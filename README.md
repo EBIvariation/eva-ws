@@ -1,4 +1,7 @@
-eva-webaaaa
+EVA
 =======
 
-EVA web application
+EBI EVA project...
+
+Sub modules:
+
