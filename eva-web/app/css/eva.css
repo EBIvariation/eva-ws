@@ -1,0 +1,16 @@
+.panel-ebi-primary, .panel-ebi-secondary{
+    border-color: #70BDBD;
+    border-radius:0 0 0 0;
+}
+
+.panel-ebi-primary > .panel-heading, .panel-ebi-secondary > .panel-heading{
+   background-color: #70BDBD;
+   border-radius:0 0 0 0;
+}
+
+.btn-ebi-primary {
+    color: #fff;
+    background-color: #70BDBD;
+    border-color: #357ebd;
+
+}
