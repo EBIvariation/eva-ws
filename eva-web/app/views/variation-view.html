@@ -1,62 +1,81 @@
 <div ng-controller="variationCtrl">
 
-    <div class="col-sm-4 col-md-3 col-lg-3" style="border:10px; border-color: #B7DDDD;">
-        <div class="panel panel-ebi-primary">
-            <div class="panel-heading">
-                <h6><strong>Filters</strong></h6>
+    <div class="col-sm-4 col-md-3 col-lg-3">
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-ebi-primary">
+                <div class="panel-heading">
+                    <div  href="#collapseFilter" style="cursor: pointer">
+                        <h6><strong>Filters</strong></h6>
+                    </div>
+                </div>
+                <div id="collapseFilter" class="panel-collapse">
+                    <div class="panel-body">
+                    </div>
+                </div>
             </div>
-            <div class="panel-body">
+
+            <div class="panel panel-ebi-secondary">
+                <div class="panel-heading">
+                    <div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseSpecies" style="cursor: pointer">
+                        Species
+                    </div>
+                </div>
+                <div id="collapseSpecies" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <select ng-model="color" ng-options="c.name for c in colors" ng-change="speciesChange()"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-ebi-secondary">
+                <div class="panel-heading">
+                    <div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseLocation" style="cursor: pointer" >
+                        Location
+                    </div>
+                </div>
+                <div id="collapseLocation" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <textarea type="text" ng-model="color.name" rows="4" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-ebi-secondary">
+                <div class="panel-heading">
+                    <div class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInfoColumns" style="cursor: pointer">
+                        Info Columns
+                    </div>
+                </div>
+                <div id="collapseInfoColumns" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <div>
+                            <div id="infoColumnMultiSelect">
+                                <button type="button" id="{{v}}" ng-repeat="(k,v) in infoColumns" ng-click="infoColumnBtnClick(v)" class="btn btn-default ">{{k}}</button>
+                            </div>
+
+                        </div>
+                        <!--<button type="button" id="{{color.name}}" ng-repeat="color in colors" ng-click="infoColumnBtnClick(color.name)"  class="btn btn-default">{{color.name}}</button>-->
+                        <div class="btn-toolbar" role="toolbar">
+                            <br /><button type="button" class="btn btn-default btn-xs" ng-click="selectAllInfoColumn()">
+                            Select all
+                        </button>
+                            <button type="button" class="btn btn-default btn-xs" ng-click="deselectAllInfoColumn()">
+                                Deselect all
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="panel panel-ebi-secondary">
-            <div class="panel-heading">
-                <div   href="#collapseSpecies" >
-                    Species
-                </div>
-            </div>
-            <div id="collapseSpecies" class="panel-collapse collapse in">
-                <div class="panel-body">
-                    <select ng-model="color" ng-options="c.name for c in colors" ng-change="speciesChange()"></select>
-                </div>
-            </div>
-        </div>
 
-        <div class="panel panel-ebi-secondary">
-            <div class="panel-heading">
-                <div   href="#collapseLocation" >
-                    Location
-                </div>
-            </div>
-            <div id="collapseLocation" class="panel-collapse collapse in">
-                <div class="panel-body">
-                    <textarea type="text" ng-model="color.name" rows="4" class="form-control"></textarea>
-                </div>
-            </div>
-        </div>
 
-        <div class="panel panel-ebi-secondary">
-            <div class="panel-heading">
-                <div   href="#collapseInfoColumns" >
-                    Info Columns
-                </div>
-            </div>
-            <div id="collapseInfoColumns" class="panel-collapse collapse in">
-                <div class="panel-body">
-                    <button type="button" id="{{v}}" ng-repeat="(k,v) in infoColumns" ng-click="infoColumnBtnClick(v)" class="btn btn-default">{{k}}</button>
-                </div>
-                <div class="panel-body">
-                    <button type="button" id="{{color.name}}" ng-repeat="color in colors" ng-click="infoColumnBtnClick(color.name)"  class="btn btn-default">{{color.name}}</button>
-                </div>
-
-            </div>
-        </div>
     </div>
     <div class="col-sm-8 col-md-9 col-lg-9">.col-md-8
         <div>
             <highchart id="chart1" config="highchartsNG" style= "width: 50%" ></highchart>
         </div>
-        <div>
+        <div style= "margin-left:150px;">
             <highchart id="chart1" config="barChart" style= "width: 30%"></highchart>
         </div>
     </div>

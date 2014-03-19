@@ -92,6 +92,11 @@ var variationCtrl = evaApp.controller('variationCtrl', ['$scope', '$rootScope', 
         }
     }
 
+
+
+
+
+
     $scope.infoColumnBtnClick = function(infoColumnId){
 
         this.color.state = !this.color.state;
@@ -106,6 +111,7 @@ var variationCtrl = evaApp.controller('variationCtrl', ['$scope', '$rootScope', 
         }
 
         if($('#'+infoColumnId).hasClass("btn-primary")){
+
             $('#'+infoColumnId).removeClass("btn-primary");
         }
         else{
@@ -113,6 +119,26 @@ var variationCtrl = evaApp.controller('variationCtrl', ['$scope', '$rootScope', 
         }
 
     }
+
+    $scope.selectAllInfoColumn = function(){
+
+        $('#infoColumnMultiSelect').children().addClass("btn-primary");
+
+        for (var i in $scope.infoColumns) {
+
+            var pos = $scope.infoColumnsFilter.indexOf($scope.infoColumns[i]);
+
+            if (pos == -1) {
+                $scope.infoColumnsFilter.push($scope.infoColumns[i]);
+            }
+        }
+
+    }
+    $scope.deselectAllInfoColumn = function(){
+        $('#infoColumnMultiSelect').children().removeClass("btn-primary");
+        $scope.infoColumnsFilter=[];
+    }
+
 
     //<!--------------Events---------------->
     $scope.speciesChange  = function(){

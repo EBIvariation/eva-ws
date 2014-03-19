@@ -24,3 +24,7 @@ evaApp.factory('variationService', function($rootScope) {
     return variationService;
 });
 
+$('#accordion').click(function(){
+    alert('sdf')
+});
+

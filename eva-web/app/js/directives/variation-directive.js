@@ -11,4 +11,15 @@ evaApp.directive('variation', function () {
 
         }
     };
+}).directive('metaData', function () {
+    return {
+        restrict: 'E',
+        replace: true,
+        transclude: true,
+        templateUrl: 'views/project-view.html',
+        controller: function($scope) {
+
+        }
+    };
 });
+

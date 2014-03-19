@@ -6,7 +6,7 @@
     <!-- build:style vendor -->
     <link type="text/css"  href="../vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link type="text/css"  href="../vendor/ng-grid-min.css" rel="stylesheet">
-    <!--<link type="text/css"  href="../vendor/bootstrap/css/bootstrap-theme.css" rel="stylesheet">-->
+    <link type="text/css"  href="../vendor/bootstrap/css/bootstrap-theme.css" rel="stylesheet">
     <link type="text/css"  href="css/eva.css" rel="stylesheet">
     <!-- /build -->
 
@@ -107,7 +107,7 @@
             </div>
 
             <div class="tab-pane" id="project">
-
+                <meta-data> </meta-data>
             </div>
 
             <div class="tab-pane" id="genomeViewer">
@@ -158,6 +158,20 @@
         e.preventDefault()
         $(this).tab('show')
     })
+
+
+//    $(document).on('click.collapse.data-api', '.accordion-toggle', function(event) {
+//        if($(this).children('span').hasClass( "glyphicon-chevron-right" )){
+//            $(this).children('span').removeClass( "glyphicon-chevron-right" );
+//            $(this).children('span').addClass("glyphicon glyphicon-chevron-down");
+//        }else if($(this).children('span').hasClass( "glyphicon glyphicon-chevron-down" )){
+//            $(this).children('span').removeClass( "glyphicon-chevron-down" );
+//            $(this).children('span').addClass("glyphicon glyphicon-chevron-right");
+//
+//        }
+//    });
+
+
 </script>
 
 </body>
