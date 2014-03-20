@@ -2,9 +2,9 @@
  * Created by jag on 17/03/2014.
  */
 
-var variationCtrl = evaApp.controller('variationCtrl', ['$scope', '$rootScope', 'variationService', function ($scope, $rootScope, variationService) {
+var variationCtrl = evaApp.controller('variationCtrl', ['$scope', '$rootScope', 'evaService','EbiVarMetadataService', function ($scope, $rootScope, evaService, EbiVarMetadataService) {
 
-    $scope.message = variationService.message;
+    $scope.message = evaService.message;
 
     $scope.infoColumns  = {
         AF: 'af',
@@ -25,7 +25,7 @@ var variationCtrl = evaApp.controller('variationCtrl', ['$scope', '$rootScope', 
     ];
     $scope.color = $scope.colors[2];
 
-    $scope.data = variationService.data;
+    $scope.data = evaService.data;
 
     $scope.highchartsNG = {
         options: {
@@ -92,7 +92,9 @@ var variationCtrl = evaApp.controller('variationCtrl', ['$scope', '$rootScope', 
         }
     }
 
+    $scope.studies = EbiVarMetadataService.getAllStudies();
 
+    console.log(EbiVarMetadataService.getAllStudies())
 
 
 
@@ -142,16 +144,16 @@ var variationCtrl = evaApp.controller('variationCtrl', ['$scope', '$rootScope', 
 
     //<!--------------Events---------------->
     $scope.speciesChange  = function(){
-        variationService.speciesChangeBroadcast($scope.color.name);
+        evaService.speciesChangeBroadcast($scope.color.name);
     }
 
     //<!--------------Broadcast---------------->
     $rootScope.$on('broadcastSpeciesChange', function() {
-            $scope.highchartsNG.series[0].data =  variationService.data;
-            $scope.highchartsNG.title.text =  variationService.message;
+            $scope.highchartsNG.series[0].data =  evaService.data;
+            $scope.highchartsNG.title.text =  evaService.message;
 
-            $scope.barChart.series[0].data =  variationService.data;
-            $scope.barChart.title.text =  variationService.message;
+            $scope.barChart.series[0].data =  evaService.data;
+            $scope.barChart.title.text =  evaService.message;
 
     });
 
@@ -160,4 +162,4 @@ var variationCtrl = evaApp.controller('variationCtrl', ['$scope', '$rootScope', 
 
 }]);
 
-variationCtrl.$inject = ['$scope', 'variationService'];
+variationCtrl.$inject = ['$scope', 'evaService'];

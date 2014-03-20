@@ -1,16 +1,16 @@
 /**
  * Created by jag on 17/03/2014.
  */
-var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','ngGrid','highcharts-ng']);
+var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','ngGrid','highcharts-ng','ebiVarServices']);
 
-evaApp.factory('variationService', function($rootScope) {
-    var variationService = {};
+evaApp.factory('evaService', function($rootScope) {
+    var evaService = {};
 
-    variationService.message = 'test';
+    evaService.message = 'test';
 
-    variationService.data = [30, 15, 2, 8, 27];
+    evaService.data = [30, 15, 2, 8, 27];
 
-    variationService.speciesChangeBroadcast = function(msg) {
+    evaService.speciesChangeBroadcast = function(msg) {
         if(msg === 'blue'){
           this.data = [1, 15, 32, 4, 17];
         }else{
@@ -21,10 +21,8 @@ evaApp.factory('variationService', function($rootScope) {
     };
 
 
-    return variationService;
+    return evaService;
 });
 
-$('#accordion').click(function(){
-    alert('sdf')
-});
+
 
