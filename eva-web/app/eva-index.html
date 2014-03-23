@@ -9,10 +9,13 @@
     <link type="text/css"  href="../vendor/bootstrap/css/bootstrap-theme.css" rel="stylesheet">
     <link type="text/css"  href="css/eva.css" rel="stylesheet">
     <!-- /build -->
+    <link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
 
     <!-- JS from vendors -->
     <!-- build:script vendor-jquery -->
     <script type="text/javascript" src="../vendor/jquery.min.js"></script>
+    <!-- /build -->
+    <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular.min.js"></script>
     <!-- /build -->
 
@@ -24,22 +27,32 @@
     <script type="text/javascript" src="../vendor/ng-grid-min.js"></script>
     <script src="http://code.highcharts.com/stock/highstock.src.js"></script>
     <script type="text/javascript" src="../vendor/highcharts-ng.js"></script>
+
     <!-- /build -->
 
-    <!---------------------services -------------------------------->
-    <script type="text/javascript" src="js/ebi-var-services/ebivar-services-metadata.js"></script>
+
     <!-- build:script eva-js -->
     <script type="text/javascript" src="js/app.js"></script>
     <!-- /build -->
 
+
+
     <!--======================CONTROLLERS======================-->
-    <script type="text/javascript" src="js/controllers/variation-controller.js"></script>
+    <script type="text/javascript" src="js/controllers/variation-browser-controller.js"></script>
+
     <!--======================DIRECTIVES======================-->
-    <script type="text/javascript" src="js/directives/variation-directive.js"></script>
+    <script type="text/javascript" src="js/directives/variation-browser-directive.js"></script>
+    <script type="text/javascript" src="js/directives/ebivar-study-directive.js"></script>
+    <script type="text/javascript" src="js/directives/datatable-directive.js"></script>
     <script type="text/javascript" src="../lib/ebi-js-commons/ebi-compliance/js/ebi-complaince-directive.js"></script>
 
     <!---------------------services -------------------------------->
     <script type="text/javascript" src="js/ebi-var-services/ebivar-services-metadata.js"></script>
+
+
+
+
+
 
 </head>
 <body>
@@ -93,6 +106,7 @@
                 <li class="active"><a href="#home">Home</a></li>
                 <li id="variationLi"><a href="#variation">Variation</a></li>
                 <li id="projectLi"><a href="#project">Project</a></li>
+                <li id="studyLi"><a href="#study">Study</a></li>
                 <li id="genomeViewerLi"><a href="#genomeViewer">Genome Viewer</a></li>
         </nav>
 
@@ -108,11 +122,15 @@
                home
             </div>
             <div class="tab-pane" id="variation">
-                <variation></variation>
+                <variation-browser></variation-browser>
             </div>
 
             <div class="tab-pane" id="project">
                 <meta-data> </meta-data>
+            </div>
+
+            <div class="tab-pane" id="study">
+                <study-data></study-data>
             </div>
 
             <div class="tab-pane" id="genomeViewer">
@@ -165,16 +183,7 @@
     })
 
 
-//    $(document).on('click.collapse.data-api', '.accordion-toggle', function(event) {
-//        if($(this).children('span').hasClass( "glyphicon-chevron-right" )){
-//            $(this).children('span').removeClass( "glyphicon-chevron-right" );
-//            $(this).children('span').addClass("glyphicon glyphicon-chevron-down");
-//        }else if($(this).children('span').hasClass( "glyphicon glyphicon-chevron-down" )){
-//            $(this).children('span').removeClass( "glyphicon-chevron-down" );
-//            $(this).children('span').addClass("glyphicon glyphicon-chevron-right");
-//
-//        }
-//    });
+
 
 
 </script>

@@ -1,12 +1,12 @@
 /**
  * Created by jag on 17/03/2014.
  */
-evaApp.directive('variation', function () {
+evaApp.directive('variationBrowser', function () {
     return {
         restrict: 'E',
         replace: true,
         transclude: true,
-        templateUrl: 'views/variation-view.html',
+        templateUrl: 'views/variation-browser-view.html',
         controller: function($scope) {
 
         }

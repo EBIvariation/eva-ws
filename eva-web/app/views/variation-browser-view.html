@@ -1,4 +1,6 @@
-<div ng-controller="variationCtrl">
+<div ng-controller="variationBrowserCtrl">
+
+
 
     <div class="col-sm-4 col-md-3 col-lg-3">
         <div  id="accordion">
@@ -71,12 +73,37 @@
 
 
     </div>
-    <div class="col-sm-8 col-md-9 col-lg-9">.col-md-8
-        <div>
-            <highchart id="chart1" config="highchartsNG" style= "width: 50%" ></highchart>
+
+    <div class="col-sm-8 col-md-9 col-lg-9">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs">
+            <li><a href="#summary" data-toggle="tab">Summary</a></li>
+            <li class="active"><a href="#vBrowser" data-toggle="tab">Variants and Effect</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane" id="summary">
+                <div>
+                    <highchart id="chart1" config="highchartsNG" style= "width: 50%" ></highchart>
+                </div>
+                <div style= "margin-left:150px;">
+                    <highchart id="chart1" config="barChart" style= "width: 30%"></highchart>
+                </div>
+
+            </div>
+            <div class="tab-pane active" id="vBrowser">
+                <!--<table my-table aa-data="testdata" ao-columns="testColumns"  style = "width: 100%"></table>-->
+                <table my-table="overrideOptions"
+                       ao-columns="testColumns"
+                       aa-data="tblData" >
+                </table>
+
+            </div>
+
         </div>
-        <div style= "margin-left:150px;">
-            <highchart id="chart1" config="barChart" style= "width: 30%"></highchart>
-        </div>
+
+
+
+
     </div>
 </div>

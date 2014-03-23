@@ -2,9 +2,11 @@
  * Created by jag on 17/03/2014.
  */
 
-var variationCtrl = evaApp.controller('variationCtrl', ['$scope', '$rootScope', 'evaService','EbiVarMetadataService', function ($scope, $rootScope, evaService, EbiVarMetadataService) {
+var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootScope', 'ebiAppDomainHostService','ebiVarMetadataService', function ($scope, $rootScope, ebiAppDomainHostService, ebiVarMetadataService) {
 
-    $scope.message = evaService.message;
+
+
+    $scope.message = ebiAppDomainHostService.message;
 
     $scope.infoColumns  = {
         AF: 'af',
@@ -25,7 +27,7 @@ var variationCtrl = evaApp.controller('variationCtrl', ['$scope', '$rootScope', 
     ];
     $scope.color = $scope.colors[2];
 
-    $scope.data = evaService.data;
+    $scope.data = ebiAppDomainHostService.data;
 
     $scope.highchartsNG = {
         options: {
@@ -92,9 +94,9 @@ var variationCtrl = evaApp.controller('variationCtrl', ['$scope', '$rootScope', 
         }
     }
 
-    $scope.studies = EbiVarMetadataService.getAllStudies();
 
-    console.log(EbiVarMetadataService.getAllStudies())
+
+
 
 
 
@@ -142,24 +144,74 @@ var variationCtrl = evaApp.controller('variationCtrl', ['$scope', '$rootScope', 
     }
 
 
+     this.tempData =ebiVarMetadataService.testData();
+     console.log(this.tempData.aaData);
+
+
+   // $scope.testData = this.data.aaData;
+    $scope.testColumns = [
+                            { "sTitle": "Engine" },
+                            { "sTitle": "Browser" },
+                            { "sTitle": "Platform" },
+                            { "sTitle": "Version", "sClass": "center" },
+                            { "sTitle": "Grade", "sClass": "center" }
+                         ];
+//    $scope.options.aaData =  $scope.testdata.aaData;
+
+
+
     //<!--------------Events---------------->
     $scope.speciesChange  = function(){
-        evaService.speciesChangeBroadcast($scope.color.name);
+        ebiAppDomainHostService.speciesChangeBroadcast($scope.color.name);
     }
 
     //<!--------------Broadcast---------------->
     $rootScope.$on('broadcastSpeciesChange', function() {
-            $scope.highchartsNG.series[0].data =  evaService.data;
-            $scope.highchartsNG.title.text =  evaService.message;
+            $scope.highchartsNG.series[0].data =  ebiAppDomainHostService.data;
+            $scope.highchartsNG.title.text =  ebiAppDomainHostService.message;
 
-            $scope.barChart.series[0].data =  evaService.data;
-            $scope.barChart.title.text =  evaService.message;
+            $scope.barChart.series[0].data =  ebiAppDomainHostService.data;
+            $scope.barChart.title.text =  ebiAppDomainHostService.message;
 
     });
+
+    $scope.tblData = this.tempData.aaData;
+
+    console.log($scope.tblData)
+    // not mandatory, here as an example
+    $scope.tblColumns = [
+        { "sTitle": "Surname" },
+        { "sTitle": "First Name" }
+    ];
+
+    // not mandatory, here as an example
+    $scope.columnDefs = [{ "bSortable": false, "aTargets": [1] }];
+
+    // not mandatory, you can use defaults in directive
+    $scope.overrideOptions = {
+        "bStateSave": true,
+        "iCookieDuration": 2419200, /* 1 month */
+        "bJQueryUI": true,
+//        "bPaginate": false,
+        "bLengthChange": false,
+        "bFilter": false,
+        "bInfo": false,
+        "bDestroy": true,
+        "sPaginationType": "full_numbers",
+    };
+
+    // we pretend that we have received new data from somewhere (eg a search)
+    $scope.addData = function(){
+        //$scope.tblData.push(["jones", "henry"]); // BUG? Angular doesn't pick this up
+        $scope.counter = $scope.counter+1;
+        var existing = $scope.tblData.slice();
+        existing.push([$scope.counter, $scope.counter*2]);
+        $scope.tblData = existing;
+    }
+    $scope.counter = 0
 
 
 
 
 }]);
 
-variationCtrl.$inject = ['$scope', 'evaService'];

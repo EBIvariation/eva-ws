@@ -1,16 +1,18 @@
 /**
  * Created by jag on 17/03/2014.
  */
-var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','ngGrid','highcharts-ng','ebiVarServices']);
+var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','ngGrid','highcharts-ng','ebiVar.Services.Metadata','ebiVar.Services.Metadata.Study','dataTablePlugin']);
 
-evaApp.factory('evaService', function($rootScope) {
-    var evaService = {};
+var METADATA_HOST = "http://localhost:8080/ws-test/rest";
+var DOMAIN = 'test';
 
-    evaService.message = 'test';
+evaApp.factory('ebiAppDomainHostService', function($rootScope) {
+    var ebiAppDomainHostService = {};
 
-    evaService.data = [30, 15, 2, 8, 27];
 
-    evaService.speciesChangeBroadcast = function(msg) {
+    ebiAppDomainHostService.data = [30, 15, 2, 8, 27];
+
+    ebiAppDomainHostService.speciesChangeBroadcast = function(msg) {
         if(msg === 'blue'){
           this.data = [1, 15, 32, 4, 17];
         }else{
@@ -21,8 +23,13 @@ evaApp.factory('evaService', function($rootScope) {
     };
 
 
-    return evaService;
+
+
+    return ebiAppDomainHostService;
 });
+
+
+
 
 
 
