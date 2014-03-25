@@ -17,10 +17,13 @@
     <!-- /build -->
     <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular.min.js"></script>
+
+
     <!-- /build -->
 
     <!-- build:script vendor -->
-
+    <script type="text/javascript" src="../vendor/underscore-min.js"></script>
+    <script src="http://backbonejs.org/backbone-min.js"></script>
     <script type="text/javascript" src="../vendor/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../vendor/ui-bootstrap-tpls-0.10.0.js"></script>
     <script type="text/javascript" src="../vendor/bootstrap-hover-dropdown.min.js"></script>
@@ -39,6 +42,7 @@
 
     <!--======================CONTROLLERS======================-->
     <script type="text/javascript" src="js/controllers/variation-browser-controller.js"></script>
+    <script type="text/javascript" src="js/controllers/backbone-event-manager.js"></script>
 
     <!--======================DIRECTIVES======================-->
     <script type="text/javascript" src="js/directives/variation-browser-directive.js"></script>
@@ -66,54 +70,37 @@
         <div class="grid_12 alpha" id="local-title">
             <h1><a href="[service-url]" title="Back to [service-name] homepage">EVA Portal</a></h1>
         </div>
-
         <!-- /local-title -->
 
         <!-- local-search -->
-        <!-- NB: if you do not have a local-search, delete the following div, and drop the class="grid_12 alpha" class from local-title above -->
-
         <div class="grid_12 omega">
             <form id="local-search" name="local-search" action="[search-action]" method="post">
-
                 <fieldset>
-
                     <div class="left">
                         <label>
                             <input type="text" name="first" id="local-searchbox">
                         </label>
-
                         <span class="examples">Examples: <a href="[search-url-1]">[search-text-1]</a>, <a href="[search-url-1]">[search-text-2]</a>, <a href="[search-url-1]">[search-text-3]</a></span>
                     </div>
-
                     <div class="right">
                         <input type="submit" name="submit" value="Search" class="submit">
                         <!-- If your search is more complex than just a keyword search, you can link to an Advanced Search,
                              with whatever features you want available-->
                         <span class="adv"><a href="../search" id="adv-search" title="Advanced">Advanced</a></span>
                     </div>
-
                 </fieldset>
-
             </form>
         </div>
-
         <!-- /local-search -->
-
         <!-- local-nav -->
-
         <nav class="" >
             <ul class="nav nav-pills" id="topMenuTab">
                 <li class="active"><a href="#home">Home</a></li>
                 <li id="variationLi"><a href="#variation">Variation</a></li>
-                <li id="projectLi"><a href="#project">Project</a></li>
+                <!--<li id="projectLi"><a href="#project">Project</a></li>-->
                 <li id="studyLi"><a href="#study">Study</a></li>
-                <li id="genomeViewerLi"><a href="#genomeViewer">Genome Viewer</a></li>
         </nav>
-
         <!-- /local-nav -->
-
-
-
     </div>
     <div id="content" role="main" class="grid_24 clearfix">
 
@@ -133,37 +120,6 @@
                 <study-data></study-data>
             </div>
 
-            <div class="tab-pane" id="genomeViewer">
-                <div id="content" role="main" class="grid_24 clearfix">
-
-                    <!-- If you require a breadcrumb trail, its root should be your service.
-                          You don't need a breadcrumb trail on the homepage of your service... -->
-                    <nav id="breadcrumb">
-                        <p>
-                            <a href="[service-url]">[service-name]</a> &gt;
-                            [page-title]
-                        </p>
-                    </nav>
-
-                    <!-- Example layout containers -->
-
-                    <section>
-                        <h2>[page-title]</h2>
-                        <p>Your content</p>
-                    </section>
-
-                    <section>
-                        <h3>Level 3 heading</h3>
-                        <p>More content in a full-width container.</p>
-
-                        <h4>Level 4 heading</h4>
-                        <p>More content in a full-width container.</p>
-                    </section>
-                    <!-- End example layout containers -->
-
-                </div>
-
-            </div>
         </div>
 
     </div>
@@ -182,6 +138,17 @@
         $(this).tab('show')
     })
 
+
+//    var eventManager = new EventManager();
+//    eventManager.on("variant:select", function(e) {
+//        console.log(e);
+//    });
+
+//    $rootScope.events = {};
+//    _.extend($rootScope.events, Backbone.Events);
+//    $rootScope.events.on("clicked", function() {
+//        alert("Ouch, you just clicked me");
+//    });
 
 
 

@@ -19,7 +19,7 @@
                                 domain:DOMAIN,
                                 options:'study/list'
                               };
-            console.log(getAllStudiesParams)
+
 
     //$scope.studies = ebiVarMetadataService.getAllStudies(getAllStudiesParams);
 

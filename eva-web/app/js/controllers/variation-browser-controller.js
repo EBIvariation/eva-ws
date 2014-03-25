@@ -6,6 +6,29 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
 
 
+    //$scope.events.trigger("clicked");
+
+
+    var eventManager = new EventManager();
+    eventManager.on("variant:select", function(e) {
+        console.log(e);
+    });
+
+
+
+    $scope.statistics = '+';
+    $scope.showStatitsicsState;
+
+    $scope.showStatitsics = function(){
+        //eventManager.trigger("variant:select", {hello: "world"});
+        //$scope.events.trigger("clicked");
+        this.showStatitsicsState = !this.showStatitsicsState;
+        if(!this.showStatitsicsState){
+            this.statistics = '+';
+        }else{
+            this.statistics = '-';
+        }
+    };
     $scope.message = ebiAppDomainHostService.message;
 
     $scope.infoColumns  = {
@@ -36,8 +59,10 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
             },
 
             plotOptions: {
+
                 series: {
                     cursor: 'pointer',
+                   // size: 80,
                     point: {
                         events: {
                             click: function() {
@@ -94,13 +119,6 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
         }
     }
 
-
-
-
-
-
-
-
     $scope.infoColumnBtnClick = function(infoColumnId){
 
         this.color.state = !this.color.state;
@@ -145,19 +163,182 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
 
      this.tempData =ebiVarMetadataService.testData();
-     console.log(this.tempData.aaData);
 
+
+   //<!---Datatable Data---->
 
    // $scope.testData = this.data.aaData;
     $scope.testColumns = [
-                            { "sTitle": "Engine" },
-                            { "sTitle": "Browser" },
-                            { "sTitle": "Platform" },
-                            { "sTitle": "Version", "sClass": "center" },
-                            { "sTitle": "Grade", "sClass": "center" }
+                            {"sTitle": "Organism"},
+                            {"sTitle": "StudyType"},
+                            {"sTitle": "StudyAccession"},
+                            {"sTitle": "StudyURL"},
+                            {"sTitle": "DisplayName"},
+                            {"sTitle": "ProjectId"},
+                            {"sTitle": "Description"},
+                            {"sTitle": "TaxID"},
+                            {"sTitle": "Pubmed"}
                          ];
-//    $scope.options.aaData =  $scope.testdata.aaData;
+    $scope.columnDefs = [{ "bSortable": false, "aTargets": [1] }];
 
+    // not mandatory, you can use defaults in directive
+    $scope.overrideOptions = {
+        "bStateSave": true,
+        "bJQueryUI": true,
+        "bLengthChange": false,
+        "bFilter": false,
+        "bInfo": false,
+        "bDestroy": true,
+        "sPaginationType": "full_numbers",
+
+    };
+
+   //<!---End of Datatable Data--->
+
+
+
+
+
+
+    $scope.tblData = [];
+    var columnData = [];
+    var variantData = [];
+
+    $scope.pagingOptions = {
+        pageSizes: [5, 10, 20],
+        pageSize: 5,
+        currentPage: 1
+    };
+
+    $scope.searchVariants = function(){
+        var getAllStudiesParams = {
+            host:METADATA_HOST,
+            domain:DOMAIN,
+            options:'study/list'
+        };
+
+        $scope.studies = ebiVarMetadataService.getAllStudies(getAllStudiesParams);
+
+        if($scope.studies.length > 0){
+            for (var i = 0; i < $scope.studies.length; i++) {
+                var test=1;
+//            var callbackfn = 'showStatitsics('+test+')';
+//            debugger
+                var callbackfn = function() {
+                    eventManager.trigger("variant:select", {hello: "world"});
+                };
+                var organism = '<a id="myLink" href="#" class="variant-selector" onClick='+callbackfn+'>'+ $scope.studies[i].organism +'</a>';
+                var pubmed = '';
+                var pubmed1 = [];
+                for (var j = 0; j < $scope.studies[i].pubmedId.length; j++) {
+                    var location  = 'http://europepmc.org/search?query='+$scope.studies[i].pubmedId[j]
+                    pubmed += '<a href="' + location + '">'+ $scope.studies[i].pubmedId[j] +'</a><br />';
+                    pubmed1.push($scope.studies[i].pubmedId[j]);
+                }
+
+                var taxId = '';
+                for (var j = 0; j < $scope.studies[i].taxId.length; j++) {
+                    taxId +=  $scope.studies[i].taxId[j] +'<br />';
+                }
+
+                //<!---ng-grid--data>
+                variantData.push({
+                    studyAccession:$scope.studies[i].studyAccession,
+                    studyType:$scope.studies[i].studyType,
+                    studyUrl:$scope.studies[i].studyUrl,
+                    displayName:$scope.studies[i].displayName,
+                    projectId:$scope.studies[i].projectId,
+                    // description:$scope.studies[i].desctiption,
+                    pubmed:pubmed1,
+                });
+
+                //datatables
+                $scope.tblData.push([
+                    organism,
+                    $scope.studies[i].studyType,
+                    $scope.studies[i].studyAccession,
+                    $scope.studies[i].studyUrl,
+                    $scope.studies[i].displayName,
+                    $scope.studies[i].projectId,
+                    //$scope.studies[i].desctiption,
+                    $scope.studies[i].studyType,
+                    taxId,
+                    pubmed
+                ]);
+
+            }
+            //<!---ng-grid--data>
+            $scope.variantBowserTableData= variantData;
+        }
+
+    }
+    //<!---Variants Main Table--->
+    $scope.variantBowserTable = {
+        data: 'variantBowserTableData',
+        pagingOptions: $scope.pagingOptions,
+        enableRowSelection:false,
+        showFilter: true,
+        columnDefs: [
+            // {field:'studyAccession', displayName:'StudyAccession', cellTemplate: '<div class="ngCellText" ><a href="#" ng-click="setSelectedVariant(row.getProperty(col.field))">{{row.getProperty(col.field)}}</a></div>'},
+            {field:'studyAccession', displayName:'StudyAccession', cellTemplate: '<div class="ngCellText" ><a href="#" ng-click="setSelectedVariant(row.getProperty(col.field))">{{row.getProperty(col.field)}}</a></div>'},
+            {field: 'studyType', displayName: 'StudyType'},
+            {field: 'studyUrl', displayName: 'StudyURL'},
+            {field: 'displayName', displayName: 'DisplayName'},
+            {field: 'projectId', displayName: 'ProjectID'},
+            {field: 'pubmed', displayName: 'Pubmed',cellTemplate: '<div class="ngCellText" ng-class="col.colIndex()" ng-repeat="ids in row.getProperty(col.field)"><a href="http://europepmc.org/search?query={{ids}}">{{ids}}</a></div>'}
+        ]
+
+    };
+    //<!----end of Variants Main Table-->
+
+
+
+
+
+
+
+
+
+
+
+    $scope.setSelectedVariant = function(args){
+
+        $scope.selectedVariant = true;
+        //http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest/latest/hsa/genomic/variant/3:169514585::T/consequence_type?of=json
+        var getVariantEffectParams = {
+            host:'http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest',
+            domain:'latest',
+            options:'hsa/genomic/variant/3:169514585::T/consequence_type?of=json'
+        };
+
+        $scope.variantEffect = ebiVarMetadataService.getVariants(getVariantEffectParams);
+        var variantEffectData=[];
+        for (var i = 0; i < $scope.variantEffect.length; i++) {
+            variantEffectData.push({
+                position:$scope.variantEffect[i].chromosome+':'+$scope.variantEffect[i].position,
+                snpId:$scope.variantEffect[i].snpId,
+                consequenceType:$scope.variantEffect[i].consequenceType,
+                aminoacidChange:$scope.variantEffect[i].aminoacidChange,
+                geneId:$scope.variantEffect[i].geneId,
+                transcriptId:$scope.variantEffect[i].transcriptId,
+                featureId:$scope.variantEffect[i].featureId,
+                featureName:$scope.variantEffect[i].featureName,
+                featureType:$scope.variantEffect[i].featureType,
+                featureBiotype:$scope.variantEffect[i].featureBiotype,
+            });
+        }
+        $scope.variantEffectTableData = variantEffectData;
+        //$rootScope.$broadcast('VariantSelected');
+    };
+
+    //<!---VariantsEffect Table--->
+    $scope.variantEffectTable = {
+        data: 'variantEffectTableData',
+        pagingOptions: $scope.pagingOptions,
+        showFilter: true,
+        enableColumnResize: true
+    };
+    //<!----end of VariantsEffect Table-->
 
 
     //<!--------------Events---------------->
@@ -175,40 +356,13 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
     });
 
-    $scope.tblData = this.tempData.aaData;
+    //<!--------------Broadcast---------------->
+    $rootScope.$on('VariantSelected', function() {
+        //$scope.variantEffectTableData =  variantEffectData;
+    });
 
-    console.log($scope.tblData)
-    // not mandatory, here as an example
-    $scope.tblColumns = [
-        { "sTitle": "Surname" },
-        { "sTitle": "First Name" }
-    ];
 
-    // not mandatory, here as an example
-    $scope.columnDefs = [{ "bSortable": false, "aTargets": [1] }];
 
-    // not mandatory, you can use defaults in directive
-    $scope.overrideOptions = {
-        "bStateSave": true,
-        "iCookieDuration": 2419200, /* 1 month */
-        "bJQueryUI": true,
-//        "bPaginate": false,
-        "bLengthChange": false,
-        "bFilter": false,
-        "bInfo": false,
-        "bDestroy": true,
-        "sPaginationType": "full_numbers",
-    };
-
-    // we pretend that we have received new data from somewhere (eg a search)
-    $scope.addData = function(){
-        //$scope.tblData.push(["jones", "henry"]); // BUG? Angular doesn't pick this up
-        $scope.counter = $scope.counter+1;
-        var existing = $scope.tblData.slice();
-        existing.push([$scope.counter, $scope.counter*2]);
-        $scope.tblData = existing;
-    }
-    $scope.counter = 0
 
 
 

@@ -7,7 +7,7 @@ angular.module('ebiVar.Services.Metadata', []).service('ebiVarMetadataService', 
 
         var studyData;
 
-//        $http({method: 'GET', url: 'http://localhost:8080/ws-test/rest/test/study/list'})
+    //        $http({method: 'GET', url: 'http://localhost:8080/ws-test/rest/test/study/list'})
 //
 //        .success(function(data, status, headers, config) {
 //                studyData = data;
@@ -15,8 +15,9 @@ angular.module('ebiVar.Services.Metadata', []).service('ebiVarMetadataService', 
 //        .error(function(data, status, headers, config) {
 //                console.log(status)
 //        });
-        console.log(args.domain)
+
         var url =args.host+'/'+args.domain+'/'+args.options;
+
 
         $.ajax({
             url: url,
@@ -27,15 +28,35 @@ angular.module('ebiVar.Services.Metadata', []).service('ebiVarMetadataService', 
                 studyData = response;
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus)
+                //console.log(textStatus)
                 studyData = '';
             }
         });
 
-
+        //console.log(studyData)
 
         return studyData;
 
+    };
+
+    this.getVariants = function(args) {
+
+        var variantData;
+        var url =args.host+'/'+args.domain+'/'+args.options;
+        $.ajax({
+            url: url,
+            async: false,
+            dataType: 'json',
+            success: function (response, textStatus, jqXHR) {
+                variantData = response;
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                //console.log(textStatus)
+                variantData = '';
+            }
+        });
+
+        return variantData;
     };
 
     this.testData = function(){
