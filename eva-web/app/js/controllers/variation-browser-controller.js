@@ -211,12 +211,16 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     };
 
     $scope.searchVariants = function(){
+        getSenchaTable();
+        variantSearch();
+    }
+
+    var variantSearch = function(){
         var getAllStudiesParams = {
             host:METADATA_HOST,
             domain:DOMAIN,
             options:'study/list'
         };
-
         $scope.studies = ebiVarMetadataService.getAllStudies(getAllStudiesParams);
 
         if($scope.studies.length > 0){
@@ -271,6 +275,7 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
             $scope.variantBowserTableData= variantData;
         }
 
+        return  variantData;
     }
     //<!---Variants Main Table--->
     $scope.variantBowserTable = {
@@ -298,10 +303,8 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
 
 
-
-
-
     $scope.setSelectedVariant = function(args){
+
 
         $scope.selectedVariant = true;
         //http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest/latest/hsa/genomic/variant/3:169514585::T/consequence_type?of=json
@@ -312,6 +315,8 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
         };
 
         $scope.variantEffect = ebiVarMetadataService.getVariants(getVariantEffectParams);
+
+        console.log($scope.variantEffect)
         var variantEffectData=[];
         for (var i = 0; i < $scope.variantEffect.length; i++) {
             variantEffectData.push({
@@ -327,14 +332,20 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
                 featureBiotype:$scope.variantEffect[i].featureBiotype,
             });
         }
+
+
+
         $scope.variantEffectTableData = variantEffectData;
         //$rootScope.$broadcast('VariantSelected');
     };
+
+
 
     //<!---VariantsEffect Table--->
     $scope.variantEffectTable = {
         data: 'variantEffectTableData',
         pagingOptions: $scope.pagingOptions,
+        filterOptions: $scope.filterOptions,
         showFilter: true,
         enableColumnResize: true
     };
@@ -360,6 +371,108 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     $rootScope.$on('VariantSelected', function() {
         //$scope.variantEffectTableData =  variantEffectData;
     });
+
+
+    var getSenchaTable = function(){
+        Ext.require([
+            'Ext.grid.*',
+            'Ext.data.*',
+            'Ext.util.*',
+            'Ext.state.*'
+        ]);
+
+// Define Company entity
+// Null out built in convert functions for performance *because the raw data is known to be valid*
+// Specifying defaultValue as undefined will also save code. *As long as there will always be values in the data, or the app tolerates undefined field values*
+        Ext.define('VariantBrowserTable', {
+            extend: 'Ext.data.Model',
+            fields: [
+                    {name: 'studyType'},
+                    {name: 'studyAccession'},
+                    {name: 'studyUrl'},
+                    {name: 'displayName'},
+                    {name: 'projectId'},
+                    {name: 'pubmed',type: 'auto'}
+            ],
+            idProperty: 'studyAccession'
+        });
+
+        Ext.onReady(function() {
+            Ext.QuickTips.init();
+
+            // setup the state provider, all state information will be saved to a cookie
+            Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider'));
+
+            var variantData =   variantSearch();
+
+
+
+
+            function createPubmedLink(val) {
+               console.log(val)
+                //alert(val)
+            }
+            // create the data store
+            var store = Ext.create('Ext.data.JsonStore', {
+                model: 'VariantBrowserTable',
+                data:  $scope.studies
+            });
+
+
+
+            // create the Grid
+            var grid = Ext.create('Ext.grid.Panel', {
+                store: store,
+                stateful: true,
+                collapsible: true,
+                multiSelect: true,
+                //stateId: 'stateGrid',
+                columns: [
+                    {
+                        text     : 'studyType',
+                        flex     : 1,
+                        sortable : false,
+                        dataIndex: 'studyType'
+                    },
+                    {
+                        text     : 'studyAccession',
+                        sortable : true,
+                        dataIndex: 'studyAccession'
+                    },
+                    {
+                        text     : 'studyUrl',
+                        sortable : true,
+                        dataIndex: 'studyUrl'
+                    },
+                    {
+                        text     : 'displayName',
+                        sortable : true,
+                        dataIndex: 'displayName'
+                    },
+                    {
+                        text     : 'projectId',
+                        sortable : true,
+                        dataIndex: 'projectId'
+                    },
+                    {
+                        text     : 'pubmed',
+                        sortable : true,
+                        renderer : createPubmedLink,
+                        dataIndex: 'pubmed'
+
+                    }
+                ],
+                  height: 350,
+//                width: 800,
+                title: 'Array Grid',
+                renderTo: 'grid-example',
+                viewConfig: {
+                    stripeRows: true,
+                    enableTextSelection: true
+                }
+            });
+        });
+    }
 
 
 

@@ -59,6 +59,20 @@ angular.module('ebiVar.Services.Metadata', []).service('ebiVarMetadataService', 
         return variantData;
     };
 
+    this.getCount = function(url){
+        alert('ssf');
+
+//        $.ajax({
+//            url: url,
+//            //url: 'http://localhost:8080/ws-test/rest/test/study/estd199',
+//            async: false,
+//            dataType: 'json',
+//            success: function (response, textStatus, jqXHR) {
+//                console.log(response)
+//            }
+//        });
+    }
+
     this.testData = function(){
         var data = {
             "aaData": [
