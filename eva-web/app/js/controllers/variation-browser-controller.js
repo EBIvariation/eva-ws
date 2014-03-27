@@ -211,7 +211,7 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     };
 
     $scope.searchVariants = function(){
-        getSenchaTable();
+        getVariantBrowserTable();
         variantSearch();
     }
 
@@ -305,9 +305,15 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
     $scope.setSelectedVariant = function(args){
 
-
         $scope.selectedVariant = true;
+        getVariantEffect();
         //http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest/latest/hsa/genomic/variant/3:169514585::T/consequence_type?of=json
+
+        //$rootScope.$broadcast('VariantSelected');
+    };
+
+    var getVariantEffect =  function(){
+
         var getVariantEffectParams = {
             host:'http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest',
             domain:'latest',
@@ -316,7 +322,7 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
         $scope.variantEffect = ebiVarMetadataService.getVariants(getVariantEffectParams);
 
-        console.log($scope.variantEffect)
+
         var variantEffectData=[];
         for (var i = 0; i < $scope.variantEffect.length; i++) {
             variantEffectData.push({
@@ -333,11 +339,11 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
             });
         }
 
-
-
         $scope.variantEffectTableData = variantEffectData;
-        //$rootScope.$broadcast('VariantSelected');
-    };
+
+        return variantEffectData;
+
+    }
 
 
 
@@ -372,8 +378,8 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
         //$scope.variantEffectTableData =  variantEffectData;
     });
 
+    var getVariantEffectTable = function(){
 
-    var getSenchaTable = function(){
         Ext.require([
             'Ext.grid.*',
             'Ext.data.*',
@@ -384,11 +390,141 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 // Define Company entity
 // Null out built in convert functions for performance *because the raw data is known to be valid*
 // Specifying defaultValue as undefined will also save code. *As long as there will always be values in the data, or the app tolerates undefined field values*
+        Ext.define('VariantEffectTable', {
+            extend: 'Ext.data.Model',
+            fields: [
+                {name: 'position'},
+                {name: 'snpId'},
+                {name: 'consequenceType'},
+                {name: 'aminoacidChange'},
+                {name: 'geneId'},
+                {name: 'transcriptId'},
+                {name: 'featureId'},
+                {name: 'featureName'},
+                {name: 'featureType'},
+                {name: 'featureBiotype'}
+            ]
+
+        });
+
+
+
+
+        Ext.onReady(function() {
+            Ext.QuickTips.init();
+
+            // setup the state provider, all state information will be saved to a cookie
+            Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider'));
+
+            var variantEffectData =   getVariantEffect();
+
+            // create the data store
+            var variantEffectStore = Ext.create('Ext.data.JsonStore', {
+                model: 'VariantEffectTable',
+                data: $scope.variantEffectTableData
+            });
+
+
+            // create the Grid
+            var variantEffectGrid = Ext.create('Ext.grid.Panel', {
+                store: variantEffectStore,
+                stateful: true,
+                collapsible: true,
+                multiSelect: true,
+                //stateId: 'stateGrid',
+                columns: [
+                    {
+                        text     : 'position',
+                        //flex     : 1,
+                        sortable : false,
+                        dataIndex: 'position'
+                    },
+                    {
+                        text     : 'snpId',
+                        sortable : true,
+                        dataIndex: 'snpId'
+
+                    },
+                    {
+                        text     : 'consequenceType',
+                        sortable : true,
+                        dataIndex: 'consequenceType'
+                    },
+                    {
+                        text     : 'aminoacidChange',
+                        sortable : true,
+                        dataIndex: 'aminoacidChange'
+                    },
+                    {
+                        text     : 'geneId',
+                        sortable : true,
+                        dataIndex: 'geneId'
+                    },
+                    {
+                        text     : 'transcriptId',
+                        sortable : true,
+                        //renderer : createPubmedLink,
+                        dataIndex: 'transcriptId'
+
+                    },
+                    {
+                        text     : 'featureId',
+                        sortable : true,
+                        //renderer : createPubmedLink,
+                        dataIndex: 'featureId'
+
+                    },
+                    {
+                        text     : 'featureName',
+                        sortable : true,
+                        //renderer : createPubmedLink,
+                        dataIndex: 'featureName'
+
+                    },
+                    {
+                        text     : 'featureType',
+                        sortable : true,
+                        //renderer : createPubmedLink,
+                        dataIndex: 'featureType'
+
+                    },
+                    {
+                        text     : 'featureBiotype',
+                        sortable : true,
+                        //renderer : createPubmedLink,
+                        dataIndex: 'featureBiotype'
+
+                    }
+                ],
+                height: 350,
+//                width: 800,
+                title: 'VariantEffect',
+                renderTo: 'VariantEffectTable',
+                viewConfig: {
+                    enableTextSelection: true
+                }
+            });
+
+        });
+    }
+
+
+    var getVariantBrowserTable = function(){
+
+        Ext.require([
+            'Ext.grid.*',
+            'Ext.data.*',
+            'Ext.util.*',
+            'Ext.state.*'
+        ]);
+
+
+
         Ext.define('VariantBrowserTable', {
             extend: 'Ext.data.Model',
             fields: [
-                    {name: 'studyType'},
-                    {name: 'studyAccession'},
+                    {name: 'studyType',type: 'string'},
+                    {name: 'studyAccession',type: 'string'},
                     {name: 'studyUrl'},
                     {name: 'displayName'},
                     {name: 'projectId'},
@@ -396,6 +532,9 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
             ],
             idProperty: 'studyAccession'
         });
+
+
+
 
         Ext.onReady(function() {
             Ext.QuickTips.init();
@@ -405,24 +544,21 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
             var variantData =   variantSearch();
 
-
-
-
-            function createPubmedLink(val) {
-               console.log(val)
-                //alert(val)
+            function createLink(val) {
+              var link = '<a href="#">'+val+'</a>';
+                return link;
             }
             // create the data store
-            var store = Ext.create('Ext.data.JsonStore', {
+            var VariantBrowserStore = Ext.create('Ext.data.JsonStore', {
                 model: 'VariantBrowserTable',
                 data:  $scope.studies
             });
 
-
+            console.log($scope.studies)
 
             // create the Grid
-            var grid = Ext.create('Ext.grid.Panel', {
-                store: store,
+            var VariantBrowserGrid = Ext.create('Ext.grid.Panel', {
+                store: VariantBrowserStore,
                 stateful: true,
                 collapsible: true,
                 multiSelect: true,
@@ -431,13 +567,16 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
                     {
                         text     : 'studyType',
                         flex     : 1,
-                        sortable : false,
+                        sortable : true,
+                       // width    : 10,
                         dataIndex: 'studyType'
                     },
                     {
                         text     : 'studyAccession',
                         sortable : true,
+                        //renderer : createLink,
                         dataIndex: 'studyAccession'
+
                     },
                     {
                         text     : 'studyUrl',
@@ -457,19 +596,34 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
                     {
                         text     : 'pubmed',
                         sortable : true,
-                        renderer : createPubmedLink,
+                        //renderer : createPubmedLink,
                         dataIndex: 'pubmed'
 
                     }
                 ],
-                  height: 350,
+                height: 350,
 //                width: 800,
-                title: 'Array Grid',
-                renderTo: 'grid-example',
+                title: 'Variant Browser',
+                renderTo: 'VariantBrowserTable',
                 viewConfig: {
-                    stripeRows: true,
-                    enableTextSelection: true
-                }
+                    enableTextSelection: true,
+                    stripeRows: false,
+                },
+                //colModel : colModel,
+                //selModel : selModel,
+//                listeners: {
+//                    cellclick: function(grid,rowIndex,e) {
+//                        // Ext.Msg.alert('sdf');
+//
+//                        console.log($scope.studies)
+//                    }
+//                }
+
+
+            });
+            // update panel body on selection change
+            VariantBrowserGrid.getSelectionModel().on('selectionchange', function(sm ,selectedRecord) {
+                getVariantEffectTable();
             });
         });
     }
