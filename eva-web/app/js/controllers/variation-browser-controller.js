@@ -210,10 +210,7 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
         currentPage: 1
     };
 
-    $scope.searchVariants = function(){
-        getVariantBrowserTable();
-        variantSearch();
-    }
+
 
     var variantSearch = function(){
         var getAllStudiesParams = {
@@ -277,6 +274,8 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
         return  variantData;
     }
+
+
     //<!---Variants Main Table--->
     $scope.variantBowserTable = {
         data: 'variantBowserTableData',
@@ -306,18 +305,24 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     $scope.setSelectedVariant = function(args){
 
         $scope.selectedVariant = true;
-        getVariantEffect();
-        //http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest/latest/hsa/genomic/variant/3:169514585::T/consequence_type?of=json
 
-        //$rootScope.$broadcast('VariantSelected');
     };
 
-    var getVariantEffect =  function(){
+    var getVariantEffect =  function(args){
+
+        console.log(args);
+
+        var position = '';
+        if(args === 'Control Set'){
+            position = '4:169514585::T';
+        }else{
+            position = '3:169514585::T';
+        }
 
         var getVariantEffectParams = {
             host:'http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest',
             domain:'latest',
-            options:'hsa/genomic/variant/3:169514585::T/consequence_type?of=json'
+            options:'hsa/genomic/variant/'+position+'/consequence_type?of=json'
         };
 
         $scope.variantEffect = ebiVarMetadataService.getVariants(getVariantEffectParams);
@@ -378,7 +383,12 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
         //$scope.variantEffectTableData =  variantEffectData;
     });
 
-    var getVariantEffectTable = function(){
+
+
+
+
+
+ //var getVariantBrowserTable = function(){
 
         Ext.require([
             'Ext.grid.*',
@@ -387,24 +397,19 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
             'Ext.state.*'
         ]);
 
-// Define Company entity
-// Null out built in convert functions for performance *because the raw data is known to be valid*
-// Specifying defaultValue as undefined will also save code. *As long as there will always be values in the data, or the app tolerates undefined field values*
-        Ext.define('VariantEffectTable', {
+
+
+        Ext.define('VariantBrowserTable', {
             extend: 'Ext.data.Model',
             fields: [
-                {name: 'position'},
-                {name: 'snpId'},
-                {name: 'consequenceType'},
-                {name: 'aminoacidChange'},
-                {name: 'geneId'},
-                {name: 'transcriptId'},
-                {name: 'featureId'},
-                {name: 'featureName'},
-                {name: 'featureType'},
-                {name: 'featureBiotype'}
-            ]
-
+                    {name: 'studyType',type: 'string'},
+                    {name: 'studyAccession',type: 'string'},
+                    {name: 'studyUrl'},
+                    {name: 'displayName'},
+                    {name: 'projectId'},
+                    {name: 'pubmed',type: 'auto'}
+            ],
+            idProperty: 'studyAccession'
         });
 
 
@@ -416,13 +421,120 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
             // setup the state provider, all state information will be saved to a cookie
             Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider'));
 
-            var variantEffectData =   getVariantEffect();
+            var variantData =   variantSearch();
+
+            function createLink(val) {
+              var link = '<a href="#">'+val+'</a>';
+                return link;
+            }
+            // create the data store
+            var VariantBrowserStore = Ext.create('Ext.data.JsonStore', {
+                model: 'VariantBrowserTable',
+                data:  []
+            });
+
+            //console.log($scope.studies)
+
+
+            // create the Grid
+            var VariantBrowserGrid = Ext.create('Ext.grid.Panel', {
+                store: VariantBrowserStore,
+                stateful: true,
+                collapsible: true,
+                multiSelect: true,
+                //stateId: 'stateGrid',
+                columns: [
+                    {
+                        text     : 'studyType',
+                        flex     : 1,
+                        sortable : true,
+                       // width    : 10,
+                        dataIndex: 'studyType'
+                    },
+                    {
+                        text     : 'studyAccession',
+                        sortable : true,
+                        //renderer : createLink,
+                        dataIndex: 'studyAccession'
+
+                    },
+                    {
+                        text     : 'studyUrl',
+                        sortable : true,
+                        dataIndex: 'studyUrl'
+                    },
+                    {
+                        text     : 'displayName',
+                        sortable : true,
+                        dataIndex: 'displayName'
+                    },
+                    {
+                        text     : 'projectId',
+                        sortable : true,
+                        dataIndex: 'projectId'
+                    },
+                    {
+                        text     : 'pubmed',
+                        sortable : true,
+                        //renderer : createPubmedLink,
+                        dataIndex: 'pubmed'
+
+                    }
+                ],
+                height: 350,
+                //width: 800,
+                title: 'Variant Browser',
+                renderTo: 'VariantBrowserTable',
+                viewConfig: {
+                    enableTextSelection: true,
+                    stripeRows: false,
+                    autoLoad:false,
+
+                },
+                listeners: {
+                    itemclick : function() {
+                        var data = VariantBrowserGrid.getSelectionModel().selected.items[0].data;
+                        //updateVariantEffectTable(data.studyType);
+                        var variantEffectData =   getVariantEffect(data.studyType);
+                        if(variantEffectData.length > 0){
+                            variantEffectGrid.getStore().loadData(variantEffectData);
+                        }else{
+                            variantEffectGrid.getStore().removeAll();
+                        }
+                    }
+                }
+            });
+
+
+
+            Ext.define('VariantEffectTable', {
+                extend: 'Ext.data.Model',
+                fields: [
+                    {name: 'position'},
+                    {name: 'snpId'},
+                    {name: 'consequenceType'},
+                    {name: 'aminoacidChange'},
+                    {name: 'geneId'},
+                    {name: 'transcriptId'},
+                    {name: 'featureId'},
+                    {name: 'featureName'},
+                    {name: 'featureType'},
+                    {name: 'featureBiotype'}
+                ]
+
+            });
+
 
             // create the data store
             var variantEffectStore = Ext.create('Ext.data.JsonStore', {
                 model: 'VariantEffectTable',
-                data: $scope.variantEffectTableData
+                data: [],
             });
+
+            $scope.searchVariants = function(){
+                //getVariantBrowserTable();
+                VariantBrowserGrid.getStore().loadData($scope.studies );
+            }
 
 
             // create the Grid
@@ -506,132 +618,7 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
             });
 
         });
-    }
-
-
-    var getVariantBrowserTable = function(){
-
-        Ext.require([
-            'Ext.grid.*',
-            'Ext.data.*',
-            'Ext.util.*',
-            'Ext.state.*'
-        ]);
-
-
-
-        Ext.define('VariantBrowserTable', {
-            extend: 'Ext.data.Model',
-            fields: [
-                    {name: 'studyType',type: 'string'},
-                    {name: 'studyAccession',type: 'string'},
-                    {name: 'studyUrl'},
-                    {name: 'displayName'},
-                    {name: 'projectId'},
-                    {name: 'pubmed',type: 'auto'}
-            ],
-            idProperty: 'studyAccession'
-        });
-
-
-
-
-        Ext.onReady(function() {
-            Ext.QuickTips.init();
-
-            // setup the state provider, all state information will be saved to a cookie
-            Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider'));
-
-            var variantData =   variantSearch();
-
-            function createLink(val) {
-              var link = '<a href="#">'+val+'</a>';
-                return link;
-            }
-            // create the data store
-            var VariantBrowserStore = Ext.create('Ext.data.JsonStore', {
-                model: 'VariantBrowserTable',
-                data:  $scope.studies
-            });
-
-            console.log($scope.studies)
-
-            // create the Grid
-            var VariantBrowserGrid = Ext.create('Ext.grid.Panel', {
-                store: VariantBrowserStore,
-                stateful: true,
-                collapsible: true,
-                multiSelect: true,
-                //stateId: 'stateGrid',
-                columns: [
-                    {
-                        text     : 'studyType',
-                        flex     : 1,
-                        sortable : true,
-                       // width    : 10,
-                        dataIndex: 'studyType'
-                    },
-                    {
-                        text     : 'studyAccession',
-                        sortable : true,
-                        //renderer : createLink,
-                        dataIndex: 'studyAccession'
-
-                    },
-                    {
-                        text     : 'studyUrl',
-                        sortable : true,
-                        dataIndex: 'studyUrl'
-                    },
-                    {
-                        text     : 'displayName',
-                        sortable : true,
-                        dataIndex: 'displayName'
-                    },
-                    {
-                        text     : 'projectId',
-                        sortable : true,
-                        dataIndex: 'projectId'
-                    },
-                    {
-                        text     : 'pubmed',
-                        sortable : true,
-                        //renderer : createPubmedLink,
-                        dataIndex: 'pubmed'
-
-                    }
-                ],
-                height: 350,
-//                width: 800,
-                title: 'Variant Browser',
-                renderTo: 'VariantBrowserTable',
-                viewConfig: {
-                    enableTextSelection: true,
-                    stripeRows: false,
-                },
-                //colModel : colModel,
-                //selModel : selModel,
-//                listeners: {
-//                    cellclick: function(grid,rowIndex,e) {
-//                        // Ext.Msg.alert('sdf');
-//
-//                        console.log($scope.studies)
-//                    }
-//                }
-
-
-            });
-            // update panel body on selection change
-            VariantBrowserGrid.getSelectionModel().on('selectionchange', function(sm ,selectedRecord) {
-                getVariantEffectTable();
-            });
-        });
-    }
-
-
-
-
-
+ // }
 
 
 }]);
