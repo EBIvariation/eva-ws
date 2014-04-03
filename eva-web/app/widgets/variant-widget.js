@@ -2,8 +2,11 @@ function VariantWidget(args) {
     var _this = this;
     _.extend(this, Backbone.Events);
 
+    this.location = '';
+
     //set instantiation args, must be last
     _.extend(this, args);
+
 
 
 }
@@ -39,14 +42,17 @@ VariantWidget.prototype = {
             Ext.define(this.variantTableID, {
                 extend: 'Ext.data.Model',
                 fields: [
-                    {name: 'studyType',type: 'string'},
-                    {name: 'studyAccession',type: 'string'},
-                    {name: 'studyUrl'},
-                    {name: 'displayName'},
-                    {name: 'projectId'},
-                    {name: 'pubmed',type: 'auto'}
+                    {name: 'id',type: 'string'},
+                    {name: 'type',type: 'string'},
+                    {name: 'chr',type: 'int'},
+                    {name: 'start',type: 'int'},
+                    {name: 'end',type: 'int'},
+                    {name: 'length',type: 'int'},
+                    {name: 'ref',type: 'string'},
+                    {name: 'alt',type: 'string'}
+
                 ],
-                idProperty: 'studyAccession'
+                idProperty: 'id'
             });
 
 
@@ -75,38 +81,50 @@ VariantWidget.prototype = {
                 columns: {
                     items:[
                         {
-                            text     : 'studyType',
+                            text     : 'ID',
                             sortable : false,
-                            dataIndex: 'studyType'
+                            dataIndex: 'id'
 
                         },
                         {
-                            text     : 'studyAccession',
+                            text     : 'Type',
                             sortable : true,
                             //renderer : createLink,
-                            dataIndex: 'studyAccession'
+                            dataIndex: 'type'
 
                         },
                         {
-                            text     : 'studyUrl',
+                            text     : 'Chromosome',
                             sortable : true,
-                            dataIndex: 'studyUrl'
+                            dataIndex: 'chr'
                         },
                         {
-                            text     : 'displayName',
+                            text     : 'Start',
                             sortable : true,
-                            dataIndex: 'displayName',
+                            dataIndex: 'start',
                         },
                         {
-                            text     : 'projectId',
+                            text     : 'End',
                             sortable : true,
-                            dataIndex: 'projectId'
+                            dataIndex: 'end'
                         },
                         {
-                            text     : 'pubmed',
+                            text     : 'Length',
                             sortable : true,
-                            dataIndex: 'pubmed',
-                            resizable: false
+                            dataIndex: 'length'
+
+                        },
+                        {
+                            text     : 'REF',
+                            sortable : true,
+                            dataIndex: 'ref'
+
+                        },
+                        {
+                            text     : 'ALT',
+                            sortable : true,
+                            dataIndex: 'alt'
+
                         }
                     ],
                     defaults: {
@@ -126,26 +144,24 @@ VariantWidget.prototype = {
                 listeners: {
                     itemclick : function() {
                         var data =  _this.vbGrid.getSelectionModel().selected.items[0].data;
-                        _this._updateEffectGrid(data.studyType);
+
+                         var position = data.chr + ":" + data.start + ":" + data.ref + ":" + data.alt;
+                        _this._updateEffectGrid(position);
                     }
                 }
             });
 
+        console.log(_this.location)
 
-        var url = METADATA_HOST+'/'+DOMAIN+'/study/list';
+        var url = METADATA_HOST+'/'+VERSION+'/segment/'+_this.location+'/variants?exclude=files,effects';
         var data = _this._getAll(url);
-        _this.vbGrid.getStore().loadData(data);
+        _this.vbGrid.getStore().loadData(data.response.result);
         return _this.vbGrid;
     },
 
     _updateEffectGrid:function(args){
         var _this = this;
-        var position = '';
-        if(args === 'Control Set'){
-            position = '4:169514585::T';
-        }else{
-            position = '3:169514585::T';
-        }
+        var position = args;
         var url = 'http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest/latest/hsa/genomic/variant/'+position+'/consequence_type?of=json';
         var data = _this._getAll(url);
         if(data.length > 0){
@@ -164,6 +180,7 @@ VariantWidget.prototype = {
         Ext.define(_this.variantEffectTableID, {
             extend: 'Ext.data.Model',
             fields: [
+                {name: 'chromosome'},
                 {name: 'position'},
                 {name: 'snpId'},
                 {name: 'consequenceType'},
@@ -198,7 +215,9 @@ VariantWidget.prototype = {
                         text     : 'position',
                         //flex     : 1,
                         sortable : false,
-                        dataIndex: 'position'
+                        dataIndex: 'position',
+                        xtype: 'templatecolumn',
+                        tpl: '{chromosome}:{position}'
                     },
                     {
                         text     : 'snpId',
@@ -274,11 +293,10 @@ VariantWidget.prototype = {
         return _this.veGrid;
     },
 
-    _getAll:function(url){
+    _getAll:function(args){
         var data;
         $.ajax({
-            url: url,
-            //url: 'http://localhost:8080/ws-test/rest/test/study/estd199',
+            url: args,
             async: false,
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {

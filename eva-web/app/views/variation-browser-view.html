@@ -31,18 +31,18 @@
                 </div>
             </div>
 
-            <div class="panel panel-ebi-secondary">
-                <div class="panel-heading">
-                    <div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseSpecies" style="cursor: pointer">
-                        Species
-                    </div>
-                </div>
-                <div id="collapseSpecies" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                        <select ng-model="color" ng-options="c.name for c in colors" ng-change="speciesChange()"></select>
-                    </div>
-                </div>
-            </div>
+            <!--<div class="panel panel-ebi-secondary">-->
+                <!--<div class="panel-heading">-->
+                    <!--<div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseSpecies" style="cursor: pointer">-->
+                        <!--Species-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div id="collapseSpecies" class="panel-collapse collapse in">-->
+                    <!--<div class="panel-body">-->
+                        <!--<select ng-model="color" ng-options="c.name for c in colors" ng-change="speciesChange()"></select>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
 
             <div class="panel panel-ebi-secondary">
                 <div class="panel-heading">
@@ -50,39 +50,39 @@
                         Location
                     </div>
                 </div>
-                <div id="collapseLocation" class="panel-collapse collapse">
+                <div id="collapseLocation" class="panel-collapse collapse in">
                     <div class="panel-body">
-                        <textarea type="text" ng-model="color.name" rows="4" class="form-control"></textarea>
+                        <textarea type="text" ng-model="location" rows="4" class="form-control"></textarea>
                     </div>
                 </div>
             </div>
 
-            <div class="panel panel-ebi-secondary">
-                <div class="panel-heading">
-                    <div class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInfoColumns" style="cursor: pointer">
-                        Info Columns
-                    </div>
-                </div>
-                <div id="collapseInfoColumns" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <div>
-                            <div id="infoColumnMultiSelect">
-                                <button type="button" id="{{v}}" ng-repeat="(k,v) in infoColumns" ng-click="infoColumnBtnClick(v)" class="btn btn-default btn-sm">{{k}}</button>
-                            </div>
+            <!--<div class="panel panel-ebi-secondary">-->
+                <!--<div class="panel-heading">-->
+                    <!--<div class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInfoColumns" style="cursor: pointer">-->
+                        <!--Info Columns-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div id="collapseInfoColumns" class="panel-collapse collapse">-->
+                    <!--<div class="panel-body">-->
+                        <!--<div>-->
+                            <!--<div id="infoColumnMultiSelect">-->
+                                <!--<button type="button" id="{{v}}" ng-repeat="(k,v) in infoColumns" ng-click="infoColumnBtnClick(v)" class="btn btn-default btn-sm">{{k}}</button>-->
+                            <!--</div>-->
 
-                        </div>
-                        <!--<button type="button" id="{{color.name}}" ng-repeat="color in colors" ng-click="infoColumnBtnClick(color.name)"  class="btn btn-default">{{color.name}}</button>-->
-                        <div class="btn-toolbar" role="toolbar">
-                            <br /><button type="button" class="btn btn-default btn-xs" ng-click="selectAllInfoColumn()">
-                            Select all
-                        </button>
-                            <button type="button" class="btn btn-default btn-xs" ng-click="deselectAllInfoColumn()">
-                                Deselect all
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        <!--</div>-->
+                        <!--&lt;!&ndash;<button type="button" id="{{color.name}}" ng-repeat="color in colors" ng-click="infoColumnBtnClick(color.name)"  class="btn btn-default">{{color.name}}</button>&ndash;&gt;-->
+                        <!--<div class="btn-toolbar" role="toolbar">-->
+                            <!--<br /><button type="button" class="btn btn-default btn-xs" ng-click="selectAllInfoColumn()">-->
+                            <!--Select all-->
+                        <!--</button>-->
+                            <!--<button type="button" class="btn btn-default btn-xs" ng-click="deselectAllInfoColumn()">-->
+                                <!--Deselect all-->
+                            <!--</button>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
         </div>
 
 
@@ -119,20 +119,19 @@
 
                     <div  id="VariantBrowserTable"></div>
 
+                    <ul id="variantBrowserSubTabs" class="variantBrowserTabs nav nav-tabs nav-pills">
+                        <li><a href="#vEffect" data-toggle="tab">Variant Effect</a></li>
+                        <li><a href="#vFiles" data-toggle="tab">Variant Files</a></li>
+                    </ul>
 
-                        <ul id="variantBrowserSubTabs" class="variantBrowserTabs nav nav-tabs nav-pills">
-                            <li><a href="#vEffect" data-toggle="tab">Variant Effect</a></li>
-                            <li><a href="#vFiles" data-toggle="tab">Variant Files</a></li>
-                        </ul>
-
-                        <div class="tab-content">
-                            <div class="tab-pane" id="vEffect">
-                                <div id="VariantEffectTable"></div>
-                            </div>
-                            <div class="tab-pane" id="vFiles">
-                                <div id="VariantEffectTable"></div>
-                            </div>
-                         </div>
+                    <div class="tab-content">
+                        <div class="tab-pane" id="vEffect">
+                            <div id="VariantEffectTable"></div>
+                        </div>
+                        <div class="tab-pane" id="vFiles">
+                            <div id="VariantEffectTable"></div>
+                        </div>
+                     </div>
 
 
                 </div>

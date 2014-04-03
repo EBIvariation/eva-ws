@@ -3,8 +3,10 @@
  */
 var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','ngGrid','highcharts-ng','ebiVar.Services.Metadata','ebiVar.Services.Metadata.Study','dataTablePlugin']);
 
-var METADATA_HOST = "http://localhost:8080/ws-test/rest";
-var DOMAIN = 'test';
+//http://wwwint.ebi.ac.uk/eva/webservices/rest/v1/segment/1:5000-35000/variants
+
+var METADATA_HOST = "http://wwwint.ebi.ac.uk/eva/webservices/rest";
+var VERSION = 'v1';
 
 evaApp.factory('ebiAppDomainHostService', function($rootScope) {
     var ebiAppDomainHostService = {};

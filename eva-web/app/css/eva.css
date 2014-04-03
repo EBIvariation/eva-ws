@@ -62,7 +62,14 @@ div .ngHeaderText{
     border-color: #357ebd;
 }
 
-
+th, td {
+    padding: 1px
+    1px 1px 5px;
+    border: 1px
+    solid #f1f1f1;
+    border-collapse: collapse;
+    vertical-align: top;
+}
 
 
 

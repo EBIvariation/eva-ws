@@ -29,6 +29,9 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
             this.statistics = '-';
         }
     };
+
+    $scope.location = '1:5000-35000';
+
     $scope.message = ebiAppDomainHostService.message;
 
     $scope.infoColumns  = {
@@ -162,193 +165,12 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     }
 
 
-     this.tempData =ebiVarMetadataService.testData();
-
-
-   //<!---Datatable Data---->
-
-   // $scope.testData = this.data.aaData;
-    $scope.testColumns = [
-                            {"sTitle": "Organism"},
-                            {"sTitle": "StudyType"},
-                            {"sTitle": "StudyAccession"},
-                            {"sTitle": "StudyURL"},
-                            {"sTitle": "DisplayName"},
-                            {"sTitle": "ProjectId"},
-                            {"sTitle": "Description"},
-                            {"sTitle": "TaxID"},
-                            {"sTitle": "Pubmed"}
-                         ];
-    $scope.columnDefs = [{ "bSortable": false, "aTargets": [1] }];
-
-    // not mandatory, you can use defaults in directive
-    $scope.overrideOptions = {
-        "bStateSave": true,
-        "bJQueryUI": true,
-        "bLengthChange": false,
-        "bFilter": false,
-        "bInfo": false,
-        "bDestroy": true,
-        "sPaginationType": "full_numbers",
-
-    };
-
-   //<!---End of Datatable Data--->
 
 
 
 
 
 
-    $scope.tblData = [];
-    var columnData = [];
-    var variantData = [];
-
-    $scope.pagingOptions = {
-        pageSizes: [5, 10, 20],
-        pageSize: 5,
-        currentPage: 1
-    };
-
-
-
-    var variantSearch = function(){
-        var getAllStudiesParams = {
-            host:METADATA_HOST,
-            domain:DOMAIN,
-            options:'study/list'
-        };
-        $scope.studies = ebiVarMetadataService.getAllStudies(getAllStudiesParams);
-
-        if($scope.studies.length > 0){
-            for (var i = 0; i < $scope.studies.length; i++) {
-                var test=1;
-//            var callbackfn = 'showStatitsics('+test+')';
-//            debugger
-                var callbackfn = function() {
-                    eventManager.trigger("variant:select", {hello: "world"});
-                };
-                var organism = '<a id="myLink" href="#" class="variant-selector" onClick='+callbackfn+'>'+ $scope.studies[i].organism +'</a>';
-                var pubmed = '';
-                var pubmed1 = [];
-                for (var j = 0; j < $scope.studies[i].pubmedId.length; j++) {
-                    var location  = 'http://europepmc.org/search?query='+$scope.studies[i].pubmedId[j]
-                    pubmed += '<a href="' + location + '">'+ $scope.studies[i].pubmedId[j] +'</a><br />';
-                    pubmed1.push($scope.studies[i].pubmedId[j]);
-                }
-
-                var taxId = '';
-                for (var j = 0; j < $scope.studies[i].taxId.length; j++) {
-                    taxId +=  $scope.studies[i].taxId[j] +'<br />';
-                }
-
-                //<!---ng-grid--data>
-                variantData.push({
-                    studyAccession:$scope.studies[i].studyAccession,
-                    studyType:$scope.studies[i].studyType,
-                    studyUrl:$scope.studies[i].studyUrl,
-                    displayName:$scope.studies[i].displayName,
-                    projectId:$scope.studies[i].projectId,
-                    // description:$scope.studies[i].desctiption,
-                    pubmed:pubmed1,
-                });
-
-                //datatables
-                $scope.tblData.push([
-                    organism,
-                    $scope.studies[i].studyType,
-                    $scope.studies[i].studyAccession,
-                    $scope.studies[i].studyUrl,
-                    $scope.studies[i].displayName,
-                    $scope.studies[i].projectId,
-                    //$scope.studies[i].desctiption,
-                    $scope.studies[i].studyType,
-                    taxId,
-                    pubmed
-                ]);
-
-            }
-            //<!---ng-grid--data>
-            $scope.variantBowserTableData= variantData;
-        }
-
-        return  variantData;
-    }
-
-
-    //<!---Variants Main Table--->
-    $scope.variantBowserTable = {
-        data: 'variantBowserTableData',
-        pagingOptions: $scope.pagingOptions,
-        enableRowSelection:false,
-        showFilter: true,
-        columnDefs: [
-            // {field:'studyAccession', displayName:'StudyAccession', cellTemplate: '<div class="ngCellText" ><a href="#" ng-click="setSelectedVariant(row.getProperty(col.field))">{{row.getProperty(col.field)}}</a></div>'},
-            {field:'studyAccession', displayName:'StudyAccession', cellTemplate: '<div class="ngCellText" ><a href="#" ng-click="setSelectedVariant(row.getProperty(col.field))">{{row.getProperty(col.field)}}</a></div>'},
-            {field: 'studyType', displayName: 'StudyType'},
-            {field: 'studyUrl', displayName: 'StudyURL'},
-            {field: 'displayName', displayName: 'DisplayName'},
-            {field: 'projectId', displayName: 'ProjectID'},
-            {field: 'pubmed', displayName: 'Pubmed',cellTemplate: '<div class="ngCellText" ng-class="col.colIndex()" ng-repeat="ids in row.getProperty(col.field)"><a href="http://europepmc.org/search?query={{ids}}">{{ids}}</a></div>'}
-        ]
-
-    };
-    //<!----end of Variants Main Table-->
-
-
-
-
-
-
-
-
-    $scope.setSelectedVariant = function(args){
-
-        $scope.selectedVariant = true;
-
-    };
-
-    var getVariantEffect =  function(args){
-
-        console.log(args);
-
-        var position = '';
-        if(args === 'Control Set'){
-            position = '4:169514585::T';
-        }else{
-            position = '3:169514585::T';
-        }
-
-        var getVariantEffectParams = {
-            host:'http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest',
-            domain:'latest',
-            options:'hsa/genomic/variant/'+position+'/consequence_type?of=json'
-        };
-
-        $scope.variantEffect = ebiVarMetadataService.getVariants(getVariantEffectParams);
-
-
-        var variantEffectData=[];
-        for (var i = 0; i < $scope.variantEffect.length; i++) {
-            variantEffectData.push({
-                position:$scope.variantEffect[i].chromosome+':'+$scope.variantEffect[i].position,
-                snpId:$scope.variantEffect[i].snpId,
-                consequenceType:$scope.variantEffect[i].consequenceType,
-                aminoacidChange:$scope.variantEffect[i].aminoacidChange,
-                geneId:$scope.variantEffect[i].geneId,
-                transcriptId:$scope.variantEffect[i].transcriptId,
-                featureId:$scope.variantEffect[i].featureId,
-                featureName:$scope.variantEffect[i].featureName,
-                featureType:$scope.variantEffect[i].featureType,
-                featureBiotype:$scope.variantEffect[i].featureBiotype,
-            });
-        }
-
-        $scope.variantEffectTableData = variantEffectData;
-
-        return variantEffectData;
-
-    }
 
 
 
@@ -389,11 +211,13 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     $scope.searchVariants = function(){
         //getVariantBrowserTable();
         //VariantBrowserGrid.getStore().loadData($scope.studies );
+
         var variantWidget;
         variantWidget = new VariantWidget({
-            variantTableID: 'VariantBrowserTable',
-            variantEffectTableID: 'VariantEffectTable',
-            variantFilesTableID: 'VariantFilesTable'
+            variantTableID       : 'VariantBrowserTable',
+            variantEffectTableID : 'VariantEffectTable',
+            variantFilesTableID  : 'VariantFilesTable',
+            location             : $scope.location
         });
         variantWidget.draw();
     }
