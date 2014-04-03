@@ -168,7 +168,7 @@ Ext.onReady(function() {
             }
         ],
         height: 350,
-        width: 600,
+        //width: 600,
         title: 'Array Grid',
         renderTo: 'grid-example',
         viewConfig: {

@@ -33,10 +33,10 @@
 }
 
 
-.my-table
-{
-    overflow-y:scroll;
-}
+/*.my-table*/
+/*{*/
+    /*overflow-y:scroll;*/
+/*}*/
 
 .gridStyle {
     margin-top: 20px;
@@ -53,21 +53,19 @@ div .ngHeaderText{
     background-color:#70BDBD;
 }
 
-#variantBrowserTabs.nav-pills > li > a {padding-top:3px !important; padding-bottom:3px !important;}
-#variantBrowserTabs.nav-pills {min-height:20px !important}
+.variantBrowserTabs.nav-pills > li > a {padding-top:3px !important; padding-bottom:3px !important;}
+.variantBrowserTabs.nav-pills {min-height:20px !important}
 
-#variantBrowserTabs.nav-pills li a, .nav-tabs{
+.variantBrowserTabs.nav-pills li a, .nav-tabs{
     border-radius: 0px;
     /*border: 1px solid #ddd;*/
     border-color: #357ebd;
 }
 
-/*!
- * Ext JS
- * Copyright(c) 2006-2012 Sencha Inc.
- * licensing@sencha.com
- * http://www.sencha.com/license
- */
+
+
+
+
 
 
 
