@@ -39,7 +39,7 @@ public class EvaWSServer {
 
     protected static ObjectMapper jsonObjectMapper;
     protected static ObjectWriter jsonObjectWriter;
-    protected XmlMapper xmlObjectMapper;
+    protected static XmlMapper xmlObjectMapper;
 
     protected static Logger logger;
 
@@ -52,6 +52,8 @@ public class EvaWSServer {
 
         jsonObjectMapper = new ObjectMapper();
         jsonObjectWriter = jsonObjectMapper.writer();
+
+        xmlObjectMapper = new XmlMapper();
 
         logger.info("EvaWSServer: Initiating attributes inside static block");
     }
