@@ -24,6 +24,7 @@ VariantWidget.prototype = {
         var _this = this;
        this.grid = this._createBrowserGrid();
        this.gridEffect = this._createEffectGrid();
+       this.gridFiles = this._createFilesGrid();
 
     },
     _createBrowserGrid:function(){
@@ -70,6 +71,8 @@ VariantWidget.prototype = {
                 model: this.variantTableID,
                 data:[]
             });
+
+
 
             // create the Grid
             _this.vbGrid = Ext.create('Ext.grid.Panel', {
@@ -144,17 +147,16 @@ VariantWidget.prototype = {
                 listeners: {
                     itemclick : function() {
                         var data =  _this.vbGrid.getSelectionModel().selected.items[0].data;
-
                          var position = data.chr + ":" + data.start + ":" + data.ref + ":" + data.alt;
                         _this._updateEffectGrid(position);
                     }
                 }
             });
 
-        console.log(_this.location)
 
-        var url = METADATA_HOST+'/'+VERSION+'/segment/'+_this.location+'/variants?exclude=files,effects';
+        var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants?exclude=files,effects';
         var data = _this._getAll(url);
+        console.log(data.response.result)
         _this.vbGrid.getStore().loadData(data.response.result);
         return _this.vbGrid;
     },
@@ -291,6 +293,74 @@ VariantWidget.prototype = {
         });
 
         return _this.veGrid;
+    },
+    _createFilesGrid:function(){
+
+        jQuery( "#"+this.variantFilesTableID+" div").remove();
+        var _this = this;
+
+        Ext.define(_this.variantFilesTableID, {
+            extend: 'Ext.data.Model',
+            fields: [
+                {name: 'files', type:'auto'}
+            ]
+
+        });
+
+
+        // create the data store
+        _this.vfStore = Ext.create('Ext.data.JsonStore', {
+            model: _this.variantFilesTableID,
+            data: [],
+            reader: {
+                type  : 'json',
+                //record:'files'
+            }
+
+        });
+
+
+
+        // create the Grid
+        _this.vfGrid = Ext.create('Ext.grid.Panel', {
+            store:  _this.vfStore,
+            stateful: true,
+            collapsible: true,
+            multiSelect: true,
+            //stateId: 'stateGrid',
+            columns:{
+                items:[
+                    {
+                        text     : 'position',
+                        //flex     : 1,
+                        sortable : false,
+                        dataIndex: 'files',
+                        renderer:function(value){
+                            console.log(value)
+                            //return value[0].fileId;
+                        }
+                    }
+
+
+                ],
+                defaults: {
+                    flex: 1
+                }
+            },
+            height: 350,
+//                width: 800,
+            title: 'VariantFiles',
+            renderTo: this.variantFilesTableID,
+            viewConfig: {
+                enableTextSelection: true
+            }
+        });
+
+        var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants';
+        var data = _this._getAll(url);
+        _this.vfGrid.getStore().loadData(data.response.result);
+
+        return _this.vfGrid;
     },
 
     _getAll:function(args){
