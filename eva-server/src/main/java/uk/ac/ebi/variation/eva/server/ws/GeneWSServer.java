@@ -44,15 +44,25 @@ public class GeneWSServer extends EvaWSServer {
 
     @GET
     @Path("{gene}/variants")
-    public Response getVariantsByGene(@PathParam("gene") String geneId) {
+    public Response getVariantsByGene(@PathParam("gene") String geneId,
+                                      @DefaultValue("") @QueryParam("type") String variantType) {
+        if (!variantType.isEmpty()) {
+            queryOptions.put("type", variantType);
+        }
+        
         return createOkResponse(variantMongoQueryBuilder.getAllVariantsByGene(geneId, queryOptions));
     }
     
     @GET
     @Path("/ranking")
-    public Response getVariantsByGene(@PathParam("gene") String geneId, 
-                                      @DefaultValue("10") @QueryParam("limit") int limit,
-                                      @DefaultValue("desc") @QueryParam("sort") String sort) {
+    public Response genesRankingByVariantsNumber(@PathParam("gene") String geneId, 
+                                                 @DefaultValue("10") @QueryParam("limit") int limit,
+                                                 @DefaultValue("desc") @QueryParam("sort") String sort,
+                                                 @DefaultValue("") @QueryParam("type") String variantType) {
+        if (!variantType.isEmpty()) {
+            queryOptions.put("type", variantType);
+        }
+        
         if (sort.equalsIgnoreCase("desc")) {
             return createOkResponse(variantMongoQueryBuilder.getMostAffectedGenes(limit, queryOptions));
         } else if (sort.equalsIgnoreCase("asc")) {
