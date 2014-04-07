@@ -67,6 +67,15 @@ div .ngHeaderText{
     white-space: nowrap;
 }
 
+.x-column-header-inner{
+    zoom:1;
+    text-align:center;
+    position:relative;
+    white-space:nowrap;
+    line-height:15px;
+    padding:3px 6px 4px
+}
+
 
 
 

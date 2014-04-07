@@ -147,25 +147,40 @@ VariantWidget.prototype = {
                 listeners: {
                     itemclick : function() {
                         var data =  _this.vbGrid.getSelectionModel().selected.items[0].data;
-                         var position = data.chr + ":" + data.start + ":" + data.ref + ":" + data.alt;
+                        var variantId = data.id;
+                        var position = data.chr + ":" + data.start + ":" + data.ref + ":" + data.alt;
                         _this._updateEffectGrid(position);
+                        _this._updateFilesGrid(variantId);
                     }
                 }
             });
 
 
         var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants?exclude=files,effects';
-        var data = _this._getAll(url);
-        console.log(data.response.result)
+        var data = _this._fetchData(url);
         _this.vbGrid.getStore().loadData(data.response.result);
         return _this.vbGrid;
+    },
+
+    _updateFilesGrid:function(args){
+        var _this = this;
+        var variantId = args;
+        var url = METADATA_HOST+'/'+VERSION+'/variants/'+variantId+'/info';
+        var data = this._fetchData(url);
+
+        if(data.response.result){
+           _this.gridFiles.getStore().loadData(data.response.result);
+        }else{
+          _this.gridFiles.getStore().removeAll();
+        }
+
     },
 
     _updateEffectGrid:function(args){
         var _this = this;
         var position = args;
         var url = 'http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest/latest/hsa/genomic/variant/'+position+'/consequence_type?of=json';
-        var data = _this._getAll(url);
+        var data = _this._fetchData(url);
         if(data.length > 0){
             this.gridEffect.getStore().loadData(data);
         }else{
@@ -295,14 +310,14 @@ VariantWidget.prototype = {
         return _this.veGrid;
     },
     _createFilesGrid:function(){
-
+        
         jQuery( "#"+this.variantFilesTableID+" div").remove();
         var _this = this;
 
         Ext.define(_this.variantFilesTableID, {
             extend: 'Ext.data.Model',
             fields: [
-                {name: 'files', type:'auto'}
+                {name: 'files', type:'auto' }
             ]
 
         });
@@ -314,7 +329,6 @@ VariantWidget.prototype = {
             data: [],
             reader: {
                 type  : 'json',
-                //record:'files'
             }
 
         });
@@ -331,15 +345,200 @@ VariantWidget.prototype = {
             columns:{
                 items:[
                     {
-                        text     : 'position',
+                        text     : 'FileID',
                         //flex     : 1,
                         sortable : false,
                         dataIndex: 'files',
                         renderer:function(value){
                             console.log(value)
-                            //return value[0].fileId;
+                            return value[0].fileId;
                         }
+                    },
+                    {
+                        text     : 'StudyID',
+                        //flex     : 1,
+                        sortable : false,
+                        dataIndex: 'files',
+                        renderer:function(value){
+                            return value[0].studyId;
+                        }
+                    },
+                    {
+                        text     : 'Attributes',
+                        columns:[
+                                    {
+                                                text     : 'QUAL',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+                                        renderer:function(value){
+                                            return value[0].attributes.QUAL;
+                                        }
+                                    },
+                                    {
+                                        text     : 'FILTER',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+                                        renderer:function(value){
+                                            return value[0].attributes.FILTER;
+                                        }
+                                    },
+                                    {
+                                        text     : 'AVGPOST',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+                                        hidden: true,
+                                        renderer:function(value){
+                                            return value[0].attributes.AVGPOST;
+                                        }
+                                    },
+                                    {
+                                        text     : 'RSQ',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+                                        hidden: true,
+                                        renderer:function(value){
+                                            return value[0].attributes.RSQ;
+                                        }
+                                    },
+                                    {
+                                        text     : 'LDAF',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+                                        hidden: true,
+                                        renderer:function(value){
+                                            return value[0].attributes.LDAF;
+                                        }
+                                    },
+                                    {
+                                        text     : 'ERATE',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+                                        renderer:function(value){
+                                            return value[0].attributes.ERATE;
+                                        }
+                                    },
+                                    {
+                                        text     : 'AN',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+//                                        hidden: true,
+                                        renderer:function(value){
+                                            return value[0].attributes.AN;
+                                        }
+                                    },
+                                    {
+                                        text     : 'VT',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+                                        hidden: true,
+                                        renderer:function(value){
+                                            return value[0].attributes.VT;
+                                        }
+                                    },
+                                    {
+                                        text     : 'AA',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+//                                        hidden: true,
+                                        renderer:function(value){
+                                            return value[0].attributes.AA;
+                                        }
+                                    },
+                                    {
+                                        text     : 'THETA',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+                                        hidden: true,
+                                        renderer:function(value){
+                                            return value[0].attributes.THETA;
+                                        }
+                                    },
+                                    {
+                                        text     : 'AC',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+//                                        hidden: true,
+                                        renderer:function(value){
+                                            return value[0].attributes.AC;
+                                        }
+                                    },
+                                    {
+                                        text     : 'SNPSOURCE',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+//                                        hidden: true,
+                                        renderer:function(value){
+                                            return value[0].attributes.SNPSOURCE;
+                                        }
+                                    },
+                                    {
+                                        text     : 'AF',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+//                                        hidden: true,
+                                        renderer:function(value){
+                                            return value[0].attributes.AF;
+                                        }
+                                    },
+                                    {
+                                        text     : 'ASN_AF',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+                                        hidden: true,
+                                        renderer:function(value){
+                                            return value[0].attributes.ASN_AF;
+                                        }
+                                    },
+                                    {
+                                        text     : 'AMR_AF',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+                                        hidden: true,
+                                        renderer:function(value){
+                                            return value[0].attributes.AMR_AF;
+                                        }
+                                    },
+                                    {
+                                        text     : 'AFR_AF',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+                                        hidden: true,
+                                        renderer:function(value){
+                                            return value[0].attributes.AFR_AF;
+                                        }
+                                    },
+                                    {
+                                        text     : 'EUR_AF',
+                                        //flex     : 1,
+                                        sortable : false,
+                                        dataIndex: 'files',
+                                        hidden: true,
+                                        //resizable: false,
+                                        renderer:function(value){
+                                            return value[0].attributes.EUR_AF;
+                                        }
+                                    }
+
+                                ]
+
                     }
+
 
 
                 ],
@@ -348,7 +547,7 @@ VariantWidget.prototype = {
                 }
             },
             height: 350,
-//                width: 800,
+            //width: 800,
             title: 'VariantFiles',
             renderTo: this.variantFilesTableID,
             viewConfig: {
@@ -357,13 +556,14 @@ VariantWidget.prototype = {
         });
 
         var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants';
-        var data = _this._getAll(url);
+        var data = _this._fetchData(url);
         _this.vfGrid.getStore().loadData(data.response.result);
+        //console.log(data.response.result[0])
 
         return _this.vfGrid;
     },
 
-    _getAll:function(args){
+    _fetchData:function(args){
         var data;
         $.ajax({
             url: args,
@@ -378,8 +578,6 @@ VariantWidget.prototype = {
         });
         return data;
     }
-
-
 
 };
 
