@@ -9,10 +9,10 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     //$scope.events.trigger("clicked");
 
 
-    var eventManager = new EventManager();
-    eventManager.on("variant:select", function(e) {
-        console.log(e);
-    });
+//    var eventManager = new EventManager();
+//    eventManager.on("variant:select", function(e) {
+//        console.log(e);
+//    });
 
 
 

@@ -50,8 +50,10 @@ VariantWidget.prototype = {
                     {name: 'end',type: 'int'},
                     {name: 'length',type: 'int'},
                     {name: 'ref',type: 'string'},
-                    {name: 'alt',type: 'string'}
-
+                    {name: 'alt',type: 'string'},
+                    {name: 'chunkIds',type: 'auto'},
+                    {name: 'hgvsType',type: 'auto', mapping:'hgvs[0].type'},
+                    {name: 'hgvsName',type: 'auto', mapping:'hgvs[0].name'}
                 ],
                 idProperty: 'id'
             });
@@ -63,13 +65,22 @@ VariantWidget.prototype = {
             // setup the state provider, all state information will be saved to a cookie
             Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider'));
 
-
-
+            var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants?exclude=files,effects';
 
             // create the data store
             _this.vbStore = Ext.create('Ext.data.JsonStore', {
+                autoLoad: true,
+                autoSync: true,
                 model: this.variantTableID,
-                data:[]
+                proxy: {
+                    type: 'ajax',
+                    url:url,
+                    reader: {
+                        type: 'json',
+                        root: 'response.result'
+                    }
+                }
+
             });
 
 
@@ -128,6 +139,37 @@ VariantWidget.prototype = {
                             sortable : true,
                             dataIndex: 'alt'
 
+                        },
+                        {
+                            text     : 'ChunkIDs',
+                            sortable : true,
+                            dataIndex: 'chunkIds',
+                            renderer:function(value){
+                                var chunkids ='';
+                                for (var i = 0; i < value.length; i++) {
+                                    chunkids += value[i]+'<br />';
+                                }
+                                return chunkids;
+                            }
+
+                        },
+                        {
+                            text     : 'HGVS',
+                            columns:[
+                                    {
+                                        text     : 'Type',
+                                        sortable : true,
+                                        dataIndex: 'hgvsType'
+                                    },
+                                    {
+                                        text     : 'Name',
+                                        sortable : true,
+                                        dataIndex: 'hgvsName',
+                                        resizable: false
+
+                                    }
+                            ]
+
                         }
                     ],
                     defaults: {
@@ -155,10 +197,6 @@ VariantWidget.prototype = {
                 }
             });
 
-
-        var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants?exclude=files,effects';
-        var data = _this._fetchData(url);
-        _this.vbGrid.getStore().loadData(data.response.result);
         return _this.vbGrid;
     },
 
@@ -181,6 +219,9 @@ VariantWidget.prototype = {
         var position = args;
         var url = 'http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest/latest/hsa/genomic/variant/'+position+'/consequence_type?of=json';
         var data = _this._fetchData(url);
+
+
+
         if(data.length > 0){
             this.gridEffect.getStore().loadData(data);
         }else{
@@ -310,7 +351,7 @@ VariantWidget.prototype = {
         return _this.veGrid;
     },
     _createFilesGrid:function(){
-        
+
         jQuery( "#"+this.variantFilesTableID+" div").remove();
         var _this = this;
 
@@ -322,13 +363,20 @@ VariantWidget.prototype = {
 
         });
 
+        var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants';
 
         // create the data store
         _this.vfStore = Ext.create('Ext.data.JsonStore', {
             model: _this.variantFilesTableID,
-            data: [],
-            reader: {
-                type  : 'json',
+            autoLoad: true,
+            autoSync: true,
+            proxy: {
+                type: 'ajax',
+                url:url,
+                reader: {
+                    type: 'json',
+                    root: 'response.result'
+                }
             }
 
         });
@@ -350,7 +398,7 @@ VariantWidget.prototype = {
                         sortable : false,
                         dataIndex: 'files',
                         renderer:function(value){
-                            console.log(value)
+                            //console.log(value)
                             return value[0].fileId;
                         }
                     },
@@ -554,11 +602,6 @@ VariantWidget.prototype = {
                 enableTextSelection: true
             }
         });
-
-        var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants';
-        var data = _this._fetchData(url);
-        _this.vfGrid.getStore().loadData(data.response.result);
-        //console.log(data.response.result[0])
 
         return _this.vfGrid;
     },
