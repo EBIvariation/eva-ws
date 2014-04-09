@@ -115,9 +115,9 @@
                         <highchart ng-show="showStatitsicsState" id="chart1" config="highchartsNG" style="width: 250px; height: 200px;" ></highchart>
                     </div>
                 </div>
-                <div class="my-table">
+                <div class="variantTable">
 
-                    <div  id="VariantBrowserTable"></div>
+                    <div id={{variantTableId}}></div>
 
                     <ul id="variantBrowserSubTabs" class="variantBrowserTabs nav nav-tabs nav-pills">
                         <li class="active"><a href="#vEffect" data-toggle="tab">Variant Effect</a></li>
@@ -125,14 +125,23 @@
                     </ul>
 
                     <div class="tab-content">
-                        <div class="tab-pane active" id="vEffect">
-                            <div id="VariantEffectTable"></div>
-                        </div>
-                        <div class="tab-pane" id="vFiles">
-                            <div id="VariantFilesTable"></div>
-                        </div>
-                     </div>
 
+                        <div class="tab-pane active" id="vEffect">
+                            <div id={{variantEffectTableId}}></div>
+                        </div>
+
+                        <div class="tab-pane" id="vFiles">
+
+                            <div id={{variantFilesTableId}}></div>
+
+                            <div  class="row">
+                                <div class="col-md-6"><div id={{variantStatsViewId}}></div></div>
+                                <div class="col-md-6"><div id={{variantStatsChartId}}></div></div>
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
                 <div>

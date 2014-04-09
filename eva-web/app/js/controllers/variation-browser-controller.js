@@ -206,7 +206,11 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     });
 
 
-
+    $scope.variantTableId       = 'VariantBrowserTable';
+    $scope.variantEffectTableId = 'VariantEffectTable';
+    $scope.variantFilesTableId  = 'VariantFilesTable';
+    $scope.variantStatsViewId   = 'VariantStatsView';
+    $scope.variantStatsChartId   = 'VariantStatsChart';
 
     $scope.searchVariants = function(){
         //getVariantBrowserTable();
@@ -214,9 +218,11 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
         var variantWidget;
         variantWidget = new VariantWidget({
-            variantTableID       : 'VariantBrowserTable',
-            variantEffectTableID : 'VariantEffectTable',
-            variantFilesTableID  : 'VariantFilesTable',
+            variantTableID       : $scope.variantTableId,
+            variantEffectTableID : $scope.variantEffectTableId,
+            variantFilesTableID  : $scope.variantFilesTableId,
+            variantStatsViewID   : $scope.variantStatsViewId,
+            variantStatsChartID  : $scope.variantStatsChartId,
             location             : $scope.location
         });
         variantWidget.draw();

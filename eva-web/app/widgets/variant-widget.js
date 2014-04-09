@@ -25,6 +25,7 @@ VariantWidget.prototype = {
        this.grid = this._createBrowserGrid();
        this.gridEffect = this._createEffectGrid();
        this.gridFiles = this._createFilesGrid();
+       this.gridStats = this._createStatesGrid();
 
     },
     _createBrowserGrid:function(){
@@ -37,7 +38,6 @@ VariantWidget.prototype = {
                 'Ext.util.*',
                 'Ext.state.*'
             ]);
-
 
 
             Ext.define(this.variantTableID, {
@@ -600,10 +600,122 @@ VariantWidget.prototype = {
             renderTo: this.variantFilesTableID,
             viewConfig: {
                 enableTextSelection: true
-            }
+            },
+            tbar: [{
+                text: 'Apply Template',
+                listeners: {
+                    click: function() {
+                        _this._updateStatsGrid();
+                    }
+                }
+            }]
         });
 
         return _this.vfGrid;
+    },
+
+    _createStatesGrid:function(){
+        jQuery( "#"+this.variantStatsViewID+" div").remove();
+        var _this = this;
+        var statsPanel = Ext.create('Ext.Panel', {
+            renderTo:  _this.variantStatsViewID,
+            title: 'Variant Stats',
+            height:350,
+            html: '<p><i>Click the Variant to see results here</i></p>'
+        });
+        return statsPanel;
+    },
+
+    _updateStatsGrid:function(){
+        var data = {
+            name: 'Abe Elias',
+            company: 'Sencha Inc',
+            address: '525 University Ave',
+            city: 'Palo Alto',
+            state: 'California',
+            zip: '44102',
+            kids: [{
+                name: 'Solomon',
+                age:3
+            },{
+                name: 'Rebecca',
+                age:2
+            },{
+                name: 'Rebecca 1',
+                age:0
+            }]
+        };
+
+        var _this = this;
+        tpl =Ext.create('Ext.XTemplate',
+            '<p>Name: {name}</p>',
+            '<p>Company: {company}</p>',
+            '<p>Location: {city}, {state}</p>',
+            '<p>Kids: ',
+            '<tpl for="kids">',
+                '<p> kid - {name}</p>',
+            '</tpl></p>',
+//            '<div id="container1"></div>',
+            '<div>{[this.formatScore()]}</div>',
+            {
+                formatScore: function() {
+                   _this._statsPieChart();
+                }
+            }
+         );
+         tpl.overwrite(_this.gridStats.body,data);
+        _this.gridStats.doComponentLayout();
+    },
+
+
+
+    _statsPieChart:function(){
+        var _this = this;
+        var chart1 = new Highcharts.Chart({
+            chart: {
+                renderTo: _this.variantStatsChartID,
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+
+            title: {
+                text: 'Browser market shares at a specific website, 2010'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        color: '#000000',
+                        connectorColor: '#000000',
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'Browser share',
+                data: [
+                    ['Firefox',   45.0],
+                    ['IE',       26.8],
+                    {
+                        name: 'Chrome',
+                        y: 12.8,
+                        sliced: true,
+                        selected: true
+                    },
+                    ['Safari',    8.5],
+                    ['Opera',     6.2],
+                    ['Others',   0.7]
+                ]
+            }]
+        });
+
     },
 
     _fetchData:function(args){
