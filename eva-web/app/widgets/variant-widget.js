@@ -21,11 +21,11 @@ VariantWidget.prototype = {
     },
 
     _createVariantPanel:function(){
-        var _this = this;
+
+       var _this = this;
        this.grid = this._createBrowserGrid();
        this.gridEffect = this._createEffectGrid();
        this.gridFiles = this._createFilesGrid();
-       this.gridStats = this._createStatesGrid();
 
     },
     _createBrowserGrid:function(){
@@ -191,7 +191,9 @@ VariantWidget.prototype = {
                         var data =  _this.vbGrid.getSelectionModel().selected.items[0].data;
                         var variantId = data.id;
                         var position = data.chr + ":" + data.start + ":" + data.ref + ":" + data.alt;
+
                         _this._updateEffectGrid(position);
+                        _this.gridStats = _this._createStatesGrid();
                         _this._updateFilesGrid(variantId);
                     }
                 }
@@ -208,6 +210,8 @@ VariantWidget.prototype = {
 
         if(data.response.result){
            _this.gridFiles.getStore().loadData(data.response.result);
+           _this.gridFiles.setHeight(150);
+           _this._updateStatsGrid(data.response.result);
         }else{
           _this.gridFiles.getStore().removeAll();
         }
@@ -219,8 +223,6 @@ VariantWidget.prototype = {
         var position = args;
         var url = 'http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest/latest/hsa/genomic/variant/'+position+'/consequence_type?of=json';
         var data = _this._fetchData(url);
-
-
 
         if(data.length > 0){
             this.gridEffect.getStore().loadData(data);
@@ -286,7 +288,12 @@ VariantWidget.prototype = {
                     {
                         text     : 'consequenceType',
                         sortable : true,
-                        dataIndex: 'consequenceType'
+                        dataIndex: 'consequenceType',
+                        renderer:function(value){
+                            var soID = '<a href="http://www.sequenceontology.org/miso/current_release/term/'+value+'" target="_blank">'+value+'</a>';
+                            return soID;
+                        }
+
                     },
                     {
                         text     : 'aminoacidChange',
@@ -296,13 +303,21 @@ VariantWidget.prototype = {
                     {
                         text     : 'geneId',
                         sortable : true,
-                        dataIndex: 'geneId'
+                        dataIndex: 'geneId',
+                        renderer:function(value){
+                            var geneID = '<a href="http://www.ensembl.org/Homo_sapiens/Location/View?g='+value+'" target="_blank">'+value+'</a>';
+                            return geneID;
+                        }
                     },
                     {
                         text     : 'transcriptId',
                         sortable : true,
                         //renderer : createPubmedLink,
-                        dataIndex: 'transcriptId'
+                        dataIndex: 'transcriptId',
+                        renderer:function(value){
+                            var transcriptID = '<a href="http://www.ensembl.org/Homo_sapiens/Location/View?t='+value+'" target="_blank">'+value+'</a>';
+                            return transcriptID;
+                        }
 
                     },
                     {
@@ -596,19 +611,11 @@ VariantWidget.prototype = {
             },
             height: 350,
             //width: 800,
-            title: 'VariantFiles',
+            title: 'Variant Files',
             renderTo: this.variantFilesTableID,
             viewConfig: {
                 enableTextSelection: true
-            },
-            tbar: [{
-                text: 'Apply Template',
-                listeners: {
-                    click: function() {
-                        _this._updateStatsGrid();
-                    }
-                }
-            }]
+            }
         });
 
         return _this.vfGrid;
@@ -620,56 +627,52 @@ VariantWidget.prototype = {
         var statsPanel = Ext.create('Ext.Panel', {
             renderTo:  _this.variantStatsViewID,
             title: 'Variant Stats',
-            height:350,
+            height:370,
             html: '<p><i>Click the Variant to see results here</i></p>'
         });
         return statsPanel;
     },
 
-    _updateStatsGrid:function(){
-        var data = {
-            name: 'Abe Elias',
-            company: 'Sencha Inc',
-            address: '525 University Ave',
-            city: 'Palo Alto',
-            state: 'California',
-            zip: '44102',
-            kids: [{
-                name: 'Solomon',
-                age:3
-            },{
-                name: 'Rebecca',
-                age:2
-            },{
-                name: 'Rebecca 1',
-                age:0
-            }]
-        };
-
+    _updateStatsGrid:function(args){
         var _this = this;
         tpl =Ext.create('Ext.XTemplate',
-            '<p>Name: {name}</p>',
-            '<p>Company: {company}</p>',
-            '<p>Location: {city}, {state}</p>',
-            '<p>Kids: ',
-            '<tpl for="kids">',
-                '<p> kid - {name}</p>',
-            '</tpl></p>',
-//            '<div id="container1"></div>',
-            '<div>{[this.formatScore()]}</div>',
+            '<tpl for="files">',
+                '<tpl for="stats">',
+                    '<table>',
+                        '<tr>','<td>MAF</td>', '<td>{maf}</td>','</tr>',
+                        '<tr>','<td>MGF</td>','<td>{mgf}</td>','</tr>',
+                        '<tr>','<td>Allele MAF</td>','<td>{alleleMaf}</td>','</tr>',
+                        '<tr>','<td>Genotype MAF</td>','<td>{genotypeMaf}</td>','</tr>',
+                        '<tr>','<td>miss Allele</td>','<td>{missAllele}</td>','</tr>',
+                        '<tr>','<td>miss Genotypes</td>','<td>{missGenotypes}</td>','</tr>',
+                        '<tr>','<td>Mendel Err</td>','<td>{missGenotypes}</td>', '</tr>',
+                        '<tr>','<td>Cases Percent Dominant</td>','<td>{casesPercentDominant}</td>','</tr>',
+                        '<tr>','<td>Controls Percent Dominant</td>','<td>{controlsPercentDominant}</td>', '</tr>',
+                        '<tr>','<td>Cases Percent Recessive</td>','<td>{controlsPercentDominant}</td>','</tr>',
+                        '<tr>','<td>Controls Percent Recessive</td>','<td>{controlsPercentRecessive}</td>','</tr>',
+                    '</table>',
+                    '<p>{[this._drawChart(values.genotypeCount)]}</p>',
+                '</tpl>',
+            '</tpl>',
             {
-                formatScore: function() {
-                   _this._statsPieChart();
+                _drawChart: function(args) {
+                    var chartData=[];
+                    for (key in args) {
+                        chartData.push([key, args[key]]);
+                    }
+                    args['title'] = 'Genotype Count';
+                    args['data'] = chartData;
+                   _this._statsPieChart(args);
                 }
             }
          );
-         tpl.overwrite(_this.gridStats.body,data);
+         tpl.overwrite(_this.gridStats.body,args[0]);
         _this.gridStats.doComponentLayout();
     },
 
 
 
-    _statsPieChart:function(){
+    _statsPieChart:function(args){
         var _this = this;
         var chart1 = new Highcharts.Chart({
             chart: {
@@ -680,7 +683,7 @@ VariantWidget.prototype = {
             },
 
             title: {
-                text: 'Browser market shares at a specific website, 2010'
+                text: args.title
             },
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -699,21 +702,12 @@ VariantWidget.prototype = {
             },
             series: [{
                 type: 'pie',
-                name: 'Browser share',
-                data: [
-                    ['Firefox',   45.0],
-                    ['IE',       26.8],
-                    {
-                        name: 'Chrome',
-                        y: 12.8,
-                        sliced: true,
-                        selected: true
-                    },
-                    ['Safari',    8.5],
-                    ['Opera',     6.2],
-                    ['Others',   0.7]
-                ]
-            }]
+                name: args.title,
+                data: args.data
+            }],
+            credits: {
+                enabled: false
+            },
         });
 
     },

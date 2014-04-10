@@ -120,8 +120,8 @@
                     <div id={{variantTableId}}></div>
 
                     <ul id="variantBrowserSubTabs" class="variantBrowserTabs nav nav-tabs nav-pills">
-                        <li class="active"><a href="#vEffect" data-toggle="tab">Variant Effect</a></li>
-                        <li><a href="#vFiles" data-toggle="tab">Variant Files</a></li>
+                        <li class="active"><a href="#vEffect" data-toggle="tab">Variant Effects</a></li>
+                        <li><a href="#vFiles" data-toggle="tab">Variant Files & Stats</a></li>
                     </ul>
 
                     <div class="tab-content">
@@ -135,8 +135,12 @@
                             <div id={{variantFilesTableId}}></div>
 
                             <div  class="row">
-                                <div class="col-md-6"><div id={{variantStatsViewId}}></div></div>
-                                <div class="col-md-6"><div id={{variantStatsChartId}}></div></div>
+                                <div class="col-md-8">
+                                    <div id={{variantStatsViewId}}></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div id={{variantStatsChartId}} style="width: 250px;"></div>
+                                </div>
                             </div>
 
                         </div>
