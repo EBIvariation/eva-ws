@@ -615,7 +615,9 @@ VariantWidget.prototype = {
             renderTo: this.variantFilesTableID,
             viewConfig: {
                 enableTextSelection: true
-            }
+            },
+            deferredRender: false,
+            hideMode: 'offsets'
         });
 
         return _this.vfGrid;

@@ -15,7 +15,6 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 //    });
 
 
-
     $scope.statistics = '+';
     $scope.showStatitsicsState;
 
@@ -205,28 +204,6 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
         //$scope.variantEffectTableData =  variantEffectData;
     });
 
-
-    $scope.variantTableId       = 'VariantBrowserTable';
-    $scope.variantEffectTableId = 'VariantEffectTable';
-    $scope.variantFilesTableId  = 'VariantFilesTable';
-    $scope.variantStatsViewId   = 'VariantStatsView';
-    $scope.variantStatsChartId   = 'VariantStatsChart';
-
-    $scope.searchVariants = function(){
-        //getVariantBrowserTable();
-        //VariantBrowserGrid.getStore().loadData($scope.studies );
-
-        var variantWidget;
-        variantWidget = new VariantWidget({
-            variantTableID       : $scope.variantTableId,
-            variantEffectTableID : $scope.variantEffectTableId,
-            variantFilesTableID  : $scope.variantFilesTableId,
-            variantStatsViewID   : $scope.variantStatsViewId,
-            variantStatsChartID  : $scope.variantStatsChartId,
-            location             : $scope.location
-        });
-        variantWidget.draw();
-    }
 
 
 }]);

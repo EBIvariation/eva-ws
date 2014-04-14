@@ -11,16 +11,6 @@ evaApp.directive('variationBrowser', function () {
 
         }
     };
-}).directive('variantEffect', function () {
-    return {
-        restrict: 'E',
-        replace: true,
-        transclude: true,
-        templateUrl: 'views/variant-effect-view.html',
-        controller: function($scope) {
-
-        }
-    };
 }).directive('metaData', function () {
     return {
         restrict: 'E',
