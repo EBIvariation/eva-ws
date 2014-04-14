@@ -22,7 +22,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                             '</div>' +
                          '</div>' +
 
-                        '<div class="tab-pane active" id="vBrowser">'+
+                         '<div class="tab-pane active" id="vBrowser">'+
 
                             '<div>' +
                                 '<div>' +
@@ -68,17 +68,18 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
                             '</div>' +
 
-                        '</div>' +
+                         '</div>' +
 
                     '<div>'+
 
                   '</div>',
         link: function($scope, element, attr) {
+
                 $scope.variantTableId       = 'VariantBrowserTable';
                 $scope.variantEffectTableId = 'VariantEffectTable';
                 $scope.variantFilesTableId  = 'VariantFilesTable';
                 $scope.variantStatsViewId   = 'VariantStatsView';
-                $scope.variantStatsChartId   = 'VariantStatsChart';
+                $scope.variantStatsChartId  = 'VariantStatsChart';
 
                 $scope.searchVariants = function(){
                     //console.log(element)

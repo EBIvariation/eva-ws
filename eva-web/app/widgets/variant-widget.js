@@ -66,15 +66,19 @@ VariantWidget.prototype = {
             Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider'));
 
             var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants?exclude=files,effects';
-
             // create the data store
             _this.vbStore = Ext.create('Ext.data.JsonStore', {
                 autoLoad: true,
                 autoSync: true,
+                autoLoad: {start: 0, limit: 5},
+                pageSize: 5,
+                remoteSort: true,
                 model: this.variantTableID,
                 proxy: {
                     type: 'ajax',
                     url:url,
+                    startParam:"skip",
+                    limitParam:"limit",
                     reader: {
                         type: 'json',
                         root: 'response.result'
@@ -186,6 +190,12 @@ VariantWidget.prototype = {
                     enableTextSelection: true,
                     forceFit: true
                 },
+                dockedItems: [{
+                    xtype: 'pagingtoolbar',
+                    store: _this.vbStore,   // same store GridPanel is using
+                    dock: 'bottom',
+                    displayInfo: true
+                }],
                 listeners: {
                     itemclick : function() {
                         var data =  _this.vbGrid.getSelectionModel().selected.items[0].data;
@@ -616,8 +626,7 @@ VariantWidget.prototype = {
             viewConfig: {
                 enableTextSelection: true
             },
-            deferredRender: false,
-            hideMode: 'offsets'
+            deferredRender: false
         });
 
         return _this.vfGrid;
