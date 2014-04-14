@@ -1,7 +1,7 @@
 /**
  * Created by jag on 17/03/2014.
  */
-var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','ngGrid','highcharts-ng','ebiVar.Services.Metadata','ebiVar.Services.Metadata.Study','dataTablePlugin']);
+var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','ngGrid','highcharts-ng','ebiVar.Services.Metadata','ebiVar.Services.Metadata.Study','variantWidgetModule']);
 
 //http://wwwint.ebi.ac.uk/eva/webservices/rest/v1/segment/1:5000-35000/variants
 

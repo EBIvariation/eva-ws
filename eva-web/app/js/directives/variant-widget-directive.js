@@ -1,7 +1,7 @@
 /**
  * Created by jag on 14/04/2014.
  */
-evaApp.directive('variantWidget', function () {
+angular.module('variantWidgetModule', []).directive('variantWidget', function () {
     return {
         restrict: 'E',
         replace: true,
@@ -81,6 +81,7 @@ evaApp.directive('variantWidget', function () {
                 $scope.variantStatsChartId   = 'VariantStatsChart';
 
                 $scope.searchVariants = function(){
+                    //console.log(element)
                     var variantWidget;
                     variantWidget = new VariantWidget({
                         variantTableID       : $scope.variantTableId,
@@ -91,7 +92,6 @@ evaApp.directive('variantWidget', function () {
                         location             : $scope.location
                     });
                     variantWidget.draw();
-
                 }
             }
 
