@@ -81,11 +81,16 @@ VariantWidget.prototype = {
                     limitParam:"limit",
                     reader: {
                         type: 'json',
-                        root: 'response.result'
+                        root: 'response.result',
+                        //totalProperty:7
                     }
                 }
 
             });
+
+           //_this.vbStore.proxy.reader.totalProperty = 7;
+           console.log('test');
+
 
 
 
@@ -211,6 +216,15 @@ VariantWidget.prototype = {
                     }
                 }
             });
+
+       // _this.vbStore.total = 7;
+
+       // _this.vbStore.totalCount = gridStore.count(); //update the totalCount property of Store
+       // pagingToolbar.onLoad();
+
+
+        //pagingToolbar.onLoad();
+
 
         return _this.vbGrid;
     },
