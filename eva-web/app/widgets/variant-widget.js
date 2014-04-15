@@ -144,40 +144,43 @@ VariantWidget.prototype = {
                             dataIndex: 'alt'
 
                         },
-                        {
-                            text     : 'ChunkIDs',
-                            sortable : true,
-                            dataIndex: 'chunkIds',
-                            renderer:function(value){
-                                var chunkids ='';
-                                for (var i = 0; i < value.length; i++) {
-                                    chunkids += value[i]+'<br />';
-                                }
-                                return chunkids;
-                            }
-
-                        },
+//                        {
+//                            text     : 'ChunkIDs',
+//                            sortable : true,
+//                            dataIndex: 'chunkIds',
+//                            renderer:function(value){
+//                                var chunkids ='';
+//                                for (var i = 0; i < value.length; i++) {
+//                                    chunkids += value[i]+'<br />';
+//                                }
+//                                return chunkids;
+//                            }
+//
+//                        },
                         {
                             text     : 'HGVS',
                             columns:[
-                                    {
-                                        text     : 'Type',
-                                        sortable : true,
-                                        dataIndex: 'hgvsType'
-                                    },
+//                                    {
+//                                        text     : 'Type',
+//                                        sortable : true,
+//                                        dataIndex: 'hgvsType'
+//                                    },
                                     {
                                         text     : 'Name',
                                         sortable : true,
                                         dataIndex: 'hgvsName',
-                                        resizable: false
-
                                     }
-                            ]
+                            ],
+                            defaults: {
+                                //flex: 1,
+                                align:'center'
+                            }
 
                         }
                     ],
                     defaults: {
-                        flex: 1
+                        flex: 1,
+                        align:'center'
                     }
                 },
                 height: 350,
@@ -361,7 +364,8 @@ VariantWidget.prototype = {
                     }
                 ],
                 defaults: {
-                    flex: 1
+                    flex: 1,
+                    align:'center'
                 }
             },
             height: 350,
@@ -608,7 +612,11 @@ VariantWidget.prototype = {
                                         }
                                     }
 
-                                ]
+                                ],
+                                defaults: {
+                                    //flex: 1,
+                                    align:'center'
+                                }
 
                     }
 
@@ -616,7 +624,8 @@ VariantWidget.prototype = {
 
                 ],
                 defaults: {
-                    flex: 1
+                    flex: 1,
+                    align:'center'
                 }
             },
             height: 350,
@@ -638,7 +647,7 @@ VariantWidget.prototype = {
         var statsPanel = Ext.create('Ext.Panel', {
             renderTo:  _this.variantStatsViewID,
             title: 'Variant Stats',
-            height:370,
+            height:330,
             html: '<p><i>Click the Variant to see results here</i></p>'
         });
         return statsPanel;
@@ -649,7 +658,7 @@ VariantWidget.prototype = {
         tpl =Ext.create('Ext.XTemplate',
             '<tpl for="files">',
                 '<tpl for="stats">',
-                    '<table>',
+                    '<table class="grid-table">',
                         '<tr>','<td>MAF</td>', '<td>{maf}</td>','</tr>',
                         '<tr>','<td>MGF</td>','<td>{mgf}</td>','</tr>',
                         '<tr>','<td>Allele MAF</td>','<td>{alleleMaf}</td>','</tr>',
