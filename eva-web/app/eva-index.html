@@ -3,25 +3,38 @@
 <head>
     <!--Bootstrap and AngularJS--->
     <!--css--->
+
+
+
+
     <!-- build:style vendor -->
+    <link type="text/css"  href="../vendor/extJS/css/resources/css/ext-all.css" rel="stylesheet">
     <link type="text/css"  href="../vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link type="text/css"  href="../vendor/ng-grid-min.css" rel="stylesheet">
     <link type="text/css"  href="../vendor/bootstrap/css/bootstrap-theme.css" rel="stylesheet">
-    <link type="text/css"  href="../vendor/extJS/css/resources/css/ext-all.css" rel="stylesheet">
+    <!-- /build -->
+
+    <!---css from EBI --->
+    <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/boilerplate-style.css">
+    <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-global.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/ebi-visual.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/984-24-col-fluid.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/develop/embl-petrol-colours.css" type="text/css" media="screen">
+    <!---/EBI----->
+
+    <link type="text/css"  href="css/eva-portal-colours.css" rel="stylesheet">
+    <link type="text/css"  href="css/eva-portal-visual.css" rel="stylesheet">
     <link type="text/css"  href="css/eva.css" rel="stylesheet">
 
-    <!-- /build -->
-    <!--<link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">-->
+
+
 
     <!-- JS from vendors -->
     <!-- build:script vendor-jquery -->
     <script type="text/javascript" src="../vendor/jquery.min.js"></script>
     <!-- /build -->
-    <!--<script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>-->
+
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular.min.js"></script>
-
-
-    <!-- /build -->
 
     <!-- build:script vendor -->
     <script type="text/javascript" src="../vendor/underscore-min.js"></script>
@@ -33,6 +46,8 @@
     <script src="http://code.highcharts.com/stock/highstock.src.js"></script>
     <script type="text/javascript" src="../vendor/highcharts-ng.js"></script>
     <script type="text/javascript" src="../vendor/extJS/js/ext-all.js"></script>
+    <script type="text/javascript" src="../vendor/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="../app/widgets/variant-widget.js"></script>
     <!--<script type="text/javascript" src="../vendor/extJS/js/ext-debug.js"></script>-->
     <!-- /build -->
 
@@ -48,9 +63,8 @@
     <script type="text/javascript" src="js/controllers/backbone-event-manager.js"></script>
 
     <!--======================DIRECTIVES======================-->
-    <script type="text/javascript" src="js/directives/variation-browser-directive.js"></script>
+    <script type="text/javascript" src="js/directives/variant-widget-directive.js"></script>
     <script type="text/javascript" src="js/directives/ebivar-study-directive.js"></script>
-    <script type="text/javascript" src="js/directives/datatable-directive.js"></script>
     <script type="text/javascript" src="../lib/ebi-js-commons/ebi-compliance/js/ebi-complaince-directive.js"></script>
 
     <!---------------------services -------------------------------->
@@ -100,28 +114,44 @@
             <ul class="nav nav-pills" id="topMenuTab">
                 <li class="active"><a href="#home">Home</a></li>
                 <li id="variationLi"><a href="#variation">Variation</a></li>
+                <li id="genesLi"><a href="#genes">Genes</a></li>
+                <li id="samplesLi"><a href="#samples">Samples</a></li>
+                <li id="clinicalLi"><a href="#clinical">Clinical</a></li>
                 <!--<li id="projectLi"><a href="#project">Project</a></li>-->
-                <li id="studyLi"><a href="#study">Study</a></li>
+                <!--<li id="studyLi"><a href="#study"></a></li>-->
+
         </nav>
         <!-- /local-nav -->
     </div>
-    <div id="content" role="main" class="grid_24 clearfix">
+    <div ui-view  id="content" role="main" class="grid_24 clearfix">
 
         <div class="tab-content">
             <div class="tab-pane active" id="home">
                home
             </div>
             <div class="tab-pane" id="variation">
-                <variation-browser></variation-browser>
+                <variantion-widget></variantion-widget>
             </div>
 
-            <div class="tab-pane" id="project">
-                <meta-data> </meta-data>
+            <div class="tab-pane" id="genes">
+                genes
             </div>
 
-            <div class="tab-pane" id="study">
-                <study-data></study-data>
+            <div class="tab-pane" id="samples">
+                samples
             </div>
+
+            <div class="tab-pane" id="clinical">
+                clinical
+            </div>
+
+            <!--<div class="tab-pane" id="project">-->
+                <!--<meta-data></meta-data>-->
+            <!--</div>-->
+
+            <!--<div class="tab-pane" id="study">-->
+                <!--<study-data></study-data>-->
+            <!--</div>-->
 
         </div>
 
@@ -142,10 +172,10 @@
     })
 
 
-//    var eventManager = new EventManager();
-//    eventManager.on("variant:select", function(e) {
-//        console.log(e);
-//    });
+    var eventManager = new EventManager();
+    eventManager.on("variant:select", function(e) {
+        console.log(e);
+    });
 
 //    $rootScope.events = {};
 //    _.extend($rootScope.events, Backbone.Events);

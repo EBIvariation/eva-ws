@@ -14,11 +14,11 @@
 
 }).controller('studyDataCtrl', ['$scope', '$rootScope', 'ebiAppDomainHostService','ebiVarMetadataService', function ($scope, $rootScope, ebiAppDomainHostService, ebiVarMetadataService) {
 
-    var getAllStudiesParams = {
-                                host:METADATA_HOST,
-                                domain:DOMAIN,
-                                options:'study/list'
-                              };
+//    var getAllStudiesParams = {
+//                                host:METADATA_HOST,
+//                                domain:DOMAIN,
+//                                options:'study/list'
+//                              };
 
 
     //$scope.studies = ebiVarMetadataService.getAllStudies(getAllStudiesParams);

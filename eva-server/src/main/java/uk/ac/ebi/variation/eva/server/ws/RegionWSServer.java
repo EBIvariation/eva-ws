@@ -1,5 +1,6 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
+
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.lib.auth.MongoCredentials;
@@ -16,7 +17,7 @@ import java.io.IOException;
 /**
  * Created by imedina on 01/04/14.
  */
-@Path("/{version}/segment/{region}")
+@Path("/{version}/segments/{region}")
 @Produces(MediaType.APPLICATION_JSON)
 public class RegionWSServer extends EvaWSServer {
 
@@ -39,8 +40,13 @@ public class RegionWSServer extends EvaWSServer {
 
     @GET
     @Path("/variants")
-    public Response getGenesByRegion(@PathParam("region") String chregionId) {
-        Region region = Region.parseRegion(chregionId);
+    public Response getVariantsByRegion(@PathParam("region") String regionId,
+                                        @DefaultValue("") @QueryParam("type") String variantType) {
+        if (!variantType.isEmpty()) {
+            queryOptions.put("type", variantType);
+        }
+        
+        Region region = Region.parseRegion(regionId);
         return createOkResponse(variantMongoQueryBuilder.getAllVariantsByRegion(region, queryOptions));
     }
 }
