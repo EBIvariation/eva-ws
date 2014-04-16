@@ -46,6 +46,7 @@
     <script src="http://code.highcharts.com/stock/highstock.src.js"></script>
     <script type="text/javascript" src="../vendor/highcharts-ng.js"></script>
     <script type="text/javascript" src="../vendor/extJS/js/ext-all.js"></script>
+    <script type="text/javascript" src="../vendor/angular-ui-router.min.js"></script>
     <script type="text/javascript" src="../app/widgets/variant-widget.js"></script>
     <!--<script type="text/javascript" src="../vendor/extJS/js/ext-debug.js"></script>-->
     <!-- /build -->
@@ -62,7 +63,6 @@
     <script type="text/javascript" src="js/controllers/backbone-event-manager.js"></script>
 
     <!--======================DIRECTIVES======================-->
-    <script type="text/javascript" src="js/directives/variation-browser-directive.js"></script>
     <script type="text/javascript" src="js/directives/variant-widget-directive.js"></script>
     <script type="text/javascript" src="js/directives/ebivar-study-directive.js"></script>
     <script type="text/javascript" src="../lib/ebi-js-commons/ebi-compliance/js/ebi-complaince-directive.js"></script>
@@ -123,14 +123,14 @@
         </nav>
         <!-- /local-nav -->
     </div>
-    <div id="content" role="main" class="grid_24 clearfix">
+    <div ui-view  id="content" role="main" class="grid_24 clearfix">
 
         <div class="tab-content">
             <div class="tab-pane active" id="home">
                home
             </div>
             <div class="tab-pane" id="variation">
-                <variation-browser></variation-browser>
+                <variantion-widget></variantion-widget>
             </div>
 
             <div class="tab-pane" id="genes">
@@ -172,10 +172,10 @@
     })
 
 
-//    var eventManager = new EventManager();
-//    eventManager.on("variant:select", function(e) {
-//        console.log(e);
-//    });
+    var eventManager = new EventManager();
+    eventManager.on("variant:select", function(e) {
+        console.log(e);
+    });
 
 //    $rootScope.events = {};
 //    _.extend($rootScope.events, Backbone.Events);

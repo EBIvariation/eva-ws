@@ -18,6 +18,10 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     $scope.statistics = '+';
     $scope.showStatitsicsState;
 
+    $scope.searchVariants = function(){
+        eventManager.trigger("variant:select");
+    }
+
     $scope.showStatitsics = function(){
         //eventManager.trigger("variant:select", {hello: "world"});
         //$scope.events.trigger("clicked");

@@ -29,7 +29,11 @@ VariantWidget.prototype = {
 
     },
     _createBrowserGrid:function(){
-        jQuery( "#"+this.variantTableID+" div").remove();
+
+        if(jQuery("#"+this.variantTableID+" div").length){
+            jQuery( "#"+this.variantTableID+" div").remove();
+        }
+
         var _this = this;
 
             Ext.require([
@@ -70,7 +74,7 @@ VariantWidget.prototype = {
             _this.vbStore = Ext.create('Ext.data.JsonStore', {
                 autoLoad: true,
                 autoSync: true,
-                autoLoad: {start: 0, limit: 5},
+                //autoLoad: {start: 0, limit: 5},
                 pageSize: 5,
                 remoteSort: true,
                 model: this.variantTableID,
@@ -82,14 +86,12 @@ VariantWidget.prototype = {
                     reader: {
                         type: 'json',
                         root: 'response.result',
-                        //totalProperty:7
+                        //totalProperty: 'response.numResults'
                     }
                 }
 
             });
 
-           //_this.vbStore.proxy.reader.totalProperty = 7;
-           console.log('test');
 
 
 
@@ -260,8 +262,10 @@ VariantWidget.prototype = {
     },
 
     _createEffectGrid:function(){
+        if(jQuery( "#"+this.variantEffectTableID+" div").length){
+            jQuery( "#"+this.variantEffectTableID+" div").remove();
+        }
 
-        jQuery( "#"+this.variantEffectTableID+" div").remove();
         var _this = this;
 
         Ext.define(_this.variantEffectTableID, {
@@ -394,8 +398,10 @@ VariantWidget.prototype = {
         return _this.veGrid;
     },
     _createFilesGrid:function(){
+        if(jQuery( "#"+this.variantFilesTableID+" div").length){
+            jQuery( "#"+this.variantFilesTableID+" div").remove();
+        }
 
-        jQuery( "#"+this.variantFilesTableID+" div").remove();
         var _this = this;
 
         Ext.define(_this.variantFilesTableID, {

@@ -1,7 +1,7 @@
 /**
  * Created by jag on 17/03/2014.
  */
-var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','ngGrid','highcharts-ng','ebiVar.Services.Metadata','ebiVar.Services.Metadata.Study','variantWidgetModule']);
+var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','ngGrid','highcharts-ng','ebiVar.Services.Metadata','ebiVar.Services.Metadata.Study','ui.router','variantWidgetModule']);
 
 //http://wwwint.ebi.ac.uk/eva/webservices/rest/v1/segment/1:5000-35000/variants
 
@@ -28,6 +28,8 @@ evaApp.factory('ebiAppDomainHostService', function($rootScope) {
 
     return ebiAppDomainHostService;
 });
+
+
 
 
 
