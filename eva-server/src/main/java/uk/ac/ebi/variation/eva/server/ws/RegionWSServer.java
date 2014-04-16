@@ -3,8 +3,7 @@ package uk.ac.ebi.variation.eva.server.ws;
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.lib.auth.MongoCredentials;
-import org.opencb.opencga.storage.variant.VariantMongoQueryBuilder;
-import org.opencb.opencga.storage.variant.VariantQueryBuilder;
+import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -21,7 +20,7 @@ import java.io.IOException;
 @Produces(MediaType.APPLICATION_JSON)
 public class RegionWSServer extends EvaWSServer {
 
-    private VariantQueryBuilder variantMongoQueryBuilder;
+    private VariantMongoDBAdaptor variantMongoQueryBuilder;
     private MongoCredentials credentials;
 
     public RegionWSServer() {
@@ -32,7 +31,7 @@ public class RegionWSServer extends EvaWSServer {
         super(version, uriInfo, hsr);
         try {
             credentials = new MongoCredentials("mongos-hxvm-dev-001", 27017, "eva_hsapiens", "biouser", "biopass");
-            variantMongoQueryBuilder = new VariantMongoQueryBuilder(credentials);
+            variantMongoQueryBuilder = new VariantMongoDBAdaptor(credentials);
         } catch (IllegalOpenCGACredentialsException e) {
             e.printStackTrace();
         }
