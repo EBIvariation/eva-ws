@@ -14,7 +14,10 @@ angular.module('variantWidgetModule', []).directive('variantionWidget', function
                 $scope.variantFilesTableId  = 'VariantFilesTable';
                 $scope.variantStatsViewId   = 'VariantStatsView';
                 $scope.variantStatsChartId  = 'VariantStatsChart';
-                eventManager.on("variant:select", function(e) {
+
+
+                eventManager.on("variant:search", function(e) {
+
                     var variantWidget;
                     variantWidget = new VariantWidget({
                         variantTableID       : $scope.variantTableId,

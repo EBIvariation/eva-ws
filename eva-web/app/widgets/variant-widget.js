@@ -14,7 +14,6 @@ function VariantWidget(args) {
 VariantWidget.prototype = {
 
     draw: function () {
-
         var _this = this;
         this._createVariantPanel();
 
@@ -69,7 +68,7 @@ VariantWidget.prototype = {
             // setup the state provider, all state information will be saved to a cookie
             Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider'));
 
-            var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants?exclude=files,effects';
+            var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants?exclude=files,effects,chunkIds';
             // create the data store
             _this.vbStore = Ext.create('Ext.data.JsonStore', {
                 autoLoad: true,
@@ -412,7 +411,7 @@ VariantWidget.prototype = {
 
         });
 
-        var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants';
+        var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants?exclude=effects,chunkIds';
 
         // create the data store
         _this.vfStore = Ext.create('Ext.data.JsonStore', {

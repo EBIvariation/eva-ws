@@ -44,12 +44,25 @@
             <div class="panel panel-ebi-secondary">
                 <div class="panel-heading">
                     <div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseLocation" style="cursor: pointer" >
-                        Location
+                        Region
                     </div>
                 </div>
                 <div id="collapseLocation" class="panel-collapse collapse in">
                     <div class="panel-body">
                         <textarea type="text" ng-model="location" rows="4" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-ebi-secondary">
+                <div class="panel-heading">
+                    <div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseGene" style="cursor: pointer" >
+                        Gene
+                    </div>
+                </div>
+                <div id="collapseGene" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <textarea type="text" ng-model="gene" rows="2" class="form-control"></textarea>
                     </div>
                 </div>
             </div>
