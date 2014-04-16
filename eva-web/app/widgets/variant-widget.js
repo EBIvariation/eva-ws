@@ -68,6 +68,10 @@ VariantWidget.prototype = {
             // setup the state provider, all state information will be saved to a cookie
             Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider'));
 
+            Ext.Ajax.useDefaultXhrHeader = false;
+            // Can also be specified in the request options
+            Ext.Ajax.cors = true;
+
             var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants?exclude=files,effects,chunkIds';
             // create the data store
             _this.vbStore = Ext.create('Ext.data.JsonStore', {
