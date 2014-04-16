@@ -79,7 +79,7 @@ VariantWidget.prototype = {
                 model: this.variantTableID,
                 proxy: {
                     type: 'ajax',
-                    url:url,
+                    url: url,
                     startParam:"skip",
                     limitParam:"limit",
                     reader: {
