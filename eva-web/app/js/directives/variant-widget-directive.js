@@ -10,6 +10,8 @@ angular.module('variantWidgetModule', []).directive('variantionWidget', function
         templateUrl: 'views/variation-browser-view.html',
         link: function($scope, element, attr) {
 
+            debugger
+
                 $scope.variantTableId       = 'VariantBrowserTable';
                 $scope.variantEffectTableId = 'VariantEffectTable';
                 $scope.variantFilesTableId  = 'VariantFilesTable';
