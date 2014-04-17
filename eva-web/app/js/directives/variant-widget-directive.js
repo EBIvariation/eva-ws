@@ -35,6 +35,7 @@ angular.module('variantWidgetModule', []).directive('variantionWidget', function
                         genomeViewer.render();
                         genomeViewer.draw();
                         genomeViewer.addTrack(tracks);
+                        genomeViewer.addOverviewTrack(geneOverview);
                     }
 
                     var region = new Region();
@@ -63,6 +64,7 @@ angular.module('variantWidgetModule', []).directive('variantionWidget', function
                 ]
             };
             var species = availableSpecies.items[0].items[0];
+
 
             genomeViewer = new GenomeViewer({
                 targetId: 'variant-browser-gv',
@@ -141,7 +143,7 @@ angular.module('variantWidgetModule', []).directive('variantionWidget', function
                     console.log(event)
                 }
             });
-            var gene = new FeatureTrack({
+            var geneOverview = new FeatureTrack({
                 targetId: null,
                 id: 2,
 //        title: 'Gene',
@@ -164,7 +166,6 @@ angular.module('variantWidgetModule', []).directive('variantionWidget', function
                     }
                 })
             });
-            genomeViewer.addOverviewTrack(gene);
 
             this.snp = new FeatureTrack({
                 targetId: null,
