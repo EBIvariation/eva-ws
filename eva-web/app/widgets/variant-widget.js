@@ -108,19 +108,7 @@ VariantWidget.prototype = {
                 //stateId: 'stateGrid',
                 columns: {
                     items:[
-                        {
-                            text     : 'ID',
-                            sortable : false,
-                            dataIndex: 'id'
 
-                        },
-                        {
-                            text     : 'Type',
-                            sortable : true,
-                            //renderer : createLink,
-                            dataIndex: 'type'
-
-                        },
                         {
                             text     : 'Chromosome',
                             sortable : true,
@@ -143,17 +131,32 @@ VariantWidget.prototype = {
 
                         },
                         {
-                            text     : 'REF',
-                            sortable : true,
-                            dataIndex: 'ref'
+                            text     : 'ID',
+                            sortable : false,
+                            dataIndex: 'id'
 
                         },
                         {
-                            text     : 'ALT',
+                            text     : 'Type',
                             sortable : true,
-                            dataIndex: 'alt'
+                            //renderer : createLink,
+                            dataIndex: 'type'
 
                         },
+
+                        {
+                            text     : 'REF/ALT',
+                            sortable : true,
+                            dataIndex: 'ref',
+                            xtype: 'templatecolumn',
+                            tpl: '{ref}/{alt}'
+
+                        },
+                        {
+                            text     : 'HGVS Name',
+                            sortable : true,
+                            dataIndex: 'hgvsName',
+                        }
 //                        {
 //                            text     : 'ChunkIDs',
 //                            sortable : true,
@@ -167,26 +170,7 @@ VariantWidget.prototype = {
 //                            }
 //
 //                        },
-                        {
-                            text     : 'HGVS',
-                            columns:[
-//                                    {
-//                                        text     : 'Type',
-//                                        sortable : true,
-//                                        dataIndex: 'hgvsType'
-//                                    },
-                                    {
-                                        text     : 'Name',
-                                        sortable : true,
-                                        dataIndex: 'hgvsName',
-                                    }
-                            ],
-                            defaults: {
-                                //flex: 1,
-                                align:'center'
-                            }
 
-                        }
                     ],
                     defaults: {
                         flex: 1,
@@ -197,7 +181,7 @@ VariantWidget.prototype = {
                 //width: 800,
                 autoWidth: true,
                 autoScroll:false,
-                title: 'Variant Browser',
+                title: 'Variant Data',
                 renderTo: this.variantTableID,
                 viewConfig: {
                     enableTextSelection: true,
@@ -212,12 +196,25 @@ VariantWidget.prototype = {
                 listeners: {
                     itemclick : function() {
                         var data =  _this.vbGrid.getSelectionModel().selected.items[0].data;
+
                         var variantId = data.id;
                         var position = data.chr + ":" + data.start + ":" + data.ref + ":" + data.alt;
+                        var location = data.chr + ":" + data.start + "-" + data.end;
 
                         _this._updateEffectGrid(position);
                         _this.gridStats = _this._createStatesGrid();
                         _this._updateFilesGrid(variantId);
+
+                        var region = new Region();
+                        region.parse(location);
+                        genomeViewer.setRegion(region);
+                        console.log(region)
+                    },
+                    render : function(grid){
+                        grid.store.on('load', function(store, records, options){
+                            grid.getSelectionModel().select(0);
+                            grid.fireEvent('itemclick', grid, grid.getSelectionModel().getLastSelected());
+                        });
                     }
                 }
             });
@@ -391,7 +388,7 @@ VariantWidget.prototype = {
             },
             height: 350,
 //                width: 800,
-            title: 'VariantEffect',
+            title: 'Effects',
             renderTo: this.variantEffectTableID,
             viewConfig: {
                 enableTextSelection: true
@@ -420,17 +417,7 @@ VariantWidget.prototype = {
         // create the data store
         _this.vfStore = Ext.create('Ext.data.JsonStore', {
             model: _this.variantFilesTableID,
-            autoLoad: true,
-            autoSync: true,
-            proxy: {
-                type: 'ajax',
-                url:url,
-                reader: {
-                    type: 'json',
-                    root: 'response.result'
-                }
-            }
-
+            data: [],
         });
 
 
@@ -653,7 +640,7 @@ VariantWidget.prototype = {
             },
             height: 350,
             //width: 800,
-            title: 'Variant Files',
+            title: 'Files',
             renderTo: this.variantFilesTableID,
             viewConfig: {
                 enableTextSelection: true
@@ -669,7 +656,7 @@ VariantWidget.prototype = {
         var _this = this;
         var statsPanel = Ext.create('Ext.Panel', {
             renderTo:  _this.variantStatsViewID,
-            title: 'Variant Stats',
+            title: 'Stats',
             height:330,
             html: '<p><i>Click the Variant to see results here</i></p>'
         });
