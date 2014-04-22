@@ -44,25 +44,42 @@
             <div class="panel panel-ebi-secondary">
                 <div class="panel-heading">
                     <div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseLocation" style="cursor: pointer" >
-                        Region
+                        Filter By
                     </div>
                 </div>
                 <div id="collapseLocation" class="panel-collapse collapse in">
                     <div class="panel-body">
-                        <textarea type="text" ng-model="location" rows="4" class="form-control"></textarea>
+                        Region: <textarea type="text" ng-model="location" rows="2" class="form-control"></textarea>
+                        Gene: <textarea type="text" ng-model="gene" rows="2" class="form-control"></textarea>
                     </div>
                 </div>
             </div>
 
             <div class="panel panel-ebi-secondary">
                 <div class="panel-heading">
-                    <div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseGene" style="cursor: pointer" >
-                        Gene
+                    <div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseConType" style="cursor: pointer" >
+                        Consequence Type
                     </div>
                 </div>
-                <div id="collapseGene" class="panel-collapse collapse in">
+                <div id="collapseConType" class="panel-collapse collapse in">
                     <div class="panel-body">
-                        <textarea type="text" ng-model="gene" rows="2" class="form-control"></textarea>
+                         <textarea type="text"  rows="2" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-ebi-secondary">
+                <div class="panel-heading">
+                    <div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseType" style="cursor: pointer" >
+                        Type
+                    </div>
+                </div>
+                <div id="collapseType" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <select class="selectpicker">
+                            <option>SNP</option>
+                            <option>Indel</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -123,7 +140,7 @@
                 <div>
                     <div>
                         <h3><small><span class="label label-primary">Summary </span>&nbsp;<button type="button" ng-click="showStatitsics()" class="btn  btn-default btn-xs">{{statistics}}</button></small></h3>
-                        <highchart ng-show="showStatitsicsState" id="chart1" config="highchartsNG" style="width: 250px; height: 200px;" ></highchart>
+                        <highchart ng-show="showStatitsicsState" id="chart1" config="summaryPieChartConfig" style="width: 350px; height: 300px;" ></highchart>
                     </div>
                 </div>
 
@@ -131,18 +148,18 @@
                     <!--<div><h4>Summary</h4></div>-->
                     <div id={{variantTableId}}></div><br/>
 
-                    <ul id="variantBrowserSubTabs" class="variantBrowserTabs nav nav-tabs nav-pills">
-                        <li class="active"><a href="#vFiles" data-toggle="tab">Variant Files & Stats</a></li>
-                        <li><a href="#vEffect" data-toggle="tab">Variant Effects</a></li>
-                        <li><a href="#vGenotypes" data-toggle="tab">Variant Genotypes</a></li>
-                        <li><a href="#genomeViewer" data-toggle="tab">Genome Viewer</a></li>
+                    <ul id={{variantBrowserSubTabsId}} class="variantBrowserTabs nav nav-tabs nav-pills">
+                        <li id="{{variantFilesTableId}}Li" class="active"><a href="#vFiles" data-toggle="tab">Variant Files & Stats</a></li>
+                        <li id="{{variantEffectTableId}}Li" ><a href="#vEffect" data-toggle="tab">Variant Effects</a></li>
+                        <li id="vGenotypes1"><a href="#vGenotypes" data-toggle="tab">Variant Genotypes</a></li>
+                        <li id="{{variantGenomeViewerId}}Li"><a href="#genomeViewer" data-toggle="tab">Genome Viewer</a></li>
                     </ul>
 
                     <div class="tab-content">
 
                         <div class="tab-pane fade active in" id="vFiles">
                             <!--<div><h5>Files</h5></div>-->
-                            <div id={{variantFilesTableId}}></div>
+                            <div  id={{variantFilesTableId}}></div>
 
                             <div  class="row">
 
@@ -168,7 +185,7 @@
                         </div>
 
                         <div class="tab-pane fade"  id="genomeViewer">
-                            <div id="variant-browser-gv" style="width:980px"></div>
+                            <div id={{variantGenomeViewerId}} style="width:980px"></div>
                         </div>
 
                     </div>

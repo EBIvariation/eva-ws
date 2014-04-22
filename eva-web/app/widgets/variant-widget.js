@@ -20,12 +20,11 @@ VariantWidget.prototype = {
     },
 
     _createVariantPanel:function(){
-
        var _this = this;
        this.grid = this._createBrowserGrid();
-       this.gridEffect = this._createEffectGrid();
        this.gridFiles = this._createFilesGrid();
-
+       this.gridEffect = this._createEffectGrid();
+       this.gridStats = this._createStatesGrid();
     },
     _createBrowserGrid:function(){
 
@@ -195,20 +194,15 @@ VariantWidget.prototype = {
                 }],
                 listeners: {
                     itemclick : function() {
-                        var data =  _this.vbGrid.getSelectionModel().selected.items[0].data;
-
-                        var variantId = data.id;
-                        var position = data.chr + ":" + data.start + ":" + data.ref + ":" + data.alt;
-                        var location = data.chr + ":" + data.start + "-" + data.end;
-
-                        _this._updateEffectGrid(position);
-                        _this.gridStats = _this._createStatesGrid();
-                        _this._updateFilesGrid(variantId);
-
-                        var region = new Region();
-                        region.parse(location);
-                        genomeViewer.setRegion(region);
-                        console.log(region)
+                        var data = _this._getSelectedData();
+                        _this._updateEffectGrid(data.position);
+                        _this._updateFilesGrid(data.variantId);
+                        var activeTab = jQuery('#'+_this.variantSubTabsID+' .active').attr('id');
+                        if(activeTab  === _this.variantGenomeViewerID+'Li'){
+                            var region = new Region();
+                            region.parse(data.location);
+                            genomeViewer.setRegion(region);
+                        }
                     },
                     render : function(grid){
                         grid.store.on('load', function(store, records, options){
@@ -219,13 +213,20 @@ VariantWidget.prototype = {
                 }
             });
 
-       // _this.vbStore.total = 7;
-
-       // _this.vbStore.totalCount = gridStore.count(); //update the totalCount property of Store
-       // pagingToolbar.onLoad();
-
-
-        //pagingToolbar.onLoad();
+            jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var data = _this._getSelectedData();
+                if(e.target.parentElement.id == _this.variantEffectTableID+'Li' ){
+                    _this._updateEffectGrid(data.position);
+                }
+                else if(e.target.parentElement.id === _this.variantFilesTableID+'Li'){
+                    _this._updateFilesGrid(data.variantId);
+                }
+                else if(e.target.parentElement.id  === _this.variantGenomeViewerID+'Li'){
+                    var region = new Region();
+                    region.parse(data.location);
+                    genomeViewer.setRegion(region);
+                }
+           });
 
 
         return _this.vbGrid;
@@ -401,6 +402,8 @@ VariantWidget.prototype = {
         if(jQuery( "#"+this.variantFilesTableID+" div").length){
             jQuery( "#"+this.variantFilesTableID+" div").remove();
         }
+
+
 
         var _this = this;
 
@@ -740,6 +743,20 @@ VariantWidget.prototype = {
             },
         });
 
+    },
+
+    _getSelectedData:function(){
+        var _this = this;
+        var parseData = [];
+        var data =  _this.vbGrid.getSelectionModel().selected.items[0].data;
+        var data = _this.vbGrid.getSelectionModel().selected.items[0].data;
+
+         parseData['variantId'] = data.id;
+         parseData['position']  = data.chr + ":" + data.start + ":" + data.ref + ":" + data.alt;
+         parseData['location']  = data.chr + ":" + data.start + "-" + data.end;
+
+
+        return parseData;
     },
 
     _fetchData:function(args){

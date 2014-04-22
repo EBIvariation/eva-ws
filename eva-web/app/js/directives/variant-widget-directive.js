@@ -12,11 +12,13 @@ angular.module('variantWidgetModule', []).directive('variantionWidget', function
 
 
 
-                $scope.variantTableId       = 'VariantBrowserTable';
-                $scope.variantEffectTableId = 'VariantEffectTable';
-                $scope.variantFilesTableId  = 'VariantFilesTable';
-                $scope.variantStatsViewId   = 'VariantStatsView';
-                $scope.variantStatsChartId  = 'VariantStatsChart';
+                $scope.variantTableId       = 'variantBrowserTable';
+                $scope.variantEffectTableId = 'variantEffectTable';
+                $scope.variantFilesTableId  = 'variantFilesTable';
+                $scope.variantStatsViewId   = 'variantStatsView';
+                $scope.variantStatsChartId  = 'variantStatsChart';
+                $scope.variantGenomeViewerId  = 'variant-browser-gv';
+                $scope.variantBrowserSubTabsId  = 'variantSubTabs';
 
 
                 eventManager.on("variant:search", function(e) {
@@ -28,7 +30,10 @@ angular.module('variantWidgetModule', []).directive('variantionWidget', function
                         variantFilesTableID  : $scope.variantFilesTableId,
                         variantStatsViewID   : $scope.variantStatsViewId,
                         variantStatsChartID  : $scope.variantStatsChartId,
-                        location             : $scope.location
+                        location             : $scope.location,
+                        variantGenomeViewerID: $scope.variantGenomeViewerId,
+                        variantSubTabsID     : $scope.variantBrowserSubTabsId,
+
                     });
                     variantWidget.draw();
 
