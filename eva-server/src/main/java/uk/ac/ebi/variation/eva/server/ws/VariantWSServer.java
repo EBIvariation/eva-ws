@@ -1,6 +1,7 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
 import java.io.IOException;
+import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.opencb.biodata.models.feature.Region;
+import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.VariantDBAdaptor;
@@ -59,9 +61,32 @@ public class VariantWSServer extends EvaWSServer {
                 queryOptions.put("alternate", parts[3]);
             }
             
-            System.out.println(queryOptions.toJson());
             return createOkResponse(variantMongoQueryBuilder.getAllVariantsByRegion(region, queryOptions));
         }
     }
     
+    @GET
+    @Path("/exists")
+    public Response checkVariantExists(@PathParam("variantId") String variantId) {
+        if (!variantId.contains(":")) { // Query by accession id
+            return createJsonResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
+        } else { // Query by chr:pos:ref:alt
+            String parts[] = variantId.split(":", -1);
+            if (parts.length < 3) {
+                return createJsonResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
+            }
+            
+            Region region = new Region(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[1]));
+            queryOptions.put("reference", parts[2]);
+            if (parts.length > 3) {
+                queryOptions.put("alternate", parts[3]);
+            }
+            
+            QueryResult queryResult = variantMongoQueryBuilder.getAllVariantsByRegion(region, queryOptions);
+            queryResult.setResult(Arrays.asList(queryResult.getNumResults() > 0));
+            queryResult.setResultType(Boolean.class);
+            return createOkResponse(queryResult);
+        }
+    }
+   
 }
