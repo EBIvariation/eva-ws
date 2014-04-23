@@ -168,7 +168,7 @@ Ext.onReady(function() {
             }
         ],
         height: 350,
-        width: 600,
+        //width: 600,
         title: 'Array Grid',
         renderTo: 'grid-example',
         viewConfig: {
@@ -530,3 +530,540 @@ Ext.onReady(function() {
     // via the StoreManager by its storeId
     Ext.data.StoreManager.get('gridBookStore').load();
 });
+
+
+Source of gridintab.js:
+
+// vim: sw=4:ts=4:nu:nospell:fdc=4
+/**
+ * Grid in an inactive tab example
+ *
+ * @author Ing. Jozef Sakáloš
+ * @copyright (c) 2008, by Ing. Jozef Sakáloš
+ * @date 10. April 2008
+ * @version $Id: gridintab.js 152 2009-06-23 20:10:42Z jozo $
+ *
+ * @license gridintab.js is licensed under the terms of the Open Source
+ * LGPL 3.0 license. Commercial use is permitted to the extent that the
+ * code/component(s) do NOT become part of another Open Source or Commercially
+ * licensed development library or toolkit without explicit permission.
+ *
+ * License details: http://www.gnu.org/licenses/lgpl.html
+ */
+/*global Ext, Example */
+Ext.ns('Example');
+Ext.BLANK_IMAGE_URL = './ext/resources/images/default/s.gif';
+// example grid
+Example.Grid = Ext.extend(Ext.grid.GridPanel, {
+    initComponent:function() {
+        var config = {
+            store:new Ext.data.JsonStore({
+                id:'company'
+                ,totalProperty:'totalCount'
+                ,root:'rows'
+                ,url:'get-grid-data.php'
+                // ,listeners:{loadexception:console.log}
+                ,fields:[
+                    {name:'company'}
+                    ,{name:'price', type:'float'}
+                    ,{name:'change', type:'float'}
+                    ,{name:'pctChange', type:'float'}
+                    ,{name:'lastChange', type:'date', dateFormat:'n/j h:ia'}
+                    ,{name:'industry'}
+                    ,{name:'desc'}
+                ]
+            })
+            ,columns:[{
+                id:'company'
+                ,header:"Company"
+                ,width:40, sortable:true
+                ,dataIndex:'company'
+            },{
+                header:"Price"
+                ,width:20
+                ,sortable:true
+                ,renderer:Ext.util.Format.usMoney
+                ,dataIndex:'price'
+            },{
+                header:"Change"
+                ,width:20
+                ,sortable:true
+                ,dataIndex:'change'
+            },{
+                header:"% Change"
+                ,width:20
+                ,sortable:true
+                ,dataIndex:'pctChange'
+            },{
+                header:"Last Updated"
+                ,width:20, sortable:true
+                ,renderer:Ext.util.Format.dateRenderer('m/d/Y')
+                ,dataIndex:'lastChange'
+            }]
+            ,viewConfig:{forceFit:true}
+            ,loadMask:true
+        }; // eo config object
+
+        // apply config
+        Ext.apply(this, Ext.apply(this.initialConfig, config));
+
+        this.bbar = new Ext.PagingToolbar({
+            store:this.store
+            ,displayInfo:true
+            ,pageSize:10
+        });
+
+        // call parent
+        Example.Grid.superclass.initComponent.apply(this, arguments);
+
+        // load the store at the latest possible moment
+        this.on({
+            afterlayout:{scope:this, single:true, fn:function() {
+                this.store.load({params:{start:0, limit:10}});
+            }}
+        });
+
+    } // eo function initComponent
+
+});
+
+Ext.reg('examplegrid', Example.Grid);
+
+// application main entry point
+Ext.onReady(function() {
+    Ext.QuickTips.init();
+
+    // create and show window
+    var win = new Ext.Window({
+        renderTo: Ext.getBody()
+        ,title:Ext.get('page-title').dom.innerHTML
+        ,width:400
+        ,height:300
+        ,plain:true
+        ,layout:'fit'
+        ,border:false
+        ,closable:false
+        ,items:[{
+            xtype:'tabpanel'
+            ,defaults:{layout:'fit'}
+            ,activeItem:0
+            ,items: [{
+                title:'First Tab (a test of the very long label)'
+                ,id:'firsttab'
+                ,iconCls:'icon-ok'
+                ,bodyStyle:'padding:10px'
+                ,html:'Click on Grid Tab to instantiate and render the grid.'
+            },{
+                title:'Grid Tab'
+                ,id:'gridtab'
+                ,xtype:'examplegrid'
+                ,autoScroll:true
+            }]
+        }]
+    });
+    win.show();
+}); // eo function onReady
+// eof
+
+
+Source of gridintab.js:
+
+// vim: sw=4:ts=4:nu:nospell:fdc=4
+/**
+ * Grid in an inactive tab example
+ *
+ * @author Ing. Jozef Sakáloš
+ * @copyright (c) 2008, by Ing. Jozef Sakáloš
+ * @date 10. April 2008
+ * @version $Id: gridintab.js 152 2009-06-23 20:10:42Z jozo $
+ *
+ * @license gridintab.js is licensed under the terms of the Open Source
+ * LGPL 3.0 license. Commercial use is permitted to the extent that the
+ * code/component(s) do NOT become part of another Open Source or Commercially
+ * licensed development library or toolkit without explicit permission.
+ *
+ * License details: http://www.gnu.org/licenses/lgpl.html
+ */
+/*global Ext, Example */
+Ext.ns('Example');
+Ext.BLANK_IMAGE_URL = './ext/resources/images/default/s.gif';
+// example grid
+Example.Grid = Ext.extend(Ext.grid.GridPanel, {
+    initComponent:function() {
+        var config = {
+            store:new Ext.data.JsonStore({
+                id:'company'
+                ,totalProperty:'totalCount'
+                ,root:'rows'
+                ,url:'get-grid-data.php'
+                // ,listeners:{loadexception:console.log}
+                ,fields:[
+                    {name:'company'}
+                    ,{name:'price', type:'float'}
+                    ,{name:'change', type:'float'}
+                    ,{name:'pctChange', type:'float'}
+                    ,{name:'lastChange', type:'date', dateFormat:'n/j h:ia'}
+                    ,{name:'industry'}
+                    ,{name:'desc'}
+                ]
+            })
+            ,columns:[{
+                id:'company'
+                ,header:"Company"
+                ,width:40, sortable:true
+                ,dataIndex:'company'
+            },{
+                header:"Price"
+                ,width:20
+                ,sortable:true
+                ,renderer:Ext.util.Format.usMoney
+                ,dataIndex:'price'
+            },{
+                header:"Change"
+                ,width:20
+                ,sortable:true
+                ,dataIndex:'change'
+            },{
+                header:"% Change"
+                ,width:20
+                ,sortable:true
+                ,dataIndex:'pctChange'
+            },{
+                header:"Last Updated"
+                ,width:20, sortable:true
+                ,renderer:Ext.util.Format.dateRenderer('m/d/Y')
+                ,dataIndex:'lastChange'
+            }]
+            ,viewConfig:{forceFit:true}
+            ,loadMask:true
+        }; // eo config object
+
+        // apply config
+        Ext.apply(this, Ext.apply(this.initialConfig, config));
+
+        this.bbar = new Ext.PagingToolbar({
+            store:this.store
+            ,displayInfo:true
+            ,pageSize:10
+        });
+
+        // call parent
+        Example.Grid.superclass.initComponent.apply(this, arguments);
+
+        // load the store at the latest possible moment
+        this.on({
+            afterlayout:{scope:this, single:true, fn:function() {
+                this.store.load({params:{start:0, limit:10}});
+            }}
+        });
+
+    } // eo function initComponent
+
+});
+
+Ext.reg('examplegrid', Example.Grid);
+
+// application main entry point
+Ext.onReady(function() {
+    Ext.QuickTips.init();
+
+    // create and show window
+    var win = new Ext.Window({
+        renderTo: Ext.getBody()
+        ,title:Ext.get('page-title').dom.innerHTML
+        ,width:400
+        ,height:300
+        ,plain:true
+        ,layout:'fit'
+        ,border:false
+        ,closable:false
+        ,items:[{
+            xtype:'tabpanel'
+            ,defaults:{layout:'fit'}
+            ,activeItem:0
+            ,items: [{
+                title:'First Tab (a test of the very long label)'
+                ,id:'firsttab'
+                ,iconCls:'icon-ok'
+                ,bodyStyle:'padding:10px'
+                ,html:'Click on Grid Tab to instantiate and render the grid.'
+            },{
+                title:'Grid Tab'
+                ,id:'gridtab'
+                ,xtype:'examplegrid'
+                ,autoScroll:true
+            }]
+        }]
+    });
+    win.show();
+}); // eo function onReady
+// eof
+
+
+Source of gridintab.js:
+
+// vim: sw=4:ts=4:nu:nospell:fdc=4
+/**
+ * Grid in an inactive tab example
+ *
+ * @author Ing. Jozef Sakáloš
+ * @copyright (c) 2008, by Ing. Jozef Sakáloš
+ * @date 10. April 2008
+ * @version $Id: gridintab.js 152 2009-06-23 20:10:42Z jozo $
+ *
+ * @license gridintab.js is licensed under the terms of the Open Source
+ * LGPL 3.0 license. Commercial use is permitted to the extent that the
+ * code/component(s) do NOT become part of another Open Source or Commercially
+ * licensed development library or toolkit without explicit permission.
+ *
+ * License details: http://www.gnu.org/licenses/lgpl.html
+ */
+/*global Ext, Example */
+Ext.ns('Example');
+Ext.BLANK_IMAGE_URL = './ext/resources/images/default/s.gif';
+// example grid
+Example.Grid = Ext.extend(Ext.grid.GridPanel, {
+    initComponent:function() {
+        var config = {
+            store:new Ext.data.JsonStore({
+                id:'company'
+                ,totalProperty:'totalCount'
+                ,root:'rows'
+                ,url:'get-grid-data.php'
+                // ,listeners:{loadexception:console.log}
+                ,fields:[
+                    {name:'company'}
+                    ,{name:'price', type:'float'}
+                    ,{name:'change', type:'float'}
+                    ,{name:'pctChange', type:'float'}
+                    ,{name:'lastChange', type:'date', dateFormat:'n/j h:ia'}
+                    ,{name:'industry'}
+                    ,{name:'desc'}
+                ]
+            })
+            ,columns:[{
+                id:'company'
+                ,header:"Company"
+                ,width:40, sortable:true
+                ,dataIndex:'company'
+            },{
+                header:"Price"
+                ,width:20
+                ,sortable:true
+                ,renderer:Ext.util.Format.usMoney
+                ,dataIndex:'price'
+            },{
+                header:"Change"
+                ,width:20
+                ,sortable:true
+                ,dataIndex:'change'
+            },{
+                header:"% Change"
+                ,width:20
+                ,sortable:true
+                ,dataIndex:'pctChange'
+            },{
+                header:"Last Updated"
+                ,width:20, sortable:true
+                ,renderer:Ext.util.Format.dateRenderer('m/d/Y')
+                ,dataIndex:'lastChange'
+            }]
+            ,viewConfig:{forceFit:true}
+            ,loadMask:true
+        }; // eo config object
+
+        // apply config
+        Ext.apply(this, Ext.apply(this.initialConfig, config));
+
+        this.bbar = new Ext.PagingToolbar({
+            store:this.store
+            ,displayInfo:true
+            ,pageSize:10
+        });
+
+        // call parent
+        Example.Grid.superclass.initComponent.apply(this, arguments);
+
+        // load the store at the latest possible moment
+        this.on({
+            afterlayout:{scope:this, single:true, fn:function() {
+                this.store.load({params:{start:0, limit:10}});
+            }}
+        });
+
+    } // eo function initComponent
+
+});
+
+Ext.reg('examplegrid', Example.Grid);
+
+// application main entry point
+Ext.onReady(function() {
+    Ext.QuickTips.init();
+
+    // create and show window
+    var win = new Ext.Window({
+        renderTo: Ext.getBody()
+        ,title:Ext.get('page-title').dom.innerHTML
+        ,width:400
+        ,height:300
+        ,plain:true
+        ,layout:'fit'
+        ,border:false
+        ,closable:false
+        ,items:[{
+            xtype:'tabpanel'
+            ,defaults:{layout:'fit'}
+            ,activeItem:0
+            ,items: [{
+                title:'First Tab (a test of the very long label)'
+                ,id:'firsttab'
+                ,iconCls:'icon-ok'
+                ,bodyStyle:'padding:10px'
+                ,html:'Click on Grid Tab to instantiate and render the grid.'
+            },{
+                title:'Grid Tab'
+                ,id:'gridtab'
+                ,xtype:'examplegrid'
+                ,autoScroll:true
+            }]
+        }]
+    });
+    win.show();
+}); // eo function onReady
+// eof
+
+Source of gridintab.js:
+
+// vim: sw=4:ts=4:nu:nospell:fdc=4
+/**
+ * Grid in an inactive tab example
+ *
+ * @author Ing. Jozef Sakáloš
+ * @copyright (c) 2008, by Ing. Jozef Sakáloš
+ * @date 10. April 2008
+ * @version $Id: gridintab.js 152 2009-06-23 20:10:42Z jozo $
+ *
+ * @license gridintab.js is licensed under the terms of the Open Source
+ * LGPL 3.0 license. Commercial use is permitted to the extent that the
+ * code/component(s) do NOT become part of another Open Source or Commercially
+ * licensed development library or toolkit without explicit permission.
+ *
+ * License details: http://www.gnu.org/licenses/lgpl.html
+ */
+/*global Ext, Example */
+Ext.ns('Example');
+Ext.BLANK_IMAGE_URL = './ext/resources/images/default/s.gif';
+// example grid
+Example.Grid = Ext.extend(Ext.grid.GridPanel, {
+    initComponent:function() {
+        var config = {
+            store:new Ext.data.JsonStore({
+                id:'company'
+                ,totalProperty:'totalCount'
+                ,root:'rows'
+                ,url:'get-grid-data.php'
+                // ,listeners:{loadexception:console.log}
+                ,fields:[
+                    {name:'company'}
+                    ,{name:'price', type:'float'}
+                    ,{name:'change', type:'float'}
+                    ,{name:'pctChange', type:'float'}
+                    ,{name:'lastChange', type:'date', dateFormat:'n/j h:ia'}
+                    ,{name:'industry'}
+                    ,{name:'desc'}
+                ]
+            })
+            ,columns:[{
+                id:'company'
+                ,header:"Company"
+                ,width:40, sortable:true
+                ,dataIndex:'company'
+            },{
+                header:"Price"
+                ,width:20
+                ,sortable:true
+                ,renderer:Ext.util.Format.usMoney
+                ,dataIndex:'price'
+            },{
+                header:"Change"
+                ,width:20
+                ,sortable:true
+                ,dataIndex:'change'
+            },{
+                header:"% Change"
+                ,width:20
+                ,sortable:true
+                ,dataIndex:'pctChange'
+            },{
+                header:"Last Updated"
+                ,width:20, sortable:true
+                ,renderer:Ext.util.Format.dateRenderer('m/d/Y')
+                ,dataIndex:'lastChange'
+            }]
+            ,viewConfig:{forceFit:true}
+            ,loadMask:true
+        }; // eo config object
+
+        // apply config
+        Ext.apply(this, Ext.apply(this.initialConfig, config));
+
+        this.bbar = new Ext.PagingToolbar({
+            store:this.store
+            ,displayInfo:true
+            ,pageSize:10
+        });
+
+        // call parent
+        Example.Grid.superclass.initComponent.apply(this, arguments);
+
+        // load the store at the latest possible moment
+        this.on({
+            afterlayout:{scope:this, single:true, fn:function() {
+                this.store.load({params:{start:0, limit:10}});
+            }}
+        });
+
+    } // eo function initComponent
+
+});
+
+Ext.reg('examplegrid', Example.Grid);
+
+// application main entry point
+Ext.onReady(function() {
+    Ext.QuickTips.init();
+
+    // create and show window
+    var win = new Ext.Window({
+        renderTo: Ext.getBody()
+        ,title:Ext.get('page-title').dom.innerHTML
+        ,width:400
+        ,height:300
+        ,plain:true
+        ,layout:'fit'
+        ,border:false
+        ,closable:false
+        ,items:[{
+            xtype:'tabpanel'
+            ,defaults:{layout:'fit'}
+            ,activeItem:0
+            ,items: [{
+                title:'First Tab (a test of the very long label)'
+                ,id:'firsttab'
+                ,iconCls:'icon-ok'
+                ,bodyStyle:'padding:10px'
+                ,html:'Click on Grid Tab to instantiate and render the grid.'
+            },{
+                title:'Grid Tab'
+                ,id:'gridtab'
+                ,xtype:'examplegrid'
+                ,autoScroll:true
+            }]
+        }]
+    });
+    win.show();
+}); // eo function onReady
+// eof
+
+

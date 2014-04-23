@@ -1,7 +1,4 @@
 <div ng-controller="variationBrowserCtrl">
-
-
-
     <div class="col-sm-4 col-md-3 col-lg-3">
         <div  id="accordion">
             <div class="panel panel-ebi-primary">
@@ -31,114 +28,160 @@
                 </div>
             </div>
 
-            <div class="panel panel-ebi-secondary">
-                <div class="panel-heading">
-                    <div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseSpecies" style="cursor: pointer">
-                        Species
-                    </div>
-                </div>
-                <div id="collapseSpecies" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                        <select ng-model="color" ng-options="c.name for c in colors" ng-change="speciesChange()"></select>
-                    </div>
-                </div>
-            </div>
+            <!--<div class="panel panel-ebi-secondary">-->
+            <!--<div class="panel-heading">-->
+            <!--<div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseSpecies" style="cursor: pointer">-->
+            <!--Species-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div id="collapseSpecies" class="panel-collapse collapse in">-->
+            <!--<div class="panel-body">-->
+            <!--<select ng-model="color" ng-options="c.name for c in colors" ng-change="speciesChange()"></select>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
 
             <div class="panel panel-ebi-secondary">
                 <div class="panel-heading">
                     <div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseLocation" style="cursor: pointer" >
-                        Location
+                        Region
                     </div>
                 </div>
-                <div id="collapseLocation" class="panel-collapse collapse">
+                <div id="collapseLocation" class="panel-collapse collapse in">
                     <div class="panel-body">
-                        <textarea type="text" ng-model="color.name" rows="4" class="form-control"></textarea>
+                        <textarea type="text" ng-model="location" rows="4" class="form-control"></textarea>
                     </div>
                 </div>
             </div>
 
             <div class="panel panel-ebi-secondary">
                 <div class="panel-heading">
-                    <div class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInfoColumns" style="cursor: pointer">
-                        Info Columns
+                    <div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseGene" style="cursor: pointer" >
+                        Gene
                     </div>
                 </div>
-                <div id="collapseInfoColumns" class="panel-collapse collapse">
+                <div id="collapseGene" class="panel-collapse collapse in">
                     <div class="panel-body">
-                        <div>
-                            <div id="infoColumnMultiSelect">
-                                <button type="button" id="{{v}}" ng-repeat="(k,v) in infoColumns" ng-click="infoColumnBtnClick(v)" class="btn btn-default btn-sm">{{k}}</button>
-                            </div>
-
-                        </div>
-                        <!--<button type="button" id="{{color.name}}" ng-repeat="color in colors" ng-click="infoColumnBtnClick(color.name)"  class="btn btn-default">{{color.name}}</button>-->
-                        <div class="btn-toolbar" role="toolbar">
-                            <br /><button type="button" class="btn btn-default btn-xs" ng-click="selectAllInfoColumn()">
-                            Select all
-                        </button>
-                            <button type="button" class="btn btn-default btn-xs" ng-click="deselectAllInfoColumn()">
-                                Deselect all
-                            </button>
-                        </div>
+                        <textarea type="text" ng-model="gene" rows="2" class="form-control"></textarea>
                     </div>
                 </div>
             </div>
+
+            <!--<div class="panel panel-ebi-secondary">-->
+            <!--<div class="panel-heading">-->
+            <!--<div class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseInfoColumns" style="cursor: pointer">-->
+            <!--Info Columns-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--<div id="collapseInfoColumns" class="panel-collapse collapse">-->
+            <!--<div class="panel-body">-->
+            <!--<div>-->
+            <!--<div id="infoColumnMultiSelect">-->
+            <!--<button type="button" id="{{v}}" ng-repeat="(k,v) in infoColumns" ng-click="infoColumnBtnClick(v)" class="btn btn-default btn-sm">{{k}}</button>-->
+            <!--</div>-->
+
+            <!--</div>-->
+            <!--&lt;!&ndash;<button type="button" id="{{color.name}}" ng-repeat="color in colors" ng-click="infoColumnBtnClick(color.name)"  class="btn btn-default">{{color.name}}</button>&ndash;&gt;-->
+            <!--<div class="btn-toolbar" role="toolbar">-->
+            <!--<br /><button type="button" class="btn btn-default btn-xs" ng-click="selectAllInfoColumn()">-->
+            <!--Select all-->
+            <!--</button>-->
+            <!--<button type="button" class="btn btn-default btn-xs" ng-click="deselectAllInfoColumn()">-->
+            <!--Deselect all-->
+            <!--</button>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
         </div>
-
-
-
     </div>
+    <!--<div class="col-sm-8 col-md-9 col-lg-9">-->
+    <!--<ul id="variantBrowserTabs" class="variantBrowserTabs nav nav-tabs nav-pills">-->
+    <!--<li><a ui-sref="variant.browser">Browser</a></li>-->
+    <!--<li><a ui-sref="variant.view">View</a></li>-->
+    <!--</ul>-->
+    <!--<div ui-view></div>-->
+    <!--</div>-->
 
     <div  class="col-sm-8 col-md-9 col-lg-9">
-        <!-- Nav tabs -->
-        <ul id="variantBrowserTabs" class="nav nav-tabs nav-pills">
-            <li><a href="#summary" data-toggle="tab">Summary</a></li>
-            <li class="active"><a href="#vBrowser" data-toggle="tab">Variants and Effect</a></li>
-            <li><a href="#genomeViewer" data-toggle="tab">Genome Viewer</a></li>
-        </ul>
+        <h2>Variant Browser</h2>
+        <!--<ul id="variantBrowserTabs" class="variantBrowserTabs nav nav-tabs nav-pills">-->
+            <!--&lt;!&ndash;<li><a href="#summary" data-toggle="tab">Summary</a></li>&ndash;&gt;-->
+            <!--<li class="active"><a href="#vBrowser" data-toggle="tab">Variants and Effect</a></li>-->
+        <!--</ul>-->
 
         <div class="tab-content">
-            <div class="tab-pane" id="summary">
-                <!--<div>-->
-                    <!--<highchart id="chart1" config="highchartsNG" style= "width: 50%" ></highchart>-->
-                <!--</div>-->
-                <div style= "margin-left:150px;">
-                    <highchart id="chart1" config="barChart" style= "width: 30%"></highchart>
-                </div>
 
-            </div>
-           <div class="tab-pane active" id="vBrowser">
-                <!--<table my-table aa-data="testdata" ao-columns="testColumns"  style = "width: 100%"></table>-->
+            <!--<div class="tab-pane" id="summary">-->
+                <!--<div style= "margin-left:150px;">-->
+                    <!--<highchart id="chart1" config="barChart" style= "width: 30%"></highchart>-->
+                <!--</div>-->
+            <!--</div>-->
+
+            <div class="tab-pane active" id="vBrowser">
+
                 <div>
                     <div>
-                        <h3><small><span class="label label-primary">Statistics </span>&nbsp;<button type="button" ng-click="showStatitsics()" class="btn  btn-default btn-xs">{{statistics}}</button></small></h3>
+                        <h3><small><span class="label label-primary">Summary </span>&nbsp;<button type="button" ng-click="showStatitsics()" class="btn  btn-default btn-xs">{{statistics}}</button></small></h3>
                         <highchart ng-show="showStatitsicsState" id="chart1" config="highchartsNG" style="width: 250px; height: 200px;" ></highchart>
                     </div>
                 </div>
-                <div class="my-table">
-                    <!--<div class="gridStyle" ng-grid="variantBowserTable"  ></div>-->
-                    <!--<div id="topic-grid"></div>-->
-                    <div  id="VariantBrowserTable"></div>
-                    <div  id="VariantEffectTable"></div>
 
-                    <!--<table my-table="overrideOptions"-->
-                           <!--ao-columns="testColumns"-->
-                           <!--aa-data="tblData" >-->
-                    <!--</table>-->
+                <div class="variantTable">
+                    <!--<div><h4>Summary</h4></div>-->
+                    <div id={{variantTableId}}></div><br/>
+
+                    <ul id="variantBrowserSubTabs" class="variantBrowserTabs nav nav-tabs nav-pills">
+                        <li class="active"><a href="#vFiles" data-toggle="tab">Variant Files & Stats</a></li>
+                        <li><a href="#vEffect" data-toggle="tab">Variant Effects</a></li>
+                        <li><a href="#vGenotypes" data-toggle="tab">Variant Genotypes</a></li>
+                        <li><a href="#genomeViewer" data-toggle="tab">Genome Viewer</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+
+                        <div class="tab-pane fade active in" id="vFiles">
+                            <!--<div><h5>Files</h5></div>-->
+                            <div id={{variantFilesTableId}}></div>
+
+                            <div  class="row">
+
+                                <div class="col-md-8">
+                                    <!--<div><h5>Stats</h5></div>-->
+                                    <div id={{variantStatsViewId}}></div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div id={{variantStatsChartId}} style="width: 250px;"></div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="tab-pane fade " id="vEffect">
+                            <!--<div><h5>Effects</h5></div>-->
+                            <div id={{variantEffectTableId}}></div>
+                        </div>
+                        <div class="tab-pane fade " id="vGenotypes">
+                            <!--<div><h5>Effects</h5></div>-->
+                            <div>Genotypes Coming <soon>    </soon></div>
+                        </div>
+
+                        <div class="tab-pane fade"  id="genomeViewer">
+                            <div id="variant-browser-gv" style="width:980px"></div>
+                        </div>
+
+                    </div>
+
                 </div>
-                <div>
-                    <variant-effect ng-show="selectedVariant"></variant-effect>
-                </div>
+
             </div>
 
-            <div class="tab-pane" id="genomeViewer">
-                Genome Viewer
-            </div>
+
+
 
         </div>
 
-
-
-
     </div>
+    <!--<variant-widget></variant-widget>-->
 </div>

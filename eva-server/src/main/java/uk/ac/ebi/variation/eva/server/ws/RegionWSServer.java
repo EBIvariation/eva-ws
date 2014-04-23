@@ -1,5 +1,11 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
+
+import org.opencb.biodata.models.feature.Region;
+import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
+import org.opencb.opencga.lib.auth.MongoCredentials;
+import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -7,11 +13,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
-import org.opencb.biodata.models.feature.Region;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.lib.auth.MongoCredentials;
-import org.opencb.opencga.storage.variant.VariantDBAdaptor;
-import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
 
 /**
  * Created by imedina on 01/04/14.
@@ -20,7 +21,7 @@ import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
 @Produces(MediaType.APPLICATION_JSON)
 public class RegionWSServer extends EvaWSServer {
 
-    private VariantDBAdaptor variantMongoQueryBuilder;
+    private VariantMongoDBAdaptor variantMongoQueryBuilder;
     private MongoCredentials credentials;
 
     public RegionWSServer() {

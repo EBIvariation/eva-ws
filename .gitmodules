@@ -1,3 +1,6 @@
 [submodule "eva-web/lib/ebi-js-commons"]
 	path = eva-web/lib/ebi-js-commons
 	url = git@github.com:EBIvariation/ebi-js-commons.git
+[submodule "eva-web/lib/jsorolla"]
+	path = eva-web/lib/jsorolla
+	url = git@github.com:opencb/jsorolla.git
