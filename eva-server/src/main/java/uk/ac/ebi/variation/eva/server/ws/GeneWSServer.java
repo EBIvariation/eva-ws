@@ -45,9 +45,17 @@ public class GeneWSServer extends EvaWSServer {
     @GET
     @Path("{gene}/variants")
     public Response getVariantsByGene(@PathParam("gene") String geneId,
+                                      @QueryParam("ref") String reference,
+                                      @QueryParam("alt") String alternate, 
                                       @DefaultValue("") @QueryParam("type") String variantType) {
         if (!variantType.isEmpty()) {
             queryOptions.put("type", variantType);
+        }
+        if (reference != null) {
+            queryOptions.put("reference", reference);
+        }
+        if (alternate != null) {
+            queryOptions.put("alternate", alternate);
         }
         
         return createOkResponse(variantMongoQueryBuilder.getAllVariantsByGene(geneId, queryOptions));
@@ -55,7 +63,7 @@ public class GeneWSServer extends EvaWSServer {
     
     @GET
     @Path("/ranking")
-    public Response genesRankingByVariantsNumber(@PathParam("gene") String geneId, 
+    public Response genesRankingByVariantsNumber(@PathParam("gene") String geneId,
                                                  @DefaultValue("10") @QueryParam("limit") int limit,
                                                  @DefaultValue("desc") @QueryParam("sort") String sort,
                                                  @DefaultValue("") @QueryParam("type") String variantType) {
