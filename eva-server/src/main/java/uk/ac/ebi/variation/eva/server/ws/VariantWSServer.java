@@ -11,6 +11,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.opencb.biodata.models.feature.Region;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.VariantDBAdaptor;
@@ -44,7 +45,23 @@ public class VariantWSServer extends EvaWSServer {
     @GET
     @Path("/info")
     public Response getVariantById(@PathParam("variantId") String variantId) {
-        return createOkResponse(variantMongoQueryBuilder.getVariantById(variantId, queryOptions));
+        if (!variantId.contains(":")) { // Query by accession id
+            return createOkResponse(variantMongoQueryBuilder.getVariantById(variantId, queryOptions));
+        } else { // Query by chr:pos:ref:alt
+            String parts[] = variantId.split(":", -1);
+            if (parts.length < 3) {
+                return createJsonResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
+            }
+            
+            Region region = new Region(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[1]));
+            queryOptions.put("reference", parts[2]);
+            if (parts.length > 3) {
+                queryOptions.put("alternate", parts[3]);
+            }
+            
+            System.out.println(queryOptions.toJson());
+            return createOkResponse(variantMongoQueryBuilder.getAllVariantsByRegion(region, queryOptions));
+        }
     }
     
 }
