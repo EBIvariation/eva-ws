@@ -40,9 +40,17 @@ public class RegionWSServer extends EvaWSServer {
     @GET
     @Path("/variants")
     public Response getVariantsByRegion(@PathParam("region") String regionId,
-                                        @DefaultValue("") @QueryParam("type") String variantType) {
+                                        @DefaultValue("") @QueryParam("type") String variantType,
+                                        @QueryParam("ref") String reference,
+                                        @QueryParam("alt") String alternate) {
         if (!variantType.isEmpty()) {
             queryOptions.put("type", variantType);
+        }
+        if (reference != null) {
+            queryOptions.put("reference", reference);
+        }
+        if (alternate != null) {
+            queryOptions.put("alternate", alternate);
         }
         
         Region region = Region.parseRegion(regionId);
