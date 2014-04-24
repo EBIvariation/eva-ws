@@ -89,6 +89,13 @@ div .ngHeaderText{
     border-collapse: collapse;
     vertical-align: top;
 }
+ h3 {
+     color:#BF8230;
+ }
+
+ h3 span{
+     color:#BBBBBB;
+ }
 
 
 
