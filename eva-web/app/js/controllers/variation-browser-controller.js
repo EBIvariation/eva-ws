@@ -14,58 +14,64 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 //        console.log(e);
 //    });
 
-//    var summaryUrl = METADATA_HOST+'/'+VERSION+'/genes/ranking';
-//    var summaryData = ebiVarMetadataService.fetchData(summaryUrl);
-//    var summaryChartData = parseSummaryChartData(summaryData);
-//    console.log(summaryChartData.data)
-//
-//
-//    function parseSummaryChartData(args){
-//
-//        var data = [];
-//        var tempArray=[];
-//        for (key in args.response.result) {
-//            tempArray.push([args.response.result[key]._id,args.response.result[key].count]);
-//        }
-//
-//        data['data'] = tempArray;
-//        data['data'] = tempArray;
-//        return data;
-//    }
 
-//    $scope.summaryPieChartConfig = {
-//        options: {
-//            chart: {
-//                type: 'pie'
-//            },
-//
-//            plotOptions: {
-//
-//                series: {
-//                    cursor: 'pointer',
-//                    // size: 80,
-//                    point: {
-//                        events: {
-//                            click: function() {
-//                                console.log(this)
-//                            }
-//                        }
-//                    }
-//
-//                }
-//            }
-//        },
-//        series: [{
-//            data:   summaryChartData.data
-//        }],
-//        title: {
-//            text:  ''
-//        },
-//        loading: false,
-//        credits: {
-//            enabled: false
-//        }
-//    }
+    function createSummaryChart(){
+
+        var summaryUrl = METADATA_HOST+'/'+VERSION+'/genes/ranking';
+        var summaryData = ebiVarMetadataService.fetchData(summaryUrl);
+        var summaryChartData = parseSummaryChartData(summaryData);
+        console.log(summaryChartData.data)
+
+
+        function parseSummaryChartData(args){
+
+            var data = [];
+            var tempArray=[];
+            for (key in args.response.result) {
+                tempArray.push([args.response.result[key]._id,args.response.result[key].count]);
+            }
+
+            data['data'] = tempArray;
+            data['data'] = tempArray;
+            return data;
+        }
+
+        $scope.summaryPieChartConfig = {
+            options: {
+                chart: {
+                    type: 'pie'
+                },
+
+                plotOptions: {
+
+                    series: {
+                        cursor: 'pointer',
+                        // size: 80,
+                        point: {
+                            events: {
+                                click: function() {
+                                    console.log(this)
+                                }
+                            }
+                        }
+
+                    }
+                }
+            },
+            series: [{
+                data:   summaryChartData.data
+            }],
+            title: {
+                text:  ''
+            },
+            loading: false,
+            credits: {
+                enabled: false
+            }
+        }
+    }
+
+
 
     $scope.statistics = '+';
     $scope.showStatitsicsState;
@@ -82,6 +88,7 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
             this.statistics = '+';
         }else{
             this.statistics = '-';
+            createSummaryChart();
         }
     };
 
