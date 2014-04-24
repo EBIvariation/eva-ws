@@ -32,7 +32,8 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
             }
 
             data['data'] = tempArray;
-            data['data'] = tempArray;
+            data['title'] = 'Genes Ranking';
+
             return data;
         }
 
@@ -62,7 +63,7 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
                 data:   summaryChartData.data
             }],
             title: {
-                text:  ''
+                text:  summaryChartData.title
             },
             loading: false,
             credits: {
