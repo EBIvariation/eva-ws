@@ -10,7 +10,6 @@
     <!-- build:style vendor -->
     <link type="text/css"  href="../vendor/extJS/css/resources/css/ext-all.css" rel="stylesheet">
     <link type="text/css"  href="../vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link type="text/css"  href="../vendor/ng-grid-min.css" rel="stylesheet">
     <link type="text/css"  href="../vendor/bootstrap/css/bootstrap-theme.css" rel="stylesheet">
     <!-- /build -->
 
@@ -40,10 +39,8 @@
     <script type="text/javascript" src="../vendor/underscore-min.js"></script>
     <script src="http://backbonejs.org/backbone-min.js"></script>
     <script type="text/javascript" src="../vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="../vendor/ui-bootstrap-tpls-0.10.0.js"></script>
-    <script type="text/javascript" src="../vendor/bootstrap-hover-dropdown.min.js"></script>
-    <script type="text/javascript" src="../vendor/ng-grid-min.js"></script>
-    <script src="http://code.highcharts.com/stock/highstock.src.js"></script>
+    <script type="text/javascript" src="../vendor/ui-bootstrap-tpls-0.10.0.min.js"></script>
+    <script type="text/javascript" src="../vendor/highstock.src.js"></script>
     <script type="text/javascript" src="../vendor/highcharts-ng.js"></script>
     <script type="text/javascript" src="../vendor/extJS/js/ext-all.js"></script>
     <script type="text/javascript" src="../vendor/angular-ui-router.min.js"></script>
@@ -149,7 +146,6 @@
     <!--======================DIRECTIVES======================-->
     <script type="text/javascript" src="js/directives/eva-portal-home-drirective.js"></script>
     <script type="text/javascript" src="js/directives/variant-widget-directive.js"></script>
-    <script type="text/javascript" src="js/directives/ebivar-study-directive.js"></script>
     <script type="text/javascript" src="../lib/ebi-js-commons/ebi-compliance/js/ebi-complaince-directive.js"></script>
 
     <!---------------------services -------------------------------->
@@ -260,17 +256,9 @@
 
 
     var eventManager = new EventManager();
-    eventManager.on("variant:select", function(e) {
-        console.log(e);
+    eventManager.on("variant:search", function(e) {
+        //console.log('search');
     });
-
-//    $rootScope.events = {};
-//    _.extend($rootScope.events, Backbone.Events);
-//    $rootScope.events.on("clicked", function() {
-//        alert("Ouch, you just clicked me");
-//    });
-
-
 
 
 </script>
