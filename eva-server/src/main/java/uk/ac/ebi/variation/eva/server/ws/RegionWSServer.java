@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created by imedina on 01/04/14.
@@ -41,17 +42,21 @@ public class RegionWSServer extends EvaWSServer {
     @GET
     @Path("/variants")
     public Response getVariantsByRegion(@PathParam("region") String regionId,
-                                        @DefaultValue("") @QueryParam("type") String variantType,
                                         @QueryParam("ref") String reference,
-                                        @QueryParam("alt") String alternate) {
-        if (!variantType.isEmpty()) {
-            queryOptions.put("type", variantType);
-        }
+                                        @QueryParam("alt") String alternate,
+                                        @QueryParam("effect") String effect,
+                                        @DefaultValue("") @QueryParam("type") String variantType) {
         if (reference != null) {
             queryOptions.put("reference", reference);
         }
         if (alternate != null) {
             queryOptions.put("alternate", alternate);
+        }
+        if (effect != null) {
+            queryOptions.put("effect", Arrays.asList(effect.split(",")));
+        }
+        if (!variantType.isEmpty()) {
+            queryOptions.put("type", variantType);
         }
         
         Region region = Region.parseRegion(regionId);

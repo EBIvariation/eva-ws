@@ -1,6 +1,7 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
 import java.io.IOException;
+import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -47,15 +48,19 @@ public class GeneWSServer extends EvaWSServer {
     public Response getVariantsByGene(@PathParam("gene") String geneId,
                                       @QueryParam("ref") String reference,
                                       @QueryParam("alt") String alternate, 
-                                      @DefaultValue("") @QueryParam("type") String variantType) {
-        if (!variantType.isEmpty()) {
-            queryOptions.put("type", variantType);
-        }
+                                      @DefaultValue("") @QueryParam("type") String variantType,
+                                      @QueryParam("effect") String effect) {
         if (reference != null) {
             queryOptions.put("reference", reference);
         }
         if (alternate != null) {
             queryOptions.put("alternate", alternate);
+        }
+        if (effect != null) {
+            queryOptions.put("effect", Arrays.asList(effect.split(",")));
+        }
+        if (!variantType.isEmpty()) {
+            queryOptions.put("type", variantType);
         }
         
         return createOkResponse(variantMongoQueryBuilder.getAllVariantsByGene(geneId, queryOptions));
