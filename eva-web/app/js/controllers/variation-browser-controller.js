@@ -112,7 +112,71 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
     $scope.data = ebiAppDomainHostService.data;
 
+    $scope.studies = [
+        {id: "1000g", name: "1000 genomes", description: "..."},
+        {id: "gonl", name: "GoNL", description: "..."},
+        {id: "evs", name: "EVS", description: "..."}
+    ]
 
+    $scope.consequenceTypes = [
+        {acc: 'SO:0001893', name: 'transcript_ablation', description: 'A feature ablation whereby the deleted region includes a transcript feature'},
+        {acc: 'SO:0001575', name: 'splice_donor_variant', description: 'A splice variant that changes the 2 base region at the 5\' end of an intron'},
+        {acc: 'SO:0001574', name: 'splice_acceptor_variant', description: 'A splice variant that changes the 2 base region at the 3\' end of an intron'},
+        {acc: 'SO:0001587', name: 'stop_gained', description: 'A sequence variant whereby at least one base of a codon is changed, resulting in a premature stop codon, leading to a shortened transcript'},
+        {acc: 'SO:0001589', name: 'frameshift_variant', description: 'A sequence variant which causes a disruption of the translational reading frame, because the number of nucleotides inserted or deleted is not a multiple of three'},
+        {acc: 'SO:0001578', name: 'stop_lost', description: 'A sequence variant where at least one base of the terminator codon (stop) is changed, resulting in an elongated transcript'},
+        {acc: 'SO:0001582', name: 'initiator_codon_variant', description: 'A codon variant that changes at least one base of the first codon of a transcript'},
+        {acc: 'SO:0001821', name: 'inframe_insertion', description: 'An inframe non synonymous variant that inserts bases into in the coding sequence'},
+        {acc: 'SO:0001822', name: 'inframe_deletion', description: 'An inframe non synonymous variant that deletes bases from the coding sequence'},
+        {acc: 'SO:0001583', name: 'missense_variant', description: 'A sequence variant, that changes one or more bases, resulting in a different amino acid sequence but where the length is preserved'},
+        {acc: 'SO:0001889', name: 'transcript_amplification', description: 'A feature amplification of a region containing a transcript'},
+        {acc: 'SO:0001630', name: 'splice_region_variant', description: 'A sequence variant in which a change has occurred within the region of the splice site, either within 1-3 bases of the exon or 3-8 bases of the intron'},
+        {acc: 'SO:0001626', name: 'incomplete_terminal_codon_variant', description: 'A sequence variant where at least one base of the final codon of an incompletely annotated transcript is changed'},
+        {acc: 'SO:0001819', name: 'synonymous_variant', description: 'A sequence variant where there is no resulting change to the encoded amino acid'},
+        {acc: 'SO:0001567', name: 'stop_retained_variant', description: 'A sequence variant where at least one base in the terminator codon is changed, but the terminator remains'},
+        {acc: 'SO:0001580', name: 'coding_sequence_variant', description: 'A sequence variant that changes the coding sequence'},
+        {acc: 'SO:0001620', name: 'mature_miRNA_variant', description: 'A transcript variant located with the sequence of the mature miRNA'},
+        {acc: 'SO:0001623', name: '5_prime_UTR_variant', description: 'A UTR variant of the 5\' UTR'},
+        {acc: 'SO:0001624', name: '3_prime_UTR_variant', description: 'A UTR variant of the 3\' UTR'},
+        {acc: 'SO:0001792', name: 'non_coding_exon_variant', description: 'A sequence variant that changes non-coding exon sequence'},
+        {acc: 'SO:0001619', name: 'nc_transcript_variant', description: 'A transcript variant of a non coding RNA'},
+        {acc: 'SO:0001627', name: 'intron_variant', description: 'A transcript variant occurring within an intron'},
+        {acc: 'SO:0001621', name: 'NMD_transcript_variant', description: 'A variant in a transcript that is the target of NMD'},
+        {acc: 'SO:0001631', name: 'upstream_gene_variant', description: 'A sequence variant located 5\' of a gene'},
+        {acc: 'SO:0001632', name: 'downstream_gene_variant', description: 'A sequence variant located 3\' of a gene'},
+        {acc: 'SO:0001895', name: 'TFBS_ablation', description: 'A feature ablation whereby the deleted region includes a transcription factor binding site'},
+        {acc: 'SO:0001892', name: 'TFBS_amplification', description: 'A feature amplification of a region containing a transcription factor binding site'},
+        {acc: 'SO:0001782', name: 'TF_binding_site_variant', description: 'A sequence variant located within a transcription factor binding site'},
+        {acc: 'SO:0001566', name: 'regulatory_region_variant', description: 'A sequence variant located within a regulatory region'},
+        {acc: 'SO:0001894', name: 'regulatory_region_ablation', description: 'A feature ablation whereby the deleted region includes a regulatory region'},
+        {acc: 'SO:0001891', name: 'regulatory_region_amplification', description: 'A feature amplification of a region containing a regulatory region'},
+        {acc: 'SO:0001907', name: 'feature_elongation', description: 'A sequence variant that causes the extension of a genomic feature, with regard to the reference sequence'},
+        {acc: 'SO:0001906', name: 'feature_truncation', description: 'A sequence variant that causes the reduction of a genomic feature, with regard to the reference sequence'},
+        {acc: 'SO:0001628', name: 'intergenic_variant', description: 'A sequence variant located in the intergenic region, between genes'}
+    ];
+
+    $scope.variationClasses = [
+        {acc: "SO:0001483", name: "SNV", description: "SNVs are single nucleotide positions in genomic DNA at which different sequence alternatives exist.", call: "Variation"},
+        {acc: "SO:1000032", name: "indel", description: "A sequence alteration which included an insertion and a deletion, affecting 2 or more bases.", call: "Variation"},
+        {acc: "SO:1000002", name: "substitution", description: "A sequence alteration where the length of the change in the variant is the same as that of the reference.", call: "Variation"},
+        {acc: "SO:0000705", name: "tandem_repeat", description: "Two or more adjcent copies of a region (of length greater than 1).", call: "Variation"},
+        {acc: "SO:0001784", name: "complex_structural_alteration", description: "A structural sequence alteration or rearrangement encompassing one or more genome fragments.", call: "Structural variation"},
+        {acc: "SO:0001742", name: "copy_number_gain", description: "A sequence alteration whereby the copy number of a given regions is greater than the reference sequence.", call: "Structural variation"},
+        {acc: "SO:0001743", name: "copy_number_loss", description: "A sequence alteration whereby the copy number of a given region is less than the reference sequence.", call: "Structural variation"},
+        {acc: "SO:0001019", name: "copy_number_variation", description: "A variation that increases or decreases the copy number of a given region.", call: "Structural variation"},
+        {acc: "SO:1000035", name: "duplication", description: "One or more nucleotides are added between two adjacent nucleotides in the sequence; the inserted sequence derives from, or is identical in sequence to, nucleotides adjacent to insertion point.", call: "Structural variation"},
+        {acc: "SO:0001873", name: "interchromosomal_breakpoint", description: "A rearrangement breakpoint between two different chromosomes.", call: "Structural variation"},
+        {acc: "SO:0001874", name: "intrachromosomal_breakpoint", description: "A rearrangement breakpoint within the same chromosome.", call: "Structural variation"},
+        {acc: "SO:1000036", name: "inversion", description: "A continuous nucleotide sequence is inverted in the same position.", call: "Structural variation"},
+        {acc: "SO:0001837", name: "mobile_element_insertion", description: "A kind of insertion where the inserted sequence is a mobile element.", call: "Structural variation"},
+        {acc: "SO:0001838", name: "novel_sequence_insertion", description: "An insertion the sequence of which cannot be mapped to the reference genome.", call: "Structural variation"},
+        {acc: "SO:1000173", name: "tandem_duplication", description: "A duplication consisting of 2 identical adjacent regions.", call: "Structural variation"},
+        {acc: "SO:0000199", name: "translocation", description: "A region of nucleotide sequence that has translocated to a new position.", call: "Structural variation"},
+        {acc: "SO:0000159", name: "deletion", description: "The point at which one or more contiguous nucleotides were excised.", call: "Variation"},
+        {acc: "SO:0000667", name: "insertion", description: "The sequence of one or more nucleotides added between two adjacent nucleotides in the sequence.", call: "Variation"},
+        {acc: "SO:0001059", name: "sequence_alteration", description: "A sequence_alteration is a sequence_feature whose extent is the deviation from another sequence.", call: "Variation"},
+        {acc: "SO:0000051", name: "probe", description: "A DNA sequence used experimentally to detect the presence or absence of a complementary nucleic acid.", call: "CNV probe"}
+    ]
 
     $scope.barChart = {
         options: {
@@ -188,13 +252,6 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
         $('#infoColumnMultiSelect').children().removeClass("btn-primary");
         $scope.infoColumnsFilter=[];
     }
-
-
-
-
-
-
-
 
 
 
