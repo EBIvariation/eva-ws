@@ -90,15 +90,11 @@
             <div id="collapseConsequenceType" class="panel-collapse collapse in">
                 <div class="panel-body">
                     <div class="">
-                        <button type="button" class="btn btn-default btn-xs" onclick="$('.evaConsqTypeCheckbox').prop('checked', true);" >
-                            Select all
-                        </button>
-                        <button type="button" class="btn btn-default btn-xs" onclick="$('.evaConsqTypeCheckbox').prop('checked', false);">
-                            Clear
-                        </button>
+                        <button type="button" class="btn btn-default btn-xs" ng-click="checkAll_CT()">Select all</button>
+                        <button type="button" class="btn btn-default btn-xs" ng-click="uncheckAll_CT()">Clear </button>
                     </div>
                     <div ng-repeat="ct in consequenceTypes | orderBy: 'name'">
-                        <input type="checkbox" class="evaConsqTypeCheckbox" title="{{ct.description}}"> {{ct.name}} (<a target="_blank" href="http://www.sequenceontology.org/miso/current_release/term/{{ct.acc}}">{{ct.acc}}</a>)
+                        <input type="checkbox" checklist-model="selectedCT.Id" checklist-value="ct.acc" title="{{ct.description}}"> {{ct.name}} (<a target="_blank" href="http://www.sequenceontology.org/miso/current_release/term/{{ct.acc}}">{{ct.acc}}</a>)
                     </div>
                 </div>
             </div>
@@ -114,15 +110,11 @@
             <div id="collapseVariationClass" class="panel-collapse collapse in">
                 <div class="panel-body">
                     <div class="">
-                        <button type="button" class="btn btn-default btn-xs" onclick="$('.evaVarClassCheckbox').prop('checked', true);" >
-                            Select all
-                        </button>
-                        <button type="button" class="btn btn-default btn-xs" onclick="$('.evaVarClassCheckbox').prop('checked', false);">
-                            Clear
-                        </button>
+                        <button type="button" class="btn btn-default btn-xs" ng-click="checkAll_VC()">Select all</button>
+                        <button type="button" class="btn btn-default btn-xs" ng-click="uncheckAll_VC()">Clear </button>
                     </div>
                     <div ng-repeat="ct in variationClasses | filter: { call: 'Variation' } :true ">
-                        <input type="checkbox" class="evaVarClassCheckbox" title="{{ct.description}}"> {{ct.name}} (<a target="_blank" href="http://www.sequenceontology.org/miso/current_release/term/{{ct.acc}}">{{ct.acc}}</a>)
+                        <input type="checkbox" checklist-model="selectedVC.Id" checklist-value="ct.acc" class="evaVarClassCheckbox" title="{{ct.description}}"> {{ct.name}} (<a target="_blank" href="http://www.sequenceontology.org/miso/current_release/term/{{ct.acc}}">{{ct.acc}}</a>)
                     </div>
                 </div>
             </div>

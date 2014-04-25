@@ -13,7 +13,11 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 //    eventManager.on("variant:select", function(e) {
 //        console.log(e);
 //    });
-
+    eventManager.on("variant:search", function(e) {
+        console.log('sef');
+        console.log( $scope.selectedCT.Id);
+        console.log( $scope.selectedVC.Id);
+    });
 
     function createSummaryChart(){
 
@@ -82,8 +86,6 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     }
 
     $scope.showStatitsics = function(){
-        //eventManager.trigger("variant:select", {hello: "world"});
-        //$scope.events.trigger("clicked");
         this.showStatitsicsState = !this.showStatitsicsState;
         if(!this.showStatitsicsState){
             this.statistics = '+';
@@ -97,34 +99,28 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
     $scope.gene = 'BRCA1';
 
-    $scope.message = ebiAppDomainHostService.message;
 
-    $scope.infoColumns  = {
-        AF: 'af',
-        AC: 'ac',
-        VF: 'vf',
-        AA: 'aa',
-        AN: 'an'
-    };
-
-    $scope.infoColumnsFilter = [];
-
-    $scope.colors = [
-        {name:'black', shade:'dark', state:false},
-        {name:'white', shade:'light',state:false},
-        {name:'red', shade:'dark',state:false},
-        {name:'blue', shade:'dark',state:false},
-        {name:'yellow', shade:'light',state:false}
-    ];
-    $scope.color = $scope.colors[2];
-
-    $scope.data = ebiAppDomainHostService.data;
 
     $scope.studies = [
         {id: "1000g", name: "1000 genomes", description: "..."},
         {id: "gonl", name: "GoNL", description: "..."},
         {id: "evs", name: "EVS", description: "..."}
     ]
+
+
+
+
+    $scope.selectedCT = {
+        Id: []
+    };
+
+    $scope.checkAll_CT = function() {
+        $scope.selectedCT.Id = $scope.consequenceTypes.map(function(item) { return item.acc; });
+    };
+    $scope.uncheckAll_CT = function() {
+        $scope.selectedCT.Id = [];
+    };
+
 
     $scope.consequenceTypes = [
         {acc: 'SO:0001893', name: 'transcript_ablation', description: 'A feature ablation whereby the deleted region includes a transcript feature'},
@@ -162,6 +158,19 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
         {acc: 'SO:0001906', name: 'feature_truncation', description: 'A sequence variant that causes the reduction of a genomic feature, with regard to the reference sequence'},
         {acc: 'SO:0001628', name: 'intergenic_variant', description: 'A sequence variant located in the intergenic region, between genes'}
     ];
+
+
+
+    $scope.selectedVC = {
+        Id: []
+    };
+
+    $scope.checkAll_VC = function() {
+        $scope.selectedVC.Id = $scope.variationClasses.map(function(item) { return item.acc; });
+    };
+    $scope.uncheckAll_VC = function() {
+        $scope.selectedVC.Id = [];
+    };
 
     $scope.variationClasses = [
         {acc: "SO:0001483", name: "SNV", description: "SNVs are single nucleotide positions in genomic DNA at which different sequence alternatives exist.", call: "Variation"},
@@ -218,6 +227,7 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
             enabled: false
         }
     }
+
 
 }]);
 
