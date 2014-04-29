@@ -2,7 +2,7 @@
  * Created by jag on 14/04/2014.
  */
 var genomeViewer;
-angular.module('variantWidgetModule', []).directive('variantionWidget', function () {
+angular.module('variantWidgetModule', []).directive('variantWidget', function () {
     return {
         restrict: 'E',
         replace: true,
@@ -23,6 +23,15 @@ angular.module('variantWidgetModule', []).directive('variantionWidget', function
 
                 eventManager.on("variant:search", function(e) {
 
+                    console.log( $scope.selectedCT.filter);
+                    console.log( $scope.selectedVC.filter);
+                    if($scope.selectedCT.filter.length > 0){
+                        $scope.CTfilter = '&effect='+$scope.selectedCT.filter.join();
+                    }else{
+                        $scope.CTfilter = '';
+                    }
+
+                    $scope.filters =  $scope.CTfilter;
                     var variantWidget;
                     variantWidget = new VariantWidget({
                         variantTableID       : $scope.variantTableId,
@@ -31,6 +40,7 @@ angular.module('variantWidgetModule', []).directive('variantionWidget', function
                         variantStatsViewID   : $scope.variantStatsViewId,
                         variantStatsChartID  : $scope.variantStatsChartId,
                         location             : $scope.location,
+                        filters              : $scope.filters,
                         variantGenomeViewerID: $scope.variantGenomeViewerId,
                         variantSubTabsID     : $scope.variantBrowserSubTabsId,
 

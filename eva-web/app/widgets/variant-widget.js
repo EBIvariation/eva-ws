@@ -22,9 +22,10 @@ VariantWidget.prototype = {
     _createVariantPanel:function(){
        var _this = this;
        this.grid = this._createBrowserGrid();
-       this.gridFiles = this._createFilesGrid();
-       this.gridEffect = this._createEffectGrid();
-       this.gridStats = this._createStatesGrid();
+//       this.gridFiles = _this._createFilesGrid();
+//       this.gridEffect = _this._createEffectGrid();
+//       this.gridStats = _this._createStatesGrid();
+
     },
     _createBrowserGrid:function(){
 
@@ -71,7 +72,10 @@ VariantWidget.prototype = {
             // Can also be specified in the request options
             Ext.Ajax.cors = true;
 
-            var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants?exclude=files,effects,chunkIds';
+            //console.log(_this.filters);
+
+            var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants?exclude=files,chunkIds'+_this.filters;
+             //console.log(url)
             // create the data store
             _this.vbStore = Ext.create('Ext.data.JsonStore', {
                 autoLoad: true,
@@ -97,7 +101,7 @@ VariantWidget.prototype = {
 
 
 
-
+            var variant_present = '';
             // create the Grid
             _this.vbGrid = Ext.create('Ext.grid.Panel', {
                 store:  _this.vbStore,
@@ -186,6 +190,7 @@ VariantWidget.prototype = {
                     enableTextSelection: true,
                     forceFit: true
                 },
+                deferredRender: false,
                 dockedItems: [{
                     xtype: 'pagingtoolbar',
                     store: _this.vbStore,   // same store GridPanel is using
@@ -206,33 +211,52 @@ VariantWidget.prototype = {
                     },
                     render : function(grid){
                         grid.store.on('load', function(store, records, options){
-                            grid.getSelectionModel().select(0);
-                            grid.fireEvent('itemclick', grid, grid.getSelectionModel().getLastSelected());
+                            if(_this.vbStore.getCount() > 0){
+                                variant_present = 1;
+                                _this.gridFiles = _this._createFilesGrid();
+                                _this.gridEffect = _this._createEffectGrid();
+                                _this.gridStats = _this._createStatesGrid();
+                                grid.getSelectionModel().select(0);
+                                grid.fireEvent('itemclick', grid, grid.getSelectionModel().getLastSelected());
+
+
+                            }else{
+                                variant_present = 0;
+                            }
                         });
                     }
                 }
             });
 
             jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                var data = _this._getSelectedData();
-                if(e.target.parentElement.id == _this.variantEffectTableID+'Li' ){
-                    _this._updateEffectGrid(data.position);
+               // console.log(e)
+                if(variant_present === 1){
+                    var grid = _this.vbGrid
+                    var data = _this._getSelectedData();
+                    console.log(data)
+                    if(e.target.parentElement.id == _this.variantEffectTableID+'Li' ){
+                        _this.gridEffect = _this._createEffectGrid();
+                        _this._updateEffectGrid(data.position);
+                    }
+                    else if(e.target.parentElement.id === _this.variantFilesTableID+'Li'){
+                        _this.gridFiles = _this._createFilesGrid();
+                        _this.gridStats = _this._createStatesGrid();
+                        _this._updateFilesGrid(data.variantId);
+                    }
+                    else if(e.target.parentElement.id  === _this.variantGenomeViewerID+'Li'){
+                        var region = new Region();
+                        region.parse(data.location);
+                        genomeViewer.setRegion(region);
+                    }
                 }
-                else if(e.target.parentElement.id === _this.variantFilesTableID+'Li'){
-                    _this._updateFilesGrid(data.variantId);
-                }
-                else if(e.target.parentElement.id  === _this.variantGenomeViewerID+'Li'){
-                    var region = new Region();
-                    region.parse(data.location);
-                    genomeViewer.setRegion(region);
-                }
-           });
 
+           });
 
         return _this.vbGrid;
     },
 
     _updateFilesGrid:function(args){
+
         var _this = this;
         var variantId = args;
         var url = METADATA_HOST+'/'+VERSION+'/variants/'+variantId+'/info';
@@ -390,6 +414,7 @@ VariantWidget.prototype = {
             height: 350,
 //                width: 800,
             title: 'Effects',
+            deferredRender: false,
             renderTo: this.variantEffectTableID,
             viewConfig: {
                 enableTextSelection: true

@@ -1,0 +1,73 @@
+<div>
+    <div class="col-sm-4 col-md-3 col-lg-3">
+        <div  id="accordion">
+            <div class="panel panel-ebi-primary">
+                <div class="panel-heading">
+                    <div  href="#collapseFilter" style="cursor: pointer">
+                        <h6><strong>Filters</strong></h6>
+                    </div>
+                </div>
+                <div id="collapseFilter" class="panel-collapse">
+                    <div class="panel-body">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default btn-xs" ng-click="" >
+                                    Reload
+                                </button>
+                                <button type="button" class="btn btn-default btn-xs" ng-click="">
+                                    Clear
+                                </button>
+                            </div>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default btn-xs" ng-click=searchVariants()>
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-ebi-secondary">
+                <div class="panel-heading">
+                    <div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseLocation" style="cursor: pointer" >
+                        Filter By
+                    </div>
+                </div>
+                <div id="collapseLocation" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        Gene: <textarea type="text" ng-model="gene" rows="2" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="panel panel-ebi-secondary">
+                <div class="panel-heading">
+                    <div  class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseStudy" style="cursor: pointer" >
+                        Study
+                    </div>
+                </div>
+                <div id="collapseStudy" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <div class="">
+                            <button type="button" class="btn btn-default btn-xs" onclick="$('.evaStudyCheckbox').prop('checked', true);" >
+                                Select all
+                            </button>
+                            <button type="button" class="btn btn-default btn-xs" onclick="$('.evaStudyCheckbox').prop('checked', false);">
+                                Clear
+                            </button>
+                        </div>
+                        <br />
+                        <div ng-repeat="ct in studies">
+                            <input type="checkbox" class="evaStudyCheckbox" title="{{ct.description}}"> {{ct.name}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div  class="col-sm-8 col-md-9 col-lg-9">
+        sdf
+    </div>
+</div>

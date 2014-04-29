@@ -6,17 +6,10 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
 
 
-    //$scope.events.trigger("clicked");
 
 
-//    var eventManager = new EventManager();
-//    eventManager.on("variant:select", function(e) {
-//        console.log(e);
-//    });
     eventManager.on("variant:search", function(e) {
-        console.log('sef');
-        console.log( $scope.selectedCT.Id);
-        console.log( $scope.selectedVC.Id);
+
     });
 
     function createSummaryChart(){
@@ -95,7 +88,7 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
         }
     };
 
-    $scope.location = '1:5000-35000';
+    $scope.location = '1:5000-3500000';
 
     $scope.gene = 'BRCA1';
 
@@ -111,14 +104,14 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
 
     $scope.selectedCT = {
-        Id: []
+        filter: []
     };
 
     $scope.checkAll_CT = function() {
-        $scope.selectedCT.Id = $scope.consequenceTypes.map(function(item) { return item.acc; });
+        $scope.selectedCT.filter = $scope.consequenceTypes.map(function(item) { return item.name; });
     };
     $scope.uncheckAll_CT = function() {
-        $scope.selectedCT.Id = [];
+        $scope.selectedCT.filter = [];
     };
 
 
@@ -162,14 +155,14 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
 
     $scope.selectedVC = {
-        Id: []
+        filter: []
     };
 
     $scope.checkAll_VC = function() {
-        $scope.selectedVC.Id = $scope.variationClasses.map(function(item) { return item.acc; });
+        $scope.selectedVC.filter = $scope.variationClasses.map(function(item) { return item.name; });
     };
     $scope.uncheckAll_VC = function() {
-        $scope.selectedVC.Id = [];
+        $scope.selectedVC.filter = [];
     };
 
     $scope.variationClasses = [

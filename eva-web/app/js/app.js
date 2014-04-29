@@ -1,11 +1,11 @@
 /**
  * Created by jag on 17/03/2014.
  */
-var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','highcharts-ng','ebiVar.Services.Metadata','ui.router','homeWidgetModule','variantWidgetModule','checklist-model']);
+var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','highcharts-ng','ebiVar.Services.Metadata','ui.router','homeWidgetModule','variantWidgetModule','checklist-model', 'geneWidgetModule']);
 
 //http://wwwint.ebi.ac.uk/eva/webservices/rest/v1/segment/1:5000-35000/variants
 
-var METADATA_HOST = "http://www.ebi.ac.uk/eva/webservices/rest";
+var METADATA_HOST = "http://wwwint.ebi.ac.uk/eva/webservices/rest";
 //var METADATA_HOST = "http://localhost:8080/eva/webservices/rest";
 
 //var METADATA_HOST = "http://172.22.69.133:8080/eva/webservices/rest";
