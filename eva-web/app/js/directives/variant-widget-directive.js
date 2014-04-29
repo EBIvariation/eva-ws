@@ -23,6 +23,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
                 eventManager.on("variant:search", function(e) {
 
+
                     console.log( $scope.selectedCT.filter);
                     console.log( $scope.selectedVC.filter);
                     if($scope.selectedCT.filter.length > 0){

@@ -81,7 +81,7 @@ VariantWidget.prototype = {
                 autoLoad: true,
                 autoSync: true,
                 //autoLoad: {start: 0, limit: 5},
-                pageSize: 5,
+                pageSize: 10,
                 remoteSort: true,
                 model: this.variantTableID,
                 proxy: {
@@ -233,7 +233,6 @@ VariantWidget.prototype = {
                 if(variant_present === 1){
                     var grid = _this.vbGrid
                     var data = _this._getSelectedData();
-                    console.log(data)
                     if(e.target.parentElement.id == _this.variantEffectTableID+'Li' ){
                         _this.gridEffect = _this._createEffectGrid();
                         _this._updateEffectGrid(data.position);

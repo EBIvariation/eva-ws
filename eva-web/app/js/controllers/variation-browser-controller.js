@@ -6,10 +6,8 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
 
 
-
-
-    eventManager.on("variant:search", function(e) {
-
+    eventManager.on("gene:search variant:search" , function(e) {
+        updateRegion( $scope.gene);
     });
 
     function createSummaryChart(){
@@ -77,6 +75,11 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     $scope.searchVariants = function(){
         eventManager.trigger("variant:search");
     }
+    $scope.searchGenes = function(){
+        eventManager.trigger("gene:search");
+    }
+
+
 
     $scope.showStatitsics = function(){
         this.showStatitsicsState = !this.showStatitsicsState;
@@ -91,6 +94,17 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     $scope.location = '1:5000-3500000';
 
     $scope.gene = 'BRCA1';
+
+    function updateRegion(args){
+
+        if(args){
+            var geneInfoURL = 'http://ws.bioinfo.cipf.es/cellbase/rest/latest/hsa/feature/gene/'+$scope.gene+'/info?of=json';
+            var regionData = ebiVarMetadataService.fetchData(geneInfoURL);
+            var region = regionData[0][0].chromosome+':'+regionData[0][0].start+'-'+regionData[0][0].end;
+            //sconsole.log(region)
+            $scope.location = region;
+        }
+    }
 
 
 
