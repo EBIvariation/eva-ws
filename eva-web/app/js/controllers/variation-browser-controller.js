@@ -93,7 +93,7 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
     $scope.location = '1:5000-3500000';
 
-    $scope.gene = 'BRCA1';
+    $scope.gene = 'TMEM51';
 
     function updateRegion(args){
 
