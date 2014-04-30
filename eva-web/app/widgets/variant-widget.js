@@ -128,12 +128,6 @@ VariantWidget.prototype = {
                             dataIndex: 'end'
                         },
                         {
-                            text     : 'Length',
-                            sortable : true,
-                            dataIndex: 'length'
-
-                        },
-                        {
                             text     : 'ID',
                             sortable : false,
                             dataIndex: 'id'
@@ -152,7 +146,7 @@ VariantWidget.prototype = {
                             sortable : true,
                             dataIndex: 'ref',
                             xtype: 'templatecolumn',
-                            tpl: '{ref}/{alt}'
+                            tpl: '<tpl if="ref">{ref}<tpl else>-</tpl>/<tpl if="alt">{alt}<tpl else>-</tpl>'
 
                         },
                         {
