@@ -46,24 +46,34 @@ VariantWidget.prototype = {
         });
 
         var tree = Ext.create('Ext.tree.Panel', {
+            header:false,
+            border :false,
             autoWidth: true,
             autoHeight: true,
             renderTo: args.id,
-            collapsible: true,
+            collapsible: false,
             useArrows: true,
             rootVisible: false,
             store: store,
             frame: true,
+            hideHeaders: true,
+            bodyBorder:false,
+
             //the 'columns' property is now 'headers'
             columns: [{
                 xtype: 'treecolumn', //this is so we know which column will show the tree
                 //text: 'Task',
                 flex: 2,
-                sortable: true,
-                dataIndex: 'name'
+                sortable: false,
+                dataIndex: 'name',
+
             }],
+
+
             dockedItems: [{
                 xtype: 'toolbar',
+                ui: 'light',
+                frame: false,
                 items: [
                     {
                         xtype: 'button',
@@ -76,7 +86,7 @@ VariantWidget.prototype = {
                     },
                     {
                         xtype: 'button',
-                        text: 'Clear ',
+                        text: 'Clear',
                         handler: function(){
                             tree.getRootNode().cascadeBy(function(){
                                 this.set( 'checked', false );
@@ -85,6 +95,7 @@ VariantWidget.prototype = {
                     }
                 ]
             }],
+
             listeners: {
                 itemclick : function(view, record, item, index, event) {
                     if(record)
