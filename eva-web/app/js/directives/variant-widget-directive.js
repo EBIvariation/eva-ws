@@ -2,6 +2,8 @@
  * Created by jag on 14/04/2014.
  */
 var genomeViewer;
+
+
 angular.module('variantWidgetModule', []).directive('variantWidget', function () {
     return {
         restrict: 'E',
@@ -9,30 +11,74 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
         transclude: true,
         templateUrl: 'views/variation-browser-view.html',
         link: function($scope, element, attr) {
+                var conTypeTree;
+                var studiesTree;
+                var varClassesTree;
+
+                $scope.variantTableId            = 'variantBrowserTable';
+                $scope.variantEffectTableId      = 'variantEffectTable';
+                $scope.variantFilesTableId       = 'variantFilesTable';
+                $scope.variantStatsViewId        = 'variantStatsView';
+                $scope.variantStatsChartId       = 'variantStatsChart';
+                $scope.variantGenomeViewerId     = 'variant-browser-gv';
+                $scope.variantBrowserSubTabsId   = 'variantSubTabs';
+                $scope.studiesTreeId             = 'studiesTreeID';
+                $scope.consequenceTypeTreeId     = 'consequenceTypeTreeID';
+                $scope.variationClassesTreeId    = 'variationClassesTreeID';
 
 
+                jQuery('#topMenuTab a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    var variantTreeWidget;
+                    variantTreeWidget = new VariantWidget({});
 
-                $scope.variantTableId       = 'variantBrowserTable';
-                $scope.variantEffectTableId = 'variantEffectTable';
-                $scope.variantFilesTableId  = 'variantFilesTable';
-                $scope.variantStatsViewId   = 'variantStatsView';
-                $scope.variantStatsChartId  = 'variantStatsChart';
-                $scope.variantGenomeViewerId  = 'variant-browser-gv';
-                $scope.variantBrowserSubTabsId  = 'variantSubTabs';
+                    var studiesTreeArgs = [];
+                    studiesTreeArgs.id =  $scope.studiesTreeId;
+                    studiesTreeArgs.data = $scope.studies;
+
+
+                    var consequenceTypeTreeArgs = [];
+                    consequenceTypeTreeArgs.id =  $scope.consequenceTypeTreeId;
+                    consequenceTypeTreeArgs.data = $scope.consequenceTypes;
+
+
+                    var variationClassesTreeArgs = [];
+                    variationClassesTreeArgs.id =  $scope.variationClassesTreeId;
+                    variationClassesTreeArgs.data = $scope.variationClasses;
+
+                    if(e.target.parentElement.id === 'variationLi'){
+                        if(jQuery("#"+$scope.studiesTreeId).contents().length === 0 ){
+                            studiesTree = variantTreeWidget.createTreePanel(studiesTreeArgs);
+                        }
+                        if(jQuery("#"+$scope.consequenceTypeTreeId).contents().length === 0 ){
+                            conTypeTree = variantTreeWidget.createTreePanel(consequenceTypeTreeArgs);
+                        }
+
+                        if(jQuery("#"+$scope.variationClassesTreeId).contents().length === 0 ){
+                            varClassesTree = variantTreeWidget.createTreePanel(variationClassesTreeArgs);
+                        }
+                    }
+
+                });
 
 
                 eventManager.on("variant:search", function(e) {
 
+                    var studyFilter  = getCheckedFilters(studiesTree.getView().getChecked());
+                    var conTypeFilter  = getCheckedFilters(conTypeTree.getView().getChecked());
+                    var varClassesFilter  = getCheckedFilters(varClassesTree.getView().getChecked());
 
-                    console.log( $scope.selectedCT.filter);
-                    console.log( $scope.selectedVC.filter);
-                    if($scope.selectedCT.filter.length > 0){
-                        $scope.CTfilter = '&effect='+$scope.selectedCT.filter.join();
+//                    console.log(studyFilter)
+//                    console.log(conTypeFilter)
+//                    console.log(varClassesFilter)
+
+                    if(conTypeFilter){
+                        $scope.CTfilter = '&effect='+conTypeFilter;
                     }else{
                         $scope.CTfilter = '';
                     }
 
                     $scope.filters =  $scope.CTfilter;
+
                     var variantWidget;
                     variantWidget = new VariantWidget({
                         variantTableID       : $scope.variantTableId,
@@ -44,10 +90,9 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                         filters              : $scope.filters,
                         variantGenomeViewerID: $scope.variantGenomeViewerId,
                         variantSubTabsID     : $scope.variantBrowserSubTabsId,
-
                     });
-                    variantWidget.draw();
 
+                    variantWidget.draw();
 
                     if(!genomeViewer.rendered) {
                         genomeViewer.render();
@@ -61,6 +106,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                     genomeViewer.setRegion(region);
 
                 });
+
 
 
 
@@ -217,9 +263,22 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
 //            genomeViewer.draw();
 
+            //Function to get checked filters
+            function getCheckedFilters(args){
+                if(args.length > 0){
+                    var filters = [];
+                    Ext.Array.each(args , function(rec){
+                        filters.push(rec.get('name'));
+                    });
+                    return filters.join();
+                }
             }
 
+
+        }
+
     };
+
 }).config(function($stateProvider, $urlRouterProvider) {
 //    $stateProvider
 //        .state('variant', {

@@ -97,6 +97,11 @@ div .ngHeaderText{
      color:#BBBBBB;
  }
 
+.no-icon {
+    display : none;
+    background-image:url('ext/resources/images/default/s.gif') !important;
+}
+
 
 
 

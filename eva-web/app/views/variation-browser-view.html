@@ -65,18 +65,19 @@
             </div>
             <div id="collapseStudy" class="panel-collapse collapse in">
                 <div class="panel-body">
-                    <div class="">
-                        <button type="button" class="btn btn-default btn-xs" onclick="$('.evaStudyCheckbox').prop('checked', true);" >
-                            Select all
-                        </button>
-                        <button type="button" class="btn btn-default btn-xs" onclick="$('.evaStudyCheckbox').prop('checked', false);">
-                            Clear
-                        </button>
-                    </div>
-                    <br />
-                    <div ng-repeat="ct in studies">
-                        <input type="checkbox" class="evaStudyCheckbox" title="{{ct.description}}"> {{ct.name}}
-                    </div>
+                    <!--<div class="">-->
+                        <!--<button type="button" class="btn btn-default btn-xs" onclick="$('.evaStudyCheckbox').prop('checked', true);" >-->
+                            <!--Select all-->
+                        <!--</button>-->
+                        <!--<button type="button" class="btn btn-default btn-xs" onclick="$('.evaStudyCheckbox').prop('checked', false);">-->
+                            <!--Clear-->
+                        <!--</button>-->
+                    <!--</div>-->
+                    <!--<br />-->
+                    <!--<div ng-repeat="ct in studies">-->
+                        <!--<input type="checkbox" class="evaStudyCheckbox" title="{{ct.description}}"> {{ct.name}}-->
+                    <!--</div>-->
+                    <div id={{studiesTreeId}}></div>
                 </div>
             </div>
         </div>
@@ -90,14 +91,15 @@
             </div>
             <div id="collapseConsequenceType" class="panel-collapse collapse in">
                 <div class="panel-body">
-                    <div class="">
-                        <button type="button" class="btn btn-default btn-xs" ng-click="checkAll_CT()">Select all</button>
-                        <button type="button" class="btn btn-default btn-xs" ng-click="uncheckAll_CT()">Clear </button>
-                    </div>
-                    <br />
-                    <div ng-repeat="ct in consequenceTypes | orderBy: 'name'">
-                        <input type="checkbox" checklist-model="selectedCT.filter" checklist-value="ct.name" title="{{ct.description}}"> {{ct.name}} (<a target="_blank" href="http://www.sequenceontology.org/miso/current_release/term/{{ct.acc}}">{{ct.acc}}</a>)
-                    </div>
+                    <!--<div class="">-->
+                        <!--<button type="button" class="btn btn-default btn-xs" ng-click="checkAll_CT()">Select all</button>-->
+                        <!--<button type="button" class="btn btn-default btn-xs" ng-click="uncheckAll_CT()">Clear </button>-->
+                    <!--</div>-->
+                    <!--<br />-->
+                    <!--<div ng-repeat="ct in consequenceTypes | orderBy: 'name'">-->
+                        <!--<input type="checkbox" checklist-model="selectedCT.filter" checklist-value="ct.name" title="{{ct.description}}"> {{ct.name}} (<a target="_blank" href="http://www.sequenceontology.org/miso/current_release/term/{{ct.acc}}">{{ct.acc}}</a>)-->
+                    <!--</div>-->
+                    <div id={{consequenceTypeTreeId}}></div>
                 </div>
             </div>
         </div>
@@ -111,14 +113,15 @@
             </div>
             <div id="collapseVariationClass" class="panel-collapse collapse in">
                 <div class="panel-body">
-                    <div class="">
-                        <button type="button" class="btn btn-default btn-xs" ng-click="checkAll_VC()">Select all</button>
-                        <button type="button" class="btn btn-default btn-xs" ng-click="uncheckAll_VC()">Clear </button>
-                    </div>
-                    <br />
-                    <div ng-repeat="ct in variationClasses | filter: { call: 'Variation' } :true ">
-                        <input type="checkbox" checklist-model="selectedVC.filter" checklist-value="ct.name" class="evaVarClassCheckbox" title="{{ct.description}}"> {{ct.name}} (<a target="_blank" href="http://www.sequenceontology.org/miso/current_release/term/{{ct.acc}}">{{ct.acc}}</a>)
-                    </div>
+                    <!--<div class="">-->
+                        <!--<button type="button" class="btn btn-default btn-xs" ng-click="checkAll_VC()">Select all</button>-->
+                        <!--<button type="button" class="btn btn-default btn-xs" ng-click="uncheckAll_VC()">Clear </button>-->
+                    <!--</div>-->
+                    <!--<br />-->
+                    <!--<div ng-repeat="ct in variationClasses | filter: { call: 'Variation' } :true ">-->
+                        <!--<input type="checkbox" checklist-model="selectedVC.filter" checklist-value="ct.name" class="evaVarClassCheckbox" title="{{ct.description}}"> {{ct.name}} (<a target="_blank" href="http://www.sequenceontology.org/miso/current_release/term/{{ct.acc}}">{{ct.acc}}</a>)-->
+                    <!--</div>-->
+                    <div id={{variationClassesTreeId}}></div>
                 </div>
             </div>
         </div>

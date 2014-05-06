@@ -19,6 +19,93 @@ VariantWidget.prototype = {
 
     },
 
+    createTreePanel:function(args){
+
+        Ext.require([
+            'Ext.tree.*',
+            'Ext.data.*',
+            'Ext.window.MessageBox'
+        ]);
+
+        Ext.define('Tree Model', {
+            extend: 'Ext.data.Model',
+            fields: [
+                {name: 'name',type: 'string'}
+            ]
+        });
+
+        var store = Ext.create('Ext.data.TreeStore', {
+            model: 'Tree Model',
+            proxy: {
+                type: 'memory',
+                data:args.data,
+                reader: {
+                    type: 'json'
+                }
+            }
+        });
+
+        var tree = Ext.create('Ext.tree.Panel', {
+            autoWidth: true,
+            autoHeight: true,
+            renderTo: args.id,
+            collapsible: true,
+            useArrows: true,
+            rootVisible: false,
+            store: store,
+            frame: true,
+            //the 'columns' property is now 'headers'
+            columns: [{
+                xtype: 'treecolumn', //this is so we know which column will show the tree
+                //text: 'Task',
+                flex: 2,
+                sortable: true,
+                dataIndex: 'name'
+            }],
+            dockedItems: [{
+                xtype: 'toolbar',
+                items: [
+                    {
+                        xtype: 'button',
+                        text: 'Select All',
+                        handler: function(){
+                            tree.getRootNode().cascadeBy(function(){
+                                this.set( 'checked', true );
+                            });
+                        }
+                    },
+                    {
+                        xtype: 'button',
+                        text: 'Clear ',
+                        handler: function(){
+                            tree.getRootNode().cascadeBy(function(){
+                                this.set( 'checked', false );
+                            });
+                        }
+                    }
+                ]
+            }],
+            listeners: {
+                itemclick : function(view, record, item, index, event) {
+                    if(record)
+                    {
+                        if(record.childNodes.length > 0){
+                            record.cascadeBy(function(){
+                                this.set( 'checked', true );
+                            });
+                            record.set( 'checked', false );
+                        }
+                    }
+                }
+            }
+
+        });
+
+        return tree;
+
+    },
+
+
     _createVariantPanel:function(){
        var _this = this;
        this.grid = this._createBrowserGrid();
@@ -72,7 +159,6 @@ VariantWidget.prototype = {
             // Can also be specified in the request options
             Ext.Ajax.cors = true;
 
-            //console.log(_this.filters);
 
             var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants?exclude=files,chunkIds'+_this.filters;
              //console.log(url)
@@ -222,12 +308,14 @@ VariantWidget.prototype = {
                 }
             });
 
-            jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+
+            jQuery('#'+_this.variantSubTabsID+' a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                // console.log(e)
                 if(variant_present === 1){
                     var grid = _this.vbGrid
                     var data = _this._getSelectedData();
-                    if(e.target.parentElement.id == _this.variantEffectTableID+'Li' ){
+                    console.log(e.target.parentElement.id)
+                    if(e.target.parentElement.id === _this.variantEffectTableID+'Li' ){
                         _this.gridEffect = _this._createEffectGrid();
                         _this._updateEffectGrid(data.position);
                     }
