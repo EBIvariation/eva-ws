@@ -55,7 +55,7 @@ VariantWidget.prototype = {
             useArrows: true,
             rootVisible: false,
             store: store,
-            frame: true,
+            frame: false,
             hideHeaders: true,
             bodyBorder:false,
 
