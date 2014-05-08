@@ -101,11 +101,10 @@ VariantWidget.prototype = {
                     {
                         if(record.hasChildNodes()){
                             record.cascadeBy(function(){
-                                console.log()
-                                c.get('checked')
                                 this.set( 'checked', true );
                                 record.set( 'checked', false );
                             });
+
 
                         }
                     }
