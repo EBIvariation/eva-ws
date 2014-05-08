@@ -65,14 +65,12 @@ VariantWidget.prototype = {
                 //text: 'Task',
                 flex: 2,
                 sortable: false,
-                dataIndex: 'name',
-
+                dataIndex: 'name'
             }],
-
 
             dockedItems: [{
                 xtype: 'toolbar',
-                ui: 'light',
+                ui: 'footer',
                 frame: false,
                 items: [
                     {
@@ -96,18 +94,24 @@ VariantWidget.prototype = {
                 ]
             }],
 
+
             listeners: {
                 itemclick : function(view, record, item, index, event) {
                     if(record)
                     {
-                        if(record.childNodes.length > 0){
+                        if(record.hasChildNodes()){
                             record.cascadeBy(function(){
+                                console.log()
+                                c.get('checked')
                                 this.set( 'checked', true );
+                                record.set( 'checked', false );
                             });
-                            record.set( 'checked', false );
+
                         }
                     }
                 }
+
+
             }
 
         });

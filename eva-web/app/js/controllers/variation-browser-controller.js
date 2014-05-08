@@ -243,11 +243,11 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     $scope.variationClasses = [
         {
             name:'Variation',
-            cls: "folder",
+            //cls: "folder",
             expanded: true,
-            leaf: false,
+            //leaf: false,
             children: [
-                        {acc: "SO:0001483", name: "SNV", description: "SNVs are single nucleotide positions in genomic DNA at which different sequence alternatives exist.", call: "Variation",leaf: true,checked: false,  iconCls :'no-icon'},
+                        {acc: "SO:0001483", name: "SNV", description: "SNVs are single nucleotide positions in genomic DNA at which different sequence alternatives exist.", call: "Variation",leaf: true,checked: false},
                         {acc: "SO:1000032", name: "indel", description: "A sequence alteration which included an insertion and a deletion, affecting 2 or more bases.", call: "Variation",leaf: true,checked: false,  iconCls :'no-icon'},
                         {acc: "SO:1000002", name: "substitution", description: "A sequence alteration where the length of the change in the variant is the same as that of the reference.", call: "Variation",leaf: true,checked: false,  iconCls :'no-icon'},
                         {acc: "SO:0000667", name: "insertion", description: "The sequence of one or more nucleotides added between two adjacent nucleotides in the sequence.", call: "Variation", leaf: true,checked: false,  iconCls :'no-icon'},
