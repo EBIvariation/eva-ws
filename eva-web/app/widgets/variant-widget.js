@@ -83,8 +83,6 @@ VariantWidget.prototype = {
                                 }else{
                                     this.set( 'checked', true );
                                 }
-
-                                console.log(this);
                             });
                         }
                     },
@@ -107,19 +105,22 @@ VariantWidget.prototype = {
 
             listeners: {
                 itemclick : function(view, record, item, index, event) {
+
                     if(record)
                     {
                         if(record.hasChildNodes()){
+                            var is_checked = record.firstChild.data.checked;
                             record.cascadeBy(function(){
-                                this.set( 'checked', true );
-                                //record.set( 'checked', false );
+                                if(is_checked == false){
+                                    this.set( 'checked', true );
+                                }else{
+                                    this.set( 'checked', false );
+                                }
                                 record.set('checked', null);
                             });
                         }
                     }
                 }
-
-
             }
 
         });
