@@ -78,7 +78,13 @@ VariantWidget.prototype = {
                         text: 'Select All',
                         handler: function(){
                             tree.getRootNode().cascadeBy(function(){
-                                this.set( 'checked', true );
+                                if(this.hasChildNodes()){
+                                    this.set('checked', null);
+                                }else{
+                                    this.set( 'checked', true );
+                                }
+
+                                console.log(this);
                             });
                         }
                     },
@@ -87,7 +93,11 @@ VariantWidget.prototype = {
                         text: 'Clear',
                         handler: function(){
                             tree.getRootNode().cascadeBy(function(){
-                                this.set( 'checked', false );
+                                if(this.hasChildNodes()){
+                                    this.set('checked', null);
+                                }else{
+                                    this.set( 'checked', false );
+                                }
                             });
                         }
                     }
@@ -102,10 +112,9 @@ VariantWidget.prototype = {
                         if(record.hasChildNodes()){
                             record.cascadeBy(function(){
                                 this.set( 'checked', true );
-                                record.set( 'checked', false );
+                                //record.set( 'checked', false );
+                                record.set('checked', null);
                             });
-
-
                         }
                     }
                 }
