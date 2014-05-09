@@ -30,6 +30,7 @@
     <!-- /build -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
 
     <!-- build:script vendor -->
     <script type="text/javascript" src="../vendor/underscore-min.js"></script>
@@ -160,6 +161,7 @@
 
 </head>
 <body>
+
 <div ebi-header></div>
 <div id="wrapper" class="container_24">
     <div id="local-masthead" class="masthead grid_24 nomenu">
@@ -195,25 +197,27 @@
         <nav class="" >
             <ul class="nav nav-pills" id="topMenuTab">
                 <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
-                <li id="variationLi"><a href="#variation" data-toggle="tab">Variation</a></li>
-                <li id="genesLi"><a href="#genes" data-toggle="tab">Genes</a></li>
+                <li id="variationLi"><a href="#vbrowser" data-toggle="tab">Variat Browser</a></li>
+                <li id="genesLi"><a href="#gbrowser" data-toggle="tab">Genes</a></li>
                 <li id="samplesLi"><a href="#samples" data-toggle="tab">Samples</a></li>
                 <li id="clinicalLi"><a href="#clinical" data-toggle="tab">Clinical</a></li>
+                <li id="variantViewLi"><a href="#variantView" data-toggle="tab">Variant View</a></li>
             </ul>
         </nav>
         <!-- /local-nav -->
     </div>
-    <div ui-view  id="content" role="main" class="grid_24 clearfix">
+    <div  id="content" role="main" class="grid_24 clearfix">
 
+        <!--<ng-view></ng-view>-->
         <div class="tab-content">
             <div class="tab-pane active" id="home">
                 <home-widget></home-widget>
             </div>
-            <div class="tab-pane" id="variation">
+            <div class="tab-pane" id="vbrowser">
                 <variant-widget></variant-widget>
             </div>
 
-            <div class="tab-pane" id="genes">
+            <div class="tab-pane" id="gbrowser">
                 <gene-widget></gene-widget>
             </div>
 
@@ -225,31 +229,85 @@
                 clinical
             </div>
 
-        </div>
+            <div class="tab-pane" id="variantView">
+                <variant-view></variant-view>
+            </div>
 
+        </div>
     </div>
-</div>
+
+ </div>
+
+
+
+
 
 <div ebi-footer></div>
 
 <script>
-        $(function () {
-            $('#topMenuTab a:first').tab('show')
-        })
-        $('#topMenuTab a').click(function (e) {
-            e.preventDefault()
-            $(this).tab('show')
-        })
-        $('#innerDocMenuTab a').click(function (e) {
-            e.preventDefault()
-            $(this).tab('show')
-        })
-
 
     var eventManager = new EventManager();
     eventManager.on("variant:search", function(e) {
         //console.log('search');
     });
+
+
+    $(function () {
+        var data = getUrlParameters("");
+
+        if(data.tab_id){
+            $('#topMenuTab a[href=#'+data.tab_id+']').trigger("click");
+        }else{
+            $('#topMenuTab a:first').tab('show')
+        }
+    })
+
+    $('#topMenuTab a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+
+    })
+    $('#innerDocMenuTab a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+    })
+
+
+
+
+
+
+
+        //$('#topMenuTab a:last').tab('show')
+
+
+
+    /*
+     Function: getUrlParameters
+     Description: Get the value of URL parameters either from
+     current URL or static URL
+     Author: Tirumal
+     URL: www.code-tricks.com
+     */
+    function getUrlParameters(staticURL){
+        var data = [];
+
+        var currLocation = (staticURL.length)? staticURL : window.location.search;
+        if(currLocation.indexOf("?") >= 0)
+        {
+            parArr = currLocation.split("?")[1].split("&");
+            if(parArr){
+                for(var i = 0; i < parArr.length; i++){
+                    parr = parArr[i].split("=");
+                    data.tab_id = parr[0];
+                    data.value = parr[1];
+                    return data;
+                }
+            }
+        }else{
+            return false
+        }
+    }
 
 
 </script>

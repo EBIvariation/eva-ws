@@ -26,8 +26,8 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                 $scope.consequenceTypeTreeId     = 'consequenceTypeTreeID';
                 $scope.variationClassesTreeId    = 'variationClassesTreeID';
 
-
                 jQuery('#topMenuTab a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+
                     var variantTreeWidget;
                     variantTreeWidget = new VariantWidget({});
 
@@ -279,20 +279,26 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
     };
 
-}).config(function($stateProvider, $urlRouterProvider) {
-//    $stateProvider
-//        .state('variant', {
-//            url: "/variant",
-//            templateUrl: "views/variation-browser-view.html",
-//        })
-//        .state('variant.view', {
-//            url: "/view",
-//            templateUrl: "views/variant-view.html",
-//        })
-//        .state('variant.browser', {
-//            url: "/browser",
-//            templateUrl: "views/variant-browser.html",
-//
-//        })
+}).directive('variantView', function () {
+    return {
+        restrict: 'E',
+        replace: true,
+        transclude: true,
+        templateUrl: 'views/variant-view.html',
+        controller: function($scope,ebiVarMetadataService) {
+
+            $scope.variantView = 'sdasfd';
+            var data = getUrlParameters("");
+            var variantInfoUrl = METADATA_HOST+'/'+VERSION+'/variants/'+data.value+'/info';
+            //$scope.variantInfoData = ebiVarMetadataService.fetchData(variantInfoUrl);
+            $scope.variantInfoData = variantInfoUrl;
+            //console.log( variantInfoUrl)
+        },
+        link: function($scope, element, attr) {
+
+
+        }
+
+    };
 
 });
