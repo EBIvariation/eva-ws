@@ -127,6 +127,21 @@ div .ngHeaderText{
     color: #fff;
 }
 
+.table-borderless td,
+.table-borderless th {
+    border: 0;
+}
+
+.table-borderless>tbody>tr>td {
+    border-top: none;
+}
+
+.div-bordered{
+    border-left: double #ADADAD;
+    border-top: 1px solid #ADADAD;
+    border-bottom: 1px solid #ADADAD;
+}
+
 
 
 

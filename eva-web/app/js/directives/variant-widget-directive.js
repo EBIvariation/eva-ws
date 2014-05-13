@@ -292,11 +292,14 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
             $scope.variantView = 'sdasfd';
             var data = getUrlParameters("");
             var variantInfoUrl = METADATA_HOST+'/'+VERSION+'/variants/'+data.value+'/info';
-            //$scope.variantInfoData = ebiVarMetadataService.fetchData(variantInfoUrl);
-            $scope.variantInfoData = variantInfoUrl;
+            var tmpData = ebiVarMetadataService.fetchData(variantInfoUrl);
+
+            $scope.variantInfoData = tmpData.response.result[0];
+
+            console.log($scope.variantInfoData)
 
             $scope.variant = data.value;
-            //console.log( variantInfoUrl)
+
         },
         link: function($scope, element, attr) {
 

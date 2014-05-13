@@ -118,8 +118,8 @@ VariantGenotypeWidget.prototype = {
         var dataFields = [];
         var dataColumns = [];
 
-        dataFields.push('Studies');
-        var dataColumns = [{text:'Studies',flex:1,sortable:false,dataIndex:'Studies',align:'center'}];
+        dataFields.push('Samples');
+        var dataColumns = [{text:'Samples',flex:1,sortable:false,dataIndex:'Samples',align:'center'}];
 
         for(key in columnData ){
             dataFields.push(columnData[key]);

@@ -190,7 +190,7 @@ VariantWidget.prototype = {
             _this.vbStore = Ext.create('Ext.data.JsonStore', {
                 autoLoad: true,
                 autoSync: true,
-                //autoLoad: {start: 0, limit: 5},
+                autoLoad: {start: 0, limit: 10},
                 pageSize: 10,
                 remoteSort: true,
                 model: this.variantTableID,
@@ -202,7 +202,7 @@ VariantWidget.prototype = {
                     reader: {
                         type: 'json',
                         root: 'response.result',
-                        //totalProperty: 'response.numResults'
+                        totalProperty: 'response.numTotalResults'
                     }
                 }
 
