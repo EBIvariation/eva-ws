@@ -306,6 +306,7 @@ VariantWidget.prototype = {
                         var data = _this._getSelectedData();
                         _this._updateEffectGrid(data.position);
                         _this._updateFilesGrid(data.variantId);
+                        _this._createGenotypeGrid(data.variantId);
                         var activeTab = jQuery('#'+_this.variantSubTabsID+' .active').attr('id');
                         if(activeTab  === _this.variantGenomeViewerID+'Li'){
                             var region = new Region();
@@ -317,13 +318,13 @@ VariantWidget.prototype = {
                         grid.store.on('load', function(store, records, options){
                             if(_this.vbStore.getCount() > 0){
                                 variant_present = 1;
+                                var variantGenotypeArgs = [];
+
+                                grid.getSelectionModel().select(0);
                                 _this.gridFiles = _this._createFilesGrid();
                                 _this.gridEffect = _this._createEffectGrid();
                                 _this.gridStats = _this._createStatesGrid();
-                                grid.getSelectionModel().select(0);
                                 grid.fireEvent('itemclick', grid, grid.getSelectionModel().getLastSelected());
-
-
                             }else{
                                 variant_present = 0;
                             }
@@ -344,9 +345,13 @@ VariantWidget.prototype = {
                         _this._updateEffectGrid(data.position);
                     }
                     else if(e.target.parentElement.id === _this.variantFilesTableID+'Li'){
+
                         _this.gridFiles = _this._createFilesGrid();
                         _this.gridStats = _this._createStatesGrid();
                         _this._updateFilesGrid(data.variantId);
+                    }
+                    else if(e.target.parentElement.id === _this.variantGenoTypeTableID+'Li'){
+                        _this._createGenotypeGrid(data.variantId);
                     }
                     else if(e.target.parentElement.id  === _this.variantGenomeViewerID+'Li'){
                         var region = new Region();
@@ -359,6 +364,19 @@ VariantWidget.prototype = {
 
         return _this.vbGrid;
     },
+
+    _createGenotypeGrid:function(args){
+        var _this = this;
+        var variantGenotype = new VariantGenotypeWidget({
+            url       :  METADATA_HOST+'/'+VERSION+'/variants/'+args+'/info',
+            render_id : _this.variantGenoTypeTableID,
+            title: 'Genotypes',
+            pageSize:10
+        });
+        variantGenotype.draw();
+
+    },
+
 
     _updateFilesGrid:function(args){
 

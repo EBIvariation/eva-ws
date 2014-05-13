@@ -103,6 +103,33 @@ div .ngHeaderText{
 }
 
 
+#variantViewTabs{
+    position: fixed;
+}
+#variantViewTabs a, #variantViewTabs a:link, #variantViewTabs a:visited{
+
+    border-bottom-width: 1px;
+    border-bottom-style: none;
+}
+#variantViewTabsnav li,#variantViewTabs nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center
+}
+
+
+#variantViewTabs a:hover {
+    background: #c6deef;
+}
+#variantViewTabs a.active {
+    background: #428BCA;
+    color: #fff;
+}
+
+
+
+
 
 
 

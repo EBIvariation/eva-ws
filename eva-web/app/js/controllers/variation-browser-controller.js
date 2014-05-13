@@ -89,8 +89,9 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     };
 
     $scope.location = '1:5000-3500000';
+    $scope.location = '21:9411240-9411260';
 
-    $scope.gene = 'TMEM51';
+    //$scope.gene = 'TMEM51';
 
     function updateRegion(args){
 

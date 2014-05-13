@@ -42,6 +42,11 @@
     <script type="text/javascript" src="../vendor/extJS/js/ext-all.js"></script>
     <script type="text/javascript" src="../vendor/angular-ui-router.min.js"></script>
     <script type="text/javascript" src="../vendor/checklist-model.js"></script>
+    <script type="text/javascript" src="../vendor/angular-scroll.min.js"></script>
+    <script type="text/javascript" src="../vendor/extJS/ux/SlidingPager.js"></script>
+    <script type="text/javascript" src="../vendor/extJS/ux/data/PagingMemoryProxy.js"></script>
+
+
     <!--<script type="text/javascript" src="../vendor/extJS/js/ext-debug.js"></script>-->
     <!-- /build -->
 
@@ -150,6 +155,7 @@
     <!------------------------Widgets ----------------------------->
     <script type="text/javascript" src="../app/widgets/variant-widget.js"></script>
     <script type="text/javascript" src="../app/widgets/gene-widget.js"></script>
+    <script type="text/javascript" src="../app/widgets/variant-genotype.js"></script>
 
     <!---------------------services -------------------------------->
     <script type="text/javascript" src="js/ebi-var-services/ebivar-services-metadata.js"></script>
@@ -160,7 +166,7 @@
 
 
 </head>
-<body>
+<body data-spy="scroll" data-target="#myScrollspy" >
 
 <div ebi-header></div>
 <div id="wrapper" class="container_24">
@@ -206,6 +212,7 @@
         </nav>
         <!-- /local-nav -->
     </div>
+
     <div  id="content" role="main" class="grid_24 clearfix">
 
         <!--<ng-view></ng-view>-->
@@ -254,9 +261,8 @@
 
     $(function () {
         var data = getUrlParameters("");
-
         if(data.tab_id){
-            $('#topMenuTab a[href=#'+data.tab_id+']').trigger("click");
+            $('#topMenuTab a[href=#'+data.tab_id+']').click();
         }else{
             $('#topMenuTab a:first').tab('show')
         }
@@ -271,14 +277,16 @@
         e.preventDefault()
         $(this).tab('show')
     })
+    $('#topMenuTab a').on('shown', function (e) {
+        alert('sdf');
+        window.location.hash = e.target.hash;
+    })
 
+    $('#topMenuTab a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
 
-
-
-
-
-
-        //$('#topMenuTab a:last').tab('show')
+    })
 
 
 
@@ -308,6 +316,8 @@
             return false
         }
     }
+
+
 
 
 </script>

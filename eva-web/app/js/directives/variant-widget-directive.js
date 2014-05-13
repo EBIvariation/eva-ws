@@ -20,6 +20,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                 $scope.variantFilesTableId       = 'variantFilesTable';
                 $scope.variantStatsViewId        = 'variantStatsView';
                 $scope.variantStatsChartId       = 'variantStatsChart';
+                $scope.variantGenoTypeTableId    = 'variantGenoTypeTable';
                 $scope.variantGenomeViewerId     = 'variant-browser-gv';
                 $scope.variantBrowserSubTabsId   = 'variantSubTabs';
                 $scope.studiesTreeId             = 'studiesTreeID';
@@ -81,15 +82,16 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
                     var variantWidget;
                     variantWidget = new VariantWidget({
-                        variantTableID       : $scope.variantTableId,
-                        variantEffectTableID : $scope.variantEffectTableId,
-                        variantFilesTableID  : $scope.variantFilesTableId,
-                        variantStatsViewID   : $scope.variantStatsViewId,
-                        variantStatsChartID  : $scope.variantStatsChartId,
-                        location             : $scope.location,
-                        filters              : $scope.filters,
-                        variantGenomeViewerID: $scope.variantGenomeViewerId,
-                        variantSubTabsID     : $scope.variantBrowserSubTabsId,
+                        variantTableID          : $scope.variantTableId,
+                        variantEffectTableID    : $scope.variantEffectTableId,
+                        variantFilesTableID     : $scope.variantFilesTableId,
+                        variantStatsViewID      : $scope.variantStatsViewId,
+                        variantStatsChartID     : $scope.variantStatsChartId,
+                        variantGenoTypeTableID  : $scope.variantGenoTypeTableId,
+                        location                : $scope.location,
+                        filters                 : $scope.filters,
+                        variantGenomeViewerID   : $scope.variantGenomeViewerId,
+                        variantSubTabsID        : $scope.variantBrowserSubTabsId,
                     });
 
                     variantWidget.draw();
@@ -292,6 +294,8 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
             var variantInfoUrl = METADATA_HOST+'/'+VERSION+'/variants/'+data.value+'/info';
             //$scope.variantInfoData = ebiVarMetadataService.fetchData(variantInfoUrl);
             $scope.variantInfoData = variantInfoUrl;
+
+            $scope.variant = data.value;
             //console.log( variantInfoUrl)
         },
         link: function($scope, element, attr) {

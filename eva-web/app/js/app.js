@@ -1,7 +1,7 @@
 /**
  * Created by jag on 17/03/2014.
  */
-var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','highcharts-ng','ebiVar.Services.Metadata','homeWidgetModule','variantWidgetModule','checklist-model', 'geneWidgetModule', 'ui.router']);
+var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','highcharts-ng','ebiVar.Services.Metadata','homeWidgetModule','variantWidgetModule','checklist-model', 'geneWidgetModule', 'ui.router', 'duScroll']);
 
 
 
