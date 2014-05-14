@@ -1,6 +1,6 @@
 <div>
     <div>
-        <h1>{{variant}} Info</h1>
+        <h2>{{variant}} Info</h2>
     </div>
     <div class="row">
         <div class="col-sm-3  col-md-2 col-lg-2">
@@ -14,10 +14,10 @@
         <div class="col-sm-9 col-md-10 col-lg-10">
             <div id="summary">
                 <div class="row">
-                    <h2>Summary</h2>
+                    <h3>Summary</h3>
                     <div class="col-md-6">
-                        <div class="table-responsive div-bordered">
-                            <table class="table table-borderless">
+                        <div class="table-responsive div-bordered jumbotron">
+                            <table class="table table-borderless jumbotron">
                                 <tr><td>ID</td><td>{{variantInfoData.id}}</td></tr>
                                 <tr><td>Type</td><td>{{variantInfoData.type}}</td></tr>
                                 <tr><td>Chromosome Position</td><td>{{variantInfoData.chr}}:{{variantInfoData.start}}-{{variantInfoData.end}}</td></tr>
@@ -31,25 +31,41 @@
             </div>
 
 
-            <!--<div id="effects">-->
-                <!--<h2>Effects</h2>-->
-                <!--<p>Bacon strip steak ground round, tongue pastrami short ribs pork chop venison turducken sausage sirloin. Flank chicken pork chop capicola turkey turducken cow pork loin biltong meatball drumstick pancetta filet mignon ground round fatback. Ham hock jerky short ribs brisket. Meatloaf shoulder pork chop capicola, sirloin swine pig pork. Jerky ribeye hamburger pork loin sirloin kevin bresaola boudin chuck flank. Ham hock pork belly chicken jerky rump bresaola.</p>-->
-            <!--</div>-->
+            <div id="effects">
+                <h3>Effects</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4></h4>
+                        <div class="table-responsive div-bordered jumbotron" >
+                            <div ng-repeat="(key,value) in  effectsData">
+                                <h3><small><span class="label label-primary">{{value.id}} </span>&nbsp;<button type="button" ng-click="showEffects()" class="btn  btn-default btn-xs">{{effects}}</button></small></h3>
+                                <div ng-show="showEffectsState" ng-repeat="(k,v) in  value.data">
+                                    <table class="table table-borderless jumbotron">
+                                        <tr><td>featureId</td><td>{{v.featureId}}</td></tr>
+                                        <tr><td>Position</td><td>{{v.featureChromosome}}:{{v.featureStart}}-{{v.featureEnd}}</td></tr>
+                                        <tr><td>featureType</td><td>{{v.featureType}}</td></tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div id="files">
-                <h2>Files</h2>
+                <h3>Files</h3>
                 <div class="row">
                     <div class="col-md-6">
                         <h4>Attributes</h4>
-                        <div class="table-responsive div-bordered">
-                            <table class="table table-borderless">
+                        <div class="table-responsive div-bordered jumbotron" >
+                            <table class="table table-borderless jumbotron ">
                                 <tr ng-repeat="(k,v) in variantFilesData.attributes"><td>{{k}} </td><td>{{v}}</td></tr>
                             </table>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <h4>Info</h4>
-                        <div class="table-responsive div-bordered">
+                        <div class="table-responsive">
                             <p>File ID  : {{variantFilesData.fileId}} </p>
                             <p>Study ID : {{variantFilesData.studyId}} </p>
                         </div>
@@ -59,11 +75,11 @@
 
 
             <div id="stats">
-                <h2>Stats</h2>
+                <h3>Stats</h3>
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="table-responsive div-bordered">
-                            <table class="table table-borderless">
+                        <div class="table-responsive div-bordered jumbotron">
+                            <table class="table table-borderless jumbotron">
                                 <tr ng-repeat="(k,v) in variantFilesData.stats"><td>{{k}} </td><td>{{v}}</td></tr>
                             </table>
                         </div>

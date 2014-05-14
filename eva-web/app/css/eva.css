@@ -92,6 +92,9 @@ div .ngHeaderText{
  h3 {
      color:#BF8230;
  }
+ h4,h2 {
+    color:#426783;
+ }
 
  h3 span{
      color:#BBBBBB;
@@ -141,6 +144,7 @@ div .ngHeaderText{
     border-top: 1px solid #ADADAD;
     border-bottom: 1px solid #ADADAD;
     border-right: 1px solid #ADADAD;
+
 }
 
 

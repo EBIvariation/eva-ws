@@ -294,12 +294,51 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
             var variantInfoUrl = METADATA_HOST+'/'+VERSION+'/variants/'+data.value+'/info';
             var tmpData = ebiVarMetadataService.fetchData(variantInfoUrl);
 
+            $scope.variant = data.value;
             $scope.variantInfoData  = tmpData.response.result[0];
             $scope.variantFilesData = tmpData.response.result[0].files[0];
 
-            console.log($scope.variantFilesData)
+            console.log($scope.variantInfoData)
 
-            $scope.variant = data.value;
+            var position = $scope.variantInfoData.chr + ":" + $scope.variantInfoData.start + ":" + $scope.variantInfoData.ref + ":" + $scope.variantInfoData.alt;
+            //var url = 'http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest/latest/hsa/genomic/variant/'+position+'/consequence_type?of=json';
+            var url = 'http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest/latest/hsa/genomic/variant/'+position+'/consequence_type?of=json';
+            var effectsTempData = ebiVarMetadataService.fetchData(url);
+
+            var effectsTempDataArray = [];
+            $.each(effectsTempData, function(key, value) {
+                var consequenceType = value.consequenceType;
+                if(!effectsTempDataArray[consequenceType]) effectsTempDataArray[consequenceType] = [];
+                effectsTempDataArray[consequenceType].push({'featureId':value.featureId,'featureType':value.featureType,'featureChromosome':value.featureChromosome,'featureStart':value.featureStart,'featureEnd':value.featureEnd});
+            });
+
+            var effectsDataArray = new Array();
+            for (key in effectsTempDataArray){
+                effectsDataArray.push({id:key,data:effectsTempDataArray[key]});
+            }
+            $scope.effectsData = effectsDataArray;
+
+            $scope.effects = '-';
+            $scope.showEffectsState = true;
+
+
+
+            console.log($scope.effectsData );
+
+            $scope.showEffects = function(){
+                this.showEffectsState = !this.showEffectsState;
+                if(!this.showEffectsState){
+                    this.effects = '+';
+                }else{
+                    this.effects = '-';
+                }
+            };
+
+
+
+
+
+
 
         },
         link: function($scope, element, attr) {
