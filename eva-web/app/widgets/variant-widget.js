@@ -240,7 +240,9 @@ VariantWidget.prototype = {
                         {
                             text     : 'ID',
                             sortable : false,
-                            dataIndex: 'id'
+                            dataIndex: 'id',
+                            xtype: 'templatecolumn',
+                            tpl: '<a href="?variantInfo={id}" target="_blank">{id}</a>'
 
                         },
                         {

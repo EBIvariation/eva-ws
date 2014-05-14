@@ -8,46 +8,69 @@
                 <li><a href="#summary" du-smooth-scroll du-scrollspy offset="300">Summary</a></li>
                 <li><a href="#effects" du-smooth-scroll du-scrollspy offset="300">Effects</a></li>
                 <li><a href="#files" du-smooth-scroll du-scrollspy offset="300">Files</a></li>
+                <li><a href="#stats" du-smooth-scroll du-scrollspy offset="300">Stats</a></li>
             </ul>
        </div>
         <div class="col-sm-9 col-md-10 col-lg-10">
             <div id="summary">
-                <section>
+                <div class="row">
                     <h2>Summary</h2>
-
-                    <div class="table-responsive div-bordered" style="font-size: 16px;">
-                        <table class="table table-borderless">
-                           <tr><td>ID</td><td>{{variantInfoData.id}}</td></tr>
-                           <tr><td>Type</td><td>{{variantInfoData.type}}</td></tr>
-                           <tr><td>Chromosome Position</td><td>{{variantInfoData.chr}}:{{variantInfoData.start}}-{{variantInfoData.end}}</td></tr>
-                           <tr><td>Ref</td><td>{{variantInfoData.ref}}</td></tr>
-                           <tr><td>Alt</td><td>{{variantInfoData.alt}}</td></tr>
-                        </table>
+                    <div class="col-md-6">
+                        <div class="table-responsive div-bordered">
+                            <table class="table table-borderless">
+                                <tr><td>ID</td><td>{{variantInfoData.id}}</td></tr>
+                                <tr><td>Type</td><td>{{variantInfoData.type}}</td></tr>
+                                <tr><td>Chromosome Position</td><td>{{variantInfoData.chr}}:{{variantInfoData.start}}-{{variantInfoData.end}}</td></tr>
+                                <tr><td>Ref</td><td>{{variantInfoData.ref}}</td></tr>
+                                <tr><td>Alt</td><td>{{variantInfoData.alt}}</td></tr>
+                            </table>
+                        </div>
                     </div>
-                </section>
+                </div>
+
             </div>
 
 
-            <section id="effects">
-                <h2>Section 2</h2>
-                <p>Bacon strip steak ground round, tongue pastrami short ribs pork chop venison turducken sausage sirloin. Flank chicken pork chop capicola turkey turducken cow pork loin biltong meatball drumstick pancetta filet mignon ground round fatback. Ham hock jerky short ribs brisket. Meatloaf shoulder pork chop capicola, sirloin swine pig pork. Jerky ribeye hamburger pork loin sirloin kevin bresaola boudin chuck flank. Ham hock pork belly chicken jerky rump bresaola.</p>
-            </section>
+            <!--<div id="effects">-->
+                <!--<h2>Effects</h2>-->
+                <!--<p>Bacon strip steak ground round, tongue pastrami short ribs pork chop venison turducken sausage sirloin. Flank chicken pork chop capicola turkey turducken cow pork loin biltong meatball drumstick pancetta filet mignon ground round fatback. Ham hock jerky short ribs brisket. Meatloaf shoulder pork chop capicola, sirloin swine pig pork. Jerky ribeye hamburger pork loin sirloin kevin bresaola boudin chuck flank. Ham hock pork belly chicken jerky rump bresaola.</p>-->
+            <!--</div>-->
 
-            <section id="files">
-                <h2>Section 3</h2>
-                <p>Shank fatback pastrami short loin, turkey jowl kielbasa ribeye chicken jerky drumstick flank ham. Swine shankle pork belly kielbasa shoulder flank jowl, sirloin doner. Kevin tri-tip bresaola leberkas. Swine ball tip cow strip steak. Ham filet mignon pork chop, pork fatback andouille pork loin shoulder jowl swine strip steak turducken prosciutto rump.</p>
+            <div id="files">
+                <h2>Files</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Attributes</h4>
+                        <div class="table-responsive div-bordered">
+                            <table class="table table-borderless">
+                                <tr ng-repeat="(k,v) in variantFilesData.attributes"><td>{{k}} </td><td>{{v}}</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Info</h4>
+                        <div class="table-responsive div-bordered">
+                            <p>File ID  : {{variantFilesData.fileId}} </p>
+                            <p>Study ID : {{variantFilesData.studyId}} </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <img src="http://lorempixel.com/1000/400/" alt="" />
 
-                <p>Tongue tri-tip pastrami, shoulder rump pork belly ground round. Ham hock chuck leberkas doner, strip steak corned beef tri-tip capicola. Rump turkey ham sausage shankle. Flank shankle pork chop ham hock. Shankle venison kielbasa, pancetta swine beef ball tip t-bone bacon hamburger ground round ribeye flank. Turducken bacon bresaola, chicken kevin boudin ball tip strip steak filet mignon pork turkey shank ground round. Kielbasa fatback prosciutto pork chop, jerky ground round leberkas boudin ball tip beef shankle shoulder swine brisket.</p>
-            </section>
+            <div id="stats">
+                <h2>Stats</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="table-responsive div-bordered">
+                            <table class="table table-borderless">
+                                <tr ng-repeat="(k,v) in variantFilesData.stats"><td>{{k}} </td><td>{{v}}</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <section id="section-4">
-                <h2>Section 4</h2>
-                <img src="http://lorempixel.com/1000/600/" alt="" />
-
-                <p>Shoulder cow tenderloin chuck, pork chop jerky doner leberkas. Chuck sausage hamburger, kevin beef pork chop pork shoulder ground round ball tip turducken flank. Bresaola tri-tip meatloaf, salami venison tail pig shank shankle jowl sausage brisket cow biltong turducken. Swine turducken hamburger ball tip short loin prosciutto kevin jowl tri-tip. Doner meatloaf pork brisket.</p>
-            </section>
         </div>
     </div>
 

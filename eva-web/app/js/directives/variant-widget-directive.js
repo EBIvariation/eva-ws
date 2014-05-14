@@ -294,9 +294,10 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
             var variantInfoUrl = METADATA_HOST+'/'+VERSION+'/variants/'+data.value+'/info';
             var tmpData = ebiVarMetadataService.fetchData(variantInfoUrl);
 
-            $scope.variantInfoData = tmpData.response.result[0];
+            $scope.variantInfoData  = tmpData.response.result[0];
+            $scope.variantFilesData = tmpData.response.result[0].files[0];
 
-            console.log($scope.variantInfoData)
+            console.log($scope.variantFilesData)
 
             $scope.variant = data.value;
 
