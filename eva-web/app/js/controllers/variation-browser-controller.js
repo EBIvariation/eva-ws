@@ -2,7 +2,7 @@
  * Created by jag on 17/03/2014.
  */
 
-var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootScope', 'ebiAppDomainHostService','ebiVarMetadataService', function ($scope, $rootScope, ebiAppDomainHostService, ebiVarMetadataService) {
+var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootScope', 'ebiVarMetadataService', function ($scope, $rootScope, ebiVarMetadataService) {
 
 
 
@@ -12,7 +12,7 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 
     function createSummaryChart(){
 
-        var summaryUrl = METADATA_HOST+'/'+VERSION+'/genes/ranking';
+        var summaryUrl = METADATA_HOST+'/'+METADATA_VERSION+'/genes/ranking';
         var summaryData = ebiVarMetadataService.fetchData(summaryUrl);
         var summaryChartData = parseSummaryChartData(summaryData);
         console.log(summaryChartData.data)
@@ -96,7 +96,7 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     function updateRegion(args){
 
         if(args){
-                var geneInfoURL = 'http://ws.bioinfo.cipf.es/cellbase/rest/latest/hsa/feature/gene/'+$scope.gene+'/info?of=json';
+                var geneInfoURL = CELLBASE_HOST+'/'+CELLBASE_VERSION+'/hsa/feature/gene/'+$scope.gene+'/info?of=json';
                 var regionData = ebiVarMetadataService.fetchData(geneInfoURL);
                 var region = regionData[0][0].chromosome+':'+regionData[0][0].start+'-'+regionData[0][0].end;
                 //sconsole.log(region)

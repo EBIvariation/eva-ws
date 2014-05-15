@@ -184,7 +184,7 @@ VariantWidget.prototype = {
             Ext.Ajax.cors = true;
 
 
-            var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants?exclude=files,chunkIds'+_this.filters;
+            var url = METADATA_HOST+'/'+METADATA_VERSION+'/segments/'+_this.location+'/variants?exclude=files,chunkIds'+_this.filters;
              //console.log(url)
             // create the data store
             _this.vbStore = Ext.create('Ext.data.JsonStore', {
@@ -347,7 +347,6 @@ VariantWidget.prototype = {
                         _this._updateEffectGrid(data.position);
                     }
                     else if(e.target.parentElement.id === _this.variantFilesTableID+'Li'){
-
                         _this.gridFiles = _this._createFilesGrid();
                         _this.gridStats = _this._createStatesGrid();
                         _this._updateFilesGrid(data.variantId);
@@ -370,7 +369,7 @@ VariantWidget.prototype = {
     _createGenotypeGrid:function(args){
         var _this = this;
         var variantGenotype = new VariantGenotypeWidget({
-            url       :  METADATA_HOST+'/'+VERSION+'/variants/'+args+'/info',
+            url       :  METADATA_HOST+'/'+METADATA_VERSION+'/variants/'+args+'/info',
             render_id : _this.variantGenoTypeTableID,
             title: 'Genotypes',
             pageSize:10
@@ -384,7 +383,7 @@ VariantWidget.prototype = {
 
         var _this = this;
         var variantId = args;
-        var url = METADATA_HOST+'/'+VERSION+'/variants/'+variantId+'/info';
+        var url = METADATA_HOST+'/'+METADATA_VERSION+'/variants/'+variantId+'/info';
         var data = this._fetchData(url);
 
         if(data.response.result){
@@ -400,7 +399,7 @@ VariantWidget.prototype = {
     _updateEffectGrid:function(args){
         var _this = this;
         var position = args;
-        var url = 'http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest/latest/hsa/genomic/variant/'+position+'/consequence_type?of=json';
+        var url = CELLBASE_HOST+'/'+CELLBASE_VERSION+'/hsa/genomic/variant/'+position+'/consequence_type?of=json';
         var data = _this._fetchData(url);
 
         if(data.length > 0){
@@ -565,7 +564,7 @@ VariantWidget.prototype = {
 
         });
 
-        var url = METADATA_HOST+'/'+VERSION+'/segments/'+_this.location+'/variants?exclude=effects,chunkIds';
+        var url = METADATA_HOST+'/'+METADATA_VERSION+'/segments/'+_this.location+'/variants?exclude=effects,chunkIds';
 
         // create the data store
         _this.vfStore = Ext.create('Ext.data.JsonStore', {

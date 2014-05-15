@@ -207,7 +207,7 @@
                 <li id="genesLi"><a href="#gbrowser" data-toggle="tab">Genes</a></li>
                 <li id="samplesLi"><a href="#samples" data-toggle="tab">Samples</a></li>
                 <li id="clinicalLi"><a href="#clinical" data-toggle="tab">Clinical</a></li>
-                <li class="hidden" id="variantInfo  Li"><a href="#variantID" data-toggle="tab">Variant View</a></li>
+                <li class="hidden" id="variantID  Li"><a href="#variantID" data-toggle="tab">Variant View</a></li>
             </ul>
         </nav>
         <!-- /local-nav -->
@@ -277,11 +277,6 @@
         e.preventDefault()
         $(this).tab('show')
     })
-    $('#topMenuTab a').on('shown', function (e) {
-        alert('sdf');
-        window.location.hash = e.target.hash;
-    })
-
     $('#topMenuTab a').click(function (e) {
         e.preventDefault()
         $(this).tab('show')

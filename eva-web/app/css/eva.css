@@ -89,10 +89,10 @@ div .ngHeaderText{
     border-collapse: collapse;
     vertical-align: top;
 }
- h3 {
+ h2,h4{
      color:#BF8230;
  }
- h4,h2 {
+ h3 {
     color:#426783;
  }
 
@@ -141,9 +141,9 @@ div .ngHeaderText{
 .table-bordered td {
     text-align: center;
 }
-/*.table-bordered th {*/
-    /*background-color: #207A7A;*/
-/*}*/
+.table-bordered th {
+    background-color: ;
+}
 
 .div-bordered{
     border-left: double #ADADAD;

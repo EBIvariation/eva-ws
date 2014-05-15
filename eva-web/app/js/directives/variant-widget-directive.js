@@ -114,8 +114,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
 
 
-            CELLBASE_HOST = "http://ws-beta.bioinfo.cipf.es/cellbase/rest";
-            CELLBASE_VERSION = "v3";
+
             var region = new Region({chromosome: "13", start: 32889611, end: 32889611});
             var availableSpecies = {
                 "text": "Species",
@@ -289,23 +288,25 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
         templateUrl: 'views/variant-view.html',
         controller: function($scope,ebiVarMetadataService) {
 
-            $scope.variantView = 'sdasfd';
             var data = getUrlParameters("");
-            var variantInfoUrl = METADATA_HOST+'/'+VERSION+'/variants/'+data.value+'/info';
+            var variantInfoUrl = METADATA_HOST+'/'+METADATA_VERSION+'/variants/'+data.value+'/info';
             var tmpData = ebiVarMetadataService.fetchData(variantInfoUrl);
 
+            if(!tmpData.response.numResults){
+                return;
+            }
             $scope.variant = data.value;
+
             $scope.variantInfoData  = tmpData.response.result[0];
             $scope.variantFilesData = tmpData.response.result[0].files[0];
 
             console.log($scope.variantInfoData)
 
             var position = $scope.variantInfoData.chr + ":" + $scope.variantInfoData.start + ":" + $scope.variantInfoData.ref + ":" + $scope.variantInfoData.alt;
-            //var url = 'http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest/latest/hsa/genomic/variant/'+position+'/consequence_type?of=json';
-            var url = 'http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest/latest/hsa/genomic/variant/'+position+'/consequence_type?of=json';
+            var url = CELLBASE_HOST+'/'+CELLBASE_VERSION+'/hsa/genomic/variant/'+position+'/consequence_type?of=json';
             var effectsTempData = ebiVarMetadataService.fetchData(url);
-
             var effectsTempDataArray = [];
+
             $.each(effectsTempData, function(key, value) {
                 var consequenceType = value.consequenceType;
                 if(!effectsTempDataArray[consequenceType]) effectsTempDataArray[consequenceType] = [];
@@ -335,12 +336,6 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                     this.effects = '-';
                 }
             };
-
-
-
-
-
-
 
         },
         link: function($scope, element, attr) {
