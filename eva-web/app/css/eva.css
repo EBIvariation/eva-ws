@@ -138,6 +138,12 @@ div .ngHeaderText{
 .table-borderless>tbody>tr>td {
     border-top: none;
 }
+.table-bordered td {
+    text-align: center;
+}
+/*.table-bordered th {*/
+    /*background-color: #207A7A;*/
+/*}*/
 
 .div-bordered{
     border-left: double #ADADAD;

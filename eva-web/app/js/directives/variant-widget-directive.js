@@ -309,12 +309,14 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
             $.each(effectsTempData, function(key, value) {
                 var consequenceType = value.consequenceType;
                 if(!effectsTempDataArray[consequenceType]) effectsTempDataArray[consequenceType] = [];
-                effectsTempDataArray[consequenceType].push({'featureId':value.featureId,'featureType':value.featureType,'featureChromosome':value.featureChromosome,'featureStart':value.featureStart,'featureEnd':value.featureEnd});
+                effectsTempDataArray[consequenceType].push({'featureId':value.featureId,'featureType':value.featureType,'featureChromosome':value.featureChromosome,'featureStart':value.featureStart,'featureEnd':value.featureEnd,'consequenceTypeType':value.consequenceTypeType});
             });
+
 
             var effectsDataArray = new Array();
             for (key in effectsTempDataArray){
-                effectsDataArray.push({id:key,data:effectsTempDataArray[key]});
+                console.log(effectsTempDataArray[key][0].consequenceTypeType)
+                effectsDataArray.push({id:key,name:effectsTempDataArray[key][0].consequenceTypeType,data:effectsTempDataArray[key]});
             }
             $scope.effectsData = effectsDataArray;
 
