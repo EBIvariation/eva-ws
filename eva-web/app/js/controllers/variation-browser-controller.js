@@ -4,7 +4,12 @@
 
 var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootScope', 'ebiVarMetadataService', function ($scope, $rootScope, ebiVarMetadataService) {
 
+    $scope.searchboxValue;
+    $scope.search = function(value){
 
+        var url = window.location.origin+window.location.pathname+'?variantID='+$scope.searchboxValue;
+        window.location.href = url;
+    }
 
     eventManager.on("gene:search variant:search" , function(e) {
        updateRegion( $scope.gene);
