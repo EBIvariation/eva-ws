@@ -1,5 +1,5 @@
 /*global module:false*/
-    module.exports = function (grunt) {
+module.exports = function (grunt) {
 
     // Project configuration.
     grunt.initConfig({
@@ -8,7 +8,9 @@
         meta: {
             version : {
                 eva:'1.0',
-                utils:'1.0'
+                utils:'1.0',
+                cellbase:'1.0',
+                gv:'1.0'
             }
         },
 
@@ -29,30 +31,27 @@
 
             eva: {
                 src: [
-                     /** eva app js **/
+                /** eva app js **/
                     'app/js/app.js',
 
-                    /** ebi-compliance **/
+                /** ebi-compliance **/
                     'lib/ebi-js-commons/ebi-compliance/js/ebi-complaince-directive.js',
 
-
-
-                    /** eva controllers **/
+                /** eva controllers **/
                     'app/js/controllers/variation-browser-controller.js',
                     'app/js/controllers/backbone-event-manager.js',
 
-
-                    /** eva-directives **/
+                /** eva-directives **/
                     'app/js/directives/eva-portal-home-drirective.js',
                     'app/js/directives/variant-widget-directive.js',
                     'app/js/directives/gene-view-directive.js',
 
-                    /** eva-widgets **/
+                /** eva-widgets **/
                     'app/widgets/variant-widget.js',
                     'app/widgets/gene-widget.js',
                     'app/widgets/variant-genotype.js',
 
-                    /** eva-services **/
+                /** eva-services **/
                     'app/js/ebi-var-services/ebivar-services-metadata.js'
 
                 ],
@@ -64,7 +63,88 @@
                     'lib/jsorolla/src/lib/utils/utils.js'
                 ],
                 dest: 'build/eva/<%= meta.version.eva %>/app/js/utils-<%= meta.version.utils %>.js'
-            }
+            },
+            cellbase:{
+                src: [
+                    'lib/jsorolla/src/lib/cellbase/ui-widgets/info-widget.js',
+                    'lib/jsorolla/src/lib/cellbase/ui-widgets/gene-info-widget.js',
+                    'lib/jsorolla/src/lib/cellbase/ui-widgets/protein-info-widget.js',
+                    'lib/jsorolla/src/lib/cellbase/ui-widgets/snp-info-widget.js.js',
+                    'lib/jsorolla/src/lib/cellbase/ui-widgets/transcript-info-widget.js',
+                    'lib/jsorolla/src/lib/cellbase/ui-widgets/vcf-variant-info-widget.js',
+                    'lib/jsorolla/src/lib/cellbase/cellbase-manager.js'
+
+                ],
+                dest: 'build/eva/<%= meta.version.eva %>/app/js/cellbase-<%= meta.version.cellbase %>.js'
+            },
+            gv:{
+                src: [
+                /** data-adapter **/
+                    'lib/jsorolla/src/genome-viewer/data-adapter/cellbase-adapter.js',
+                    'lib/jsorolla/src/genome-viewer/data-adapter/sequence-adapter.js',
+                    'lib/jsorolla/src/genome-viewer/data-adapter/opencga-adapter.js',
+                    'lib/jsorolla/src/genome-viewer/data-adapter/bam-adapter.js',
+                    'lib/jsorolla/src/genome-viewer/data-adapter/feature-data-adapter.js',
+                    'lib/jsorolla/src/genome-viewer/data-adapter/vcf-data-adapter.js',
+                    'lib/jsorolla/src/genome-viewer/data-adapter/gff2-data-adapter.js',
+                    'lib/jsorolla/src/genome-viewer/data-adapter/gff3-data-adapter.js',
+                    'lib/jsorolla/src/genome-viewer/data-adapter/bed-data-adapter.js',
+                    'lib/jsorolla/src/genome-viewer/data-adapter/das-adapter.js',
+
+                /** data-source **/
+                    'lib/jsorolla/src/lib/data-source/data-source.js',
+                    'lib/jsorolla/src/lib/data-source/string-data-source.js',
+                    'lib/jsorolla/src/lib/data-source/file-data-source.js',
+
+                    'lib/jsorolla/src/lib/region.js',
+                    'lib/jsorolla/src/lib/feature-binary-search-tree.js',
+
+                /** cache **/
+                    'lib/jsorolla/src/genome-viewer/cache/feature-cache.js',
+                    'lib/jsorolla/src/genome-viewer/cache/bam-cache.js',
+
+                    'lib/jsorolla/src/cache/memory-store.js',
+                    'lib/jsorolla/src/cache/feature-chunk-cache.js',
+
+                /** panels **/
+                    'lib/jsorolla/src/genome-viewer/navigation-bar.js',
+                    'lib/jsorolla/src/genome-viewer/chromosome-panel.js',
+                    'lib/jsorolla/src/genome-viewer/karyotype-panel.js',
+                    'lib/jsorolla/src/genome-viewer/tracks/tracklist-panel.js',
+                    'lib/jsorolla/src/genome-viewer/status-bar.js',
+
+                /** widgets **/
+                    'lib/jsorolla/src/genome-viewer/widget/legend-panel.js',
+                    'lib/jsorolla/src/genome-viewer/widget/legend-widget.js',
+                    'lib/jsorolla/src/genome-viewer/widget/url-widget.js',
+                    'lib/jsorolla/src/genome-viewer/widget/file-widget.js',
+                    'lib/jsorolla/src/genome-viewer/widget/vcf-file-widget.js',
+                    'lib/jsorolla/src/genome-viewer/widget/gff-file-widget.js',
+                    'lib/jsorolla/src/genome-viewer/widget/bed-file-widget.js',
+
+                /** tracks **/
+                    'lib/jsorolla/src/genome-viewer/tracks/track.js',
+                    'lib/jsorolla/src/genome-viewer/tracks/feature-track.js',
+                    'lib/jsorolla/src/genome-viewer/tracks/sequence-track.js',
+                    'lib/jsorolla/src/genome-viewer/tracks/gene-track.js',
+                    'lib/jsorolla/src/genome-viewer/tracks/bam-track.js',
+
+                /** renderer **/
+                    'lib/jsorolla/src/genome-viewer/renderers/renderer.js',
+                    'lib/jsorolla/src/genome-viewer/renderers/feature-renderer.js',
+                    'lib/jsorolla/src/genome-viewer/renderers/sequence-renderer.js',
+                    'lib/jsorolla/src/genome-viewer/renderers/feature-cluster-renderer.js',
+                    'lib/jsorolla/src/genome-viewer/renderers/histogram-renderer.js',
+                    'lib/jsorolla/src/genome-viewer/renderers/gene-renderer.js',
+                    'lib/jsorolla/src/genome-viewer/renderers/bam-renderer.js',
+                    'lib/jsorolla/src/genome-viewer/renderers/vcf-multisample-renderer.js',
+
+                    'lib/jsorolla/src/genome-viewer/genome-viewer.js'
+
+
+                ],
+                dest: 'build/eva/<%= meta.version.eva %>/app/js/gv-<%= meta.version.gv %>.js'
+            },
 
         },
         uglify: {
@@ -77,6 +157,14 @@
                 src: '<%= concat.utils.dest %>',
                 dest: 'build/eva/<%= meta.version.eva %>/app/js/utils-<%= meta.version.utils %>.min.js'
             },
+            cellbase: {
+                src: '<%= concat.utils.dest %>',
+                dest: 'build/eva/<%= meta.version.eva %>/app/js/cellbase-<%= meta.version.cellbase %>.min.js'
+            },
+            gv: {
+                src: '<%= concat.utils.dest %>',
+                dest: 'build/eva/<%= meta.version.eva %>/app/js/gv-<%= meta.version.gv %>.min.js'
+            }
 
         },
         jshint: {
@@ -148,8 +236,10 @@
                 options: {
                     beautify: true,
                     scripts: {
-                        'eva-js': '<%= concat.eva.dest %>',
-                        'utils-js': '<%= concat.utils.dest %>',
+                        'eva-js'        : '<%= concat.eva.dest %>',
+                        'utils-js'      : '<%= concat.utils.dest %>',
+                        'cellbase-js'   : '<%= concat.cellbase.dest %>',
+                        'gv-js'         : '<%= concat.gv.dest %>',
                         'vendor': [
                             'build/eva/<%= meta.version.eva %>/vendor/underscore-min.js',
                             'build/eva/<%= meta.version.eva %>/vendor/backbone-1.1.2-min.js',
@@ -164,7 +254,7 @@
                             'build/eva/<%= meta.version.eva %>/vendor/extJS/ux/SlidingPager.js',
                             'build/eva/<%= meta.version.eva %>/vendor/extJS/ux/data/PagingMemoryProxy.js'
                         ],
-                        'vendor-jquery': [                           
+                        'vendor-jquery': [
                             'build/eva/<%= meta.version.eva %>/vendor/jquery.min.js'
                         ],
                     },
@@ -216,6 +306,13 @@
                 tasks: ['eva'],
                 options: {spawn: false}
             }
+        },
+        rename: {
+            main: {
+                files: [
+                    {src: ['build/eva/<%= meta.version.eva %>/app/eva-index.html'], dest: 'build/eva/<%= meta.version.eva %>/app/index.html'}
+                ]
+            }
         }
 
     });
@@ -239,6 +336,6 @@
     grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify'])
 
 
-    grunt.registerTask('eva', ['clean:eva','concat:eva','uglify:eva', 'copy:eva', 'copy:gv','htmlbuild:eva']);
+    grunt.registerTask('eva', ['clean:eva','concat:eva','concat:utils','concat:cellbase', 'concat:gv','uglify:eva','uglify:utils','uglify:cellbase','uglify:gv', 'copy:eva', 'copy:gv','htmlbuild:eva', 'rename:main']);
 
 };

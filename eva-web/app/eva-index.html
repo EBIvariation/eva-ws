@@ -12,13 +12,11 @@
     <!---css from EBI --->
     <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/mini/ebi-fluid-embl.css">
     <!---/EBI----->
-
+    <!---css from EVA --->
     <link type="text/css"  href="css/eva-portal-colours.css" rel="stylesheet">
     <link type="text/css"  href="css/eva-portal-visual.css" rel="stylesheet">
     <link type="text/css"  href="css/eva.css" rel="stylesheet">
-
-
-
+    <!---/EVA CSS----->
 
     <!-- JS from vendors -->
     <!-- build:script vendor-jquery -->
@@ -42,9 +40,7 @@
     <script type="text/javascript" src="../vendor/extJS/ux/SlidingPager.js"></script>
     <script type="text/javascript" src="../vendor/extJS/ux/data/PagingMemoryProxy.js"></script>
     <!--<script type="text/javascript" src="../vendor/extJS/js/ext-debug.js"></script>-->
-
     <!-- /build -->
-
 
     <!-- Genome-viewer -->
     <link href="../lib/jsorolla/styles/css/style.css" rel="stylesheet">
@@ -60,8 +56,7 @@
 
     <script type="text/javascript" src="../lib/jsorolla/src/lib/ui-widgets/ux-window.js"></script>
 
-
-
+    <!-- build:script cellbase-js -->
     <!-- cellbase ui-widgets -->
     <script type="text/javascript" src="../lib/jsorolla/src/lib/cellbase/ui-widgets/info-widget.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/src/lib/cellbase/ui-widgets/gene-info-widget.js"></script>
@@ -72,9 +67,9 @@
 
     <!-- cellbase ws-manager -->
     <script type="text/javascript" src="../lib/jsorolla/src/lib/cellbase/cellbase-manager.js"></script>
+    <!-- /build -->
 
-
-
+    <!-- build:script gv-js -->
     <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/data-adapter/cellbase-adapter.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/data-adapter/sequence-adapter.js"></script>
     <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/data-adapter/opencga-adapter.js"></script>
@@ -132,10 +127,7 @@
     <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/vcf-multisample-renderer.js"></script>
 
     <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/genome-viewer.js"></script>
-
-
-
-
+    <!-- /build -->
 
     <!-- build:script eva-js -->
     <script type="text/javascript" src="js/app.js"></script>
@@ -158,16 +150,11 @@
 
     <!---------------------services -------------------------------->
     <script type="text/javascript" src="js/ebi-var-services/ebivar-services-metadata.js"></script>
-
     <!-- /build -->
 
-
-
-
-
-
 </head>
-<body data-spy="scroll" data-target="#myScrollspy" >
+
+<body>
 
 <div ebi-header></div>
 <div id="wrapper" class="container_24">
