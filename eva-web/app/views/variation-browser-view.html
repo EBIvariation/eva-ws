@@ -183,37 +183,38 @@
 
             <div>
                 <div>
-                    <h3><small><span class="label label-primary">Summary </span>&nbsp;<button type="button" ng-click="showStatitsics()" class="btn  btn-default btn-xs">{{statistics}}</button></small></h3>
+                    <h3>Summary<small>&nbsp;<button type="button" ng-click="showStatitsics()" class="btn  btn-default btn-xs">{{statistics}}</button></small></h3>
                     <highchart ng-show="showStatitsicsState" id="chart1" config="summaryPieChartConfig" style="width: 350px; height: 300px;" ></highchart>
                 </div>
             </div>
 
             <div class="variantTable">
                 <!--<div><h4>Summary</h4></div>-->
+                <h3>Variant Browser</h3>
                 <div id={{variantTableId}}></div><br/>
-
+                <h3>Variant Data</h3>
                 <ul id={{variantBrowserSubTabsId}} class="variantBrowserTabs nav nav-tabs nav-pills">
                     <li id="{{variantFilesTableId}}Li" class="active"><a href="#vFiles" data-toggle="tab">Variant Files & Stats</a></li>
                     <li id="{{variantEffectTableId}}Li" ><a href="#vEffect" data-toggle="tab">Variant Effects</a></li>
                     <li id="{{variantGenoTypeTableId}}Li"><a href="#vGenotypes" data-toggle="tab">Variant Genotypes</a></li>
-                    <li id="{{variantGenomeViewerId}}Li"><a href="#genomeViewer" data-toggle="tab">Genome Viewer</a></li>
+                    <li id="{{variantGenomeViewerId}}Li"><a href="#genomeViewer" data-toggle="tab">Genome Browser</a></li>
                 </ul>
 
                 <div class="tab-content">
 
                     <div class="tab-pane fade active in" id="vFiles">
-                        <!--<div><h5>Files</h5></div>-->
+                        <div><h4>Files</h4></div>
+
                         <div  id={{variantFilesTableId}}></div>
 
                         <div  class="row">
-
+                            <div><h4>&nbsp;&nbsp;Stats</h4></div>
                             <div class="col-md-8">
-                                <!--<div><h5>Stats</h5></div>-->
-                                <div id={{variantStatsViewId}}></div>
+                               <div id={{variantStatsViewId}}></div>
                             </div>
 
                             <div class="col-md-4">
-                                <div id={{variantStatsChartId}} style="width: 250px;"></div>
+                                <br /><div id={{variantStatsChartId}} style="width: 250px;"></div>
                             </div>
 
                         </div>
@@ -221,10 +222,12 @@
                     </div>
                     <div class="tab-pane fade " id="vEffect">
                         <!--<div><h5>Effects</h5></div>-->
-                        <div id={{variantEffectTableId}}></div>
+                        <h4>Effects</h4>
+                       <div id={{variantEffectTableId}}></div>
                     </div>
                     <div class="tab-pane fade " id="vGenotypes">
                         <!--<div><h5>Effects</h5></div>-->
+                        <h4>Genotypes</h4>
                         <div id={{variantGenoTypeTableId}}></div>
                         <div id="grid-example"></div>
                     </div>

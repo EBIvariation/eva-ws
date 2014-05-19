@@ -214,6 +214,7 @@ VariantWidget.prototype = {
             var variant_present = '';
             // create the Grid
             _this.vbGrid = Ext.create('Ext.grid.Panel', {
+                header:false,
                 store:  _this.vbStore,
                 stateful: true,
                 collapsible: true,
@@ -290,7 +291,7 @@ VariantWidget.prototype = {
                 //width: 800,
                 autoWidth: true,
                 autoScroll:false,
-                title: 'Variant Data',
+                //title: 'Variant Data',
                 renderTo: this.variantTableID,
                 viewConfig: {
                     enableTextSelection: true,
@@ -444,6 +445,7 @@ VariantWidget.prototype = {
 
         // create the Grid
         _this.veGrid = Ext.create('Ext.grid.Panel', {
+            header:false,
             store:  _this.veStore,
             stateful: true,
             collapsible: true,
@@ -576,6 +578,7 @@ VariantWidget.prototype = {
 
         // create the Grid
         _this.vfGrid = Ext.create('Ext.grid.Panel', {
+            header:false,
             store:  _this.vfStore,
             stateful: true,
             collapsible: true,

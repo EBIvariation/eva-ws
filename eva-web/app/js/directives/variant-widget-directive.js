@@ -47,6 +47,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                     variationClassesTreeArgs.data = $scope.variationClasses;
 
                     if(e.target.parentElement.id === 'variationLi'){
+
                         if(jQuery("#"+$scope.studiesTreeId).contents().length === 0 ){
                             studiesTree = variantTreeWidget.createTreePanel(studiesTreeArgs);
                         }
@@ -57,6 +58,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                         if(jQuery("#"+$scope.variationClassesTreeId).contents().length === 0 ){
                             varClassesTree = variantTreeWidget.createTreePanel(variationClassesTreeArgs);
                         }
+                        eventManager.trigger("variant:search");
                     }
 
                 });

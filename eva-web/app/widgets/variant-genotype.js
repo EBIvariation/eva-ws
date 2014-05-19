@@ -60,6 +60,7 @@ VariantGenotypeWidget.prototype = {
         });
 
         _this.vgGrid = Ext.create('Ext.grid.Panel', {
+            header:false,
             store:  _this.vgStore,
             stateful: true,
             collapsible: true,
