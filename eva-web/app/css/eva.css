@@ -109,6 +109,10 @@ div .ngHeaderText{
 #variantViewTabs{
     position: fixed;
 }
+.panel-body a, .panel-body a:link{
+    border-bottom-style: none;
+}
+
 #variantViewTabs a, #variantViewTabs a:link, #variantViewTabs a:visited{
 
     border-bottom-width: 1px;
@@ -151,6 +155,10 @@ div .ngHeaderText{
     border-bottom: 1px solid #ADADAD;
     border-right: 1px solid #ADADAD;
 
+}
+
+div.masthead ul li.right{
+    float:right;
 }
 
 

@@ -65,7 +65,7 @@ VariantWidget.prototype = {
                 {
                     xtype: 'treecolumn', //this is so we know which column will show the tree
                     //text: 'Task',
-                    flex: 3,
+                    flex: 2,
                     sortable: false,
                     dataIndex: 'name',
                     renderer:function (value, meta, record) {
