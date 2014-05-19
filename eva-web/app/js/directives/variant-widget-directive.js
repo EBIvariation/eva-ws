@@ -290,13 +290,20 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
         templateUrl: 'views/variant-view.html',
         controller: function($scope,ebiVarMetadataService) {
 
-            var data = getUrlParameters("");
-            var variantInfoUrl = METADATA_HOST+'/'+METADATA_VERSION+'/variants/'+data.value+'/info';
-            var tmpData = ebiVarMetadataService.fetchData(variantInfoUrl);
+
+           var data = getUrlParameters("");
+
+           if(data.value){
+               var variantInfoUrl = METADATA_HOST+'/'+METADATA_VERSION+'/variants/'+data.value+'/info';
+               var tmpData = ebiVarMetadataService.fetchData(variantInfoUrl);
+           }else{
+               return;
+           }
 
             if(!tmpData.response.numResults){
                 return;
             }
+
             $scope.variant = data.value;
 
             $scope.variantInfoData  = tmpData.response.result[0];

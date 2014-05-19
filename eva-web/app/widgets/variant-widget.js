@@ -30,7 +30,8 @@ VariantWidget.prototype = {
         Ext.define('Tree Model', {
             extend: 'Ext.data.Model',
             fields: [
-                {name: 'name',type: 'string'}
+                {name: 'name',type: 'string'},
+                {name: 'acc',type: 'string'}
             ]
         });
 
@@ -60,13 +61,20 @@ VariantWidget.prototype = {
             bodyBorder:false,
 
             //the 'columns' property is now 'headers'
-            columns: [{
-                xtype: 'treecolumn', //this is so we know which column will show the tree
-                //text: 'Task',
-                flex: 2,
-                sortable: false,
-                dataIndex: 'name'
-            }],
+            columns: [
+                {
+                    xtype: 'treecolumn', //this is so we know which column will show the tree
+                    //text: 'Task',
+                    flex: 3,
+                    sortable: false,
+                    dataIndex: 'name',
+                    renderer:function (value, meta, record) {
+                        var link = "http://www.sequenceontology.org/miso/current_release/term/"+record.data.acc;
+                        return value+' <a href='+link+' target="_blank">'+record.data.acc+'</a>';
+                    }
+                }
+
+            ],
 
             dockedItems: [{
                 xtype: 'toolbar',
@@ -810,6 +818,7 @@ VariantWidget.prototype = {
         jQuery( "#"+this.variantStatsViewID+" div").remove();
         var _this = this;
         var statsPanel = Ext.create('Ext.Panel', {
+            header:false,
             renderTo:  _this.variantStatsViewID,
             title: 'Stats',
             height:330,
