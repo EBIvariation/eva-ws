@@ -54,3 +54,7 @@ local.properties
 .buildpath
 
 
+#node modules and build
+ eva-web/build/*
+ eva-web/node_modules/*
+ 
