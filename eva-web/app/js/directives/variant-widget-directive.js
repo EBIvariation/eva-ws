@@ -58,7 +58,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                         if(jQuery("#"+$scope.variationClassesTreeId).contents().length === 0 ){
                             varClassesTree = variantTreeWidget.createTreePanel(variationClassesTreeArgs);
                         }
-                        eventManager.trigger("variant:search");
+                       // eventManager.trigger("variant:search");
                     }
 
                 });

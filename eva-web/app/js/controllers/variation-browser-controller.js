@@ -77,6 +77,11 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     $scope.searchVariants = function(){
         eventManager.trigger("variant:search");
     }
+    $scope.reloadVariants = function(){
+        $scope.location = location;
+        $scope.gene = gene;
+        //eventManager.trigger("variant:search");
+    }
     $scope.searchGenes = function(){
         eventManager.trigger("gene:search");
     }
@@ -93,10 +98,12 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
         }
     };
 
-    $scope.location = '1:5000-3500000';
-    $scope.location = '21:9411240-9411260';
+    var location = '21:9411240-9411260';
+    var gene = 'TMEM51';
+    //$scope.location = '1:5000-3500000';
+    $scope.location = location;
 
-    //$scope.gene = 'TMEM51';
+    //$scope.gene = gene;
 
     function updateRegion(args){
 
@@ -116,8 +123,8 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
 //        {id: "gonl", name: "GoNL", description: "..."},
 //        {id: "evs", name: "EVS", description: "..."},
         {name: '1000g',leaf: true, checked: false,  iconCls :'no-icon' },
-        {name: 'gonl',leaf: true, checked: false,  iconCls :'no-icon' },
-        {name: 'evs',leaf: true, checked: false,  iconCls :'no-icon' }
+        {name: 'GoNL',leaf: true, checked: false,  iconCls :'no-icon' },
+        {name: 'EVS',leaf: true, checked: false,  iconCls :'no-icon' }
     ]
 
 

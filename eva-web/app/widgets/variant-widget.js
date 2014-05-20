@@ -47,7 +47,7 @@ VariantWidget.prototype = {
         });
 
         var tree = Ext.create('Ext.tree.Panel', {
-            header:false,
+             header:false,
             border :false,
             autoWidth: true,
             autoHeight: true,
