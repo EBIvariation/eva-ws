@@ -98,9 +98,10 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
         }
     };
 
+    var location = '1:5000-3500000';
     var location = '21:9411240-9411260';
     var gene = 'TMEM51';
-    //$scope.location = '1:5000-3500000';
+
     $scope.location = location;
     //$scope.gene = gene;
 

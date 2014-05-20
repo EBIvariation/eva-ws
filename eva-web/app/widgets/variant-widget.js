@@ -822,7 +822,7 @@ VariantWidget.prototype = {
             renderTo:  _this.variantStatsViewID,
             title: 'Stats',
             height:330,
-            html: '<p><i>Click the Variant to see results here</i></p>'
+            html: '<p><i></i></p>'
         });
         return statsPanel;
     },
