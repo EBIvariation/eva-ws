@@ -71,17 +71,23 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
         return data;
     }
 
-    $scope.statistics = '+';
+    $(function() {
+        $('#summaryChart').tooltip();
+    });
+
+    $scope.statisticsClass = 'glyphicon glyphicon-chevron-right';
     $scope.showStatitsicsState;
+
 
     $scope.searchVariants = function(){
         eventManager.trigger("variant:search");
     }
     $scope.reloadVariants = function(){
         $scope.location = location;
-        $scope.gene = gene;
-        //eventManager.trigger("variant:search");
+       // $scope.gene = gene;
+       eventManager.trigger("variant:search");
     }
+
     $scope.searchGenes = function(){
         eventManager.trigger("gene:search");
     }
@@ -91,14 +97,14 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     $scope.showStatitsics = function(){
         this.showStatitsicsState = !this.showStatitsicsState;
         if(!this.showStatitsicsState){
-            this.statistics = '+';
+            this.statisticsClass = 'glyphicon glyphicon-chevron-right';
         }else{
-            this.statistics = '-';
-            createSummaryChart();
+            this.statisticsClass = 'glyphicon glyphicon-chevron-down';
+           // createSummaryChart();
         }
     };
 
-    var location = '1:5000-3500000';
+
     var location = '21:9411240-9411260';
     var gene = 'TMEM51';
 

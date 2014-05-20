@@ -338,6 +338,7 @@ VariantWidget.prototype = {
                                 grid.fireEvent('itemclick', grid, grid.getSelectionModel().getLastSelected());
                             }else{
                                 variant_present = 0;
+                                _this._clearGrid();
                             }
                         });
                     }
@@ -368,6 +369,10 @@ VariantWidget.prototype = {
                         region.parse(data.location);
                         genomeViewer.setRegion(region);
                     }
+                }else{
+
+                    _this._clearGrid();
+
                 }
 
            });
@@ -420,7 +425,7 @@ VariantWidget.prototype = {
     },
 
     _createEffectGrid:function(){
-        if(jQuery( "#"+this.variantEffectTableID+" div").length){
+        if(jQuery( "#"+this.variantEffectTableID+" div").length > 0){
             jQuery( "#"+this.variantEffectTableID+" div").remove();
         }
 
@@ -558,7 +563,7 @@ VariantWidget.prototype = {
         return _this.veGrid;
     },
     _createFilesGrid:function(){
-        if(jQuery( "#"+this.variantFilesTableID+" div").length){
+        if(jQuery( "#"+this.variantFilesTableID+" div").length > 0){
             jQuery( "#"+this.variantFilesTableID+" div").remove();
         }
 
@@ -815,7 +820,10 @@ VariantWidget.prototype = {
     },
 
     _createStatesGrid:function(){
-        jQuery( "#"+this.variantStatsViewID+" div").remove();
+        if(jQuery( "#"+this.variantStatsViewID+" div").length > 0){
+            jQuery( "#"+this.variantStatsViewID+" div").remove();
+        }
+
         var _this = this;
         var statsPanel = Ext.create('Ext.Panel', {
             header:false,
@@ -934,6 +942,15 @@ VariantWidget.prototype = {
             }
         });
         return data;
+    },
+
+    _clearGrid:function(){
+         var _this = this;
+        _this.gridFiles = _this._createFilesGrid();
+        _this.gridEffect = _this._createEffectGrid();
+        _this.gridStats = _this._createStatesGrid();
+        _this._createGenotypeGrid();
+        _this._statsPieChart('');
     }
 
 };

@@ -39,11 +39,15 @@ VariantGenotypeWidget.prototype = {
         ]);
 
         var parsedData = _this._parseData();
+        if(!parsedData){
+            return;
+        }
 
         Ext.define(_this.render_id, {
             extend: 'Ext.data.Model',
             fields: parsedData.fields
         });
+
 
         _this.vgStore = Ext.create('Ext.data.Store', {
             model: _this.render_id,
@@ -103,8 +107,12 @@ VariantGenotypeWidget.prototype = {
 //        var formatArr = formatTempArr.reverse();
         var columnData = [];
 
-
+        if(!tmpData.response.numResults){
+           return;
+        }
         var tmpSmplData = tmpData.response.result[0].files[0].samples;
+
+
 
         for (key in tmpSmplData) {
             var tempArray= new Array();

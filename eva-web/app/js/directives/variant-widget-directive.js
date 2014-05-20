@@ -63,6 +63,16 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
                 });
 
+                $scope.clearVariants = function(){
+                    $scope.location = '';
+                    $scope.gene = '';
+                    console.log(studiesTree.store.getRootNode())
+                    clearCheckedFilters(studiesTree);
+                    clearCheckedFilters(conTypeTree);
+                    clearCheckedFilters(varClassesTree);
+                    eventManager.trigger("variant:search");
+                }
+
 
                 eventManager.on("variant:search", function(e) {
 
@@ -275,6 +285,13 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                     });
                     return filters.join();
                 }
+            }
+
+            //Function to clear checked filters
+            function clearCheckedFilters(args){
+                args.store.getRootNode().cascadeBy(function(){
+                    this.set( 'checked', false );
+                });
             }
 
 
