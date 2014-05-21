@@ -203,19 +203,16 @@
                 <div class="tab-content">
 
                     <div class="tab-pane fade active in" id="vFiles">
-
-                        <div><h4>Studies</h4></div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="table-responsive" >
                                     <div ng-repeat="(key,value) in  filesData">
-                                        <h4><span style="text-transform: capitalize;" class="label label-primary">{{value.id}}</span>&nbsp;&nbsp;<small><button type="button" ng-click="toggleShow()" class="btn  btn-default btn-xs">{{toggleLabel}}</button></small></h4>
+                                        <h5><span style="text-transform: capitalize;" class="label label-danger">{{value.id}} study</span>&nbsp;&nbsp;<small><button type="button" ng-click="toggleShow()" class="btn  btn-default btn-xs">{{toggleLabel}}</button></small></h5>
                                         <div ng-show="toggleState">
                                             <div class="row"  ng-repeat="(key,value) in  value.data">
-
-                                                <div class="col-md-8 jumbotron">
+                                                <div class="col-md-8">
                                                     <div><h5>File</h5></div>
-                                                    <table class="table table-bordered jumbotron">
+                                                    <table class="table table-striped">
                                                         <tr>
                                                             <th>QUAL</th>
                                                             <th>FILTER</th>
@@ -239,19 +236,18 @@
                                                     </table>
                                                     <div>
                                                         <h5>Stats</h5>
-                                                        <table class="table  jumbotron">
-                                                            <tr><td>alleleMaf</td> <td>{{value.stats.alleleMaf}}</td></tr>
-                                                            <tr><td>genotypeMaf</td> <td>{{value.stats.genotypeMaf}}</td></tr>
-                                                            <tr><td>maf</td> <td>{{value.stats.maf}}</td></tr>
-                                                            <tr><td>mendelErr</td> <td>{{value.stats.mendelErr}}</td></tr>
-                                                            <tr><td>mgf</td> <td>{{value.stats.mgf}}</td></tr>
-                                                            <tr><td>missAllele</td> <td>{{value.stats.missAllele}}</td></tr>
-                                                            <tr><td>missGenotypes</td> <td>{{value.stats.missGenotypes}}</td></tr>
+                                                        <table class="table table-borderless">
+                                                            <tr><td>MAF</td> <td>{{value.stats.maf|number:4}}({{value.stats.alleleMaf}})</td></tr>
+                                                            <tr><td>MendelErr</td> <td>{{value.stats.mendelErr}}</td></tr>
+                                                            <tr><td>MGF</td> <td>{{value.stats.mgf|number:4}}({{value.stats.genotypeMaf}})</td></tr>
+                                                            <tr><td>MissAllele</td> <td>{{value.stats.missAllele}}</td></tr>
+                                                            <tr><td>MissGenotypes</td> <td>{{value.stats.missGenotypes}}</td></tr>
                                                         </table>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4" ng-repeat="(key,value) in  value.chartData">
-                                                    <div width="20%" id={{value.$$hashKey}}></div>
+                                                    <h5 style="margin-left:70px;">Genotype Count</h5>
+                                                    <div  style="height: 300px; width: 300px;"id={{value.$$hashKey}}></div>
                                                     <div ng-show="statsPieChart(value,value.$$hashKey)"></div>
                                                 </div>
 
