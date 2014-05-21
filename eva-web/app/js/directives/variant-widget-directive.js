@@ -323,16 +323,13 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                     tmpDataArray[studyId].push({'attributes':value.attributes,'stats':value.stats, 'chartData':chartData });
 
                 });
-                //console.log(tmpDataArray)
                 var filesDataArray = new Array();
                 for (key in tmpDataArray){
                     filesDataArray.push({id:key,data:tmpDataArray[key]});
                 }
 
-                console.log(filesDataArray)
-
                 return filesDataArray;
-                //console.log(tmpDataArray)
+
             }
 
 
@@ -379,13 +376,11 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                 if(!effectsTempDataArray[consequenceType]) effectsTempDataArray[consequenceType] = [];
                 effectsTempDataArray[consequenceType].push({'featureId':value.featureId,'featureType':value.featureType,'featureChromosome':value.featureChromosome,'featureStart':value.featureStart,'featureEnd':value.featureEnd,'consequenceTypeType':value.consequenceTypeType});
             });
-            //console.log(effectsTempDataArray)
 
             var effectsDataArray = new Array();
             for (key in effectsTempDataArray){
                 effectsDataArray.push({id:key,name:effectsTempDataArray[key][0].consequenceTypeType,data:effectsTempDataArray[key]});
             }
-            console.log(effectsDataArray)
             $scope.effectsData = effectsDataArray;
 
 
