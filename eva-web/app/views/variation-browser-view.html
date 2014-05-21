@@ -203,12 +203,70 @@
                 <div class="tab-content">
 
                     <div class="tab-pane fade active in" id="vFiles">
-                        <div><h4>Files</h4></div>
+
+                        <div><h4>Studies</h4></div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="table-responsive" >
+                                    <div ng-repeat="(key,value) in  filesData">
+                                        <h4><span style="text-transform: capitalize;" class="label label-primary">{{value.id}}</span>&nbsp;&nbsp;<small><button type="button" ng-click="toggleShow()" class="btn  btn-default btn-xs">{{toggleLabel}}</button></small></h4>
+                                        <div ng-show="toggleState">
+                                            <div class="row"  ng-repeat="(key,value) in  value.data">
+
+                                                <div class="col-md-8 jumbotron">
+                                                    <div><h5>File</h5></div>
+                                                    <table class="table table-bordered jumbotron">
+                                                        <tr>
+                                                            <th>QUAL</th>
+                                                            <th>FILTER</th>
+                                                            <th>ERATE</th>
+                                                            <th>AN</th>
+                                                            <th>AA</th>
+                                                            <th>AC</th>
+                                                            <th>SNPSOURCE</th>
+                                                            <th>AF</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>{{value.attributes.QUAL}}</td>
+                                                            <td>{{value.attributes.FILTER}}</td>
+                                                            <td>{{value.attributes.ERATE}}</td>
+                                                            <td>{{value.attributes.AN}}</td>
+                                                            <td>{{value.attributes.AA}}</td>
+                                                            <td>{{value.attributes.AC}}</td>
+                                                            <td>{{value.attributes.SNPSOURCE}}</td>
+                                                            <td>{{value.attributes.AF}}</td>
+                                                        </tr>
+                                                    </table>
+                                                    <div>
+                                                        <h5>Stats</h5>
+                                                        <table class="table  jumbotron">
+                                                            <tr><td>alleleMaf</td> <td>{{value.stats.alleleMaf}}</td></tr>
+                                                            <tr><td>genotypeMaf</td> <td>{{value.stats.genotypeMaf}}</td></tr>
+                                                            <tr><td>maf</td> <td>{{value.stats.maf}}</td></tr>
+                                                            <tr><td>mendelErr</td> <td>{{value.stats.mendelErr}}</td></tr>
+                                                            <tr><td>mgf</td> <td>{{value.stats.mgf}}</td></tr>
+                                                            <tr><td>missAllele</td> <td>{{value.stats.missAllele}}</td></tr>
+                                                            <tr><td>missGenotypes</td> <td>{{value.stats.missGenotypes}}</td></tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4" ng-repeat="(key,value) in  value.chartData">
+                                                    <div width="20%" id={{value.$$hashKey}}></div>
+                                                    <div ng-show="statsPieChart(value,value.$$hashKey)"></div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div  id={{variantFilesTableId}}></div>
 
                         <div  class="row">
-                            <div><h4>&nbsp;&nbsp;&nbsp;Stats</h4></div>
+                            <!--<div><h4>&nbsp;&nbsp;&nbsp;Stats</h4></div>-->
                             <div class="col-md-8">
                                <div id={{variantStatsViewId}}></div>
                             </div>

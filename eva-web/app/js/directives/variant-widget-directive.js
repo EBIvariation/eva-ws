@@ -2,7 +2,7 @@
  * Created by jag on 14/04/2014.
  */
 var genomeViewer;
-
+var fileAttributes = 'asdsdf';
 
 angular.module('variantWidgetModule', []).directive('variantWidget', function () {
     return {
@@ -10,7 +10,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
         replace: true,
         transclude: true,
         templateUrl: 'views/variation-browser-view.html',
-        link: function($scope, element, attr) {
+        controller: function($scope,ebiVarMetadataService) {
                 var conTypeTree;
                 var studiesTree;
                 var varClassesTree;
@@ -58,7 +58,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                         if(jQuery("#"+$scope.variationClassesTreeId).contents().length === 0 ){
                             varClassesTree = variantTreeWidget.createTreePanel(variationClassesTreeArgs);
                         }
-                       // eventManager.trigger("variant:search");
+                        eventManager.trigger("variant:search");
                     }
 
                 });
@@ -72,6 +72,13 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                     clearCheckedFilters(varClassesTree);
                     eventManager.trigger("variant:search");
                 }
+
+                eventManager.on("variant:files", function(e) {
+                    $scope.$apply(function(){
+                        $scope.filesData = parseFilesData(e)
+                        //$scope.filesData  = fileData;
+                    })
+                });
 
 
                 eventManager.on("variant:search", function(e) {
@@ -108,6 +115,8 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
                     variantWidget.draw();
 
+
+
                     if(!genomeViewer.rendered) {
                         genomeViewer.render();
                         genomeViewer.draw();
@@ -119,10 +128,11 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                     region.parse($scope.location);
                     genomeViewer.setRegion(region);
 
+
                 });
 
 
-
+//            variantWidget = _this.vbGrid.getSelectionModel().selected.items[0].data
 
 
 
@@ -294,6 +304,37 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                 });
             }
 
+            //function to parse files and stats Data
+            function parseFilesData(args){
+                var url = METADATA_HOST+'/'+METADATA_VERSION+'/variants/'+args+'/info';
+                var data = ebiVarMetadataService.fetchData(url);
+                var tmpData = data.response.result[0].files;
+                var tmpDataArray = [];
+
+                $.each(tmpData, function(key, value) {
+                    var chartData = [];
+                    var studyId = value.studyId;
+                    if(!tmpDataArray[studyId]) tmpDataArray[studyId] = [];
+                    var chartArray=[];
+                    for (key in value.stats.genotypeCount) {
+                        chartArray.push([key,  value.stats.genotypeCount[key]]);
+                    }
+                    chartData.push({'title':'Genotype Count','data':chartArray});
+                    tmpDataArray[studyId].push({'attributes':value.attributes,'stats':value.stats, 'chartData':chartData });
+
+                });
+                //console.log(tmpDataArray)
+                var filesDataArray = new Array();
+                for (key in tmpDataArray){
+                    filesDataArray.push({id:key,data:tmpDataArray[key]});
+                }
+
+                console.log(filesDataArray)
+
+                return filesDataArray;
+                //console.log(tmpDataArray)
+            }
+
 
         }
 
@@ -326,7 +367,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
             $scope.variantInfoData  = tmpData.response.result[0];
             $scope.variantFilesData = tmpData.response.result[0].files[0];
 
-            console.log($scope.variantInfoData)
+
 
             var position = $scope.variantInfoData.chr + ":" + $scope.variantInfoData.start + ":" + $scope.variantInfoData.ref + ":" + $scope.variantInfoData.alt;
             var url = CELLBASE_HOST+'/'+CELLBASE_VERSION+'/hsa/genomic/variant/'+position+'/consequence_type?of=json';
@@ -338,30 +379,16 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                 if(!effectsTempDataArray[consequenceType]) effectsTempDataArray[consequenceType] = [];
                 effectsTempDataArray[consequenceType].push({'featureId':value.featureId,'featureType':value.featureType,'featureChromosome':value.featureChromosome,'featureStart':value.featureStart,'featureEnd':value.featureEnd,'consequenceTypeType':value.consequenceTypeType});
             });
-
+            //console.log(effectsTempDataArray)
 
             var effectsDataArray = new Array();
             for (key in effectsTempDataArray){
-                console.log(effectsTempDataArray[key][0].consequenceTypeType)
                 effectsDataArray.push({id:key,name:effectsTempDataArray[key][0].consequenceTypeType,data:effectsTempDataArray[key]});
             }
+            console.log(effectsDataArray)
             $scope.effectsData = effectsDataArray;
 
-            $scope.effects = '-';
-            $scope.showEffectsState = true;
 
-
-
-            console.log($scope.effectsData );
-
-            $scope.showEffects = function(){
-                this.showEffectsState = !this.showEffectsState;
-                if(!this.showEffectsState){
-                    this.effects = '+';
-                }else{
-                    this.effects = '-';
-                }
-            };
 
         },
         link: function($scope, element, attr) {

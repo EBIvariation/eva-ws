@@ -331,6 +331,61 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
         }
     }
 
+    $scope.toggleLabel = '-';
+    $scope.toggleState = true;
+
+    $scope.toggleShow = function(){
+        this.toggleState = !this.toggleState;
+        if(!this.toggleState){
+            this.toggleLabel = '+';
+        }else{
+            this.toggleLabel = '-';
+        }
+    };
+
+    $scope.statsPieChart = function(value,id){
+        //alert('sadfdf')
+
+        var chart1 = new Highcharts.Chart({
+            chart: {
+                renderTo:id,
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+
+            title: {
+                text: value.title
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        color: '#000000',
+                        connectorColor: '#000000',
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    },
+                    showInLegend: true
+                }
+
+            },
+            series: [{
+                type: 'pie',
+                name: value.title,
+                data: value.data
+            }],
+            credits: {
+                enabled: false
+            },
+        });
+
+    }
+
 
 }]);
 

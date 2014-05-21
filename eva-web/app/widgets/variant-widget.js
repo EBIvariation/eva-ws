@@ -315,8 +315,9 @@ VariantWidget.prototype = {
                 listeners: {
                     itemclick : function() {
                         var data = _this._getSelectedData();
+                        eventManager.trigger("variant:files", data.variantId);
                         _this._updateEffectGrid(data.position);
-                        _this._updateFilesGrid(data.variantId);
+                       // _this._updateFilesGrid(data.variantId);
                         _this._createGenotypeGrid(data.variantId);
                         var activeTab = jQuery('#'+_this.variantSubTabsID+' .active').attr('id');
                         if(activeTab  === _this.variantGenomeViewerID+'Li'){
@@ -332,9 +333,9 @@ VariantWidget.prototype = {
                                 var variantGenotypeArgs = [];
 
                                 grid.getSelectionModel().select(0);
-                                _this.gridFiles = _this._createFilesGrid();
+                                //_this.gridFiles = _this._createFilesGrid();
                                 _this.gridEffect = _this._createEffectGrid();
-                                _this.gridStats = _this._createStatesGrid();
+                                //_this.gridStats = _this._createStatesGrid();
                                 grid.fireEvent('itemclick', grid, grid.getSelectionModel().getLastSelected());
                             }else{
                                 variant_present = 0;
@@ -356,11 +357,11 @@ VariantWidget.prototype = {
                         _this.gridEffect = _this._createEffectGrid();
                         _this._updateEffectGrid(data.position);
                     }
-                    else if(e.target.parentElement.id === _this.variantFilesTableID+'Li'){
-                        _this.gridFiles = _this._createFilesGrid();
-                        _this.gridStats = _this._createStatesGrid();
-                        _this._updateFilesGrid(data.variantId);
-                    }
+//                    else if(e.target.parentElement.id === _this.variantFilesTableID+'Li'){
+//                        _this.gridFiles = _this._createFilesGrid();
+//                        _this.gridStats = _this._createStatesGrid();
+//                        _this._updateFilesGrid(data.variantId);
+//                    }
                     else if(e.target.parentElement.id === _this.variantGenoTypeTableID+'Li'){
                         _this._createGenotypeGrid(data.variantId);
                     }
@@ -370,8 +371,7 @@ VariantWidget.prototype = {
                         genomeViewer.setRegion(region);
                     }
                 }else{
-
-                    _this._clearGrid();
+                   // _this._clearGrid();
 
                 }
 
@@ -829,6 +829,7 @@ VariantWidget.prototype = {
             header:false,
             renderTo:  _this.variantStatsViewID,
             title: 'Stats',
+
             height:330,
             html: '<p><i></i></p>'
         });
@@ -862,6 +863,7 @@ VariantWidget.prototype = {
                     for (key in args) {
                         chartData.push([key, args[key]]);
                     }
+
                     args['title'] = 'Genotype Count';
                     args['data'] = chartData;
                    _this._statsPieChart(args);
@@ -946,11 +948,11 @@ VariantWidget.prototype = {
 
     _clearGrid:function(){
          var _this = this;
-        _this.gridFiles = _this._createFilesGrid();
+//        _this.gridFiles = _this._createFilesGrid();
         _this.gridEffect = _this._createEffectGrid();
-        _this.gridStats = _this._createStatesGrid();
+//        _this.gridStats = _this._createStatesGrid();
         _this._createGenotypeGrid();
-        _this._statsPieChart('');
+//        _this._statsPieChart('');
     }
 
 };

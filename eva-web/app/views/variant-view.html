@@ -38,8 +38,8 @@
                         <h4></h4>
                         <div class="table-responsive div-bordered jumbotron" >
                             <div ng-repeat="(key,value) in  effectsData">
-                                    <h4><span style="text-transform: capitalize;" class="label label-primary">{{value.name}}</span>&nbsp; <a  style="font-size:14px;" href="http://www.sequenceontology.org/miso/current_release/term/{{value.id}}" target="_blank">{{value.id}}</a>&nbsp;<small><button type="button" ng-click="showEffects()" class="btn  btn-default btn-xs">{{effects}}</button></small></h4>
-                                <div ng-show="showEffectsState">
+                                    <h4><span style="text-transform: capitalize;" class="label label-primary">{{value.name}}</span>&nbsp; <a  style="font-size:14px;" href="http://www.sequenceontology.org/miso/current_release/term/{{value.id}}" target="_blank">{{value.id}}</a>&nbsp;<small><button type="button" ng-click="toggleShow()" class="btn  btn-default btn-xs">{{toggleLabel}}</button></small></h4>
+                                <div ng-show="toggleState">
                                     <br /> <table class="table table-bordered jumbotron">
                                         <tr>
                                             <th>Feature Id</th>
