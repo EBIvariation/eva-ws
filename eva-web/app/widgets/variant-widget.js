@@ -438,6 +438,7 @@ VariantWidget.prototype = {
                 {name: 'position'},
                 {name: 'snpId'},
                 {name: 'consequenceType'},
+                {name: 'consequenceTypeObo'},
                 {name: 'aminoacidChange'},
                 {name: 'geneId'},
                 {name: 'transcriptId'},
@@ -478,6 +479,12 @@ VariantWidget.prototype = {
                         text     : 'snpId',
                         sortable : true,
                         dataIndex: 'snpId'
+
+                    },
+                    {
+                        text     : 'consequenceTypeObo',
+                        sortable : true,
+                        dataIndex: 'consequenceTypeObo'
 
                     },
                     {
