@@ -55,6 +55,6 @@ local.properties
 
 
 #node modules and build
- eva-web/build/*
- eva-web/node_modules/*
+eva-web/build/*
+eva-web/node_modules/*
  
