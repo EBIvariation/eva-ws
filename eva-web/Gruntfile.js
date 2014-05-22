@@ -55,14 +55,14 @@ module.exports = function (grunt) {
                     'app/js/ebi-var-services/ebivar-services-metadata.js'
 
                 ],
-                dest: 'build/eva/<%= meta.version.eva %>/app/js/eva-<%= meta.version.eva %>.js'
+                dest: 'build/eva/<%= meta.version.eva %>/js/eva-<%= meta.version.eva %>.js'
             },
             utils:{
                 src: [
                     'lib/jsorolla/src/lib/utils/svg.js',
                     'lib/jsorolla/src/lib/utils/utils.js'
                 ],
-                dest: 'build/eva/<%= meta.version.eva %>/app/js/utils-<%= meta.version.utils %>.js'
+                dest: 'build/eva/<%= meta.version.eva %>/js/utils-<%= meta.version.utils %>.js'
             },
             cellbase:{
                 src: [
@@ -75,7 +75,7 @@ module.exports = function (grunt) {
                     'lib/jsorolla/src/lib/cellbase/cellbase-manager.js'
 
                 ],
-                dest: 'build/eva/<%= meta.version.eva %>/app/js/cellbase-<%= meta.version.cellbase %>.js'
+                dest: 'build/eva/<%= meta.version.eva %>/js/cellbase-<%= meta.version.cellbase %>.js'
             },
             gv:{
                 src: [
@@ -143,7 +143,7 @@ module.exports = function (grunt) {
 
 
                 ],
-                dest: 'build/eva/<%= meta.version.eva %>/app/js/gv-<%= meta.version.gv %>.js'
+                dest: 'build/eva/<%= meta.version.eva %>/js/gv-<%= meta.version.gv %>.js'
             },
 
         },
@@ -151,19 +151,19 @@ module.exports = function (grunt) {
 
             eva: {
                 src: '<%= concat.eva.dest %>',
-                dest: 'build/eva/<%= meta.version.eva %>/app/js/eva-<%= meta.version.eva %>.min.js'
+                dest: 'build/eva/<%= meta.version.eva %>/js/eva-<%= meta.version.eva %>.min.js'
             },
             utils: {
                 src: '<%= concat.utils.dest %>',
-                dest: 'build/eva/<%= meta.version.eva %>/app/js/utils-<%= meta.version.utils %>.min.js'
+                dest: 'build/eva/<%= meta.version.eva %>/js/utils-<%= meta.version.utils %>.min.js'
             },
             cellbase: {
                 src: '<%= concat.utils.dest %>',
-                dest: 'build/eva/<%= meta.version.eva %>/app/js/cellbase-<%= meta.version.cellbase %>.min.js'
+                dest: 'build/eva/<%= meta.version.eva %>/js/cellbase-<%= meta.version.cellbase %>.min.js'
             },
             gv: {
                 src: '<%= concat.utils.dest %>',
-                dest: 'build/eva/<%= meta.version.eva %>/app/js/gv-<%= meta.version.gv %>.min.js'
+                dest: 'build/eva/<%= meta.version.eva %>/js/gv-<%= meta.version.gv %>.min.js'
             }
 
         },
@@ -209,16 +209,9 @@ module.exports = function (grunt) {
 
             eva: {
                 files: [
-                    {   expand: true,  src: ['app/views/*'], dest: 'build/eva/<%= meta.version.eva %>/app/views',  flatten: true},
+                    {   expand: true,  src: ['app/views/*'], dest: 'build/eva/<%= meta.version.eva %>/views',  flatten: true},
                     {   expand: true,  src: ['vendor/**'], dest: 'build/eva/<%= meta.version.eva %>'},
-                    {   expand: true,  src: ['app/css/*'], dest: 'build/eva/<%= meta.version.eva %>/app/css', flatten: true}
-                ]
-            },
-            gv: {
-                files: [
-                    { expand: true,  src: ['lib/jsorolla/src/**'], dest: 'build/eva/<%= meta.version.eva %>/' },
-                    { expand: true,  src: ['lib/jsorolla/vendor/**'], dest: 'build/eva/<%= meta.version.eva %>/' },
-                    { expand: true,  src: ['lib/jsorolla/styles/**'], dest: 'build/eva/<%= meta.version.eva %>/' }
+                    {   expand: true,  src: ['app/css/*'], dest: 'build/eva/<%= meta.version.eva %>/css', flatten: true}
                 ]
             }
 
@@ -251,7 +244,8 @@ module.exports = function (grunt) {
                             'build/eva/<%= meta.version.eva %>/vendor/checklist-model.js',
                             'build/eva/<%= meta.version.eva %>/vendor/angular-scroll.min.js',
                             'build/eva/<%= meta.version.eva %>/vendor/extJS/ux/SlidingPager.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/extJS/ux/data/PagingMemoryProxy.js'
+                            'build/eva/<%= meta.version.eva %>/vendor/extJS/ux/data/PagingMemoryProxy.js',
+                            'build/eva/<%= meta.version.eva %>/vendor/genome-viewer-1.0.3.min.js'
                         ],
                         'vendor-jquery': [
                             'build/eva/<%= meta.version.eva %>/vendor/jquery.min.js'
@@ -334,7 +328,7 @@ module.exports = function (grunt) {
     grunt.registerTask('vendor', ['curl-dir']);
 
     // Default task.
-    grunt.registerTask('default', ['clean:eva','concat:eva','concat:utils','concat:cellbase', 'concat:gv','uglify:eva','uglify:utils','uglify:cellbase','uglify:gv', 'copy:eva', 'copy:gv','htmlbuild:eva'])
+    grunt.registerTask('default', ['clean:eva','concat:eva','concat:utils','concat:cellbase', 'concat:gv','uglify:eva','uglify:utils','uglify:cellbase','uglify:gv', 'copy:eva', 'htmlbuild:eva'])
 
 
 //    grunt.registerTask('clean', ['clean:eva']);
