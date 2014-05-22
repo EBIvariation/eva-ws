@@ -193,6 +193,7 @@ module.exports = function (grunt) {
         qunit: {
             files: ['test/**/*.html']
         },
+
         watch: {
             gruntfile: {
                 files: '<%= jshint.gruntfile.src %>',
@@ -224,9 +225,7 @@ module.exports = function (grunt) {
         },
 
         clean: {
-
             eva: ['build/eva/<%= meta.version.eva %>/']
-
         },
 
         htmlbuild: {
@@ -300,6 +299,7 @@ module.exports = function (grunt) {
                 dest: 'vendor'
             }
         },
+
         watch: {
             scripts: {
                 files: ['app/**'],
@@ -307,6 +307,7 @@ module.exports = function (grunt) {
                 options: {spawn: false}
             }
         },
+
         rename: {
             main: {
                 files: [
@@ -333,9 +334,9 @@ module.exports = function (grunt) {
     grunt.registerTask('vendor', ['curl-dir']);
 
     // Default task.
-    grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify'])
+    grunt.registerTask('default', ['clean:eva','concat:eva','concat:utils','concat:cellbase', 'concat:gv','uglify:eva','uglify:utils','uglify:cellbase','uglify:gv', 'copy:eva', 'copy:gv','htmlbuild:eva', 'rename:main'])
 
 
-    grunt.registerTask('eva', ['clean:eva','concat:eva','concat:utils','concat:cellbase', 'concat:gv','uglify:eva','uglify:utils','uglify:cellbase','uglify:gv', 'copy:eva', 'copy:gv','htmlbuild:eva', 'rename:main']);
+//    grunt.registerTask('clean', ['clean:eva']);
 
 };
