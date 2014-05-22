@@ -7,10 +7,10 @@ module.exports = function (grunt) {
         // Metadata.
         meta: {
             version : {
-                eva:'1.0',
-                utils:'1.0',
-                cellbase:'1.0',
-                gv:'1.0'
+                eva: '1.0.0',
+//                utils: '1.0',
+//                cellbase: '1.0',
+//                gv: '1.0'
             }
         },
 
@@ -230,8 +230,8 @@ module.exports = function (grunt) {
 
         htmlbuild: {
             eva: {
-                src: 'app/eva-index.html',
-                dest: 'build/eva/<%= meta.version.eva %>/app',
+                src: 'app/index.html',
+                dest: 'build/eva/<%= meta.version.eva %>/',
                 options: {
                     beautify: true,
                     scripts: {
@@ -244,8 +244,8 @@ module.exports = function (grunt) {
                             'build/eva/<%= meta.version.eva %>/vendor/backbone-1.1.2-min.js',
                             'build/eva/<%= meta.version.eva %>/vendor/bootstrap/js/bootstrap.min.js',
                             'build/eva/<%= meta.version.eva %>/vendor/ui-bootstrap-tpls-0.10.0.min.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/highstock.src.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/highcharts-ng.js',
+//                            'build/eva/<%= meta.version.eva %>/vendor/highstock.src.js',
+//                            'build/eva/<%= meta.version.eva %>/vendor/highcharts-ng.js',
                             'build/eva/<%= meta.version.eva %>/vendor/extJS/js/ext-all.js',
                             'build/eva/<%= meta.version.eva %>/vendor/angular-ui-router.min.js',
                             'build/eva/<%= meta.version.eva %>/vendor/checklist-model.js',
@@ -255,7 +255,7 @@ module.exports = function (grunt) {
                         ],
                         'vendor-jquery': [
                             'build/eva/<%= meta.version.eva %>/vendor/jquery.min.js'
-                        ],
+                        ]
                     },
                     styles: {
                         'eva-css': [
@@ -308,13 +308,13 @@ module.exports = function (grunt) {
             }
         },
 
-        rename: {
-            main: {
-                files: [
-                    {src: ['build/eva/<%= meta.version.eva %>/app/eva-index.html'], dest: 'build/eva/<%= meta.version.eva %>/app/index.html'}
-                ]
-            }
-        }
+//        rename: {
+//            main: {
+//                files: [
+//                    {src: ['build/eva/<%= meta.version.eva %>/app/index.html'], dest: 'build/eva/<%= meta.version.eva %>/app/index.html'}
+//                ]
+//            }
+//        }
 
     });
 
@@ -334,7 +334,7 @@ module.exports = function (grunt) {
     grunt.registerTask('vendor', ['curl-dir']);
 
     // Default task.
-    grunt.registerTask('default', ['clean:eva','concat:eva','concat:utils','concat:cellbase', 'concat:gv','uglify:eva','uglify:utils','uglify:cellbase','uglify:gv', 'copy:eva', 'copy:gv','htmlbuild:eva', 'rename:main'])
+    grunt.registerTask('default', ['clean:eva','concat:eva','concat:utils','concat:cellbase', 'concat:gv','uglify:eva','uglify:utils','uglify:cellbase','uglify:gv', 'copy:eva', 'copy:gv','htmlbuild:eva'])
 
 
 //    grunt.registerTask('clean', ['clean:eva']);

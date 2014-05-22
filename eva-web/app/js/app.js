@@ -1,7 +1,3 @@
-/**
- * Created by jag on 17/03/2014.
- */
-var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','highcharts-ng','ebiVar.Services.Metadata','homeWidgetModule','variantWidgetModule','checklist-model', 'geneWidgetModule', 'ui.router', 'duScroll']);
 
 
 METADATA_HOST = "http://www.ebi.ac.uk/eva/webservices/rest";
@@ -19,11 +15,11 @@ if(window.location.host.indexOf("www.ebi.ac.uk") === -1){
     CELLBASE_VERSION = "latest";
 }
 
-
-
-
-
-
+/**
+ * Created by jag on 17/03/2014.
+ */
+//var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','highcharts-ng','ebiVar.Services.Metadata','homeWidgetModule','variantWidgetModule','checklist-model', 'geneWidgetModule', 'ui.router', 'duScroll']);
+var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','ebiVar.Services.Metadata','homeWidgetModule','variantWidgetModule','checklist-model', 'geneWidgetModule', 'ui.router', 'duScroll']);
 
 
 
