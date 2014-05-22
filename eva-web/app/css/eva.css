@@ -162,6 +162,14 @@ div.masthead ul li.right{
 }
 
 
+.x-tree-node-text,.x-grid-row .x-grid-cell, .x-column-header-text,.x-toolbar-text,.x-btn-inner {
+    font-family: Verdana, sans-serif !important;
+}
+
+
+
+
+
 
 
 
