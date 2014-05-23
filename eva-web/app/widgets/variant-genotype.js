@@ -102,9 +102,27 @@ VariantGenotypeWidget.prototype = {
         var data = [];
         var dataArray=[];
 
-        var tmpData =  _this._fetchData(_this.url);
-//        var formatTempArr = tmpData.response.result[0].files[0].format.split(":").sort();
-//        var formatArr = formatTempArr.reverse();
+        var tmpData;
+        if(_this.variantId){
+            evaManager.get({
+                category: 'variants',
+                resource: 'info',
+                params: {
+                    of: 'json'
+                },
+                query: _this.variantId,
+                async: false,
+                success: function (data) {
+                    tmpData = data;
+                },
+                error: function (data) {
+                    console.log('Could not get variant info');
+                }
+            });
+
+        }else{
+            return;
+        }
         var columnData = [];
 
         if(!tmpData.response.numResults){
@@ -144,6 +162,7 @@ VariantGenotypeWidget.prototype = {
 
     _fetchData:function(args){
         var data;
+
         $.ajax({
             url: args,
             async: false,
@@ -155,6 +174,8 @@ VariantGenotypeWidget.prototype = {
                 data = '';
             }
         });
+        console.log(args)
+        console.log(data)
         return data;
     }
 

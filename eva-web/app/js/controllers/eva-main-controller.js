@@ -2,7 +2,7 @@
  * Created by jag on 17/03/2014.
  */
 
-var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootScope', 'ebiVarMetadataService', function ($scope, $rootScope, ebiVarMetadataService) {
+var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope', '$rootScope',  function ($scope, $rootScope) {
 
     $scope.searchboxValue;
     $scope.search = function(value){
@@ -12,14 +12,14 @@ var variationCtrl = evaApp.controller('variationBrowserCtrl', ['$scope', '$rootS
     }
 
     eventManager.on("gene:search variant:search" , function(e) {
-       updateRegion( $scope.gene);
+       //updateRegion( $scope.gene);
     });
 
     function createSummaryChart(){
 
-        var summaryUrl = METADATA_HOST+'/'+METADATA_VERSION+'/genes/ranking';
+        //var summaryUrl = METADATA_HOST+'/'+METADATA_VERSION+'/genes/ranking';
         var summaryData = ebiVarMetadataService.fetchData(summaryUrl);
-        var summaryChartData = parseSummaryChartData(summaryData);
+        //var summaryChartData = parseSummaryChartData(summaryData);
         console.log(summaryChartData.data)
 
         $scope.summaryPieChartConfig = {

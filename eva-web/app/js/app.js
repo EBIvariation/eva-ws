@@ -19,7 +19,7 @@ if(window.location.host.indexOf("www.ebi.ac.uk") === -1){
  * Created by jag on 17/03/2014.
  */
 //var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','highcharts-ng','ebiVar.Services.Metadata','homeWidgetModule','variantWidgetModule','checklist-model', 'geneWidgetModule', 'ui.router', 'duScroll']);
-var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','ebiVar.Services.Metadata','homeWidgetModule','variantWidgetModule','geneWidgetModule', 'duScroll']);
+var evaApp = angular.module('evaApp', ['ui.bootstrap','ebiApp','homeWidgetModule','variantWidgetModule','geneWidgetModule', 'duScroll']);
 
 
 

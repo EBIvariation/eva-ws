@@ -2,15 +2,13 @@
  * Created by jag on 14/04/2014.
  */
 var genomeViewer;
-var fileAttributes = 'asdsdf';
-
 angular.module('variantWidgetModule', []).directive('variantWidget', function () {
     return {
         restrict: 'E',
         replace: true,
         transclude: true,
         templateUrl: 'views/variation-browser-view.html',
-        controller: function($scope,ebiVarMetadataService) {
+        controller: function($scope) {
                 var conTypeTree;
                 var studiesTree;
                 var varClassesTree;
@@ -130,11 +128,6 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
 
                 });
-
-
-//            variantWidget = _this.vbGrid.getSelectionModel().selected.items[0].data
-
-
 
 
             var region = new Region({chromosome: "13", start: 32889611, end: 32889611});
@@ -306,10 +299,27 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
             //function to parse files and stats Data
             function parseFilesData(args){
-                var url = METADATA_HOST+'/'+METADATA_VERSION+'/variants/'+args+'/info';
-//                var data = ebiVarMetadataService.fetchData({category: "variants", id: args, endpoint: "info"}, {limit: 5});
-                var data = ebiVarMetadataService.fetchData(url);
-                var tmpData = data.response.result[0].files;
+
+                var variantData;
+                evaManager.get({
+                    category: 'variants',
+                    resource: 'info',
+                    params: {
+                        of: 'json'
+                    },
+                    query: args,
+                    async: false,
+                    success: function (data) {
+                        variantData = data.response.result[0].files;
+                    },
+                    error: function (data) {
+                        console.log('Could not get variant info');
+                    }
+                });
+
+
+
+                var tmpData = variantData;
                 var tmpDataArray = [];
 
                 $.each(tmpData, function(key, value) {
@@ -344,19 +354,34 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
         replace: true,
         transclude: true,
         templateUrl: 'views/variant-view.html',
-        controller: function($scope,ebiVarMetadataService) {
+        controller: function($scope) {
 
 
            var data = getUrlParameters("");
 
            if(data.value){
-               var variantInfoUrl = METADATA_HOST+'/'+METADATA_VERSION+'/variants/'+data.value+'/info';
-               var tmpData = ebiVarMetadataService.fetchData(variantInfoUrl);
+               var variantData;
+               evaManager.get({
+                   category: 'variants',
+                   resource: 'info',
+                   params: {
+                       of: 'json'
+                   },
+                   query: data.value,
+                   async: false,
+                   success: function (data) {
+                       variantData = data;
+                   },
+                   error: function (data) {
+                       console.log('Could not get variant info');
+                   }
+               });
+               var tmpData = variantData;
+
            }else{
                return;
            }
-
-            if(!tmpData.response.numResults){
+            if(!tmpData || !tmpData.response.numResults){
                 return;
             }
 
@@ -368,8 +393,21 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
 
             var position = $scope.variantInfoData.chr + ":" + $scope.variantInfoData.start + ":" + $scope.variantInfoData.ref + ":" + $scope.variantInfoData.alt;
-            var url = CELLBASE_HOST+'/'+CELLBASE_VERSION+'/hsa/genomic/variant/'+position+'/consequence_type?of=json';
-            var effectsTempData = ebiVarMetadataService.fetchData(url);
+            var effectsTempData;
+            CellBaseManager.get({
+                species: 'hsa',
+                category: 'genomic',
+                subCategory: 'variant',
+                resource: 'consequence_type',
+                query: position,
+                async: false,
+                success: function (data) {
+                    effectsTempData = data;
+                },
+                error: function (data) {
+                    console.log('Could not get variant effects list');
+                }
+            });
             var effectsTempDataArray = [];
 
             $.each(effectsTempData, function(key, value) {

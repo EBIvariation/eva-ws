@@ -28,27 +28,29 @@ module.exports = function (grunt) {
 
             eva: {
                 src: [
-                /** eva app js **/
+                    /** eva app js **/
+                    'app/js/eva-manager.js',
                     'app/js/app.js',
 
-                /** ebi-compliance **/
+                    /** ebi-compliance **/
                     'lib/ebi-js-commons/ebi-compliance/js/ebi-complaince-directive.js',
 
-                /** eva controllers **/
-                    'app/js/controllers/variation-browser-controller.js',
+                    /** eva controllers **/
+                    'app/js/controllers/eva-main-controller.js',
                     'app/js/controllers/backbone-event-manager.js',
 
-                /** eva-directives **/
+                    /** eva-directives **/
                     'app/js/directives/eva-portal-home-drirective.js',
                     'app/js/directives/variant-widget-directive.js',
                     'app/js/directives/gene-view-directive.js',
 
-                /** eva-widgets **/
-                    'app/widgets/variant-widget.js',
+                     /** eva-widgets **/
+                    'app/widgets/variant-browser-widget.js',
                     'app/widgets/gene-widget.js',
                     'app/widgets/variant-genotype.js',
+                    'app/widgets/variant-effects.js',
 
-                /** eva-services **/
+                    /** eva-services **/
                     'app/js/ebi-var-services/ebivar-services-metadata.js'
 
                 ],
