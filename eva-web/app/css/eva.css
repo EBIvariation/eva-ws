@@ -1,12 +1,12 @@
 
 .panel-ebi-primary, .panel-ebi-secondary{
     border-color: #357ebd;
-    border-radius:0 0 0 0;
+    /*border-radius:0 0 0 0;*/
 }
 
 .panel-ebi-primary > .panel-heading, .panel-ebi-secondary > .panel-heading{
    background-color: #CFDFF4;
-   border-radius:0 0 0 0;
+   /*border-radius:0 0 0 0;*/
    padding: 2px 3px;
 }
 
@@ -54,11 +54,18 @@ div .ngHeaderText{
     background-color:##CFDFF4;
 }
 
-.variantBrowserTabs.nav-pills > li > a {padding-top:3px !important; padding-bottom:3px !important; }
-.variantBrowserTabs.nav-pills {min-height:20px !important;  background-color: #CFDFF4;}
+.variantBrowserTabs.nav-pills > li > a {
+    padding-top:3px !important;
+    padding-bottom:3px !important;
+}
+.variantBrowserTabs.nav-pills {
+    min-height:20px !important;
+    /*background-color: #CFDFF4;*/
+    border-color: #ffffff;
+}
 
 .variantBrowserTabs.nav-pills li a, .nav-tabs{
-    border-radius: 0px;
+    /*border-radius: 0px;*/
     /*border: 1px solid #ddd;*/
     border-color: #357ebd;
 }

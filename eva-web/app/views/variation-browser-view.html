@@ -121,7 +121,7 @@
                             <div class="col-md-12">
                                 <div class="table-responsive" >
                                     <div ng-repeat="(key,value) in  filesData">
-                                        <h5><span style="text-transform: capitalize;" class="label label-danger">{{value.id}} study</span>&nbsp;&nbsp;<small><button type="button" ng-click="toggleShow()" class="btn  btn-default btn-xs">{{toggleLabel}}</button></small></h5>
+                                        <h4>{{value.id}} study&nbsp;&nbsp;<small><button type="button" ng-click="toggleShow()" class="btn  btn-default btn-xs">{{toggleLabel}}</button></small></h4>
                                         <div ng-show="toggleState">
                                             <div class="row"  ng-repeat="(key,value) in  value.data">
                                                 <div class="col-md-8">
