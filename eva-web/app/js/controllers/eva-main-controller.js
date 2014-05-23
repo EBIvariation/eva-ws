@@ -11,9 +11,8 @@ var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope', '$rootScope',  fun
         window.location.href = url;
     }
 
-    eventManager.on("gene:search variant:search" , function(e) {
-       //updateRegion( $scope.gene);
-    });
+
+
 
     function createSummaryChart(){
 
@@ -79,20 +78,6 @@ var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope', '$rootScope',  fun
     $scope.showStatitsicsState;
 
 
-    $scope.searchVariants = function(){
-        eventManager.trigger("variant:search");
-    }
-    $scope.reloadVariants = function(){
-        $scope.location = location;
-       // $scope.gene = gene;
-       eventManager.trigger("variant:search");
-    }
-
-    $scope.searchGenes = function(){
-        eventManager.trigger("gene:search");
-    }
-
-
 
     $scope.showStatitsics = function(){
         this.showStatitsicsState = !this.showStatitsicsState;
@@ -105,22 +90,8 @@ var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope', '$rootScope',  fun
     };
 
 
-    var location = '21:9411240-9411260';
-    var gene = 'TMEM51';
 
-    $scope.location = location;
-    //$scope.gene = gene;
 
-    function updateRegion(args){
-
-        if(args){
-                var geneInfoURL = CELLBASE_HOST+'/'+CELLBASE_VERSION+'/hsa/feature/gene/'+$scope.gene+'/info?of=json';
-                var regionData = ebiVarMetadataService.fetchData(geneInfoURL);
-                var region = regionData[0][0].chromosome+':'+regionData[0][0].start+'-'+regionData[0][0].end;
-                //sconsole.log(region)
-                $scope.location = region;
-        }
-    }
 
 
 

@@ -42,11 +42,11 @@ module.exports = function (grunt) {
                     /** eva-directives **/
                     'app/js/directives/eva-portal-home-drirective.js',
                     'app/js/directives/variant-widget-directive.js',
-                    'app/js/directives/gene-view-directive.js',
+                    'app/js/directives/gene-widget-directive.js',
 
                      /** eva-widgets **/
                     'app/widgets/variant-browser-widget.js',
-                    'app/widgets/gene-widget.js',
+                    'app/widgets/gene-browser-widget.js',
                     'app/widgets/variant-genotype.js',
                     'app/widgets/variant-effects.js',
 

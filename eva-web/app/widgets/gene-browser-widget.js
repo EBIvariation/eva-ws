@@ -71,8 +71,7 @@ GeneWidget.prototype = {
 
         //console.log(_this.filters);
 
-        var url = METADATA_HOST+'/'+VERSION+'/genes/'+_this.gene+'/variants';
-        console.log(url)
+
         // create the data store
 
 
@@ -152,19 +151,6 @@ GeneWidget.prototype = {
                         sortable : true,
                         dataIndex: 'hgvsName',
                     }
-//                        {
-//                            text     : 'ChunkIDs',
-//                            sortable : true,
-//                            dataIndex: 'chunkIds',
-//                            renderer:function(value){
-//                                var chunkids ='';
-//                                for (var i = 0; i < value.length; i++) {
-//                                    chunkids += value[i]+'<br />';
-//                                }
-//                                return chunkids;
-//                            }
-//
-//                        },
 
                 ],
                 defaults: {
@@ -188,9 +174,25 @@ GeneWidget.prototype = {
 
 
 
-        var data =  _this._fetchData(url);
+        var tempData;
+        evaManager.get({
+            category: 'genes',
+            resource: 'variants',
+            params: {
+                of: 'json'
+            },
+            query: _this.gene,
+            async: false,
+            success: function (data) {
+                tempData = data;
+            },
+            error: function (data) {
+                console.log('Could not get variant info');
+            }
+        });
+        console.log(_this)
 
-        var groupData = _this._groupData(data);
+        var groupData = _this._groupData(tempData);
 
         console.log(groupData)
 

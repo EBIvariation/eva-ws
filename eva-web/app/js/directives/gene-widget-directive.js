@@ -7,6 +7,9 @@ angular.module('geneWidgetModule', []).directive('geneWidget', function () {
         link: function($scope, element, attr) {
             $scope.geneView = 'sdasfd';
             $scope.geneTableId       = 'geneBrowserTable';
+            $scope.searchGenes = function(){
+                eventManager.trigger("gene:search");
+            }
             eventManager.on("gene:search", function(e) {
                 var geneWidget;
                 geneWidget = new GeneWidget({

@@ -9,6 +9,13 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
         transclude: true,
         templateUrl: 'views/variation-browser-view.html',
         controller: function($scope) {
+
+
+                var location = '21:9411240-9411260';
+                //var gene = 'TMEM51';
+                $scope.location = location;
+                $scope.gene = gene;
+
                 var conTypeTree;
                 var studiesTree;
                 var varClassesTree;
@@ -24,6 +31,30 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                 $scope.studiesTreeId             = 'studiesTreeID';
                 $scope.consequenceTypeTreeId     = 'consequenceTypeTreeID';
                 $scope.variationClassesTreeId    = 'variationClassesTreeID';
+
+
+
+
+                $scope.searchVariants = function(){
+                    eventManager.trigger("variant:search");
+                }
+
+                $scope.reloadVariants = function(){
+                    $scope.location = location;
+                    // $scope.gene = gene;
+                    eventManager.trigger("variant:search");
+                }
+
+                $scope.clearVariants = function(){
+                    $scope.location = '';
+                    $scope.gene = '';
+                    clearCheckedFilters(studiesTree);
+                    clearCheckedFilters(conTypeTree);
+                    clearCheckedFilters(varClassesTree);
+                    eventManager.trigger("variant:search");
+                }
+
+
 
                 jQuery('#topMenuTab a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 
@@ -61,21 +92,17 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
                 });
 
-                $scope.clearVariants = function(){
-                    $scope.location = '';
-                    $scope.gene = '';
-                    console.log(studiesTree.store.getRootNode())
-                    clearCheckedFilters(studiesTree);
-                    clearCheckedFilters(conTypeTree);
-                    clearCheckedFilters(varClassesTree);
-                    eventManager.trigger("variant:search");
-                }
+
 
                 eventManager.on("variant:files", function(e) {
                     $scope.$apply(function(){
                         $scope.filesData = parseFilesData(e)
                         //$scope.filesData  = fileData;
                     })
+                });
+
+                eventManager.on("gene:search variant:search" , function(e) {
+                    updateRegion( $scope.gene);
                 });
 
 
@@ -279,6 +306,37 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
 //            genomeViewer.draw();
 
+
+            //function to update region by geneId
+            function updateRegion(args){
+                if(args){
+                    var geneInfoURL = CELLBASE_HOST+'/'+CELLBASE_VERSION+'/hsa/feature/gene/'+$scope.gene+'/info?of=json';
+
+                    var regionData;
+                    CellBaseManager.get({
+                        species: 'hsa',
+                        category: 'feature',
+                        subCategory: 'gene',
+                        resource: 'info',
+                        query: $scope.gene,
+                        async: false,
+                        success: function (data) {
+                            regionData = data;
+                        },
+                        error: function (data) {
+                            console.log('Could not get variant effects list');
+                        }
+                    });
+
+                    var region = regionData[0][0].chromosome+':'+regionData[0][0].start+'-'+regionData[0][0].end;
+                    $scope.$apply(function(){
+                        $scope.location = region;
+                    })
+
+                }
+            }
+
+
             //Function to get checked filters
             function getCheckedFilters(args){
                 if(args.length > 0){
@@ -342,8 +400,6 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                 return filesDataArray;
 
             }
-
-
         }
 
     };
