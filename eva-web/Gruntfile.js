@@ -52,7 +52,7 @@ module.exports = function (grunt) {
                     'app/js/ebi-var-services/ebivar-services-metadata.js'
 
                 ],
-                dest: 'build/eva/<%= meta.version.eva %>/js/eva-<%= meta.version.eva %>.js'
+                dest: 'build/<%= meta.version.eva %>/eva-<%= meta.version.eva %>.js'
             }
 
         },
@@ -60,7 +60,7 @@ module.exports = function (grunt) {
 
             eva: {
                 src: '<%= concat.eva.dest %>',
-                dest: 'build/eva/<%= meta.version.eva %>/js/eva-<%= meta.version.eva %>.min.js'
+                dest: 'build/<%= meta.version.eva %>/eva-<%= meta.version.eva %>.min.js'
             }
         },
         jshint: {
@@ -105,54 +105,58 @@ module.exports = function (grunt) {
 
             eva: {
                 files: [
-                    {   expand: true,  src: ['app/views/*'], dest: 'build/eva/<%= meta.version.eva %>/views',  flatten: true},
-                    {   expand: true,  src: ['vendor/**'], dest: 'build/eva/<%= meta.version.eva %>'},
-                    {   expand: true,  src: ['app/css/*'], dest: 'build/eva/<%= meta.version.eva %>/css', flatten: true}
+                    {   expand: true,  src: ['app/views/*'], dest: 'build/<%= meta.version.eva %>/views',  flatten: true},
+                    {   expand: true,  src: ['vendor/**'], dest: 'build/<%= meta.version.eva %>'},
+                    {   expand: true,  src: ['app/css/*'], dest: 'build/<%= meta.version.eva %>/css', flatten: true},
+                    {   expand: true,  src: ['app/js/gv-config.js'], dest: 'build/<%= meta.version.eva %>/', flatten: true}
                 ]
             }
 
         },
 
         clean: {
-            eva: ['build/eva/<%= meta.version.eva %>/']
+            eva: ['build/<%= meta.version.eva %>/']
         },
 
         htmlbuild: {
             eva: {
                 src: 'app/index.html',
-                dest: 'build/eva/<%= meta.version.eva %>/',
+                dest: 'build/<%= meta.version.eva %>/',
                 options: {
                     beautify: true,
                     scripts: {
                         'eva-js'        : '<%= concat.eva.dest %>',
                         'vendor': [
-                            'build/eva/<%= meta.version.eva %>/vendor/jquery.min.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/angular-1.2.16.min.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/underscore-1.5.2.min.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/backbone-1.1.2-min.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/bootstrap/js/bootstrap.min.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/ui-bootstrap-tpls-0.10.0.min.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/highcharts-4.0.1.min.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/extJS/js/ext-all.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/angular-ui-router.min.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/checklist-model.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/angular-scroll.min.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/extJS/ux/SlidingPager.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/extJS/ux/data/PagingMemoryProxy.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/gv-config.js',
-                            'build/eva/<%= meta.version.eva %>/vendor/genome-viewer-1.0.3.min.js'
+                            'build/<%= meta.version.eva %>/vendor/jquery.min.js',
+                            'build/<%= meta.version.eva %>/vendor/angular-1.2.16.min.js',
+                            'build/<%= meta.version.eva %>/vendor/underscore-1.5.2.min.js',
+                            'build/<%= meta.version.eva %>/vendor/backbone-1.1.2-min.js',
+                            'build/<%= meta.version.eva %>/vendor/bootstrap/js/bootstrap.min.js',
+                            'build/<%= meta.version.eva %>/vendor/ui-bootstrap-tpls-0.10.0.min.js',
+                            'build/<%= meta.version.eva %>/vendor/highcharts-4.0.1.min.js',
+                            'build/<%= meta.version.eva %>/vendor/extJS/js/ext-all.js',
+                            'build/<%= meta.version.eva %>/vendor/angular-ui-router.min.js',
+                            'build/<%= meta.version.eva %>/vendor/checklist-model.js',
+                            'build/<%= meta.version.eva %>/vendor/angular-scroll.min.js',
+                            'build/<%= meta.version.eva %>/vendor/extJS/ux/SlidingPager.js',
+                            'build/<%= meta.version.eva %>/vendor/extJS/ux/data/PagingMemoryProxy.js',
+//                            'build/<%= meta.version.eva %>/vendor/gv-config.js',
+                            'build/<%= meta.version.eva %>/vendor/genome-viewer-1.0.3.min.js'
+                        ],
+                        'internal-dependencies': [
+                            'build/<%= meta.version.eva %>/gv-config.js'
                         ]
                     },
                     styles: {
                         'eva-css': [
-                            'build/eva/<%= meta.version.eva %>/app/css/eva-portal-colours.css',
-                            'build/eva/<%= meta.version.eva %>/app/css/eva-portal-visual.css',
-                            'build/eva/<%= meta.version.eva %>/app/css/eva.css'
+                            'build/<%= meta.version.eva %>/app/css/eva-portal-colours.css',
+                            'build/<%= meta.version.eva %>/app/css/eva-portal-visual.css',
+                            'build/<%= meta.version.eva %>/app/css/eva.css'
                         ],
                         'vendor': [
-                            'build/eva/<%= meta.version.eva %>/vendor/bootstrap/css/bootstrap.min.css',
-                            'build/eva/<%= meta.version.eva %>/vendor/bootstrap/css/bootstrap-theme.min.css',
-                            'build/eva/<%= meta.version.eva %>/vendor/extJS/css/resources/css/ext-all.css'
+                            'build/<%= meta.version.eva %>/vendor/bootstrap/css/bootstrap.min.css',
+                            'build/<%= meta.version.eva %>/vendor/bootstrap/css/bootstrap-theme.min.css',
+                            'build/<%= meta.version.eva %>/vendor/extJS/css/resources/css/ext-all.css'
 
 
                         ]
@@ -197,7 +201,7 @@ module.exports = function (grunt) {
 //        rename: {
 //            main: {
 //                files: [
-//                    {src: ['build/eva/<%= meta.version.eva %>/app/index.html'], dest: 'build/eva/<%= meta.version.eva %>/app/index.html'}
+//                    {src: ['build/<%= meta.version.eva %>/app/index.html'], dest: 'build/<%= meta.version.eva %>/app/index.html'}
 //                ]
 //            }
 //        }
