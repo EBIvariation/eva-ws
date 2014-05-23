@@ -187,20 +187,12 @@ module.exports = function (grunt) {
         },
 
         watch: {
-            scripts: {
+            src: {
                 files: ['app/**'],
-                tasks: ['eva'],
+                tasks: ['default'],
                 options: {spawn: false}
             }
-        },
-
-//        rename: {
-//            main: {
-//                files: [
-//                    {src: ['build/eva/<%= meta.version.eva %>/app/index.html'], dest: 'build/eva/<%= meta.version.eva %>/app/index.html'}
-//                ]
-//            }
-//        }
+        }
 
     });
 
