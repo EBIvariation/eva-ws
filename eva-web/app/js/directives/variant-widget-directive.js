@@ -307,6 +307,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
             //function to parse files and stats Data
             function parseFilesData(args){
                 var url = METADATA_HOST+'/'+METADATA_VERSION+'/variants/'+args+'/info';
+//                var data = ebiVarMetadataService.fetchData({category: "variants", id: args, endpoint: "info"}, {limit: 5});
                 var data = ebiVarMetadataService.fetchData(url);
                 var tmpData = data.response.result[0].files;
                 var tmpDataArray = [];

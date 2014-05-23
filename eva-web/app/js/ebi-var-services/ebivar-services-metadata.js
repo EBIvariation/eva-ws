@@ -3,7 +3,10 @@ angular.module('ebiVar.Services.Metadata', []).service('ebiVarMetadataService', 
 
     this.fetchData = function(args) {
 
-        var url = args;
+        // URL foramtion
+
+
+        var url = args;s
         $.ajax({
             url: url,
             //url: 'http://localhost:8080/ws-test/rest/test/study/estd199',
@@ -21,5 +24,6 @@ angular.module('ebiVar.Services.Metadata', []).service('ebiVarMetadataService', 
         return data;
 
     };
+
 
 });
