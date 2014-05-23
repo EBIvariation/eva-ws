@@ -190,32 +190,14 @@ GeneWidget.prototype = {
                 console.log('Could not get variant info');
             }
         });
-        console.log(_this)
 
         var groupData = _this._groupData(tempData);
 
-        console.log(groupData)
 
         _this.gbGrid.getStore().loadData(groupData.response.result);
 
 
         return _this.gbGrid;
-    },
-
-    _fetchData:function(args){
-        var data;
-        $.ajax({
-            url: args,
-            async: false,
-            dataType: 'json',
-            success: function (response, textStatus, jqXHR) {
-                data = response;
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                data = '';
-            }
-        });
-        return data;
     },
 
     _groupData:function(args){
