@@ -399,7 +399,13 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
             $scope.variant = data.value;
 
             $scope.variantInfoData  = tmpData.response.result[0];
-            $scope.variantFilesData =  $scope.parseFilesData( $scope.variant);
+            if(!$scope.$$phase){
+                $scope.$apply(function(){
+                    $scope.variantFilesData =  $scope.parseFilesData( $scope.variant);
+                })
+            }
+
+
 
 
 
