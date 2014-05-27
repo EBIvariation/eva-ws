@@ -14,7 +14,7 @@ angular.module('geneWidgetModule', []).directive('geneWidget', function () {
                 var geneWidget;
                 geneWidget = new GeneWidget({
                     geneTableID    : $scope.geneTableId,
-                    gene           : $scope.gene,
+                    gene           : 'TMEM51',
 
                 });
                 geneWidget.draw();

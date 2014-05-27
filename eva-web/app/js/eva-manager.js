@@ -94,9 +94,9 @@ var evaManager = {
             query = '/' + config.query;
         }
 
-        var url = config.host + '/' + config.version +  '/' + config.category + '/'  + query + '/' + config.resource;
+        var url = config.host + '/' + config.version +  '/' + config.category + query + '/' + config.resource;
         url = Utils.addQueryParamtersToUrl(config.params, url);
-
+        alert(url);
 
         return url;
     }
