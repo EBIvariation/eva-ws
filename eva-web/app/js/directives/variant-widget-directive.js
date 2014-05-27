@@ -9,151 +9,151 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
         transclude: true,
         templateUrl: 'views/variation-browser-view.html',
         controller: function($scope) {
+        },
+        link: function($scope, element, attr) {
+            var location = '21:9411240-9411260';
+            //var gene = 'TMEM51';
+            $scope.location = location;
+            $scope.gene = gene;
+
+            var conTypeTree;
+            var studiesTree;
+            var varClassesTree;
+
+            $scope.variantTableId            = 'variantBrowserTable';
+            $scope.variantEffectTableId      = 'variantEffectTable';
+            $scope.variantFilesTableId       = 'variantFilesTable';
+            $scope.variantStatsViewId        = 'variantStatsView';
+            $scope.variantStatsChartId       = 'variantStatsChart';
+            $scope.variantGenoTypeTableId    = 'variantGenoTypeTable';
+            $scope.variantGenomeViewerId     = 'variant-browser-gv';
+            $scope.variantBrowserSubTabsId   = 'variantSubTabs';
+            $scope.studiesTreeId             = 'studiesTreeID';
+            $scope.consequenceTypeTreeId     = 'consequenceTypeTreeID';
+            $scope.variationClassesTreeId    = 'variationClassesTreeID';
 
 
-                var location = '21:9411240-9411260';
-                //var gene = 'TMEM51';
+
+
+            $scope.searchVariants = function(){
+                eventManager.trigger("variant:search");
+            }
+
+            $scope.reloadVariants = function(){
                 $scope.location = location;
-                $scope.gene = gene;
+                // $scope.gene = gene;
+                eventManager.trigger("variant:search");
+            }
 
-                var conTypeTree;
-                var studiesTree;
-                var varClassesTree;
-
-                $scope.variantTableId            = 'variantBrowserTable';
-                $scope.variantEffectTableId      = 'variantEffectTable';
-                $scope.variantFilesTableId       = 'variantFilesTable';
-                $scope.variantStatsViewId        = 'variantStatsView';
-                $scope.variantStatsChartId       = 'variantStatsChart';
-                $scope.variantGenoTypeTableId    = 'variantGenoTypeTable';
-                $scope.variantGenomeViewerId     = 'variant-browser-gv';
-                $scope.variantBrowserSubTabsId   = 'variantSubTabs';
-                $scope.studiesTreeId             = 'studiesTreeID';
-                $scope.consequenceTypeTreeId     = 'consequenceTypeTreeID';
-                $scope.variationClassesTreeId    = 'variationClassesTreeID';
+            $scope.clearVariants = function(){
+                $scope.location = '';
+                $scope.gene = '';
+                clearCheckedFilters(studiesTree);
+                clearCheckedFilters(conTypeTree);
+                clearCheckedFilters(varClassesTree);
+                eventManager.trigger("variant:search");
+            }
 
 
 
+            jQuery('#topMenuTab a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 
-                $scope.searchVariants = function(){
-                    eventManager.trigger("variant:search");
-                }
+                var variantTreeWidget;
+                variantTreeWidget = new VariantWidget({});
 
-                $scope.reloadVariants = function(){
-                    $scope.location = location;
-                    // $scope.gene = gene;
-                    eventManager.trigger("variant:search");
-                }
-
-                $scope.clearVariants = function(){
-                    $scope.location = '';
-                    $scope.gene = '';
-                    clearCheckedFilters(studiesTree);
-                    clearCheckedFilters(conTypeTree);
-                    clearCheckedFilters(varClassesTree);
-                    eventManager.trigger("variant:search");
-                }
+                var studiesTreeArgs = [];
+                studiesTreeArgs.id =  $scope.studiesTreeId;
+                studiesTreeArgs.data = $scope.studies;
 
 
-
-                jQuery('#topMenuTab a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-
-                    var variantTreeWidget;
-                    variantTreeWidget = new VariantWidget({});
-
-                    var studiesTreeArgs = [];
-                    studiesTreeArgs.id =  $scope.studiesTreeId;
-                    studiesTreeArgs.data = $scope.studies;
+                var consequenceTypeTreeArgs = [];
+                consequenceTypeTreeArgs.id =  $scope.consequenceTypeTreeId;
+                consequenceTypeTreeArgs.data = $scope.consequenceTypes;
 
 
-                    var consequenceTypeTreeArgs = [];
-                    consequenceTypeTreeArgs.id =  $scope.consequenceTypeTreeId;
-                    consequenceTypeTreeArgs.data = $scope.consequenceTypes;
+                var variationClassesTreeArgs = [];
+                variationClassesTreeArgs.id =  $scope.variationClassesTreeId;
+                variationClassesTreeArgs.data = $scope.variationClasses;
 
+                if(e.target.parentElement.id === 'variationLi'){
 
-                    var variationClassesTreeArgs = [];
-                    variationClassesTreeArgs.id =  $scope.variationClassesTreeId;
-                    variationClassesTreeArgs.data = $scope.variationClasses;
-
-                    if(e.target.parentElement.id === 'variationLi'){
-
-                        if(jQuery("#"+$scope.studiesTreeId).contents().length === 0 ){
-                            studiesTree = variantTreeWidget.createTreePanel(studiesTreeArgs);
-                        }
-                        if(jQuery("#"+$scope.consequenceTypeTreeId).contents().length === 0 ){
-                            conTypeTree = variantTreeWidget.createTreePanel(consequenceTypeTreeArgs);
-                        }
-
-                        if(jQuery("#"+$scope.variationClassesTreeId).contents().length === 0 ){
-                            varClassesTree = variantTreeWidget.createTreePanel(variationClassesTreeArgs);
-                        }
-                        eventManager.trigger("variant:search");
+                    if(jQuery("#"+$scope.studiesTreeId).contents().length === 0 ){
+                        studiesTree = variantTreeWidget.createTreePanel(studiesTreeArgs);
+                    }
+                    if(jQuery("#"+$scope.consequenceTypeTreeId).contents().length === 0 ){
+                        conTypeTree = variantTreeWidget.createTreePanel(consequenceTypeTreeArgs);
                     }
 
-                });
+                    if(jQuery("#"+$scope.variationClassesTreeId).contents().length === 0 ){
+                        varClassesTree = variantTreeWidget.createTreePanel(variationClassesTreeArgs);
+                    }
+                    eventManager.trigger("variant:search");
+                }
+
+            });
 
 
 
-                eventManager.on("variant:files", function(e) {
-                    $scope.$apply(function(){
-                        $scope.filesData =  $scope.parseFilesData(e);
-                    })
-                });
+            eventManager.on("variant:files", function(e) {
+                $scope.$apply(function(){
+                    $scope.filesData =  $scope.parseFilesData(e);
+                })
+            });
 
-                eventManager.on("gene:search variant:search" , function(e) {
-                    updateRegion( $scope.gene);
-                });
+            eventManager.on("gene:search variant:search" , function(e) {
+                updateRegion( $scope.gene);
+            });
 
 
-                eventManager.on("variant:search", function(e) {
+            eventManager.on("variant:search", function(e) {
 
-                    var studyFilter  = getCheckedFilters(studiesTree.getView().getChecked());
-                    var conTypeFilter  = getCheckedFilters(conTypeTree.getView().getChecked());
-                    var varClassesFilter  = getCheckedFilters(varClassesTree.getView().getChecked());
+                var studyFilter  = getCheckedFilters(studiesTree.getView().getChecked());
+                var conTypeFilter  = getCheckedFilters(conTypeTree.getView().getChecked());
+                var varClassesFilter  = getCheckedFilters(varClassesTree.getView().getChecked());
 
 //                    console.log(studyFilter)
 //                    console.log(conTypeFilter)
 //                    console.log(varClassesFilter)
 
-                    if(conTypeFilter){
-                        $scope.CTfilter = '&effect='+conTypeFilter;
-                    }else{
-                        $scope.CTfilter = '';
-                    }
+                if(conTypeFilter){
+                    $scope.CTfilter = '&effect='+conTypeFilter;
+                }else{
+                    $scope.CTfilter = '';
+                }
 
-                    $scope.filters =  $scope.CTfilter;
+                $scope.filters =  $scope.CTfilter;
 
-                    var variantWidget;
-                    variantWidget = new VariantWidget({
-                        variantTableID          : $scope.variantTableId,
-                        variantEffectTableID    : $scope.variantEffectTableId,
-                        variantFilesTableID     : $scope.variantFilesTableId,
-                        variantStatsViewID      : $scope.variantStatsViewId,
-                        variantStatsChartID     : $scope.variantStatsChartId,
-                        variantGenoTypeTableID  : $scope.variantGenoTypeTableId,
-                        location                : $scope.location,
-                        filters                 : $scope.filters,
-                        variantGenomeViewerID   : $scope.variantGenomeViewerId,
-                        variantSubTabsID        : $scope.variantBrowserSubTabsId,
-                    });
-
-                    variantWidget.draw();
-
-
-
-                    if(!genomeViewer.rendered) {
-                        genomeViewer.render();
-                        genomeViewer.draw();
-                        genomeViewer.addTrack(tracks);
-                        genomeViewer.addOverviewTrack(geneOverview);
-                    }
-
-                    var region = new Region();
-                    region.parse($scope.location);
-                    genomeViewer.setRegion(region);
-
-
+                var variantWidget;
+                variantWidget = new VariantWidget({
+                    variantTableID          : $scope.variantTableId,
+                    variantEffectTableID    : $scope.variantEffectTableId,
+                    variantFilesTableID     : $scope.variantFilesTableId,
+                    variantStatsViewID      : $scope.variantStatsViewId,
+                    variantStatsChartID     : $scope.variantStatsChartId,
+                    variantGenoTypeTableID  : $scope.variantGenoTypeTableId,
+                    location                : $scope.location,
+                    filters                 : $scope.filters,
+                    variantGenomeViewerID   : $scope.variantGenomeViewerId,
+                    variantSubTabsID        : $scope.variantBrowserSubTabsId,
                 });
+
+                variantWidget.draw();
+
+
+
+                if(!genomeViewer.rendered) {
+                    genomeViewer.render();
+                    genomeViewer.draw();
+                    genomeViewer.addTrack(tracks);
+                    genomeViewer.addOverviewTrack(geneOverview);
+                }
+
+                var region = new Region();
+                region.parse($scope.location);
+                genomeViewer.setRegion(region);
+
+
+            });
 
 
             var region = new Region({chromosome: "13", start: 32889611, end: 32889611});
@@ -354,7 +354,6 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                 });
             }
 
-
         }
 
     };
@@ -366,32 +365,33 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
         transclude: true,
         templateUrl: 'views/variant-view.html',
         controller: function($scope) {
+        },
+        link: function($scope, element, attr) {
 
+            var data = getUrlParameters("");
 
-           var data = getUrlParameters("");
+            if(data.value){
+                var variantData;
+                evaManager.get({
+                    category: 'variants',
+                    resource: 'info',
+                    params: {
+                        of: 'json'
+                    },
+                    query: data.value,
+                    async: false,
+                    success: function (data) {
+                        variantData = data;
+                    },
+                    error: function (data) {
+                        console.log('Could not get variant info');
+                    }
+                });
+                var tmpData = variantData;
 
-           if(data.value){
-               var variantData;
-               evaManager.get({
-                   category: 'variants',
-                   resource: 'info',
-                   params: {
-                       of: 'json'
-                   },
-                   query: data.value,
-                   async: false,
-                   success: function (data) {
-                       variantData = data;
-                   },
-                   error: function (data) {
-                       console.log('Could not get variant info');
-                   }
-               });
-               var tmpData = variantData;
-
-           }else{
-               return;
-           }
+            }else{
+                return;
+            }
             if(!tmpData || !tmpData.response.numResults){
                 return;
             }
@@ -431,12 +431,6 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                 effectsDataArray.push({id:key,name:effectsTempDataArray[key][0].consequenceTypeType,data:effectsTempDataArray[key]});
             }
             $scope.effectsData = effectsDataArray;
-
-
-
-        },
-        link: function($scope, element, attr) {
-
 
         }
 
