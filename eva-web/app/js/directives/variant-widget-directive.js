@@ -400,15 +400,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
             $scope.variantInfoData  = tmpData.response.result[0];
 
-            $scope.$apply(function(){
-                $scope.variantFilesData =  $scope.parseFilesData( $scope.variant);
-            })
-
-
-
-
-
-
+            $scope.variantFilesData =  $scope.parseFilesData( $scope.variant);
 
             var position = $scope.variantInfoData.chr + ":" + $scope.variantInfoData.start + ":" + $scope.variantInfoData.ref + ":" + $scope.variantInfoData.alt;
             var effectsTempData;
