@@ -98,7 +98,7 @@
 
             <div>
                 <div>
-                    <h3>Summary&nbsp;<button id="summaryChart"  title="Gene Ranking data"  data-placement='right' type="button" ng-click="showStatitsics()" class="btn  btn-default btn-xs"><span class={{statisticsClass}} style="color: #426783"></span></button></h3>
+                    <h3>Summary&nbsp;<button data-original-title="Gene Ranking Data" data-toggle="tooltip" data-placement="right" type="button" ng-click="showStatitsics()" class="btn  btn-default btn-xs toolTip"><span class={{statisticsClass}} style="color: #426783"></span></button></h3>
                     <highchart ng-show="showStatitsicsState" id="chart1" config="summaryPieChartConfig" style="width: 350px; height: 300px;" ></highchart>
                 </div>
             </div>
@@ -119,10 +119,10 @@
                     <div class="tab-pane fade active in" id="vFiles">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="table-responsive" >
+                                <div  class="table-responsive" >
                                     <div ng-repeat="(key,value) in  filesData">
-                                        <h4>{{value.id}} study&nbsp;&nbsp;<small><button type="button" ng-click="toggleShow()" class="btn  btn-default btn-xs">{{toggleLabel}}</button></small></h4>
-                                        <div ng-show="toggleState">
+                                        <h4>{{value.id}} study&nbsp;&nbsp;<small><button type="button" ng-init="toggleState=true" ng-click="toggleShow()" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>
+                                        <div class="div-secondary" ng-if="toggleState">
                                             <div class="row"  ng-repeat="(key,value) in  value.data">
                                                 <div class="col-md-8">
                                                     <div><h5>File</h5></div>
@@ -151,9 +151,9 @@
                                                     <div>
                                                         <h5>Stats</h5>
                                                         <table class="table table-borderless">
-                                                            <tr><td>MAF</td> <td>{{value.stats.maf|number:4}} ({{value.stats.alleleMaf}})</td></tr>
+                                                            <tr><td>MAF <span title="MAF(alleleMaf)"  data-placement='right'  data-toggle="tooltip" class="glyphicon glyphicon-question-sign"></span></td> <td>{{value.stats.maf|number:4}} ({{value.stats.alleleMaf}})</td></tr>
+                                                            <tr><td>MGF <span title="MGF(genotypeMaf)"  data-placement='right'  data-toggle="tooltip" class="glyphicon glyphicon-question-sign"></span></td> <td>{{value.stats.mgf|number:4}} ({{value.stats.genotypeMaf}})</td></tr>
                                                             <tr><td>MendelErr</td> <td>{{value.stats.mendelErr}}</td></tr>
-                                                            <tr><td>MGF</td> <td>{{value.stats.mgf|number:4}} ({{value.stats.genotypeMaf}})</td></tr>
                                                             <tr><td>MissAllele</td> <td>{{value.stats.missAllele}}</td></tr>
                                                             <tr><td>MissGenotypes</td> <td>{{value.stats.missGenotypes}}</td></tr>
                                                         </table>
@@ -162,7 +162,7 @@
                                                 <div class="col-md-4" ng-repeat="(key,value) in  value.chartData">
                                                     <h5 style="margin-left:70px;">Genotype Count</h5>
                                                     <div  style="height: 300px; width: 300px;"id={{value.$$hashKey}}></div>
-                                                    <div ng-show="statsPieChart(value,value.$$hashKey)"></div>
+                                                    <div ng-show="drawPieChart(value,value.$$hashKey)"></div>
                                                 </div>
 
                                             </div>

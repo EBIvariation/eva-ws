@@ -16,7 +16,7 @@
                 <div class="row">
                     <h3>Summary</h3>
                     <div class="col-md-8">
-                        <div class="table-responsive div-bordered jumbotron">
+                        <div class="table-responsive jumbotron">
                             <table class="table table-borderless jumbotron">
                                 <tr><td>ID</td><td>{{variantInfoData.id}}</td></tr>
                                 <tr><td>Type</td><td>{{variantInfoData.type}}</td></tr>
@@ -35,11 +35,10 @@
                 <h3>Effects</h3>
                 <div class="row">
                     <div class="col-md-8">
-                        <h4></h4>
-                        <div class="table-responsive div-bordered jumbotron" >
+                        <div class="table-responsive jumbotron" >
                             <div ng-repeat="(key,value) in  effectsData">
-                                    <h4><span style="text-transform: capitalize;" class="label label-primary">{{value.name}}</span>&nbsp; <a  style="font-size:14px;" href="http://www.sequenceontology.org/miso/current_release/term/{{value.id}}" target="_blank">{{value.id}}</a>&nbsp;<small><button type="button" ng-click="toggleShow()" class="btn  btn-default btn-xs">{{toggleLabel}}</button></small></h4>
-                                <div ng-show="toggleState">
+                                    <h4><span style="text-transform: capitalize;" class="label label-primary">{{value.name}}</span>&nbsp; <a  style="font-size:14px;" href="http://www.sequenceontology.org/miso/current_release/term/{{value.id}}" target="_blank">{{value.id}}</a>&nbsp;<small><button type="button" ng-init="toggleState=true" ng-click="toggleShow()" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>
+                               <div class="div-secondary" ng-if="toggleState">
                                     <br /> <table class="table table-bordered jumbotron">
                                         <tr>
                                             <th>Feature Id</th>
@@ -66,25 +65,17 @@
             <div id="studies">
                 <h3>Studies</h3>
                 <div class="row">
-                    <div class="col-md-8">
-                        <h4>File Attributes</h4>
-                        <div class="table-responsive div-bordered jumbotron" >
+                    <div  class="col-md-8" ng-repeat="(key,value) in  variantFilesData">
+                        <h4>{{value.id}} study&nbsp;&nbsp;<small><button type="button"  ng-init="toggleState=true" ng-click="toggleShow()" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>
+                        <div class="div-secondary"  ng-if="toggleState">
                             <table class="table table-borderless jumbotron ">
-                                <tr ng-repeat="(k,v) in variantFilesData.attributes"><td>{{k}} </td><td>{{v}}</td></tr>
+                                <h5>File Attributes</h5>
+                                <tr ng-repeat="(k,v) in value.data[0].attributes"><td>{{k}} </td><td>{{v}}</td></tr>
                             </table>
-                        </div>
-                        <h4>Stats</h4>
-                        <div class="table-responsive div-bordered jumbotron">
-                            <table class="table table-borderless jumbotron">
-                                <tr ng-repeat="(k,v) in variantFilesData.stats"><td>{{k}} </td><td>{{v}}</td></tr>
+                            <table class="table table-borderless jumbotron ">
+                                <h5>Stats</h5>
+                                <tr ng-repeat="(k,v) in value.data[0].stats"><td>{{k}} </td><td>{{v}}</td></tr>
                             </table>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <h4>Info</h4>
-                        <div class="table-responsive">
-                            <p>File ID  : {{variantFilesData.fileId}} </p>
-                            <p>Study ID : {{variantFilesData.studyId}} </p>
                         </div>
                     </div>
                 </div>
