@@ -15,7 +15,7 @@
             <div id="summary">
                 <div class="row">
                     <h3>Summary</h3>
-                    <div class="col-md-8">
+                    <div class="col-md-10">
                         <div class="table-responsive jumbotron">
                             <table class="table table-borderless jumbotron">
                                 <tr><td>ID</td><td>{{variantInfoData.id}}</td></tr>
@@ -34,7 +34,7 @@
             <div id="effects">
                 <h3>Effects</h3>
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-10">
                         <div class="table-responsive jumbotron" >
                             <div ng-repeat="(key,value) in  effectsData">
                                     <h4><span style="text-transform: capitalize;" class="label label-primary">{{value.name}}</span>&nbsp; <a  style="font-size:14px;" href="http://www.sequenceontology.org/miso/current_release/term/{{value.id}}" target="_blank">{{value.id}}</a>&nbsp;<small><button type="button" ng-init="toggleState=true" ng-click="toggleShow()" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>
@@ -65,7 +65,7 @@
             <div id="studies">
                 <h3>Studies</h3>
                 <div class="row">
-                    <div  class="col-md-8" ng-repeat="(key,value) in  variantFilesData">
+                    <div  class="col-md-10" ng-repeat="(key,value) in  variantFilesData">
                         <h4>{{value.id}} study&nbsp;&nbsp;<small><button type="button"  ng-init="toggleState=true" ng-click="toggleShow()" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>
                         <div class="div-secondary"  ng-if="toggleState">
                             <table class="table table-borderless jumbotron ">

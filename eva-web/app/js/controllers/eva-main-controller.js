@@ -11,51 +11,6 @@ var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope', '$rootScope',  fun
         window.location.href = url;
     }
 
-
-
-
-    function createSummaryChart(){
-
-        //var summaryUrl = METADATA_HOST+'/'+METADATA_VERSION+'/genes/ranking';
-        var summaryData = ebiVarMetadataService.fetchData(summaryUrl);
-        //var summaryChartData = parseSummaryChartData(summaryData);
-        console.log(summaryChartData.data)
-
-        $scope.summaryPieChartConfig = {
-            options: {
-                chart: {
-                    type: 'pie'
-                },
-
-                plotOptions: {
-
-                    series: {
-                        cursor: 'pointer',
-                        // size: 80,
-                        point: {
-                            events: {
-                                click: function() {
-                                    console.log(this)
-                                }
-                            }
-                        }
-
-                    }
-                }
-            },
-            series: [{
-                data:   summaryChartData.data
-            }],
-            title: {
-                text:  summaryChartData.title
-            },
-            loading: false,
-            credits: {
-                enabled: false
-            }
-        }
-    }
-
     function parseSummaryChartData(args){
 
         var data = [];
@@ -70,9 +25,6 @@ var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope', '$rootScope',  fun
         return data;
     }
 
-    $(function() {
-        $("[data-toggle='tooltip']").tooltip();
-    });
 
     $scope.statisticsClass = 'glyphicon glyphicon-chevron-right';
     $scope.showStatitsicsState;
@@ -90,33 +42,12 @@ var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope', '$rootScope',  fun
     };
 
 
-
-
-
-
-
     $scope.studies = [
-//        {id: "1000g", name: "1000 genomes", description: "..."},
-//        {id: "gonl", name: "GoNL", description: "..."},
-//        {id: "evs", name: "EVS", description: "..."},
         {name: '1000g',leaf: true, checked: false,  iconCls :'no-icon' },
         {name: 'GoNL',leaf: true, checked: false,  iconCls :'no-icon' },
         {name: 'EVS',leaf: true, checked: false,  iconCls :'no-icon' }
     ]
 
-
-
-
-//    $scope.selectedCT = {
-//        filter: []
-//    };
-//
-//    $scope.checkAll_CT = function() {
-//        $scope.selectedCT.filter = $scope.consequenceTypes.map(function(item) { return item.name; });
-//    };
-//    $scope.uncheckAll_CT = function() {
-//        $scope.selectedCT.filter = [];
-//    };
 
 
     $scope.consequenceTypes = [
@@ -217,19 +148,6 @@ var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope', '$rootScope',  fun
 
     ];
 
-
-
-//    $scope.selectedVC = {
-//        filter: []
-//    };
-//
-//    $scope.checkAll_VC = function() {
-//        $scope.selectedVC.filter = $scope.variationClasses.map(function(item) { return item.name; });
-//    };
-//    $scope.uncheckAll_VC = function() {
-//        $scope.selectedVC.filter = [];
-//    };
-
     $scope.variationClasses = [
         {
             name:'Variation',
@@ -268,39 +186,6 @@ var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope', '$rootScope',  fun
 //        },
         {acc: "SO:0000051", name: "probe", description: "A DNA sequence used experimentally to detect the presence or absence of a complementary nucleic acid.", call: "CNV probe", leaf: true,checked: false,  iconCls :'no-icon'}
     ];
-
-    $scope.barChart = {
-        options: {
-            chart: {
-                type: 'bar',
-            },
-            plotOptions: {
-                series: {
-                    cursor: 'pointer',
-                    point: {
-                        events: {
-                            click: function() {
-                                console.log(this.series.color)
-                            }
-                        }
-                    }
-
-                }
-            }
-
-        },
-
-        series: [{
-            data:   $scope.data
-        }],
-        title: {
-            text:  $scope.message
-        },
-        loading: false,
-        credits: {
-            enabled: false
-        }
-    }
 
 
     $scope.toggleState = true;
