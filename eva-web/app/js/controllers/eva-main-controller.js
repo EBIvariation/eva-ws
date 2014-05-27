@@ -2,7 +2,7 @@
  * Created by jag on 17/03/2014.
  */
 
-var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope', '$rootScope',  function ($scope, $rootScope) {
+var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope',  function ($scope) {
 
     $scope.searchboxValue;
     $scope.search = function(value){
