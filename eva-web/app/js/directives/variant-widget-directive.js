@@ -11,7 +11,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
         controller: function($scope) {
         },
         link: function($scope, element, attr) {
-            var location = '21:9411240-9411260';
+            var location = '21:9411240-9711260';
             //var gene = 'TMEM51';
             $scope.location = location;
             $scope.gene = gene;
