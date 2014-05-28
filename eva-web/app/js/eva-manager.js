@@ -96,7 +96,6 @@ var evaManager = {
 
         var url = config.host + '/' + config.version +  '/' + config.category + query + '/' + config.resource;
         url = Utils.addQueryParamtersToUrl(config.params, url);
-        alert(url);
 
         return url;
     }
