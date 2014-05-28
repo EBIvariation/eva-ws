@@ -280,6 +280,9 @@ var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope',  function ($scope)
         return filesDataArray;
 
     }
+    $(function() {
+        $("[data-toggle='tooltip']").tooltip();
+    });
 
 
 }]);
