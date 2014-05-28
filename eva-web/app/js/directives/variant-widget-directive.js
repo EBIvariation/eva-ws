@@ -402,6 +402,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
             $scope.variantFilesData =  $scope.parseFilesData( $scope.variant);
 
+
             var position = $scope.variantInfoData.chr + ":" + $scope.variantInfoData.start + ":" + $scope.variantInfoData.ref + ":" + $scope.variantInfoData.alt;
             var effectsTempData;
             CellBaseManager.get({

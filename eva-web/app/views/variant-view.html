@@ -16,8 +16,8 @@
                 <h3>Summary</h3>
                 <div class="row">
                     <div class="col-md-10">
-                        <div class="table-responsive jumbotron">
-                            <table class="table table-borderless jumbotron">
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
                                 <tr><td>ID</td><td>{{variantInfoData.id}}</td></tr>
                                 <tr><td>Type</td><td>{{variantInfoData.type}}</td></tr>
                                 <tr><td>Chromosome Position</td><td>{{variantInfoData.chr}}:{{variantInfoData.start}}-{{variantInfoData.end}}</td></tr>
@@ -35,11 +35,11 @@
                 <h3>Effects</h3>
                 <div class="row">
                     <div class="col-md-10">
-                        <div class="table-responsive jumbotron" >
+                        <div class="table-responsive" >
                             <div ng-repeat="(key,value) in  effectsData">
-                                    <h4><span style="text-transform: capitalize;" class="label label-primary">{{value.name}}</span>&nbsp; <a  style="font-size:14px;" href="http://www.sequenceontology.org/miso/current_release/term/{{value.id}}" target="_blank">{{value.id}}</a>&nbsp;<small><button type="button" ng-init="toggleState=true" ng-click="toggleShow()" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>
+                                    <h4>{{value.name}}&nbsp; <a  style="font-size:14px;" href="http://www.sequenceontology.org/miso/current_release/term/{{value.id}}" target="_blank">{{value.id}}</a>&nbsp;<small><button type="button" ng-init="toggleState=true" ng-click="toggleShow()" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>
                                <div class="div-secondary" ng-if="toggleState">
-                                    <br /> <table class="table table-bordered jumbotron">
+                                    <br /> <table class="table table-bordered ">
                                         <tr>
                                             <th>Feature Id</th>
                                             <th>Feature Chromosome</th>
@@ -68,14 +68,26 @@
                     <div  class="col-md-10" ng-repeat="(key,value) in  variantFilesData">
                         <h4>{{value.id}} study&nbsp;&nbsp;<small><button type="button"  ng-init="toggleState=true" ng-click="toggleShow()" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>
                         <div class="div-secondary"  ng-if="toggleState">
-                            <table class="table table-borderless jumbotron ">
-                                <h5>File Attributes</h5>
-                                <tr ng-repeat="(k,v) in value.data[0].attributes"><td>{{k}} </td><td>{{v}}</td></tr>
-                            </table>
-                            <table class="table table-borderless jumbotron ">
-                                <h5>Stats</h5>
-                                <tr ng-repeat="(k,v) in value.data[0].stats"><td>{{k}} </td><td>{{v}}</td></tr>
-                            </table>
+                            <div ng-repeat="(key,value) in value.data">
+                                <table class="table table-bordered  ">
+                                    <h5>File Attributes</h5>
+                                    <tr><th ng-repeat="(key,value) in value.attributes">{{key}} </th></tr>
+                                    <tr ><td ng-repeat="(key,value) in value.attributes">{{value}}</td></tr>
+                                </table>
+                                <div class="row">
+                                    <div  class="col-md-8">
+                                        <h5>Stats</h5>
+                                        <table class="table table-borderless">
+                                            <tr ng-repeat="(key,value) in value.stats"><td>{{key}} </td><td>{{value}}</td></tr>
+                                        </table>
+                                    </div>
+                                    <div  class="col-md-2" ng-repeat="(key,value) in  value.chartData">
+                                        <h5 style="margin-left:70px;">Genotype Count</h5>
+                                        <div  style="height: 300px; width: 300px;"id={{value.$$hashKey}}></div>
+                                        <div ng-show="drawPieChart(value,value.$$hashKey)"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
