@@ -156,6 +156,7 @@ div .ngHeaderText{
     text-align: center;
 }
 
+
 .div-bordered{
     border-left: double #ADADAD;
     border-top: 1px solid #ADADAD;
@@ -174,6 +175,9 @@ div.masthead ul li.right{
 }
 
 .div-secondary{
+    margin-left:5px;
+}
+.table-secondary{
     margin-left:5px;
 }
 

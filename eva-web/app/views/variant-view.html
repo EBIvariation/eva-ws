@@ -16,7 +16,7 @@
                 <h3>Summary</h3>
                 <div class="row">
                     <div class="col-md-10">
-                        <div class="table-responsive">
+                        <div class="table-responsive div-secondary">
                             <table class="table table-borderless">
                                 <tr><td>ID</td><td>{{variantInfoData.id}}</td></tr>
                                 <tr><td>Type</td><td>{{variantInfoData.type}}</td></tr>
@@ -37,9 +37,9 @@
                     <div class="col-md-10">
                         <div class="table-responsive" >
                             <div ng-repeat="(key,value) in  effectsData">
-                                    <h4>{{value.name}}&nbsp; <a  style="font-size:14px;" href="http://www.sequenceontology.org/miso/current_release/term/{{value.id}}" target="_blank">{{value.id}}</a>&nbsp;<small><button type="button" ng-init="toggleState=true" ng-click="toggleShow()" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>
-                               <div class="div-secondary" ng-if="toggleState">
-                                    <br /> <table class="table table-bordered ">
+                                <h4>{{value.name}}&nbsp; <a  style="font-size:14px;" href="http://www.sequenceontology.org/miso/current_release/term/{{value.id}}" target="_blank">{{value.id}}</a>&nbsp;<small><button type="button" ng-init="toggleState=true" ng-click="toggleShow()" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>
+                                <div class="div-secondary" ng-if="toggleState">
+                                    <br /> <table class="table table-bordered table-secondary">
                                         <tr>
                                             <th>Feature Id</th>
                                             <th>Feature Chromosome</th>
@@ -69,7 +69,7 @@
                         <h4>{{value.id}} study&nbsp;&nbsp;<small><button type="button"  ng-init="toggleState=true" ng-click="toggleShow()" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>
                         <div class="div-secondary"  ng-if="toggleState">
                             <div ng-repeat="(key,value) in value.data">
-                                <table class="table table-bordered  ">
+                                <table class="table table-bordered table-secondary">
                                     <h5>File Attributes</h5>
                                     <tr><th ng-repeat="(key,value) in value.attributes">{{key}} </th></tr>
                                     <tr ><td ng-repeat="(key,value) in value.attributes">{{value}}</td></tr>
