@@ -64,33 +64,34 @@
 
             <div id="studies">
                 <h3>Studies</h3>
-                <div class="row">
-                    <div  class="col-md-10" ng-repeat="(key,value) in  variantFilesData">
-                        <h4>{{value.id}} study&nbsp;&nbsp;<small><button type="button"  ng-init="toggleState=true" ng-click="toggleShow()" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>
-                        <div class="div-secondary"  ng-if="toggleState">
-                            <div ng-repeat="(key,value) in value.data">
-                                <table class="table table-bordered table-secondary">
-                                    <h5>File Attributes</h5>
-                                    <tr><th ng-repeat="(key,value) in value.attributes">{{key}} </th></tr>
-                                    <tr ><td ng-repeat="(key,value) in value.attributes">{{value}}</td></tr>
-                                </table>
-                                <div class="row">
-                                    <div  class="col-md-8">
-                                        <h5>Stats</h5>
-                                        <table class="table table-borderless">
-                                            <tr ng-repeat="(key,value) in value.stats"><td>{{key}} </td><td>{{value}}</td></tr>
-                                        </table>
-                                    </div>
-                                    <div  class="col-md-2" ng-repeat="(key,value) in  value.chartData">
-                                        <h5 style="margin-left:70px;">Genotype Count</h5>
-                                        <div  style="height: 300px; width: 300px;"id={{value.$$hashKey}}></div>
-                                        <div ng-show="drawPieChart(value,value.$$hashKey)"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div id="variantViewFilesID"></div><div></div>
+                <!--<div class="row">-->
+                    <!--<div  class="col-md-10" ng-repeat="(key,value) in  variantFilesData">-->
+                        <!--<h4>{{value.id}} study&nbsp;&nbsp;<small><button type="button"  ng-init="toggleState=true" ng-click="toggleShow()" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>-->
+                        <!--<div class="div-secondary"  ng-if="toggleState">-->
+                            <!--<div ng-repeat="(key,value) in value.data">-->
+                                <!--<table class="table table-bordered table-secondary">-->
+                                    <!--<h5>File Attributes</h5>-->
+                                    <!--<tr><th ng-repeat="(key,value) in value.attributes">{{key}} </th></tr>-->
+                                    <!--<tr ><td ng-repeat="(key,value) in value.attributes">{{value}}</td></tr>-->
+                                <!--</table>-->
+                                <!--<div class="row">-->
+                                    <!--<div  class="col-md-8">-->
+                                        <!--<h5>Stats</h5>-->
+                                        <!--<table class="table table-borderless">-->
+                                            <!--<tr ng-repeat="(key,value) in value.stats"><td>{{key}} </td><td>{{value}}</td></tr>-->
+                                        <!--</table>-->
+                                    <!--</div>-->
+                                    <!--<div  class="col-md-2" ng-repeat="(key,value) in  value.chartData">-->
+                                        <!--<h5 style="margin-left:70px;">Genotype Count</h5>-->
+                                        <!--<div  style="height: 300px; width: 300px;"id={{value.$$hashKey}}></div>-->
+                                        <!--<div ng-show="drawPieChart(value,value.$$hashKey)"></div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
             </div>
         </div>
     </div>

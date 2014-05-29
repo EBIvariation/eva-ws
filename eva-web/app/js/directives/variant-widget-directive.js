@@ -99,6 +99,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                 $scope.$apply(function(){
                     $scope.filesData =  $scope.parseFilesData(e);
                 })
+
             });
 
             eventManager.on("gene:search variant:search" , function(e) {
@@ -431,6 +432,16 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                 effectsDataArray.push({id:key,name:effectsTempDataArray[key][0].consequenceTypeType,data:effectsTempDataArray[key]});
             }
             $scope.effectsData = effectsDataArray;
+
+            $scope.variantViewFilesId = 'variantViewFilesID';
+
+            var variantStudyWidget;
+            variantStudyWidget = new VariantStudyWidget({
+                render_id    : 'variantViewFilesID',
+                variantId    :  data.value
+            });
+
+            variantStudyWidget.draw();
 
         }
 
