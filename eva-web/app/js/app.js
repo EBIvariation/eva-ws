@@ -11,8 +11,8 @@ if(window.location.host.indexOf("www.ebi.ac.uk") === -1){
     METADATA_HOST = "http://wwwint.ebi.ac.uk/eva/webservices/rest";
     METADATA_VERSION = 'v1';
 
-//    CELLBASE_HOST = "http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest";
-//    CELLBASE_VERSION = "latest";
+    CELLBASE_HOST = "http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest";
+    CELLBASE_VERSION = "latest";
 }
 
 /**
