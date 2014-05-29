@@ -30,6 +30,8 @@ VariantStudyWidget.prototype = {
             return;
         }
 
+        _this._clear();
+
         var fileData = _this._parseFilesData(_this.variantId);
 
         for (var key in fileData){
@@ -56,7 +58,7 @@ VariantStudyWidget.prototype = {
 
 
                 _this.div  = '<h4>'+study.id+' Study</h4>'
-                _this.div += '<div id="'+studyDivId+'" class="row"><div class="col-md-10">'
+                _this.div += '<div id="'+studyDivId+'" class="row"><div class="col-md-8">'
                 _this.div += '<div id="'+attributesId+'"></div>'
                 _this.div += '<div class="row"><div class="col-md-7" id="'+statsId+'"></div><div class="col-md-3"><h5>Genotype Count</h5><div id="'+chartId+'"></div></div></div>'
                 _this.div += '</div></div>'
@@ -72,6 +74,11 @@ VariantStudyWidget.prototype = {
         //$(this.targetDiv).append( $(_this.div));
         console.log('sdf')
 
+    },
+
+    _clear:function(){
+        var _this = this;
+        $( "#"+_this.render_id).empty();
     },
 
     _loadAttributesData:function(args){
