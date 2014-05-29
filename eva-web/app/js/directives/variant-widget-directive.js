@@ -140,8 +140,6 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
                 variantWidget.draw();
 
-
-
                 if(!genomeViewer.rendered) {
                     genomeViewer.render();
                     genomeViewer.draw();

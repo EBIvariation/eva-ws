@@ -1,7 +1,7 @@
-/*! Genome Viewer - v1.0.3 - 2014-05-22 15:50:33
+/*! Genome Viewer - v1.0.3 - 2014-05-29 14:45:45
 * http://https://github.com/opencb/jsorolla/
 * Copyright (c) 2014  Licensed GPLv2 */
-/*! Genome Viewer - v1.0.3 - 2014-05-22 15:50:33
+/*! Genome Viewer - v1.0.3 - 2014-05-29 14:45:45
 * http://https://github.com/opencb/jsorolla/
 * Copyright (c) 2014  Licensed GPLv2 */
 var Utils = {
@@ -859,7 +859,7 @@ FeatureBinarySearchTree.prototype = {
         
     }
 };
-/*! Genome Viewer - v1.0.3 - 2014-05-22 15:50:33
+/*! Genome Viewer - v1.0.3 - 2014-05-29 14:45:45
 * http://https://github.com/opencb/jsorolla/
 * Copyright (c) 2014  Licensed GPLv2 */
 var CellBaseManager = {
