@@ -97,7 +97,15 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
             eventManager.on("variant:files", function(e) {
                 $scope.$apply(function(){
-                    $scope.filesData =  $scope.parseFilesData(e);
+                    //$scope.filesData =  $scope.parseFilesData(e);
+                    var variantBrowserStudyWidget;
+                    variantBrowserStudyWidget = new VariantStudyWidget({
+                        render_id    : 'variantBrowserStudyID',
+                        variantId    : e
+                    });
+
+                    variantBrowserStudyWidget.draw();
+
                 })
 
             });
@@ -400,7 +408,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
             $scope.variantInfoData  = tmpData.response.result[0];
 
-            $scope.variantFilesData =  $scope.parseFilesData( $scope.variant);
+            //$scope.variantFilesData =  $scope.parseFilesData( $scope.variant);
 
 
             var position = $scope.variantInfoData.chr + ":" + $scope.variantInfoData.start + ":" + $scope.variantInfoData.ref + ":" + $scope.variantInfoData.alt;
@@ -433,11 +441,11 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
             }
             $scope.effectsData = effectsDataArray;
 
-            $scope.variantViewFilesId = 'variantViewFilesID';
+            $scope.variantViewFilesId = 'variantViewStudyID';
 
             var variantStudyWidget;
             variantStudyWidget = new VariantStudyWidget({
-                render_id    : 'variantViewFilesID',
+                render_id    : 'variantViewStudyID',
                 variantId    :  data.value
             });
 
