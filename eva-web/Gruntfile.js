@@ -112,6 +112,7 @@ module.exports = function (grunt) {
                     {   expand: true, src: ['vendor/**'], dest: 'build/<%= meta.version.eva %>'},
                     {   expand: true, src: ['app/css/*'], dest: 'build/<%= meta.version.eva %>/css', flatten: true},
                     {   expand: true, src: ['app/img/*'], dest: 'build/<%= meta.version.eva %>/img', flatten: true},
+                    {   expand: true, src: ['app/files/*'], dest: 'build/<%= meta.version.eva %>/files', flatten: true},
                     {   expand: true, src: ['app/js/gv-config.js'], dest: 'build/<%= meta.version.eva %>/', flatten: true}
                 ]
             }

@@ -127,7 +127,7 @@ VariantStudyWidget.prototype = {
         var data = args[0].data
         var id = args[0].id
 
-        _this.statsDiv = '<h5>Stats</h5>'
+        _this.statsDiv =  '<h5>Stats</h5>'
         _this.statsDiv += '<table class="table">'
         _this.statsDiv += '<tr><td>Minor Allele Frequency</td><td>'+data.maf.toFixed(4)+'('+data.alleleMaf+')</td></tr>'
         _this.statsDiv += '<tr><td>Minor Genotype Frequency</td><td>'+data.mgf.toFixed(4)+'('+data.genotypeMaf+')</td></tr>'
