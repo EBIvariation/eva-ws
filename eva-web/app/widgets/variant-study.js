@@ -35,13 +35,14 @@ VariantStudyWidget.prototype = {
         var fileData = _this._parseFilesData(_this.variantId);
 
         for (var key in fileData){
-             var studyDivId = 'study-div-'+key;
              var study = fileData[key];
+             var studyDivId = study.id+'-'+key;
+
 
             for(var k in study.data){
-                var attributesId = studyDivId+'-attributes-div-'+k;
-                var statsId = studyDivId+'-stats-div-'+k;
-                var chartId = studyDivId+'-chart-div-'+k;
+                var attributesId = studyDivId+'-attributes-'+k;
+                var statsId = studyDivId+'-stats-'+k;
+                var chartId = studyDivId+'-chart-id-'+k;
 
                 var attributesData = study.data[k].attributes;
                 var statsData = study.data[k].stats;
@@ -57,11 +58,28 @@ VariantStudyWidget.prototype = {
                     chart.push({id:chartId,data:chartData});
 
 
-                _this.div  = '<h4>'+study.id+' Study</h4>'
-                _this.div += '<div id="'+studyDivId+'" class="row"><div class="col-md-8">'
-                _this.div += '<div id="'+attributesId+'"></div>'
-                _this.div += '<div class="row"><div class="col-md-7" id="'+statsId+'"></div><div class="col-md-3"><h5>Genotype Count</h5><div id="'+chartId+'"></div></div></div>'
+                _this.div  = '<h4>'+study.id+' Study <button id="'+studyDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
+                _this.div += '<div id="'+studyDivId+'"><div>'
+                _this.div += '<div class="col-md-12" style="overflow:scroll;" id="'+attributesId+'"></div>'
+                _this.div += '<div class="col-md-7" id="'+statsId+'"></div><div class="col-md-3"><h5 style="margin-left:60px;">Genotype Count</h5><div id="'+chartId+'"></div></div>'
                 _this.div += '</div></div>'
+                _this.div += '<script>'
+                _this.div += function toggleShow(id,value) {
+                                    var button = 'button[id="'+id+'"]';
+                                    var div = 'div[id="'+id+'"]';
+                                    var text = $(button).text();
+                                    if(text == "+"){
+                                        $(button).text('-');
+                                    }else{
+                                        $(button).text('+');
+                                    }
+                                    $(div).toggle(function(event) {
+
+                                        return false;
+                                    });
+
+                            }
+                _this.div += '</script>'
                 $(this.targetDiv).append( $(_this.div));
                 _this._loadAttributesData(attributes);
                 _this._loadStatsData(stats);
@@ -72,7 +90,7 @@ VariantStudyWidget.prototype = {
 
 
         //$(this.targetDiv).append( $(_this.div));
-        console.log('sdf')
+
 
     },
 
@@ -111,8 +129,8 @@ VariantStudyWidget.prototype = {
 
         _this.statsDiv = '<h5>Stats</h5>'
         _this.statsDiv += '<table class="table">'
-        _this.statsDiv += '<tr><td>MAF</td><td>'+data.maf.toFixed(4)+'('+data.alleleMaf+')</td></tr>'
-        _this.statsDiv += '<tr><td>MGF</td><td>'+data.mgf.toFixed(4)+'('+data.genotypeMaf+')</td></tr>'
+        _this.statsDiv += '<tr><td>Minor Allele Frequency</td><td>'+data.maf.toFixed(4)+'('+data.alleleMaf+')</td></tr>'
+        _this.statsDiv += '<tr><td>Minor Genotype Frequency</td><td>'+data.mgf.toFixed(4)+'('+data.genotypeMaf+')</td></tr>'
         _this.statsDiv += ' <tr><td>MendelErr</td> <td>'+data.mendelErr+'</td></tr>'
         _this.statsDiv += ' <tr><td>MissAllele</td> <td>'+data.missAllele+'</td></tr>'
         _this.statsDiv += ' <tr><td>MissGenotypes</td> <td>'+data.missGenotypes+'</td></tr>'

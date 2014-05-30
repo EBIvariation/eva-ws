@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/mini/ebi-fluid-embl.css">
     <!---/EBI----->
     <!---css from EVA --->
-    <link type="text/css"  href="css/eva-portal-colours.css" rel="stylesheet">
+    <!--<link type="text/css"  href="css/eva-portal-colours.css" rel="stylesheet">-->
     <link type="text/css"  href="css/eva-portal-visual.css" rel="stylesheet">
     <link type="text/css"  href="css/eva.css" rel="stylesheet">
     <!---/EVA CSS----->
@@ -75,7 +75,7 @@
         <!-- local-title -->
         <!-- NB: for additional title style patterns, see http://frontier.ebi.ac.uk/web/style/patterns -->
         <div class="grid_12 alpha" id="local-title">
-            <h1><a href="#" title="Back to [service-name] homepage">EVA Portal</a></h1>
+            <h2><a href="/eva"><img src="img/eva_logo.png" alt="" width="75" height="64" /></a>European Variation Archive</h2>
         </div>
         <!-- /local-title -->
 
@@ -164,6 +164,7 @@
         var data = getUrlParameters("");
         if(data.tab_id){
             $('#topMenuTab a[href=#'+data.tab_id+']').click();
+
         }else{
             $('#topMenuTab a:first').tab('show')
         }
