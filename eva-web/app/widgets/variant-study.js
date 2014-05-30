@@ -74,7 +74,6 @@ VariantStudyWidget.prototype = {
                                         $(button).text('+');
                                     }
                                     $(div).toggle(function(event) {
-
                                         return false;
                                     });
 
