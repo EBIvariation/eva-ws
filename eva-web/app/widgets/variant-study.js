@@ -131,9 +131,9 @@ VariantStudyWidget.prototype = {
         _this.statsDiv += '<table class="table">'
         _this.statsDiv += '<tr><td>Minor Allele Frequency</td><td>'+data.maf.toFixed(4)+'('+data.alleleMaf+')</td></tr>'
         _this.statsDiv += '<tr><td>Minor Genotype Frequency</td><td>'+data.mgf.toFixed(4)+'('+data.genotypeMaf+')</td></tr>'
-        _this.statsDiv += ' <tr><td>MendelErr</td> <td>'+data.mendelErr+'</td></tr>'
-        _this.statsDiv += ' <tr><td>MissAllele</td> <td>'+data.missAllele+'</td></tr>'
-        _this.statsDiv += ' <tr><td>MissGenotypes</td> <td>'+data.missGenotypes+'</td></tr>'
+        _this.statsDiv += ' <tr><td>Mendelian Errors</td> <td>'+data.mendelErr+'</td></tr>'
+        _this.statsDiv += ' <tr><td>Missing Allele</td> <td>'+data.missAllele+'</td></tr>'
+        _this.statsDiv += ' <tr><td>Missing Genotypes</td> <td>'+data.missGenotypes+'</td></tr>'
         _this.statsDiv += '</table>'
         $('#'+id).append( $(_this.statsDiv));
     },
