@@ -49,6 +49,7 @@ module.exports = function (grunt) {
                     'app/widgets/gene-browser-widget.js',
                     'app/widgets/variant-genotype.js',
                     'app/widgets/variant-effects.js',
+                    'app/widgets/variant-study.js',
 
                     /** eva-services **/
                     'app/js/ebi-var-services/ebivar-services-metadata.js'
@@ -110,6 +111,7 @@ module.exports = function (grunt) {
                     {   expand: true, src: ['app/views/*'], dest: 'build/<%= meta.version.eva %>/views', flatten: true},
                     {   expand: true, src: ['vendor/**'], dest: 'build/<%= meta.version.eva %>'},
                     {   expand: true, src: ['app/css/*'], dest: 'build/<%= meta.version.eva %>/css', flatten: true},
+                    {   expand: true, src: ['app/img/*'], dest: 'build/<%= meta.version.eva %>/img', flatten: true},
                     {   expand: true, src: ['app/js/gv-config.js'], dest: 'build/<%= meta.version.eva %>/', flatten: true}
                 ]
             }
@@ -151,7 +153,7 @@ module.exports = function (grunt) {
                     },
                     styles: {
                         'eva-css': [
-                            'build/<%= meta.version.eva %>/app/css/eva-portal-colours.css',
+//                            'build/<%= meta.version.eva %>/app/css/eva-portal-colours.css',
                             'build/<%= meta.version.eva %>/app/css/eva-portal-visual.css',
                             'build/<%= meta.version.eva %>/app/css/eva.css'
                         ],
