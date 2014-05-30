@@ -1,11 +1,43 @@
 
+
+div#local-masthead {
+
+    background: #156765 url("../img/EBI_banner_Homepage.jpg") no-repeat  right top ;
+    background-size: 100%;
+
+}
+body.front div#local-masthead {
+
+    background: #156765 url("../img/EBI_banner_Homepage.jpg") no-repeat  right top ;
+    background-size: 100%;
+
+}
+
+body.front #local-masthead ul {
+    margin-top:-16px;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0)
+{
+    body.front #local-masthead ul {
+        margin-top:-22px;
+    }
+
+}
+div#local-masthead h2{
+    color:#BFD9D8;
+}
+
+
 .panel-ebi-primary, .panel-ebi-secondary{
-    border-color: #357ebd;
+    /*border-color: #357ebd;*/
+    border-color: #156765;
     /*border-radius:0 0 0 0;*/
 }
 
 .panel-ebi-primary > .panel-heading, .panel-ebi-secondary > .panel-heading{
-   background-color: #CFDFF4;
+   /*background-color: #CFDFF4;*/
+   background-color: #70BDBD;
    /*border-radius:0 0 0 0;*/
    padding: 2px 3px;
 }
@@ -67,7 +99,12 @@ div .ngHeaderText{
 .variantBrowserTabs.nav-pills li a, .nav-tabs{
     /*border-radius: 0px;*/
     /*border: 1px solid #ddd;*/
-    border-color: #357ebd;
+    /*border-color: #357ebd;*/
+    border-color: #156765;
+}
+
+.nav-pills > li.active > a,      .nav-pills > li.active > a:hover{
+    background-color: #70BDBD;
 }
 
 
@@ -137,7 +174,8 @@ div .ngHeaderText{
     background: #c6deef;
 }
 #variantViewTabs a.active {
-    background: #428BCA;
+    /*background: #428BCA;*/
+    background: #70BDBD;
     color: #fff;
 }
 
@@ -179,6 +217,10 @@ div.masthead ul li.right{
 }
 .table-secondary{
     margin-left:5px;
+}
+
+#variantViewTabs{
+    margin-left:30px;
 }
 
 

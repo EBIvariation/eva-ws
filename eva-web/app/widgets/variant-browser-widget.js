@@ -66,10 +66,20 @@ VariantWidget.prototype = {
                     flex: 2,
                     sortable: false,
                     dataIndex: 'name',
+//                    renderer:function (value, meta, record) {
+//                        var link = "http://www.sequenceontology.org/miso/current_release/term/"+record.data.acc;
+//                        return value+' <a href='+link+' target="_blank">'+record.data.acc+'</a>';
+//                    }
+                },
+                {
+                    text: '',
+                    flex: 1,
+                    dataIndex: 'acc',
                     renderer:function (value, meta, record) {
-                        var link = "http://www.sequenceontology.org/miso/current_release/term/"+record.data.acc;
-                        return value+' <a href='+link+' target="_blank">'+record.data.acc+'</a>';
+                        var link = "http://www.sequenceontology.org/miso/current_release/term/"+value;
+                        return ' <a href='+link+' target="_blank">'+value+'</a>';
                     }
+
                 }
 
             ],
@@ -274,8 +284,9 @@ VariantWidget.prototype = {
                         align:'center'
                     }
                 },
-                height: 350,
+//                height: 350,
                 //width: 800,
+                autoHeight:true,
                 autoWidth: true,
                 autoScroll:false,
                 //title: 'Variant Data',

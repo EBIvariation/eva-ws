@@ -18,11 +18,12 @@
                     <div class="col-md-10">
                         <div class="table-responsive div-secondary">
                             <table class="table table-borderless">
-                                <tr><td>ID</td><td>{{variantInfoData.id}}</td></tr>
-                                <tr><td>Type</td><td>{{variantInfoData.type}}</td></tr>
-                                <tr><td>Chromosome Position</td><td>{{variantInfoData.chr}}:{{variantInfoData.start}}-{{variantInfoData.end}}</td></tr>
-                                <tr ng-show="variantInfoData.ref"><td>Ref</td><td>{{variantInfoData.ref}}</td></tr>
-                                <tr ng-show="variantInfoData.alt"><td>Alt</td><td>{{variantInfoData.alt}}</td></tr>
+                                <tr><td><b>ID</b></td><td>{{variantInfoData.id}}</td></tr>
+                                <tr><td><b>Type</b></td><td>{{variantInfoData.type}}</td></tr>
+                                <tr><td><b>Chromosome:Start-End</b></td><td>{{variantInfoData.chr}}:{{variantInfoData.start}}-{{variantInfoData.end}}</td></tr>
+                                <!--<tr><td><b>Start-End</b></td><td>{{variantInfoData.start}}-{{variantInfoData.end}}</td></tr>-->
+                                <tr ng-show="variantInfoData.ref"><td><b>Ref</b></td><td>{{variantInfoData.ref}}</td></tr>
+                                <tr ng-show="variantInfoData.alt"><td><b>Alt</b></td><td>{{variantInfoData.alt}}</td></tr>
                             </table>
                         </div>
                     </div>
@@ -64,7 +65,11 @@
 
             <div id="studies">
                 <h3>Studies</h3>
-                <div id="variantViewStudyID"></div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div  id="variantViewStudyID"></div>
+                    </div>
+                </div>
                 <!--<div class="row">-->
                     <!--<div  class="col-md-10" ng-repeat="(key,value) in  variantFilesData">-->
                         <!--<h4>{{value.id}} study&nbsp;&nbsp;<small><button type="button"  ng-init="toggleState=true" ng-click="toggleShow()" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>-->
