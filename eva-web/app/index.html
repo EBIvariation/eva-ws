@@ -108,10 +108,11 @@
                 <li id="genesLi"><a href="#gbrowser" data-toggle="tab">Genes</a></li>
                 <!--<li id="samplesLi"><a href="#samples" data-toggle="tab">Samples</a></li>-->
                 <li id="aboutLi"><a href="#aboutEva" data-toggle="tab">About EVA</a></li>
-                <li class="hidden" id="variantIDLi"><a href="#variantID" data-toggle="tab">Variant View</a></li>
-                <li id="gviewerLi"  ><a href="#gviewer" data-toggle="tab">Genome Viewer</a></li>
-                <li class="hidden" id="templatesLi"  ><a href="#templates" data-toggle="tab">Templates</a></li>
-                <li class="hidden" id="vcfLi"  ><a href="#vcf" data-toggle="tab">VCF Format</a></li>
+                <li id="variantIDLi" class="hidden"><a href="#variantID" data-toggle="tab">Variant View</a></li>
+                <li id="gviewerLi"><a href="#gviewer" data-toggle="tab">Genome Viewer</a></li>
+                <li id="templatesLi" class="hidden"><a href="#templates" data-toggle="tab">Templates</a></li>
+                <li id="vcfLi" class="hidden"><a href="#vcf" data-toggle="tab">VCF Format</a></li>
+                <li id="subStartLi" class="hidden"><a href="#submission-start" data-toggle="tab">Submission Form</a></li>
 
             </ul>
         </nav>
@@ -158,6 +159,9 @@
 
             <div class="tab-pane" id="vcf">
                <vcf-format></vcf-format>
+            </div>
+            <div class="tab-pane" id="submission-start">
+                <submission-form></submission-form>
             </div>
 
         </div>

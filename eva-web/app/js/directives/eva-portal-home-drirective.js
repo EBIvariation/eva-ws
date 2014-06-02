@@ -89,4 +89,32 @@ angular.module('homeWidgetModule', []).directive('homeWidget', function () {
 
         }
 
+}).directive('submissionForm', function () {
+        return {
+            restrict: 'E',
+            replace: true,
+            transclude: true,
+            template:'<div class="col-md-8 contact-form">' +
+                        '<form id="contact" ng-submit="subSubmit()">'+
+                            '<div class="row">' +
+                                '<div class="col-md-2 form-group"><h6>Name</h6></div>'+
+                                '<div class="col-md-6 form-group"><input class="form-control" id="name" ng-model=name  type="text" required  /></div>'+
+                            '</div>'+
+                            '<div class="row">' +
+                                '<div class="col-md-2 form-group"><h6>Email</h6></div>'+
+                                '<div class="col-md-6 form-group"><input class="form-control" id="email" ng-model=email  type="text" required /></div>'+
+                            '</div>'+
+                            '<div class="row">' +
+                                '<div class="col-md-2 form-group"><button class="btn btn-primary" type="submit">Submit</button></div>'+
+                            '</div>'+
+                        '</form>'+
+                     '</div>',
+            controller: function($scope) {
+              $scope.subSubmit = function(){
+                  alert('sdfsf')
+              }
+            },
+
+        }
+
 });
