@@ -223,6 +223,14 @@ div.masthead ul li.right{
     margin-left:30px;
 }
 
+input:invalid, textarea:invalid {
+    background-color: #ffffff;
+}
+
+.required{
+    color:#FF0000;
+}
+
 
 
 
