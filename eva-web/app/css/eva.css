@@ -236,8 +236,9 @@ input:invalid, textarea:invalid {
     max-width: 20px;
 }
 
-a, a:link, a:visited {
-     border-bottom-style: none;
+#variantBrowserTable a,#variantBrowserTable  a:link,#variantBrowserTable  a:visited
+{
+    border-bottom-style: none;
 }
 .x-tree-icon-parent{
     background-image: none;

@@ -62,9 +62,11 @@ VariantStudyWidget.prototype = {
                 _this.div += '<div id="'+studyDivId+'"><div>'
                 _this.div += '<div class="col-md-12" style="overflow:scroll;" id="'+attributesId+'"></div>'
                 _this.div += '<div class="col-md-7" id="'+statsId+'"></div>'
-                if(chartData[0].data.length > 0){
-                _this.div += '<div class="col-md-3"><h5 style="margin-left:60px;">Genotype Count</h5><div id="'+chartId+'"></div></div>'
+                _this.div += '<div class="col-md-3"><h5 style="margin-left:60px;">Genotype Count</h5><div id="'+chartId+'">'
+                if(!chartData[0].data.length > 0){
+                    _this.div += '<div class="col-md-10"><span style="margin-left:60px;">No Data</span></div>'
                 }
+                _this.div += '</div></div>'
                 _this.div += '</div></div>'
                 _this.div += '<script>'
                 _this.div += function toggleShow(id,value) {
