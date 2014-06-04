@@ -247,6 +247,10 @@ input:invalid, textarea:invalid {
     background-image: none;
 }
 
+img.in-active{
+    opacity:0.2;
+}
+
 
 
 
