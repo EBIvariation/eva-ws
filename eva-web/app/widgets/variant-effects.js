@@ -186,7 +186,9 @@ VariantEffectsWidget.prototype = {
             deferredRender: false,
             renderTo:  _this.render_id,
             viewConfig: {
-                enableTextSelection: true
+                enableTextSelection: true,
+                emptyText: 'No Record to Display',
+                deferEmptyText: false
             }
         });
 

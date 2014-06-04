@@ -61,7 +61,10 @@ VariantStudyWidget.prototype = {
                 _this.div  = '<h4>'+study.id+' Study <button id="'+studyDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
                 _this.div += '<div id="'+studyDivId+'"><div>'
                 _this.div += '<div class="col-md-12" style="overflow:scroll;" id="'+attributesId+'"></div>'
-                _this.div += '<div class="col-md-7" id="'+statsId+'"></div><div class="col-md-3"><h5 style="margin-left:60px;">Genotype Count</h5><div id="'+chartId+'"></div></div>'
+                _this.div += '<div class="col-md-7" id="'+statsId+'"></div>'
+                if(chartData[0].data.length > 0){
+                _this.div += '<div class="col-md-3"><h5 style="margin-left:60px;">Genotype Count</h5><div id="'+chartId+'"></div></div>'
+                }
                 _this.div += '</div></div>'
                 _this.div += '<script>'
                 _this.div += function toggleShow(id,value) {
@@ -82,7 +85,9 @@ VariantStudyWidget.prototype = {
                 $(this.targetDiv).append( $(_this.div));
                 _this._loadAttributesData(attributes);
                 _this._loadStatsData(stats);
-                _this._drawPieChart(chart);
+                if(chartData[0].data.length > 0){
+                    _this._drawPieChart(chart);
+                }
 
             }
         }
@@ -126,6 +131,12 @@ VariantStudyWidget.prototype = {
         var data = args[0].data
         var id = args[0].id
 
+        if(!data.alleleMaf){
+            data.alleleMaf = '-';
+        }
+        if(!data.genotypeMaf){
+            data.genotypeMaf = '-';
+        }
         _this.statsDiv =  '<h5>Stats</h5>'
         _this.statsDiv += '<table class="table">'
         _this.statsDiv += '<tr><td>Minor Allele Frequency</td><td>'+data.maf.toFixed(4)+'('+data.alleleMaf+')</td></tr>'

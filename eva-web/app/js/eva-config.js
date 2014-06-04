@@ -6,7 +6,6 @@ consequenceTypes = [
         expanded: true,
         leaf: false,
         children:[{
-
             name: 'Coding Variant',
             leaf: false ,
             iconCls :'no-icon',

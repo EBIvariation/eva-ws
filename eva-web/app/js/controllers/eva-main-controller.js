@@ -98,50 +98,6 @@ var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope',  function ($scope)
 
     }
 
-    //Function to parse variant Files Data
-    $scope.parseFilesData = function(args){
-        var variantData;
-        evaManager.get({
-            category: 'variants',
-            resource: 'info',
-            params: {
-                of: 'json'
-            },
-            query: args,
-            async: false,
-            success: function (data) {
-                variantData = data.response.result[0].files;
-            },
-            error: function (data) {
-                console.log('Could not get variant info');
-            }
-        });
-
-
-
-        var tmpData = variantData;
-        var tmpDataArray = [];
-
-        $.each(tmpData, function(key, value) {
-            var chartData = [];
-            var studyId = value.studyId;
-            if(!tmpDataArray[studyId]) tmpDataArray[studyId] = [];
-            var chartArray=[];
-            for (key in value.stats.genotypeCount) {
-                chartArray.push([key,  value.stats.genotypeCount[key]]);
-            }
-            chartData.push({'title':'Genotype Count','data':chartArray});
-            tmpDataArray[studyId].push({'attributes':value.attributes,'stats':value.stats, 'chartData':chartData });
-
-        });
-        var filesDataArray = new Array();
-        for (key in tmpDataArray){
-            filesDataArray.push({id:key,data:tmpDataArray[key]});
-        }
-
-        return filesDataArray;
-
-    }
     $(function() {
         $("[data-toggle='tooltip']").tooltip();
     });

@@ -84,44 +84,43 @@ VariantWidget.prototype = {
 
             ],
 
-            dockedItems: [{
-                xtype: 'toolbar',
-                ui: 'footer',
-                frame: false,
-                items: [
-                    {
-                        xtype: 'button',
-                        text: 'Select All',
-                        handler: function(){
-                            tree.getRootNode().cascadeBy(function(){
-                                if(this.hasChildNodes()){
-                                    this.set('checked', null);
-                                }else{
-                                    this.set( 'checked', true );
-                                }
-                            });
-                        }
-                    },
-                    {
-                        xtype: 'button',
-                        text: 'Clear',
-                        handler: function(){
-                            tree.getRootNode().cascadeBy(function(){
-                                if(this.hasChildNodes()){
-                                    this.set('checked', null);
-                                }else{
-                                    this.set( 'checked', false );
-                                }
-                            });
-                        }
-                    }
-                ]
-            }],
+//            dockedItems: [{
+//                xtype: 'toolbar',
+//                ui: 'footer',
+//                frame: false,
+//                items: [
+//                    {
+//                        xtype: 'button',
+//                        text: 'Select All',
+//                        handler: function(){
+//                            tree.getRootNode().cascadeBy(function(){
+//                                if(this.hasChildNodes()){
+//                                    this.set('checked', null);
+//                                }else{
+//                                    this.set( 'checked', true );
+//                                }
+//                            });
+//                        }
+//                    },
+//                    {
+//                        xtype: 'button',
+//                        text: 'Clear',
+//                        handler: function(){
+//                            tree.getRootNode().cascadeBy(function(){
+//                                if(this.hasChildNodes()){
+//                                    this.set('checked', null);
+//                                }else{
+//                                    this.set( 'checked', false );
+//                                }
+//                            });
+//                        }
+//                    }
+//                ]
+//            }],
 
 
             listeners: {
                 itemclick : function(view, record, item, index, event) {
-
                     if(record)
                     {
                         if(record.hasChildNodes()){
@@ -140,6 +139,8 @@ VariantWidget.prototype = {
             }
 
         });
+
+
 
         return tree;
 
@@ -232,7 +233,14 @@ VariantWidget.prototype = {
                 multiSelect: true,
                 columns: {
                     items:[
+                        {
+                            text     : 'ID',
+                            sortable : false,
+                            dataIndex: 'id',
+                            xtype: 'templatecolumn',
+                            tpl: '<tpl if="id"><a href="?variantID={id}" target="_blank">{id}</a><tpl else>-</tpl>'
 
+                        },
                         {
                             text     : 'Chromosome',
                             sortable : true,
@@ -249,21 +257,12 @@ VariantWidget.prototype = {
                             dataIndex: 'end'
                         },
                         {
-                            text     : 'ID',
-                            sortable : false,
-                            dataIndex: 'id',
-                            xtype: 'templatecolumn',
-                            tpl: '<a href="?variantID={id}" target="_blank">{id}</a>'
-
-                        },
-                        {
                             text     : 'Type',
                             sortable : true,
                             //renderer : createLink,
                             dataIndex: 'type'
 
                         },
-
                         {
                             text     : 'REF/ALT',
                             sortable : true,
@@ -276,6 +275,13 @@ VariantWidget.prototype = {
                             text     : 'HGVS Name',
                             sortable : true,
                             dataIndex: 'hgvsName',
+                        },
+                        {
+                            text     : 'View',
+                            sortable : true,
+                            dataIndex: 'id',
+                            xtype: 'templatecolumn',
+                            tpl: '<tpl><a href="?home"><img class="grid-img" src="img/eva_logo.png"/></a>&nbsp;<a href="?home"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a></tpl>'
                         }
 
                     ],
@@ -305,8 +311,14 @@ VariantWidget.prototype = {
                 listeners: {
                     itemclick : function() {
                         var data = _this._getSelectedData();
-                        eventManager.trigger("variant:files", data.variantId);
-                        _this._createGenotypeGrid(data.variantId);
+
+                        var variantId = data.variantId;
+                        if (!variantId) {
+                            variantId = data.position;
+                        }
+
+                        eventManager.trigger("variant:files", variantId);
+                        _this._createGenotypeGrid(variantId);
                         _this._createEffectsGrid(data.position);
                         var activeTab = jQuery('#'+_this.variantSubTabsID+' .active').attr('id');
                         if(activeTab  === _this.variantGenomeViewerID+'Li'){

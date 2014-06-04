@@ -39,6 +39,7 @@ VariantGenotypeWidget.prototype = {
         ]);
 
         var parsedData = _this._parseData();
+
         if(!parsedData){
             return;
         }
@@ -63,6 +64,8 @@ VariantGenotypeWidget.prototype = {
 
         });
 
+
+
         _this.vgGrid = Ext.create('Ext.grid.Panel', {
             header:false,
             store:  _this.vgStore,
@@ -77,7 +80,9 @@ VariantGenotypeWidget.prototype = {
             renderTo: _this.render_id,
             viewConfig: {
                 enableTextSelection: true,
-                forceFit: true
+                forceFit: true,
+                emptyText: 'No Record to Display',
+                deferEmptyText: false
             },
             deferredRender: false,
             bbar: Ext.create('Ext.PagingToolbar', {
@@ -88,6 +93,7 @@ VariantGenotypeWidget.prototype = {
             })
         });
 
+        
         _this.vgStore.load();
 
         return _this.vgGrid;

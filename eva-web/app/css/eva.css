@@ -231,6 +231,17 @@ input:invalid, textarea:invalid {
     color:#FF0000;
 }
 
+.grid-img{
+    max-height: 20px;
+    max-width: 20px;
+}
+
+a, a:link, a:visited {
+     border-bottom-style: none;
+}
+.x-grid-tree-node-expanded .x-tree-icon-parent {
+    background-image: url(...);
+}
 
 
 
