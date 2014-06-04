@@ -239,6 +239,9 @@ input:invalid, textarea:invalid {
 a, a:link, a:visited {
      border-bottom-style: none;
 }
+.x-tree-icon-parent{
+    background-image: url(...);
+}
 .x-grid-tree-node-expanded .x-tree-icon-parent {
     background-image: url(...);
 }
