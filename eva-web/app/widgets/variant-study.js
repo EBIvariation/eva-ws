@@ -14,12 +14,18 @@ function VariantStudyWidget(args) {
 
 VariantStudyWidget.prototype = {
 
-    draw: function () {
+    draw: function (args) {
         var _this = this;
-        this._createStudyPanel();
+        if(args === 'files'){
+            this._createFilesStudyPanel();
+        }
+        if(args === 'genotype'){
+            console.log('')
+        }
+
     },
 
-    _createStudyPanel:function(){
+    _createFilesStudyPanel:function(){
         var _this = this;
 
         _this.targetId = (_this.render_id) ? _this.render_id : _this.targetId;
@@ -48,14 +54,9 @@ VariantStudyWidget.prototype = {
                 var statsData = study.data[k].stats;
                 var chartData = study.data[k].chartData;
 
-                var attributes = new Array();
-                    attributes.push({id:attributesId,data:attributesData});
-
-                var stats = new Array();
-                    stats.push({id:statsId,data:statsData});
-
-                var chart = new Array();
-                    chart.push({id:chartId,data:chartData});
+                var attributes = {id:attributesId,data:attributesData};
+                var stats = {id:statsId,data:statsData};
+                var chart = {id:chartId,data:chartData};
 
 
                 _this.div  = '<h4>'+study.id+' Study <button id="'+studyDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
@@ -107,8 +108,8 @@ VariantStudyWidget.prototype = {
 
     _loadAttributesData:function(args){
         var _this = this;
-        var data = args[0].data
-        var id = args[0].id
+        var data = args.data
+        var id = args.id
 
         _this.attributeDiv = '<h5>File Attributes</h5>'
         _this.attributeDiv += '<table class="table table-striped"><tr>'
@@ -130,8 +131,8 @@ VariantStudyWidget.prototype = {
     _loadStatsData:function(args){
 
         var _this = this;
-        var data = args[0].data
-        var id = args[0].id
+        var data = args.data
+        var id = args.id
 
         if(!data.alleleMaf){
             data.alleleMaf = '-';
@@ -197,9 +198,9 @@ VariantStudyWidget.prototype = {
     },
 
     _drawPieChart:function(args){
-        var value = args[0].data[0].data;
-        var title = args[0].data[0].title;
-        var id = args[0].id;
+        var value = args.data[0].data;
+        var title = args.data[0].title;
+        var id = args.id;
 
 
 

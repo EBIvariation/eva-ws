@@ -96,20 +96,6 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
 
 
-            eventManager.on("variant:files", function(variantId) {
-                $scope.$apply(function(){
-                    var variantBrowserStudyWidget;
-                    variantBrowserStudyWidget = new VariantStudyWidget({
-                        render_id    : 'variantBrowserStudyID',
-                        variantId    : variantId
-                    });
-
-                    variantBrowserStudyWidget.draw();
-
-                })
-
-            });
-
             eventManager.on("gene:search variant:search" , function(e) {
                 updateRegion( $scope.gene);
             });
@@ -438,7 +424,6 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
             }
             $scope.effectsData = effectsDataArray;
 
-            $scope.variantViewFilesId = 'variantViewStudyID';
 
             var variantStudyWidget;
             variantStudyWidget = new VariantStudyWidget({
@@ -446,7 +431,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                 variantId    :  data.value
             });
 
-            variantStudyWidget.draw();
+            variantStudyWidget.draw('files');
 
         }
 

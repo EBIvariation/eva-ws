@@ -24,9 +24,18 @@ VariantEffectsWidget.prototype = {
     _createEffectsGrid:function(){
 
         var _this = this;
-        if(jQuery( "#"+_this.render_id+" div").length > 0){
-            jQuery( "#"+_this.render_id+" div").remove();
+
+        _this.targetId = (_this.render_id) ? _this.render_id : _this.targetId;
+        _this.targetDiv = (_this.targetId instanceof HTMLElement ) ? _this.targetId : $('#' + _this.targetId)[0];
+
+        if (_this.targetDiv === "undefined" || _this.targetDiv == null ) {
+            console.log('targetId not found');
+            return;
         }
+
+        _this._clear();
+
+
 
         Ext.require([
             'Ext.grid.*',
@@ -195,7 +204,12 @@ VariantEffectsWidget.prototype = {
 
         return _this.veGrid;
 
-    }
+    },
+
+    _clear:function(){
+        var _this = this;
+        $( "#"+_this.render_id).empty();
+    },
 
 
 

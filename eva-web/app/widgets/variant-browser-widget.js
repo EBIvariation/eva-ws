@@ -316,12 +316,16 @@ VariantWidget.prototype = {
                     itemclick : function() {
                         var data = _this._getSelectedData();
                         var variantId = data.variantId;
-                        if (!variantId) {
-                            variantId = data.position;
-                        }
-                        eventManager.trigger("variant:files", variantId);
+                        var position = data.position;
+
+                        var filesGridArgs = {render_id: _this.variantFilesTableID,variantID: variantId};
+                        _this._createFilesGrid(filesGridArgs);
+
                         _this._createGenotypeGrid(variantId);
-                        _this._createEffectsGrid(data.position);
+
+                        var effectsGridArgs = {render_id: _this.variantEffectTableID,position: position}
+                        _this._createEffectsGrid(effectsGridArgs);
+
                         var activeTab = jQuery('#'+_this.variantSubTabsID+' .active').attr('id');
                         if(activeTab  === _this.variantGenomeViewerID+'Li'){
                             var region = new Region();
@@ -353,7 +357,8 @@ VariantWidget.prototype = {
                     var grid = _this.vbGrid
                     var data = _this._getSelectedData();
                     if(e.target.parentElement.id === _this.variantEffectTableID+'Li' ){
-                        _this._createEffectsGrid(data.position);
+                        var effectsGridArgs = {render_id: _this.variantEffectTableID,position: data.position}
+                        _this._createEffectsGrid(effectsGridArgs);
                     }
                     else if(e.target.parentElement.id === _this.variantGenoTypeTableID+'Li'){
                         _this._createGenotypeGrid(data.variantId);
@@ -373,8 +378,25 @@ VariantWidget.prototype = {
         return _this.vbGrid;
     },
 
+    _createFilesGrid:function(args){
+        var variantBrowserStudyWidget;
+        variantBrowserStudyWidget = new VariantStudyWidget({
+            render_id    : args.render_id,
+            variantId    : args.variantID
+        });
+        variantBrowserStudyWidget.draw('files');
+
+    },
+
     _createGenotypeGrid:function(args){
         var _this = this;
+        var variantBrowserGenoTypeWidget;
+        variantBrowserGenoTypeWidget = new VariantStudyWidget({
+            variantId       : args,
+            render_id : _this.variantGenoTypeTableID,
+        });
+        variantBrowserGenoTypeWidget.draw('genotype');
+
         var variantGenotype = new VariantGenotypeWidget({
             variantId       : args,
             render_id : _this.variantGenoTypeTableID,
@@ -387,9 +409,8 @@ VariantWidget.prototype = {
     _createEffectsGrid:function(args){
         var _this = this;
         var variantEffects = new VariantEffectsWidget({
-            position : args,
-            render_id : _this.variantEffectTableID,
-            title     : 'Effects'
+            position : args.position,
+            render_id : args.render_id,
         });
         variantEffects.draw();
 
@@ -404,6 +425,10 @@ VariantWidget.prototype = {
          parseData['variantId'] = data.id;
          parseData['position']  = data.chr + ":" + data.start + ":" + data.ref + ":" + data.alt;
          parseData['location']  = data.chr + ":" + data.start + "-" + data.end;
+
+         if(!parseData.variantId){
+             parseData.variantId = parseData.position;
+         }
 
         return parseData;
     },
