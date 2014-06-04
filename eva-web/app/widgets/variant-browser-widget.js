@@ -309,7 +309,7 @@ VariantWidget.prototype = {
                 dockedItems: [{
                     xtype: 'pagingtoolbar',
                     store: _this.vbStore,   // same store GridPanel is using
-                    dock: 'bottom',
+                    dock: 'top',
                     displayInfo: true
                 }],
                 listeners: {
