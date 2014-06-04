@@ -36,6 +36,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
 
 
+
             $scope.searchVariants = function(){
                 eventManager.trigger("variant:search");
             }
@@ -69,12 +70,12 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 
                 var consequenceTypeTreeArgs = [];
                 consequenceTypeTreeArgs.id =  $scope.consequenceTypeTreeId;
-                consequenceTypeTreeArgs.data = $scope.consequenceTypes;
+                consequenceTypeTreeArgs.data = consequenceTypes;
 
 
                 var variationClassesTreeArgs = [];
                 variationClassesTreeArgs.id =  $scope.variationClassesTreeId;
-                variationClassesTreeArgs.data = $scope.variationClasses;
+                variationClassesTreeArgs.data = variationClasses;
 
                 if(e.target.parentElement.id === 'variationLi'){
 
