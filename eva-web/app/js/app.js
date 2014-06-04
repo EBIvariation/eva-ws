@@ -6,9 +6,18 @@ METADATA_VERSION = 'v1';
 CELLBASE_HOST = "http://www.ebi.ac.uk/cellbase/webservices/rest";
 CELLBASE_VERSION = "v3";
 
-if(window.location.host.indexOf("www.ebi.ac.uk") === -1){
+if(window.location.host.indexOf("wwwint.ebi.ac.uk") === -1){
 
     METADATA_HOST = "http://wwwint.ebi.ac.uk/eva/webservices/rest";
+    METADATA_VERSION = 'v1';
+
+    CELLBASE_HOST = "http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest";
+    CELLBASE_VERSION = "latest";
+}
+
+if(window.location.host.indexOf("wwwdev.ebi.ac.uk") === -1){
+
+    METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
     METADATA_VERSION = 'v1';
 
     CELLBASE_HOST = "http://ws-beta.bioinfo.cipf.es/cellbase-staging/rest";
