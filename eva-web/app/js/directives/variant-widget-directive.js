@@ -422,6 +422,7 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
             for (key in effectsTempDataArray){
                 effectsDataArray.push({id:key,name:effectsTempDataArray[key][0].consequenceTypeType,data:effectsTempDataArray[key]});
             }
+
             $scope.effectsData = effectsDataArray;
 
 
