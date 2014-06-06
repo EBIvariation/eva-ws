@@ -59,7 +59,7 @@
 /* Color
 ===================================================*/
 
-/* These style rules will over-ride the core EBI styles and apply 
+/* These style rules will over-ride the core EBI styles and apply
     your custom colour palette in a consistent manner */
 
 /* Links */
@@ -81,7 +81,7 @@ a.special:active {
 }
 
 
-a:link { color: #1B1BB3; }
+/*a:link { color: #1B1BB3; }*/
 
 a:hover,
 a:focus,
@@ -142,4 +142,9 @@ div#local-masthead ul li a:hover,
 div#local-masthead ul li a:focus,
 div#local-masthead ul li a:active {
     border-bottom: 3px solid #0B62A4;
+}
+
+div#local-search form fieldset, form#local-search fieldset{
+
+    /*background-color: rgb(210, 229, 244);*/
 }
