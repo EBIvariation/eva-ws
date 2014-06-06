@@ -36,7 +36,7 @@ public class GeneWSServer extends EvaWSServer {
     public GeneWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException {
         super(version, uriInfo, hsr);
         try {
-            credentials = new MongoCredentials("mongos-hxvm-dev-001", 27017, "eva_hsapiens", "biouser", "biopass");
+            credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
             variantMongoQueryBuilder = new VariantMongoDBAdaptor(credentials);
         } catch (IllegalOpenCGACredentialsException e) {
             e.printStackTrace();

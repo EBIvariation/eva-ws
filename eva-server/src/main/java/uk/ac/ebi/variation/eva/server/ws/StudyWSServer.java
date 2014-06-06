@@ -35,7 +35,7 @@ public class StudyWSServer extends EvaWSServer {
     public StudyWSServer(@DefaultValue("") @PathParam("version") String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException {
         super(version, uriInfo, hsr);
         try {
-            credentials = new MongoCredentials("mongos-hxvm-dev-001", 27017, "eva_hsapiens", "biouser", "biopass");
+            credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
             studyMongoQueryBuilder = new StudyMongoDBAdaptor(credentials);
         } catch (IllegalOpenCGACredentialsException e) {
             e.printStackTrace();
