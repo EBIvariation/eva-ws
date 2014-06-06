@@ -61,8 +61,7 @@ VariantWidget.prototype = {
             //the 'columns' property is now 'headers'
             columns: [
                 {
-                    xtype: 'treecolumn', //this is so we know which column will show the tree
-                    //text: 'Task',
+                    xtype: 'treecolumn',
                     flex: 2,
                     sortable: false,
                     dataIndex: 'name',
@@ -124,14 +123,14 @@ VariantWidget.prototype = {
                     if(record)
                     {
                         if(record.hasChildNodes()){
-                            var is_checked = record.firstChild.data.checked;
                             record.cascadeBy(function(){
-                                if(is_checked == false){
-                                    this.set( 'checked', true );
-                                }else{
-                                    this.set( 'checked', false );
-                                }
-                                record.set('checked', null);
+                               if(this.isLeaf()){
+                                   if(this.data.checked == false){
+                                       this.set( 'checked', true );
+                                   }else{
+                                       this.set( 'checked', false );
+                                   }
+                               }
                             });
                         }
                     }
@@ -310,7 +309,8 @@ VariantWidget.prototype = {
                     xtype: 'pagingtoolbar',
                     store: _this.vbStore,   // same store GridPanel is using
                     dock: 'top',
-                    displayInfo: true
+                    displayInfo: true,
+                    height:50
                 }],
                 listeners: {
                     itemclick : function() {

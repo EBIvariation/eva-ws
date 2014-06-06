@@ -252,6 +252,13 @@ img.in-active{
     opacity:0.2;
 }
 
+.x-tree-icon, .x-tree-elbow-img, .x-tree-checkbox{
+    margin-left:-10px;
+}
+
+
+
+
 
 
 
