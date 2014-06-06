@@ -210,6 +210,7 @@ div.masthead ul li.right{
 
 .x-tree-node-text,.x-grid-row .x-grid-cell, .x-column-header-text,.x-toolbar-text,.x-btn-inner {
     font-family: Verdana, sans-serif !important;
+    font-size:12px;
 }
 
 .div-secondary{
@@ -250,6 +251,7 @@ input:invalid, textarea:invalid {
 img.in-active{
     opacity:0.2;
 }
+
 
 
 
