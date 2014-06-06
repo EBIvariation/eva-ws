@@ -1,4 +1,4 @@
-/*
+    /*
 This file is part of Ext JS 4.2
 
 Copyright (c) 2011-2013 Sencha Inc

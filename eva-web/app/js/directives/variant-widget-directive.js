@@ -2,56 +2,154 @@
  * Created by jag on 14/04/2014.
  */
 var genomeViewer;
-angular.module('variantWidgetModule', []).directive('variantionWidget', function () {
+angular.module('variantWidgetModule', []).directive('variantWidget', function () {
     return {
         restrict: 'E',
         replace: true,
         transclude: true,
         templateUrl: 'views/variation-browser-view.html',
+        controller: function($scope) {
+        },
         link: function($scope, element, attr) {
 
+            var location = '21:9411240-9711260';
+            //var gene = 'TMEM51';
+            $scope.location = location;
+            $scope.gene = gene;
+
+            var conTypeTree;
+            var studiesTree;
+            var varClassesTree;
+
+            $scope.variantTableId            = 'variantBrowserTable';
+            $scope.variantEffectTableId      = 'variantEffectTable';
+            $scope.variantFilesTableId       = 'variantFilesTable';
+            $scope.variantStatsViewId        = 'variantStatsView';
+            $scope.variantStatsChartId       = 'variantStatsChart';
+            $scope.variantGenoTypeTableId    = 'variantGenoTypeTable';
+            $scope.variantGenomeViewerId     = 'variant-browser-gv';
+            $scope.variantBrowserSubTabsId   = 'variantSubTabs';
+            $scope.studiesTreeId             = 'studiesTreeID';
+            $scope.consequenceTypeTreeId     = 'consequenceTypeTreeID';
+            $scope.variationClassesTreeId    = 'variationClassesTreeID';
 
 
-                $scope.variantTableId       = 'VariantBrowserTable';
-                $scope.variantEffectTableId = 'VariantEffectTable';
-                $scope.variantFilesTableId  = 'VariantFilesTable';
-                $scope.variantStatsViewId   = 'VariantStatsView';
-                $scope.variantStatsChartId  = 'VariantStatsChart';
 
 
-                eventManager.on("variant:search", function(e) {
 
-                    var variantWidget;
-                    variantWidget = new VariantWidget({
-                        variantTableID       : $scope.variantTableId,
-                        variantEffectTableID : $scope.variantEffectTableId,
-                        variantFilesTableID  : $scope.variantFilesTableId,
-                        variantStatsViewID   : $scope.variantStatsViewId,
-                        variantStatsChartID  : $scope.variantStatsChartId,
-                        location             : $scope.location
-                    });
-                    variantWidget.draw();
+            $scope.searchVariants = function(){
+                eventManager.trigger("variant:search");
+            }
+
+            $scope.reloadVariants = function(){
+                $scope.location = location;
+                // $scope.gene = gene;
+                eventManager.trigger("variant:search");
+            }
+
+            $scope.clearVariants = function(){
+                $scope.location = '';
+                $scope.gene = '';
+                clearCheckedFilters(studiesTree);
+                clearCheckedFilters(conTypeTree);
+                clearCheckedFilters(varClassesTree);
+                eventManager.trigger("variant:search");
+            }
 
 
-                    if(!genomeViewer.rendered) {
-                        genomeViewer.render();
-                        genomeViewer.draw();
-                        genomeViewer.addTrack(tracks);
-                        genomeViewer.addOverviewTrack(geneOverview);
+
+            jQuery('#topMenuTab a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+
+                var variantTreeWidget;
+                variantTreeWidget = new VariantWidget({});
+
+                var studiesTreeArgs = [];
+                studiesTreeArgs.id =  $scope.studiesTreeId;
+                studiesTreeArgs.data = $scope.studies;
+
+
+                var consequenceTypeTreeArgs = [];
+                consequenceTypeTreeArgs.id =  $scope.consequenceTypeTreeId;
+                consequenceTypeTreeArgs.data = consequenceTypes;
+
+
+                var variationClassesTreeArgs = [];
+                variationClassesTreeArgs.id =  $scope.variationClassesTreeId;
+                variationClassesTreeArgs.data = variationClasses;
+
+                if(e.target.parentElement.id === 'variationLi'){
+
+                    if(jQuery("#"+$scope.studiesTreeId).contents().length === 0 ){
+                        studiesTree = variantTreeWidget.createTreePanel(studiesTreeArgs);
+                    }
+                    if(jQuery("#"+$scope.consequenceTypeTreeId).contents().length === 0 ){
+                        conTypeTree = variantTreeWidget.createTreePanel(consequenceTypeTreeArgs);
                     }
 
-                    var region = new Region();
-                    region.parse($scope.location);
-                    genomeViewer.setRegion(region);
+                    if(jQuery("#"+$scope.variationClassesTreeId).contents().length === 0 ){
+                        varClassesTree = variantTreeWidget.createTreePanel(variationClassesTreeArgs);
+                    }
+                    eventManager.trigger("variant:search");
+                }
 
+            });
+
+
+
+            eventManager.on("gene:search variant:search" , function(e) {
+                updateRegion( $scope.gene);
+            });
+
+
+            eventManager.on("variant:search", function(e) {
+
+                var studyFilter  = getCheckedFilters(studiesTree.getView().getChecked());
+                var conTypeFilter  = getCheckedFilters(conTypeTree.getView().getChecked());
+                var varClassesFilter  = getCheckedFilters(varClassesTree.getView().getChecked());
+
+//                    console.log(studyFilter)
+//                    console.log(conTypeFilter)
+//                    console.log(varClassesFilter)
+
+                if(conTypeFilter){
+                    $scope.CTfilter = '&effect='+conTypeFilter;
+                }else{
+                    $scope.CTfilter = '';
+                }
+
+                $scope.filters =  $scope.CTfilter;
+
+                var variantWidget;
+                variantWidget = new VariantWidget({
+                    variantTableID          : $scope.variantTableId,
+                    variantEffectTableID    : $scope.variantEffectTableId,
+                    variantFilesTableID     : $scope.variantFilesTableId,
+                    variantStatsViewID      : $scope.variantStatsViewId,
+                    variantStatsChartID     : $scope.variantStatsChartId,
+                    variantGenoTypeTableID  : $scope.variantGenoTypeTableId,
+                    location                : $scope.location,
+                    filters                 : $scope.filters,
+                    variantGenomeViewerID   : $scope.variantGenomeViewerId,
+                    variantSubTabsID        : $scope.variantBrowserSubTabsId,
                 });
 
+                variantWidget.draw();
+
+                if(!genomeViewer.rendered) {
+                    genomeViewer.render();
+                    genomeViewer.draw();
+                    genomeViewer.addTrack(tracks);
+                    genomeViewer.addOverviewTrack(geneOverview);
+                }
+
+                var region = new Region();
+                region.parse($scope.location);
+                genomeViewer.setRegion(region);
 
 
+            });
 
 
-            CELLBASE_HOST = "http://ws-beta.bioinfo.cipf.es/cellbase/rest";
-            CELLBASE_VERSION = "v3";
             var region = new Region({chromosome: "13", start: 32889611, end: 32889611});
             var availableSpecies = {
                 "text": "Species",
@@ -201,23 +299,143 @@ angular.module('variantWidgetModule', []).directive('variantionWidget', function
 
 //            genomeViewer.draw();
 
+
+            //function to update region by geneId
+            function updateRegion(args){
+                if(args){
+                    var geneInfoURL = CELLBASE_HOST+'/'+CELLBASE_VERSION+'/hsa/feature/gene/'+$scope.gene+'/info?of=json';
+
+                    var regionData;
+                    CellBaseManager.get({
+                        species: 'hsa',
+                        category: 'feature',
+                        subCategory: 'gene',
+                        resource: 'info',
+                        query: $scope.gene,
+                        async: false,
+                        success: function (data) {
+                            regionData = data;
+                        },
+                        error: function (data) {
+                            console.log('Could not get variant effects list');
+                        }
+                    });
+
+                    var region = regionData[0][0].chromosome+':'+regionData[0][0].start+'-'+regionData[0][0].end;
+                    $scope.$apply(function(){
+                        $scope.location = region;
+                    })
+
+                }
             }
 
+
+            //Function to get checked filters
+            function getCheckedFilters(args){
+                if(args.length > 0){
+                    var filters = [];
+                    Ext.Array.each(args , function(rec){
+                        filters.push(rec.get('name'));
+                    });
+                    return filters.join();
+                }
+            }
+
+            //Function to clear checked filters
+            function clearCheckedFilters(args){
+                args.store.getRootNode().cascadeBy(function(){
+                    this.set( 'checked', false );
+                });
+            }
+
+        }
+
     };
-}).config(function($stateProvider, $urlRouterProvider) {
-//    $stateProvider
-//        .state('variant', {
-//            url: "/variant",
-//            templateUrl: "views/variation-browser-view.html",
-//        })
-//        .state('variant.view', {
-//            url: "/view",
-//            templateUrl: "views/variant-view.html",
-//        })
-//        .state('variant.browser', {
-//            url: "/browser",
-//            templateUrl: "views/variant-browser.html",
-//
-//        })
+
+}).directive('variantView', function () {
+    return {
+        restrict: 'E',
+        replace: true,
+        transclude: true,
+        templateUrl: 'views/variant-view.html',
+        controller: function($scope) {
+        },
+        link: function($scope, element, attr) {
+
+            var data = getUrlParameters("");
+
+            if(data.value){
+                var variantData;
+                evaManager.get({
+                    category: 'variants',
+                    resource: 'info',
+                    params: {
+                        of: 'json'
+                    },
+                    query: data.value,
+                    async: false,
+                    success: function (data) {
+                        variantData = data;
+                    },
+                    error: function (data) {
+                        console.log('Could not get variant info');
+                    }
+                });
+                var tmpData = variantData;
+
+            }else{
+                return;
+            }
+            if(!tmpData || !tmpData.response.numResults){
+                return;
+            }
+
+            $scope.variant = data.value;
+
+            $scope.variantInfoData  = tmpData.response.result[0];
+
+            var position = $scope.variantInfoData.chr + ":" + $scope.variantInfoData.start + ":" + $scope.variantInfoData.ref + ":" + $scope.variantInfoData.alt;
+            var effectsTempData;
+            CellBaseManager.get({
+                species: 'hsa',
+                category: 'genomic',
+                subCategory: 'variant',
+                resource: 'consequence_type',
+                query: position,
+                async: false,
+                success: function (data) {
+                    effectsTempData = data;
+                },
+                error: function (data) {
+                    console.log('Could not get variant effects list');
+                }
+            });
+            var effectsTempDataArray = [];
+
+            $.each(effectsTempData, function(key, value) {
+                var consequenceType = value.consequenceType;
+                if(!effectsTempDataArray[consequenceType]) effectsTempDataArray[consequenceType] = [];
+                effectsTempDataArray[consequenceType].push({'featureId':value.featureId,'featureType':value.featureType,'featureChromosome':value.featureChromosome,'featureStart':value.featureStart,'featureEnd':value.featureEnd,'consequenceTypeType':value.consequenceTypeType});
+            });
+
+            var effectsDataArray = new Array();
+            for (key in effectsTempDataArray){
+                effectsDataArray.push({id:key,name:effectsTempDataArray[key][0].consequenceTypeType,data:effectsTempDataArray[key]});
+            }
+
+            $scope.effectsData = effectsDataArray;
+
+
+            var variantStudyWidget;
+            variantStudyWidget = new VariantStudyWidget({
+                render_id    : 'variantViewStudyID',
+                variantId    :  data.value
+            });
+
+            variantStudyWidget.draw('files');
+
+        }
+
+    };
 
 });
