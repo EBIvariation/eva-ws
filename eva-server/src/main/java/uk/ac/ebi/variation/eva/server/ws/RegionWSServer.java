@@ -18,7 +18,7 @@ import java.util.Arrays;
 /**
  * Created by imedina on 01/04/14.
  */
-@Path("/{version}/segments/{region}")
+@Path("/{version}/segments")
 @Produces(MediaType.APPLICATION_JSON)
 public class RegionWSServer extends EvaWSServer {
 
@@ -40,11 +40,12 @@ public class RegionWSServer extends EvaWSServer {
     }
 
     @GET
-    @Path("/variants")
+    @Path("/{region}/variants")
     public Response getVariantsByRegion(@PathParam("region") String regionId,
                                         @QueryParam("ref") String reference,
                                         @QueryParam("alt") String alternate,
-                                        @QueryParam("effect") String effect,
+                                        @QueryParam("effects") String effects,
+                                        @QueryParam("studies") String studies,
                                         @DefaultValue("") @QueryParam("type") String variantType) {
         if (reference != null) {
             queryOptions.put("reference", reference);
@@ -52,8 +53,11 @@ public class RegionWSServer extends EvaWSServer {
         if (alternate != null) {
             queryOptions.put("alternate", alternate);
         }
-        if (effect != null) {
-            queryOptions.put("effect", Arrays.asList(effect.split(",")));
+        if (effects != null) {
+            queryOptions.put("effect", Arrays.asList(effects.split(",")));
+        }
+        if (studies != null) {
+            queryOptions.put("studies", Arrays.asList(studies.split(",")));
         }
         if (!variantType.isEmpty()) {
             queryOptions.put("type", variantType);

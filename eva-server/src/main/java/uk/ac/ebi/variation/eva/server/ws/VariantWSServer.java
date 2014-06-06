@@ -8,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -23,7 +24,7 @@ import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/{version}/variants/{variantId}")
+@Path("/{version}/variants")
 @Produces(MediaType.APPLICATION_JSON)
 public class VariantWSServer extends EvaWSServer {
 
@@ -45,8 +46,13 @@ public class VariantWSServer extends EvaWSServer {
     }
 
     @GET
-    @Path("/info")
-    public Response getVariantById(@PathParam("variantId") String variantId) {
+    @Path("/{variantId}/info")
+    public Response getVariantById(@PathParam("variantId") String variantId,
+                                   @QueryParam("studies") String studies) {
+        if (studies != null) {
+            queryOptions.put("studies", Arrays.asList(studies.split(",")));
+        }
+        
         if (!variantId.contains(":")) { // Query by accession id
             return createOkResponse(variantMongoQueryBuilder.getVariantById(variantId, queryOptions));
         } else { // Query by chr:pos:ref:alt
@@ -66,7 +72,7 @@ public class VariantWSServer extends EvaWSServer {
     }
     
     @GET
-    @Path("/exists")
+    @Path("/{variantId}/exists")
     public Response checkVariantExists(@PathParam("variantId") String variantId) {
         if (!variantId.contains(":")) { // Query by accession id
             return createJsonResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");

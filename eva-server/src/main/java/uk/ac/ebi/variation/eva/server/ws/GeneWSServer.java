@@ -22,7 +22,7 @@ import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/{version}/genes/")
+@Path("/{version}/genes")
 @Produces(MediaType.APPLICATION_JSON)
 public class GeneWSServer extends EvaWSServer {
 
@@ -44,20 +44,24 @@ public class GeneWSServer extends EvaWSServer {
     }
 
     @GET
-    @Path("{gene}/variants")
+    @Path("/{gene}/variants")
     public Response getVariantsByGene(@PathParam("gene") String geneId,
                                       @QueryParam("ref") String reference,
                                       @QueryParam("alt") String alternate, 
                                       @DefaultValue("") @QueryParam("type") String variantType,
-                                      @QueryParam("effect") String effect) {
+                                      @QueryParam("effects") String effects,
+                                      @QueryParam("studies") String studies) {
         if (reference != null) {
             queryOptions.put("reference", reference);
         }
         if (alternate != null) {
             queryOptions.put("alternate", alternate);
         }
-        if (effect != null) {
-            queryOptions.put("effect", Arrays.asList(effect.split(",")));
+        if (effects != null) {
+            queryOptions.put("effect", Arrays.asList(effects.split(",")));
+        }
+        if (studies != null) {
+            queryOptions.put("studies", Arrays.asList(studies.split(",")));
         }
         if (!variantType.isEmpty()) {
             queryOptions.put("type", variantType);
