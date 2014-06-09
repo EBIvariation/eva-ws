@@ -94,59 +94,7 @@ angular.module('homeWidgetModule', []).directive('homeWidget', function () {
             restrict: 'E',
             replace: true,
             transclude: true,
-            template:'<div class="col-md-12 contact-form">' +
-                        '<h3>Submission Form</h3>'+
-                        '<form id="contact" ng-submit="subSubmit()">'+
-                            '<div class="row">' +
-                            '<div class="col-md-4 form-group"><h4>User Details</h4></div>'+
-                            '</div>'+
-                            '<div class="row">' +
-                                '<div class="col-md-4 form-group"><h6>Full Name <span class="required">*</span></h6></div>'+
-                                '<div class="col-md-4 form-group input-group-sm"><input class="form-control" id="name" ng-model=name  type="text" required/></div>'+
-                            '</div>'+
-                            '<div class="row">' +
-                                '<div class="col-md-4 form-group"><h6>Email <span class="required">*</span></h6></div>'+
-                                '<div class="col-md-4 form-group input-group-sm"><input class="form-control" id="email" ng-model=email  type="email" required/></div>'+
-                            '</div>'+
-                            '<div class="row">' +
-                                '<div class="col-md-4 form-group"><h6>Institution/Company Name <span class="required">*</span></h6></div>'+
-                                '<div class="col-md-4 form-group input-group-sm"><input class="form-control" id="company" ng-model=company  type="text" required/></div>'+
-                            '</div>'+
-                            '<div class="row">' +
-                                '<div class="col-md-4 form-group"><h6>Preferred Centre Acronym (subject to availability) <span class="required">*</span></h6></div>'+
-                                '<div class="col-md-4 form-group input-group-sm"><input class="form-control" id="acronym" ng-model=acronym  type="text" required/></div>'+
-                            '</div>'+
-                            '<div class="row">' +
-                                '<div class="col-md-4 form-group"><h6>WebPage</h6></div>'+
-                                '<div class="col-md-4 form-group input-group-sm"><input class="form-control" id="webpage" ng-model=webpage  type="text"/></div>'+
-                            '</div>'+
-                            '<div class="row">' +
-                                '<div class="col-md-4 form-group"><h4>Type of Submission</h4></div>'+
-                            '</div>'+
-                            '<div class="row">' +
-                                '<div class="col-md-4 form-group"><h6>Genomic DNA</h6></div>'+
-                                 '<div class="col-md-4 form-group input-group-sm"><label><input ng-true-value="Genomic DNA" ng-false-value="" ng-model="genomicDNA" type="checkbox"></label></div>'+
-                            '</div>'+
-                            '<div class="row">' +
-                                '<div class="col-md-4 form-group"><h6>Exonic DNA</h6></div>'+
-                                '<div class="col-md-4 form-group input-group-sm"><label><input ng-true-value="Exonic DNA" ng-false-value="" ng-model="exonicDNA" type="checkbox"></label></div>'+
-                            '</div>'+
-                            '<div class="row">' +
-                                '<div class="col-md-4 form-group"><h6>Transcribed RNA</h6></div>'+
-                                '<div class="col-md-4 form-group input-group-sm"><label><input ng-true-value="Transcribed RNA" ng-false-value="" ng-model="transcribedRNA" type="checkbox"></label></div>'+
-                            '</div>'+
-                            '<div class="row">' +
-                                '<div class="col-md-4 form-group"><h6>Other</h6></div>'+
-                                '<div class="col-md-4 form-group input-group-sm"><label><input ng-true-value="Other" ng-false-value="" ng-model="other" type="checkbox"></label></div>'+
-                            '</div>'+
-                            '<div class="row">' +
-                                '<div class="col-md-8 form-group"><h6>Comments</h6><textarea class="form-control" rows="3"></textarea></div>'+
-                            '</div>'+
-                            '<div class="row">' +
-                                '<div class="col-md-4 form-group"><button class="btn btn-primary" type="submit">Submit</button></div>'+
-                            '</div>'+
-                        '</form>'+
-                     '</div>',
+            templateUrl: 'views/submission-form.html',
             controller: function($scope) {
               $scope.name = '';
               $scope.email = '';
@@ -157,6 +105,7 @@ angular.module('homeWidgetModule', []).directive('homeWidget', function () {
               $scope.exonicDNA = '';
               $scope.transcribedRNA = '';
               $scope.other = '';
+              $scope.taxID = '';
               $scope.subSubmit = function(){
                   console.log($scope.name);
                   console.log($scope.email);
@@ -168,7 +117,56 @@ angular.module('homeWidgetModule', []).directive('homeWidget', function () {
                   console.log($scope.transcribedRNA);
                   console.log($scope.other);
               }
+
             },
+            link: function($scope, element, attr) {
+                element.bind('change', function( evt ) {
+
+                    if (window.File && window.FileReader && window.FileList && window.Blob) {
+                        var fileSelected = document.getElementById('vcf_file').files;
+                        var fileTobeRead = fileSelected[0];
+                        var fileReader = new FileReader();
+                        fileReader.readAsText(fileTobeRead);
+                        fileReader.onload = function (e) {
+                           var content   = fileReader.result;
+                           processFileData(content);
+
+                        }
+
+                    }
+
+
+
+                    function processFileData(content) {
+                        var allTextLines = content.split(/\r\n|\n/);
+                        //console.log(allTextLines)
+                        var lines = [];
+                        var tarr = [];
+                        for (var i=0; i<allTextLines.length; i++) {
+                            if(allTextLines[i].substring(0,2) == '##'){
+
+                                allTextLines[i] = allTextLines[i].substring(2);
+                                console.log(allTextLines[i].substring(0,3))
+                                if(allTextLines[i].substring(0,3) !== 'INF' && allTextLines[i].substring(0,3) !== 'FOR' && allTextLines[i].substring(0,3) !== 'ALT'){
+                                    allTextLines[i] = allTextLines[i].split("=");
+                                    console.log(allTextLines[i])
+                                    var attr = allTextLines[i][0];
+                                    var value = allTextLines[i][1];
+                                    tarr.push({'+attr+':value});
+                                }
+
+                            }
+                        }
+                        lines.push(tarr);
+                        console.log(lines);
+                    }
+
+                });
+
+
+
+
+            }
 
         }
 

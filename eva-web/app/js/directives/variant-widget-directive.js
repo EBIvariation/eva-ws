@@ -110,6 +110,8 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
 //                    console.log(studyFilter)
 //                    console.log(conTypeFilter)
 //                    console.log(varClassesFilter)
+                console.log(studyFilter)
+                console.log(conTypeFilter)
 
                 if(conTypeFilter){
                     $scope.CTfilter = '&effect='+conTypeFilter;
@@ -117,7 +119,13 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                     $scope.CTfilter = '';
                 }
 
-                $scope.filters =  $scope.CTfilter;
+                if(studyFilter){
+                    $scope.studyFilter = '&studies='+studyFilter;
+                }else{
+                    $scope.studyFilter = '';
+                }
+
+                $scope.filters =  $scope.CTfilter+$scope.studyFilter;
 
                 var variantWidget;
                 variantWidget = new VariantWidget({

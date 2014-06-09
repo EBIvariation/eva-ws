@@ -44,8 +44,9 @@ var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope',  function ($scope)
 
     $scope.studies = [
         {name: '1000g',leaf: true, checked: false,  iconCls :'no-icon' },
-        {name: 'GoNL',leaf: true, checked: false,  iconCls :'no-icon' },
-        {name: 'EVS',leaf: true, checked: false,  iconCls :'no-icon' }
+        {name: 'gonl',leaf: true, checked: false,  iconCls :'no-icon' },
+        {name: 'evs',leaf: true, checked: false,  iconCls :'no-icon' },
+        {name: 'uk10k',leaf: true, checked: false,  iconCls :'no-icon' }
     ]
 
 

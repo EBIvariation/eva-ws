@@ -283,8 +283,8 @@ VariantWidget.prototype = {
                             align:'left',
                             tpl: '<tpl if="id"><a href="?variantID={id}" target="_blank"><img class="grid-img" src="img/eva_logo.png"/></a>&nbsp;' +
                                     '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
-                                    '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><img alt="NCBI Logo"  title="NCBI" src="//static.pubmed.gov/portal/portal3rc.fcgi/3986154/img/28977"></a>'+
-                                 '<tpl else><a href="?variantID={chr}:{start}:{ref}:{alt}" target="_blank"><img class="grid-img" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="in-active" src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<img alt="NCBI Logo"  class="in-active" title="NCBI" src="//static.pubmed.gov/portal/portal3rc.fcgi/3986154/img/28977"></tpl>'
+                                    '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>'+
+                                 '<tpl else><a href="?variantID={chr}:{start}:{ref}:{alt}" target="_blank"><img class="grid-img" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="in-active" src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="in-active">dbSNP</span></tpl>'
                         }
 
                     ],
@@ -302,7 +302,9 @@ VariantWidget.prototype = {
                 renderTo: this.variantTableID,
                 viewConfig: {
                     enableTextSelection: true,
-                    forceFit: true
+                    forceFit: true,
+                    loadMask: false,
+                    emptyText: 'No Record to Display'
                 },
                 deferredRender: false,
                 dockedItems: [{

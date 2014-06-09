@@ -1,0 +1,203 @@
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="col-md-12 contact-form"> 
+        <h3>Submission Form</h3>
+        <form id="contact" ng-submit="subSubmit()">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion"
+                           href="#fileInfo">
+                           File
+                        </a>
+                    </h4>
+                </div>
+                <div id="fileInfo" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Analysis Title <span class="required">*</span></h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="name" ng-model=analysisTitle  type="text" required/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>MD5 <span class="required">*</span></h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="name" ng-model=md5  type="text" required/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Upload File <span class="required">*</span></h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control"   id="vcf_file" type="file" required/></div>
+                            <div id="filecontents">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion"
+                           href="#projectInfo">
+                            Project Info
+                        </a>
+                    </h4>
+                </div>
+                <div id="projectInfo" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Project Title <span class="required">*</span></h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="projectTitle" ng-model=projectTitle  type="text" required/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Project Alias <span class="required">*</span></h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="projectAlias" ng-model=projectAlias  type="text" required/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Description <span class="required">*</span></h6></div>
+                            <div class="col-md-4 form-group "><textarea class="form-control" ng-model=projectDesc rows="2" required></textarea></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Center<span class="required">*</span></h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="center" ng-model=center  type="text" required/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Tax ID<span class="required">*</span></h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="taxID" ng-model=taxID  type="text" required/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Scope<span class="required">*</span></h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="projectScope" ng-model=projectScope  type="text" required/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Material<span class="required">*</span></h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="material" ng-model=material  type="text" required/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Publication(s)</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="publications" ng-model=publications  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Associated Project(s)</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="associatedProjects" ng-model=associatedProjects  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Link(s)</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="projectLinks" ng-model=projectLinks  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Hold Date</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="holdDate" ng-model=holdDate  type="date"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Collaborations(s)</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="webpage" ng-model=webpage  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Strain</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="collaborations" ng-model=collaborations  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Breed</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="breed" ng-model=breed  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Broker</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="broker" ng-model=broker  type="text"/></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion"
+                           href="#sampleInfo">
+                            Sample Info
+                        </a>
+                    </h4>
+                </div>
+                <div id="sampleInfo" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Sample Alias AND Taxonamy</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="sampleAlias" ng-model=sampleAlias  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Sample Accession</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="sampleAccession" ng-model=sampleAccession  type="text" /></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Sample Set Accession</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="sampleSetAccession" ng-model=sampleSetAccession  type="text" /></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Analysis Alias <span class="required">*</span></h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="analysisAlias" ng-model=analysisAlias  type="text" required/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Description</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="sampleDesc" ng-model=sampleDesc  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Link(s)</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="sampleLinks" ng-model=sampleLinks  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Attributes(s)</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="sampleAttributes" ng-model=sampleAttributes  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Phenotypes</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="samplePhenotypes" ng-model=samplePhenotypes  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Disease Sites(s)</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="diseaseSites" ng-model=diseaseSites  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Strain</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="strain" ng-model=strain  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Breed</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="breed" ng-model=breed  type="text"/></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion"
+                           href="#analysisInfo">
+                            Analysis Info
+                        </a>
+                    </h4>
+                </div>
+                <div id="analysisInfo" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Center</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="center" ng-model=center  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Date</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="analysisDate" ng-model=analysisDate  type="date"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Link(s)</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="analysisLinks" ng-model=analysisLinks  type="text"/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><h6>Run Accession(s)</h6></div>
+                            <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="runAccession" ng-model=runAccession  type="text"/></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 form-group"><button class="btn btn-primary" type="submit">Submit</button></div>
+            </div>
+        </form>
+     </div>
+</div>
