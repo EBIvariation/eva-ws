@@ -38,7 +38,8 @@ VariantGenotypeWidget.prototype = {
             'Ext.ux.SlidingPager'
         ]);
 
-        var parsedData = _this._parseData();
+
+        var parsedData = _this._parseData(_this.data);
 
         if(!parsedData){
             return;
@@ -76,7 +77,7 @@ VariantGenotypeWidget.prototype = {
             height: 350,
             autoWidth: true,
             autoScroll:false,
-            title:  _this.title,
+            title:  _this.study,
             renderTo: _this.render_id,
             viewConfig: {
                 enableTextSelection: true,
@@ -102,7 +103,7 @@ VariantGenotypeWidget.prototype = {
 
     },
 
-    _parseData:function(){
+    _parseOldData:function(){
 
         var _this = this;
         var data = [];
@@ -166,23 +167,45 @@ VariantGenotypeWidget.prototype = {
         return data;
     },
 
-    _fetchData:function(args){
-        var data;
+    _parseData:function(args){
 
-        $.ajax({
-            url: args,
-            async: false,
-            dataType: 'json',
-            success: function (response, textStatus, jqXHR) {
-                data = response;
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                data = '';
-            }
-        });
-        console.log(args)
-        console.log(data)
+        var _this = this;
+        var data = [];
+        var dataArray=[];
+
+
+        var columnData = [];
+
+        if(!args.samples){
+            return;
+        }
+        var tmpSmplData = args.samples;
+
+
+
+        for (var key in tmpSmplData) {
+            var tempArray= new Array();
+            var columnData = new Array();
+            tempArray.push(tmpSmplData[key]);
+            dataArray.push(tempArray);
+        }
+        var dataFields = [];
+        var dataColumns = [];
+
+        dataFields.push('Samples');
+        var dataColumns = [{text:'Samples',flex:1,sortable:false,dataIndex:'Samples',align:'center'}];
+
+        for(key in columnData ){
+            dataFields.push(columnData[key]);
+            dataColumns.push({text:columnData[key],flex:1,sortable:false,dataIndex:columnData[key],align:'center'})
+        }
+
+        data['data'] = dataArray;
+        data['fields'] = dataFields;
+        data['columns'] = dataColumns;
+
         return data;
+
     }
 
 

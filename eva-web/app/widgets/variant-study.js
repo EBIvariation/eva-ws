@@ -20,9 +20,39 @@ VariantStudyWidget.prototype = {
             this._createFilesStudyPanel();
         }
         if(args === 'genotype'){
-            console.log('')
+            this._createGenotypePanel();
         }
 
+    },
+    _createGenotypePanel:function(){
+        var _this = this;
+        _this.targetId = (_this.render_id) ? _this.render_id : _this.targetId;
+        _this.targetDiv = (_this.targetId instanceof HTMLElement ) ? _this.targetId : $('#' + _this.targetId)[0];
+
+        if (_this.targetDiv === "undefined" || _this.targetDiv == null ) {
+            console.log('targetId not found');
+            return;
+        }
+        _this._clear();
+        var genotypesData = _this._parseGenotypesData(_this.variantId);
+
+        if(!genotypesData.length > 0){
+            _this.div = '<div class="col-md-12">No Data Found</div>'
+             $(this.targetDiv).append( $(_this.div));
+             return;
+        }
+        for(var key in genotypesData ){
+            var study = genotypesData[key];
+            var genotypeDivId = 'genotype-'+study.id+'-'+key;
+            var genotypeTableRenderId = 'genotype-table-'+study.id+'-'+key;
+            var genotypeArgs = {id:genotypeTableRenderId,data:study.data,study:study.id}
+            _this.div  = '<h4>'+study.id+' Genotypes <button id="'+genotypeDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
+            _this.div += '<div id="'+genotypeDivId+'">'
+            _this.div += '<div class="col-md-12" id="'+genotypeTableRenderId+'"></div>'
+            _this.div += '</div>'
+            $(this.targetDiv).append( $(_this.div));
+            _this._loadGenotypeData(genotypeArgs);
+        }
     },
 
     _createFilesStudyPanel:function(){
@@ -93,15 +123,22 @@ VariantStudyWidget.prototype = {
             }
         }
 
-
-        //$(this.targetDiv).append( $(_this.div));
-
-
     },
 
     _clear:function(){
         var _this = this;
         $( "#"+_this.render_id).empty();
+    },
+
+
+    _loadGenotypeData:function(args){
+        var variantGenotype = new VariantGenotypeWidget({
+            data      : args.data,
+            render_id : args.id,
+            title: args.study,
+            pageSize:10
+        });
+        variantGenotype.draw();
     },
 
     _loadAttributesData:function(args){
@@ -192,6 +229,47 @@ VariantStudyWidget.prototype = {
         }
 
         return filesDataArray;
+
+    },
+    _parseGenotypesData:function(args){
+
+        var variantData;
+        evaManager.get({
+            category: 'variants',
+            resource: 'info',
+            params: {
+                of: 'json'
+            },
+            query: args,
+            async: false,
+            success: function (data) {
+                variantData = data.response.result[0].files;
+            },
+            error: function (data) {
+                console.log('Could not get variant info');
+            }
+        });
+
+
+
+        var tmpData = variantData;
+        var tmpDataArray = [];
+
+        $.each(tmpData, function(key, value) {
+            var chartData = [];
+            var studyId = value.studyId;
+            if(value.samples){
+                if(!tmpDataArray[studyId]) tmpDataArray[studyId] = [];
+                tmpDataArray[studyId] = {samples:value.samples,'format':value.format};
+            }
+        });
+
+        var genotypesDataArray = new Array();
+        for (key in tmpDataArray){
+            genotypesDataArray.push({id:key,data:tmpDataArray[key]});
+        }
+
+        return genotypesDataArray;
 
     },
 

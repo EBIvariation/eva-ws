@@ -399,14 +399,6 @@ VariantWidget.prototype = {
         });
         variantBrowserGenoTypeWidget.draw('genotype');
 
-        var variantGenotype = new VariantGenotypeWidget({
-            variantId       : args,
-            render_id : _this.variantGenoTypeTableID,
-            title: 'Genotypes',
-            pageSize:10
-        });
-        variantGenotype.draw();
-
     },
     _createEffectsGrid:function(args){
         var _this = this;
