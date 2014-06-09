@@ -39,13 +39,10 @@ VariantStudyWidget.prototype = {
         _this._clear();
 
         var fileData = _this._parseFilesData(_this.variantId);
-
         for (var key in fileData){
              var study = fileData[key];
-             var studyDivId = study.id+'-'+key;
-
-
             for(var k in study.data){
+                var studyDivId = study.id+'-'+k;
                 var attributesId = studyDivId+'-attributes-'+k;
                 var statsId = studyDivId+'-stats-'+k;
                 var chartId = studyDivId+'-chart-id-'+k;
@@ -61,6 +58,7 @@ VariantStudyWidget.prototype = {
 
                 _this.div  = '<h4>'+study.id+' Study <button id="'+studyDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
                 _this.div += '<div id="'+studyDivId+'"><div>'
+                _this.div += '<div class="col-md-12"><div class="row"><div class="col-md-12" ><h5>File ID: &nbsp;<span style="font-size:15px; font-weight:bold; color:#000000;">'+study.data[k].fileID+'</span></h5></div></div></div>'
                 _this.div += '<div class="col-md-12" style="overflow:scroll;" id="'+attributesId+'"></div>'
                 _this.div += '<div class="col-md-7" id="'+statsId+'"></div>'
                 _this.div += '<div class="col-md-3"><h5 style="margin-left:60px;">Genotype Count</h5><div id="'+chartId+'">'
@@ -185,7 +183,7 @@ VariantStudyWidget.prototype = {
                 chartArray.push([key,  value.stats.genotypeCount[key]]);
             }
             chartData.push({'title':'Genotype Count','data':chartArray});
-            tmpDataArray[studyId].push({'attributes':value.attributes,'stats':value.stats, 'chartData':chartData });
+            tmpDataArray[studyId].push({fileID:value.fileId,'attributes':value.attributes,'stats':value.stats, 'chartData':chartData });
 
         });
         var filesDataArray = new Array();
