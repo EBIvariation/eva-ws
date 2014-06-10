@@ -56,6 +56,42 @@ angular.module('homeWidgetModule', []).directive('homeWidget', function () {
                     '</div></div>'
 
     }
+}).directive('clinical', function () {
+        return {
+            restrict: 'E',
+            replace: true,
+            transclude: true,
+            template: '<div><h3>EVA Clinical</h3>'+
+                '<div>' +
+                '<p>EVA is working with the <a href="http://www.ncbi.nlm.nih.gov/clinvar/">ClinVar project</a>&nbsp;as well as with collaborators such as <a href="http://lovd.nl/3.0/home">LOVD</a>&nbsp;to build a global database of genetic variants that are associated with clincal significance interpretation and detailed phenotypic data.&nbsp;If you are a clinical diagnostic or research lab who would like to submit data to our resource, please follow the instructions below or submit <a href="http://www.ncbi.nlm.nih.gov/clinvar/docs/submit/" style="line-height: 1.538em;">directly to ClinVar</a> at NCBI.</p>' +
+                '</div>'+
+                '<h3>Key stages of EVA Clincal submissions</h3>'+
+                '<h4>Contact</h4>'+
+                '<div>'+
+                '<p><img src="img/Contact.png" alt="" width="48" height="48"> Contact the EVA Helpdesk via this webform in order to provide details of your submission.</p>'+
+                '</div>'+
+                '<h4>Receive</h4>'+
+                '<div>'+
+                '<p><img src="img/Receive.png" alt="" width="48" height="48"> &nbsp;Receive your submission pack, which will include:'+
+                '<div style="margin-left:70px;">'+
+                '<ul>'+
+                '<li>Details for your submission uploads </li>'+
+                '<li> <a href="?templates">Templates</a> to capture your associated metadata </li>'+
+                '<li>Key stages for your submission</li>'+
+                '</ul>'+
+                '</div>'+
+                '</p>'+
+                '</div>'+
+                '<h4>Submit</h4>'+
+                '<div>'+
+                '<p><img src="img/Upload.png" alt="" width="48" height="48"> Upload your data files to your private submission upload account or directly to the <a href="mailto:eva-helpdesk@ebi.ac.uk?subject=Sequence submissionto EVA&amp;body=**We will provide you with a submission package metadata templates guides for completing templates**" target="_top">EVA Helpdesk</a>.</p>'+
+                '</div>'+
+                '<h4>Document</h4>'+
+                '<div>'+
+                '<p><img src="img/Document.png" alt="" width="48" height="48"> Provide details of your study, samples, experiments, runs/analysis, policy and datasets </p>'+
+                '</div></div>'
+
+        }
 }).directive('templates', function () {
         return {
             restrict: 'E',
@@ -64,9 +100,15 @@ angular.module('homeWidgetModule', []).directive('homeWidget', function () {
             template: '<div>' +
                         '<h3>Templates</h3>'+
                         '<div>'+
+                        '<h4>EVA Submissions</h4>'+
                         '<p>EVA submissions are accompanied by an Excel spreadsheet and/or tab-delimited text files which describe the meta-data. We encourage our users to submit as much metadata as possible.</p>'+
                         '<p>Please download our submission template via this <a href="files/EVA_Submission_template.EVA_.V1.0.1_live.xlsx" target="_blank">link</a>.</p>'+
                         '<p>A completed template for a fictional submission can be downloaded <a href="files/EVA_Submission_template.EVA_.V1.0.1_live_mockup.xlsx" target="_blank">here</a>.</p>'+
+                        '</div>' +
+                        '<h4>EVA Clincal Submissions</h4>'+
+                        '<p>EVA Clinical submissions are described via an Excel spreadsheet and/or tab-delimited text files. Our submissions templates are fully compliant with the data required for ClinVar allowing us to broker the submission of all EVA Clincal data to our collaborating NCBI resource.</p>'+
+                        '<p>Please download our EVA Clinical submission template via this link..</p>'+
+                        '<p>A completed EVA Clinical template for a fictional submission can be downloaded here.</p>'+
                         '</div>' +
                       '</div>'
 

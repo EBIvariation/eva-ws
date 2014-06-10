@@ -311,8 +311,7 @@ VariantWidget.prototype = {
                     xtype: 'pagingtoolbar',
                     store: _this.vbStore,   // same store GridPanel is using
                     dock: 'top',
-                    displayInfo: true,
-                    height:50
+                    displayInfo: true
                 }],
                 listeners: {
                     itemclick : function() {
