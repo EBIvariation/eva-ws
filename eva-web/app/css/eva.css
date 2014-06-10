@@ -256,6 +256,9 @@ img.in-active{
     margin-left:-10px;
 }
 
+.parent{
+    cursor:pointer;
+}
 
 
 

@@ -2,11 +2,12 @@
 consequenceTypes = [
     {
         name:'Transcript Variant',
-        cls: "task",
+        cls: "parent",
         expanded: true,
         leaf: false,
         children:[{
             name: 'Coding Variant',
+            cls: "parent",
             leaf: false ,
             iconCls :'no-icon',
             expanded: true,
@@ -31,6 +32,7 @@ consequenceTypes = [
             {
 
                 name: 'Non-coding Variant',
+                cls: "parent",
                 leaf: false ,
                 iconCls :'no-icon',
                 expanded: true,
@@ -47,6 +49,7 @@ consequenceTypes = [
             {
 
                 name: 'Splice Variant',
+                cls: "parent",
                 leaf: false ,
                 iconCls :'no-icon',
                 expanded: true,
@@ -67,7 +70,7 @@ consequenceTypes = [
     },
     {
         name:'Regulatory Variant ',
-        cls: "task",
+        cls: "parent",
         expanded: true,
         leaf: false,
         children: [
@@ -82,7 +85,7 @@ consequenceTypes = [
     },
     {
         name:'Intergenic Variant',
-        cls: "task",
+        cls: "parent",
         expanded: true,
         leaf: false,
         children: [
@@ -96,7 +99,7 @@ consequenceTypes = [
 variationClasses = [
     {
         name:'Variation',
-        cls: "task",
+        cls: "parent",
         expanded: true,
         leaf: false,
         children: [
