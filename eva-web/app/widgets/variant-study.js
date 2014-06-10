@@ -89,7 +89,7 @@ VariantStudyWidget.prototype = {
                 _this.div  = '<h4>'+study.id+' Study <button id="'+studyDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
                 _this.div += '<div id="'+studyDivId+'"><div>'
                 _this.div += '<div class="col-md-12"><div class="row"><div class="col-md-12" ><h5>File ID: &nbsp;<span style="font-size:15px; font-weight:bold; color:#000000;">'+study.data[k].fileID+'</span></h5></div></div></div>'
-                _this.div += '<div class="col-md-12" style="overflow:scroll;" id="'+attributesId+'"></div>'
+                _this.div += '<div class="col-md-12" id="'+attributesId+'"></div>'
                 _this.div += '<div class="col-md-7" id="'+statsId+'"></div>'
                 _this.div += '<div class="col-md-3"><h5 style="margin-left:60px;">Genotype Count</h5><div id="'+chartId+'">'
                 if(!chartData[0].data.length > 0){
@@ -147,7 +147,7 @@ VariantStudyWidget.prototype = {
         var id = args.id
 
         _this.attributeDiv = '<h5>File Attributes</h5>'
-        _this.attributeDiv += '<table class="table table-striped"><tr>'
+        _this.attributeDiv += '<div style="overflow:scroll;"><table class="table table-striped"><tr>'
 
         for(var key in data){
             _this.attributeDiv += '<th>'+key+'</th>'
@@ -156,7 +156,7 @@ VariantStudyWidget.prototype = {
         for(var value in data ){
             _this.attributeDiv += '<td>'+data[value]+'</td>'
         }
-        _this.attributeDiv += '</tr></table>'
+        _this.attributeDiv += '</tr></table></div>'
 
         $('#'+id).append( $(_this.attributeDiv));
 
