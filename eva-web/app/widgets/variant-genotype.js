@@ -21,9 +21,9 @@ VariantGenotypeWidget.prototype = {
     _createGenotypeGrid:function(){
         var _this = this;
 
-        if(jQuery("#"+_this.render_id+" div").length){
-            jQuery( "#"+_this.render_id+" div").remove();
-        }
+//        if(jQuery("#"+_this.render_id+" div").length){
+//            jQuery( "#"+_this.render_id+" div").remove();
+//        }
 
         Ext.Loader.setConfig({enabled: true});
 
@@ -33,7 +33,7 @@ VariantGenotypeWidget.prototype = {
             'Ext.data.*',
             'Ext.grid.*',
             'Ext.util.*',
-            'Ext.ux.data.PagingMemoryProxy',
+//            'Ext.ux.data.PagingMemoryProxy',
             'Ext.toolbar.Paging',
             'Ext.ux.SlidingPager'
         ]);
@@ -56,28 +56,25 @@ VariantGenotypeWidget.prototype = {
             remoteSort: true,
             pageSize: _this.pageSize,
             proxy: {
-                type: 'pagingmemory',
+//                type: 'pagingmemory',
+                type: 'memory',
                 data: parsedData.data,
                 reader: {
                     type: 'array'
                 }
             }
-
         });
-
-
-
         _this.vgGrid = Ext.create('Ext.grid.Panel', {
-            header:false,
+//            header:true,
             store:  _this.vgStore,
             stateful: true,
-            collapsible: true,
+//            collapsible: true,
             multiSelect: true,
             columns: parsedData.columns,
             height: 350,
             autoWidth: true,
             autoScroll:false,
-            title:  _this.study,
+//            title:  _this.title,
             renderTo: _this.render_id,
             viewConfig: {
                 enableTextSelection: true,

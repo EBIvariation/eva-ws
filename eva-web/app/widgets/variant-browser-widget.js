@@ -169,7 +169,7 @@ VariantWidget.prototype = {
             Ext.define(this.variantTableID, {
                 extend: 'Ext.data.Model',
                 fields: [
-                    {name: 'id',type: 'string'},
+                    {name: 'id',type: 'string',type: 'auto'},
                     {name: 'type',type: 'string'},
                     {name: 'chr',type: 'int'},
                     {name: 'start',type: 'int'},
@@ -186,24 +186,20 @@ VariantWidget.prototype = {
 
 
 
-            Ext.QuickTips.init();
-
-            // setup the state provider, all state information will be saved to a cookie
-            Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider'));
-
+            //add CORS support for ASN manifest request
             Ext.Ajax.useDefaultXhrHeader = false;
-            // Can also be specified in the request options
             Ext.Ajax.cors = true;
+
 
 
             var url = METADATA_HOST+'/'+METADATA_VERSION+'/segments/'+_this.location+'/variants?exclude=files,chunkIds'+_this.filters;
             // create the data store
             _this.vbStore = Ext.create('Ext.data.JsonStore', {
                 autoLoad: true,
-                autoSync: true,
+//                autoSync: true,
                 autoLoad: {start: 0, limit: 10},
                 pageSize: 10,
-                remoteSort: true,
+                remoteSort: false,
                 model: this.variantTableID,
                 proxy: {
                     type: 'ajax',
@@ -234,53 +230,51 @@ VariantWidget.prototype = {
                     items:[
                         {
                             text     : 'ID',
-                            sortable : false,
                             dataIndex: 'id',
+                            renderer: function (value, meta, record) {
+                                if(value.indexOf(_this.variantTableID)!== -1){
+    //                                    record.set('id', '');
+    //                                    record.commit();
+                                    record.data.id = '';
+                                    return '-';
+                                }else{
+                                    return '<a href="?variantID='+value+'" target="_blank">'+value+'</a>';
+                                }
+                            },
                             xtype: 'templatecolumn',
                             tpl: '<tpl if="id"><a href="?variantID={id}" target="_blank">{id}</a><tpl else>-</tpl>'
 
                         },
                         {
                             text     : 'Chromosome',
-                            sortable : true,
                             dataIndex: 'chr'
                         },
                         {
                             text     : 'Start',
-                            sortable : true,
-                            dataIndex: 'start',
+                            dataIndex: 'start'
                         },
                         {
                             text     : 'End',
-                            sortable : true,
                             dataIndex: 'end'
                         },
                         {
                             text     : 'Type',
-                            sortable : true,
-                            //renderer : createLink,
                             dataIndex: 'type'
-
                         },
                         {
                             text     : 'REF/ALT',
-                            sortable : true,
                             dataIndex: 'ref',
                             xtype: 'templatecolumn',
                             tpl: '<tpl if="ref">{ref}<tpl else>-</tpl>/<tpl if="alt">{alt}<tpl else>-</tpl>'
-
                         },
                         {
                             text     : 'HGVS Name',
-                            sortable : true,
                             dataIndex: 'hgvsName',
                         },
                         {
                             text     : 'View',
-                            sortable : true,
                             dataIndex: 'id',
                             xtype: 'templatecolumn',
-                            align:'left',
                             tpl: '<tpl if="id"><a href="?variantID={id}" target="_blank"><img class="grid-img" src="img/eva_logo.png"/></a>&nbsp;' +
                                     '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
                                     '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>'+
@@ -290,7 +284,8 @@ VariantWidget.prototype = {
                     ],
                     defaults: {
                         flex: 1,
-                        align:'center'
+                        align:'center',
+                        sortable : false
                     }
                 },
 //                height: 350,
@@ -353,7 +348,6 @@ VariantWidget.prototype = {
 
 
             jQuery('#'+_this.variantSubTabsID+' a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-               // console.log(e)
                 if(variant_present === 1){
                     var grid = _this.vbGrid
                     var data = _this._getSelectedData();
@@ -418,7 +412,6 @@ VariantWidget.prototype = {
          parseData['variantId'] = data.id;
          parseData['position']  = data.chr + ":" + data.start + ":" + data.ref + ":" + data.alt;
          parseData['location']  = data.chr + ":" + data.start + "-" + data.end;
-
          if(!parseData.variantId){
              parseData.variantId = parseData.position;
          }
