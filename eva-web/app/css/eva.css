@@ -259,6 +259,10 @@ img.in-active{
 .parent{
     cursor:pointer;
 }
+.x-tbar-loading, .x-tbar-page-last, .x-tbar-page-next, .x-tbar-page-prev,.x-tbar-page-first {
+    background-size:16px 16px;
+}
+
 
 
 
