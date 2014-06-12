@@ -200,11 +200,11 @@ VariantGenotypeWidget.prototype = {
         var dataColumns = [];
 
         dataFields.push('Samples');
-        var dataColumns = [{text:'Samples',flex:1,sortable:false,dataIndex:'Samples',align:'center', baseCls:'customHeader'}];
+        var dataColumns = [{text:'Samples',flex:1,sortable:false,dataIndex:'Samples',align:'center', cls:'customHeader'}];
 
         for(key in columnData ){
             dataFields.push(columnData[key]);
-            dataColumns.push({text:columnData[key],flex:1,sortable:false,dataIndex:columnData[key],align:'center', baseCls:'customHeader'})
+            dataColumns.push({text:columnData[key],flex:1,sortable:false,dataIndex:columnData[key],align:'center', cls:'customHeader'})
         }
 
         data['data'] = dataArray;

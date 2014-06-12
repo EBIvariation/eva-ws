@@ -284,7 +284,7 @@ VariantWidget.prototype = {
                         flex: 1,
                         align:'center',
                         sortable : false,
-                        baseCls:'customHeader'
+                        cls:'customHeader'
                     }
                 },
 //                height: 350,

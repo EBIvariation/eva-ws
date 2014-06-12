@@ -272,7 +272,7 @@ img.in-active{
 }
 
 .customHeader{
-    background:#156765 !important; !important;
+    background:#156765 !important;color:black !important;
 }
 .x-btn-default-small,.x-form-text-default{
     background-color: #E1E1E1;
