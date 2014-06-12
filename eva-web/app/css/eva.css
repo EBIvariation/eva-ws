@@ -271,11 +271,12 @@ img.in-active{
 }
 
 .customPagingToolbar, .x-toolbar {
-    background:#70BDBD !important;color:black !important;
+    /*background:#70BDBD !important;color:black !important;*/
 }
 
 .customHeader{
-    background:#156765 !important;color:black !important;
+    /*background:#156765 !important;color:black !important;*/
+    background:#70BDBD !important;color:black !important;
 }
 .x-btn-default-small,.x-form-text-default{
     background-color: #E1E1E1;
