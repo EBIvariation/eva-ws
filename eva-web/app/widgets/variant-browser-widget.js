@@ -299,7 +299,11 @@ VariantWidget.prototype = {
                     forceFit: true,
                     loadMask: false,
                     emptyText: 'No Record to Display',
-                    stripeRows: false
+                    stripeRows: false,
+                    getRowClass: function(record, index, rowParams, ds) {
+                        console.log(record)
+                    }
+
                 },
                 deferredRender: false,
                 dockedItems: [{

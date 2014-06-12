@@ -193,6 +193,9 @@ div .ngHeaderText{
 .table-bordered th {
     text-align: center;
 }
+.table-striped th{
+    /*background:#156765 !important;color:black !important;*/
+}
 
 
 .div-bordered{
@@ -277,6 +280,9 @@ img.in-active{
 .x-btn-default-small,.x-form-text-default{
     background-color: #E1E1E1;
     border-color:#CECECE
+}
+.x-grid3-row-selected{
+    background-color: #E1E1E1;
 }
 
 

@@ -45,7 +45,7 @@ VariantStudyWidget.prototype = {
             var study = genotypesData[key];
             var genotypeDivId = 'genotype-'+study.id+'-'+key;
             var genotypeArgs = {id:genotypeDivId,data:study.data,studyId:study.id}
-            _this.div  = '<h4>'+study.id+' Genotypes <button id="button-'+genotypeDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
+            _this.div  = '<h4>'+study.id+'&nbsp;<button id="button-'+genotypeDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
             _this.div += '<div class="col-md-12" id="'+genotypeDivId+'">'
             _this.div += '</div>'
             $(this.targetDiv).append( $(_this.div));
@@ -83,8 +83,7 @@ VariantStudyWidget.prototype = {
                 var stats = {id:statsId,data:statsData};
                 var chart = {id:chartId,data:chartData};
 
-
-                _this.div  = '<h4>'+study.id+' Study <button id="button-'+studyDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
+                _this.div = '<h4>'+study.id+' <button id="button-'+studyDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
                 _this.div += '<div id="'+studyDivId+'"><div>'
                 _this.div += '<div class="col-md-12"><div class="row"><div class="col-md-12" ><h5>File ID: &nbsp;<span style="font-size:15px; font-weight:bold; color:#000000;">'+study.data[k].fileID+'</span></h5></div></div></div>'
                 _this.div += '<div class="col-md-12" id="'+attributesId+'"></div>'
