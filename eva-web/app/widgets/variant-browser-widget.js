@@ -300,9 +300,7 @@ VariantWidget.prototype = {
                     loadMask: false,
                     emptyText: 'No Record to Display',
                     stripeRows: false,
-                    getRowClass: function(record, index, rowParams, ds) {
-                        console.log(record)
-                    }
+//                    selectedItemCls: 'selectedRow'
 
                 },
                 deferredRender: false,
