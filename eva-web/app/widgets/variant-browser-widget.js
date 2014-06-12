@@ -233,16 +233,14 @@ VariantWidget.prototype = {
                             dataIndex: 'id',
                             renderer: function (value, meta, record) {
                                 if(value.indexOf(_this.variantTableID)!== -1){
-    //                                    record.set('id', '');
-    //                                    record.commit();
                                     record.data.id = '';
                                     return '-';
                                 }else{
                                     return '<a href="?variantID='+value+'" target="_blank">'+value+'</a>';
                                 }
                             },
-                            xtype: 'templatecolumn',
-                            tpl: '<tpl if="id"><a href="?variantID={id}" target="_blank">{id}</a><tpl else>-</tpl>'
+//                            xtype: 'templatecolumn',
+//                            tpl: '<tpl if="id"><a href="?variantID={id}" target="_blank">{id}</a><tpl else>-</tpl>'
 
                         },
                         {
@@ -285,7 +283,8 @@ VariantWidget.prototype = {
                     defaults: {
                         flex: 1,
                         align:'center',
-                        sortable : false
+                        sortable : false,
+                        baseCls:'customHeader'
                     }
                 },
 //                height: 350,
@@ -299,14 +298,17 @@ VariantWidget.prototype = {
                     enableTextSelection: true,
                     forceFit: true,
                     loadMask: false,
-                    emptyText: 'No Record to Display'
+                    emptyText: 'No Record to Display',
+                    stripeRows: false
                 },
                 deferredRender: false,
                 dockedItems: [{
                     xtype: 'pagingtoolbar',
                     store: _this.vbStore,   // same store GridPanel is using
                     dock: 'top',
-                    displayInfo: true
+                    displayInfo: true,
+                    cls: 'customPagingToolbar',
+                    defaultButtonUI :'default',
                 }],
                 listeners: {
                     itemclick : function() {

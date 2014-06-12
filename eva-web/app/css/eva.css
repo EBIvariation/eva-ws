@@ -263,6 +263,22 @@ img.in-active{
     background-size:16px 16px;
 }
 
+.x-grid-with-row-lines .x-grid-item {
+    border-bottom: none;
+}
+
+.customPagingToolbar, .x-toolbar {
+    background:#70BDBD !important;color:black !important;
+}
+
+.customHeader{
+    background:#156765 !important; !important;
+}
+.x-btn-default-small,.x-form-text-default{
+    background-color: #E1E1E1;
+    border-color:#CECECE
+}
+
 
 
 

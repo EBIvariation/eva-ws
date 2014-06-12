@@ -83,12 +83,22 @@ VariantGenotypeWidget.prototype = {
                 deferEmptyText: false
             },
             deferredRender: false,
-            bbar: Ext.create('Ext.PagingToolbar', {
-                pageSize: 10,
-                store:  _this.vgStore,
+//            bbar: Ext.create('Ext.PagingToolbar', {
+//                pageSize: 10,
+//                store:  _this.vgStore,
+//                displayInfo: true,
+//                dock: 'top',
+//                plugins: Ext.create('Ext.ux.SlidingPager', {})
+//            }),
+            dockedItems: [{
+                xtype: 'pagingtoolbar',
+                store: _this.vgStore,   // same store GridPanel is using
+                dock: 'top',
                 displayInfo: true,
+                cls: 'customPagingToolbar',
+                defaultButtonUI :'default',
                 plugins: Ext.create('Ext.ux.SlidingPager', {})
-            })
+            }],
         });
 
         
@@ -190,11 +200,11 @@ VariantGenotypeWidget.prototype = {
         var dataColumns = [];
 
         dataFields.push('Samples');
-        var dataColumns = [{text:'Samples',flex:1,sortable:false,dataIndex:'Samples',align:'center'}];
+        var dataColumns = [{text:'Samples',flex:1,sortable:false,dataIndex:'Samples',align:'center', baseCls:'customHeader'}];
 
         for(key in columnData ){
             dataFields.push(columnData[key]);
-            dataColumns.push({text:columnData[key],flex:1,sortable:false,dataIndex:columnData[key],align:'center'})
+            dataColumns.push({text:columnData[key],flex:1,sortable:false,dataIndex:columnData[key],align:'center', baseCls:'customHeader'})
         }
 
         data['data'] = dataArray;

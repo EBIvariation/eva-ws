@@ -186,7 +186,8 @@ VariantEffectsWidget.prototype = {
                 ],
                 defaults: {
                     flex: 1,
-                    align:'center'
+                    align:'center',
+                    baseCls:'customHeader'
                 }
             },
             height: 350,
