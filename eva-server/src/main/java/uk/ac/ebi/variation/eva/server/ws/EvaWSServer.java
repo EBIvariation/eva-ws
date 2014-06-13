@@ -16,6 +16,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.*;
 import java.io.IOException;
+import org.opencb.biodata.models.feature.Genotype;
+import org.opencb.biodata.models.variant.ArchivedVariantFile;
+import org.opencb.biodata.models.variant.VariantSource;
+import org.opencb.biodata.models.variant.stats.VariantStats;
+import org.opencb.opencga.storage.variant.json.ArchivedVariantFileJsonMixin;
+import org.opencb.opencga.storage.variant.json.GenotypeJsonMixin;
+import org.opencb.opencga.storage.variant.json.VariantSourceJsonMixin;
+import org.opencb.opencga.storage.variant.json.VariantStatsJsonMixin;
 
 /**
  * Created by imedina on 01/04/14.
@@ -50,6 +58,10 @@ public class EvaWSServer {
         logger = LoggerFactory.getLogger(EvaWSServer.class);
 
         jsonObjectMapper = new ObjectMapper();
+        jsonObjectMapper.addMixInAnnotations(ArchivedVariantFile.class, ArchivedVariantFileJsonMixin.class);
+        jsonObjectMapper.addMixInAnnotations(Genotype.class, GenotypeJsonMixin.class);
+        jsonObjectMapper.addMixInAnnotations(VariantStats.class, VariantStatsJsonMixin.class);
+        jsonObjectMapper.addMixInAnnotations(VariantSource.class, VariantSourceJsonMixin.class);
         jsonObjectWriter = jsonObjectMapper.writer();
 
         xmlObjectMapper = new XmlMapper();
