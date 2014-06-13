@@ -19,11 +19,12 @@ VariantWidget.prototype = {
 
     createTreePanel:function(args){
 
-        Ext.require([
-            'Ext.tree.*',
-            'Ext.data.*',
-            'Ext.window.MessageBox'
-        ]);
+//        Ext.require([
+//            'Ext.tree.*',
+//            'Ext.data.*',
+//            'Ext.window.MessageBox'
+//        ]);
+        Ext.QuickTips.init();
 
         Ext.define('Tree Model', {
             extend: 'Ext.data.Model',
@@ -65,6 +66,7 @@ VariantWidget.prototype = {
                     flex: 2,
                     sortable: false,
                     dataIndex: 'name',
+                    tooltipType: 'qtip'
 //                    renderer:function (value, meta, record) {
 //                        var link = "http://www.sequenceontology.org/miso/current_release/term/"+record.data.acc;
 //                        return value+' <a href='+link+' target="_blank">'+record.data.acc+'</a>';
@@ -158,12 +160,12 @@ VariantWidget.prototype = {
 
         var _this = this;
 
-            Ext.require([
-                'Ext.grid.*',
-                'Ext.data.*',
-                'Ext.util.*',
-                'Ext.state.*'
-            ]);
+//            Ext.require([
+//                'Ext.grid.*',
+//                'Ext.data.*',
+//                'Ext.util.*',
+//                'Ext.state.*'
+//            ]);
 
 
             Ext.define(this.variantTableID, {
@@ -183,8 +185,6 @@ VariantWidget.prototype = {
                 ],
                 idProperty: 'id'
             });
-
-
 
             //add CORS support for ASN manifest request
             Ext.Ajax.useDefaultXhrHeader = false;
