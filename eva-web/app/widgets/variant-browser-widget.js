@@ -310,7 +310,7 @@ VariantWidget.prototype = {
                     dock: 'top',
                     displayInfo: true,
                     cls: 'customPagingToolbar',
-                    defaultButtonUI :'default',
+//                    defaultButtonUI :'default',
                 }],
                 listeners: {
                     itemclick : function() {

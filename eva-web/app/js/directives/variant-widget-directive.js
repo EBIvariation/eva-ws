@@ -9,8 +9,10 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
         transclude: true,
         templateUrl: 'views/variation-browser-view.html',
         controller: function($scope) {
+
         },
         link: function($scope, element, attr) {
+
 
             var location = '21:9411240-9711260';
             //var gene = 'TMEM51';

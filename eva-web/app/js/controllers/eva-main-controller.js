@@ -41,13 +41,39 @@ var evaMainCtrl = evaApp.controller('evaMainCtrl', ['$scope',  function ($scope)
         }
     };
 
+//    http://wwwint.ebi.ac.uk/eva/webservices/rest/v1/studies/list
+    var studiesList;
+    evaManager.get({
+        category: 'studies',
+        resource: 'list',
+        params: {
+            of: 'json'
+        },
+        query: '',
+        async: false,
+        success: function (data) {
+            studiesList = data;
+        },
+        error: function (data) {
+            console.log('Could not get list of studies');
+        }
+    });
+    var studiesListData = studiesList.response.result;
+    var studiesListObject = new Array();
+    for (var key in studiesListData){
+        studiesListObject.push({name:studiesListData[key],leaf: true, checked: false,  iconCls :'no-icon', qtip:studiesListData[key]})
+    }
 
-    $scope.studies = [
-        {name: '1000g',leaf: true, checked: false,  iconCls :'no-icon' },
-        {name: 'gonl',leaf: true, checked: false,  iconCls :'no-icon' },
-        {name: 'evs',leaf: true, checked: false,  iconCls :'no-icon' },
-        {name: 'uk10k',leaf: true, checked: false,  iconCls :'no-icon' }
-    ]
+
+//    $scope.studies = [
+//        {name: '1000g',leaf: true, checked: false,  iconCls :'no-icon' },
+//        {name: 'gonl',leaf: true, checked: false,  iconCls :'no-icon' },
+//        {name: 'evs',leaf: true, checked: false,  iconCls :'no-icon' },
+//        {name: 'uk10k',leaf: true, checked: false,  iconCls :'no-icon' }
+//    ]
+
+    $scope.studies = studiesListObject;
+    //console.log($scope.studies)
 
 
 
