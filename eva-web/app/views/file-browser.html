@@ -1,0 +1,41 @@
+<div class="row">
+    <div class="col-md-12" ng-repeat="(key,value) in  studies">
+        <div>
+            <h4>{{value.name}} <small><button type="button" ng-init="toggleState=false" ng-click="toggleShow(); showFiles(key)" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>
+            <div class="col-md-12" ng-if="toggleState">
+                <table class="table table-bordered table-secondary">
+                    <tr>
+                        <th>File ID</th>
+                        <th>Date</th>
+                        <th>Samples Count</th>
+                        <th>Variants Count</th>
+                        <th>SNP Count</th>
+                        <th>Indel Count</th>
+                        <th>Pass Count</th>
+                        <th>Transitions Count</th>
+                        <th>Transversions Count</th>
+                        <th>Accumulated Quality</th>
+                        <th>Mean Quality</th>
+                    </tr>
+                    <tr ng-repeat="(key,value) in  studyFilesData">
+                        <td>{{value.fileId}}</td>
+                        <td>{{value.date| date:'dd-MM-yyyy'}}</td>
+                        <td>{{value.globalStats.samplesCount}}</td>
+                        <td>{{value.globalStats.variantsCount}}</td>
+                        <td>{{value.globalStats.snpCount}}</td>
+                        <td>{{value.globalStats.indelCount}}</td>
+                        <td>{{value.globalStats.passCount}}</td>
+                        <td>{{value.globalStats.transitionsCount}}</td>
+                        <td>{{value.globalStats.transversionsCount}}</td>
+                        <td>{{value.globalStats.accumulatedQuality}}</td>
+                        <td>{{value.globalStats.meanQuality}}</td>
+                    </tr>
+                </table>
+
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

@@ -44,6 +44,7 @@ module.exports = function (grunt) {
                     'app/js/directives/eva-portal-home-drirective.js',
                     'app/js/directives/variant-widget-directive.js',
                     'app/js/directives/gene-widget-directive.js',
+                    'app/js/directives/file-browser-directive.js',
 
                      /** eva-widgets **/
                     'app/widgets/variant-browser-widget.js',
