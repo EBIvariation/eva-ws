@@ -45,22 +45,9 @@ VariantWidget.prototype = {
             }
         });
 
-        var tree = Ext.create('Ext.tree.Panel', {
-            header:false,
-            border :false,
-            autoWidth: true,
-            autoHeight: true,
-            renderTo: args.id,
-            collapsible: false,
-            useArrows: true,
-            rootVisible: false,
-            store: store,
-            frame: false,
-            hideHeaders: true,
-            bodyBorder:false,
-
-            //the 'columns' property is now 'headers'
-            columns: [
+        var columns;
+        if(args.link){
+             columns = [
                 {
                     xtype: 'treecolumn',
                     flex: 2,
@@ -83,7 +70,37 @@ VariantWidget.prototype = {
 
                 }
 
-            ],
+            ]
+        }else{
+             columns = [
+                {
+                    xtype: 'treecolumn',
+                    flex: 2,
+                    sortable: false,
+                    dataIndex: 'name',
+                    tooltipType: 'qtip'
+                }
+            ]
+
+        }
+
+
+        var tree = Ext.create('Ext.tree.Panel', {
+            header:false,
+            border :false,
+            autoWidth: true,
+            autoHeight: true,
+            renderTo: args.id,
+            collapsible: false,
+            useArrows: true,
+            rootVisible: false,
+            store: store,
+            frame: false,
+            hideHeaders: true,
+            bodyBorder:false,
+
+            //the 'columns' property is now 'headers'
+            columns: columns,
 
 //            dockedItems: [{
 //                xtype: 'toolbar',

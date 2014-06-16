@@ -68,16 +68,19 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                 var studiesTreeArgs = [];
                 studiesTreeArgs.id =  $scope.studiesTreeId;
                 studiesTreeArgs.data = $scope.studies;
+                studiesTreeArgs.link = false;
 
 
                 var consequenceTypeTreeArgs = [];
                 consequenceTypeTreeArgs.id =  $scope.consequenceTypeTreeId;
                 consequenceTypeTreeArgs.data = consequenceTypes;
+                consequenceTypeTreeArgs.link = true;
 
 
                 var variationClassesTreeArgs = [];
                 variationClassesTreeArgs.id =  $scope.variationClassesTreeId;
                 variationClassesTreeArgs.data = variationClasses;
+                variationClassesTreeArgs.link = true;
 
                 if(e.target.parentElement.id === 'variationLi'){
 
