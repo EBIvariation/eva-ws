@@ -333,9 +333,9 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                     });
 
                     var region = regionData[0][0].chromosome+':'+regionData[0][0].start+'-'+regionData[0][0].end;
-                    $scope.$apply(function(){
+                    //$scope.$apply(function(){
                         $scope.location = region;
-                    })
+                   // })
 
                 }
             }
