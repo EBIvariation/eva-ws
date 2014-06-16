@@ -12,6 +12,7 @@ angular.module('fileBrowserModule', []).directive('fileBrowser', function () {
                 var studyArgs = {name:$scope.studies[id].name}
                 var studyFilesData = getFiles(studyArgs);
                 if(this.toggleState){
+                    $scope.studies[id]['filesData']= studyFilesData;
                     $scope.studyFilesData = studyFilesData;
                 }
 
