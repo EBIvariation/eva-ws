@@ -5,29 +5,29 @@
             <div class="col-md-12" ng-if="toggleState">
                 <table class="table table-bordered table-secondary">
                     <tr>
-                        <th>File ID</th>
+                        <th>File Name</th>
                         <th>Date</th>
                         <th>Samples Count</th>
                         <th>Variants Count</th>
                         <th>SNP Count</th>
                         <th>Indel Count</th>
                         <th>Pass Count</th>
-                        <th>Transitions Count</th>
-                        <th>Transversions Count</th>
-                        <th>Accumulated Quality</th>
+                        <th>Transitions/Transversions Ratio</th>
+                        <!--<th>Transversions Count</th>-->
+                        <!--<th>Accumulated Quality</th>-->
                         <th>Mean Quality</th>
                     </tr>
-                    <tr ng-repeat="(key,value) in  value.filesData">
-                        <td>{{value.fileId}}</td>
+                    <tr ng-repeat="value in  value.filesData|orderBy:'fileId'">
+                        <td>{{value.fileName}}</td>
                         <td>{{value.date| date:'dd-MM-yyyy'}}</td>
                         <td>{{value.globalStats.samplesCount}}</td>
                         <td>{{value.globalStats.variantsCount}}</td>
                         <td>{{value.globalStats.snpCount}}</td>
                         <td>{{value.globalStats.indelCount}}</td>
                         <td>{{value.globalStats.passCount}}</td>
-                        <td>{{value.globalStats.transitionsCount}}</td>
-                        <td>{{value.globalStats.transversionsCount}}</td>
-                        <td>{{value.globalStats.accumulatedQuality}}</td>
+                        <td>{{(value.globalStats.transitionsCount/value.globalStats.transversionsCount)|number:2}} ({{value.globalStats.transitionsCount}}/{{value.globalStats.transversionsCount}})</td>
+                        <!--<td>{{value.globalStats.transversionsCount}}</td>-->
+                        <!--<td>{{value.globalStats.accumulatedQuality}}</td>-->
                         <td>{{value.globalStats.meanQuality | number:3}}</td>
                     </tr>
                 </table>

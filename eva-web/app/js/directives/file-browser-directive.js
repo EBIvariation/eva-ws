@@ -13,7 +13,6 @@ angular.module('fileBrowserModule', []).directive('fileBrowser', function () {
                 var studyFilesData = getFiles(studyArgs);
                 if(this.toggleState){
                     $scope.studies[id]['filesData']= studyFilesData;
-                    $scope.studyFilesData = studyFilesData;
                 }
 
             }
