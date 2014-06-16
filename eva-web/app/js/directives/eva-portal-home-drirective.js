@@ -160,6 +160,22 @@ angular.module('homeWidgetModule', []).directive('homeWidget', function () {
 
         }
 
+}).directive('contactUs', function () {
+        return {
+            restrict: 'E',
+            replace: true,
+            transclude: true,
+            template: '<div>' +
+                        '<h2>Contact Us</h2>'+
+                        '<div>'+
+                            '<p>If you have any questions related to the European Variation Archive resource, please <a href="mailto:eva-helpdesk@ebi.ac.uk">contact us</a>.</p>'+
+                            '<p>Follow us on Twitter using <a href="https://twitter.com/EBIvariation" target="_blank">@EBIvariation</a></p>'+
+                        '</div>' +
+                     '</div>'
+
+
+        }
+
 }).directive('submissionForm', function () {
         return {
             restrict: 'E',

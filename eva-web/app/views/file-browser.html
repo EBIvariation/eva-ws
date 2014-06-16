@@ -1,7 +1,13 @@
 <div class="row">
     <div class="col-md-12" ng-repeat="(key,value) in  studies">
         <div>
-            <h4>{{value.name}} <small><button type="button" ng-init="toggleState=false" ng-click="toggleShow(); showFiles(key)" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>
+            <table class="table table-borderless">
+                <tr>
+                    <td style="width:50%"> <h4>{{value.name}}</h4></td>
+                    <td><button style="margin-top:10px;" type="button" ng-init="toggleState=false" ng-click="toggleShow(); showFiles(key)" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></td>
+                </tr>
+            </table>
+            <!--<h4>{{value.name}} <small><button type="button" ng-init="toggleState=false" ng-click="toggleShow(); showFiles(key)" class="btn  btn-default btn-xs"><span ng-if="toggleState">-</span><span ng-if="!toggleState">+</span></button></small></h4>-->
             <div class="col-md-12" ng-if="toggleState">
                 <table class="table table-bordered table-secondary">
                     <tr>

@@ -183,6 +183,9 @@ div .ngHeaderText{
 .table-borderless th {
     border: 0;
 }
+.table-borderless > tbody > tr > td{
+    padding: 0px;
+}
 
 .table-borderless>tbody>tr>td {
     border-top: none;

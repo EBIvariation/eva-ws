@@ -106,17 +106,21 @@
         <nav class="" >
             <ul class="nav nav-pills" id="topMenuTab">
                 <li class="active"><a href="#home" data-toggle="tab"><span class="glyphicon glyphicon-home"></span> Home</a></li>
-                <li id="variationLi"><a href="#vbrowser" data-toggle="tab">Variant Browser</a></li>
+                <!--<li id="submitLi"><a href="#submitData" data-toggle="tab"> Submit Data</a></li>-->
+                <li id="subStartLi"><a href="#submission-start" data-toggle="tab">Submit Data</a></li>
                 <li id="fileBrowserLi"><a href="#fbrowser" data-toggle="tab">File Browser</a></li>
+                <li id="variationLi"><a href="#vbrowser" data-toggle="tab">Variant Browser</a></li>
+                <li id="gviewerLi"><a href="#gviewer" data-toggle="tab">Genome Viewer</a></li>
                 <!--<li id="genesLi"><a href="#gbrowser" data-toggle="tab">Genes</a></li>-->
                 <!--<li id="clinicalLi"><a href="#clinical" data-toggle="tab">Clinical</a></li>-->
-                <li id="submitLi"><a href="#submitData" data-toggle="tab"> Submit Data</a></li>
-                <li id="aboutLi"><a href="#aboutEva" data-toggle="tab">About EVA</a></li>
+                <li id="aboutLi"><a href="#aboutEva" data-toggle="tab">About</a></li>
+                <li id="contactUsLi"><a href="#contactUs" data-toggle="tab">Contact</a></li>
+
+                <!----hidden tabs---->
                 <li id="variantIDLi" class="hidden"><a href="#variantID" data-toggle="tab">Variant View</a></li>
-                <li id="gviewerLi"><a href="#gviewer" data-toggle="tab">Genome Viewer</a></li>
                 <li id="templatesLi" class="hidden"><a href="#templates" data-toggle="tab">Templates</a></li>
                 <li id="vcfLi" class="hidden"><a href="#vcf" data-toggle="tab">VCF Format</a></li>
-                <li id="subStartLi" class="hidden"><a href="#submission-start" data-toggle="tab">Submission Form</a></li>
+
             </ul>
         </nav>
         <!-- /local-nav -->
@@ -129,35 +133,49 @@
             <div class="tab-pane active" id="home">
                 <home-widget></home-widget>
             </div>
+
             <div class="tab-pane" id="submitData">
                 <submission></submission>
             </div>
+
+            <div class="tab-pane" id="submission-start">
+                <submission-form></submission-form>
+            </div>
+
+
+            <div class="tab-pane" id="fbrowser">
+               <file-browser></file-browser>
+            </div>
+
             <div class="tab-pane" id="vbrowser">
                 <variant-widget></variant-widget>
             </div>
-            <div class="tab-pane" id="fbrowser">
-               <file-browser></file-browser>
+
+            <div class="tab-pane" id="gviewer">
+                Coming Soon
             </div>
 
             <div class="tab-pane" id="gbrowser">
                 <gene-widget></gene-widget>
             </div>
 
-            <div class="tab-pane" id="samples">
-
-            </div>
-
             <div class="tab-pane" id="clinical">
                 <clinical></clinical>
+            </div>
+
+
+            <div class="tab-pane" id="aboutEva">
+                <about></about>
+            </div>
+
+            <div class="tab-pane" id="contactUs">
+                <contact-us></contact-us>
             </div>
 
             <div class="tab-pane" id="variantID">
                 <variant-view></variant-view>
             </div>
 
-            <div class="tab-pane" id="aboutEva">
-                <about></about>
-            </div>
 
             <div class="tab-pane" id="templates">
                 <templates></templates>
@@ -165,9 +183,6 @@
 
             <div class="tab-pane" id="vcf">
                <vcf-format></vcf-format>
-            </div>
-            <div class="tab-pane" id="submission-start">
-                <submission-form></submission-form>
             </div>
 
         </div>

@@ -151,7 +151,7 @@ VariantStudyWidget.prototype = {
         var id = args.id
 
         _this.attributeDiv = '<h5>Attributes</h5>'
-        _this.attributeDiv += '<div style="overflow:auto;"><table class="table table-striped"><tr>'
+        _this.attributeDiv += '<div style="overflow:auto;"><table class="table  table-bordered"><tr>'
 
         for(var key in data){
             _this.attributeDiv += '<th>'+key+'</th>'
