@@ -72,7 +72,7 @@ VariantWidget.prototype = {
 
             ]
         }else{
-             columns = [
+            var columns = [
                 {
                     xtype: 'treecolumn',
                     flex: 2,
@@ -304,7 +304,7 @@ VariantWidget.prototype = {
                         cls:'customHeader'
                     }
                 },
-//                height: 350,
+//                 height: 360,
                 //width: 800,
                 autoHeight:true,
                 autoWidth: true,
@@ -314,11 +314,12 @@ VariantWidget.prototype = {
                 viewConfig: {
                     enableTextSelection: true,
                     forceFit: true,
-                    loadMask: false,
+                    loadMask: true,
+                    removeMask: true,
+                    deferEmptyText:false,
                     emptyText: 'No Record to Display',
-                    stripeRows: false,
+                    stripeRows: false
 //                    selectedItemCls: 'selectedRow'
-
                 },
                 deferredRender: false,
                 dockedItems: [{
@@ -352,13 +353,16 @@ VariantWidget.prototype = {
                     },
                     render : function(grid){
                         grid.store.on('load', function(store, records, options){
-                            if(_this.vbStore.getCount() > 0){
+                            if(grid.store.getCount() > 0){
+                                grid.view.loadMask.hide();
                                 variant_present = 1;
                                 var variantGenotypeArgs = [];
                                 grid.getSelectionModel().select(0);
-                               // _this.gridEffect = _this._createEffectGrid();
                                 grid.fireEvent('itemclick', grid, grid.getSelectionModel().getLastSelected());
+
                             }else{
+                                grid.setHeight(250);
+                                grid.view.loadMask.hide();
                                 variant_present = 0;
                                 _this._clearGrid();
                             }
@@ -369,25 +373,37 @@ VariantWidget.prototype = {
 
 
             jQuery('#'+_this.variantSubTabsID+' a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                if(variant_present === 1){
                     var grid = _this.vbGrid
                     var data = _this._getSelectedData();
+                    if(e.target.parentElement.id === _this.variantFilesTableID+'Li' ){
+                        if(variant_present === 1){
+                            var filesGridArgs = {render_id: _this.variantFilesTableID,variantID: data.variantId };
+                            _this._createFilesGrid(filesGridArgs);
+                        }else{
+                            _this._clearGrid();
+                        }
+                    }
                     if(e.target.parentElement.id === _this.variantEffectTableID+'Li' ){
-                        var effectsGridArgs = {render_id: _this.variantEffectTableID,position: data.position}
-                        _this._createEffectsGrid(effectsGridArgs);
+                        if(variant_present === 1){
+                            var effectsGridArgs = {render_id: _this.variantEffectTableID,position: data.position}
+                            _this._createEffectsGrid(effectsGridArgs);
+                        }else{
+                            _this._clearGrid();
+                        }
                     }
                     else if(e.target.parentElement.id === _this.variantGenoTypeTableID+'Li'){
-                        _this._createGenotypeGrid(data.variantId);
+                        if(variant_present === 1){
+                            _this._createGenotypeGrid(data.variantId);
+                        }else{
+                            _this._clearGrid();
+                        }
                     }
                     else if(e.target.parentElement.id  === _this.variantGenomeViewerID+'Li'){
                         var region = new Region();
                         region.parse(data.location);
                         genomeViewer.setRegion(region);
                     }
-                }else{
-                   // _this._clearGrid();
 
-                }
 
            });
 
@@ -427,24 +443,30 @@ VariantWidget.prototype = {
     _getSelectedData:function(){
         var _this = this;
         var parseData = [];
-        var data =  _this.vbGrid.getSelectionModel().selected.items[0].data;
-        var data = _this.vbGrid.getSelectionModel().selected.items[0].data;
 
-         parseData['variantId'] = data.id;
-         parseData['position']  = data.chr + ":" + data.start + ":" + data.ref + ":" + data.alt;
-         parseData['location']  = data.chr + ":" + data.start + "-" + data.end;
-         if(!parseData.variantId){
-             parseData.variantId = parseData.position;
-         }
+        if( _this.vbGrid.getSelectionModel().selected.items.length > 0){
+            var data =  _this.vbGrid.getSelectionModel().selected.items[0].data;
+            var data = _this.vbGrid.getSelectionModel().selected.items[0].data;
 
-        return parseData;
+            parseData['variantId'] = data.id;
+            parseData['position']  = data.chr + ":" + data.start + ":" + data.ref + ":" + data.alt;
+            parseData['location']  = data.chr + ":" + data.start + "-" + data.end;
+            if(!parseData.variantId){
+                parseData.variantId = parseData.position;
+            }
+            return parseData;
+        }else{
+            return;
+        }
     },
 
 
     _clearGrid:function(){
          var _this = this;
-        _this._createGenotypeGrid();
-        _this._createEffectsGrid();
+        $( "#"+_this.variantFilesTableID).empty();
+        $( "#"+_this.variantGenoTypeTableID).empty();
+        $( "#"+_this.variantEffectTableID).empty();
+
 
     }
 

@@ -101,8 +101,7 @@ VariantEffectsWidget.prototype = {
                 items:[
                     {
                         text     : 'position',
-                        //flex     : 1,
-                        sortable : false,
+                        sortable : true,
                         dataIndex: 'position',
                         xtype: 'templatecolumn',
                         tpl: '{chromosome}:{position}'
@@ -146,7 +145,6 @@ VariantEffectsWidget.prototype = {
                     {
                         text     : 'transcriptId',
                         sortable : true,
-                        //renderer : createPubmedLink,
                         dataIndex: 'transcriptId',
                         renderer:function(value){
                             var transcriptID = '<a href="http://www.ensembl.org/Homo_sapiens/Location/View?t='+value+'" target="_blank">'+value+'</a>';
@@ -157,30 +155,25 @@ VariantEffectsWidget.prototype = {
                     {
                         text     : 'featureId',
                         sortable : true,
-                        //renderer : createPubmedLink,
                         dataIndex: 'featureId'
 
                     },
                     {
                         text     : 'featureName',
                         sortable : true,
-                        //renderer : createPubmedLink,
                         dataIndex: 'featureName'
 
                     },
                     {
                         text     : 'featureType',
                         sortable : true,
-                        //renderer : createPubmedLink,
                         dataIndex: 'featureType'
 
                     },
                     {
                         text     : 'featureBiotype',
                         sortable : true,
-                        //renderer : createPubmedLink,
-                        dataIndex: 'featureBiotype',
-                        resizable: false
+                        dataIndex: 'featureBiotype'
 
                     }
                 ],
@@ -190,7 +183,9 @@ VariantEffectsWidget.prototype = {
                     cls:'customHeader'
                 }
             },
-            height: 350,
+            autoHeight:true,
+            autoScroll:true,
+//            height: 350,
 //                width: 800,
             title: 'Effects',
             deferredRender: false,
@@ -198,7 +193,19 @@ VariantEffectsWidget.prototype = {
             viewConfig: {
                 enableTextSelection: true,
                 emptyText: 'No Record to Display',
-                deferEmptyText: false
+                deferEmptyText: false,
+                loadMask:false
+            },
+            listeners: {
+                render : function(grid){
+                    grid.store.on('load', function(store, records, options){
+                        if(grid.store.getCount() < 1){
+                            grid.setHeight(100);
+                        }else if(grid.store.getCount() > 10){
+                            grid.setHeight(350);
+                        }
+                    });
+                }
             }
         });
 

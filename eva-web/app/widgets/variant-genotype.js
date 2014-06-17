@@ -96,7 +96,6 @@ VariantGenotypeWidget.prototype = {
                 dock: 'top',
                 displayInfo: true,
                 cls: 'customPagingToolbar',
-                defaultButtonUI :'default',
                 plugins: Ext.create('Ext.ux.SlidingPager', {})
             }],
         });

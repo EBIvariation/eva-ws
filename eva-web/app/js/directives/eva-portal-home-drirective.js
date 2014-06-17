@@ -193,17 +193,17 @@ angular.module('homeWidgetModule', []).directive('homeWidget', function () {
               $scope.transcribedRNA = '';
               $scope.other = '';
               $scope.taxID = '';
-              $scope.subSubmit = function(){
-                  console.log($scope.name);
-                  console.log($scope.email);
-                  console.log($scope.company);
-                  console.log($scope.acronym);
-                  console.log($scope.webpage);
-                  console.log($scope.genomicDNA);
-                  console.log($scope.exonicDNA);
-                  console.log($scope.transcribedRNA);
-                  console.log($scope.other);
-              }
+//              $scope.subSubmit = function(){
+//                  console.log($scope.name);
+//                  console.log($scope.email);
+//                  console.log($scope.company);
+//                  console.log($scope.acronym);
+//                  console.log($scope.webpage);
+//                  console.log($scope.genomicDNA);
+//                  console.log($scope.exonicDNA);
+//                  console.log($scope.transcribedRNA);
+//                  console.log($scope.other);
+//              }
 
             },
             link: function($scope, element, attr) {
@@ -257,4 +257,110 @@ angular.module('homeWidgetModule', []).directive('homeWidget', function () {
 
         }
 
+}).directive('submissionStartForm', function () {
+        return {
+            restrict: 'E',
+            replace: true,
+            transclude: true,
+            template:  '<form id="contact" ng-submit="subSubmit()">'+
+                        '<h4>User Details</h4>'+
+                        '<div class="row">'+
+                        '<div class="col-md-2 form-group"><h6>Full Name <span class="required">*</span></h6></div>'+
+                        '<div class="col-md-4 form-group input-group-sm"><input class="form-control" id="name" ng-model=name  type="text" required/></div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                        '<div class="col-md-2 form-group"><h6>Email <span class="required">*</span></h6></div>'+
+                        '<div class="col-md-4 form-group input-group-sm"><input class="form-control" id="name" ng-model=email  type="email" required/></div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                        '<div class="col-md-2 form-group"><h6>Institution/Company Name   <span class="required"></span></h6></div>'+
+                        '<div class="col-md-4 form-group input-group-sm"><input class="form-control" id="name" ng-model=company  type="text"/></div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                        '<div class="col-md-2 form-group"><h6> Webpage  <span class="required">*</span></h6></div>'+
+                        '<div class="col-md-4 form-group input-group-sm"><input class="form-control" id="name" ng-model=webpage  type="text"/></div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                        '<div class="col-md-2 form-group"><h6> Country of Origin  <span class="required">*</span></h6></div>'+
+                        '<div class="col-md-4 form-group input-group-sm"><input class="form-control" id="name" ng-model=country  type="text" required/></div>'+
+                        '</div>'+
+                        '<h4>Type of Submission  <span class="required">*</span></h4>'+
+                        '<div class="row">'+
+                        '<div class="col-md-2 form-group"><h6> Genomic DNA</h6></div>'+
+                        '<div class="col-md-4 form-group input-group-sm"><input type="checkbox"  ng-model=genomicDNA ng-true-value="Genomic DNA"  ></div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                        '<div class="col-md-2 form-group"><h6> Exonic DNA</h6></div>'+
+                        '<div class="col-md-4 form-group input-group-sm"><input type="checkbox"  ng-model=exonicDNA  ng-true-value="Exonic DNA" ></div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                        '<div class="col-md-2 form-group"><h6> Transcribed RNA</h6></div>'+
+                        '<div class="col-md-4 form-group input-group-sm"><input type="checkbox"  ng-model=transcribedRNA  ng-true-value="Transcribed RNA" ></div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                        '<div class="col-md-2 form-group"><h6> Clinical</h6></div>'+
+                        '<div class="col-md-4 form-group input-group-sm"><input type="checkbox"  ng-model=clinical ng-true-value="Clinical"  ></div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                        '<div class="col-md-2 form-group"><h6> Unknown</h6></div>'+
+                        '<div class="col-md-4 form-group input-group-sm"><input type="checkbox"  ng-model=unknown ng-true-value="Unknown" ></div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                        '<div class="col-md-2 form-group"><h6> Other</h6></div>'+
+                        '<div class="col-md-4 form-group input-group-sm"><input type="checkbox"  ng-model=other ng-true-value="Other" ></div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                        '<div class="col-md-2 form-group"><h6>Preferred Centre Acronym (subject to availability)</h6></div>'+
+                        '<div class="col-md-4 form-group input-group-sm"><input class="form-control" id="name" ng-model=acronym  type="text"/></div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                        '<div class="col-md-8 form-group"><p><h6>Comments</h6></p><textarea class="form-control" rows="3" ng-model=comments></textarea></div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                            '<div class="col-md-4 form-group"><button class="btn btn-primary" type="submit">Submit</button></div>'+
+                        '</div>'+
+                        '</form>',
+            controller: function($scope) {
+
+                $scope.submissionTypes = [
+                                            {name:'Genomic DNA', id:'genomicDNA'},
+                                            {name:'Exonic DNA ', id:'exonicDNA'},
+                                            {name:'Transcribed RNA', id:'transcribedRNA'},
+                                            {name:'Clinical', id:'clinical'},
+                                            {name:'Unknown', id:'unknown'},
+                                            {name:'Other', id:'other'}
+                                         ];
+                $scope.name = '';
+                $scope.email = '';
+                $scope.company = '';
+                $scope.acronym = '';
+                $scope.webpage = '';
+                $scope.genomicDNA = '';
+                $scope.exonicDNA = '';
+                $scope.transcribedRNA = '';
+                $scope.clinical = '';
+                $scope.unknown = '';
+                $scope.other = '';
+                $scope.comments = '';
+                $scope.country = '';
+
+                $scope.subSubmit = function(){
+
+                   var submissionTypeValue = [$scope.genomicDNA,$scope.exonicDNA,$scope.transcribedRNA,$scope.clinical,$scope.unknown,$scope.other];
+
+                   var data =[{
+                           name:$scope.name,
+                           email:$scope.email,
+                           company:$scope.company,
+                           country:$scope.country,
+                           acronym:$scope.acronym,
+                           webpage:$scope.webpage,
+                           comments:$scope.comments,
+                           submissionType:submissionTypeValue,
+                           }]
+                    console.log(data)
+
+                }
+            }
+        }
 });

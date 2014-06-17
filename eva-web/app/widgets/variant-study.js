@@ -44,8 +44,16 @@ VariantStudyWidget.prototype = {
         for(var key in genotypesData ){
             var study = genotypesData[key];
             var genotypeDivId = 'genotype-'+study.id+'-'+key;
+            if(study.name != null){
+                var studyName = study.name;
+            }else{
+                var studyName = study.id;
+            }
+
+            console.log(studyName)
+
             var genotypeArgs = {id:genotypeDivId,data:study.data,studyId:study.id}
-            _this.div  = '<h4>'+study.id+'&nbsp;<button id="button-'+genotypeDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
+            _this.div  = '<h4>'+studyName+'&nbsp;<button id="button-'+genotypeDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
             _this.div += '<div class="col-md-12" id="'+genotypeDivId+'">'
             _this.div += '</div>'
             $(this.targetDiv).append( $(_this.div));
@@ -68,9 +76,18 @@ VariantStudyWidget.prototype = {
 
         var fileData = _this._parseFilesData(_this.variantId);
         for (var key in fileData){
+
             var study = fileData[key];
+
+            if(study.name != null){
+                var studyName = study.name;
+            }else{
+                var studyName = study.id;
+            }
+
             var studyDivId = study.id+'-'+key;
-            _this.div = '<h4>'+study.id+' <button id="button-'+studyDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
+
+            _this.div = '<h4>'+studyName+' <button id="button-'+studyDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
             _this.div += '<div id="'+studyDivId+'"><div>'
             _this.div += '</div></div>'
             $(this.targetDiv).append( $(_this.div));
@@ -193,6 +210,8 @@ VariantStudyWidget.prototype = {
 
     _parseFilesData:function(args){
 
+        var _this = this;
+
         var variantData;
         evaManager.get({
             category: 'variants',
@@ -224,6 +243,7 @@ VariantStudyWidget.prototype = {
                 chartArray.push([key,  value.stats.genotypeCount[key]]);
             }
             chartData.push({'title':'Genotype Count','data':chartArray});
+
             tmpDataArray[studyId].push({fileID:value.fileId,'attributes':value.attributes,'stats':value.stats, 'chartData':chartData });
 
         });
@@ -231,13 +251,17 @@ VariantStudyWidget.prototype = {
 
         var filesDataArray = new Array();
         for (key in tmpDataArray){
-            filesDataArray.push({id:key,data:tmpDataArray[key]});
+            var studyname = _this._getStudyName(key);
+            filesDataArray.push({id:key,name:studyname,data:tmpDataArray[key]});
         }
+
+
 
         return filesDataArray;
 
     },
     _parseGenotypesData:function(args){
+        var _this = this;
 
         var variantData;
         evaManager.get({
@@ -272,19 +296,40 @@ VariantStudyWidget.prototype = {
 
         var genotypesDataArray = new Array();
         for (key in tmpDataArray){
-            genotypesDataArray.push({id:key,data:tmpDataArray[key]});
+            var studyname = _this._getStudyName(key);
+            genotypesDataArray.push({id:key,name:studyname,data:tmpDataArray[key]});
         }
 
         return genotypesDataArray;
 
     },
+    _getStudyName:function(args){
 
+        var studyName;
+        evaManager.get({
+            category: 'studies',
+            resource: 'view',
+            params: {
+                of: 'json'
+            },
+            query: args,
+            async: false,
+            success: function (data) {
+                studyName = data.response.result[0].studyName
+            },
+            error: function (data) {
+                console.log('Could not get study info');
+            }
+
+
+        });
+        return studyName;
+
+    },
     _drawPieChart:function(args){
         var value = args.data[0].data;
         var title = args.data[0].title;
         var id = args.id;
-
-
 
 
         var chart1 = new Highcharts.Chart({
