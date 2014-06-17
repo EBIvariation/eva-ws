@@ -170,12 +170,11 @@ VariantWidget.prototype = {
        this.grid = this._createBrowserGrid();
     },
     _createBrowserGrid:function(){
-
-        if(jQuery("#"+this.variantTableID+" div").length){
-            jQuery( "#"+this.variantTableID+" div").remove();
-        }
-
         var _this = this;
+        if(jQuery("#"+_this.variantTableID+" div").length){
+            jQuery( "#"+_this.variantTableID+" div").remove();
+        }
+        _this._clearGrid();
 
 //            Ext.require([
 //                'Ext.grid.*',

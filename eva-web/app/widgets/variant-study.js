@@ -41,21 +41,28 @@ VariantStudyWidget.prototype = {
              $(this.targetDiv).append( $(_this.div));
              return;
         }
+        console.log(genotypesData)
         for(var key in genotypesData ){
             var study = genotypesData[key];
             var genotypeDivId = 'genotype-'+study.id+'-'+key;
-            if(study.name != null){
+            if(typeof study.name  != 'undefined'){
                 var studyName = study.name;
             }else{
                 var studyName = study.id;
             }
 
             var genotypeArgs = {id:genotypeDivId,data:study.data,studyId:study.id}
-            _this.div  = '<h4>'+studyName+'&nbsp;<button id="button-'+genotypeDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
-            _this.div += '<div class="col-md-12" id="'+genotypeDivId+'">'
-            _this.div += '</div>'
-            $(this.targetDiv).append( $(_this.div));
-            _this._loadGenotypeData(genotypeArgs);
+            if(typeof study.data.format != 'undefined'){
+                _this.div  = '<h4>'+studyName+'&nbsp;<button id="button-'+genotypeDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
+                _this.div += '<div class="col-md-12" id="'+genotypeDivId+'">'
+                _this.div += '</div>'
+                $(this.targetDiv).append( $(_this.div));
+                _this._loadGenotypeData(genotypeArgs);
+            }else{
+                _this.div  = '<h4>'+studyName+'&nbsp;</h4>'
+                _this.div += '<div class="col-md-12">No Data Found</div>'
+                $(this.targetDiv).append( $(_this.div));
+            }
         }
     },
 
@@ -77,7 +84,7 @@ VariantStudyWidget.prototype = {
 
             var study = fileData[key];
 
-            if(study.name != null){
+            if(typeof study.name  != 'undefined'){
                 var studyName = study.name;
             }else{
                 var studyName = study.id;
@@ -287,11 +294,12 @@ VariantStudyWidget.prototype = {
         $.each(tmpData, function(key, value) {
             var chartData = [];
             var studyId = value.studyId;
-            if(value.samples){
+           // if(value.samples){
                 if(!tmpDataArray[studyId]) tmpDataArray[studyId] = [];
                 tmpDataArray[studyId] = {samples:value.samples,'format':value.format};
-            }
+            //}
         });
+
 
         var genotypesDataArray = new Array();
         for (key in tmpDataArray){
