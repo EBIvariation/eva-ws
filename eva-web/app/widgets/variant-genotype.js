@@ -69,7 +69,6 @@ VariantGenotypeWidget.prototype = {
             store:  _this.vgStore,
             stateful: true,
 //            collapsible: true,
-            multiSelect: true,
             columns: parsedData.columns,
             height: 350,
             autoWidth: true,
@@ -97,7 +96,7 @@ VariantGenotypeWidget.prototype = {
                 displayInfo: true,
                 cls: 'customPagingToolbar',
                 plugins: Ext.create('Ext.ux.SlidingPager', {})
-            }],
+            }]
         });
 
         

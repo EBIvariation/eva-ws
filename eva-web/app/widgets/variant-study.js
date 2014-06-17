@@ -50,8 +50,6 @@ VariantStudyWidget.prototype = {
                 var studyName = study.id;
             }
 
-            console.log(studyName)
-
             var genotypeArgs = {id:genotypeDivId,data:study.data,studyId:study.id}
             _this.div  = '<h4>'+studyName+'&nbsp;<button id="button-'+genotypeDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
             _this.div += '<div class="col-md-12" id="'+genotypeDivId+'">'
