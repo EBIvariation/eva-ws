@@ -52,17 +52,19 @@ VariantStudyWidget.prototype = {
             }
 
             var genotypeArgs = {id:genotypeDivId,data:study.data,studyId:study.id}
-            if(typeof study.data.format != 'undefined'){
-                _this.div  = '<h4>'+studyName+'&nbsp;<button id="button-'+genotypeDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
-                _this.div += '<div class="col-md-12" id="'+genotypeDivId+'">'
-                _this.div += '</div>'
-                $(this.targetDiv).append( $(_this.div));
-                _this._loadGenotypeData(genotypeArgs);
-            }else{
-                _this.div  = '<h4>'+studyName+'&nbsp;</h4>'
-                _this.div += '<div class="col-md-12">No Data Found</div>'
-                $(this.targetDiv).append( $(_this.div));
-            }
+
+            _this.div  = '<h4>'+studyName+'&nbsp;<button id="button-'+genotypeDivId+'" type="button"  onclick="toggleShow(this.id,1)"  class="btn  btn-default btn-xs"><span>-</span></button></h4>'
+            _this.div += '<div class="col-md-12" id="'+genotypeDivId+'">'
+             if(typeof study.data.format != 'undefined'){
+                 this.div += '</div>'
+                 $(this.targetDiv).append( $(_this.div));
+                 _this._loadGenotypeData(genotypeArgs);
+
+             }else{
+                 _this.div += '<div class="col-md-12">No Data Found</div></div>'
+                 $(this.targetDiv).append( $(_this.div));
+             }
+
         }
     },
 
