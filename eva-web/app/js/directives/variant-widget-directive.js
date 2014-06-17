@@ -355,7 +355,10 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
             //Function to clear checked filters
             function clearCheckedFilters(args){
                 args.store.getRootNode().cascadeBy(function(){
-                    this.set( 'checked', false );
+                    if(this.isLeaf()){
+                        this.set( 'checked', false );
+                    }
+
                 });
             }
 
