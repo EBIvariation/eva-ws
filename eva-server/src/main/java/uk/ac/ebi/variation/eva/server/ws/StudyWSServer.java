@@ -15,6 +15,7 @@ import javax.ws.rs.core.UriInfo;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.lib.auth.MongoCredentials;
+import org.opencb.opencga.storage.variant.StudyDBAdaptor;
 import org.opencb.opencga.storage.variant.mongodb.StudyMongoDBAdaptor;
 
 /**
@@ -25,7 +26,7 @@ import org.opencb.opencga.storage.variant.mongodb.StudyMongoDBAdaptor;
 @Produces(MediaType.APPLICATION_JSON)
 public class StudyWSServer extends EvaWSServer {
     
-    private StudyMongoDBAdaptor studyMongoQueryBuilder;
+    private StudyDBAdaptor studyMongoQueryBuilder;
     private MongoCredentials credentials;
 
     public StudyWSServer() {
@@ -50,8 +51,8 @@ public class StudyWSServer extends EvaWSServer {
     
     @GET
     @Path("/{study}/files")
-    public Response getFilesByStudyName(@PathParam("study") String study) {
-        QueryResult idQueryResult = studyMongoQueryBuilder.getStudyNameById(study, queryOptions);
+    public Response getFilesByStudy(@PathParam("study") String study) {
+        QueryResult idQueryResult = studyMongoQueryBuilder.findStudyNameOrStudyId(study, queryOptions);
         if (idQueryResult.getNumResults() == 0) {
             QueryResult queryResult = new QueryResult("error", "Study identifier not found");
             return createOkResponse(queryResult);
@@ -63,4 +64,18 @@ public class StudyWSServer extends EvaWSServer {
         return createOkResponse(finalResult);
     }
     
+    @GET
+    @Path("/{study}/view")
+    public Response getStudy(@PathParam("study") String study) {
+        QueryResult idQueryResult = studyMongoQueryBuilder.findStudyNameOrStudyId(study, queryOptions);
+        if (idQueryResult.getNumResults() == 0) {
+            QueryResult queryResult = new QueryResult("error", "Study identifier not found");
+            return createOkResponse(queryResult);
+        }
+        
+        BasicDBObject id = (BasicDBObject) idQueryResult.getResult().get(0);
+        QueryResult finalResult = studyMongoQueryBuilder.getStudyById(id.getString("studyId"), queryOptions);
+        finalResult.setDBTime(finalResult.getDBTime() + idQueryResult.getDBTime());
+        return createOkResponse(finalResult);
+    }
 }
