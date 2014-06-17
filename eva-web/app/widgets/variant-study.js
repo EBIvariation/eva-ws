@@ -105,7 +105,8 @@ VariantStudyWidget.prototype = {
                 var stats = {id:statsId,data:statsData};
                 var chart = {id:chartId,data:chartData};
 
-                _this.div1  = '<div class="col-md-12"><div class="row"><div class="col-md-12" ><h5>File ID: &nbsp;<span style="font-size:15px; font-weight:bold; color:#000000;">'+study.data[k].fileID+'</span></h5></div></div></div>'
+                _this.div1  = '<div class="col-md-12"><div class="row"><div class="col-md-12" ></div></div></div>'
+                //_this.div1  = '<div class="col-md-12"><div class="row"><div class="col-md-12" ><h5>File ID: &nbsp;<span style="font-size:15px; font-weight:bold; color:#000000;">'+study.data[k].fileID+'</span></h5></div></div></div>'
                 _this.div1 += '<div class="col-md-12">'
                 _this.div1 += '<div class="col-md-12" id="'+attributesId+'"></div>'
                 _this.div1 += '<div class="col-md-7" id="'+statsId+'"></div>'
