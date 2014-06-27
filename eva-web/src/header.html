@@ -1,0 +1,123 @@
+<template>
+    <style>
+        @import url("http://www.ebi.ac.uk/web_guidelines/css/compliance/mini/ebi-fluid-embl.css");
+        #global-masthead {
+            font-family: Verdana, sans-serif;
+            width: 100%;
+            margin: 0;
+        }
+
+        #local-masthead {
+            font-family: Verdana, sans-serif;
+            width: 100%;
+            margin: 0;
+            background: #156765 url("../app/img/EBI_banner_Homepage.jpg") no-repeat right top;
+            background-size: 100%;
+        }
+
+        #local-title > h1 {
+            font-size: 46px;
+            text-shadow: 1px 1px #666;
+        }
+
+        header {
+            height:159px;
+            margin:0px;
+            font-size: 13px;
+            /*line-height: 1.538;*/
+        }
+    </style>
+    <header>
+        <div id="global-masthead" class="masthead grid_24">
+            <!--This has to be one line and no newline characters-->
+            <a href="//www.ebi.ac.uk/" title="Go to the EMBL-EBI homepage"><img
+                    src="//www.ebi.ac.uk/web_guidelines/images/logos/EMBL-EBI/EMBL_EBI_Logo_white.png" alt="EMBL European Bioinformatics Institute"></a>
+
+            <nav>
+                <ul id="global-nav">
+                    <!-- set active class as appropriate -->
+                    <li class="first active" id="services"><a href="//www.ebi.ac.uk/services">Services</a></li>
+                    <li id="research"><a href="//www.ebi.ac.uk/research">Research</a></li>
+                    <li id="training"><a href="//www.ebi.ac.uk/training">Training</a></li>
+                    <li id="industry"><a href="//www.ebi.ac.uk/industry">Industry</a></li>
+                    <li id="about" class="last"><a href="//www.ebi.ac.uk/about">About us</a></li>
+                </ul>
+            </nav>
+
+        </div>
+
+        <div id="local-masthead" class="masthead grid_24 nomenu">
+
+            <!-- local-title --template>
+            <!-- NB: for additional title style patterns, see http://frontier.ebi.ac.uk/web/style/patterns -->
+
+            <div class="grid_12 alpha" id="local-title">
+                <h1><a href="./" title="Back to European Variation Archive homepage">
+                    <img src="../app/img/eva_logo.png" alt="" width="75" height="64">
+                    European Variation Archive
+                </a></h1>
+            </div>
+
+            <!-- /local-title -->
+
+            <!-- local-search -->
+            <!-- NB: if you do not have a local-search, delete the following div, and drop the class="grid_12 alpha" class from local-title above -->
+
+            <form id="local-search" name="local-search" action="[search-action]" method="post">
+
+                <fieldset>
+
+                    <div class="left">
+                        <label>
+                            <input type="text" name="first" id="local-searchbox">
+                        </label>
+                        <!-- Include some example searchterms - keep them short and few! -->
+                            <span class="examples">Examples: <a href="[search-url-1]">[search-text-1]</a>, <a href="[search-url-1]">[search-text-2]</a>, <a
+                                    href="[search-url-1]">[search-text-3]</a></span>
+                    </div>
+
+                    <div class="right">
+                        <input type="submit" name="submit" value="Search" class="submit">
+                        <!-- If your search is more complex than just a keyword search, you can link to an Advanced Search,
+                             with whatever features you want available -->
+                        <span class="adv"><a href="../search" id="adv-search" title="Advanced">Advanced</a></span>
+                    </div>
+
+                </fieldset>
+
+            </form>
+
+            <!-- /local-search -->
+
+            <!-- local-nav -->
+
+            <nav>
+                <ul class="grid_24" id="local-nav">
+                    <li class="first"><a href="#Home">Home</a></li>
+                    <li><a href="#Documentation">Documentation</a></li>
+                    <li><a href="#Help">Help</a></li>
+                    <li class="last"><a href="#About">About</a></li>
+                    <!-- If you need to include functional (as opposed to purely navigational) links in your local menu,
+                        add them here, and give them a class of "functional". Remember: you'll need a class of "last" for
+                    whichever one will show up last...
+                        For example: -->
+
+                    <li class="functional last"><a href="#Login" class="icon icon-functional" data-icon="l">Login</a></li>
+                    <li class="functional"><a href="#Feedback" class="icon icon-generic" data-icon="\">Feedback</a></li>
+                    <li class="functional"><a href="#Share" class="icon icon-functional" data-icon="r">Share</a></li>
+                </ul>
+            </nav>
+
+            <!-- /local-nav -->
+
+        </div>
+    </header>
+</template>
+
+<script>
+    var documentLocal = document._currentScript.ownerDocument;
+    var el = document.body.querySelector('#header');
+    var shadow = el.createShadowRoot();
+    var template = documentLocal.querySelector('template');
+    shadow.appendChild(template.content.cloneNode(true));
+</script>
