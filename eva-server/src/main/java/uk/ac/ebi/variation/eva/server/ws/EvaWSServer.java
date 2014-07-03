@@ -52,9 +52,6 @@ public class EvaWSServer {
 
 
     static {
-//        BasicConfigurator.configure();
-//        dbAdaptorFactory = new HibernateDBAdaptorFactory();
-
         logger = LoggerFactory.getLogger(EvaWSServer.class);
 
         jsonObjectMapper = new ObjectMapper();
@@ -66,7 +63,7 @@ public class EvaWSServer {
 
         xmlObjectMapper = new XmlMapper();
 
-        logger.info("EvaWSServer: Initiating attributes inside static block");
+        logger.info("EvaWSServer: Initialising attributes inside static block");
     }
 
     public EvaWSServer() {
