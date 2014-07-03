@@ -48,9 +48,15 @@ public class GeneWSServer extends EvaWSServer {
     public Response getVariantsByGene(@PathParam("gene") String geneId,
                                       @QueryParam("ref") String reference,
                                       @QueryParam("alt") String alternate, 
-                                      @DefaultValue("") @QueryParam("type") String variantType,
                                       @QueryParam("effects") String effects,
-                                      @QueryParam("studies") String studies) {
+                                      @QueryParam("studies") String studies,
+                                      @DefaultValue("-1f") @QueryParam("maf") float maf,
+                                      @DefaultValue("-1") @QueryParam("miss_alleles") int missingAlleles,
+                                      @DefaultValue("-1") @QueryParam("miss_gts") int missingGenotypes,
+                                      @DefaultValue("=") @QueryParam("maf_op") String mafOperator,
+                                      @DefaultValue("=") @QueryParam("miss_alleles_op") String missingAllelesOperator,
+                                      @DefaultValue("=") @QueryParam("miss_gts_op") String missingGenotypesOperator,
+                                      @DefaultValue("") @QueryParam("type") String variantType) {
         if (reference != null) {
             queryOptions.put("reference", reference);
         }
@@ -65,6 +71,24 @@ public class GeneWSServer extends EvaWSServer {
         }
         if (!variantType.isEmpty()) {
             queryOptions.put("type", variantType);
+        }
+        if (maf >= 0) {
+            queryOptions.put("maf", maf);
+            if (mafOperator != null) {
+                queryOptions.put("opMaf", mafOperator);
+            }
+        }
+        if (missingAlleles >= 0) {
+            queryOptions.put("missingAlleles", missingAlleles);
+            if (missingAllelesOperator != null) {
+                queryOptions.put("opMissingAlleles", missingAllelesOperator);
+            }
+        }
+        if (missingGenotypes >= 0) {
+            queryOptions.put("missingGenotypes", missingGenotypes);
+            if (missingGenotypesOperator != null) {
+                queryOptions.put("opMissingGenotypes", missingGenotypesOperator);
+            }
         }
         
         return createOkResponse(variantMongoQueryBuilder.getAllVariantsByGene(geneId, queryOptions));
