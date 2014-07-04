@@ -40,7 +40,7 @@ EvaMenu.prototype = {
     },
     _createMenuItems: function () {
         var _this = this;
-        var items = ['Variant browser', 'Genome viewer'];
+        var items = ['Variant browser', 'Genome browser'];
 
         var lastLi = this.target.querySelector('li.last')
         $(lastLi).removeClass('last');

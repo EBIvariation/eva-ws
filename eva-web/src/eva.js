@@ -29,19 +29,48 @@ Eva.prototype = {
 
         //HTML skel
         this.div = document.createElement('div');
-        this.div.setAttribute('class', 'eva-div');
+        this.div.setAttribute('class', 'eva-app');
         this.div.setAttribute('id', this.id);
-
-        this.variantWidgetdiv = document.createElement('div');
-        this.variantWidgetdiv.setAttribute('class', 'eva-child');
-        this.div.appendChild(this.variantWidgetdiv);
-        this.childDivMenuMap['Variant browser'] = this.variantWidgetdiv;
-
 
         this.targetMenuUl = (this.targetMenu instanceof HTMLElement ) ? this.targetMenu : document.querySelector('#' + this.targetMenu);
         this.evaMenu = this._createEvaMenu(this.targetMenuUl);
 
-        this.variantWidget = this._createVariantWidget(this.variantWidgetdiv);
+
+       /* variant browser option*/
+        this.variantBrowserOptionDiv = document.createElement('div');
+        $(this.variantBrowserOptionDiv).addClass('eva-child variant-browser-option-div');
+        this.div.appendChild(this.variantBrowserOptionDiv);
+        this.childDivMenuMap['Variant browser'] = this.variantBrowserOptionDiv;
+
+        this.formPanelVariantFilterDiv = document.createElement('div');
+        $(this.formPanelVariantFilterDiv).addClass('form-panel-variant-filter-div');
+        this.variantBrowserOptionDiv.appendChild(this.formPanelVariantFilterDiv);
+
+        this.variantWidgetDiv = document.createElement('div');
+        $(this.variantWidgetDiv).addClass('variant-widget-div');
+        this.variantBrowserOptionDiv.appendChild(this.variantWidgetDiv);
+
+        this.formPanelVariantFilter = this._createFormPanelVariantFilter(this.formPanelVariantFilterDiv);
+        this.variantWidget = this._createVariantWidget(this.variantWidgetDiv);
+
+
+//        /* genome browser option*/
+        this.genomeBrowserOptionDiv = document.createElement('div');
+        $(this.genomeBrowserOptionDiv).addClass('eva-child genome-browser-option-div');
+        this.div.appendChild(this.genomeBrowserOptionDiv);
+        this.childDivMenuMap['Genome browser'] = this.genomeBrowserOptionDiv;
+
+        this.formPanelGenomeFilterDiv = document.createElement('div');
+        $(this.formPanelGenomeFilterDiv).addClass('form-panel-genome-filter-div');
+        this.genomeBrowserOptionDiv.appendChild(this.formPanelGenomeFilterDiv);
+
+        this.genomeViewerDiv = document.createElement('div');
+        $(this.genomeViewerDiv).addClass('genome-viewer-div');
+        this.genomeBrowserOptionDiv.appendChild(this.genomeViewerDiv);
+
+
+        this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
+        this.genomeViewer = this._createGenomeViewer(this.genomeViewerDiv);
 
         this.evaMenu.select('Variant browser');
 //        this.panel = this._createPanel();
@@ -56,8 +85,86 @@ Eva.prototype = {
 
         this.evaMenu.draw();
         this.variantWidget.draw();
+        this.formPanelVariantFilter.draw();
+        this.formPanelGenomeFilter.draw();
+        this.genomeViewer.draw();
 
-
+//        var EXAMPLE_DATA = [
+//            {
+//                "type": "SNV",
+//                "chromosome": "1",
+//                "start": 1650807,
+//                "end": 1650807,
+//                "length": 1,
+//                "reference": "T",
+//                "alternate": "C",
+//                "id": "rs1137005",
+//                "hgvs": {
+//                    "genomic": [
+//                        "1:g.1650807T>C"
+//                    ]
+//                },
+//                "files": {
+//                    "test2": {
+//                        "fileId": "test2",
+//                        "studyId": "test",
+//                        "format": "GT:DS:GL",
+//                        "samplesData": {
+//                            "NA19600": {
+//                                "GT": "0|1"
+//                            },
+//                            "NA19660": {
+//                                "GT": "0|1"
+//                            },
+//                            "NA19661": {
+//                                "GT": "1|1"
+//                            },
+//                            "NA19685": {
+//                                "GT": "0|0"
+//                            }
+//                        },
+//                        "stats": {
+//                            "chromosome": null,
+//                            "position": -1,
+//                            "refAllele": null,
+//                            "altAllele": null,
+//                            "refAlleleCount": -1,
+//                            "altAlleleCount": -1,
+//                            "genotypesCount": {
+//                                "0|1": 2,
+//                                "1|1": 1,
+//                                "0|0": 1
+//                            },
+//                            "missingAlleles": 0,
+//                            "missingGenotypes": 0,
+//                            "refAlleleFreq": -1,
+//                            "altAlleleFreq": -1,
+//                            "genotypesFreq": { },
+//                            "maf": 0.5,
+//                            "mgf": 1,
+//                            "mafAllele": "T",
+//                            "mgfGenotype": "0|1",
+//                            "pedigreeStatsAvailable": false,
+//                            "mendelianErrors": -1,
+//                            "casesPercentDominant": -1,
+//                            "controlsPercentDominant": -1,
+//                            "casesPercentRecessive": -1,
+//                            "controlsPercentRecessive": -1,
+//                            "transitionsCount": -1,
+//                            "transversionsCount": -1,
+//                            "quality": 0,
+//                            "numSamples": 0
+//                        },
+//                        "attributes": {
+//                            "QUAL": "100.0",
+//                            "FILTER": "PASS"
+//                        }
+//                    }
+//                },
+//                "effect": [ ]
+//            }
+//
+//        ];
         var EXAMPLE_DATA = [];
         $.ajax({
             url: "http://www.ebi.ac.uk/eva/webservices/rest/v1/segments/1:5000-35000/variants",
@@ -96,18 +203,242 @@ Eva.prototype = {
     _createVariantWidget: function (target) {
 //        var width = this.width - parseInt(this.div.style.paddingLeft) - parseInt(this.div.style.paddingRight);
 
-
         var variantWidget = new VariantWidget({
-            width: this.width,
+            width: 1020,
             target: target,
             title: 'Variant Widget',
 //            data: EXAMPLE_DATA,
 //            url: url,
             filters: {},
             defaultToolConfig: {},
-            tools: []
+            tools: [],
+            dataParser:function(data){
+                for (var i = 0; i < data.length; i++) {
+                    var variant = data[i];
+                    variant.chromosome = variant.chr;
+                    variant.alternate = variant.alt;
+                    variant.reference = variant.ref;
+
+                    if (variant.hgvs && variant.hgvs.length > 0) {
+                        variant.hgvs_name = variant.hgvs[0].genomic;
+                    }
+                }
+            }
+
         }); //the div must exist
 
         return variantWidget;
+    },
+    _createFormPanelVariantFilter: function (target) {
+        var positionFilter = new PositionFilterFormPanel();
+        var studyFilter = new StudyFilterFormPanel({
+            urlStudies: "http://www.ebi.ac.uk/eva/webservices/rest/v1/studies/list"
+        });
+
+        var conseqType = new ConsequenceTypeFilterFormPanel();
+
+        var formPanel = new FormPanel({
+            target: target,
+            title: 'Filter',
+            filters: [positionFilter, studyFilter, conseqType],
+            width: 300,
+            height:1000
+        });
+
+        return formPanel;
+    },
+    _createFormPanelGenomeFilter: function (target) {
+        var positionFilter = new PositionFilterFormPanel();
+        var studyFilter = new StudyFilterFormPanel({
+            urlStudies: "http://www.ebi.ac.uk/eva/webservices/rest/v1/studies/list"
+        });
+
+        var conseqType = new ConsequenceTypeFilterFormPanel();
+
+
+        var formPanel = new FormPanel({
+            target: target,
+            title: 'Form Panel',
+            filters: [positionFilter, studyFilter, conseqType],
+            width: 300,
+            height:1000
+        });
+
+        return formPanel;
+    },
+    _createGenomeViewer: function (target) {
+        var _this = this;
+
+
+        var region = new Region({
+            chromosome: "13",
+            start: 32889611,
+            end: 32889611
+        });
+
+        var genomeViewer = new GenomeViewer({
+            sidePanel: false,
+            target: target,
+            border: false,
+            resizable: true,
+            width: 1018,
+            region: region,
+            trackListTitle: '',
+            drawNavigationBar: true,
+            drawKaryotypePanel: false,
+            drawChromosomePanel: false,
+            drawRegionOverviewPanel: true,
+            overviewZoomMultiplier: 50,
+            navigationBarConfig: {
+                componentsConfig: {
+                    restoreDefaultRegionButton: false,
+                    regionHistoryButton: false,
+                    speciesButton: false,
+                    chromosomesButton: false,
+                    karyotypeButton: false,
+                    chromosomeButton: false,
+                    regionButton: false,
+//                    zoomControl: false,
+                    windowSizeControl: false,
+//                    positionControl: false,
+//                    moveControl: false,
+//                    autoheightButton: false,
+//                    compactButton: false,
+//                    searchControl: false
+                }
+            },
+        }); //the div must exist
+
+
+        var renderer = new FeatureRenderer(FEATURE_TYPES.gene);
+        renderer.on({
+            'feature:click': function (event) {
+                // feature click event example
+                console.log(event)
+            }
+        });
+        var geneOverview = new FeatureTrack({
+            targetId: null,
+            id: 2,
+//        title: 'Gene overview',
+            minHistogramRegionSize: 20000000,
+            maxLabelRegionSize: 10000000,
+            height: 100,
+
+            renderer: renderer,
+
+            dataAdapter: new CellBaseAdapter({
+                category: "genomic",
+                subCategory: "region",
+                resource: "gene",
+                params: {
+                    exclude: 'transcripts,chunkIds'
+                },
+                species: genomeViewer.species,
+                cacheConfig: {
+                    chunkSize: 100000
+                }
+            })
+        });
+
+
+        var sequence = new SequenceTrack({
+            targetId: null,
+            id: 1,
+//        title: 'Sequence',
+            height: 30,
+            visibleRegionSize: 200,
+
+            renderer: new SequenceRenderer(),
+
+            dataAdapter: new SequenceAdapter({
+                category: "genomic",
+                subCategory: "region",
+                resource: "sequence",
+                species: genomeViewer.species
+            })
+        });
+
+
+        var gene = new GeneTrack({
+            targetId: null,
+            id: 2,
+            title: 'Gene',
+            minHistogramRegionSize: 20000000,
+            maxLabelRegionSize: 10000000,
+            minTranscriptRegionSize: 200000,
+            height: 140,
+
+            renderer: new GeneRenderer(),
+
+            dataAdapter: new CellBaseAdapter({
+                category: "genomic",
+                subCategory: "region",
+                resource: "gene",
+                species: genomeViewer.species,
+                params: {
+                    exclude: 'transcripts.tfbs,transcripts.xrefs,transcripts.exons.sequence'
+                },
+                cacheConfig: {
+                    chunkSize: 100000
+                }
+            })
+        });
+
+        var snp = new FeatureTrack({
+            targetId: null,
+            id: 4,
+            title: 'SNP',
+            featureType: 'SNP',
+            minHistogramRegionSize: 10000,
+            maxLabelRegionSize: 3000,
+            height: 100,
+
+            renderer: new FeatureRenderer(FEATURE_TYPES.snp),
+
+            dataAdapter: new CellBaseAdapter({
+                category: "genomic",
+                subCategory: "region",
+                resource: "snp",
+                params: {
+                    exclude: 'transcriptVariations,xrefs,samples'
+                },
+                species: genomeViewer.species,
+                cacheConfig: {
+                    chunkSize: 10000
+                }
+            })
+        });
+
+
+        var eva = new FeatureTrack({
+            targetId: null,
+            id: 4,
+            title: 'Eva',
+            featureType: 'variant',
+            minHistogramRegionSize: 10000,
+            maxLabelRegionSize: 3000,
+            height: 100,
+
+            renderer: new FeatureRenderer(FEATURE_TYPES.undefined),
+
+            dataAdapter: new EvaAdapter({
+                host:'http://www.ebi.ac.uk/eva/webservices/rest',
+                version:'v1',
+                category: "segments",
+                resource: "variants",
+                params: {
+//                    exclude: ''
+                },
+                cacheConfig: {
+                    chunkSize: 10000
+                }
+            })
+        });
+
+        genomeViewer.addOverviewTrack(geneOverview);
+        genomeViewer.addTrack([sequence, gene, eva, snp]);
+
+        return genomeViewer;
     }
 }

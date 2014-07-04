@@ -8,25 +8,9 @@
     <link rel="import" href="header.html">
     <link rel="import" href="footer.html">
 
-    <style type="text/css">
-        /* You have the option of setting a maximum width for your page, and making sure everything is centered */
-        body {
-            max-width: 1350px
-            margin: 0 auto;
-            background: #fff url(http://www.ebi.ac.uk/web_guidelines/images/global/pale_grey_slight_texture.jpg) top left repeat;
-        }
-        #header{
-            margin:0px;
-        }
-        #content{
-            padding:10px;
-            background-color: #ffffff;
-            margin:0px;
-        }
-    </style>
-
+    <link type="text/css" rel="stylesheet" href="eva.css"/>
 </head>
-<body>
+<body class="eva">
 
 <div id="header"></div>
 <div id="content"></div>
@@ -119,9 +103,16 @@
 <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/variant/variant-widget.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/variant/variant-stats-panel.js"></script>
 
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/form-panel.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/position-filter-form-panel.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/study-filter-form-panel.js"></script>
+<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/consequence-type-filter-form-panel.js"></script>
+
 
 <script type="text/javascript" src="eva.js"></script>
 <script type="text/javascript" src="eva-menu.js"></script>
+<script type="text/javascript" src="eva-adapter.js"></script>
+<script type="text/javascript" src="eva-manager.js"></script>
 
 <script type="text/javascript">
     var eva;

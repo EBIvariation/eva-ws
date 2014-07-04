@@ -1,0 +1,57 @@
+body.eva {
+    max-width: 1350px;
+    margin: 0 auto;
+    background: #fff url(http://www.ebi.ac.uk/web_guidelines/images/global/pale_grey_slight_texture.jpg) top left repeat;
+    font-family: 'HelveticaNeueLT Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+.eva a{
+    cursor:pointer;
+}
+
+.eva #header {
+    margin: 0px;
+}
+
+.eva #content {
+    padding: 10px;
+    background-color: #ffffff;
+    margin: 0px;
+}
+
+.eva .eva-app {
+    position: relative;
+}
+
+.eva .variant-browser-option-div {
+    position: relative;
+    overflow: hidden;
+}
+
+.eva .form-panel-variant-filter-div {
+    width: 300px;
+    float: left;
+}
+
+.eva .variant-widget-div {
+    margin-left: 10px;
+    width: 1020px;
+    float: left;
+}
+
+.eva .genome-browser-option-div {
+    position: relative;
+    overflow: hidden;
+}
+
+.eva .form-panel-genome-filter-div {
+    width: 300px;
+    float: left;
+}
+
+.eva .genome-viewer-div {
+    font-size: 12px;
+    margin-left: 10px;
+    width: 1018px;
+    float: left;
+    border: 1px solid #d3d3d3;
+}
