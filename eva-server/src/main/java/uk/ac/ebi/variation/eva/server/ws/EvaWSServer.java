@@ -208,8 +208,7 @@ public class EvaWSServer {
         }
     }
 
-
     private Response buildResponse(Response.ResponseBuilder responseBuilder) {
-        return responseBuilder.header("Access-Control-Allow-Origin", "*").build();
+        return responseBuilder.header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Headers", "x-requested-with, content-type").build();
     }
 }

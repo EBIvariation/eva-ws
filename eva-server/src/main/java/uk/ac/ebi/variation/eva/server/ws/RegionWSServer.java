@@ -13,7 +13,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by imedina on 01/04/14.
@@ -87,7 +89,16 @@ public class RegionWSServer extends EvaWSServer {
             }
         }
         
-        Region region = Region.parseRegion(regionId);
-        return createOkResponse(variantMongoQueryBuilder.getAllVariantsByRegion(region, queryOptions));
+        List<Region> regions = new ArrayList<>();
+        for (String s : regionId.split(",")) {
+            regions.add(Region.parseRegion(s));
+        }
+        return createOkResponse(variantMongoQueryBuilder.getAllVariantsByRegionList(regions, queryOptions));
+    }
+    
+    @OPTIONS
+    @Path("/{region}/variants")
+    public Response getVariantsByRegion() {
+        return createOkResponse("");
     }
 }
