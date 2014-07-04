@@ -58,7 +58,7 @@ public class VariantWSServer extends EvaWSServer {
         } else { // Query by chr:pos:ref:alt
             String parts[] = variantId.split(":", -1);
             if (parts.length < 3) {
-                return createJsonResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
+                return createErrorResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
             }
             
             Region region = new Region(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[1]));
@@ -75,11 +75,11 @@ public class VariantWSServer extends EvaWSServer {
     @Path("/{variantId}/exists")
     public Response checkVariantExists(@PathParam("variantId") String variantId) {
         if (!variantId.contains(":")) { // Query by accession id
-            return createJsonResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
+            return createErrorResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
         } else { // Query by chr:pos:ref:alt
             String parts[] = variantId.split(":", -1);
             if (parts.length < 3) {
-                return createJsonResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
+                return createErrorResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
             }
             
             Region region = new Region(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[1]));
@@ -90,7 +90,7 @@ public class VariantWSServer extends EvaWSServer {
             
             QueryResult queryResult = variantMongoQueryBuilder.getAllVariantsByRegion(region, queryOptions);
             queryResult.setResult(Arrays.asList(queryResult.getNumResults() > 0));
-            queryResult.setResultType(Boolean.class);
+            queryResult.setResultType(Boolean.class.getCanonicalName());
             return createOkResponse(queryResult);
         }
     }

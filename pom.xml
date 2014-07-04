@@ -50,16 +50,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.opencb.datastore</groupId>
-                <artifactId>datastore-mongodb</artifactId>
-                <version>0.1.0</version>
-            </dependency>
-            <!--<dependency>-->
-                <!--<groupId>org.opencb.commons</groupId>-->
-                <!--<artifactId>bioformats</artifactId>-->
-                <!--<version>1.0.0</version>-->
-            <!--</dependency>-->
 
             <!-- General dependencies -->
             <dependency>
@@ -92,11 +82,11 @@
                 <artifactId>jackson-dataformat-xml</artifactId>
                 <version>2.3.2</version>
             </dependency>
-            <!--<dependency>-->
-                <!--<groupId>org.mongodb</groupId>-->
-                <!--<artifactId>mongo-java-driver</artifactId>-->
-                <!--<version>2.11.3</version>-->
-            <!--</dependency>-->
+            <dependency>
+                <groupId>asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>3.3.1</version>
+            </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>

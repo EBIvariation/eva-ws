@@ -54,13 +54,14 @@ public class StudyWSServer extends EvaWSServer {
     public Response getFilesByStudy(@PathParam("study") String study) {
         QueryResult idQueryResult = studyMongoQueryBuilder.findStudyNameOrStudyId(study, queryOptions);
         if (idQueryResult.getNumResults() == 0) {
-            QueryResult queryResult = new QueryResult("error", "Study identifier not found");
+            QueryResult queryResult = new QueryResult();
+            queryResult.setErrorMsg("Study identifier not found");
             return createOkResponse(queryResult);
         }
         
         BasicDBObject id = (BasicDBObject) idQueryResult.getResult().get(0);
         QueryResult finalResult = studyMongoQueryBuilder.getAllSourcesByStudyId(id.getString("studyId"), queryOptions);
-        finalResult.setDBTime(finalResult.getDBTime() + idQueryResult.getDBTime());
+        finalResult.setDbTime(finalResult.getDbTime() + idQueryResult.getDbTime());
         return createOkResponse(finalResult);
     }
     
@@ -69,13 +70,14 @@ public class StudyWSServer extends EvaWSServer {
     public Response getStudy(@PathParam("study") String study) {
         QueryResult idQueryResult = studyMongoQueryBuilder.findStudyNameOrStudyId(study, queryOptions);
         if (idQueryResult.getNumResults() == 0) {
-            QueryResult queryResult = new QueryResult("error", "Study identifier not found");
+            QueryResult queryResult = new QueryResult();
+            queryResult.setErrorMsg("Study identifier not found");
             return createOkResponse(queryResult);
         }
         
         BasicDBObject id = (BasicDBObject) idQueryResult.getResult().get(0);
         QueryResult finalResult = studyMongoQueryBuilder.getStudyById(id.getString("studyId"), queryOptions);
-        finalResult.setDBTime(finalResult.getDBTime() + idQueryResult.getDBTime());
+        finalResult.setDbTime(finalResult.getDbTime() + idQueryResult.getDbTime());
         return createOkResponse(finalResult);
     }
 }
