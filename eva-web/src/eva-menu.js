@@ -31,34 +31,16 @@ EvaMenu.prototype = {
 //            '</div>' +
 //            '';
 
-        this._createMenuItems();
-
-        //HTML skel
-        this.target
-    },
-    draw: function () {
-    },
-    _createMenuItems: function () {
-        var _this = this;
-//        var items = ['Variant browser', 'Genome browser'];
-
-        var lastLi = this.target.querySelector('li');
-//        $(lastLi).removeClass('last');
-//
-//        for (var i = 0; i < items.length; i++) {
-//            var text = items[i];
-//            var newLi = document.createElement('li');
-//            newLi.innerHTML = '<a href="#' + text + '">' + text + '</a>';
-//            $(lastLi).after(newLi);
-//            lastLi = newLi;
-//        }
-
         $(this.target).click(function (e) {
             if ($(e.target).prop("tagName") == 'A') {
                 _this._optionClickHandler(e.target);
             }
         });
 
+        //HTML skel
+        this.target
+    },
+    draw: function () {
     },
     _optionClickHandler: function (aEl) {
         $(this.target).find('.active').removeClass('active');

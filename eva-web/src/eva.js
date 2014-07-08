@@ -40,7 +40,6 @@ Eva.prototype = {
         $(this.variantBrowserOptionDiv).addClass('eva-child variant-browser-option-div');
         this.div.appendChild(this.variantBrowserOptionDiv);
         this.childDivMenuMap['Variant Browser'] = this.variantBrowserOptionDiv;
-        this.select('Variant Browser');
 
 
         this.formPanelVariantFilterDiv = document.createElement('div');
@@ -73,6 +72,8 @@ Eva.prototype = {
         this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
         this.genomeViewer = this._createGenomeViewer(this.genomeViewerDiv);
 
+
+        this.select('Variant Browser');
 //        this.panel = this._createPanel();
     },
     draw: function () {
@@ -184,9 +185,15 @@ Eva.prototype = {
         this.variantWidget.variantBrowserGrid.load(EXAMPLE_DATA);
 //        this.panel.render(this.div);
     },
-    select:function(option){
-        $(this.childDivMenuMap[option]).css({display: 'inherit'});
+    select: function (option) {
         this.evaMenu.select(option);
+        this._selectHandler(option);
+    },
+    _selectHandler: function (option) {
+        $(this.div).children('.eva-child').each(function (index, el) {
+            $(el).css({display: 'none'});
+        });
+        $(this.childDivMenuMap[option]).css({display: 'inherit'});
     },
     _createEvaMenu: function (target) {
         var _this = this;
@@ -194,10 +201,7 @@ Eva.prototype = {
             target: target,
             handlers: {
                 'menu:click': function (e) {
-                    $(_this.div).children('.eva-child').each(function (index, el) {
-                        $(el).css({display: 'none'});
-                    });
-                    $(_this.childDivMenuMap[e.option]).css({display: 'inherit'});
+                    _this._selectHandler(e.option);
                 }
             }
         });
@@ -249,7 +253,7 @@ Eva.prototype = {
                 'search': function (e) {
                     console.log(e.filterParams);
                     var regions = [];
-                    if(e.filterParams.region !== ""){
+                    if (e.filterParams.region !== "") {
                         regions = e.filterParams.region.split(",");
                     }
                     delete  e.filterParams.region;
