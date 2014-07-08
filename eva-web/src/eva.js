@@ -62,18 +62,16 @@ Eva.prototype = {
 
         this.formPanelGenomeFilterDiv = document.createElement('div');
         $(this.formPanelGenomeFilterDiv).addClass('form-panel-genome-filter-div');
-        this.genomeBrowserOptionDiv.appendChild(this.formPanelGenomeFilterDiv);
 
         this.genomeViewerDiv = document.createElement('div');
         $(this.genomeViewerDiv).addClass('genome-viewer-div');
         this.genomeBrowserOptionDiv.appendChild(this.genomeViewerDiv);
 
-
-        this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
         this.genomeViewer = this._createGenomeViewer(this.genomeViewerDiv);
+        this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
+        this.genomeViewer.leftSidebarDiv.appendChild(this.formPanelGenomeFilterDiv);
 
-
-        this.select('Variant Browser');
+        this.select('Genome Browser');
 //        this.panel = this._createPanel();
     },
     draw: function () {
@@ -87,8 +85,8 @@ Eva.prototype = {
         this.evaMenu.draw();
         this.variantWidget.draw();
         this.formPanelVariantFilter.draw();
-        this.formPanelGenomeFilter.draw();
         this.genomeViewer.draw();
+        this.formPanelGenomeFilter.draw();
 //        var EXAMPLE_DATA = [
 //            {
 //                "type": "SNV",
@@ -326,18 +324,17 @@ Eva.prototype = {
 
 
         var formPanel = new FormPanel({
+            title:'Create Tracks',
             target: target,
-            title: 'Form Panel',
-            filters: [positionFilter, studyFilter, conseqType],
+            filters: [studyFilter, conseqType],
             width: 300,
-            height: 1000
+            height: 500
         });
 
         return formPanel;
     },
     _createGenomeViewer: function (target) {
         var _this = this;
-
 
         var region = new Region({
             chromosome: "13",
@@ -350,7 +347,7 @@ Eva.prototype = {
             target: target,
             border: false,
             resizable: true,
-            width: 1018,
+            width: 1328,
             region: region,
             trackListTitle: '',
             drawNavigationBar: true,
@@ -360,6 +357,7 @@ Eva.prototype = {
             overviewZoomMultiplier: 50,
             navigationBarConfig: {
                 componentsConfig: {
+                    leftSideButton: true,
                     restoreDefaultRegionButton: false,
                     regionHistoryButton: false,
                     speciesButton: false,
@@ -375,9 +373,12 @@ Eva.prototype = {
 //                    compactButton: false,
 //                    searchControl: false
                 }
-            },
+            }
         }); //the div must exist
 
+        genomeViewer.navigationBar.on('leftSideButton:click', function () {
+            $(_this.formPanelGenomeFilterDiv).toggle();
+        });
 
         var renderer = new FeatureRenderer(FEATURE_TYPES.gene);
         renderer.on({

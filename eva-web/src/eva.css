@@ -50,13 +50,11 @@ body.eva {
 
 .eva .form-panel-genome-filter-div {
     width: 300px;
-    float: left;
 }
 
 .eva .genome-viewer-div {
     font-size: 12px;
-    margin-left: 10px;
-    width: 1018px;
+    width: 1318px;
     float: left;
     border: 1px solid #d3d3d3;
 }
