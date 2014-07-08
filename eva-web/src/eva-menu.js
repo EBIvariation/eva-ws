@@ -40,18 +40,18 @@ EvaMenu.prototype = {
     },
     _createMenuItems: function () {
         var _this = this;
-        var items = ['Variant browser', 'Genome browser'];
+//        var items = ['Variant browser', 'Genome browser'];
 
-        var lastLi = this.target.querySelector('li.last')
-        $(lastLi).removeClass('last');
-
-        for (var i = 0; i < items.length; i++) {
-            var text = items[i];
-            var newLi = document.createElement('li');
-            newLi.innerHTML = '<a href="#' + text + '">' + text + '</a>';
-            $(lastLi).after(newLi);
-            lastLi = newLi;
-        }
+        var lastLi = this.target.querySelector('li');
+//        $(lastLi).removeClass('last');
+//
+//        for (var i = 0; i < items.length; i++) {
+//            var text = items[i];
+//            var newLi = document.createElement('li');
+//            newLi.innerHTML = '<a href="#' + text + '">' + text + '</a>';
+//            $(lastLi).after(newLi);
+//            lastLi = newLi;
+//        }
 
         $(this.target).click(function (e) {
             if ($(e.target).prop("tagName") == 'A') {

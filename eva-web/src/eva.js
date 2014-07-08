@@ -35,12 +35,13 @@ Eva.prototype = {
         this.targetMenuUl = (this.targetMenu instanceof HTMLElement ) ? this.targetMenu : document.querySelector('#' + this.targetMenu);
         this.evaMenu = this._createEvaMenu(this.targetMenuUl);
 
-
-       /* variant browser option*/
+        /* variant browser option*/
         this.variantBrowserOptionDiv = document.createElement('div');
         $(this.variantBrowserOptionDiv).addClass('eva-child variant-browser-option-div');
         this.div.appendChild(this.variantBrowserOptionDiv);
-        this.childDivMenuMap['Variant browser'] = this.variantBrowserOptionDiv;
+        this.childDivMenuMap['Variant Browser'] = this.variantBrowserOptionDiv;
+        this.select('Variant Browser');
+
 
         this.formPanelVariantFilterDiv = document.createElement('div');
         $(this.formPanelVariantFilterDiv).addClass('form-panel-variant-filter-div');
@@ -58,7 +59,7 @@ Eva.prototype = {
         this.genomeBrowserOptionDiv = document.createElement('div');
         $(this.genomeBrowserOptionDiv).addClass('eva-child genome-browser-option-div');
         this.div.appendChild(this.genomeBrowserOptionDiv);
-        this.childDivMenuMap['Genome browser'] = this.genomeBrowserOptionDiv;
+        this.childDivMenuMap['Genome Browser'] = this.genomeBrowserOptionDiv;
 
         this.formPanelGenomeFilterDiv = document.createElement('div');
         $(this.formPanelGenomeFilterDiv).addClass('form-panel-genome-filter-div');
@@ -72,7 +73,6 @@ Eva.prototype = {
         this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
         this.genomeViewer = this._createGenomeViewer(this.genomeViewerDiv);
 
-        this.evaMenu.select('Variant browser');
 //        this.panel = this._createPanel();
     },
     draw: function () {
@@ -88,7 +88,6 @@ Eva.prototype = {
         this.formPanelVariantFilter.draw();
         this.formPanelGenomeFilter.draw();
         this.genomeViewer.draw();
-
 //        var EXAMPLE_DATA = [
 //            {
 //                "type": "SNV",
@@ -167,7 +166,7 @@ Eva.prototype = {
 //        ];
         var EXAMPLE_DATA = [];
         $.ajax({
-            url: "http://www.ebi.ac.uk/eva/webservices/rest/v1/segments/1:5000-35000/variants",
+            url: this.host,
             dataType: 'json',
             async: false,
             success: function (response, textStatus, jqXHR) {
@@ -184,6 +183,10 @@ Eva.prototype = {
         });
         this.variantWidget.variantBrowserGrid.load(EXAMPLE_DATA);
 //        this.panel.render(this.div);
+    },
+    select:function(option){
+        $(this.childDivMenuMap[option]).css({display: 'inherit'});
+        this.evaMenu.select(option);
     },
     _createEvaMenu: function (target) {
         var _this = this;
@@ -208,11 +211,10 @@ Eva.prototype = {
             target: target,
             title: 'Variant Widget',
 //            data: EXAMPLE_DATA,
-//            url: url,
             filters: {},
             defaultToolConfig: {},
             tools: [],
-            dataParser:function(data){
+            dataParser: function (data) {
                 for (var i = 0; i < data.length; i++) {
                     var variant = data[i];
                     variant.chromosome = variant.chr;
@@ -224,12 +226,12 @@ Eva.prototype = {
                     }
                 }
             }
-
         }); //the div must exist
 
         return variantWidget;
     },
     _createFormPanelVariantFilter: function (target) {
+        var _this = this;
         var positionFilter = new PositionFilterFormPanel();
         var studyFilter = new StudyFilterFormPanel({
             urlStudies: "http://www.ebi.ac.uk/eva/webservices/rest/v1/studies/list"
@@ -242,7 +244,70 @@ Eva.prototype = {
             title: 'Filter',
             filters: [positionFilter, studyFilter, conseqType],
             width: 300,
-            height:1000
+            height: 1000,
+            handlers: {
+                'search': function (e) {
+                    console.log(e.filterParams);
+                    var regions = [];
+                    if(e.filterParams.region !== ""){
+                        regions = e.filterParams.region.split(",");
+                    }
+                    delete  e.filterParams.region;
+
+
+                    if (e.filterParams.gene !== "") {
+                        CellBaseManager.get({
+                            species: 'hsapiens',
+                            category: 'feature',
+                            subCategory: 'gene',
+                            query: e.filterParams.gene,
+                            resource: "info",
+                            async: false,
+                            params: {
+                                include: 'chromosome,start,end'
+                            },
+                            success: function (data) {
+                                for (var i = 0; i < data.response.length; i++) {
+                                    var queryResult = data.response[i];
+                                    var region = new Region(queryResult.result[0]);
+                                    regions.push(region.toString());
+                                }
+                            }
+                        });
+                    }
+
+                    if (e.filterParams.snp !== "") {
+                        CellBaseManager.get({
+                            species: 'hsapiens',
+                            category: 'feature',
+                            subCategory: 'snp',
+                            query: e.filterParams.snp,
+                            resource: "info",
+                            async: false,
+                            params: {
+                                include: 'chromosome,start,end'
+                            },
+                            success: function (data) {
+                                for (var i = 0; i < data.response.length; i++) {
+                                    var queryResult = data.response[i];
+                                    var region = new Region(queryResult.result[0]);
+                                    regions.push(region.toString());
+                                }
+                            }
+                        });
+
+                    }
+
+
+                    var url = EvaManager.url({
+                        host: 'http://172.22.70.2:8080/eva/webservices/rest',
+                        category: 'segments',
+                        resource: 'variants',
+                        query: regions
+                    });
+                    _this.variantWidget.retrieveData(url, e.filterParams)
+                }
+            }
         });
 
         return formPanel;
@@ -261,7 +326,7 @@ Eva.prototype = {
             title: 'Form Panel',
             filters: [positionFilter, studyFilter, conseqType],
             width: 300,
-            height:1000
+            height: 1000
         });
 
         return formPanel;
@@ -411,33 +476,35 @@ Eva.prototype = {
         });
 
 
-        var eva = new FeatureTrack({
-            targetId: null,
-            id: 4,
-            title: 'Eva',
-            featureType: 'variant',
-            minHistogramRegionSize: 10000,
-            maxLabelRegionSize: 3000,
-            height: 100,
-
-            renderer: new FeatureRenderer(FEATURE_TYPES.undefined),
-
-            dataAdapter: new EvaAdapter({
-                host:'http://www.ebi.ac.uk/eva/webservices/rest',
-                version:'v1',
-                category: "segments",
-                resource: "variants",
-                params: {
-//                    exclude: ''
-                },
-                cacheConfig: {
-                    chunkSize: 10000
-                }
-            })
-        });
+//        var eva = new FeatureTrack({
+//            targetId: null,
+//            id: 4,
+//            title: 'Eva',
+//            featureType: 'variant',
+//            minHistogramRegionSize: 10000,
+//            maxLabelRegionSize: 3000,
+//            height: 100,
+//
+//            renderer: new FeatureRenderer(FEATURE_TYPES.undefined),
+//
+//            dataAdapter: new EvaAdapter({
+//                host: 'http://www.ebi.ac.uk/eva/webservices/rest',
+//                version: 'v1',
+//                category: "segments",
+//                resource: "variants",
+//                params: {
+////                    exclude: ''
+//                },
+//                cacheConfig: {
+//                    chunkSize: 10000
+//                }
+//            })
+//        });
 
         genomeViewer.addOverviewTrack(geneOverview);
-        genomeViewer.addTrack([sequence, gene, eva, snp]);
+        genomeViewer.addTrack([sequence, gene, snp]);
+
+//        genomeViewer.addTrack(eva);
 
         return genomeViewer;
     }

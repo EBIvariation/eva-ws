@@ -4,8 +4,13 @@ body.eva {
     background: #fff url(http://www.ebi.ac.uk/web_guidelines/images/global/pale_grey_slight_texture.jpg) top left repeat;
     font-family: 'HelveticaNeueLT Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
-.eva a{
-    cursor:pointer;
+
+.eva a {
+    cursor: pointer;
+}
+
+.eva-child {
+    display: none;
 }
 
 .eva #header {
@@ -54,4 +59,8 @@ body.eva {
     width: 1018px;
     float: left;
     border: 1px solid #d3d3d3;
+}
+
+.no-icon {
+    display: none;
 }
