@@ -11,7 +11,6 @@ function Eva(args) {
     //set instantiation args, must be last
     _.extend(this, args);
 
-
     this.on(this.handlers);
 
     this.childDivMenuMap = {};
@@ -54,7 +53,7 @@ Eva.prototype = {
         this.variantWidget = this._createVariantWidget(this.variantWidgetDiv);
 
 
-//        /* genome browser option*/
+        /* genome browser option*/
         this.genomeBrowserOptionDiv = document.createElement('div');
         $(this.genomeBrowserOptionDiv).addClass('eva-child genome-browser-option-div');
         this.div.appendChild(this.genomeBrowserOptionDiv);
@@ -71,7 +70,7 @@ Eva.prototype = {
         this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
         this.genomeViewer.leftSidebarDiv.appendChild(this.formPanelGenomeFilterDiv);
 
-        this.select('Genome Browser');
+        this.select('Variant Browser');
 //        this.panel = this._createPanel();
     },
     draw: function () {
@@ -224,7 +223,7 @@ Eva.prototype = {
                     variant.reference = variant.ref;
 
                     if (variant.hgvs && variant.hgvs.genomic > 0) {
-                        variant.hgvs_name= variant.hgvs.genomic[0];
+                        variant.hgvs_name = variant.hgvs.genomic[0];
                     }
                 }
 
@@ -251,25 +250,24 @@ Eva.prototype = {
             width: 300,
             height: 1000,
             handlers: {
-                'search': function (e) {
-                    console.log(e.filterParams);
+                'submit': function (e) {
+                    console.log(e.values);
                     var regions = [];
-                    if (e.filterParams.region !== "") {
-                        regions = e.filterParams.region.split(",");
+                    if (e.values.region !== "") {
+                        regions = e.values.region.split(",");
                     }
-                    delete  e.filterParams.region;
+                    delete  e.values.region;
 
-
-                    if(e.filterParams.studies !== undefined){
-                    
-                        e.filterParams.studies = e.filterParams.studies.join(",");
+                    if (e.values.studies !== undefined) {
+                        e.values.studies = e.values.studies.join(",");
                     }
-                    if (e.filterParams.gene !== "") {
+
+                    if (e.values.gene !== "") {
                         CellBaseManager.get({
                             species: 'hsapiens',
                             category: 'feature',
                             subCategory: 'gene',
-                            query: e.filterParams.gene,
+                            query: e.values.gene,
                             resource: "info",
                             async: false,
                             params: {
@@ -285,12 +283,12 @@ Eva.prototype = {
                         });
                     }
 
-                    if (e.filterParams.snp !== "") {
+                    if (e.values.snp !== "") {
                         CellBaseManager.get({
                             species: 'hsapiens',
                             category: 'feature',
                             subCategory: 'snp',
-                            query: e.filterParams.snp,
+                            query: e.values.snp,
                             resource: "info",
                             async: false,
                             params: {
@@ -316,7 +314,7 @@ Eva.prototype = {
                         resource: 'variants',
                         query: regions
                     });
-                    _this.variantWidget.retrieveData(url, e.filterParams)
+                    _this.variantWidget.retrieveData(url, e.values)
                 }
             }
         });
@@ -333,11 +331,18 @@ Eva.prototype = {
 
 
         var formPanel = new FormPanel({
-            title:'Create Tracks',
+//            title: 'Create Tracks',
+            border: false,
+            submitButtonText: 'Add track',
             target: target,
             filters: [studyFilter, conseqType],
             width: 300,
-            height: 500
+            height: 500,
+            handlers: {
+                'submit': function () {
+
+                }
+            }
         });
 
         return formPanel;
