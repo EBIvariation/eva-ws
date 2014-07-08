@@ -71,7 +71,7 @@ Eva.prototype = {
         this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
         this.genomeViewer.leftSidebarDiv.appendChild(this.formPanelGenomeFilterDiv);
 
-        this.select('Genome Browser');
+        this.select('Variant Browser');
 //        this.panel = this._createPanel();
     },
     draw: function () {
@@ -253,6 +253,8 @@ Eva.prototype = {
             handlers: {
                 'search': function (e) {
                     console.log(e.filterParams);
+
+                    _this.variantWidget.setLoading(true);
                     var regions = [];
                     if (e.filterParams.region !== "") {
                         regions = e.filterParams.region.split(",");
@@ -261,8 +263,9 @@ Eva.prototype = {
 
 
                     if(e.filterParams.studies !== undefined){
-                    
-                        e.filterParams.studies = e.filterParams.studies.join(",");
+                        if (e.filterParams.studies instanceof Array) {
+                            e.filterParams.studies = e.filterParams.studies.join(",");
+                        }
                     }
                     if (e.filterParams.gene !== "") {
                         CellBaseManager.get({
