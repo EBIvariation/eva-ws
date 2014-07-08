@@ -264,6 +264,12 @@ Eva.prototype = {
                             e.values.studies = e.values.studies.join(",");
                         }
                     }
+                    
+                    if (e.values.ct !== undefined) {
+                        if (e.values.ct instanceof Array) {
+                            e.values.ct = e.values.ct.join(",");
+                        }
+                    }
 
                     if (e.values.gene !== "") {
                         CellBaseManager.get({
@@ -310,9 +316,7 @@ Eva.prototype = {
 
 
                     var url = EvaManager.url({
-                        //host: 'http://172.22.70.2:8080/eva/webservices/rest',
-                        //host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-                        host: 'http://ves-ebi-f8:8080/eva/webservices/rest',
+                        host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                         category: 'segments',
                         resource: 'variants',
                         query: regions
