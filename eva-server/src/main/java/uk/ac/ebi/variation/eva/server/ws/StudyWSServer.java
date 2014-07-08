@@ -16,6 +16,7 @@ import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.StudyDBAdaptor;
+import org.opencb.opencga.storage.variant.mongodb.DBObjectToVariantSourceConverter;
 import org.opencb.opencga.storage.variant.mongodb.StudyMongoDBAdaptor;
 
 /**
@@ -60,7 +61,7 @@ public class StudyWSServer extends EvaWSServer {
         }
         
         BasicDBObject id = (BasicDBObject) idQueryResult.getResult().get(0);
-        QueryResult finalResult = studyMongoQueryBuilder.getAllSourcesByStudyId(id.getString("studyId"), queryOptions);
+        QueryResult finalResult = studyMongoQueryBuilder.getAllSourcesByStudyId(id.getString(DBObjectToVariantSourceConverter.STUDYID_FIELD), queryOptions);
         finalResult.setDbTime(finalResult.getDbTime() + idQueryResult.getDbTime());
         return createOkResponse(finalResult);
     }
@@ -76,7 +77,7 @@ public class StudyWSServer extends EvaWSServer {
         }
         
         BasicDBObject id = (BasicDBObject) idQueryResult.getResult().get(0);
-        QueryResult finalResult = studyMongoQueryBuilder.getStudyById(id.getString("studyId"), queryOptions);
+        QueryResult finalResult = studyMongoQueryBuilder.getStudyById(id.getString(DBObjectToVariantSourceConverter.STUDYID_FIELD), queryOptions);
         finalResult.setDbTime(finalResult.getDbTime() + idQueryResult.getDbTime());
         return createOkResponse(finalResult);
     }
