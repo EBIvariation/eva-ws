@@ -225,10 +225,13 @@ Eva.prototype = {
                     variant.alternate = variant.alt;
                     variant.reference = variant.ref;
 
-                    if (variant.hgvs && variant.hgvs.length > 0) {
-                        variant.hgvs_name = variant.hgvs[0].genomic;
+                    if (variant.hgvs && variant.hgvs.genomic > 0) {
+                        variant.hgvs_name= variant.hgvs.genomic[0];
                     }
                 }
+
+                console.log("DATA");
+                console.log(data);
             }
         }); //the div must exist
 
@@ -238,7 +241,7 @@ Eva.prototype = {
         var _this = this;
         var positionFilter = new PositionFilterFormPanel();
         var studyFilter = new StudyFilterFormPanel({
-            urlStudies: "http://www.ebi.ac.uk/eva/webservices/rest/v1/studies/list"
+            urlStudies: "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/list"
         });
 
         var conseqType = new ConsequenceTypeFilterFormPanel();
@@ -259,6 +262,10 @@ Eva.prototype = {
                     delete  e.filterParams.region;
 
 
+                    if(e.filterParams.studies !== undefined){
+                    
+                        e.filterParams.studies = e.filterParams.studies.join(",");
+                    }
                     if (e.filterParams.gene !== "") {
                         CellBaseManager.get({
                             species: 'hsapiens',
@@ -304,7 +311,9 @@ Eva.prototype = {
 
 
                     var url = EvaManager.url({
-                        host: 'http://172.22.70.2:8080/eva/webservices/rest',
+                        //host: 'http://172.22.70.2:8080/eva/webservices/rest',
+                        //host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                        host: 'http://ves-ebi-f8:8080/eva/webservices/rest',
                         category: 'segments',
                         resource: 'variants',
                         query: regions
