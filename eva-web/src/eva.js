@@ -252,6 +252,7 @@ Eva.prototype = {
             handlers: {
                 'submit': function (e) {
                     console.log(e.values);
+                    _this.variantWidget.setLoading(true);
                     var regions = [];
                     if (e.values.region !== "") {
                         regions = e.values.region.split(",");
@@ -259,7 +260,9 @@ Eva.prototype = {
                     delete  e.values.region;
 
                     if (e.values.studies !== undefined) {
-                        e.values.studies = e.values.studies.join(",");
+                        if (e.values.studies instanceof Array) {
+                            e.values.studies = e.values.studies.join(",");
+                        }
                     }
 
                     if (e.values.gene !== "") {
