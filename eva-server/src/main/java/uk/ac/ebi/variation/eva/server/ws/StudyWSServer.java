@@ -16,8 +16,10 @@ import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.StudyDBAdaptor;
+import org.opencb.opencga.storage.variant.VariantSourceDBAdaptor;
 import org.opencb.opencga.storage.variant.mongodb.DBObjectToVariantSourceConverter;
 import org.opencb.opencga.storage.variant.mongodb.StudyMongoDBAdaptor;
+import org.opencb.opencga.storage.variant.mongodb.VariantSourceMongoDBAdaptor;
 
 /**
  *
@@ -27,7 +29,8 @@ import org.opencb.opencga.storage.variant.mongodb.StudyMongoDBAdaptor;
 @Produces(MediaType.APPLICATION_JSON)
 public class StudyWSServer extends EvaWSServer {
     
-    private StudyDBAdaptor studyMongoQueryBuilder;
+    private StudyDBAdaptor studyDbAdaptor;
+    private VariantSourceDBAdaptor variantSourceDbAdaptor;
     private MongoCredentials credentials;
 
     public StudyWSServer() {
@@ -38,7 +41,8 @@ public class StudyWSServer extends EvaWSServer {
         super(version, uriInfo, hsr);
         try {
             credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
-            studyMongoQueryBuilder = new StudyMongoDBAdaptor(credentials);
+            studyDbAdaptor = new StudyMongoDBAdaptor(credentials);
+            variantSourceDbAdaptor = new VariantSourceMongoDBAdaptor(credentials);
         } catch (IllegalOpenCGACredentialsException e) {
             e.printStackTrace();
         }
@@ -47,13 +51,13 @@ public class StudyWSServer extends EvaWSServer {
     @GET
     @Path("/list")
     public Response getStudies() {
-        return createOkResponse(studyMongoQueryBuilder.listStudies());
+        return createOkResponse(studyDbAdaptor.listStudies());
     }
     
     @GET
     @Path("/{study}/files")
     public Response getFilesByStudy(@PathParam("study") String study) {
-        QueryResult idQueryResult = studyMongoQueryBuilder.findStudyNameOrStudyId(study, queryOptions);
+        QueryResult idQueryResult = studyDbAdaptor.findStudyNameOrStudyId(study, queryOptions);
         if (idQueryResult.getNumResults() == 0) {
             QueryResult queryResult = new QueryResult();
             queryResult.setErrorMsg("Study identifier not found");
@@ -61,7 +65,7 @@ public class StudyWSServer extends EvaWSServer {
         }
         
         BasicDBObject id = (BasicDBObject) idQueryResult.getResult().get(0);
-        QueryResult finalResult = studyMongoQueryBuilder.getAllSourcesByStudyId(id.getString(DBObjectToVariantSourceConverter.STUDYID_FIELD), queryOptions);
+        QueryResult finalResult = variantSourceDbAdaptor.getAllSourcesByStudyId(id.getString(DBObjectToVariantSourceConverter.STUDYID_FIELD), queryOptions);
         finalResult.setDbTime(finalResult.getDbTime() + idQueryResult.getDbTime());
         return createOkResponse(finalResult);
     }
@@ -69,7 +73,7 @@ public class StudyWSServer extends EvaWSServer {
     @GET
     @Path("/{study}/view")
     public Response getStudy(@PathParam("study") String study) {
-        QueryResult idQueryResult = studyMongoQueryBuilder.findStudyNameOrStudyId(study, queryOptions);
+        QueryResult idQueryResult = studyDbAdaptor.findStudyNameOrStudyId(study, queryOptions);
         if (idQueryResult.getNumResults() == 0) {
             QueryResult queryResult = new QueryResult();
             queryResult.setErrorMsg("Study identifier not found");
@@ -77,7 +81,7 @@ public class StudyWSServer extends EvaWSServer {
         }
         
         BasicDBObject id = (BasicDBObject) idQueryResult.getResult().get(0);
-        QueryResult finalResult = studyMongoQueryBuilder.getStudyById(id.getString(DBObjectToVariantSourceConverter.STUDYID_FIELD), queryOptions);
+        QueryResult finalResult = studyDbAdaptor.getStudyById(id.getString(DBObjectToVariantSourceConverter.STUDYID_FIELD), queryOptions);
         finalResult.setDbTime(finalResult.getDbTime() + idQueryResult.getDbTime());
         return createOkResponse(finalResult);
     }

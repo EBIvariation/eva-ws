@@ -12,6 +12,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.variant.ArchiveDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.datastore.EvaproUtils;
 
 /**
  *
@@ -28,59 +29,38 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
     
     @Override
     public QueryResult countStudies() {
-        return count("PROJECT");
+        try {
+            return EvaproUtils.count(ds, "PROJECT");
+        } catch (SQLException ex) {
+            Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            QueryResult qr = new QueryResult();
+            qr.setErrorMsg(ex.getMessage());
+            return qr;
+        }
     }
 
     @Override
     public QueryResult countFiles() {
-        return count("VCF_FILES");
+        try {
+            return EvaproUtils.count(ds, "VCF_FILES");
+        } catch (SQLException ex) {
+            Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            QueryResult qr = new QueryResult();
+            qr.setErrorMsg(ex.getMessage());
+            return qr;
+        }
     }
 
     @Override
     public QueryResult countSpecies() {
-        return count("TAXONOMY");
+        try {
+            return EvaproUtils.count(ds, "TAXONOMY");
+        } catch (SQLException ex) {
+            Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            QueryResult qr = new QueryResult();
+            qr.setErrorMsg(ex.getMessage());
+            return qr;
+        }
     }
     
-    private QueryResult count(String table) {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        QueryResult qr = null;
-        try {
-            conn = ds.getConnection();
-            pstmt = conn.prepareStatement(String.format("select count(*) from %s", table));
-            long start = System.currentTimeMillis();
-            rs = pstmt.executeQuery();
-            rs.next();
-            int count = rs.getInt(1);
-            long end = System.currentTimeMillis();
-            qr = new QueryResult(null, ((Long) (end - start)).intValue(), 1, 1, null, null, Arrays.asList(count));
-        } catch (SQLException ex) {
-            Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-        
-        return qr;
-    }
 }
