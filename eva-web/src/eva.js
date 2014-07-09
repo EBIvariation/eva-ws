@@ -151,16 +151,13 @@ Eva.prototype = {
     },
     _createVariantFileBrowser: function(target){
         var _this = this;
-        var studiesInfo = this._getStudiesInfo();
 
         var variantFileBrowser = new VariantFileBrowserPanel({
             target: target,
             title: 'File Browser',
-            width: 1300,
-            studies: studiesInfo
-
+            width: 1300
         });
-
+        this._getStudiesInfo();
         return variantFileBrowser;
     },
     _createFormPanelVariantFilter: function (target) {
@@ -338,8 +335,6 @@ Eva.prototype = {
             }
         });
         var geneOverview = new FeatureTrack({
-            targetId: null,
-            id: 2,
 //        title: 'Gene overview',
             minHistogramRegionSize: 20000000,
             maxLabelRegionSize: 10000000,
@@ -363,8 +358,6 @@ Eva.prototype = {
 
 
         var sequence = new SequenceTrack({
-            targetId: null,
-            id: 1,
 //        title: 'Sequence',
             height: 30,
             visibleRegionSize: 200,
@@ -381,8 +374,6 @@ Eva.prototype = {
 
 
         var gene = new GeneTrack({
-            targetId: null,
-            id: 2,
             title: 'Gene',
             minHistogramRegionSize: 20000000,
             maxLabelRegionSize: 10000000,
@@ -406,8 +397,6 @@ Eva.prototype = {
         });
 
         var snp = new FeatureTrack({
-            targetId: null,
-            id: 4,
             title: 'SNP',
             featureType: 'SNP',
             minHistogramRegionSize: 10000,
@@ -432,8 +421,6 @@ Eva.prototype = {
 
 
         var eva = new FeatureTrack({
-            targetId: null,
-            id: 4,
             title: 'Eva',
             featureType: 'variant',
             minHistogramRegionSize: 10000,
@@ -457,9 +444,9 @@ Eva.prototype = {
         });
 
         genomeViewer.addOverviewTrack(geneOverview);
-//        genomeViewer.addTrack([sequence, gene, snp]);
+        genomeViewer.addTrack([sequence, gene, snp, eva]);
 
-        genomeViewer.addTrack(eva);
+//        genomeViewer.addTrack(eva);
 
         return genomeViewer;
     },
@@ -469,17 +456,16 @@ Eva.prototype = {
         var studies = [];
 
         $.ajax({
-                url: "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/list",
+                url: "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/files/all",
                 dataType: 'json',
-                async: false,
                 success: function (response, textStatus, jqXHR) {
                     var data = (response !== undefined && response.response.length > 0 && response.response[0].numResults > 0)? response.response[0].result : [];
 
                     for (var i = 0; i < data.length; i++) {
                         var study = data[i];
-                        //studies.push(study);
-                        studyNames.push(study.studyId);
+                        _this._addFileToStudy(studies, study);
                     }
+                    _this.variantFileBrowser.load(studies);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log('Error loading studies');
@@ -487,36 +473,33 @@ Eva.prototype = {
             });
 
 
-            for (var i = 0, l = studyNames.length; i < l; i ++) {
-                var study = studyNames[i];
-
-                var url =  "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/" + study + "/files"
-                $.ajax({
-                    url: url,
-                    dataType: 'json',
-                    async: false,
-                    success: function (response, textStatus, jqXHR) {
-                        var data = (response !== undefined && response.response.length > 0 && response.response[0].numResults > 0)? response.response[0].result : [];
-
-                        for (var i = 0; i < data.length; i++) {
-                            var study = data[i];
-                            _this._addFileToStudy(studies, study);
-                        }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log('Error loading final studies');
-                    }
-                });
-            }
-
-            return studies;
+//            for (var i = 0, l = studyNames.length; i < l; i ++) {
+//                var study = studyNames[i];
+//
+//                var url =  "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/" + study + "/files"
+//                $.ajax({
+//                    url: url,
+//                    dataType: 'json',
+//                    success: function (response, textStatus, jqXHR) {
+//                        var data = (response !== undefined && response.response.length > 0 && response.response[0].numResults > 0)? response.response[0].result : [];
+//
+//                        for (var i = 0; i < data.length; i++) {
+//                            var study = data[i];
+//                            _this._addFileToStudy(studies, study);
+//                        }
+//                    },
+//                    error: function (jqXHR, textStatus, errorThrown) {
+//                        console.log('Error loading final studies');
+//                    }
+//                });
+//            }
     },
     _addFileToStudy: function(studies, file){
         var b = false;
         for (var i = 0, l = studies.length; i < l && !b; i ++) {
             var study= studies[i];
 
-            if(study.studyId == file.studyId){
+            if(study.studyName == file.studyName){
                 study.files.push(file);
                 b = true;
             }
@@ -524,7 +507,7 @@ Eva.prototype = {
 
         if(!b){
             studies.push({
-                studyId: file.studyId,
+                studyName: file.studyName,
                 files: [file]
             })
         }

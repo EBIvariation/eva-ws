@@ -67,6 +67,11 @@ body.eva {
     border: 1px solid #d3d3d3;
 }
 
+.ocb-variant-tab-panel-title{
+    margin-top:20px;
+}
+
+
 .no-icon {
     display: none;
 }
@@ -75,17 +80,17 @@ body.eva {
 .eva-header-5 {
     text-decoration: underline;
     color: #426783;
-    font-size: 140%;
+    font-size: 120%;
 }
 
 .eva-header-4 {
     color: #426783;
-    font-size: 160%;
+    font-size: 140%;
 }
 
 .eva-header-3 {
     color: #BF8230;
-    font-size: 180%;
+    font-size: 160%;
 }
 
 .eva-attributes-table {
