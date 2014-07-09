@@ -70,7 +70,6 @@ Eva.prototype = {
         this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
         this.genomeViewer.leftSidebarDiv.appendChild(this.formPanelGenomeFilterDiv);
 
-        this.select('Variant Browser');
 //        this.panel = this._createPanel();
     },
     draw: function () {
@@ -86,100 +85,8 @@ Eva.prototype = {
         this.formPanelVariantFilter.draw();
         this.genomeViewer.draw();
         this.formPanelGenomeFilter.draw();
-//        var EXAMPLE_DATA = [
-//            {
-//                "type": "SNV",
-//                "chromosome": "1",
-//                "start": 1650807,
-//                "end": 1650807,
-//                "length": 1,
-//                "reference": "T",
-//                "alternate": "C",
-//                "id": "rs1137005",
-//                "hgvs": {
-//                    "genomic": [
-//                        "1:g.1650807T>C"
-//                    ]
-//                },
-//                "files": {
-//                    "test2": {
-//                        "fileId": "test2",
-//                        "studyId": "test",
-//                        "format": "GT:DS:GL",
-//                        "samplesData": {
-//                            "NA19600": {
-//                                "GT": "0|1"
-//                            },
-//                            "NA19660": {
-//                                "GT": "0|1"
-//                            },
-//                            "NA19661": {
-//                                "GT": "1|1"
-//                            },
-//                            "NA19685": {
-//                                "GT": "0|0"
-//                            }
-//                        },
-//                        "stats": {
-//                            "chromosome": null,
-//                            "position": -1,
-//                            "refAllele": null,
-//                            "altAllele": null,
-//                            "refAlleleCount": -1,
-//                            "altAlleleCount": -1,
-//                            "genotypesCount": {
-//                                "0|1": 2,
-//                                "1|1": 1,
-//                                "0|0": 1
-//                            },
-//                            "missingAlleles": 0,
-//                            "missingGenotypes": 0,
-//                            "refAlleleFreq": -1,
-//                            "altAlleleFreq": -1,
-//                            "genotypesFreq": { },
-//                            "maf": 0.5,
-//                            "mgf": 1,
-//                            "mafAllele": "T",
-//                            "mgfGenotype": "0|1",
-//                            "pedigreeStatsAvailable": false,
-//                            "mendelianErrors": -1,
-//                            "casesPercentDominant": -1,
-//                            "controlsPercentDominant": -1,
-//                            "casesPercentRecessive": -1,
-//                            "controlsPercentRecessive": -1,
-//                            "transitionsCount": -1,
-//                            "transversionsCount": -1,
-//                            "quality": 0,
-//                            "numSamples": 0
-//                        },
-//                        "attributes": {
-//                            "QUAL": "100.0",
-//                            "FILTER": "PASS"
-//                        }
-//                    }
-//                },
-//                "effect": [ ]
-//            }
-//
-//        ];
-        var EXAMPLE_DATA = [];
-        $.ajax({
-            url: this.host,
-            dataType: 'json',
-            async: false,
-            success: function (response, textStatus, jqXHR) {
-                if (response != undefined && response.response.numResults > 0) {
-                    for (var i = 0; i < response.response.result.length; i++) {
-                        var elem = response.response.result[i];
-                        EXAMPLE_DATA.push(elem);
-                    }
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log('Error loading Phenotypes');
-            }
-        });
-        this.variantWidget.variantBrowserGrid.load(EXAMPLE_DATA);
+
+        this.select('Genome Browser');
 //        this.panel.render(this.div);
     },
     select: function (option) {
@@ -310,7 +217,6 @@ Eva.prototype = {
 
 
                     var url = EvaManager.url({
-                        //host: 'http://172.22.70.2:8080/eva/webservices/rest',
                         //host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                         host: 'http://ves-ebi-f8:8080/eva/webservices/rest',
                         category: 'segments',
@@ -327,7 +233,7 @@ Eva.prototype = {
     _createFormPanelGenomeFilter: function (target) {
         var positionFilter = new PositionFilterFormPanel();
         var studyFilter = new StudyFilterFormPanel({
-            urlStudies: "http://www.ebi.ac.uk/eva/webservices/rest/v1/studies/list"
+            urlStudies: "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/list"
         });
 
         var conseqType = new ConsequenceTypeFilterFormPanel();
@@ -498,35 +404,35 @@ Eva.prototype = {
         });
 
 
-//        var eva = new FeatureTrack({
-//            targetId: null,
-//            id: 4,
-//            title: 'Eva',
-//            featureType: 'variant',
-//            minHistogramRegionSize: 10000,
-//            maxLabelRegionSize: 3000,
-//            height: 100,
-//
-//            renderer: new FeatureRenderer(FEATURE_TYPES.undefined),
-//
-//            dataAdapter: new EvaAdapter({
-//                host: 'http://www.ebi.ac.uk/eva/webservices/rest',
-//                version: 'v1',
-//                category: "segments",
-//                resource: "variants",
-//                params: {
-////                    exclude: ''
-//                },
-//                cacheConfig: {
-//                    chunkSize: 10000
-//                }
-//            })
-//        });
+        var eva = new FeatureTrack({
+            targetId: null,
+            id: 4,
+            title: 'Eva',
+            featureType: 'variant',
+            minHistogramRegionSize: 10000,
+            maxLabelRegionSize: 3000,
+            height: 100,
+
+            renderer: new FeatureRenderer(FEATURE_TYPES.undefined),
+
+            dataAdapter: new EvaAdapter({
+                host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                version: 'v1',
+                category: "segments",
+                resource: "variants",
+                params: {
+//                    exclude: ''
+                },
+                cacheConfig: {
+                    chunkSize: 10000
+                }
+            })
+        });
 
         genomeViewer.addOverviewTrack(geneOverview);
-        genomeViewer.addTrack([sequence, gene, snp]);
+//        genomeViewer.addTrack([sequence, gene, snp]);
 
-//        genomeViewer.addTrack(eva);
+        genomeViewer.addTrack(eva);
 
         return genomeViewer;
     }

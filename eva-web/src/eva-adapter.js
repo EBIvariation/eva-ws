@@ -148,7 +148,10 @@ EvaAdapter.prototype = {
         for (var i = 0; i < data.response.length; i++) {
             var queryResult = data.response[i];
 
-            var region = new Region(queryResult.id);
+            var queryId = data.query[i];//temporal
+
+//            var region = new Region(queryResult.id);
+            var region = new Region(queryId);
             var features = queryResult.result;
             var chunk = this.cache[dataType].putByRegion(region, features);
             chunks.push(chunk);
@@ -178,9 +181,12 @@ EvaAdapter.prototype = {
         var chunks = [];
         for (var i = 0; i < data.response.length; i++) {
             var queryResult = data.response[i];
+            var queryId = data.query[i];//temporal
+
             for (var j = 0; j < queryResult.result.length; j++) {
                 var interval = queryResult.result[j];
-                var region = new Region(queryResult.id);
+                var region = new Region(queryId);
+//                var region = new Region(queryResult.id);
                 region.load(interval);
                 chunks.push(this.cache[histogramId].putByRegion(region, interval));
             }
