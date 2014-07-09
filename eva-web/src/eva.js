@@ -34,6 +34,13 @@ Eva.prototype = {
         this.targetMenuUl = (this.targetMenu instanceof HTMLElement ) ? this.targetMenu : document.querySelector('#' + this.targetMenu);
         this.evaMenu = this._createEvaMenu(this.targetMenuUl);
 
+        /* File Browser Panel*/
+        this.variantFileBrowserDiv = document.createElement('div')
+        $(this.variantFileBrowserDiv).addClass('eva-child variant-file-browser-div');
+        this.div.appendChild(this.variantFileBrowserDiv);
+        this.childDivMenuMap['File Browser'] = this.variantFileBrowserDiv;
+        this.variantFileBrowser = this._createVariantFileBrowser(this.variantFileBrowserDiv);
+
         /* variant browser option*/
         this.variantBrowserOptionDiv = document.createElement('div');
         $(this.variantBrowserOptionDiv).addClass('eva-child variant-browser-option-div');
@@ -53,6 +60,7 @@ Eva.prototype = {
         this.variantWidget = this._createVariantWidget(this.variantWidgetDiv);
 
 
+
         /* genome browser option*/
         this.genomeBrowserOptionDiv = document.createElement('div');
         $(this.genomeBrowserOptionDiv).addClass('eva-child genome-browser-option-div');
@@ -70,6 +78,8 @@ Eva.prototype = {
         this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
         this.genomeViewer.leftSidebarDiv.appendChild(this.formPanelGenomeFilterDiv);
 
+
+
 //        this.panel = this._createPanel();
     },
     draw: function () {
@@ -82,11 +92,12 @@ Eva.prototype = {
 
         this.evaMenu.draw();
         this.variantWidget.draw();
+        this.variantFileBrowser.draw();
         this.formPanelVariantFilter.draw();
         this.genomeViewer.draw();
         this.formPanelGenomeFilter.draw();
 
-        this.select('Variant Browser');
+        this.select('File Browser');
 //        this.panel.render(this.div);
     },
     select: function (option) {
@@ -133,13 +144,24 @@ Eva.prototype = {
                         variant.hgvs_name = variant.hgvs.genomic[0];
                     }
                 }
-
-                console.log("DATA");
-                console.log(data);
             }
         }); //the div must exist
 
         return variantWidget;
+    },
+    _createVariantFileBrowser: function(target){
+        var _this = this;
+        var studiesInfo = this._getStudiesInfo();
+
+        var variantFileBrowser = new VariantFileBrowserPanel({
+            target: target,
+            title: 'File Browser',
+            width: 1300,
+            studies: studiesInfo
+
+        });
+
+        return variantFileBrowser;
     },
     _createFormPanelVariantFilter: function (target) {
         var _this = this;
@@ -171,7 +193,7 @@ Eva.prototype = {
                             e.values.studies = e.values.studies.join(",");
                         }
                     }
-                    
+
                     if (e.values.ct !== undefined) {
                         if (e.values.ct instanceof Array) {
                             e.values.ct = e.values.ct.join(",");
@@ -440,5 +462,71 @@ Eva.prototype = {
         genomeViewer.addTrack(eva);
 
         return genomeViewer;
+    },
+    _getStudiesInfo: function(){
+        var _this = this;
+        var studyNames = [];
+        var studies = [];
+
+        $.ajax({
+                url: "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/list",
+                dataType: 'json',
+                async: false,
+                success: function (response, textStatus, jqXHR) {
+                    var data = (response !== undefined && response.response.length > 0 && response.response[0].numResults > 0)? response.response[0].result : [];
+
+                    for (var i = 0; i < data.length; i++) {
+                        var study = data[i];
+                        //studies.push(study);
+                        studyNames.push(study.studyId);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log('Error loading studies');
+                }
+            });
+
+
+            for (var i = 0, l = studyNames.length; i < l; i ++) {
+                var study = studyNames[i];
+
+                var url =  "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/" + study + "/files"
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    async: false,
+                    success: function (response, textStatus, jqXHR) {
+                        var data = (response !== undefined && response.response.length > 0 && response.response[0].numResults > 0)? response.response[0].result : [];
+
+                        for (var i = 0; i < data.length; i++) {
+                            var study = data[i];
+                            _this._addFileToStudy(studies, study);
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.log('Error loading final studies');
+                    }
+                });
+            }
+
+            return studies;
+    },
+    _addFileToStudy: function(studies, file){
+        var b = false;
+        for (var i = 0, l = studies.length; i < l && !b; i ++) {
+            var study= studies[i];
+
+            if(study.studyId == file.studyId){
+                study.files.push(file);
+                b = true;
+            }
+        }
+
+        if(!b){
+            studies.push({
+                studyId: file.studyId,
+                files: [file]
+            })
+        }
     }
 }
