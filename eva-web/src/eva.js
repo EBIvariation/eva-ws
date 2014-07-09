@@ -86,7 +86,7 @@ Eva.prototype = {
         this.genomeViewer.draw();
         this.formPanelGenomeFilter.draw();
 
-        this.select('Genome Browser');
+        this.select('Variant Browser');
 //        this.panel.render(this.div);
     },
     select: function (option) {
@@ -155,7 +155,7 @@ Eva.prototype = {
             title: 'Filter',
             filters: [positionFilter, studyFilter, conseqType],
             width: 300,
-            height: 1000,
+            height: 1043,
             handlers: {
                 'submit': function (e) {
                     console.log(e.values);
@@ -169,6 +169,12 @@ Eva.prototype = {
                     if (e.values.studies !== undefined) {
                         if (e.values.studies instanceof Array) {
                             e.values.studies = e.values.studies.join(",");
+                        }
+                    }
+                    
+                    if (e.values.ct !== undefined) {
+                        if (e.values.ct instanceof Array) {
+                            e.values.ct = e.values.ct.join(",");
                         }
                     }
 
@@ -217,8 +223,7 @@ Eva.prototype = {
 
 
                     var url = EvaManager.url({
-                        //host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-                        host: 'http://ves-ebi-f8:8080/eva/webservices/rest',
+                        host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                         category: 'segments',
                         resource: 'variants',
                         query: regions
