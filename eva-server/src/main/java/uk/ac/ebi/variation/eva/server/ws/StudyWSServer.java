@@ -2,6 +2,9 @@ package uk.ac.ebi.variation.eva.server.ws;
 
 import com.mongodb.BasicDBObject;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -20,6 +23,7 @@ import org.opencb.opencga.storage.variant.VariantSourceDBAdaptor;
 import org.opencb.opencga.storage.variant.mongodb.DBObjectToVariantSourceConverter;
 import org.opencb.opencga.storage.variant.mongodb.StudyMongoDBAdaptor;
 import org.opencb.opencga.storage.variant.mongodb.VariantSourceMongoDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
 
 /**
  *
@@ -29,7 +33,8 @@ import org.opencb.opencga.storage.variant.mongodb.VariantSourceMongoDBAdaptor;
 @Produces(MediaType.APPLICATION_JSON)
 public class StudyWSServer extends EvaWSServer {
     
-    private StudyDBAdaptor studyDbAdaptor;
+    private StudyDBAdaptor studyEvaproDbAdaptor;
+    private StudyDBAdaptor studyMongoDbAdaptor;
     private VariantSourceDBAdaptor variantSourceDbAdaptor;
     private MongoCredentials credentials;
 
@@ -40,24 +45,26 @@ public class StudyWSServer extends EvaWSServer {
     public StudyWSServer(@DefaultValue("") @PathParam("version") String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException {
         super(version, uriInfo, hsr);
         try {
+            studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
             credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
-            studyDbAdaptor = new StudyMongoDBAdaptor(credentials);
+            studyMongoDbAdaptor = new StudyMongoDBAdaptor(credentials);
             variantSourceDbAdaptor = new VariantSourceMongoDBAdaptor(credentials);
-        } catch (IllegalOpenCGACredentialsException e) {
-            e.printStackTrace();
+        } catch (IllegalOpenCGACredentialsException | NamingException ex) {
+            Logger.getLogger(StudyWSServer.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
     }
 
     @GET
     @Path("/list")
     public Response getStudies() {
-        return createOkResponse(studyDbAdaptor.listStudies());
+        return createOkResponse(studyMongoDbAdaptor.listStudies());
     }
     
     @GET
     @Path("/{study}/files")
     public Response getFilesByStudy(@PathParam("study") String study) {
-        QueryResult idQueryResult = studyDbAdaptor.findStudyNameOrStudyId(study, queryOptions);
+        QueryResult idQueryResult = studyMongoDbAdaptor.findStudyNameOrStudyId(study, queryOptions);
         if (idQueryResult.getNumResults() == 0) {
             QueryResult queryResult = new QueryResult();
             queryResult.setErrorMsg("Study identifier not found");
@@ -73,7 +80,7 @@ public class StudyWSServer extends EvaWSServer {
     @GET
     @Path("/{study}/view")
     public Response getStudy(@PathParam("study") String study) {
-        QueryResult idQueryResult = studyDbAdaptor.findStudyNameOrStudyId(study, queryOptions);
+        QueryResult idQueryResult = studyMongoDbAdaptor.findStudyNameOrStudyId(study, queryOptions);
         if (idQueryResult.getNumResults() == 0) {
             QueryResult queryResult = new QueryResult();
             queryResult.setErrorMsg("Study identifier not found");
@@ -81,8 +88,14 @@ public class StudyWSServer extends EvaWSServer {
         }
         
         BasicDBObject id = (BasicDBObject) idQueryResult.getResult().get(0);
-        QueryResult finalResult = studyDbAdaptor.getStudyById(id.getString(DBObjectToVariantSourceConverter.STUDYID_FIELD), queryOptions);
+        QueryResult finalResult = studyMongoDbAdaptor.getStudyById(id.getString(DBObjectToVariantSourceConverter.STUDYID_FIELD), queryOptions);
         finalResult.setDbTime(finalResult.getDbTime() + idQueryResult.getDbTime());
         return createOkResponse(finalResult);
+    }
+    
+    @GET
+    @Path("/{study}/summary")
+    public Response getStudySummary(@PathParam("study") String study) {
+        return createOkResponse(studyEvaproDbAdaptor.getStudyById(study, queryOptions));
     }
 }
