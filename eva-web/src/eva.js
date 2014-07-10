@@ -95,6 +95,11 @@ Eva.prototype = {
         this.variantWidget.draw();
         this.variantFileBrowser.draw();
         this.variantStudyBrowser.draw();
+
+        var projects = this._getProjectsInfo();
+        console.log(projects);
+        this.variantStudyBrowser.load(projects);
+
         this.formPanelVariantFilter.draw();
         this.genomeViewer.draw();
         this.formPanelGenomeFilter.draw();
@@ -159,7 +164,6 @@ Eva.prototype = {
             title: 'Study Browser',
             width: 1300
         });
-        //this._getStudiesInfo();
         return variantStudyBrowser;
     },
     _createVariantFileBrowser: function(target){
@@ -506,5 +510,46 @@ Eva.prototype = {
                 files: [file]
             })
         }
+    },
+    _getProjectsInfo: function(){
+    
+        var res = [];
+        var projects = [
+            {projectId: "PRJEB4019", alias: "1000g"    , title: "1000 Genomes"},
+            {projectId: "PRJEB5439", alias: "evs"      , title: "Exome Variant Server NHLBI Exome Sequencing Project"},
+            {projectId: "PRJEB5829", alias: "gonl"     , title: "Genome of the Netherlands (GoNL) Release 5"},
+            {projectId: "PRJEB6040", alias: "uk10k"    , title: "UK10K"},
+            {projectId: "PRJEB6042", alias: "geuvadis" , title: "GEUVADIS: Genetic European Variation in Disease"}
+        ];
+
+        debugger
+        for (var i = 0, l = projects.length; i < l; i ++) {
+            var p = projects[i];
+            var url = "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/" + p.projectId + "/summary"
+
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                async: false,
+                success: function (response, textStatus, jqXHR) {
+                    console.log("ASDLKFJASLDKFJAKLSDJFLKAJSDFKLAJSDFKLJASLKDFJAKLSDJFLKASDFJAKSDJFKAJSDFJASDKFJAKSDFJJDSF");
+
+                    var data = (response !== undefined && response.response.length > 0 )? response.response[0].result : [];
+
+                    for (var i = 0; i < data.length; i++) {
+                        var proj = data[i];
+                        res.push(proj);
+                    }
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log('Error loading studies');
+                }
+            });
+        }
+        debugger
+
+        return res;
+    
     }
 }
