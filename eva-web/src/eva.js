@@ -63,12 +63,18 @@ Eva.prototype = {
         this.childDivMenuMap['File Browser'] = this.variantFileBrowserDiv;
         this.variantFileBrowser = this._createVariantFileBrowser(this.variantFileBrowserDiv);
 
+        /* Style Browser Panel*/
+        this.variantStudyBrowserDiv = document.createElement('div')
+        $(this.variantStudyBrowserDiv).addClass('eva-child variant-study-browser-div');
+        this.div.appendChild(this.variantStudyBrowserDiv);
+        this.childDivMenuMap['Study Browser'] = this.variantStudyBrowserDiv;
+        this.variantStudyBrowser = this._createVariantStudyBrowser(this.variantStudyBrowserDiv);
+
         /* variant browser option*/
         this.variantBrowserOptionDiv = document.createElement('div');
         $(this.variantBrowserOptionDiv).addClass('eva-child variant-browser-option-div');
         this.div.appendChild(this.variantBrowserOptionDiv);
         this.childDivMenuMap['Variant Browser'] = this.variantBrowserOptionDiv;
-
 
         this.formPanelVariantFilterDiv = document.createElement('div');
         $(this.formPanelVariantFilterDiv).addClass('form-panel-variant-filter-div');
@@ -86,7 +92,6 @@ Eva.prototype = {
 
         this.formPanelVariantFilter = this._createFormPanelVariantFilter(this.formPanelVariantFilterDiv);
         this.variantWidget = this._createVariantWidget(this.variantWidgetDiv);
-
 
         /* genome browser option*/
         this.genomeBrowserOptionDiv = document.createElement('div');
@@ -117,8 +122,6 @@ Eva.prototype = {
 
 
 //        this.genomeViewer.leftSidebarDiv.appendChild(this.formPanelGenomeFilterDiv);
-
-
 //        this.panel = this._createPanel();
     },
     draw: function () {
@@ -132,6 +135,12 @@ Eva.prototype = {
         this.evaMenu.draw();
         this.variantWidget.draw();
         this.variantFileBrowser.draw();
+        this.variantStudyBrowser.draw();
+
+        var projects = this._getProjectsInfo();
+        console.log(projects);
+        this.variantStudyBrowser.load(projects);
+
         this.formPanelVariantFilter.draw();
         this.genomeViewer.draw();
         this.formPanelGenomeFilter.draw();
@@ -188,7 +197,17 @@ Eva.prototype = {
 
         return variantWidget;
     },
-    _createVariantFileBrowser: function (target) {
+    _createVariantStudyBrowser: function(target){
+        var _this = this;
+
+        var variantStudyBrowser = new VariantStudyBrowserPanel({
+            target: target,
+            title: 'Study Browser',
+            width: 1300
+        });
+        return variantStudyBrowser;
+    },
+    _createVariantFileBrowser: function(target){
         var _this = this;
 
         var variantFileBrowser = new VariantFileBrowserPanel({
@@ -570,26 +589,6 @@ Eva.prototype = {
         });
 
 
-//            for (var i = 0, l = studyNames.length; i < l; i ++) {
-//                var study = studyNames[i];
-//
-//                var url =  "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/" + study + "/files"
-//                $.ajax({
-//                    url: url,
-//                    dataType: 'json',
-//                    success: function (response, textStatus, jqXHR) {
-//                        var data = (response !== undefined && response.response.length > 0 && response.response[0].numResults > 0)? response.response[0].result : [];
-//
-//                        for (var i = 0; i < data.length; i++) {
-//                            var study = data[i];
-//                            _this._addFileToStudy(studies, study);
-//                        }
-//                    },
-//                    error: function (jqXHR, textStatus, errorThrown) {
-//                        console.log('Error loading final studies');
-//                    }
-//                });
-//            }
     },
     _addFileToStudy: function (studies, file) {
         var b = false;
@@ -608,5 +607,42 @@ Eva.prototype = {
                 files: [file]
             })
         }
+    },
+    _getProjectsInfo: function(){
+
+        var res = [];
+        var projects = [
+            {projectId: "PRJEB4019", alias: "1000g"    , title: "1000 Genomes"},
+            {projectId: "PRJEB5439", alias: "evs"      , title: "Exome Variant Server NHLBI Exome Sequencing Project"},
+            {projectId: "PRJEB5829", alias: "gonl"     , title: "Genome of the Netherlands (GoNL) Release 5"},
+            {projectId: "PRJEB6040", alias: "uk10k"    , title: "UK10K"},
+            {projectId: "PRJEB6042", alias: "geuvadis" , title: "GEUVADIS: Genetic European Variation in Disease"}
+        ];
+
+        for (var i = 0, l = projects.length; i < l; i ++) {
+            var p = projects[i];
+            var url = "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/" + p.projectId + "/summary"
+
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                async: false,
+                success: function (response, textStatus, jqXHR) {
+                    var data = (response !== undefined && response.response.length > 0 )? response.response[0].result : [];
+
+                    for (var i = 0; i < data.length; i++) {
+                        var proj = data[i];
+                        res.push(proj);
+                    }
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log('Error loading studies');
+                }
+            });
+        }
+
+        return res;
+
     }
 }
