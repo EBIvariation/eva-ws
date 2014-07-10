@@ -54,10 +54,11 @@ body.eva {
 }
 
 .eva .form-panel-genome-filter-div {
-    width: 300px;
+    width: 1318px;
     position: relative;
     border: 1px solid #d3d3d3;
-    border-left-width: 0px;
+    /*border-left-width: 0px;*/
+    margin-bottom: 10px;
 }
 
 .eva .genome-viewer-div {
@@ -66,16 +67,32 @@ body.eva {
     float: left;
     border: 1px solid #d3d3d3;
 }
-
-.ocb-variant-tab-panel-title{
-    margin-top:20px;
+.eva .genome-viewer-title-div{
+    margin:15px 0 10px 0;
+}
+.eva .tracks-title-div{
+    margin:15px 0 10px 0;
 }
 
+.ocb-variant-tab-panel-title {
+    margin-top: 20px;
+}
+
+.eva .form-panel-variant-filter-title-div {
+    margin: 0 0 10px 0;
+}
 
 .no-icon {
     display: none;
 }
 
+.eva-underline {
+    text-decoration: underline;
+}
+
+.eva-pointer {
+    cursor: pointer;
+}
 
 .eva-header-5 {
     text-decoration: underline;
@@ -99,40 +116,45 @@ body.eva {
     border: 1px solid #d3d3d3;
 }
 
-.eva-attributes-table tr{
+.eva-attributes-table tr {
     border-collapse: collapse;
     border: 1px solid #d3d3d3;
 }
-.eva-attributes-table td{
+
+.eva-attributes-table td {
     border-collapse: collapse;
     border: 1px solid #d3d3d3;
     padding: 5px;
     max-width: 200px;
     overflow: hidden;
 }
-.eva-attributes-table td.header{
+
+.eva-attributes-table td.header {
     border-collapse: collapse;
     border: 1px solid #d3d3d3;
     padding: 5px;
     background-color: whiteSmoke;
-    color:steelblue;
-    font-weight:bold;
+    color: steelblue;
+    font-weight: bold;
 }
 
 .eva-stats-table {
     cellspacing: 0;
     border-collapse: collapse;
 }
-.eva-stats-table tr{
+
+.eva-stats-table tr {
     border-collapse: collapse;
 }
-.eva-stats-table td{
+
+.eva-stats-table td {
     border-collapse: collapse;
     padding: 5px;
 }
-.eva-stats-table td.header{
+
+.eva-stats-table td.header {
     border-collapse: collapse;
     padding: 5px;
-    color:steelblue;
+    color: steelblue;
     /*font-weight:bold;*/
 }
