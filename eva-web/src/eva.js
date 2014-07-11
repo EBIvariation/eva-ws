@@ -1,4 +1,3 @@
-//TEMPLATE Eva
 function Eva(args) {
     _.extend(this, Backbone.Events);
 
@@ -54,14 +53,6 @@ Eva.prototype = {
         this.contactDiv = document.querySelector('#contact');
         $(this.contactDiv).addClass('eva-child');
         this.childDivMenuMap['Contact'] = this.contactDiv;
-
-
-//        /* File Browser Panel*/
-//        this.variantFileBrowserDiv = document.createElement('div')
-//        $(this.variantFileBrowserDiv).addClass('eva-child variant-file-browser-div');
-//        this.div.appendChild(this.variantFileBrowserDiv);
-//        this.childDivMenuMap['File Browser'] = this.variantFileBrowserDiv;
-//        this.variantFileBrowser = this._createVariantFileBrowser(this.variantFileBrowserDiv);
 
         /* Study Browser Panel*/
         this.variantStudyBrowserDiv = document.createElement('div')
@@ -134,12 +125,7 @@ Eva.prototype = {
 
         this.evaMenu.draw();
         this.variantWidget.draw();
-//        this.variantFileBrowser.draw();
         this.variantStudyBrowser.draw();
-
-//        var projects = this._getProjectsInfo();
-//        console.log(projects);
-//        this.variantStudyBrowser.load(projects);
 
         this.formPanelVariantFilter.draw();
         this.genomeViewer.draw();
@@ -173,6 +159,73 @@ Eva.prototype = {
     _createVariantWidget: function (target) {
 //        var width = this.width - parseInt(this.div.style.paddingLeft) - parseInt(this.div.style.paddingRight);
 
+        var columns = [
+            {
+                text: "SNP Id",
+                dataIndex: 'id'
+            },
+            {
+                text: "Chromosome",
+                dataIndex: 'chromosome'
+            },
+            {
+                text: 'Position',
+                dataIndex: 'start'
+            },
+            //{
+            //text: 'End',
+            //dataIndex: 'end'
+            //},
+            {
+                text: 'Aleles',
+                xtype: "templatecolumn",
+                tpl: "{reference}>{alternate}"
+            },
+            {
+                text: 'Class',
+                dataIndex: 'type'
+            },
+            {
+                text: '1000G MAF',
+                dataIndex: ''
+            },
+            {
+                text: 'Consequence Type',
+                dataIndex: 'ct'
+            },
+            {
+                text: 'Gene',
+                dataIndex: 'gene'
+            },
+            {
+                text: 'HGVS Names',
+                dataIndex: 'hgvs_name'
+            },
+            {
+                text: 'View',
+                //dataIndex: 'id',
+                xtype: 'templatecolumn',
+                tpl: '<tpl if="id"><a href="?variantID={id}" target="_blank"><img class="eva-grid-img" src="img/eva_logo.png"/></a>&nbsp;' +
+                    '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
+                    '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>' +
+                    '<tpl else><a href="?variantID={chromosome}:{start}:{ref}:{alt}" target="_blank"><img class="eva-grid-img" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="in-active" src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="in-active">dbSNP</span></tpl>'
+            }
+
+            //
+        ];
+
+        var attributes = [
+            {name: 'id', type: 'string'},
+            {name: "chromosome", type: "string"},
+            {name: "start", type: "int"},
+            {name: "end", type: "int"},
+            {name: "type", type: "string"},
+            {name: "ref", type: "string"},
+            {name: "alt", type: "string"},
+            {name: 'hgvs_name', type: 'string'},
+        ];
+
+
         var variantWidget = new VariantWidget({
             width: 1020,
             target: target,
@@ -180,6 +233,8 @@ Eva.prototype = {
 //            data: EXAMPLE_DATA,
             filters: {},
             defaultToolConfig: {},
+            columns: columns,
+            attributes: attributes,
             tools: [],
             dataParser: function (data) {
                 for (var i = 0; i < data.length; i++) {
@@ -197,17 +252,25 @@ Eva.prototype = {
 
         return variantWidget;
     },
-    _createVariantStudyBrowser: function(target){
+    _createVariantStudyBrowser: function (target) {
         var _this = this;
 
         var variantStudyBrowser = new VariantStudyBrowserPanel({
             target: target,
             title: 'Study Browser',
-            width: 1300
+            width: 1300,
+            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest/',
+            studies: [
+                {projectId: "PRJEB4019", alias: "1000g", title: "1000 Genomes"},
+                {projectId: "PRJEB5439", alias: "evs", title: "Exome Variant Server NHLBI Exome Sequencing Project"},
+                {projectId: "PRJEB5829", alias: "gonl", title: "Genome of the Netherlands (GoNL) Release 5"},
+                {projectId: "PRJEB6040", alias: "uk10k", title: "UK10K"},
+                {projectId: "PRJEB6042", alias: "geuvadis", title: "GEUVADIS Genetic European Variation in Disease"}
+            ]
         });
         return variantStudyBrowser;
     },
-    _createVariantFileBrowser: function(target){
+    _createVariantFileBrowser: function (target) {
         var _this = this;
 
         var variantFileBrowser = new VariantFileBrowserPanel({
@@ -231,6 +294,7 @@ Eva.prototype = {
 
         var formPanel = new FormPanel({
             target: target,
+            submitButtonText: 'Submit',
             filters: [positionFilter, studyFilter, conseqType],
             width: 300,
 //            height: 1043,
@@ -322,7 +386,7 @@ Eva.prototype = {
         });
 
         var conseqType = new ConsequenceTypeFilterFormPanel({
-            height:250
+            height: 250
         });
 
         var trackNameField = Ext.create('Ext.form.field.Text', {
@@ -338,8 +402,8 @@ Eva.prototype = {
             target: target,
             filters: [studyFilter, conseqType],
             width: 1318,
-            mode:'tabs',
-            toolbarPosition:'bottom',
+            mode: 'tabs',
+            toolbarPosition: 'bottom',
             barItems: [
                 trackNameField
             ],
@@ -348,6 +412,7 @@ Eva.prototype = {
                     var title = trackNameField.getValue();
                     if (title !== '') {
                         _this._addGenomeBrowserTrack(title, e.values);
+                        trackNameField.setValue('');
                     }
                 }
             }
@@ -614,15 +679,15 @@ Eva.prototype = {
             })
         }
     },
-    _getProjectsInfo: function(){
+    _getProjectsInfo: function () {
 
         var res = [];
         var projects = [
-            {projectId: "PRJEB4019", alias: "1000g"    , title: "1000 Genomes"},
-            {projectId: "PRJEB5439", alias: "evs"      , title: "Exome Variant Server NHLBI Exome Sequencing Project"},
-            {projectId: "PRJEB5829", alias: "gonl"     , title: "Genome of the Netherlands (GoNL) Release 5"},
-            {projectId: "PRJEB6040", alias: "uk10k"    , title: "UK10K"},
-            {projectId: "PRJEB6042", alias: "geuvadis" , title: "GEUVADIS Genetic European Variation in Disease"}
+            {projectId: "PRJEB4019", alias: "1000g", title: "1000 Genomes"},
+            {projectId: "PRJEB5439", alias: "evs", title: "Exome Variant Server NHLBI Exome Sequencing Project"},
+            {projectId: "PRJEB5829", alias: "gonl", title: "Genome of the Netherlands (GoNL) Release 5"},
+            {projectId: "PRJEB6040", alias: "uk10k", title: "UK10K"},
+            {projectId: "PRJEB6042", alias: "geuvadis", title: "GEUVADIS Genetic European Variation in Disease"}
         ];
 
 //        for (var i = 0, l = projects.length; i < l; i ++) {
