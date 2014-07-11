@@ -56,14 +56,14 @@ Eva.prototype = {
         this.childDivMenuMap['Contact'] = this.contactDiv;
 
 
-        /* File Browser Panel*/
-        this.variantFileBrowserDiv = document.createElement('div')
-        $(this.variantFileBrowserDiv).addClass('eva-child variant-file-browser-div');
-        this.div.appendChild(this.variantFileBrowserDiv);
-        this.childDivMenuMap['File Browser'] = this.variantFileBrowserDiv;
-        this.variantFileBrowser = this._createVariantFileBrowser(this.variantFileBrowserDiv);
+//        /* File Browser Panel*/
+//        this.variantFileBrowserDiv = document.createElement('div')
+//        $(this.variantFileBrowserDiv).addClass('eva-child variant-file-browser-div');
+//        this.div.appendChild(this.variantFileBrowserDiv);
+//        this.childDivMenuMap['File Browser'] = this.variantFileBrowserDiv;
+//        this.variantFileBrowser = this._createVariantFileBrowser(this.variantFileBrowserDiv);
 
-        /* Style Browser Panel*/
+        /* Study Browser Panel*/
         this.variantStudyBrowserDiv = document.createElement('div')
         $(this.variantStudyBrowserDiv).addClass('eva-child variant-study-browser-div');
         this.div.appendChild(this.variantStudyBrowserDiv);
@@ -102,7 +102,7 @@ Eva.prototype = {
         this.tracksTitleDiv = document.createElement('div');
         $(this.tracksTitleDiv).addClass('tracks-title-div eva-header-3');
         this.genomeBrowserOptionDiv.appendChild(this.tracksTitleDiv);
-        this.tracksTitleDiv.innerHTML = 'Tracks';
+        this.tracksTitleDiv.innerHTML = 'Add tracks';
 
         this.formPanelGenomeFilterDiv = document.createElement('div');
         $(this.formPanelGenomeFilterDiv).addClass('form-panel-genome-filter-div');
@@ -111,7 +111,7 @@ Eva.prototype = {
         this.genomeViewerTitleDiv = document.createElement('div');
         $(this.genomeViewerTitleDiv).addClass('genome-viewer-title-div eva-header-3');
         this.genomeBrowserOptionDiv.appendChild(this.genomeViewerTitleDiv);
-        this.genomeViewerTitleDiv.innerHTML = 'Browser';
+        this.genomeViewerTitleDiv.innerHTML = 'Genome browser';
 
         this.genomeViewerDiv = document.createElement('div');
         $(this.genomeViewerDiv).addClass('genome-viewer-div');
@@ -134,18 +134,18 @@ Eva.prototype = {
 
         this.evaMenu.draw();
         this.variantWidget.draw();
-        this.variantFileBrowser.draw();
+//        this.variantFileBrowser.draw();
         this.variantStudyBrowser.draw();
 
-        var projects = this._getProjectsInfo();
-        console.log(projects);
-        this.variantStudyBrowser.load(projects);
+//        var projects = this._getProjectsInfo();
+//        console.log(projects);
+//        this.variantStudyBrowser.load(projects);
 
         this.formPanelVariantFilter.draw();
         this.genomeViewer.draw();
         this.formPanelGenomeFilter.draw();
 
-        this.select('Genome Browser');
+        this.select('Study Browser');
 //        this.panel.render(this.div);
     },
     select: function (option) {
@@ -225,7 +225,9 @@ Eva.prototype = {
             urlStudies: "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/list"
         });
 
-        var conseqType = new ConsequenceTypeFilterFormPanel();
+        var conseqType = new ConsequenceTypeFilterFormPanel({
+
+        });
 
         var formPanel = new FormPanel({
             target: target,
@@ -319,21 +321,25 @@ Eva.prototype = {
             urlStudies: "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/list"
         });
 
-        var conseqType = new ConsequenceTypeFilterFormPanel();
+        var conseqType = new ConsequenceTypeFilterFormPanel({
+            height:250
+        });
 
         var trackNameField = Ext.create('Ext.form.field.Text', {
             xtype: 'textfield',
             emptyText: 'Track name'
         });
         var formPanel = new FormPanel({
-            title: 'Add tracks to browser',
+//            title: 'Add tracks to browser',
             border: false,
             submitButtonText: 'Add track',
-            collapsible: true,
-            titleCollapse: true,
+            collapsible: false,
+            titleCollapse: false,
             target: target,
             filters: [studyFilter, conseqType],
             width: 1318,
+            mode:'tabs',
+            toolbarPosition:'bottom',
             barItems: [
                 trackNameField
             ],
@@ -616,33 +622,33 @@ Eva.prototype = {
             {projectId: "PRJEB5439", alias: "evs"      , title: "Exome Variant Server NHLBI Exome Sequencing Project"},
             {projectId: "PRJEB5829", alias: "gonl"     , title: "Genome of the Netherlands (GoNL) Release 5"},
             {projectId: "PRJEB6040", alias: "uk10k"    , title: "UK10K"},
-            {projectId: "PRJEB6042", alias: "geuvadis" , title: "GEUVADIS: Genetic European Variation in Disease"}
+            {projectId: "PRJEB6042", alias: "geuvadis" , title: "GEUVADIS Genetic European Variation in Disease"}
         ];
 
-        for (var i = 0, l = projects.length; i < l; i ++) {
-            var p = projects[i];
-            var url = "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/" + p.projectId + "/summary"
+//        for (var i = 0, l = projects.length; i < l; i ++) {
+//            var p = projects[i];
+//            var url = "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/" + p.projectId + "/summary"
+//
+//            $.ajax({
+//                url: url,
+//                dataType: 'json',
+//                async: false,
+//                success: function (response, textStatus, jqXHR) {
+//                    var data = (response !== undefined && response.response.length > 0 )? response.response[0].result : [];
+//
+//                    for (var i = 0; i < data.length; i++) {
+//                        var proj = data[i];
+//                        res.push(proj);
+//                    }
+//
+//                },
+//                error: function (jqXHR, textStatus, errorThrown) {
+//                    console.log('Error loading studies');
+//                }
+//            });
+//        }
 
-            $.ajax({
-                url: url,
-                dataType: 'json',
-                async: false,
-                success: function (response, textStatus, jqXHR) {
-                    var data = (response !== undefined && response.response.length > 0 )? response.response[0].result : [];
-
-                    for (var i = 0; i < data.length; i++) {
-                        var proj = data[i];
-                        res.push(proj);
-                    }
-
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log('Error loading studies');
-                }
-            });
-        }
-
-        return res;
+        return projects;
 
     }
 }
