@@ -76,8 +76,7 @@ body.eva {
 .eva .form-panel-genome-filter-div {
     width: 1318px;
     position: relative;
-    border: 1px solid #d3d3d3;
-    /*border-left-width: 0px;*/
+    /*border: 1px solid #d3d3d3;*/
     margin-bottom: 10px;
 }
 
@@ -117,22 +116,6 @@ body.eva {
 .eva-pointer {
     cursor: pointer;
 }
-
-.eva-header-5,.ocb-header-5 {
-    text-decoration: underline;
-    color: #426783;
-    font-size: 120%;
-}
-
-.eva-header-4, .ocb-header-4 {
-    color: #426783;
-    font-size: 140%;
-}
-
-/*.eva-header-3, .ocb-header-3 {*/
-    /*color: #BF8230;*/
-    /*font-size: 160%;*/
-/*}*/
 
 
 .eva-header-1 {

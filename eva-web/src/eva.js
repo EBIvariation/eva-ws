@@ -118,17 +118,12 @@ Eva.prototype = {
         this.div.appendChild(this.genomeBrowserOptionDiv);
         this.childDivMenuMap['Genome Browser'] = this.genomeBrowserOptionDiv;
 
-        this.tracksTitleDiv = document.createElement('div');
-        $(this.tracksTitleDiv).addClass('tracks-title-div eva-header-3');
-        this.genomeBrowserOptionDiv.appendChild(this.tracksTitleDiv);
-        this.tracksTitleDiv.innerHTML = 'Add tracks';
-
         this.formPanelGenomeFilterDiv = document.createElement('div');
         $(this.formPanelGenomeFilterDiv).addClass('form-panel-genome-filter-div');
         this.genomeBrowserOptionDiv.appendChild(this.formPanelGenomeFilterDiv);
 
         this.genomeViewerTitleDiv = document.createElement('div');
-        $(this.genomeViewerTitleDiv).addClass('genome-viewer-title-div eva-header-3');
+        $(this.genomeViewerTitleDiv).addClass('genome-viewer-title-div eva-header-1');
         this.genomeBrowserOptionDiv.appendChild(this.genomeViewerTitleDiv);
         this.genomeViewerTitleDiv.innerHTML = 'Genome browser';
 
@@ -486,11 +481,15 @@ Eva.prototype = {
 
         var trackNameField = Ext.create('Ext.form.field.Text', {
             xtype: 'textfield',
-            emptyText: 'Track name'
+            emptyText: 'Track name',
+            flex: 5
         });
         var formPanel = new FormPanel({
-//            title: 'Add tracks to browser',
+            title: 'Add tracks',
             border: false,
+            headerConfig: {
+                baseCls: 'eva-header-1'
+            },
             submitButtonText: 'Add track',
             collapsible: false,
             titleCollapse: false,
@@ -498,7 +497,6 @@ Eva.prototype = {
             filters: [studyFilter, conseqType],
             width: 1318,
             mode: 'tabs',
-            toolbarPosition: 'bottom',
             barItems: [
                 trackNameField
             ],
