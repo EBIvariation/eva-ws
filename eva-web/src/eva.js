@@ -34,6 +34,20 @@ function Eva(args) {
 
     this.childDivMenuMap = {};
 
+
+    this.studiesStore = Ext.create('Ext.data.Store', {
+        pageSize: 50,
+        proxy: {
+            type: 'memory'
+        },
+        fields: [
+            {name: 'studyName', type: 'string'},
+            {name: 'studyId', type: 'string'}
+        ],
+        autoLoad: false
+    });
+
+
     this.rendered = false;
     if (this.autoRender) {
         this.render(this.targetId);
@@ -91,12 +105,6 @@ Eva.prototype = {
         $(this.formPanelVariantFilterDiv).addClass('form-panel-variant-filter-div');
         this.variantBrowserOptionDiv.appendChild(this.formPanelVariantFilterDiv);
 
-        this.formPanelVariantFilterTitleDiv = document.createElement('div');
-        $(this.formPanelVariantFilterTitleDiv).addClass('form-panel-variant-filter-title-div eva-header-3');
-        this.formPanelVariantFilterTitleDiv.innerHTML = 'Filter';
-        this.formPanelVariantFilterDiv.appendChild(this.formPanelVariantFilterTitleDiv);
-
-
         this.variantWidgetDiv = document.createElement('div');
         $(this.variantWidgetDiv).addClass('variant-widget-div');
         this.variantBrowserOptionDiv.appendChild(this.variantWidgetDiv);
@@ -151,7 +159,10 @@ Eva.prototype = {
         this.genomeViewer.draw();
         this.formPanelGenomeFilter.draw();
 
-        this.select('Study Browser');
+        this._loadStudies();
+
+//        this.select('Study Browser');
+        this.select('Variant Browser');
 //        this.panel.render(this.div);
     },
     select: function (option) {
@@ -159,10 +170,25 @@ Eva.prototype = {
         this._selectHandler(option);
     },
     _selectHandler: function (option) {
+        var _this = this;
         $('body').find('.eva-child').each(function (index, el) {
-            $(el).css({display: 'none'});
+            _this.div.removeChild(el)
         });
-        $(this.childDivMenuMap[option]).css({display: 'inherit'});
+        this.div.appendChild(this.childDivMenuMap[option]);
+
+        switch (option) {
+            case 'Study Browser':
+                this.variantStudyBrowser.update();
+                break;
+            case 'Variant Browser':
+                this.formPanelVariantFilter.update();
+                break;
+            case 'Genome Browser':
+                this.formPanelGenomeFilter.update();
+                break;
+        }
+        this.studiesStore.clearFilter();
+
     },
     _createEvaMenu: function (target) {
         var _this = this;
@@ -242,27 +268,42 @@ Eva.prototype = {
             {name: "type", type: "string"},
             {name: "ref", type: "string"},
             {name: "alt", type: "string"},
-            {name: 'hgvs_name', type: 'string'},
+            {name: 'hgvs_name', type: 'string'}
         ];
-
 
         var variantWidget = new VariantWidget({
             width: 1020,
             target: target,
-            title: 'Variant Widget',
-//            data: EXAMPLE_DATA,
-            filters: {},
-            defaultToolConfig: {},
+            headerConfig: {
+                baseCls: 'eva-header-1'
+            },
+            border: true,
+            browserGridConfig: {
+                title: 'Variant Browser',
+                border: true
+            },
+            toolPanelConfig: {
+                title: 'Variant Data'
+            },
+            defaultToolConfig: {
+                headerConfig: {
+                    baseCls: 'eva-header-2'
+                }
+            },
             columns: columns,
             attributes: attributes,
-            tools: [],
+            responseParser: function (response) {
+                var res = [];
+                try {
+                    res = response.response[0].result;
+                } catch (e) {
+                    console.log(e);
+                }
+                return  res;
+            },
             dataParser: function (data) {
                 for (var i = 0; i < data.length; i++) {
                     var variant = data[i];
-                    variant.chromosome = variant.chr;
-                    variant.alternate = variant.alt;
-                    variant.reference = variant.ref;
-
                     if (variant.hgvs && variant.hgvs.genomic > 0) {
                         variant.hgvs_name = variant.hgvs.genomic[0];
                     }
@@ -278,70 +319,76 @@ Eva.prototype = {
         var variantStudyBrowser = new VariantStudyBrowserPanel({
             target: target,
             title: 'Study Browser',
+            headerConfig: {
+                baseCls: 'eva-header-1'
+            },
             width: 1300,
-            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest/',
-            studies: [
-                {projectId: "PRJEB4019", alias: "1000g", title: "1000 Genomes"},
-                {projectId: "PRJEB5439", alias: "evs", title: "Exome Variant Server NHLBI Exome Sequencing Project"},
-                {projectId: "PRJEB5829", alias: "gonl", title: "Genome of the Netherlands (GoNL) Release 5"},
-                {projectId: "PRJEB6040", alias: "uk10k", title: "UK10K"},
-                {projectId: "PRJEB6042", alias: "geuvadis", title: "GEUVADIS Genetic European Variation in Disease"}
-            ]
-        });
-        return variantStudyBrowser;
-    },
-    _createVariantFileBrowser: function (target) {
-        var _this = this;
+            studiesStore: this.studiesStore
 
-        var variantFileBrowser = new VariantFileBrowserPanel({
-            target: target,
-            title: 'File Browser',
-            width: 1300
         });
-        this._getStudiesInfo();
-        return variantFileBrowser;
+//        this.on('studies:change', function (e) {
+//            variantStudyBrowser.setStudies(e.studies);
+//        });
+
+
+        return variantStudyBrowser;
     },
     _createFormPanelVariantFilter: function (target) {
         var _this = this;
-        var positionFilter = new PositionFilterFormPanel();
-        var studyFilter = new StudyFilterFormPanel({
-            urlStudies: "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/list"
+        var positionFilter = new PositionFilterFormPanel({
+            testRegion: '1:14000-20000'
         });
+        var studyFilter = new StudyFilterFormPanel({
+            studiesStore: this.studiesStore
+        });
+//        this.on('studies:change', function (e) {
+//            studyFilter.setStudies(e.studies);
+//        });
+
 
         var conseqType = new ConsequenceTypeFilterFormPanel({
-
+            consequenceTypes: consequenceTypes,
+            collapsed: true,
+            fields: [
+                {name: 'name', type: 'string'}
+            ],
+            columns: [
+                {
+                    xtype: 'treecolumn',
+                    flex: 1,
+                    sortable: false,
+                    dataIndex: 'name'
+                }
+            ]
         });
 
         var formPanel = new FormPanel({
+            title: 'Filter',
+            headerConfig: {
+                baseCls: 'eva-header-1'
+            },
+            mode: 'accordion',
             target: target,
             submitButtonText: 'Submit',
             filters: [positionFilter, studyFilter, conseqType],
             width: 300,
 //            height: 1043,
-            border: true,
+            border: false,
             handlers: {
                 'submit': function (e) {
                     console.log(e.values);
                     _this.variantWidget.setLoading(true);
+
+                    //POSITION CHECK
                     var regions = [];
-                    if (e.values.region !== "") {
-                        regions = e.values.region.split(",");
-                    }
-                    delete  e.values.region;
-
-                    if (e.values.studies !== undefined) {
-                        if (e.values.studies instanceof Array) {
-                            e.values.studies = e.values.studies.join(",");
+                    if (typeof e.values.region !== 'undefined') {
+                        if (e.values.region !== "") {
+                            regions = e.values.region.split(",");
                         }
+                        delete  e.values.region;
                     }
 
-                    if (e.values.ct !== undefined) {
-                        if (e.values.ct instanceof Array) {
-                            e.values.ct = e.values.ct.join(",");
-                        }
-                    }
-
-                    if (e.values.gene !== "") {
+                    if (typeof e.values.gene !== 'undefined') {
                         CellBaseManager.get({
                             species: 'hsapiens',
                             category: 'feature',
@@ -360,9 +407,10 @@ Eva.prototype = {
                                 }
                             }
                         });
+                        delete  e.values.gene;
                     }
 
-                    if (e.values.snp !== "") {
+                    if (typeof e.values.snp !== 'undefined') {
                         CellBaseManager.get({
                             species: 'hsapiens',
                             category: 'feature',
@@ -381,9 +429,21 @@ Eva.prototype = {
                                 }
                             }
                         });
-
+                        delete  e.values.snp;
                     }
 
+
+                    //CONSEQUENCE TYPES CHECK
+                    if (typeof e.values.ct !== 'undefined') {
+                        if (e.values.ct instanceof Array) {
+                            e.values.ct = e.values.ct.join(",");
+                        }
+                    }
+
+
+                    if (regions.length > 0) {
+                        e.values['region'] = regions.join(',');
+                    }
 
                     var url = EvaManager.url({
                         host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
@@ -402,11 +462,26 @@ Eva.prototype = {
         var _this = this;
         var positionFilter = new PositionFilterFormPanel();
         var studyFilter = new StudyFilterFormPanel({
-            urlStudies: "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/list"
+            studiesStore: this.studiesStore
         });
+//        this.on('studies:change', function (e) {
+//            studyFilter.setStudies(e.studies);
+//        });
 
         var conseqType = new ConsequenceTypeFilterFormPanel({
-            height: 250
+            consequenceTypes: consequenceTypes,
+            collapsed: false,
+            fields: [
+                {name: 'name', type: 'string'}
+            ],
+            columns: [
+                {
+                    xtype: 'treecolumn',
+                    flex: 1,
+                    sortable: false,
+                    dataIndex: 'name'
+                }
+            ]
         });
 
         var trackNameField = Ext.create('Ext.form.field.Text', {
@@ -657,83 +732,22 @@ Eva.prototype = {
 
         return genomeViewer;
     },
-    _getStudiesInfo: function () {
+    _loadStudies: function () {
         var _this = this;
-        var studyNames = [];
         var studies = [];
-
-        $.ajax({
-            url: "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/files/all",
-            dataType: 'json',
-            success: function (response, textStatus, jqXHR) {
-                var data = (response !== undefined && response.response.length > 0 && response.response[0].numResults > 0) ? response.response[0].result : [];
-
-                for (var i = 0; i < data.length; i++) {
-                    var study = data[i];
-                    _this._addFileToStudy(studies, study);
+        EvaManager.get({
+            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+            category: 'studies',
+            resource: 'list',
+            success: function (response) {
+                try {
+                    studies = response.response[0].result;
+                } catch (e) {
+                    console.log(e);
                 }
-                _this.variantFileBrowser.load(studies);
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log('Error loading studies');
+                _this.studiesStore.loadRawData(studies);
+//                _this.trigger('studies:change', {studies: studies, sender: _this});
             }
         });
-
-
-    },
-    _addFileToStudy: function (studies, file) {
-        var b = false;
-        for (var i = 0, l = studies.length; i < l && !b; i++) {
-            var study = studies[i];
-
-            if (study.studyName == file.studyName) {
-                study.files.push(file);
-                b = true;
-            }
-        }
-
-        if (!b) {
-            studies.push({
-                studyName: file.studyName,
-                files: [file]
-            })
-        }
-    },
-    _getProjectsInfo: function () {
-
-        var res = [];
-        var projects = [
-            {projectId: "PRJEB4019", alias: "1000g", title: "1000 Genomes"},
-            {projectId: "PRJEB5439", alias: "evs", title: "Exome Variant Server NHLBI Exome Sequencing Project"},
-            {projectId: "PRJEB5829", alias: "gonl", title: "Genome of the Netherlands (GoNL) Release 5"},
-            {projectId: "PRJEB6040", alias: "uk10k", title: "UK10K"},
-            {projectId: "PRJEB6042", alias: "geuvadis", title: "GEUVADIS Genetic European Variation in Disease"}
-        ];
-
-//        for (var i = 0, l = projects.length; i < l; i ++) {
-//            var p = projects[i];
-//            var url = "http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/" + p.projectId + "/summary"
-//
-//            $.ajax({
-//                url: url,
-//                dataType: 'json',
-//                async: false,
-//                success: function (response, textStatus, jqXHR) {
-//                    var data = (response !== undefined && response.response.length > 0 )? response.response[0].result : [];
-//
-//                    for (var i = 0; i < data.length; i++) {
-//                        var proj = data[i];
-//                        res.push(proj);
-//                    }
-//
-//                },
-//                error: function (jqXHR, textStatus, errorThrown) {
-//                    console.log('Error loading studies');
-//                }
-//            });
-//        }
-
-        return projects;
-
     }
 }

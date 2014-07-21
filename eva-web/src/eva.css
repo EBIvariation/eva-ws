@@ -129,10 +129,27 @@ body.eva {
     font-size: 140%;
 }
 
-.eva-header-3, .ocb-header-3 {
+/*.eva-header-3, .ocb-header-3 {*/
+    /*color: #BF8230;*/
+    /*font-size: 160%;*/
+/*}*/
+
+
+.eva-header-1 {
     color: #BF8230;
     font-size: 160%;
+    padding: 4px 6px;
+    margin-bottom: 5px;
+    border: none;
 }
+.eva-header-2 {
+    color: #426783;
+    font-size: 140%;
+    padding: 4px 6px;
+    margin-bottom: 5px;
+    border: none;
+}
+
 
 .ocb-attributes-table {
     cellspacing: 0;
@@ -181,4 +198,18 @@ body.eva {
     padding: 5px;
     color: steelblue;
     /*font-weight:bold;*/
+}
+
+
+/* top Message*/
+.ocb-msg-hidden {
+    border: 1px solid #156765;
+}
+
+.ocb-msg-hidden :first-child {
+    background-color: #156765;
+}
+
+.ocb-msg-hidden :last-child {
+    color: #156765;
 }
