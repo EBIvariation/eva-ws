@@ -169,7 +169,9 @@ Eva.prototype = {
         $('body').find('.eva-child').each(function (index, el) {
             _this.div.removeChild(el)
         });
-        this.div.appendChild(this.childDivMenuMap[option]);
+        if (this.childDivMenuMap[option]) {
+            this.div.appendChild(this.childDivMenuMap[option]);
+        }
 
         switch (option) {
             case 'Study Browser':
