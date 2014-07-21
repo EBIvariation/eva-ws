@@ -8,6 +8,7 @@
 
     <link rel="import" href="header.html">
     <link rel="import" href="footer.html">
+    <link rel="import" href="home.html">
 
 </head>
 <body class="eva">
@@ -125,17 +126,25 @@
 <script type="text/javascript">
     var eva;
     var start = function () {
+
+        // Bring in the import content.
+        var link = document.querySelector('link[href="home.html"]');
+        var homeDiv = link.import.querySelector('div');
+
+
         Ext.getBody().removeCls('x-body');
         var ulLocalNav = document.querySelector('#header').shadowRoot.querySelector('#local-nav');
 
         eva = new Eva({
             target: 'content',
             targetMenu: ulLocalNav,
-            width: $('#content').width()
+            width: $('#content').width(),
+            homeDiv:homeDiv
         });
         eva.draw();
 
     };
+
 
 
     //Start point

@@ -69,7 +69,6 @@ Eva.prototype = {
 
 
         /* Home */
-        this.homeDiv = document.querySelector('#home');
         $(this.homeDiv).addClass('eva-child');
         this.childDivMenuMap['Home'] = this.homeDiv;
 
