@@ -196,3 +196,14 @@ body.eva {
 .ocb-msg-hidden :last-child {
     color: #156765;
 }
+
+h2,h4{
+    color:#426783;
+}
+h3,h5 {
+    color:#BF8230;
+}
+
+h3 span{
+    color:#BBBBBB;
+}
