@@ -17,28 +17,26 @@ import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
  */
 public class EvaproUtils {
     
+    public static ResultSet select(DataSource ds, String query) throws SQLException {
+        Connection conn = ds.getConnection();
+        PreparedStatement pstmt = conn.prepareStatement(query);
+        return pstmt.executeQuery();
+    }
+    
     public static QueryResult count(DataSource ds, String table) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
-        ResultSet rs = null;
         QueryResult qr = null;
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(String.format("select count(*) from %s", table));
             long start = System.currentTimeMillis();
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             rs.next();
             int count = rs.getInt(1);
             long end = System.currentTimeMillis();
             qr = new QueryResult(null, ((Long) (end - start)).intValue(), 1, 1, null, null, Arrays.asList(count));
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
             if (pstmt != null) {
                 try {
                     pstmt.close();
