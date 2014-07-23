@@ -89,11 +89,11 @@ Eva.prototype = {
         this.childDivMenuMap['Templates'] = this.templatesDiv;
 
         /* Study Browser Panel*/
-        this.variantStudyBrowserDiv = document.createElement('div')
-        $(this.variantStudyBrowserDiv).addClass('eva-child variant-study-browser-div');
-        this.div.appendChild(this.variantStudyBrowserDiv);
-        this.childDivMenuMap['Study Browser'] = this.variantStudyBrowserDiv;
-        this.variantStudyBrowser = this._createVariantStudyBrowser(this.variantStudyBrowserDiv);
+        this.studyBrowserDiv = document.createElement('div')
+        $(this.studyBrowserDiv).addClass('eva-child eva-study-browser-div');
+        this.div.appendChild(this.studyBrowserDiv);
+        this.childDivMenuMap['Study Browser'] = this.studyBrowserDiv;
+        this.studyBrowser = this._createStudyBrowser(this.studyBrowserDiv);
 
         /* variant browser option*/
         this.variantBrowserOptionDiv = document.createElement('div');
@@ -148,7 +148,7 @@ Eva.prototype = {
 
         this.evaMenu.draw();
         this.variantWidget.draw();
-        this.variantStudyBrowser.draw();
+        this.studyBrowser.draw();
 
         this.formPanelVariantFilter.draw();
         this.genomeViewer.draw();
@@ -175,7 +175,7 @@ Eva.prototype = {
 
         switch (option) {
             case 'Study Browser':
-                this.variantStudyBrowser.update();
+                this.studyBrowser.update();
                 break;
             case 'Variant Browser':
                 this.formPanelVariantFilter.update();
@@ -310,35 +310,17 @@ Eva.prototype = {
 
         return variantWidget;
     },
-    _createVariantStudyBrowser: function (target) {
+    _createStudyBrowser: function (target) {
         var _this = this;
 
-        var variantStudyBrowser = new VariantStudyBrowserPanel({
+        var variantStudyBrowser = new EvaStudyBrowserPanel({
             target: target,
             title: 'Study Browser',
             headerConfig: {
                 baseCls: 'eva-header-1'
             },
             width: 1300,
-            studiesStore: this.studiesStore,
-            searchFunction:function(self, params){
-                EvaManager.get({
-                    host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-                    category: 'studies',
-                    resource: 'list',
-                    params: params,
-                    success: function (response) {
-                        var studies = [];
-                        try {
-                            studies = response.response[0].result;
-                        } catch (e) {
-                            console.log(e);
-                        }
-                        self.studiesStore.loadRawData(studies);
-                    }
-                });
-            }
-
+            studiesStore: this.studiesStore
         });
 //        this.on('studies:change', function (e) {
 //            variantStudyBrowser.setStudies(e.studies);
@@ -754,8 +736,8 @@ Eva.prototype = {
         var studies = [];
         EvaManager.get({
             host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-            category: 'studies',
-            resource: 'list',
+            category: 'meta/studies',
+            resource: 'all',
             success: function (response) {
                 try {
                     studies = response.response[0].result;
