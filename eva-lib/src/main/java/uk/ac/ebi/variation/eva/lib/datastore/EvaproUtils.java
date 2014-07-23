@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
@@ -16,12 +17,6 @@ import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
 public class EvaproUtils {
-    
-    public static ResultSet select(DataSource ds, String query) throws SQLException {
-        Connection conn = ds.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(query);
-        return pstmt.executeQuery();
-    }
     
     public static QueryResult count(DataSource ds, String table) throws SQLException {
         Connection conn = null;
@@ -54,5 +49,41 @@ public class EvaproUtils {
         }
         
         return qr;
+    }
+    
+    public static String getInClause(String field, List<String> values) {
+        StringBuilder query = new StringBuilder(field).append(" in (");
+        int i = 0;
+        for (String s : values) {
+            if (i > 0) {
+                query.append(", ");
+            }
+            query.append("\"").append(s).append("\"");
+            i++;
+        }
+        query.append(") ");
+        return query.toString();
+    }
+    
+    public static void close(PreparedStatement pstmt) throws SQLException {
+        if (pstmt != null) {
+            try {
+                pstmt.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                throw ex;
+            }
+        }
+    }
+    
+    public static void close(Connection conn) throws SQLException {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                throw ex;
+            }
+        }
     }
 }

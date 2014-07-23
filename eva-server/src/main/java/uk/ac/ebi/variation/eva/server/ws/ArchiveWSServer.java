@@ -1,11 +1,12 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
@@ -19,8 +20,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.opencb.datastore.core.QueryResult;
+import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
+import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.ArchiveDBAdaptor;
+import org.opencb.opencga.storage.variant.StudyDBAdaptor;
+import org.opencb.opencga.storage.variant.mongodb.StudyMongoDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
 
 /**
  *
@@ -31,6 +37,8 @@ import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
 public class ArchiveWSServer extends EvaWSServer {
     
     private ArchiveDBAdaptor dbAdaptor;
+    private StudyDBAdaptor studyEvaproDbAdaptor;
+    private StudyDBAdaptor studyMongoDbAdaptor;
     
     public ArchiveWSServer() {
 
@@ -39,7 +47,15 @@ public class ArchiveWSServer extends EvaWSServer {
     public ArchiveWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
             throws IOException, NamingException {
         super(version, uriInfo, hsr);
-        dbAdaptor = new ArchiveEvaproDBAdaptor();
+        try {
+            dbAdaptor = new ArchiveEvaproDBAdaptor();
+            studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
+            MongoCredentials credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
+            studyMongoDbAdaptor = new StudyMongoDBAdaptor(credentials);
+        } catch (IllegalOpenCGACredentialsException ex) {
+            Logger.getLogger(StudyWSServer.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+        }
     }
 
     @GET
@@ -58,6 +74,26 @@ public class ArchiveWSServer extends EvaWSServer {
     @Path("/studies/count")
     public Response countStudies() {
         return createOkResponse(dbAdaptor.countStudies());
+    }
+    
+    @GET
+    @Path("/studies/list")
+    public Response getStudies() {
+        return createOkResponse(studyMongoDbAdaptor.listStudies());
+    }
+    
+    @GET
+    @Path("/studies/all")
+    public Response getStudies(@QueryParam("species") String species,
+                               @QueryParam("type") String types) {
+        if (species != null && !species.isEmpty()) {
+            queryOptions.put("species", Arrays.asList(species.split(",")));
+        }
+        if (types != null && !types.isEmpty()) {
+            queryOptions.put("type", Arrays.asList(types.split(",")));
+        }
+        
+        return createOkResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
     }
     
     @GET

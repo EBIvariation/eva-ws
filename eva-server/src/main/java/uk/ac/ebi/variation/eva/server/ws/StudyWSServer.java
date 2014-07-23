@@ -56,12 +56,6 @@ public class StudyWSServer extends EvaWSServer {
     }
 
     @GET
-    @Path("/list")
-    public Response getStudies() {
-        return createOkResponse(studyMongoDbAdaptor.listStudies());
-    }
-    
-    @GET
     @Path("/{study}/files")
     public Response getFilesByStudy(@PathParam("study") String study) {
         QueryResult idQueryResult = studyMongoDbAdaptor.findStudyNameOrStudyId(study, queryOptions);

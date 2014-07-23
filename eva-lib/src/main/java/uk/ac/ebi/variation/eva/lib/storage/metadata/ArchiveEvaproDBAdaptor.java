@@ -1,10 +1,11 @@
 package uk.ac.ebi.variation.eva.lib.storage.metadata;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,9 +27,9 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
 
     public ArchiveEvaproDBAdaptor() throws NamingException {
         InitialContext cxt = new InitialContext();
-        ds = (DataSource) cxt.lookup( "java:/comp/env/jdbc/evapro" );
+        ds = (DataSource) cxt.lookup("java:/comp/env/jdbc/evapro");
     }
-    
+
     @Override
     public QueryResult countStudies() {
         try {
@@ -46,25 +47,20 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
         StringBuilder query = new StringBuilder("select TAXONOMY.SPECIES_COMMON_NAME, count(*) as COUNT from PROJECT left join PROJECT_TAXONOMY on ")
                 .append("PROJECT.PROJECT_ACCESSION = PROJECT_TAXONOMY.PROJECT_ACCESSION left join TAXONOMY on PROJECT_TAXONOMY.TAXONOMY_ID = TAXONOMY.TAXONOMY_ID ");
         if (options.containsKey("species")) {
-            query.append("where TAXONOMY.SPECIES_COMMON_NAME in (");
-            List<String> species = options.getListAs("species", String.class);
-            int i = 0;
-            for (String s : species) {
-                if (i > 0) {
-                    query.append(", ");
-                }
-                query.append("\"").append(s).append("\"");
-                i++;
-            }
-            query.append(")");
+            query.append(EvaproUtils.getInClause("TAXONOMY.SPECIES_COMMON_NAME", options.getListAs("species", String.class)));
+            query.append(" or ");
+            query.append(EvaproUtils.getInClause("TAXONOMY.SPECIES_LATIN_NAME", options.getListAs("species", String.class)));
         }
-        query.append(" group by TAXONOMY.SPECIES_COMMON_NAME order by COUNT desc");
-        
+        query.append(" group by TAXONOMY.SPECIES_LATIN_NAME order by COUNT desc");
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
         QueryResult qr = null;
-        ResultSet rs = null;
         try {
+            conn = ds.getConnection();
+            pstmt = conn.prepareStatement(query.toString());
             long start = System.currentTimeMillis();
-            rs = EvaproUtils.select(ds, query.toString());
+            ResultSet rs = pstmt.executeQuery();
             Map<String, Integer> result = new HashMap<>();
             while (rs.next()) {
                 String species = rs.getString(1) != null ? rs.getString(1) : "Others";
@@ -79,42 +75,38 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
             qr.setErrorMsg(ex.getMessage());
             return qr;
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            try {
+                EvaproUtils.close(pstmt);
+                EvaproUtils.close(conn);
+            } catch (SQLException ex) {
+                Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                qr = new QueryResult();
+                qr.setErrorMsg(ex.getMessage());
             }
         }
-        
+
         return qr;
     }
-    
+
     @Override
     public QueryResult countStudiesPerType(QueryOptions options) {
         StringBuilder query = new StringBuilder("select TYPE, count(*) as COUNT from PROJECT left join PROJECT_TAXONOMY on ")
                 .append("PROJECT.PROJECT_ACCESSION = PROJECT_TAXONOMY.PROJECT_ACCESSION left join TAXONOMY on PROJECT_TAXONOMY.TAXONOMY_ID = TAXONOMY.TAXONOMY_ID ");
         if (options.containsKey("species")) {
-            query.append("where TAXONOMY.SPECIES_COMMON_NAME in (");
-            List<String> species = options.getListAs("species", String.class);
-            int i = 0;
-            for (String s : species) {
-                if (i > 0) {
-                    query.append(", ");
-                }
-                query.append("\"").append(s).append("\"");
-                i++;
-            }
-            query.append(")");
+            query.append(EvaproUtils.getInClause("TAXONOMY.SPECIES_COMMON_NAME", options.getListAs("species", String.class)));
+            query.append(" or ");
+            query.append(EvaproUtils.getInClause("TAXONOMY.SPECIES_LATIN_NAME", options.getListAs("species", String.class)));
         }
         query.append(" group by TYPE order by COUNT desc");
-        
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
         QueryResult qr = null;
-        ResultSet rs = null;
         try {
+            conn = ds.getConnection();
+            pstmt = conn.prepareStatement(query.toString());
             long start = System.currentTimeMillis();
-            rs = EvaproUtils.select(ds, query.toString());
+            ResultSet rs = pstmt.executeQuery();
             Map<String, Integer> result = new HashMap<>();
             while (rs.next()) {
                 String species = rs.getString(1) != null ? rs.getString(1) : "Others";
@@ -129,15 +121,16 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
             qr.setErrorMsg(ex.getMessage());
             return qr;
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            try {
+                EvaproUtils.close(pstmt);
+                EvaproUtils.close(conn);
+            } catch (SQLException ex) {
+                Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                qr = new QueryResult();
+                qr.setErrorMsg(ex.getMessage());
             }
         }
-        
+
         return qr;
     }
 
