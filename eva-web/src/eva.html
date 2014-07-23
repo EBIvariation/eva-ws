@@ -134,6 +134,7 @@
         var aboutDiv = link.import.querySelector('#about');
         var contactDiv = link.import.querySelector('#contact');
         var templatesDiv = link.import.querySelector('#submissionTemplates');
+        var vcfDiv = link.import.querySelector('#vcf-format');
 
 
         Ext.getBody().removeCls('x-body');
@@ -147,7 +148,8 @@
             submitDiv:submitDiv,
             aboutDiv:aboutDiv,
             contactDiv:contactDiv,
-            templatesDiv:templatesDiv
+            templatesDiv:templatesDiv,
+            vcfDiv:vcfDiv
         });
         eva.draw();
         var tab = getUrlParameters("");

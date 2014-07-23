@@ -71,7 +71,7 @@ Eva.prototype = {
         /* Home */
         $(this.homeDiv).addClass('eva-child');
         this.childDivMenuMap['Home'] = this.homeDiv;
-
+    
         /* Submit */
         $(this.submitDiv).addClass('eva-child');
         this.childDivMenuMap['Submit Data'] = this.submitDiv;
@@ -85,8 +85,12 @@ Eva.prototype = {
         this.childDivMenuMap['Contact'] = this.contactDiv;
 
         /* Templates */
-        $(this.contactDiv).addClass('eva-child');
+        $(this.templatesDiv).addClass('eva-child');
         this.childDivMenuMap['Templates'] = this.templatesDiv;
+
+        /* VCF */
+        $(this.vcfDiv).addClass('eva-child');
+        this.childDivMenuMap['VCF'] = this.vcfDiv;
 
         /* Study Browser Panel*/
         this.variantStudyBrowserDiv = document.createElement('div')
