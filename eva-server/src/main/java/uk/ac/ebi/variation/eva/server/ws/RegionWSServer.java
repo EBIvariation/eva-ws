@@ -35,6 +35,7 @@ public class RegionWSServer extends EvaWSServer {
         super(version, uriInfo, hsr);
         try {
             credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
+//            credentials = new MongoCredentials("localhost", 27017, "eva-test", "biouser", "biopass");
             variantMongoQueryBuilder = new VariantMongoDBAdaptor(credentials);
         } catch (IllegalOpenCGACredentialsException e) {
             e.printStackTrace();
@@ -55,16 +56,16 @@ public class RegionWSServer extends EvaWSServer {
                                         @DefaultValue("=") @QueryParam("miss_alleles_op") String missingAllelesOperator,
                                         @DefaultValue("=") @QueryParam("miss_gts_op") String missingGenotypesOperator,
                                         @DefaultValue("") @QueryParam("type") String variantType) {
-        if (reference != null) {
+        if (reference != null && !reference.isEmpty()) {
             queryOptions.put("reference", reference);
         }
-        if (alternate != null) {
+        if (alternate != null && !alternate.isEmpty()) {
             queryOptions.put("alternate", alternate);
         }
-        if (effects != null) {
+        if (effects != null && !effects.isEmpty()) {
             queryOptions.put("effect", Arrays.asList(effects.split(",")));
         }
-        if (studies != null) {
+        if (studies != null && !studies.isEmpty()) {
             queryOptions.put("studies", Arrays.asList(studies.split(",")));
         }
         if (!variantType.isEmpty()) {

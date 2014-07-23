@@ -49,7 +49,7 @@ public class VariantWSServer extends EvaWSServer {
     @Path("/{variantId}/info")
     public Response getVariantById(@PathParam("variantId") String variantId,
                                    @QueryParam("studies") String studies) {
-        if (studies != null) {
+        if (studies != null && !studies.isEmpty()) {
             queryOptions.put("studies", Arrays.asList(studies.split(",")));
         }
         
