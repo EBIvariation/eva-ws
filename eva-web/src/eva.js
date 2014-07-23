@@ -73,19 +73,20 @@ Eva.prototype = {
         this.childDivMenuMap['Home'] = this.homeDiv;
 
         /* Submit */
-        this.submissionDiv = document.querySelector('#submitData');
-        $(this.submissionDiv).addClass('eva-child');
-        this.childDivMenuMap['Submit Data'] = this.submissionDiv;
+        $(this.submitDiv).addClass('eva-child');
+        this.childDivMenuMap['Submit Data'] = this.submitDiv;
 
         /* About */
-        this.aboutDiv = document.querySelector('#about');
         $(this.aboutDiv).addClass('eva-child');
         this.childDivMenuMap['About'] = this.aboutDiv;
 
         /* Contact */
-        this.contactDiv = document.querySelector('#contact');
         $(this.contactDiv).addClass('eva-child');
         this.childDivMenuMap['Contact'] = this.contactDiv;
+
+        /* Templates */
+        $(this.contactDiv).addClass('eva-child');
+        this.childDivMenuMap['Templates'] = this.templatesDiv;
 
         /* Study Browser Panel*/
         this.variantStudyBrowserDiv = document.createElement('div')

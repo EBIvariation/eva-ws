@@ -8,7 +8,7 @@
 
     <link rel="import" href="header.html">
     <link rel="import" href="footer.html">
-    <link rel="import" href="home.html">
+    <link rel="import" href="content.html">
 
 </head>
 <body class="eva">
@@ -21,7 +21,6 @@
 <link type="text/css" rel="stylesheet" href="../vendor/ext-5/theme-ebi-embl/theme-ebi-embl-all.css">
 <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/jquery.qtip.min.css"/>
 <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/bootstrap-scoped-dist/css/bootstrap.min.css">
-<link type="text/css"  href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <!-- /build -->
 
 <!-- build:style css -->
@@ -129,8 +128,12 @@
     var start = function () {
 
         // Bring in the import content.
-        var link = document.querySelector('link[href="home.html"]');
-        var homeDiv = link.import.querySelector('div');
+        var link = document.querySelector('link[href="content.html"]');
+        var homeDiv = link.import.querySelector('#home');
+        var submitDiv = link.import.querySelector('#submit');
+        var aboutDiv = link.import.querySelector('#about');
+        var contactDiv = link.import.querySelector('#contact');
+        var templatesDiv = link.import.querySelector('#submissionTemplates');
 
 
         Ext.getBody().removeCls('x-body');
@@ -140,11 +143,41 @@
             target: 'content',
             targetMenu: ulLocalNav,
             width: $('#content').width(),
-            homeDiv:homeDiv
+            homeDiv:homeDiv,
+            submitDiv:submitDiv,
+            aboutDiv:aboutDiv,
+            contactDiv:contactDiv,
+            templatesDiv:templatesDiv
         });
         eva.draw();
+        var tab = getUrlParameters("");
+        if(tab.id){
+            eva.select(decodeURI(tab.id))
+        }
+
+
 
     };
+
+    function getUrlParameters(staticURL){
+        var data = [];
+
+        var currLocation = (staticURL.length)? staticURL : window.location.search;
+        if(currLocation.indexOf("?") >= 0)
+        {
+            parArr = currLocation.split("?")[1].split("&");
+            if(parArr){
+                for(var i = 0; i < parArr.length; i++){
+                    parr = parArr[i].split("=");
+                    data.id = parr[0];
+                    data.value = parr[1];
+                    return data;
+                }
+            }
+        }else{
+            return false
+        }
+    }
 
 
 
