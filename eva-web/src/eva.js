@@ -156,7 +156,7 @@ Eva.prototype = {
         this._loadStudies();
 
 //        this.select('Study Browser');
-        this.select('Variant Browser');
+        this.select('Study Browser');
 //        this.panel.render(this.div);
     },
     select: function (option) {
@@ -319,7 +319,24 @@ Eva.prototype = {
                 baseCls: 'eva-header-1'
             },
             width: 1300,
-            studiesStore: this.studiesStore
+            studiesStore: this.studiesStore,
+            searchFunction:function(self, params){
+                EvaManager.get({
+                    host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                    category: 'studies',
+                    resource: 'list',
+                    params: params,
+                    success: function (response) {
+                        var studies = [];
+                        try {
+                            studies = response.response[0].result;
+                        } catch (e) {
+                            console.log(e);
+                        }
+                        self.studiesStore.loadRawData(studies);
+                    }
+                });
+            }
 
         });
 //        this.on('studies:change', function (e) {
