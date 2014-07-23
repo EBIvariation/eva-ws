@@ -133,6 +133,7 @@
         var submitDiv = link.import.querySelector('#submit');
         var aboutDiv = link.import.querySelector('#about');
         var contactDiv = link.import.querySelector('#contact');
+        var templatesDiv = link.import.querySelector('#submissionTemplates');
 
 
         Ext.getBody().removeCls('x-body');
@@ -145,11 +146,38 @@
             homeDiv:homeDiv,
             submitDiv:submitDiv,
             aboutDiv:aboutDiv,
-            contactDiv:contactDiv
+            contactDiv:contactDiv,
+            templatesDiv:templatesDiv
         });
         eva.draw();
+        var tab = getUrlParameters("");
+        if(tab.id){
+            eva.select(decodeURI(tab.id))
+        }
+
+
 
     };
+
+    function getUrlParameters(staticURL){
+        var data = [];
+
+        var currLocation = (staticURL.length)? staticURL : window.location.search;
+        if(currLocation.indexOf("?") >= 0)
+        {
+            parArr = currLocation.split("?")[1].split("&");
+            if(parArr){
+                for(var i = 0; i < parArr.length; i++){
+                    parr = parArr[i].split("=");
+                    data.id = parr[0];
+                    data.value = parr[1];
+                    return data;
+                }
+            }
+        }else{
+            return false
+        }
+    }
 
 
 

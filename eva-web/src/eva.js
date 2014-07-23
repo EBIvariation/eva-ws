@@ -84,6 +84,10 @@ Eva.prototype = {
         $(this.contactDiv).addClass('eva-child');
         this.childDivMenuMap['Contact'] = this.contactDiv;
 
+        /* Templates */
+        $(this.contactDiv).addClass('eva-child');
+        this.childDivMenuMap['Templates'] = this.templatesDiv;
+
         /* Study Browser Panel*/
         this.variantStudyBrowserDiv = document.createElement('div')
         $(this.variantStudyBrowserDiv).addClass('eva-child variant-study-browser-div');
