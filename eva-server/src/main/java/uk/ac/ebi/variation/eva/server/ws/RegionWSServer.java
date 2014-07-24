@@ -24,7 +24,7 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class RegionWSServer extends EvaWSServer {
 
-    private VariantMongoDBAdaptor variantMongoQueryBuilder;
+    private VariantMongoDBAdaptor variantMongoDbAdaptor;
     private MongoCredentials credentials;
 
     public RegionWSServer() {
@@ -36,7 +36,7 @@ public class RegionWSServer extends EvaWSServer {
         try {
             credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
 //            credentials = new MongoCredentials("localhost", 27017, "eva-test", "biouser", "biopass");
-            variantMongoQueryBuilder = new VariantMongoDBAdaptor(credentials);
+            variantMongoDbAdaptor = new VariantMongoDBAdaptor(credentials);
         } catch (IllegalOpenCGACredentialsException e) {
             e.printStackTrace();
         }
@@ -56,7 +56,8 @@ public class RegionWSServer extends EvaWSServer {
                                         @DefaultValue("=") @QueryParam("miss_alleles_op") String missingAllelesOperator,
                                         @DefaultValue("=") @QueryParam("miss_gts_op") String missingGenotypesOperator,
                                         @DefaultValue("") @QueryParam("type") String variantType,
-                                        @DefaultValue("false") @QueryParam("histogram") boolean histogram) {
+                                        @DefaultValue("false") @QueryParam("histogram") boolean histogram,
+                                        @DefaultValue("-1") @QueryParam("histogram_interval") int interval) {
         if (reference != null && !reference.isEmpty()) {
             queryOptions.put("reference", reference);
         }
@@ -101,13 +102,20 @@ public class RegionWSServer extends EvaWSServer {
             regionsSize += r.getEnd() - r.getStart();
         }
         
-        if (regionsSize <= 1000000) {
-            return createOkResponse(variantMongoQueryBuilder.getAllVariantsByRegionList(regions, queryOptions));
-        } else if (!histogram) {
+        if (histogram) {
+            if (regions.size() > 1) {
+                return createErrorResponse("Sorry, histogram functionality only works with a single region");
+            } else {
+                if (interval > 0) {
+                    queryOptions.put("interval", interval);
+                }
+                return createOkResponse(variantMongoDbAdaptor.getVariantsHistogramByRegion(regions.get(0), queryOptions));
+            }
+        } else if (regionsSize <= 1000000) {
+            return createOkResponse(variantMongoDbAdaptor.getAllVariantsByRegionList(regions, queryOptions));
+        } else {
             return createErrorResponse("The total size of all regions provided can't excede 1 million positions. "
                     + "If you want to browse a larger number of position, please provide the parameter 'histogram=true'");
-        } else {
-            return createErrorResponse("Sorry, histogram functionality has not been implemented yet");
         }
     }
     
