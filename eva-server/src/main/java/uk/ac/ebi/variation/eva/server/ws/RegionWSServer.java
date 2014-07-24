@@ -55,7 +55,8 @@ public class RegionWSServer extends EvaWSServer {
                                         @DefaultValue("=") @QueryParam("maf_op") String mafOperator,
                                         @DefaultValue("=") @QueryParam("miss_alleles_op") String missingAllelesOperator,
                                         @DefaultValue("=") @QueryParam("miss_gts_op") String missingGenotypesOperator,
-                                        @DefaultValue("") @QueryParam("type") String variantType) {
+                                        @DefaultValue("") @QueryParam("type") String variantType,
+                                        @DefaultValue("false") @QueryParam("histogram") boolean histogram) {
         if (reference != null && !reference.isEmpty()) {
             queryOptions.put("reference", reference);
         }
@@ -90,11 +91,24 @@ public class RegionWSServer extends EvaWSServer {
             }
         }
         
+        // Parse the provided regions. The total size of all regions together 
+        // can't excede 1 million positions
+        int regionsSize = 0;
         List<Region> regions = new ArrayList<>();
         for (String s : regionId.split(",")) {
-            regions.add(Region.parseRegion(s));
+            Region r = Region.parseRegion(s);
+            regions.add(r);
+            regionsSize += r.getEnd() - r.getStart();
         }
-        return createOkResponse(variantMongoQueryBuilder.getAllVariantsByRegionList(regions, queryOptions));
+        
+        if (regionsSize <= 1000000) {
+            return createOkResponse(variantMongoQueryBuilder.getAllVariantsByRegionList(regions, queryOptions));
+        } else if (!histogram) {
+            return createErrorResponse("The total size of all regions provided can't excede 1 million positions. "
+                    + "If you want to browse a larger number of position, please provide the parameter 'histogram=true'");
+        } else {
+            return createErrorResponse("Sorry, histogram functionality has not been implemented yet");
+        }
     }
     
     @OPTIONS
