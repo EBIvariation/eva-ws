@@ -1,0 +1,47 @@
+<template id="study-view-template">
+    <article class="user spinner">
+        <dl class="user-data" hidden>
+            <dt>Avatar:</dt>
+            <dd class="user-avatar">
+                <img src="">
+            </dd>
+
+            <dt>Fullname:</dt>
+            <!--<dd class="user-name"></dd>-->
+
+            <dt>Account:</dt>
+            <a class="user-github-url"><dd class="user-account"></dd></a>
+        </dl>
+        <dl class="user-stats" hidden>
+            <dt>Repos</dt>
+            <a class="user-repos-url"><dd class="user-repos" data-stats="repos"></dd></a>
+
+            <dt>Followers</dt>
+            <a class="user-followers-url"><dd class="user-followers" data-stats="followers"></dd></a>
+        </dl>
+        <div>
+            <h1 class="user-name"></h1>
+        </div>
+    </article>
+</template>
+
+<script>
+    doc = document.currentScript.ownerDocument,
+    studyView = Object.create(HTMLElement.prototype);
+
+    studyView.createdCallback = function() {
+        var template = doc.querySelector("#study-view-template"),
+        usr = template.content.cloneNode(true);
+        this.shadow = this.createShadowRoot();
+        this.shadow.appendChild(usr);
+    };
+
+    studyView.attachedCallback = function() {
+        var studyID = this.getAttribute('id');
+        console.log(studyID)
+        var usr = this.shadow;
+        usr.querySelector('.user-name').textContent = studyID;
+    };
+    var studyView = doc.registerElement('study-view', {'prototype': studyView});
+
+</script>
