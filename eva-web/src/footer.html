@@ -1,67 +1,207 @@
 <template>
-    <style>
-        /*@import url("http://www.ebi.ac.uk/web_guidelines/css/compliance/mini/ebi-fluid-embl.css");*/
-        article,aside,details,figcaption,figure,footer,header,hgroup,nav,section{display:block}audio,canvas,video{display:inline-block;*display:inline;*zoom:1}audio:not([controls]){display:none}[hidden]{display:none}html{font-size:100%;overflow-y:scroll;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}body{margin:0;font-size:13px;line-height:1.538}body,button,input,select,textarea{font-family:sans-serif;color:#222}::-moz-selection{background:#71b360;color:#fff;text-shadow:none}::selection{background:#71b360;color:#fff;text-shadow:none}a{color:#00e}a:visited{color:#551a8b}a:hover{color:#06e}a:focus{outline:thin dotted}a:hover,a:active{outline:0}abbr[title]{border-bottom:1px dotted;cursor:help}b,strong{font-weight:bold}blockquote{margin:1em 40px}dfn{font-style:italic}hr{display:block;height:1px;border:0;border-top:1px solid #ccc;margin:1em 0;padding:0}del{text-decoration:line-through}ins{background:#ff9;color:#000;text-decoration:none}mark{background:#ff0;color:#000;font-style:italic;font-weight:bold}pre,code,kbd,samp{font-family:monospace,monospace;_font-family:'courier new',monospace;font-size:1em}pre{white-space:pre;white-space:pre-wrap;word-wrap:break-word}q{quotes:none}q:before,q:after{content:"";content:none}small{font-size:85%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sup{top:-0.5em}sub{bottom:-0.25em}ul,ol{margin:1em 0;padding:0 0 0 40px}dd{margin:0 0 0 40px}nav ul,nav ol{list-style:none;list-style-image:none;margin:0;padding:0}img{border:0;-ms-interpolation-mode:bicubic;vertical-align:middle}svg:not(:root){overflow:hidden}figure{margin:0}form{margin:0}fieldset{border:0;margin:0;padding:0}label{cursor:pointer}legend{border:0;*margin-left:-7px;padding:0}button,input,select,textarea{font-size:100%;margin:0;vertical-align:baseline;*vertical-align:middle}button,input{line-height:normal;*overflow:visible}table button,table input{*overflow:auto}button,input[type="button"],input[type="reset"],input[type="submit"]{cursor:pointer;-webkit-appearance:button}input[type="checkbox"],input[type="radio"]{box-sizing:border-box}input[type="search"]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box}input[type="search"]::-webkit-search-decoration{-webkit-appearance:none}button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}textarea{overflow:auto;vertical-align:top;resize:vertical}input:invalid,textarea:invalid{background-color:#f0dddd}table{border-collapse:collapse;border-spacing:0}td{vertical-align:top}body.set-max-width{max-width:1280px}body.set-min-width{min-width:800px}.ir{display:block;border:0;text-indent:-999em;overflow:hidden;background-color:transparent;background-repeat:no-repeat;text-align:left;direction:ltr}.ir br{display:none}.hidden{display:none!important;visibility:hidden}.visuallyhidden{border:0;clip:rect(0 0 0 0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px}.visuallyhidden.focusable:active,.visuallyhidden.focusable:focus{clip:auto;height:auto;margin:0;overflow:visible;position:static;width:auto}.invisible{visibility:hidden}.clearfix:before,.clearfix:after{content:"";display:table}.clearfix:after{clear:both}.clearfix{zoom:1}a span.link-pdf{background:url(http://www.ebi.ac.uk/inc/images/icon_pdf.gif) right center no-repeat;padding:0 18px 0 0}h1 a span.link-pdf,h2 a span.link-pdf,h3 a span.link-pdf,h4 a span.link-pdf,h5 a span.link-pdf,h6 a span.link-pdf{display:none}@media print{*{background:transparent!important;color:black!important;text-shadow:none!important;filter:none!important;-ms-filter:none!important}a,a:visited{text-decoration:underline}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}th{font-weight:bold}tr,img{page-break-inside:avoid}img{max-width:100%!important}@page{margin:.5cm}p,h2,h3{orphans:3;widows:3}h2,h3{page-break-after:avoid}div#skip-to,div#global-masthead nav,div#local-masthead nav,form#local-search,div#global-footer,div#search_ebi,div#shortcuts,div#ebi_search_results{display:none}.float-l{float:left;margin:0 9pt 20pt 0}.float-r{float:right;margin:0 0 20pt 9pt}img.float-l,img.float-r{margin-bottom:0}.center{margin:0 auto}div.panels-flexible-column-last,div.panels-flexible-region-last{display:none}div.panels-flexible-column-first,div.panels-flexible-region-first{width:100%}}div#global-masthead,div#global-masthead nav{height:auto}div#global-masthead nav{float:right}div#global-masthead p{margin:0}div.masthead ul{margin:0;padding:0;float:left;list-style:none}div.masthead ul li{float:left}div.masthead ul a{display:block}div.masthead ul li a,div.masthead ul li a{padding:.2em .6em}div.masthead ul li abbr{border-bottom:0 none}div#global-masthead{border-bottom:1px solid #e3e3e3}div#global-masthead p,div#global-masthead img{float:left}div#global-masthead img{padding-left:.69em}div#global-masthead p#logo a,div#global-masthead p#logo a:link,div#global-masthead p#logo a:visited{border:0 none}div#local-footer p{padding-top:10px;margin:0}div#global-masthead ul{float:right;font-size:93%}div#global-masthead ul li a{display:block;border-right:1px solid #000;border-left:1px solid #666;padding-top:5px;height:23px}.oldie div#global-masthead ul li a{width:5em;text-align:center}div#global-masthead ul li.first a{border-left:0 none}div#global-masthead ul li.last a{border-right:0 none}div#global-masthead ul li a,div#global-masthead ul li a:link,div#global-masthead ul li a:visited{color:white;border-bottom:0 none}div#global-masthead ul li a:hover,div#global-masthead ul li a:active,div#global-masthead ul li a:focus,div#global-masthead ul li.active a,div#global-masthead ul li.active-trail a{border-top:3px solid white;height:20px}div#global-masthead ul li#services a:hover,div#global-masthead ul li#services a:active,div#global-masthead ul li#services a:focus,div#global-masthead ul li.active#services a,div#global-masthead ul li.active-trail#services a{border-top-color:#207a7a}div#global-masthead ul li#research a:hover,div#global-masthead ul li#research a:active,div#global-masthead ul li#research a:focus,div#global-masthead ul li#research.active a,div#global-masthead ul li#research.active-trail a{border-top-color:#71b360}div#global-masthead ul li#training a:hover,div#global-masthead ul li#training a:active,div#global-masthead ul li#training a:focus,div#global-masthead ul li#training.active a,div#global-masthead ul li#training.active-trail a{border-top-color:#fab700}div#global-masthead ul li#industry a:hover,div#global-masthead ul li#industry a:active,div#global-masthead ul li#industry a:focus,div#global-masthead ul li#industry.active a,div#global-masthead ul li#industry.active-trail a{border-top-color:#346189}div#global-masthead ul li#industry{display:none!important}div#global-masthead ul li#about a:hover,div#global-masthead ul li#about a:active,div#global-masthead ul li#about a:focus,div#global-masthead ul li#about.active a,div#global-masthead ul li#about.active-trail a{border-top-color:#207a7a}div#global-masthead ul li#about-us a:hover,div#global-masthead ul li#about-us a:active,div#global-masthead ul li#about-us a:focus,div#global-masthead ul li#about-us.active a,div#global-masthead ul li#about-us.active-trail a{border-top-color:#207a7a}form#global-search{float:right;margin:3px 0;padding:0;height:24px;vertical-align:top}form#global-search fieldset{padding:0;margin:0 9px;border:0 none;background-color:transparent}form#global-search label{display:inline;margin-right:0;float:left;margin-top:.1em}form#global-search input#global-searchbox{font-size:100%;margin:0 .3em;width:140px}form#global-search input.submit{padding:.25em;width:24px;height:24px;margin:0;display:inline;background:url(http://www.ebi.ac.uk/web_guidelines/images/global/search-button.png) no-repeat;background-position:0 0;width:24px;height:24px;-moz-box-shadow:0 0 0 transparent;-webkit-box-shadow:0 0 0 transparent;box-shadow:0 0 0 transparent;border:0 none;filter:none;float:left}form#global-search input.submit:hover,form#global-search input.submit:focus,form#global-search input.submit:active{background-position:-24px 0;width:24px;height:24px}div#local-masthead{border-bottom:3px solid #eee}div#skip-to,div#local-title-logo h1{left:-5000px;top:-5000px;position:absolute}div#local-masthead h1 span{font-size:49.2%;margin-left:32px;letter-spacing:normal;color:inherit}.level1 div#local-masthead h1 span{font-size:75%;margin-left:18px;letter-spacing:normal;color:inherit}div#local-masthead ul{margin-top:-5px;height:auto;width:100%;background-color:#111;background-color:rgba(17,17,17,0.4)}.oldie div#local-masthead ul{background-color:transparent;filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#66111111',EndColorStr='#66111111')!important}div#local-masthead ul li{border-color:transparent;border-right:1px dotted #f8f8f8}div#local-masthead ul li.active,div#local-masthead ul li.active-trail{background-color:#111}div#local-masthead ul li.last{border-right:0 none}div#local-masthead ul li a,div#local-masthead ul li a:link,div#local-masthead ul li a:visited{border-bottom:3px solid transparent;color:#f6f6f6}div#local-masthead ul li.active a,div#local-masthead ul li.active a:link,div#local-masthead ul li.active-trail a:link,div#local-masthead ul li.active a:visited,div#local-masthead ul li.active-trail a:visited{padding-top:2px;border-bottom:3px solid #666;background-color:#111}div#local-masthead ul li a:hover,div#local-masthead ul li a:focus,div#local-masthead ul li a:active{border-bottom:3px solid #71b360;color:#fff;background-color:#333}div#local-masthead p{margin:20px 0}body div#local-title h1,body div#local-title p,body div#local-title a{color:#fff;text-shadow:1px 1px #666}body.section-about div#local-masthead{background:#60bdc4 url(http://www.ebi.ac.uk/web_guidelines/images/banners/EBI_ABOUT_Banner.jpg) top right no-repeat}body.section-industry div#local-masthead{background:#83a3c9 url(http://www.ebi.ac.uk/web_guidelines/images/banners/EBI_INDUSTRY_Banner.jpg) top right no-repeat}body.section-research div#local-masthead{background:#a8d793 url(http://www.ebi.ac.uk/web_guidelines/images/banners/EBI_RESEARCH_Banner.jpg) top right no-repeat}body.section-research div#local-title h1,body.section-research div#local-title p,body.section-research div#local-title a{color:#222;text-shadow:1px 1px #ccc}body.section-services div#local-masthead{background:#60bdc4 url(http://www.ebi.ac.uk/web_guidelines/images/banners/EBI_SERVICES_Banner.jpg) top right no-repeat}body.section-training div#local-masthead{background:#f9e292 url(http://www.ebi.ac.uk/web_guidelines/images/banners/EBI_TRAINING_Banner.jpg) top right no-repeat}body.section-training div#local-title h1,body.section-training div#local-title p,body.section-training div#local-title a{color:#222;text-shadow:1px 1px #ccc}body.section-home div#local-masthead{background:#1d8086 url(http://www.ebi.ac.uk/web_guidelines/images/banners/EBI_HOMEPAGE_Banner.jpg) top right no-repeat}ul#local-nav li.functional{float:right;background-color:#444;background-color:rgba(17,17,17,0.4)}.oldie ul#local-nav li.functional{background-color:transparent;filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#66111111',EndColorStr='#66111111')!important}div#local-title a{border:0 none}div#local-title.logo-only img,div#local-title.logo-title img,div#local-title.logo-title-strapline img{float:left;margin:1em .69em .69em}div#local-title.logo-title span,div#local-title.logo-title-strapline span{display:block;margin:1em 0 .69em 0;float:left}div#local-title.logo-title span{margin-top:2.3em}div#local-title.logo-title h1,div#local-title.logo-title-strapline h1{display:inline;line-height:100%}div#local-title.logo-title-strapline h1{font-size:270%}div#local-title.logo-title-strapline p{display:inline;font-size:123.1%}div#local-search form fieldset,form#local-search fieldset{background-color:#fff;background-color:rgba(255,255,255,0.8);padding:.5em 2em .5em .3em}.oldie div#local-search form fieldset,.oldie form#local-search fieldset{background-color:transparent;filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#ccffffff',EndColorStr='#ccffffff')}div#local-search form fieldset div.left,form#local-search fieldset div.left{width:80%;margin-right:2%;float:left}div#local-search form fieldset div.right,form#local-search fieldset div.right{width:18%;float:left;text-align:center}@media only screen and (min-width:1100px){div#local-search form,form#local-search{float:right}div#local-search form fieldset,form#local-search fieldset{max-width:440px}}div#local-search form fieldset input.form-submit,div#local-search form fieldset input.submit,form#local-search fieldset input.submit{display:inline;margin:.3em .2em .1em .2em}div#local-search form fieldset input.form-text,div#local-search form fieldset input#local-searchbox,form#local-search fieldset input#local-searchbox{font-size:123.1%;width:95%}div#local-search form fieldset span.examples,form#local-search fieldset span.examples{margin:0 0 0 .3em;font-size:80%}div#local-search form fieldset span.adv,form#local-search fieldset span.adv{margin:0;font-size:80%}div#content{padding-top:9px;padding-bottom:40px}ul#secondary-nav li.active a{font-weight:bold}nav#breadcrumb{margin-top:4px}div#local-footer,div#global-footer{background-color:white;background-color:rgba(255,255,255,0.85)}.oldie div#local-footer,.oldie div#global-footer{background-color:transparent;filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#d9ffffff',EndColorStr='#d9ffffff')}#ebi-footer-meta{padding-bottom:1px;clear:both}div#local-footer{background-color:#fff;border-top:2px solid #eee}#global-footer{border-top:5px solid #eee}#global-footer h3{font-size:123.1%;margin-bottom:5px;color:#333}#global-footer p{font-size:100%;margin:0 0 5px 0}#global-footer ul{font-size:85%;padding:0 0 0 9px;list-style:none}#global-footer a{border-bottom:0 none}#global-footer ul li a,#ebi-footer-meta p a{padding:2px 4px 2px 0}#ebi-footer-meta p a{margin-left:0}#global-footer ul li a:hover,#global-footer ul li a:focus,#global-footer ul li a:active,#ebi-footer-meta p a:hover,#ebi-footer-meta p a:focus,#ebi-footer-meta p a:active{-moz-border-radius:3px;-khtml-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;background-color:#e4e4e4}#ebi-footer-meta{font-size:85%}#ebi-footer-meta p.address{color:#888}#ebi-footer-meta p.legal{margin-bottom:9px}#global-nav-expanded img{padding-left:.7em;margin:29px 0 0 0;border:0}#global-nav-expanded h3{margin-top:20px;margin-bottom 5px;line-height:1.538}#global-nav-expanded h3.services{border-bottom:2px solid #207a7a}#global-nav-expanded h3.research{border-bottom:2px solid #71b360}#global-nav-expanded h3.training{border-bottom:2px solid #fab700}#global-nav-expanded h3.industry{border-bottom:2px solid #346189}#global-nav-expanded h3.about{border-bottom:2px solid #207a7a}#global-nav-expanded .grid_4 h3{padding:0}#global-nav-expanded .grid_4 h3 a{display:block;padding:.5em .3em 0 .3em}#global-nav-expanded .grid_4 h3 a:hover,#global-nav-expanded .grid_4 h3 a:focus,#global-nav-expanded .grid_4 h3 a:active{background-color:#ddd}@media screen and (min-height:600px){div#content{min-height:250px}}@media screen and (min-height:1000px){div#content{min-height:450px}}*{font-weight:normal;font-style:normal;text-decoration:none;text-align:left;text-indent:0}body{margin:0 auto;width:96%;max-width:1350px}body.narrow{max-width:984px}body.wide{max-width:1600px}body.full-width{max-width:none}body.level1{max-width:1200px}body{font-family:Verdana,sans-serif}@font-face{font-family:'HelveticaNeueLT Pro';src:url('http://www.ebi.ac.uk/web_guidelines/fonts/helveticaneueltprolt.eot');src:url('http://www.ebi.ac.uk/web_guidelines/fonts/helveticaneueltprolt.eot?#iefix') format('embedded-opentype'),url('http://www.ebi.ac.uk/web_guidelines/fonts/helveticaneueltprolt.otf') format('opentype'),local('☺'),url('http://www.ebi.ac.uk/web_guidelines/fonts/helveticaneueltprolt.woff') format('woff'),url('http://www.ebi.ac.uk/web_guidelines/fonts/helveticaneueltprolt.ttf') format('truetype'),url('http://www.ebi.ac.uk/web_guidelines/fonts/helveticaneueltprolt.svg#HelveticaNeueLTPro-Lt') format('svg');font-weight:normal;font-style:normal}h1,h2,h3,h4,h5,h6{font-family:'HelveticaNeueLT Pro','Helvetica Neue',Helvetica,Arial,sans-serif;margin:9px 0;clear:both;line-height:1.2}h1{font-size:370%;margin:20px 0}h1.strapline{font-size:277%}h2{font-size:277%;line-height:1.11}h2.strapline{font-size:182%}td h2{font-size:257%}h3{font-size:182%}h4{font-size:161.6%;color:#000}h5{font-size:138.5%;color:#000}h6{font-size:123%;font-variant:small-caps;color:#000}p,ul,ol{font-size:100%;margin:0 0 20px 0}nav ul{font-size:108%}dt{font-family:'HelveticaNeueLT Pro','Helvetica Neue',Helvetica,Arial,sans-serif;margin:9px 0;padding:0 9px;clear:both;line-height:1.2;font-size:138.5%}ul ul,ul ul ul,ol ol,ol ol ol{margin-bottom:0}p.meta{font-size:85%;color:#444}div#global-masthead p{font-size:123.1%;font-family:'HelveticaNeueLT Pro',Helvetica,Arial,sans-serif}blockquote{font-size:100%;margin:19px 9px;padding:10px 9px;border-left:3px solid #eee}#intro,#outro{background-color:#ededed;display:block;padding-bottom:9px;-moz-border-radius:5px;-khtml-border-radius:5px;-webkit-border-radius:5px;border-radius:5px}#intro h2{margin:0;margin-bottom:5px;padding-top:13px;border-bottom:1px solid #ccc}#intro h2>p,#outro>p,.highlight>p{padding-top:1em}.shortcuts h3{border-bottom:0 none;font-size:138.5%;line-height:inherit;background-color:#DDD;margin-top:0;margin-bottom:0;padding-top:7px;padding-bottom:1px;-moz-border-radius-topleft:5px;-moz-border-radius-topright:5px;-khtml-border-radius-topleft:5px;-khtml-border-radius-topright:5px;-webkit-border-top-left-radius:5px;-webkit-border-top-right-radius:5px;border-top-left-radius:5px;border-top-right-radius:5px}.shortcuts.submenu h3{background-color:#222;color:#eee}.shortcuts #ebi_search_results h3{font-size:123.1%}.shortcuts ul{padding:.69em 1.4em}.shortcuts div.half{float:left;width:50%;padding:.69em 0}.shortcuts>div,div.highlight{width:auto;background:#ededed;padding-bottom:10px;margin:0 9px 9px 9px;overflow:visible;-moz-box-shadow:none;-webkit-box-shadow:none;box-shadow:none}.shortcuts.transparent>div{background:transparent}.shortcuts.image>div p{padding:0}.shortcuts.image>div a{display:block;border-bottom:3px solid white}.shortcuts.image>div a:hover,.shortcuts.image>div a:focus,.shortcuts.image>div a:active{border-bottom-color:#207a7a}div.highlight{border:4px solid #ddd;-moz-border-radius:5px;-khtml-border-radius:5px;-webkit-border-radius:5px;border-radius:5px}body.level1 .shortcuts>div{max-width:400px}body.level1 .shortcuts>div{padding-bottom:0}body.level1 .shortcuts img{margin:0;padding:0}.shortcuts>div ul.split{float:left;width:42%;margin:0 1%;list-style:none;padding:9px 0 9px 9px}.shortcuts>div ul li a{display:block;border-bottom-color:#ccc}div.highlight{overflow:visible;margin:0}div.highlight h3{border-bottom:0 none;line-height:inherit;background-color:#DDD;margin-top:0;margin-bottom:0}body.page-services div.highlight{margin-bottom:9px}body.page-services div.highlight h3{background-color:transparent;margin-top:5px;margin-bottom:4px;font-size:161.6%}html.fontface body.page-services div.highlight .icon:before{float:left;height:100px}body.page-services div.highlight p{text-align:left;padding:0 0 0 9px;margin:0}#intro h2,.shortcuts h3,#outro h3,div.highlight h3{color:#333}#intro,#outro,.shortcuts,.highlight{margin-left:0;margin-right:0}.shortcuts>div{margin-left:0;margin-right:0}.alpha #intro,.alpha #outro,.alpha .shortcuts,.alpha .highlight{margin-left:9px}.omega #intro,.omega #outro,.omega .shortcuts,.omega .highlight{margin-right:9px}form table th,form table td,td p,th p,ul ul,ol ol,ol ul,ul ol,ul ul ul,ol ol ol{font-size:100%}ul{list-style-type:circle}li{word-wrap:break-word}code,pre{font-size:100%}p code,li code,h1 code,h2 code,h3 code,h4 code,h5 code,h6 code,td code,pre code{font-size:100%}pre{padding:3%;border-width:1px;border-style:dotted;overflow:auto;margin:0 .69em}i,em{font-style:italic}b,strong{font-weight:bold}abbr,acronym{border-bottom:1px dashed #ccc;cursor:help}dfn{padding:2px 3px;background-color:#ddd;cursor:help}img{border:0;margin:0;width:auto;max-width:100%}img:not(.imagecache-screenshot-carousel-img){height:auto}section img{margin:7px 0}img.logo{margin-bottom:2px}img.photo{border:1px solid #777;margin:0 0 20px 9px}p.logo-img img{margin:0}img.float-l{float:left;margin:0 9px 20px 0}img.float-r{float:right;margin:0 0 20px 9px}.center{margin:0 auto}.text-highlight{color:#222;background-color:#f3f3f3;padding:0 .2em}h1,h2,h3,h4,h5,h6,p,form,table{padding:0 9px}a,a:link,a:visited{border-bottom-width:1px;border-bottom-style:dotted;border-bottom-color:inherit}a:hover,a:focus,a:active{border-bottom-style:solid}a.special{font-style:italic;border-bottom-style:double;border-bottom-width:3px;padding:.1em .3em}td a,td a:link,td a:visited,td a:hover,td a:focus,td a:active{border-bottom-color:#222}div#local-title-logo a{border:0 none;text-decoration:none}h1 a,h1 a:link,h1 a:visited,h2 a,h2 a:link,h2 a:visited,h3 a,h3 a:link,h3 a:visited,h4 a,h4 a:link,h4 a:visited,h5a,h5 a:link,h5 a:visited{border-bottom:0 none;color:inherit}h2 a:hover,h2 a:focus,h2 a:active,h3 a:hover,h3 a:focus,h3 a:active,h4 a:hover,h4 a:focus,h4 a:active,h5 a:hover,h5 a:focus,h5 a:active{color:#444}a.image,a.image:link,a.image:visited{border-bottom:0 none}form{font-size:100%;font-family:Helvetica,sans-serif;color:#444}form p,form ul,form ol{font-size:1em}form fieldset{background-color:#f7f7f7;border:2px solid #eee;padding:.5em .5em .5em 1em;margin-top:1em;margin-bottom:1em;color:inherit}form legend{font-size:100%;background-color:#e5e5e5;color:#222;padding:.1em .5em;border:2px solid #d8d8d8}form legend span{color:#000;font-size:138.5%;font-weight:bold;margin:0 4px}form legend.hide{visibility:hidden}form label{display:inline;margin-right:.3em}form input{margin:.2em .1em .2em .2em;font-family:'Helvetica Neue',Helvetica,sans-serif;vertical-align:middle}form input.submit{display:block;margin:.5em 0;padding:3px 9px;-moz-border-radius:5px;-khtml-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;font-size:108%;border-width:1px;border-color:#618658;background-color:#71b360;background-image:-moz-linear-gradient(top,#9dd98e,#71b360);background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0,#9dd98e),color-stop(1,#71b360));background-image:-webkit-linear-gradient(#9dd98e,#71b360);background-image:linear-gradient(top,#9dd98e,#71b360);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#9DD98E',EndColorStr='#71b360');box-shadow:0 2px 2px #adadad;-moz-box-shadow:0 2px 2px #adadad;-khtml-box-shadow:0 2px 2px #adadad;-webkit-box-shadow:0 2px 2px #adadad;color:#111;text-shadow:#f7f7f7 0 1px 1px;width:auto;*padding-top:0;*padding-bottom:0}form input.submit:hover,form input.submit:focus,form input.submit:active{background:#71b360}form input.submit:active{box-shadow:0 0 0 transparent;-moz-box-shadow:0 0 0 transparent;-khtml-box-shadow:0 0 0 transparent;-webkit-box-shadow:0 0 0 transparent}table{border-collapse:collapse;width:99%;background-color:white;margin:9px auto;border:5px solid #f1f1f1}th,td{padding:8px 5px 5px 5px;border:1px solid #f1f1f1;border-collapse:collapse;vertical-align:top}th,td{font-size:93%}th{font-weight:bold;background-color:#f2f2ec;border-bottom:3px solid #f7f7f7;color:black}table.predoc-details th{width:20%;background-color:#aad095}ul,ol{padding:0 9px 0 27px}ul li>p{padding-left:0}@font-face{font-family:'EBI-Conceptual';src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Conceptual/fonts/EBI-Conceptual.eot');src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Conceptual/fonts/EBI-Conceptual.eot?#iefix') format('embedded-opentype'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Conceptual/fonts/EBI-Conceptual.woff') format('woff'),local('☺'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Conceptual/fonts/EBI-Conceptual.svg#EBI-Conceptual') format('svg'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Conceptual/fonts/EBI-Conceptual.ttf') format('truetype');font-weight:normal;font-style:normal}@font-face{font-family:'EBI-Functional';src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Functional/fonts/EBI-Functional.eot');src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Functional/fonts/EBI-Functional.eot?#iefix') format('embedded-opentype'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Functional/fonts/EBI-Functional.woff') format('woff'),local('☺'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Functional/fonts/EBI-Functional.svg#EBI-Functional') format('svg'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Functional/fonts/EBI-Functional.ttf') format('truetype');font-weight:normal;font-style:normal}@font-face{font-family:'EBI-Generic';src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.eot');src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.eot?#iefix') format('embedded-opentype'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.woff') format('woff'),local('☺'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.svg#EBI-Generic') format('svg'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Generic/fonts/EBI-Generic.ttf') format('truetype');font-weight:normal;font-style:normal}@font-face{font-family:'EBI-Species';src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Species/fonts/EBI-Species.eot');src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Species/fonts/EBI-Species.eot?#iefix') format('embedded-opentype'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Species/fonts/EBI-Species.woff') format('woff'),local('☺'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Species/fonts/EBI-Species.svg#EBI-Species') format('svg'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Species/fonts/EBI-Species.ttf') format('truetype');font-weight:normal;font-style:normal}@font-face{font-family:'EBI-SocialMedia';src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-SocialMedia/fonts/EBI-SocialMedia.eot');src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-SocialMedia/fonts/EBI-SocialMedia.eot?#iefix') format('embedded-opentype'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-SocialMedia/fonts/EBI-SocialMedia.woff') format('woff'),local('☺'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-SocialMedia/fonts/EBI-SocialMedia.svg#EBI-SocialMedia') format('svg'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-SocialMedia/fonts/EBI-SocialMedia.ttf') format('truetype');font-weight:normal;font-style:normal}@font-face{font-family:'EBI-FileFormats';src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-FileFormats/fonts/EBI-FileFormats.eot');src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-FileFormats/fonts/EBI-FileFormats.eot?#iefix') format('embedded-opentype'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-FileFormats/fonts/EBI-FileFormats.woff') format('woff'),local('☺'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-FileFormats/fonts/EBI-FileFormats.svg#EBI-Functional') format('svg'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-FileFormats/fonts/EBI-FileFormats.ttf') format('truetype');font-weight:normal;font-style:normal}@font-face{font-family:'EBI-Chemistry';src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Chemistry/fonts/EBI-Chemistry.eot');src:url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Chemistry/fonts/EBI-Chemistry.eot?#iefix') format('embedded-opentype'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Chemistry/fonts/EBI-Chemistry.woff') format('woff'),local('☺'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Chemistry/fonts/EBI-Chemistry.svg#EBI-Chemistry') format('svg'),url('http://www.ebi.ac.uk/web_guidelines/fonts/EBI-Chemistry/fonts/EBI-Chemistry.ttf') format('truetype');font-weight:normal;font-style:normal}html.fontface .icon{text-decoration:none;font-style:normal}html.fontface .icon-conceptual:before{font-family:'EBI-Conceptual';font-size:138.5%;color:#bbb;content:attr(data-icon);margin:0 .3em 0 0}html.fontface .icon-functional:before{font-family:'EBI-Functional';font-size:100%;color:#bbb;content:attr(data-icon);margin:0 .3em 0 0}html.fontface .icon-static:before,html.fontface .icon-generic:before{font-family:'EBI-Generic';font-size:100%;color:#bbb;content:attr(data-icon);margin:0 .3em 0 0}html.fontface .icon-species:before{font-family:'EBI-Species';font-size:100%;color:#bbb;content:attr(data-icon);margin:0 .3em 0 0}html.fontface .icon-socialmedia:before{font-family:'EBI-SocialMedia';font-size:100%;color:#bbb;content:attr(data-icon);margin:0 .3em 0 0}html.fontface .icon-fileformats:before{font-family:'EBI-FileFormats';font-size:123.1%;color:#bbb;content:attr(data-icon);margin:0 .3em 0 0}html.fontface .icon-chemistry:before{font-family:'EBI-Chemistry';font-size:100%;color:#bbb;content:attr(data-icon);margin:0 .3em 0 0}body{background:#fff url(http://www.ebi.ac.uk/web_guidelines/images/global/pale_grey_slight_texture.jpg) top left repeat}div#content{background-color:#fff}div#global-masthead{background-color:#333;color:white}h1,h2,h3,h4,h5,h6{color:#222}h4{color:#666}a,a:link{color:#3e3e3e}a:visited{color:#666}a:hover,a:focus,a:active{color:#000}a.special{background-color:#fff}pre{background-color:#f2f2ec;border-color:#999}code{background-color:#f2f2ec;border-color:#999}kbd{-moz-border-radius:5px;-khtml-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;border:1px solid #777;color:#222;background-color:#ccc;background-image:-moz-linear-gradient(top,#ccc,#666);background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0,#ccc),color-stop(1,#666));background-image:-webkit-linear-gradient(#ccc,#666);background-image:linear-gradient(top,#ccc,#666);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#ccc',EndColorStr='#666');padding:.2em .3em}.mute{color:#666}div.alert{border-left:3px solid #ffb3ca}h2.alert,h3.alert,h4.alert{color:#ffb3ca}html.fontface h2.alert:before,html.fontface h3.alert:before,html.fontface h4.alert:before{font-family:'EBI-Generic';font-size:100%;content:"l";margin:0 .3em 0 0}html.ie8 h2.alert:before,html.ie8 h3.alert:before,html.ie8 h4.alert:before{font-size:inherit}p.alert{margin:0 9px 20px 9px;background-color:#ffb3ca}span.alert{background-color:#ffb3ca;padding:.1em .2em}input.alert,select.alert label.alert textarea.alert{background-color:white;color:inherit;border:5px solid #ffb3ca}div.warning{border-left:3px solid #e5a066}h2.warning,h3.warning,h4.warning{color:#e5a066}p.warning{margin:0 9px 20px 9px;background-color:#e5a066}html.fontface h2.warning:before,html.fontface h3.warning:before,html.fontface h4.warning:before{font-family:'EBI-Generic';font-size:100%;content:"l";margin:0 .3em 0 0}html.ie8 h2.warning:before,html.ie8 h3.warning:before,html.ie8 h4.warning:before{font-size:inherit}input.valid,select.valid,textarea.valid{border:5px solid #be7}html.fontface .icon-c1:before{color:#dac79d}html.fontface .icon-c2:before{color:#dab7e2}html.fontface .icon-c3:before{color:#62d0df}html.fontface .icon-c4:before{color:#afc9b8}html.fontface .icon-c5:before{color:#ffb4aa}html.fontface .icon-c6:before{color:#ffc999}html.fontface .icon-c7:before{color:#bec3d9}html.fontface .icon-c8:before{color:#c5d4a3}html.fontface .icon-c9:before{color:#a4c7e2}body.level1 div.caption{margin:0 9px 9px}body.level1 div.caption-inner{border:0;background:transparent;font-size:85%;font-family:Verdana,sans-serif;color:#777;text-align:left;padding:0}body.level1 div.caption img,body.level1 div.caption object{margin:0 0 4px 0}div.views-field-citation{display:block;padding:0 9px 18px 9px}div.views-field-citation a:link,div.views-field-citation a:visited{border-bottom:0 none}div.views-field-citation .biblio-title a{font-size:123.1%;font-weight:bold}#search-extras.expander #ebi_search_results{position:absolute;z-index:500;right:4px;-moz-box-shadow:5px 5px 8px #666;-webkit-box-shadow:5px 5px 8px #666;box-shadow:5px 5px 8px #666;min-width:275px}#search-extras #ebi_search_results h3{cursor:pointer}#search-extras #ebi_search_results h3.slideToggle:hover{background-color:#333;color:white}.loading{background:url(http://www.ebi.ac.uk/web_guidelines/images/global/ajax-loader.gif) no-repeat 99%}#search-extras #ebi_search_results p{margin-top:9px}#search-extras #ebi_search_results ul{list-style:none;padding-left:9px}#search-extras #ebi_search_results ul span{color:#555}#search-extras #ebi_search_results ul a:link,#search-extras #ebi_search_results ul a:visited{margin-bottom:3px}span.searchterm{font-style:italic;padding:.1em .3em .1em .2em;background-color:#EEE;-moz-border-radius:5px;-khtml-border-radius:5px;-webkit-border-radius:5px;border-radius:5px}.container_24{width:100%;margin-left:auto;margin-right:auto}.grid_1,.grid_2,.grid_3,.grid_4,.grid_5,.grid_6,.grid_7,.grid_8,.grid_9,.grid_10,.grid_11,.grid_12,.grid_13,.grid_14,.grid_15,.grid_16,.grid_17,.grid_18,.grid_19,.grid_20,.grid_21,.grid_22,.grid_23,.grid_24{display:inline;float:left;position:relative;margin-left:1%;margin-right:1%}.oldie .grid_1,.oldie .grid_2,.oldie .grid_3,.oldie .grid_4,.oldie .grid_5,.oldie .grid_6,.oldie .grid_7,.oldie .grid_8,.oldie .grid_9,.oldie .grid_10,.oldie .grid_11,.oldie .grid_12,.oldie .grid_13,.oldie .grid_14,.oldie .grid_15,.oldie .grid_16,.oldie .grid_17,.oldie .grid_18,.oldie .grid_19,.oldie .grid_20,.oldie .grid_21,.oldie .grid_22,.oldie .grid_23,.oldie .grid_24{margin-left:.9%;margin-right:.9%}.alpha,.oldie .alpha{margin-left:0}.omega,.oldie .omega{margin-right:0}.container_24 .grid_1{width:2.1666%}.container_24 .alpha.grid_1,.container_24 .omega.grid_1{width:3.1666%}.container_24 .grid_2{width:6.3333%}.container_24 .alpha.grid_2,.container_24 .omega.grid_2{width:7.3333%}.container_24 .grid_3{width:10.5%}.container_24 .alpha.grid_3,.container_24 .omega.grid_3{width:11.5%}.container_24 .grid_4{width:14.6666%}.container_24 .alpha.grid_4,.container_24 .omega.grid_4{width:15.6666%}.container_24 .grid_5{width:18.8333%}.container_24 .alpha.grid_5,.container_24 .omega.grid_5{width:19.8333%}.container_24 .grid_6{width:23.0%}.container_24 .alpha.grid_6,.container_24 .omega.grid_6{width:24.0%}.container_24 .grid_7{width:27.1666%}.container_24 .alpha.grid_7,.container_24 .omega.grid_7{width:28.1666%}.container_24 .grid_8{width:31.3333%}.container_24 .alpha.grid_8,.container_24 .omega.grid_8{width:32.3333%}.container_24 .grid_9{width:35.5%}.container_24 .alpha.grid_9,.container_24 .omega.grid_9{width:36.5%}.container_24 .grid_10{width:39.6666%}.container_24 .alpha.grid_10,.container_24 .omega.grid_10{width:40.6666%}.container_24 .grid_11{width:43.8333%}.container_24 .alpha.grid_11,.container_24 .omega.grid_11{width:44.8333%}.container_24 .grid_12{width:48.0%}.container_24 .alpha.grid_12,.container_24 .omega.grid_12{width:49.0%}.container_24 .grid_13{width:52.1666%}.container_24 .alpha.grid_13,.container_24 .omega.grid_13{width:53.1666%}.container_24 .grid_14{width:56.3333%}.container_24 .alpha.grid_14,.container_24 .omega.grid_14{width:57.3333%}.container_24 .grid_15{width:60.5%}.container_24 .alpha.grid_15,.container_24 .omega.grid_15{width:61.5%}.container_24 .grid_16{width:64.6666%}.container_24 .alpha.grid_16,.container_24 .omega.grid_16{width:65.6666%}.container_24 .grid_17{width:68.8333%}.container_24 .alpha.grid_17,.container_24 .omega.grid_17{width:69.8333%}.container_24 .grid_18{width:73.0%}.container_24 .alpha.grid_18,.container_24 .omega.grid_18{width:74.0%}.container_24 .grid_19{width:77.1666%}.container_24 .alpha.grid_19,.container_24 .omega.grid_19{width:78.1666%}.container_24 .grid_20{width:81.3333%}.container_24 .alpha.grid_20,.container_24 .omega.grid_20{width:82.3333%}.container_24 .grid_21{width:85.5%}.container_24 .alpha.grid_21,.container_24 .omega.grid_21{width:86.5%}.container_24 .grid_22{width:89.6666%}.container_24 .alpha.grid_22,.container_24 .omega.grid_22{width:90.6666%}.container_24 .grid_23{width:93.8333%}.container_24 .alpha.grid_23,.container_24 .omega.grid_23{width:94.8333%}.container_24 .grid_24{width:100%;margin-left:0;margin-right:0}.container_24 .prefix_1{padding-left:4.167%}.container_24 .prefix_2{padding-left:8.333%}.container_24 .prefix_3{padding-left:12.5%}.container_24 .prefix_4{padding-left:16.667%}.container_24 .prefix_5{padding-left:20.833%}.container_24 .prefix_6{padding-left:25.0%}.container_24 .prefix_7{padding-left:29.167%}.container_24 .prefix_8{padding-left:33.333%}.container_24 .prefix_9{padding-left:37.5%}.container_24 .prefix_10{padding-left:41.667%}.container_24 .prefix_11{padding-left:45.833%}.container_24 .prefix_12{padding-left:50.0%}.container_24 .prefix_13{padding-left:54.167%}.container_24 .prefix_14{padding-left:58.333%}.container_24 .prefix_15{padding-left:62.5%}.container_24 .prefix_16{padding-left:66.667%}.container_24 .prefix_17{padding-left:70.833%}.container_24 .prefix_18{padding-left:75.0%}.container_24 .prefix_19{padding-left:79.167%}.container_24 .prefix_20{padding-left:83.333%}.container_24 .prefix_21{padding-left:87.5%}.container_24 .prefix_22{padding-left:91.667%}.container_24 .prefix_23{padding-left:95.833%}.container_24 .suffix_1{padding-right:4.167%}.container_24 .suffix_2{padding-right:8.333%}.container_24 .suffix_3{padding-right:12.5%}.container_24 .suffix_4{padding-right:16.667%}.container_24 .suffix_5{padding-right:20.833%}.container_24 .suffix_6{padding-right:25.0%}.container_24 .suffix_7{padding-right:29.167%}.container_24 .suffix_8{padding-right:33.333%}.container_24 .suffix_9{padding-right:37.5%}.container_24 .suffix_10{padding-right:41.667%}.container_24 .suffix_11{padding-right:45.833%}.container_24 .suffix_12{padding-right:50.0%}.container_24 .suffix_13{padding-right:54.167%}.container_24 .suffix_14{padding-right:58.333%}.container_24 .suffix_15{padding-right:62.5%}.container_24 .suffix_16{padding-right:66.667%}.container_24 .suffix_17{padding-right:70.833%}.container_24 .suffix_18{padding-right:75.0%}.container_24 .suffix_19{padding-right:79.167%}.container_24 .suffix_20{padding-right:83.333%}.container_24 .suffix_21{padding-right:87.5%}.container_24 .suffix_22{padding-right:91.667%}.container_24 .suffix_23{padding-right:95.833%}.container_24 .push_1{left:4.167%}.container_24 .push_2{left:8.333%}.container_24 .push_3{left:12.5%}.container_24 .push_4{left:16.667%}.container_24 .push_5{left:20.833%}.container_24 .push_6{left:25.0%}.container_24 .push_7{left:29.167%}.container_24 .push_8{left:33.333%}.container_24 .push_9{left:37.5%}.container_24 .push_10{left:41.667%}.container_24 .push_11{left:45.833%}.container_24 .push_12{left:50.0%}.container_24 .push_13{left:54.167%}.container_24 .push_14{left:58.333%}.container_24 .push_15{left:62.5%}.container_24 .push_16{left:66.667%}.container_24 .push_17{left:70.833%}.container_24 .push_18{left:75.0%}.container_24 .push_19{left:79.167%}.container_24 .push_20{left:83.333%}.container_24 .push_21{left:87.5%}.container_24 .push_22{left:91.667%}.container_24 .push_23{left:95.833%}.container_24 .pull_1{left:-4.167%}.container_24 .pull_2{left:-8.333%}.container_24 .pull_3{left:-12.5%}.container_24 .pull_4{left:-16.667%}.container_24 .pull_5{left:-20.833%}.container_24 .pull_6{left:-25.0%}.container_24 .pull_7{left:-29.167%}.container_24 .pull_8{left:-33.333%}.container_24 .pull_9{left:-37.5%}.container_24 .pull_10{left:-41.667%}.container_24 .pull_11{left:-45.833%}.container_24 .pull_12{left:-50.0%}.container_24 .pull_13{left:-54.167%}.container_24 .pull_14{left:-58.333%}.container_24 .pull_15{left:-62.5%}.container_24 .pull_16{left:-66.667%}.container_24 .pull_17{left:-70.833%}.container_24 .pull_18{left:-75.0%}.container_24 .pull_19{left:-79.167%}.container_24 .pull_20{left:-83.333%}.container_24 .pull_21{left:-87.5%}.container_24 .pull_22{left:-91.667%}.container_24 .pull_23{left:-95.833%}.clear{clear:both;display:block;overflow:hidden;visibility:hidden;width:0;height:0}.clearfix:after{clear:both;content:' ';display:block;font-size:0;line-height:0;visibility:hidden;width:0;height:0}.clearfix{display:inline-block}* html .clearfix{height:1%}.clearfix{display:block}div#topbar{background-color:#207a7a;border-bottom:1px solid #222}a,a:link{color:#0f2559}a:hover,a:focus,a:active{color:#0e6a0e}h1,h2,h3,h4,h5,h6{color:#222}h1{color:#f7f7f7}h2{color:#207a7a}h3{color:#996a44}th{background-color:#70bdbd;background-color:rgba(112,189,189,0.5);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#70BDBD',EndColorStr='#70BDBD');filter:progid:DXImageTransform.Microsoft.transparency(50)}a.special{background-color:#7cd17c}form input.submit{border-color:#295c5c;background-color:#207a7a;background-image:-moz-linear-gradient(top,#54bdbd,#207a7a);background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0,#54bdbd),color-stop(1,#207a7a));background-image:-webkit-linear-gradient(#54bdbd,#207a7a);background-image:linear-gradient(top,#54bdbd,#207a7a);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#54bdbd',EndColorStr='#207a7a');color:#f8f8f8;text-shadow:#145251 0 1px 1px}form input.submit:hover,form input.submit:focus,form input.submit:active{background:#207a7a}div#local-masthead{background-color:#70bdbd}div#local-masthead.gradient{background-color:#70bdbd;background-image:-moz-linear-gradient(top,#70bdbd,#9adede);background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0,#70bdbd),color-stop(1,#9adede));background-image:-webkit-linear-gradient(#70bdbd,#9adede);background-image:linear-gradient(top,#70bdbd,#9adede);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#70bdbd',EndColorStr='#9adede')}div#local-masthead ul li a:hover,div#local-masthead ul li a:focus,div#local-masthead ul li a:active{border-bottom:3px solid #207a7a}div#mastheads div#local h1{color:#222}body.expander div#global{border-bottom:1px solid #111}body.expander div#local{border-top:1px solid #70d3d3}.primary-1{background-color:#207a7a}.primary-2{background-color:#295c5c}.primary-3{background-color:#0a4f4f}.primary-4{background-color:#54bdbd}.primary-5{background-color:#70bdbd}.secondary-a-1{background-color:#2e4988}.secondary-a-2{background-color:#344366}.secondary-a-3{background-color:#0f2559}.secondary-a-4{background-color:#6380c4}.secondary-a-5{background-color:#7d92c4}.secondary-b-1{background-color:#2ba32b}.secondary-b-2{background-color:#377a37}.secondary-b-3{background-color:#0e6a0e}.secondary-b-4{background-color:#5dd15d}.secondary-b-5{background-color:#7cd17c}.complement-1{background-color:#cb7935}.complement-2{background-color:#996a44}.complement-3{background-color:#844511}.complement-4{background-color:#e5a066}.complement-5{background-color:#e5b288}
+<style>
+    .ebi-embl-footer-links-container a {
+        text-decoration: none !important;
+        color: #0f2559 !important;
+        border: 0px solid !important;
+        padding: 2px 4px;
+    }
 
-        #global-footer{
-            width:100%;
-            margin:0;
-        }
-        footer{
-            font-size: 13px;
-            line-height: 1.538;
-            font-family: Verdana,sans-serif;
-        }
-    </style>
-    <footer>
-        <!-- Optional local footer (insert citation / project-specific copyright / etc here -->
-        <!--
-        <div id="local-footer" class="grid_24 clearfix">
-          <p>How to reference this page: ...</p>
+    .ebi-embl-footer-links-container a:visited {
+        color: #666 !important;
+    }
+
+    .ebi-embl-footer-links-container a:hover {
+        text-decoration: none;
+        color: #0e6a0e !important;
+        background-color: #e4e4e4 !important;
+        border: 0px solid !important;
+    }
+
+    .ebi-embl-footer-right > div > a {
+        font-family: 'HelveticaNeueLT Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+        text-decoration: none !important;
+        padding: .5em 2% 0 2% !important;
+        margin-bottom: .5em !important;
+        font-size: 16px !important;
+        color: #333 !important;
+        border-bottom: 2px solid #207A7A;
+        display: inline-block;
+        width: 96%;
+    }
+
+    .ebi-embl-footer-right > div > a:hover {
+        text-decoration: none !important;
+        background-color: #ddd !important;
+        color: #333 !important;
+        border-bottom: 2px solid #207A7A;
+    }
+
+    .ebi-embl-footer-right > div > a:visited {
+        color: #333 !important;
+        border-bottom: 2px solid #207A7A;
+    }
+
+    .ebi-embl-link-research, .ebi-embl-link-research:visited, .ebi-embl-link-research:hover {
+        border-bottom-color: #71B360 !important;
+    }
+
+    .ebi-embl-link-training, .ebi-embl-link-training:visited, .ebi-embl-link-training:hover {
+        border-bottom-color: #FAB700 !important;
+    }
+
+    .ebi-embl-link-industry, .ebi-embl-link-industry:visited, .ebi-embl-link-industry:hover {
+        border-bottom-color: #346189 !important;
+    }
+
+    .ebi-embl-footer-image-a {
+        text-decoration: none !important;
+        border: 0px solid !important;
+        height: 0px;
+        padding: 0px;
+    }
+
+    .ebi-embl-footer {
+        border-top: 5px solid #eee;
+        background-color: rgba(255, 255, 255, 0.85);
+        font-size: 11px;
+        line-height: 1.538;
+        font-family: Verdana, sans-serif;
+        position: relative;
+    }
+
+    .ebi-embl-footer-info > p.address {
+        color: #888;
+        padding: 0px 9px 9px 9px;
+        margin: 0px;
+    }
+
+    .ebi-embl-footer-info {
+        clear: both;
+    }
+
+    .ebi-embl-footer-info > p.legal {
+        padding: 0px 9px 9px 9px;
+        margin: 0px;
+    }
+
+    .ebi-embl-footer .ebi-embl-footer-links ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        text-transform: none;
+    }
+
+    .ebi-embl-footer-left {
+        width: 19%;
+        float: left;
+        margin-left: 1%;
+        margin-top: 20px;
+    }
+
+    .ebi-embl-footer-right {
+        width: 80%;
+        float: right;
+    }
+
+    .ebi-embl-footer-right > div {
+        margin-left: 1%;
+        float: left;
+        margin-top: 20px;
+        width: 19%;
+        position: relative;
+    }
+
+</style>
+<footer class="ebi-embl-footer">
+
+    <div class="ebi-embl-footer-links">
+        <div class="ebi-embl-footer-left">
+            <a class="ebi-embl-footer-image-a" href="http://www.ebi.ac.uk" title="EMBL-EBI">
+                <img src="img/EMBL_EBI_Logo_black.png" alt="EMBL European Bioinformatics Institute">
+            </a>
+            <ul class="ebi-embl-footer-links-container">
+                <li class="first"><a href="//www.ebi.ac.uk/about/news">News</a></li>
+                <li><a href="//www.ebi.ac.uk/about/brochures">Brochures</a></li>
+                <li><a href="//www.ebi.ac.uk/about/contact">Contact us</a></li>
+                <li class="last"><a href="http://intranet.ebi.ac.uk">Intranet</a></li>
+            </ul>
         </div>
-        -->
-        <!-- End optional local footer -->
 
-        <div id="global-footer" class="grid_24">
-
-            <nav id="global-nav-expanded">
-
-                <div class="grid_4 alpha">
-                    <h3 class="embl-ebi"><a href="//www.ebi.ac.uk/" title="EMBL-EBI">EMBL-EBI</a></h3>
-                </div>
-
-                <div class="grid_4">
-                    <h3 class="services"><a href="//www.ebi.ac.uk/services">Services</a></h3>
-                </div>
-
-                <div class="grid_4">
-                    <h3 class="research"><a href="//www.ebi.ac.uk/research">Research</a></h3>
-                </div>
-
-                <div class="grid_4">
-                    <h3 class="training"><a href="//www.ebi.ac.uk/training">Training</a></h3>
-                </div>
-
-                <div class="grid_4">
-                    <h3 class="industry"><a href="//www.ebi.ac.uk/industry">Industry</a></h3>
-                </div>
-
-                <div class="grid_4 omega">
-                    <h3 class="about"><a href="//www.ebi.ac.uk/about">About us</a></h3>
-                </div>
-
-            </nav>
-
-            <section id="ebi-footer-meta">
-                <p class="address">EMBL-EBI, Wellcome Trust Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, UK &nbsp; &nbsp; +44 (0)1223 49 44 44</p>
-
-                <p class="legal">Copyright &copy; EMBL-EBI 2013 | EBI is an outstation of the <a href="http://www.embl.org">European Molecular Biology
-                    Laboratory</a> | <a href="/about/privacy">Privacy</a> | <a href="/about/cookies">Cookies</a> | <a href="/about/terms-of-use">Terms of
-                    use</a></p>
-            </section>
-
+        <div class="ebi-embl-footer-right">
+            <div>
+                <a href="//www.ebi.ac.uk/services">Services</a>
+                <ul class="ebi-embl-footer-links-container">
+                    <li><a href="//www.ebi.ac.uk/services">By topic</a></li>
+                    <li><a href="//www.ebi.ac.uk/services/all">By name (A-Z)</a></li>
+                    <li><a href="//www.ebi.ac.uk/support">Help &amp; Support</a></li>
+                </ul>
+            </div>
+            <div>
+                <a class="ebi-embl-link-research" href="//www.ebi.ac.uk/research">Research</a>
+                <ul class="ebi-embl-footer-links-container">
+                    <li><a href="//www.ebi.ac.uk/research">Overview</a></li>
+                    <li><a href="//www.ebi.ac.uk/research/publications">Publications</a></li>
+                    <li><a href="//www.ebi.ac.uk/research/groups">Research groups</a></li>
+                    <li><a href="//www.ebi.ac.uk/research/postdocs">Postdocs</a> &amp; <a href="//www.ebi.ac.uk/research/eipp">PhDs</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <a class="ebi-embl-link-training" href="//www.ebi.ac.uk/training">Training</a>
+                <ul class="ebi-embl-footer-links-container">
+                    <li><a href="//www.ebi.ac.uk/training">Overview</a></li>
+                    <li><a href="//www.ebi.ac.uk/training/handson">Train at EBI</a></li>
+                    <li><a href="//www.ebi.ac.uk/training/roadshow">Train outside EBI</a></li>
+                    <li><a href="//www.ebi.ac.uk/training/online">Train online</a></li>
+                    <li><a href="//www.ebi.ac.uk/training/contact-us">Contact organisers</a></li>
+                </ul>
+            </div>
+            <div>
+                <a class="ebi-embl-link-industry" href="//www.ebi.ac.uk/industry">Industry</a>
+                <ul class="ebi-embl-footer-links-container">
+                    <li><a href="//www.ebi.ac.uk/industry">Overview</a></li>
+                    <li><a href="//www.ebi.ac.uk/industry/private">Members Area</a></li>
+                    <li><a href="//www.ebi.ac.uk/industry/workshops">Workshops</a></li>
+                    <li><a href="//www.ebi.ac.uk/industry/sme-forum"><abbr title="Small Medium Enterprise">SME</abbr> Forum</a></li>
+                    <li><a href="//www.ebi.ac.uk/industry/contact">Contact Industry programme</a></li>
+                </ul>
+            </div>
+            <div>
+                <a href="//www.ebi.ac.uk/about">About us</a>
+                <ul class="ebi-embl-footer-links-container">
+                    <li><a href="//www.ebi.ac.uk/about">Overview</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/leadership">Leadership</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/funding">Funding</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/background">Background</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/partnerships">Collaboration</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/jobs" title="Jobs, postdocs, PhDs...">Jobs</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/people">People &amp; groups</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/news">News</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/events">Events</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/travel">Visit us</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/contact">Contact us</a></li>
+                </ul>
+            </div>
         </div>
-    </footer>
+
+    </div>
+
+
+    <div class="ebi-embl-footer-info">
+        <p class="address">
+            EMBL-EBI, Wellcome Trust Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, UK &nbsp; &nbsp; +44 (0)1223 49 44 44
+        </p>
+
+        <p class="legal ebi-embl-footer-links-container">
+            Copyright © EMBL-EBI 2014 | EBI is an outstation of the
+            <a href="http://www.embl.org">European Molecular Biology Laboratory</a>
+            | <a href="http://www.ebi.ac.uk/about/privacy">Privacy</a>
+            | <a href="http://www.ebi.ac.uk/about/cookies">Cookies</a>
+            | <a href="http://www.ebi.ac.uk/about/terms-of-use">Terms of use</a>
+        </p>
+    </div>
+</footer>
 </template>
 
 <script>
