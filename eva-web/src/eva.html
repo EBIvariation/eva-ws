@@ -47,7 +47,6 @@
 <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
 
 
-
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/gv-config.js"></script>
 
 <!-- build:script js -->
@@ -138,48 +137,46 @@
 
 
         Ext.getBody().removeCls('x-body');
-        var ulLocalNav = document.querySelector('#header').shadowRoot.querySelector('#local-nav');
+        var ulLocalNav = document.querySelector('#header').shadowRoot.querySelector('.left-ul');
 
         eva = new Eva({
             target: 'content',
             targetMenu: ulLocalNav,
             width: $('#content').width(),
-            homeDiv:homeDiv,
-            submitDiv:submitDiv,
-            aboutDiv:aboutDiv,
-            contactDiv:contactDiv,
-            templatesDiv:templatesDiv,
-            vcfDiv:vcfDiv
+            homeDiv: homeDiv,
+            submitDiv: submitDiv,
+            aboutDiv: aboutDiv,
+            contactDiv: contactDiv,
+            templatesDiv: templatesDiv,
+            vcfDiv: vcfDiv
         });
         eva.draw();
         var tab = getUrlParameters("");
-        if(tab.id){
+        if (tab.id) {
             eva.select(decodeURI(tab.id))
         }
 
 
     };
 
-    function getUrlParameters(staticURL){
+    function getUrlParameters(staticURL) {
         var data = [];
 
-        var currLocation = (staticURL.length)? staticURL : window.location.search;
-        if(currLocation.indexOf("?") >= 0)
-        {
+        var currLocation = (staticURL.length) ? staticURL : window.location.search;
+        if (currLocation.indexOf("?") >= 0) {
             parArr = currLocation.split("?")[1].split("&");
-            if(parArr){
-                for(var i = 0; i < parArr.length; i++){
+            if (parArr) {
+                for (var i = 0; i < parArr.length; i++) {
                     parr = parArr[i].split("=");
                     data.id = parr[0];
                     data.value = parr[1];
                     return data;
                 }
             }
-        }else{
+        } else {
             return false
         }
     }
-
 
 
     //Start point
