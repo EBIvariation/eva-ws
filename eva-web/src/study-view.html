@@ -6,6 +6,9 @@
         .study-view-data{
             margin-left:5px;
         }
+        .table {
+            margin-left:10px;
+        }
         h2,h4{
             color:#426783;
         }
@@ -104,7 +107,7 @@
 
     studyView.renderData = function renderData(data){
         var _filesTable  = '<div><h3>'+data.summaryData[0].studyName+'</h3>' +
-                '<div class="row study-view-data"><div class="col-md-12"><table class="table table-bordered">' +
+                '<div class="row study-view-data"><div class="col-md-12"><div><h4>General Information</h4></div><table class="table table-bordered">' +
                 '<tr><td><b>Species</b></td><td>'+data.summaryData[0].species+'</td></tr>' +
                 '<tr><td><b>Material</b></td><td>'+data.summaryData[0].material+'</td></tr>' +
                 '<tr><td><b>Scope</b></td><td>'+data.summaryData[0].scope+'</td></tr>' +
