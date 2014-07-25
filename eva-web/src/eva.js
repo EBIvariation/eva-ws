@@ -94,7 +94,7 @@ Eva.prototype = {
 
         /* studyView */
 //        $(this.studyView).addClass('eva-child');
-        this.childDivMenuMap['Study View'] = this.studyView;
+        this.childDivMenuMap['Study'] = this.studyView;
 
 
 

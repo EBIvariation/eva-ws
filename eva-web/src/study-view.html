@@ -78,11 +78,34 @@
         });
 
 
+
+
     };
 
 
     studyView.parseData = function parseData() {
         var _this = this
+        if(files.length > 0){
+            for (i = 0; i < files.length; i++) {
+                var fileName = files[i].fileName
+                EvaManager.get({
+                    host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                    category: 'files',
+                    resource: 'url',
+                    query:fileName,
+                    success: function (response) {
+                        try {
+                            download_link[fileName] = response.response[0].result;
+                            console.log(response.response[0].result)
+                        } catch (e) {
+                            console.log(e);
+                        }
+                    }
+                });
+
+            }
+        }
+
         if(files.length > 0 && summary != null ){
             var data = {summaryData: summary,filesData: files }
             var divContent =  _this.renderData(data)
@@ -102,34 +125,50 @@
     }
 
     studyView.renderData = function renderData(data){
-        console.log(summary)
         var _filesTable  = '<div><h3>'+data.summaryData[0].studyName+'</h3>' +
-                            '<div class="row study-view-data"><div class="col-md-12"><table class="table table-bordered">' +
-                                '<tr><td><b>Species</b></td><td>'+data.summaryData[0].species+'</td></tr>' +
-                                '<tr><td><b>Material</b></td><td>'+data.summaryData[0].material+'</td></tr>' +
-                                '<tr><td><b>Scope</b></td><td>'+data.summaryData[0].scope+'</td></tr>' +
-                                '<tr><td><b>Type</b></td><td>'+data.summaryData[0].type+'</td></tr>' +
-                                '<tr><td><b>Description</b></td><td>'+data.summaryData[0].description+'</td></tr>' +
-                            '</table>'
+                '<div class="row study-view-data"><div class="col-md-12"><table class="table table-bordered">' +
+                '<tr><td><b>Species</b></td><td>'+data.summaryData[0].species+'</td></tr>' +
+                '<tr><td><b>Material</b></td><td>'+data.summaryData[0].material+'</td></tr>' +
+                '<tr><td><b>Scope</b></td><td>'+data.summaryData[0].scope+'</td></tr>' +
+                '<tr><td><b>Type</b></td><td>'+data.summaryData[0].type+'</td></tr>' +
+                '<tr><td><b>Description</b></td><td>'+data.summaryData[0].description+'</td></tr>' +
+                '</table>'
         _filesTable += '<div><h4>Files</h4></div><table class="table table-striped"><thead><tr>' +
-                    '<th>Samples Count</th>'+
-                    '<th>Variants Count</th>'+
-                    '<th>SNP Count</th>'+
-                    '<th>Indel Count</th>'+
-                    '<th>Pass Count</th>'+
-                    '<th>Transitions/Transversions Ratio</th>'+
-                    '<th>Mean Quality</th>'+
-                    '</tr></thead><tbody>'
+                '<th>File Name</th>'+
+                '<th>Samples Count</th>'+
+                '<th>Variants Count</th>'+
+                '<th>SNP Count</th>'+
+                '<th>Indel Count</th>'+
+                '<th>Pass Count</th>'+
+                '<th>Transitions/Transversions Ratio</th>'+
+                '<th>Mean Quality</th>'+
+                '</tr></thead><tbody>'
         for (i = 0; i < data.filesData.length; i++) {
+            var fileName = files[i].fileName
+            $.ajax({
+                type: 'GET',
+                url: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/files/'+fileName+'/url',
+                dataType: 'json',//still firefox 20 does not auto serialize JSON, You can force it to always do the parsing by adding dataType: 'json' to your call.
+                async: false,
+                success: function (data, textStatus, jqXHR) {
+                    link = data.response[0].result;
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+
+                }
+            });
+            console.log(downloadLink)
+            var downloadLink = '<a href="'+link+'" target="_blank">'+data.filesData[i].fileName+'</a>';
             _filesTable += '<tr>'+
-                            '<td>'+data.filesData[i].stats.samplesCount+'</td>' +
-                            '<td>'+data.filesData[i].stats.variantsCount+'</td>' +
-                            '<td>'+data.filesData[i].stats.snpsCount+'</td>' +
-                            '<td>'+data.filesData[i].stats.indelsCount+'</td>' +
-                            '<td>'+data.filesData[i].stats.passCount+'</td>' +
-                            '<td>'+(data.filesData[i].stats.transitionsCount/data.filesData[i].stats.transversionsCount).toFixed(2)+'&nbsp;('+data.filesData[i].stats.transitionsCount+'/'+data.filesData[i].stats.transitionsCount+')</td>' +
-                            '<td>'+data.filesData[i].stats.meanQuality+'</td>' +
-                           '</tr>'
+                    '<td>'+downloadLink+'</td>' +
+                    '<td>'+data.filesData[i].stats.samplesCount+'</td>' +
+                    '<td>'+data.filesData[i].stats.variantsCount+'</td>' +
+                    '<td>'+data.filesData[i].stats.snpsCount+'</td>' +
+                    '<td>'+data.filesData[i].stats.indelsCount+'</td>' +
+                    '<td>'+data.filesData[i].stats.passCount+'</td>' +
+                    '<td>'+(data.filesData[i].stats.transitionsCount/data.filesData[i].stats.transversionsCount).toFixed(2)+'&nbsp;('+data.filesData[i].stats.transitionsCount+'/'+data.filesData[i].stats.transitionsCount+')</td>' +
+                    '<td>'+data.filesData[i].stats.meanQuality+'</td>' +
+                    '</tr>'
         }
         _filesTable += '</tbody></table></div></div>'
 
