@@ -9,6 +9,7 @@
     <link rel="import" href="header.html">
     <link rel="import" href="footer.html">
     <link rel="import" href="content.html">
+    <link rel="import" href="study-view.html">
 
 </head>
 <body class="eva">
@@ -122,6 +123,7 @@
 <script type="text/javascript" src="eva-menu.js"></script>
 <script type="text/javascript" src="eva-adapter.js"></script>
 <script type="text/javascript" src="eva-manager.js"></script>
+<script type="text/javascript" src="eva-config.js"></script>
 
 <script type="text/javascript">
     var eva;
@@ -136,6 +138,14 @@
         var templatesDiv = link.import.querySelector('#submissionTemplates');
         var vcfDiv = link.import.querySelector('#vcf-format');
 
+        var tab = getUrlParameters("");
+        var tabId =  decodeURI(tab.id);
+        if(tabId == 'Study View'){
+            var studyView = document.createElement('study-view');
+            studyView.setAttribute('id', tab.value);
+        }
+
+
 
         Ext.getBody().removeCls('x-body');
         var ulLocalNav = document.querySelector('#header').shadowRoot.querySelector('#local-nav');
@@ -149,12 +159,13 @@
             aboutDiv:aboutDiv,
             contactDiv:contactDiv,
             templatesDiv:templatesDiv,
-            vcfDiv:vcfDiv
+            vcfDiv:vcfDiv,
+            studyView:studyView,
         });
         eva.draw();
-        var tab = getUrlParameters("");
+
         if(tab.id){
-            eva.select(decodeURI(tab.id))
+            eva.select(tabId)
         }
 
 
