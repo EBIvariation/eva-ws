@@ -33,7 +33,7 @@
 </template>
 
 <script>
-    doc = document.currentScript.ownerDocument,
+    doc = document._currentScript.ownerDocument,
     studyView = Object.create(HTMLElement.prototype);
 
     var summary = {};
@@ -163,7 +163,7 @@
         }
     }
 
-    var studyView = doc.registerElement('study-view', {'prototype': studyView});
+    var studyElement = document.registerElement('study-view', {'prototype': studyView});
 
     window.onload = function() {
 
