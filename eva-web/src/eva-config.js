@@ -1,4 +1,14 @@
 
+var TABS = [
+    "Home",
+    "Submit Data",
+    "Study Browser",
+    "variant Browser",
+    "Genome Browser",
+    "About",
+    "Contact"
+]
+
 consequenceTypes = [
     {
         name:'Transcript Variant',
