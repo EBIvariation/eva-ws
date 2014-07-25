@@ -167,7 +167,7 @@ Eva.prototype = {
         this._loadStudies();
 
 //        this.select('Study Browser');
-        this.select('Study Browser');
+        this.select('Home');
 //        this.panel.render(this.div);
     },
     select: function (option) {
