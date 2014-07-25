@@ -92,6 +92,13 @@ Eva.prototype = {
         $(this.vcfDiv).addClass('eva-child');
         this.childDivMenuMap['VCF'] = this.vcfDiv;
 
+        /* studyView */
+        $(this.studyView).addClass('eva-child');
+        this.childDivMenuMap['Study'] = this.studyView;
+
+
+
+
         /* Study Browser Panel*/
         this.studyBrowserDiv = document.createElement('div')
         $(this.studyBrowserDiv).addClass('eva-child eva-study-browser-div');
