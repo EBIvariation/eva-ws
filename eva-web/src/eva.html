@@ -10,6 +10,7 @@
     <link rel="import" href="footer.html">
     <link rel="import" href="content.html">
     <link rel="import" href="study-view.html">
+    <link rel="import" href="variant-view.html">
 
 </head>
 <body class="eva">
@@ -143,6 +144,11 @@
             var studyView = document.createElement('study-view');
             studyView.setAttribute('id', tab.value);
         }
+        if(tabId == 'Variant'){
+            var variantView = document.createElement('variant-view');
+            variantView.setAttribute('id', tab.value);
+        }
+
 
         Ext.getBody().removeCls('x-body');
         var ulLocalNav = document.querySelector('#header').shadowRoot.querySelector('.left-ul');
@@ -158,12 +164,14 @@
             templatesDiv:templatesDiv,
             vcfDiv:vcfDiv,
             studyView:studyView,
+            variantView:variantView,
         });
         eva.draw();
 
         if(tab.id){
             eva.select(tabId);
         }
+
 
     };
 
