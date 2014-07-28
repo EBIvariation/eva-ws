@@ -1,4 +1,4 @@
-<script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-scrollspy.js"></script>
+<!--<script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-scrollspy.js"></script>-->
 <template id="variant-view-template">
     <style scoped>
         @import url('../vendor/bootstrap/css/bootstrap.min.css');
@@ -48,7 +48,7 @@
 
     <div id="variant-view">
         <div>
-            <h2 id="variantInfo"></h2>
+            <h3 id="variantInfo"></h3>
         </div>
         <div class="row">
             <div class="col-sm-3  col-md-2 col-lg-2">
@@ -61,7 +61,6 @@
             </div>
             <div class="col-sm-9 col-md-10 col-lg-10">
                 <div id="summary">
-                    <h3>Summary</h3>
                     <div class="row">
                         <div class="col-md-10">
                            <div id="summary-grid"></div>
@@ -70,7 +69,6 @@
                 </div>
 
                 <div id="effects">
-                    <h3>Effects</h3>
                     <div class="row">
                         <div class="col-md-10">
                             <div id="effects-grid"></div>
@@ -79,9 +77,8 @@
                 </div>
 
                 <div id="studies">
-                    <h3>Studies</h3>
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-10">
                             <div id="studies-grid"></div>
                         </div>
                     </div>
@@ -136,15 +133,10 @@
                  }
              }
          });
-
          variantStatsPanel.draw();
-
-
          if (variant[0].files) {
              variantStatsPanel.load(variant[0].files);
          }
-
-
          return variantStatsPanel;
      }
 
@@ -165,7 +157,6 @@
              }
          });
          variantEffectGrid.draw();
-
          return variantEffectGrid;
      }
 
@@ -176,17 +167,22 @@
         var variantInfoTitle =  document.getElementById("variantInfo").textContent = variantID+' Info';
         var summaryContent =  _this.renderSummaryData(variant);
         var summaryEl = document.getElementById("summary-grid");
-        $(summaryEl).html(summaryContent);
+        var summaryElDiv =  document.createElement("div");
+        summaryElDiv.innerHTML = '<h4>Summary</h4>';
+        summaryElDiv.innerHTML += summaryContent;
+        summaryEl.appendChild(summaryElDiv);
 
         var effectsEl = document.getElementById("effects-grid");
         var effectsElDiv = document.createElement("div");
         effectsElDiv.setAttribute('class', 'ocb-variant-effect-grid');
+        effectsElDiv.innerHTML = '<h4>Effects</h4>';
         effectsEl.appendChild(effectsElDiv);
         _this.createVariantEffectGrid(effectsElDiv);
 
 //        var studyEl = document.getElementById("studies-grid");
 //        var studyElDiv = document.createElement("div");
 //        studyElDiv.setAttribute('class', 'ocb-variant-stats-panel');
+//        studyElDiv.innerHTML = '<h4>Studies</h4>';
 //        studyEl.appendChild(studyElDiv);
 //        _this.createVariantStatsPanel(studyElDiv);
 
@@ -198,13 +194,15 @@
     variantView.renderSummaryData = function (data){
            console.log(data)
 
-        var _summaryTable  = '<div class="row"><div class="col-md-12"><table class="table table-bordered">' +
-                             '<tr><td><b>ID</b></td><td>'+data[0].id+'</td></tr>' +
-                             '<tr><td><b>Type</b></td><td>'+data[0].type+'</td></tr>' +
-                             '<tr><td><b>Chromosome:Start-End</b></td><td>'+data[0].chromosome+':'+data[0].start+'-'+data[0].end+'</td></tr>' +
-                             '<tr><td><b>Ref</b></td><td>'+data[0].reference+'</td></tr>' +
-                             '<tr><td><b>Alt</b></td><td>'+data[0].alternate+'</td></tr>' +
-                             '</table>'
+        var _summaryTable  = '<div class="row"><div class="col-md-12"><table class="table table-bordered">'
+        if(data[0].id){
+            _summaryTable += '<tr><td><b>ID</b></td><td>'+data[0].id+'</td></tr>'
+        }
+        _summaryTable += '<tr><td><b>Type</b></td><td>'+data[0].type+'</td></tr>' +
+                         '<tr><td><b>Chromosome:Start-End</b></td><td>'+data[0].chromosome+':'+data[0].start+'-'+data[0].end+'</td></tr>' +
+                         '<tr><td><b>Ref</b></td><td>'+data[0].reference+'</td></tr>' +
+                         '<tr><td><b>Alt</b></td><td>'+data[0].alternate+'</td></tr>' +
+                         '</table>'
 
         _summaryTable += '</div></div>'
 
