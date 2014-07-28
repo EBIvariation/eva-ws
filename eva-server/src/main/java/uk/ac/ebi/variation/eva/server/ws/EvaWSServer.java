@@ -14,9 +14,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.opencb.biodata.models.feature.Genotype;
+import org.opencb.biodata.models.variant.ArchivedVariantFile;
+import org.opencb.biodata.models.variant.VariantSource;
+import org.opencb.biodata.models.variant.stats.VariantStats;
+import org.opencb.opencga.storage.variant.json.ArchivedVariantFileJsonMixin;
+import org.opencb.opencga.storage.variant.json.GenotypeJsonMixin;
+import org.opencb.opencga.storage.variant.json.VariantSourceJsonMixin;
+import org.opencb.opencga.storage.variant.json.VariantStatsJsonMixin;
 
 /**
  * Created by imedina on 01/04/14.
@@ -45,17 +54,18 @@ public class EvaWSServer {
 
 
     static {
-//        BasicConfigurator.configure();
-//        dbAdaptorFactory = new HibernateDBAdaptorFactory();
-
         logger = LoggerFactory.getLogger(EvaWSServer.class);
 
         jsonObjectMapper = new ObjectMapper();
+        jsonObjectMapper.addMixInAnnotations(ArchivedVariantFile.class, ArchivedVariantFileJsonMixin.class);
+        jsonObjectMapper.addMixInAnnotations(Genotype.class, GenotypeJsonMixin.class);
+        jsonObjectMapper.addMixInAnnotations(VariantStats.class, VariantStatsJsonMixin.class);
+        jsonObjectMapper.addMixInAnnotations(VariantSource.class, VariantSourceJsonMixin.class);
         jsonObjectWriter = jsonObjectMapper.writer();
 
         xmlObjectMapper = new XmlMapper();
 
-        logger.info("EvaWSServer: Initiating attributes inside static block");
+        logger.info("EvaWSServer: Initialising attributes inside static block");
     }
 
     public EvaWSServer() {
@@ -128,57 +138,77 @@ public class EvaWSServer {
     }
 
 
-
     protected Response createOkResponse(Object obj) {
         endTime = System.currentTimeMillis() - startTime;
-        queryResponse.put("time", endTime);
-        queryResponse.put("version", version);
-        queryResponse.put("queryOptions", queryOptions);
+        queryResponse.setTime(new Long(endTime - startTime).intValue());
+        queryResponse.setApiVersion(version);
+        queryResponse.setQueryOptions(queryOptions);
+        
+        // Guarantee that the QueryResponse object contains a coll of results
+        Collection coll;
+        if (obj instanceof Collection) {
+            coll = (Collection) obj;
+        } else {
+            coll = new ArrayList();
+            coll.add(obj);
+        }
+        queryResponse.setResponse(coll);
 
         switch (outputFormat.toLowerCase()) {
             case "json":
-                return createJsonResponse(obj);
+                return createJsonResponse();
             case "xml":
-                return createXmlResponse(obj);
+                return createXmlResponse();
             default:
-                return buildResponse(Response.ok(obj));
+                return buildResponse(Response.ok());
         }
     }
 
-    protected Response createOkResponse(Object obj, MediaType mediaType) {
+    protected Response createOkResponse(Collection obj, MediaType mediaType) {
         return buildResponse(Response.ok(obj, mediaType));
     }
 
-    protected Response createOkResponse(Object obj, MediaType mediaType, String fileName) {
+    protected Response createOkResponse(Collection obj, MediaType mediaType, String fileName) {
         return buildResponse(Response.ok(obj, mediaType).header("content-disposition", "attachment; filename =" + fileName));
     }
 
+    protected Response createErrorResponse(String obj) {
+        endTime = System.currentTimeMillis() - startTime;
+        queryResponse.setTime(new Long(endTime - startTime).intValue());
+        queryResponse.setApiVersion(version);
+        queryResponse.setQueryOptions(queryOptions);
+        queryResponse.setError(obj);
+        
+        switch (outputFormat.toLowerCase()) {
+            case "json":
+                return createJsonResponse();
+            case "xml":
+                return createXmlResponse();
+            default:
+                return buildResponse(Response.ok());
+        }
+    }
 
-    protected Response createJsonResponse(Object obj) {
-        queryResponse.put("response", obj);
+    
+    protected Response createJsonResponse() {
         try {
             return buildResponse(Response.ok(jsonObjectWriter.writeValueAsString(queryResponse), MediaType.APPLICATION_JSON_TYPE));
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            logger.error("Error parsing queryResponse object");
+            logger.error("Error parsing queryResponse object", e);
             return null;
         }
     }
 
-    protected Response createXmlResponse(Object obj) {
-        queryResponse.put("response", obj);
+    protected Response createXmlResponse() {
         try {
-//            return buildResponse(Response.ok(jsonObjectWriter.writeValueAsString(queryResponse), MediaType.APPLICATION_JSON_TYPE));
             return buildResponse(Response.ok(xmlObjectMapper.writeValueAsString(queryResponse), MediaType.APPLICATION_XML_TYPE));
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            logger.error("Error parsing queryResponse object");
+            logger.error("Error parsing queryResponse object", e);
             return null;
         }
     }
 
-
     private Response buildResponse(Response.ResponseBuilder responseBuilder) {
-        return responseBuilder.header("Access-Control-Allow-Origin", "*").build();
+        return responseBuilder.header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Headers", "x-requested-with, content-type").build();
     }
 }
