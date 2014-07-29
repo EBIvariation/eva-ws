@@ -47,8 +47,11 @@
     studyView.attachedCallback = function() {
 
         var _this = this
-        var studyID = this.getAttribute('id');
-        var projectId = getProjectId(studyID);
+//        var studyID = this.getAttribute('id');
+//        var projectId = getProjectId(studyID);
+
+        var projectId = this.getAttribute('id');
+        var studyID = getStudyId(projectId);
 
         EvaManager.get({
             host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
@@ -135,7 +138,12 @@
 
                 }
             });
-            var downloadLink = '<a href="'+link+'" target="_blank">'+data.filesData[i].fileName+'</a>';
+            if(link.length > 0){
+                var downloadLink = '<a href="'+link+'" target="_blank">'+data.filesData[i].fileName+'</a>';
+            }else{
+                var downloadLink = data.filesData[i].fileName;
+            }
+
             _filesTable += '<tr>'+
                     '<td>'+downloadLink+'</td>' +
                     '<td>'+data.filesData[i].stats.samplesCount+'</td>' +
@@ -156,6 +164,14 @@
         for (var i = 0; i < projects.length; i++) {
             if (projects[i].alias === studyID) {
                 return projects[i].projectId;
+            }
+        }
+    }
+
+    function getStudyId(projectId){
+        for (var i = 0; i < projects.length; i++) {
+            if (projects[i].projectId === projectId) {
+                return projects[i].alias;
             }
         }
     }
