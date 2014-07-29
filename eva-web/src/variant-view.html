@@ -179,12 +179,12 @@
         effectsEl.appendChild(effectsElDiv);
         _this.createVariantEffectGrid(effectsElDiv);
 
-//        var studyEl = document.getElementById("studies-grid");
-//        var studyElDiv = document.createElement("div");
-//        studyElDiv.setAttribute('class', 'ocb-variant-stats-panel');
-//        studyElDiv.innerHTML = '<h4>Studies</h4>';
-//        studyEl.appendChild(studyElDiv);
-//        _this.createVariantStatsPanel(studyElDiv);
+        var studyEl = document.getElementById("studies-grid");
+        var studyElDiv = document.createElement("div");
+        studyElDiv.setAttribute('class', 'ocb-variant-stats-panel');
+        studyElDiv.innerHTML = '<h4>Studies</h4>';
+        studyEl.appendChild(studyElDiv);
+        _this.createVariantStatsPanel(studyElDiv);
 
 
 
@@ -209,13 +209,6 @@
         return _summaryTable;
     }
 
-    function getProjectId(variantID){
-        for (var i = 0; i < projects.length; i++) {
-            if (projects[i].alias === variantID) {
-                return projects[i].projectId;
-            }
-        }
-    }
 
     var variantElement = document.registerElement('variant-view', {'prototype': variantView});
 
