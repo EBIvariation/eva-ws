@@ -35,17 +35,17 @@ function Eva(args) {
     this.childDivMenuMap = {};
 
 
-    this.studiesStore = Ext.create('Ext.data.Store', {
-        pageSize: 50,
-        proxy: {
-            type: 'memory'
-        },
-        fields: [
-            {name: 'studyName', type: 'string'},
-            {name: 'studyId', type: 'string'}
-        ],
-        autoLoad: false
-    });
+//    this.studiesStore = Ext.create('Ext.data.Store', {
+//        pageSize: 50,
+//        proxy: {
+//            type: 'memory'
+//        },
+//        fields: [
+//            {name: 'studyName', type: 'string'},
+//            {name: 'studyId', type: 'string'}
+//        ],
+//        autoLoad: false
+//    });
 
 
     this.rendered = false;
@@ -195,7 +195,7 @@ Eva.prototype = {
                 this.formPanelGenomeFilter.update();
                 break;
         }
-        this.studiesStore.clearFilter();
+//        this.studiesStore.clearFilter();
 
     },
     _createEvaMenu: function (target) {
@@ -330,8 +330,8 @@ Eva.prototype = {
             headerConfig: {
                 baseCls: 'eva-header-1'
             },
-            width: 1300,
-            studiesStore: this.studiesStore
+            width: 1300
+//            studiesStore: this.studiesStore
         });
 //        this.on('studies:change', function (e) {
 //            variantStudyBrowser.setStudies(e.studies);
@@ -755,7 +755,8 @@ Eva.prototype = {
                 } catch (e) {
                     console.log(e);
                 }
-                _this.studiesStore.loadRawData(studies);
+//                _this.studiesStore.loadRawData(studies);
+                _this.studyBrowser.studiesStore.loadRawData(studies);
 //                _this.trigger('studies:change', {studies: studies, sender: _this});
             }
         });
