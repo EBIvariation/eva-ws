@@ -31,31 +31,31 @@
             <h3 id="variantInfo"></h3>
         </div>
         <div class="row">
-            <div class="col-sm-3  col-md-2 col-lg-2" id="myScrollspy">
+            <div class="col-sm-3  col-md-2 col-lg-2" id="variantViewScrollspy">
                 <ul id="variantViewTabs" class="nav nav-pills nav-stacked affix-top" data-spy="affix" data-offset-top="125">
                     <li class="active"><a href="#summary">Summary</a></li>
                     <li><a href="#effects">Effects</a></li>
-                    <li><a href="#studies">Studies</a></li>
+                    <li><a href="#files">Files</a></li>
                     <!--<li><a href="#other">Other</a></li>-->
                 </ul>
             </div>
             <div class="col-sm-9 col-md-10 col-lg-10">
-                <div class="row">
+                <div id="summary" class="row">
                     <div class="col-md-10">
-                        <h4 id="summary">Summary</h4>
+                        <h4>Summary</h4>
                         <div id="summary-grid"></div>
                     </div>
                 </div>
-                <div class="row">
+                <div  id="effects" class="row">
                     <div class="col-md-10">
-                        <h4 id="effects">Effects</h4>
+                        <h4>Effects</h4>
                         <div id="effects-grid"></div>
                     </div>
                 </div>
-                <div class="row">
+                <div  id="files" class="row">
                     <div class="col-md-10">
-                        <h4 id="studies">Studies</h4>
-                        <div id="studies-grid"></div>
+                        <h4>Files</h4>
+                        <div id="files-grid"></div>
                     </div>
                 </div>
                 <!--<div class="row">-->
@@ -172,7 +172,7 @@
         effectsEl.appendChild(effectsElDiv);
         _this.createVariantEffectGrid(effectsElDiv);
 
-        var studyEl = document.getElementById("studies-grid");
+        var studyEl = document.getElementById("files-grid");
         var studyElDiv = document.createElement("div");
         studyElDiv.setAttribute('class', 'ocb-variant-stats-panel');
 //        studyElDiv.innerHTML = '<h4>Studies</h4>';
@@ -252,11 +252,12 @@
     var variantElement = document.registerElement('variant-view', {'prototype': variantView});
 
     window.onload = function() {
-        $('#variantViewTabs li').click(function() {
+        $('#variantViewTabs li').click(function(event) {
+//            event.preventDefault();
             $(this).toggleClass("active");
             $(this).siblings().removeClass("active");
         });
-        $('body').scrollspy({ target: '#myScrollspy' })
+        $('body').scrollspy({ target: '#variantViewScrollspy' })
     };
 </script>
 
