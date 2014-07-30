@@ -27,7 +27,7 @@ function EvaStudyBrowserPanel(args) {
     this.height = 800;
     this.autoRender = true;
 //    this.studies = [];
-    this.studiesStore;
+//    this.studiesStore;
     this.border = false;
     this.speciesList = [
         {
@@ -39,6 +39,18 @@ function EvaStudyBrowserPanel(args) {
             species: "hsa"
         }
     ];
+
+    this.studiesStore = Ext.create('Ext.data.Store', {
+        pageSize: 20,
+        proxy: {
+            type: 'memory'
+        },
+        fields: [
+            {name: 'studyName', type: 'string'},
+            {name: 'studyId', type: 'string'}
+        ],
+        autoLoad: false
+    });
 
     _.extend(this, args);
 
@@ -101,6 +113,16 @@ EvaStudyBrowserPanel.prototype = {
                 autoLoad: true,
                 fields: ['display', 'count'],
                 data: []
+            }),
+            scope: Ext.create('Ext.data.Store', {
+                autoLoad: true,
+                fields: ['display', 'count'],
+                data: []
+            }),
+            meterial: Ext.create('Ext.data.Store', {
+                autoLoad: true,
+                fields: ['display', 'count'],
+                data: []
             })
         };
 
@@ -149,7 +171,7 @@ EvaStudyBrowserPanel.prototype = {
 //        });
 
         this.speciesFieldTag = Ext.create('Ext.form.field.Tag', {
-            fieldLabel: 'Species',
+            fieldLabel: 'Organisms',
 //            labelWidth: this.labelWidth,
             labelAlign: 'top',
             store: stores.species,
@@ -172,17 +194,7 @@ EvaStudyBrowserPanel.prototype = {
             name: 'assembly'
         });
 
-        this.methodFieldTag = Ext.create('Ext.form.field.Tag', {
-            fieldLabel: 'Method',
-//            labelWidth: this.labelWidth,
-            labelAlign: 'top',
-            store: methodStore,
-            queryMode: 'local',
-            displayField: 'display',
-            valueField: 'value',
-            publishes: 'value',
-            name: 'method'
-        });
+
         this.typeFieldTag = Ext.create('Ext.form.field.Tag', {
             fieldLabel: 'Type',
 //            labelWidth: this.labelWidth,
@@ -193,6 +205,18 @@ EvaStudyBrowserPanel.prototype = {
             valueField: 'display',
             publishes: 'value',
             name: 'type'
+        });
+
+        this.methodFieldTag = Ext.create('Ext.form.field.Tag', {
+            fieldLabel: 'Method',
+//            labelWidth: this.labelWidth,
+            labelAlign: 'top',
+            store: methodStore,
+            queryMode: 'local',
+            displayField: 'display',
+            valueField: 'value',
+            publishes: 'value',
+            name: 'method'
         });
 
 
@@ -225,7 +249,7 @@ EvaStudyBrowserPanel.prototype = {
                 loadMask: true,
 //                hideHeaders: true,
                 plugins: 'bufferedrenderer',
-                height: 500,
+                height: 400,
                 features: [
                     {ftype: 'summary'}
                 ],
@@ -277,29 +301,72 @@ EvaStudyBrowserPanel.prototype = {
                         'selectionchange': function (sm, selectedRecord) {
                             if (selectedRecord.length) {
                                 var row = selectedRecord[0].data;
-                                _this.trigger("variant:change", {sender: _this, args: row});
+                                _this.trigger("study:select", {sender: _this, args: row});
                             }
                         }
                     }
                 },
                 columns: [
                     {
-                        text: 'Active',
-                        xtype: 'checkcolumn',
-                        dataIndex: 'uiactive',
-                        flex: 1
+                        text: "ID",
+                        dataIndex: 'studyId',
+                        flex: 3,
+                        // To render a link to FTP
+                        renderer: function (value, p, record) {
+                            return value ? Ext.String.format(
+                                '<a href="http://localhost/appl/eva/eva-web/src/eva.html?Study={0}" target="_blank">{0}</a>',
+                                value,
+                                record.data.threadid
+                            ) : '';
+                        }
                     },
                     {
                         text: "Name",
                         dataIndex: 'studyName',
-                        flex: 10
+                        flex: 5
                     },
                     {
-                        text: "ID",
-                        dataIndex: 'studyId',
+                        text: "Organism",
+                        dataIndex: 'species',
                         flex: 3
+                    },
+                    {
+                        text: "Type",
+                        dataIndex: 'type',
+                        flex: 3
+                    },
+                    {
+                        text: "Scope",
+                        dataIndex: 'scope',
+                        flex: 3
+                    },
+                    {
+                        text: "Material",
+                        dataIndex: 'material',
+                        flex: 2
+                    },
+                    {
+                        text: "Description",
+                        dataIndex: 'description',
+                        flex: 5
+//                        renderer: function (val){
+//                            return '<div style="white-space:normal !important;">'+ val +'</div>';
+//                        }
+                    },
+                    {
+                        text: "Download",
+//                        xtype: 'checkcolumn',
+                        dataIndex: 'studyId',
+                        flex: 3,
+                        renderer: function (value, p, record) {
+                            return value ? Ext.String.format(
+                                '<a href="ftp://ftp.ebi.ac.uk/pub/databases/eva/{0}" target="_blank">EVA FTP</a>',
+                                value,
+                                record.data.threadid
+                            ) : '';
+                        }
                     }
-                ],
+                ]
 //                tbar: {
 //                    height: 40,
 //                    items: [
@@ -314,6 +381,7 @@ EvaStudyBrowserPanel.prototype = {
             text: 'Submit',
             handler: function (btn) {
 //                .../studies/list?species=hsapiens&assembly=37&methods=ngs,array&type=case-control&date=2013&search=rare
+                console.log(">>>>>>>>>"+panel);
                 var values = panel.getValues();
                 for (key in values) {
                     if (values[key] == '') {
@@ -357,8 +425,8 @@ EvaStudyBrowserPanel.prototype = {
 //                studySearchField,
                 this.speciesFieldTag,
 //                this.assemblyFieldTag,
-//                this.methodFieldTag,
-                this.typeFieldTag
+                this.typeFieldTag,
+                this.methodFieldTag
             ]
         });
 
@@ -402,6 +470,7 @@ EvaStudyBrowserPanel.prototype = {
                 try {
                     var statsData = {};
                     var responseStatsData = response.response[0].result[0];
+                    console.log(responseStatsData)
                     for (key in responseStatsData) {
                         var stat = responseStatsData[key];
                         var arr = [];
@@ -414,6 +483,7 @@ EvaStudyBrowserPanel.prototype = {
                         statsData[key] = arr;
                         if (typeof stores[key] !== 'undefined') {
                             stores[key].loadRawData(statsData[key]);
+                            console.log(stores[key])
                         }
 
                     }
@@ -422,7 +492,6 @@ EvaStudyBrowserPanel.prototype = {
                 }
             }
         });
-
         return panel;
     },
 
