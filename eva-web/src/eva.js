@@ -349,7 +349,7 @@ Eva.prototype = {
             testRegion: '1:14000-20000'
         });
         var studyFilter = new StudyFilterFormPanel({
-            studiesStore: this.studiesStore
+//            studiesStore: this.studiesStore
         });
 //        this.on('studies:change', function (e) {
 //            studyFilter.setStudies(e.studies);

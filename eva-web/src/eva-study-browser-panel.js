@@ -253,14 +253,10 @@ EvaStudyBrowserPanel.prototype = {
                     ptype: 'rowexpander',
                     rowBodyTpl : new Ext.XTemplate(
                         '<p style="padding: 2px 2px 5px 15px"><b>Description:</b> {description}</p>',
-                        {
-                            formatChange: function(v){
-                                var color = v >= 0 ? 'green' : 'red';
-                                return '<span style="color: ' + color + ';">' + Ext.util.Format.usMoney(v) + '</span>';
-                            }
-                        })
+                        {}
+                    )
                 }],
-                height: 400,
+                height: 420,
                 features: [
                     {ftype: 'summary'}
                 ],
