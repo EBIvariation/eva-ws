@@ -114,8 +114,8 @@ public class RegionWSServer extends EvaWSServer {
         } else if (regionsSize <= 1000000) {
             return createOkResponse(variantMongoDbAdaptor.getAllVariantsByRegionList(regions, queryOptions));
         } else {
-            return createErrorResponse("The total size of all regions provided can't excede 1 million positions. "
-                    + "If you want to browse a larger number of position, please provide the parameter 'histogram=true'");
+            return createErrorResponse("The total size of all regions provided can't exceed 1 million positions. "
+                    + "If you want to browse a larger number of positions, please provide the parameter 'histogram=true'");
         }
     }
     
