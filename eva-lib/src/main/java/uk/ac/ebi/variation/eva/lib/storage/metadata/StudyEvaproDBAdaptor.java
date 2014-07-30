@@ -32,9 +32,7 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
 
     @Override
     public QueryResult getAllStudies(QueryOptions options) {
-        StringBuilder query = new StringBuilder("select TITLE, PROJECT.PROJECT_ACCESSION, DESCRIPTION, SPECIES_LATIN_NAME, SCOPE, MATERIAL, TYPE from PROJECT ")
-                .append("left join PROJECT_TAXONOMY on PROJECT.PROJECT_ACCESSION = PROJECT_TAXONOMY.PROJECT_ACCESSION ")
-                .append("left join TAXONOMY on PROJECT_TAXONOMY.TAXONOMY_ID = TAXONOMY.TAXONOMY_ID ");
+        StringBuilder query = new StringBuilder("select * from study_browser ");
         boolean hasSpecies = options.containsKey("species") && !options.getList("species").isEmpty();
         boolean hasType = options.containsKey("type") && !options.getList("type").isEmpty();
         if (hasSpecies || hasType) {
@@ -42,16 +40,16 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
         }
         if (hasSpecies) {
             query.append("(");
-            query.append(EvaproUtils.getInClause("TAXONOMY.SPECIES_COMMON_NAME", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("common_name", options.getListAs("species", String.class)));
             query.append(" or ");
-            query.append(EvaproUtils.getInClause("TAXONOMY.SPECIES_LATIN_NAME", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("scientific_name", options.getListAs("species", String.class)));
             query.append(")");
         }
         if (hasType) {
             if (hasSpecies) {
                 query.append(" and ");
             }
-            query.append(EvaproUtils.getInClause("PROJECT.TYPE", options.getListAs("type", String.class)));
+            query.append(EvaproUtils.getInClause("experiment_type", options.getListAs("type", String.class)));
         }
         
         Connection conn = null;
@@ -65,12 +63,10 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
             ResultSet rs = pstmt.executeQuery();
             List result = new ArrayList<>();
             while (rs.next()) {
-                VariantStudy study = new VariantStudy(rs.getString(1), rs.getString(2));
-                study.setDescription(rs.getString(3));
-                study.setSpecies(rs.getString(4));
-                study.setScope(rs.getString(5));
-                study.setMaterial(rs.getString(6));
-                study.setType(rs.getString(7));
+                VariantStudy study = new VariantStudy(rs.getString("project_title"), rs.getString("project_accession"), null, rs.getString("description"),
+                    rs.getInt("tax_id"), rs.getString("common_name"), rs.getString("scientific_name"), rs.getString("source_type"), rs.getString("center"),
+                    rs.getString("material"), rs.getString("scope"), rs.getString("experiment_type"), rs.getString("assembly_name"), 
+                    rs.getString("platform"), rs.getInt("variant_count"), rs.getInt("samples"));
                 result.add(study);
             }
             long end = System.currentTimeMillis();
@@ -111,10 +107,7 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
         QueryResult qr = null;
         try {
             conn = ds.getConnection();
-            pstmt = conn.prepareStatement("select TITLE, PROJECT.PROJECT_ACCESSION, DESCRIPTION, SPECIES_LATIN_NAME, SCOPE, MATERIAL, TYPE "
-                    + "from PROJECT, PROJECT_TAXONOMY, TAXONOMY "
-                    + "where PROJECT.PROJECT_ACCESSION = ? and "
-                    + "PROJECT.PROJECT_ACCESSION = PROJECT_TAXONOMY.PROJECT_ACCESSION and PROJECT_TAXONOMY.TAXONOMY_ID = TAXONOMY.TAXONOMY_ID");
+            pstmt = conn.prepareStatement("select * from study_browser where project_accession = ?");
             pstmt.setString(1, studyId);
             
             List l = new ArrayList<>();
@@ -122,12 +115,10 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                VariantStudy study = new VariantStudy(rs.getString(1), rs.getString(2));
-                study.setDescription(rs.getString(3));
-                study.setSpecies(rs.getString(4));
-                study.setScope(rs.getString(5));
-                study.setMaterial(rs.getString(6));
-                study.setType(rs.getString(7));
+                VariantStudy study = new VariantStudy(rs.getString("project_title"), rs.getString("project_accession"), null, rs.getString("description"),
+                    rs.getInt("tax_id"), rs.getString("common_name"), rs.getString("scientific_name"), rs.getString("source_type"), rs.getString("center"),
+                    rs.getString("material"), rs.getString("scope"), rs.getString("experiment_type"), rs.getString("assembly_name"), 
+                    rs.getString("platform"), rs.getInt("variant_count"), rs.getInt("samples"));
                 l.add(study);
             }
             long end = System.currentTimeMillis();
