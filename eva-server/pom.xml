@@ -5,20 +5,17 @@
     <parent>
         <artifactId>eva</artifactId>
         <groupId>uk.ac.ebi.variation.eva</groupId>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
         <relativePath>..</relativePath>
     </parent>
 
     <artifactId>eva-server</artifactId>
     <packaging>war</packaging>
 
-    <name>eva-server Maven Webapp</name>
-    <url>http://maven.apache.org</url>
-
     <dependencies>
         <dependency>
-            <groupId>org.opencb.datastore</groupId>
-            <artifactId>datastore-mongodb</artifactId>
+            <groupId>uk.ac.ebi.variation.eva</groupId>
+            <artifactId>eva-lib</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opencb.opencga</groupId>
@@ -28,6 +25,10 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -66,6 +67,6 @@
 
     <build>
         <finalName>eva</finalName>
-
     </build>
+    
 </project>

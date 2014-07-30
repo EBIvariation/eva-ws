@@ -1,6 +1,5 @@
 <template>
 <style>
-    @import url('../vendor/bootstrap/css/bootstrap.min.css');
     .ebi-embl-header a {
         text-decoration: none;
         color: #fff !important;
@@ -25,7 +24,8 @@
     }
 
     .hidden {
-        display: none;
+        display: none !important;
+        visibility: hidden !important;
     }
 
     .ebi-embl-head > a {
@@ -214,17 +214,13 @@
                     <li><a>Variant Browser</a></li>
                     <li><a>Genome Browser</a></li>
                     <li><a>About</a></li>
-                    <li class="last"><a>Contact</a></li>
-                    <li class="hidden"><a>Templates</a></li>
-                    <li class="hidden"><a>VCF</a></li>
-                    <li class="hidden"><a>Study</a></li>
-                    <!-- If you need to include functional (as opposed to purely navigational) links in your local menu,
-                        add them here, and give them a class of "functional". Remember: you'll need a class of "last" for
-                    whichever one will show up last...
-                        For example: -->
+                    <li><a>Contact</a></li>
+                    <!--<li class="hidden"><a>Templates</a></li>-->
+                    <!--<li class="hidden"><a>VCF</a></li>-->
+                    <!--<li class="hidden"><a>Study</a></li>-->
                 </ul>
                 <ul class="right-ul">
-                    <li class="functional last"><a href="#Login" class="icon icon-functional" data-icon="l">Login</a></li>
+                    <li class="functional"><a href="#Login" class="icon icon-functional" data-icon="l">Login</a></li>
                     <li class="functional"><a href="#Feedback" class="icon icon-generic" data-icon="\">Feedback</a></li>
                     <li class="functional"><a href="#Share" class="icon icon-functional" data-icon="r">Share</a></li>
                 </ul>
