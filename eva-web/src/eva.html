@@ -11,6 +11,7 @@
     <link rel="import" href="content.html">
     <link rel="import" href="study-view.html">
     <link rel="import" href="variant-view.html">
+    <link rel="import" href="statistics.html">
 
 </head>
 <body class="eva">
@@ -148,6 +149,10 @@
             var variantView = document.createElement('variant-view');
             variantView.setAttribute('id', tab.value);
         }
+        if(tabId == 'Home'){
+            var variantView = document.createElement('variant-view');
+            variantView.setAttribute('id', tab.value);
+        }
 
 
         Ext.getBody().removeCls('x-body');
@@ -171,6 +176,10 @@
         if(tab.id){
             eva.select(tabId);
         }
+        var statisticsView = document.createElement('eva-statistics');
+        statisticsView.setAttribute('id', 'test');
+        var statisticsEl = document.getElementById("statistics");
+        statisticsEl.appendChild(statisticsView);
 
 
     };
