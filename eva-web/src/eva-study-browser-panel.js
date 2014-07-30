@@ -248,7 +248,18 @@ EvaStudyBrowserPanel.prototype = {
                 header: this.headerConfig,
                 loadMask: true,
 //                hideHeaders: true,
-                plugins: 'bufferedrenderer',
+//                plugins: 'bufferedrenderer',
+                plugins: [{
+                    ptype: 'rowexpander',
+                    rowBodyTpl : new Ext.XTemplate(
+                        '<p style="padding: 2px 2px 5px 15px"><b>Description:</b> {description}</p>',
+                        {
+                            formatChange: function(v){
+                                var color = v >= 0 ? 'green' : 'red';
+                                return '<span style="color: ' + color + ';">' + Ext.util.Format.usMoney(v) + '</span>';
+                            }
+                        })
+                }],
                 height: 400,
                 features: [
                     {ftype: 'summary'}
@@ -310,7 +321,7 @@ EvaStudyBrowserPanel.prototype = {
                     {
                         text: "ID",
                         dataIndex: 'studyId',
-                        flex: 3,
+                        flex: 2,
                         // To render a link to FTP
                         renderer: function (value, p, record) {
                             return value ? Ext.String.format(
@@ -323,7 +334,7 @@ EvaStudyBrowserPanel.prototype = {
                     {
                         text: "Name",
                         dataIndex: 'studyName',
-                        flex: 5
+                        flex: 6
                     },
                     {
                         text: "Organism",
@@ -340,19 +351,19 @@ EvaStudyBrowserPanel.prototype = {
                         dataIndex: 'scope',
                         flex: 3
                     },
-                    {
-                        text: "Material",
-                        dataIndex: 'material',
-                        flex: 2
-                    },
-                    {
-                        text: "Description",
-                        dataIndex: 'description',
-                        flex: 5
-//                        renderer: function (val){
-//                            return '<div style="white-space:normal !important;">'+ val +'</div>';
-//                        }
-                    },
+//                    {
+//                        text: "Material",
+//                        dataIndex: 'material',
+//                        flex: 2
+//                    },
+//                    {
+//                        text: "Description",
+//                        dataIndex: 'description',
+//                        flex: 5
+////                        renderer: function (val){
+////                            return '<div style="white-space:normal !important;">'+ val +'</div>';
+////                        }
+//                    },
                     {
                         text: "Download",
 //                        xtype: 'checkcolumn',
