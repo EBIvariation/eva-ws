@@ -40,6 +40,7 @@
     var files = [];
 
     studyView.createdCallback = function() {
+        document.body.style.cursor = "wait";
         var template = studyViewDoc.querySelector("#study-view-template");
         this.appendChild(template.content.cloneNode(true));
     };
@@ -83,6 +84,7 @@
                 _this.parseData();
             }
         });
+        document.body.style.cursor = "default";
     };
 
 
