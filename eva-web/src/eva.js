@@ -71,7 +71,7 @@ Eva.prototype = {
         /* Home */
         $(this.homeDiv).addClass('eva-child');
         this.childDivMenuMap['Home'] = this.homeDiv;
-    
+
         /* Submit */
         $(this.submitDiv).addClass('eva-child');
         this.childDivMenuMap['Submit Data'] = this.submitDiv;
@@ -96,7 +96,7 @@ Eva.prototype = {
         $(this.studyView).addClass('eva-child');
         this.childDivMenuMap['Study'] = this.studyView;
 
-        /* studyView */
+        /* variantView */
         $(this.variantView).addClass('eva-child');
         this.childDivMenuMap['Variant'] = this.variantView;
 
