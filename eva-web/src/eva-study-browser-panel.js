@@ -46,8 +46,8 @@ function EvaStudyBrowserPanel(args) {
             type: 'memory'
         },
         fields: [
-            {name: 'studyName', type: 'string'},
-            {name: 'studyId', type: 'string'}
+            {name: 'id', type: 'string'},
+            {name: 'name', type: 'string'}
         ],
         autoLoad: false
     });
@@ -252,6 +252,8 @@ EvaStudyBrowserPanel.prototype = {
                 plugins: [{
                     ptype: 'rowexpander',
                     rowBodyTpl : new Ext.XTemplate(
+                        '<p style="padding: 2px 2px 2px 15px"><b>Platform:</b> {platform}</p>',
+                        '<p style="padding: 2px 2px 2px 15px"><b>Center:</b> {center}</p>',
                         '<p style="padding: 2px 2px 5px 15px"><b>Description:</b> {description}</p>',
                         {}
                     )
@@ -316,8 +318,8 @@ EvaStudyBrowserPanel.prototype = {
                 columns: [
                     {
                         text: "ID",
-                        dataIndex: 'studyId',
-                        flex: 2,
+                        dataIndex: 'id',
+                        flex: 3,
                         // To render a link to FTP
                         renderer: function (value, p, record) {
                             return value ? Ext.String.format(
@@ -329,12 +331,12 @@ EvaStudyBrowserPanel.prototype = {
                     },
                     {
                         text: "Name",
-                        dataIndex: 'studyName',
-                        flex: 6
+                        dataIndex: 'name',
+                        flex: 7
                     },
                     {
                         text: "Organism",
-                        dataIndex: 'species',
+                        dataIndex: 'speciesScientificName',
                         flex: 3
                     },
                     {
@@ -347,11 +349,11 @@ EvaStudyBrowserPanel.prototype = {
                         dataIndex: 'scope',
                         flex: 3
                     },
-//                    {
-//                        text: "Material",
-//                        dataIndex: 'material',
-//                        flex: 2
-//                    },
+                    {
+                        text: "Number Variants",
+                        dataIndex: 'numVariants',
+                        flex: 3
+                    },
 //                    {
 //                        text: "Description",
 //                        dataIndex: 'description',
@@ -363,7 +365,7 @@ EvaStudyBrowserPanel.prototype = {
                     {
                         text: "Download",
 //                        xtype: 'checkcolumn',
-                        dataIndex: 'studyId',
+                        dataIndex: 'id',
                         flex: 3,
                         renderer: function (value, p, record) {
                             return value ? Ext.String.format(
