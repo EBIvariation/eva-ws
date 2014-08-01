@@ -135,12 +135,13 @@ EvaStudyBrowserPanel.prototype = {
             ]
         });
 
-        var methodStore = Ext.create('Ext.data.Store', {
+        var platformStore = Ext.create('Ext.data.Store', {
             autoLoad: true,
             fields: ['text', 'value'],
             data: [
-                {display: 'NGS', value: 'ngs'},
-                {display: 'Array', value: 'array'}
+                {display: 'Illumina', value: 'ngs'},
+                {display: 'Roche', value: 'array'},
+                {display: 'ABI', value: 'array'}
             ]
         });
 
@@ -207,11 +208,11 @@ EvaStudyBrowserPanel.prototype = {
             name: 'type'
         });
 
-        this.methodFieldTag = Ext.create('Ext.form.field.Tag', {
-            fieldLabel: 'Method',
+        this.platformFieldTag = Ext.create('Ext.form.field.Tag', {
+            fieldLabel: 'Platform',
 //            labelWidth: this.labelWidth,
             labelAlign: 'top',
-            store: methodStore,
+            store: platformStore,
             queryMode: 'local',
             displayField: 'display',
             valueField: 'value',
@@ -219,23 +220,22 @@ EvaStudyBrowserPanel.prototype = {
             name: 'method'
         });
 
-
         var studySearchField = Ext.create('Ext.form.field.Text', {
-            fieldLabel: 'Name',
+            fieldLabel: 'Search',
             labelAlign: 'top',
             emptyText: 'search',
             name: 'search',
             listeners: {
                 change: function () {
-//                    var value = this.getValue();
-//                    if (value == "") {
-//                        _this.studiesStore.clearFilter();
-//                    } else {
-//                        var regex = new RegExp(value, "i");
-//                        _this.studiesStore.filterBy(function (e) {
-//                            return regex.test(e.get('studyName'));
-//                        });
-//                    }
+                    var value = this.getValue();
+                    if (value == "") {
+                        _this.studiesStore.clearFilter();
+                    } else {
+                        var regex = new RegExp(value, "i");
+                        _this.studiesStore.filterBy(function (e) {
+                            return regex.test(e.get('name')) || regex.test(e.get('description'));
+                        });
+                    }
                 }
             }
 
@@ -253,7 +253,7 @@ EvaStudyBrowserPanel.prototype = {
                     ptype: 'rowexpander',
                     rowBodyTpl : new Ext.XTemplate(
                         '<p style="padding: 2px 2px 2px 15px"><b>Platform:</b> {platform}</p>',
-                        '<p style="padding: 2px 2px 2px 15px"><b>Center:</b> {center}</p>',
+                        '<p style="padding: 2px 2px 2px 15px"><b>Centre:</b> {center}</p>',
                         '<p style="padding: 2px 2px 5px 15px"><b>Description:</b> {description}</p>',
                         {}
                     )
@@ -323,9 +323,8 @@ EvaStudyBrowserPanel.prototype = {
                         // To render a link to FTP
                         renderer: function (value, p, record) {
                             return value ? Ext.String.format(
-                                '<a href="?Study={0}" target="_blank">{0}</a>',
-                                value,
-                                record.data.threadid
+                                '<a href="http://localhost/appl/eva/eva-web/src/eva.html?Study={0}" target="_blank">{0}</a>',
+                                value
                             ) : '';
                         }
                     },
@@ -337,7 +336,13 @@ EvaStudyBrowserPanel.prototype = {
                     {
                         text: "Organism",
                         dataIndex: 'speciesScientificName',
-                        flex: 3
+                        flex: 3,
+                        renderer: function(value, p, record) {
+                            return value ? Ext.String.format(
+                                '<div data-toggle="popover" title="Organism" data-content="And her...">{0}</div>',
+                                value
+                            ) : '';
+                        }
                     },
                     {
                         text: "Type",
@@ -431,17 +436,17 @@ EvaStudyBrowserPanel.prototype = {
             },
             items: [
                 submitButton,
-//                studySearchField,
+                studySearchField,
                 this.speciesFieldTag,
 //                this.assemblyFieldTag,
                 this.typeFieldTag,
-                this.methodFieldTag
+                this.platformFieldTag
             ]
         });
 
 
         this.rightPanel = Ext.create('Ext.container.Container', {
-            flex: 4,
+            flex: 5,
             layout: {
                 type: 'vbox',
                 align: 'stretch'
@@ -461,7 +466,7 @@ EvaStudyBrowserPanel.prototype = {
                 align: 'stretch'
             },
             defaults: {
-                margin: 10
+                margin: 5
             },
             items: [
                 this.leftPanel,
