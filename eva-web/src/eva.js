@@ -186,8 +186,12 @@ Eva.prototype = {
         if (this.childDivMenuMap[option]) {
             this.div.appendChild(this.childDivMenuMap[option]);
         }
+        console.log(this)
 
         switch (option) {
+            case 'Home':
+                _this._twitterWidgetUpdate();
+                break;
             case 'Study Browser':
                 this.studyBrowser.update();
                 break;
@@ -762,6 +766,16 @@ Eva.prototype = {
                 _this.studyBrowser.studiesStore.loadRawData(studies);
 //                _this.trigger('studies:change', {studies: studies, sender: _this});
             }
+        });
+    },
+
+    _twitterWidgetUpdate : function (){
+
+        var twitterWidgetEl = document.getElementById('twitter-widget');
+        twitterWidgetEl.innerHTML = "";
+        twitterWidgetEl.innerHTML = '<a  class="twitter-timeline" height=100 href="https://twitter.com/EBIvariation"  data-widget-id="437894469380100096">Tweets by @EBIvariation</a>';
+        $.getScript('//platform.twitter.com/widgets.js', function(){
+            twttr.widgets.load();
         });
     }
 }
