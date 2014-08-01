@@ -1,12 +1,6 @@
 <template>
-    <style>
-        .statisticsView{
-            /*min-width: 100px;*/
-            /*height: 250px;*/
-            /*max-width: 250px;*/
-            /*margin-left:0px;*/
-            /*margin-top:-10px*/
-        }
+    <style scoped>
+        @import url('../vendor/bootstrap/css/bootstrap.min.css');
     </style>
     <div class="row">
         <div id="statistics-chart-species" class="col-md-6"></div>
@@ -29,7 +23,7 @@
 
                     //Create a copy of the template node.
                     var template = document.importNode(thisDoc.querySelector('template').content, true);
-                    _this.appendChild(template);
+                    _this.createShadowRoot().appendChild(template);
                 }
             },
             attachedCallback: {
@@ -79,10 +73,11 @@
                     var height = _this.getAttribute('height');
                     var width = _this.getAttribute('width');
                     var id = '#'+data.id;
+                    var render_id = _this.shadowRoot.querySelector(id);
                     var dataArray  = data.chartData;
                     var title = data.title;
                     $(function () {
-                        $(id).highcharts({
+                        $(render_id).highcharts({
                             chart: {
                                 plotBackgroundColor: null,
                                 plotBorderWidth: null,
@@ -133,4 +128,6 @@
 
         })
     });
+
+
 </script>
