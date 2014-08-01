@@ -1,16 +1,16 @@
 <template>
     <style>
         .statisticsView{
-            min-width: 100px;
-            height: 250px;
-            max-width: 250px;
-            margin-left:0px;
-            margin-top:-10px
+            /*min-width: 100px;*/
+            /*height: 250px;*/
+            /*max-width: 250px;*/
+            /*margin-left:0px;*/
+            /*margin-top:-10px*/
         }
     </style>
     <div class="row">
-        <div id="statistics-chart-species" class="col-md-5 statisticsView"></div>
-        <div id="statistics-chart-type" class="col-md-5 statisticsView"></div>
+        <div id="statistics-chart-species" class="col-md-6"></div>
+        <div id="statistics-chart-type" class="col-md-6"></div>
     </div>
 </template>
 
@@ -58,9 +58,6 @@
                     var _this = this;
                     var species_data  = data.species
                     var type_data  = data.type
-
-
-
                     var speciesArray=[];
                     for (key in species_data) {
                         speciesArray.push([key,  species_data[key]]);
@@ -72,12 +69,15 @@
                         typeArray.push([key,  type_data[key]]);
                     }
                     var typeChartData = {id:'statistics-chart-type',title:'Type',chartData:typeArray};
-//                    _this.drawChart(typeChartData)
+                    _this.drawChart(typeChartData)
 
                 }
             },
             drawChart: {
                 value: function (data) {
+                    var _this = this;
+                    var height = _this.getAttribute('height');
+                    var width = _this.getAttribute('width');
                     var id = '#'+data.id;
                     var dataArray  = data.chartData;
                     var title = data.title;
@@ -86,7 +86,10 @@
                             chart: {
                                 plotBackgroundColor: null,
                                 plotBorderWidth: null,
-                                plotShadow: false
+                                plotShadow: false,
+                                height:height,
+                                width:width
+
                             },
                             title: {
                                 text: 'Studies',
@@ -101,7 +104,7 @@
                                 }
                             },
                             tooltip: {
-                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                pointFormat: '<b>{point.y}</b>'
                             },
                             plotOptions: {
                                 pie: {
@@ -110,7 +113,7 @@
                                     dataLabels: {
                                         enabled: false
                                     },
-                                    showInLegend: true
+                                    showInLegend: false
                                 }
                             },
                             series: [{

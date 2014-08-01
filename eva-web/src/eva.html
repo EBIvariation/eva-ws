@@ -142,18 +142,13 @@
         var tab = getUrlParameters("");
         var tabId =  decodeURI(tab.id);
         if(tabId == 'Study'){
-            var studyView = document.createElement('study-view');
+            var studyView = document.createElement('eva-study-view');
             studyView.setAttribute('id', tab.value);
         }
         if(tabId == 'Variant'){
-            var variantView = document.createElement('variant-view');
+            var variantView = document.createElement('eva-variant-view');
             variantView.setAttribute('id', tab.value);
         }
-        if(tabId == 'Home'){
-            var variantView = document.createElement('variant-view');
-            variantView.setAttribute('id', tab.value);
-        }
-
 
         Ext.getBody().removeCls('x-body');
         var ulLocalNav = document.querySelector('#header').shadowRoot.querySelector('.left-ul');
@@ -176,13 +171,8 @@
         if(tab.id){
             eva.select(tabId);
         }
-        var statisticsView = document.createElement('eva-statistics');
-        statisticsView.setAttribute('id', 'test');
-        var statisticsEl = document.getElementById("statistics");
-        statisticsEl.appendChild(statisticsView);
-
-
     };
+
 
     function getUrlParameters(staticURL) {
         var data = [];
@@ -209,6 +199,7 @@
         // all imports loaded
         Ext.QuickTips.init();
         Ext.onReady(start);
+
     });
 </script>
 

@@ -1,4 +1,4 @@
-<template id="study-view-template">
+<template id="eva-study-view-template">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <style scoped>
         @import url('../vendor/bootstrap/css/bootstrap.min.css');
@@ -23,165 +23,184 @@
             border-bottom-style: none;
         }
     </style>
-    <view>
-        <div>
-            <div class="row">
-                <div id="study-view" class="col-md-12"></div>
-            </div>
-        </div>
-    </view>
+
+    <div class="row">
+        <div id="study-view" class="col-md-12"></div>
+    </div>
+
 </template>
 
 <script>
-    var studyViewDoc = document._currentScript.ownerDocument,
-    studyView = Object.create(HTMLElement.prototype);
-
+    var studyViewDoc = document._currentScript.ownerDocument;
     var summary = {};
     var files = [];
 
-    studyView.createdCallback = function() {
-        document.body.style.cursor = "wait";
-        var template = studyViewDoc.querySelector("#study-view-template");
-        this.appendChild(template.content.cloneNode(true));
-    };
-
-    studyView.attachedCallback = function() {
-
-        var _this = this
-//        var studyID = this.getAttribute('id');
-//        var projectId = getProjectId(studyID);
-
-        var projectId = this.getAttribute('id');
-        var studyID = getStudyId(projectId);
-
-        EvaManager.get({
-            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-            category: 'studies',
-            resource: 'files',
-            query:studyID,
-            success: function (response) {
-                try {
-                    files = response.response[0].result;
-                } catch (e) {
-                    console.log(e);
+    var studyView = document.registerElement('eva-study-view', {
+        prototype: Object.create(HTMLElement.prototype, {
+            createdCallback: {
+                value: function () {
+                    var _this = this;
+                    document.body.style.cursor = "wait";
+                    var template = studyViewDoc.querySelector("#eva-study-view-template");
+                    this.appendChild(template.content.cloneNode(true));
                 }
-               _this.parseData();
-            }
+            },
+            attachedCallback: {
+                value: function () {
+                    var _this = this;
+        //          var studyID = this.getAttribute('id');
+        //          var projectId = _this.getProjectId(studyID);
 
-        });
+                    var projectId = this.getAttribute('id');
+                    var studyID = _this.getStudyId(projectId);
 
-        EvaManager.get({
-            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-            category: 'studies',
-            resource: 'summary',
-            query:projectId,
-            success: function (response) {
-                try {
-                    summary = response.response[0].result;
-                } catch (e) {
-                    console.log(e);
-                }
-                _this.parseData();
-            }
-        });
-        document.body.style.cursor = "default";
-    };
+                    EvaManager.get({
+                        host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                        category: 'studies',
+                        resource: 'files',
+                        query:studyID,
+                        success: function (response) {
+                            try {
+                                files = response.response[0].result;
+                            } catch (e) {
+                                console.log(e);
+                            }
+                            _this.parseData();
+                        }
 
+                    });
 
-    studyView.parseData = function parseData() {
-        var _this = this
-        if(files.length > 0 && summary != null ){
-            var data = {summaryData: summary,filesData: files }
-            var divContent =  _this.renderData(data)
-        }
-        _this.draw(data,divContent)
-
-    }
-
-    studyView.draw = function draw(data, content) {
-        var _this = this;
-        var el = document.getElementById("study-view");
-        var elDiv = document.createElement("div");
-        $(elDiv).html(content);
-        el.appendChild(elDiv);
-        el.applyAuthorStyles = true;
-    }
-
-    studyView.renderData = function renderData(data){
-        var _filesTable  = '<div><h3>'+data.summaryData[0].studyName+'</h3>' +
-                '<div class="row study-view-data"><div class="col-md-12"><div><h4>General Information</h4></div><table class="table table-bordered">' +
-                '<tr><td><b>Species</b></td><td>'+data.summaryData[0].species+'</td></tr>' +
-                '<tr><td><b>Material</b></td><td>'+data.summaryData[0].material+'</td></tr>' +
-                '<tr><td><b>Scope</b></td><td>'+data.summaryData[0].scope+'</td></tr>' +
-                '<tr><td><b>Type</b></td><td>'+data.summaryData[0].type+'</td></tr>' +
-                '<tr><td><b>Description</b></td><td>'+data.summaryData[0].description+'</td></tr>' +
-                '</table>'
-        _filesTable += '<div><h4>Files</h4></div><table class="table table-striped"><thead><tr>' +
-                '<th>File Name</th>'+
-                '<th>Samples Count</th>'+
-                '<th>Variants Count</th>'+
-                '<th>SNP Count</th>'+
-                '<th>Indel Count</th>'+
-                '<th>Pass Count</th>'+
-                '<th>Transitions/Transversions Ratio</th>'+
-                '<th>Mean Quality</th>'+
-                '</tr></thead><tbody>'
-        for (i = 0; i < data.filesData.length; i++) {
-            var fileName = files[i].fileName
-            $.ajax({
-                type: 'GET',
-                url: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/files/'+fileName+'/url',
-                dataType: 'json',//still firefox 20 does not auto serialize JSON, You can force it to always do the parsing by adding dataType: 'json' to your call.
-                async: false,
-                success: function (data, textStatus, jqXHR) {
-                    link = data.response[0].result;
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
+                    EvaManager.get({
+                        host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                        category: 'studies',
+                        resource: 'summary',
+                        query:projectId,
+                        success: function (response) {
+                            try {
+                                summary = response.response[0].result;
+                            } catch (e) {
+                                console.log(e);
+                            }
+                            _this.parseData();
+                        }
+                    });
+                    document.body.style.cursor = "default";
 
                 }
-            });
-            if(link.length > 0){
-                var downloadLink = '<a href="'+link+'" target="_blank">'+data.filesData[i].fileName+'</a>';
-            }else{
-                var downloadLink = data.filesData[i].fileName;
+            },
+
+            parseData: {
+                value: function (data) {
+                    var _this = this;
+                    if(files.length > 0 && _.isEmpty(summary) == false){
+                        var data = {summaryData: summary,filesData: files }
+                        var divContent =  _this.renderData(data)
+                    }
+                    _this.draw(data,divContent)
+
+                }
+            },
+            draw: {
+                value: function (data,content) {
+                    var _this = this;
+                    var el = document.getElementById("study-view");
+                    var elDiv = document.createElement("div");
+                    $(elDiv).html(content);
+                    el.appendChild(elDiv);
+                    el.applyAuthorStyles = true;
+                }
+            },
+            renderData: {
+                value: function (data) {
+                    var _this = this;
+                    console.log(data)
+                    if(data.summaryData[0].taxonomyId){
+                        var taxLink = 'http://www.uniprot.org/taxonomy/'+data.summaryData[0].taxonomyId;
+                        taxonomyId ='<a href="'+taxLink+'" target="_blank">'+data.summaryData[0].taxonomyId+'</a>';
+                    }
+                    var _filesTable  = '<div><h3>'+data.summaryData[0].name+'</h3>' +
+                            '<div class="row study-view-data"><div class="col-md-12"><div><h4>General Information</h4></div><table class="table table-bordered">' +
+                            '<tr><td><b>Species</b></td><td>'+data.summaryData[0].speciesCommonName+'</td></tr>' +
+                            '<tr><td><b>Sceintific Name</b></td><td>'+data.summaryData[0].speciesScientificName+'</td></tr>' +
+                            '<tr><td><b>Taxonomy ID</b></td><td>'+taxonomyId+'</td></tr>' +
+                            '<tr><td><b>Center</b></td><td>'+data.summaryData[0].center+'</td></tr>' +
+                            '<tr><td><b>Material</b></td><td>'+data.summaryData[0].material+'</td></tr>' +
+                            '<tr><td><b>Scope</b></td><td>'+data.summaryData[0].scope+'</td></tr>' +
+                            '<tr><td><b>Type</b></td><td>'+data.summaryData[0].type+'</td></tr>' +
+                            '<tr><td><b>Source Type</b></td><td>'+data.summaryData[0].sourceType+'</td></tr>' +
+                            '<tr><td><b>Platform</b></td><td>'+data.summaryData[0].platform+'</td></tr>' +
+                            '<tr><td><b>Variants</b></td><td>'+data.summaryData[0].numVariants+'</td></tr>' +
+                            '<tr><td><b>Samples</b></td><td>'+data.summaryData[0].numSamples+'</td></tr>' +
+                            '<tr><td><b>Description</b></td><td>'+data.summaryData[0].description+'</td></tr>' +
+                            '</table>'
+                    _filesTable += '<div><h4>Files</h4></div><table class="table table-striped"><thead><tr>' +
+                            '<th>File Name</th>'+
+                            '<th>Samples Count</th>'+
+                            '<th>Variants Count</th>'+
+                            '<th>SNP Count</th>'+
+                            '<th>Indel Count</th>'+
+                            '<th>Pass Count</th>'+
+                            '<th>Transitions/Transversions Ratio</th>'+
+                            '<th>Mean Quality</th>'+
+                            '</tr></thead><tbody>'
+                    for (i = 0; i < data.filesData.length; i++) {
+                        var fileName = files[i].fileName
+                        $.ajax({
+                            type: 'GET',
+                            url: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/files/'+fileName+'/url',
+                            dataType: 'json',//still firefox 20 does not auto serialize JSON, You can force it to always do the parsing by adding dataType: 'json' to your call.
+                            async: false,
+                            success: function (data, textStatus, jqXHR) {
+                                link = data.response[0].result;
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+
+                            }
+                        });
+                        if(link.length > 0){
+                            var downloadLink = '<a href="'+link+'" target="_blank">'+data.filesData[i].fileName+'</a>';
+                        }else{
+                            var downloadLink = data.filesData[i].fileName;
+                        }
+
+                        _filesTable += '<tr>'+
+                                '<td>'+downloadLink+'</td>' +
+                                '<td>'+data.filesData[i].stats.samplesCount+'</td>' +
+                                '<td>'+data.filesData[i].stats.variantsCount+'</td>' +
+                                '<td>'+data.filesData[i].stats.snpsCount+'</td>' +
+                                '<td>'+data.filesData[i].stats.indelsCount+'</td>' +
+                                '<td>'+data.filesData[i].stats.passCount+'</td>' +
+                                '<td>'+(data.filesData[i].stats.transitionsCount/data.filesData[i].stats.transversionsCount).toFixed(2)+'&nbsp;('+data.filesData[i].stats.transitionsCount+'/'+data.filesData[i].stats.transitionsCount+')</td>' +
+                                '<td>'+data.filesData[i].stats.meanQuality+'</td>' +
+                                '</tr>'
+                    }
+                    _filesTable += '</tbody></table></div></div>'
+
+                    return _filesTable;
+                }
+            },
+            getProjectId: {
+                value: function (data) {
+                    var _this = this;
+                    for (var i = 0; i < projects.length; i++) {
+                        if (projects[i].alias === data) {
+                            return projects[i].projectId;
+                        }
+                    }
+                }
+            },
+            getStudyId: {
+                value: function (data) {
+                    var _this = this;
+                    for (var i = 0; i < projects.length; i++) {
+                        if (projects[i].projectId === data) {
+                            return projects[i].alias;
+                        }
+                    }
+                }
             }
 
-            _filesTable += '<tr>'+
-                    '<td>'+downloadLink+'</td>' +
-                    '<td>'+data.filesData[i].stats.samplesCount+'</td>' +
-                    '<td>'+data.filesData[i].stats.variantsCount+'</td>' +
-                    '<td>'+data.filesData[i].stats.snpsCount+'</td>' +
-                    '<td>'+data.filesData[i].stats.indelsCount+'</td>' +
-                    '<td>'+data.filesData[i].stats.passCount+'</td>' +
-                    '<td>'+(data.filesData[i].stats.transitionsCount/data.filesData[i].stats.transversionsCount).toFixed(2)+'&nbsp;('+data.filesData[i].stats.transitionsCount+'/'+data.filesData[i].stats.transitionsCount+')</td>' +
-                    '<td>'+data.filesData[i].stats.meanQuality+'</td>' +
-                    '</tr>'
-        }
-        _filesTable += '</tbody></table></div></div>'
-
-        return _filesTable;
-    }
-
-    function getProjectId(studyID){
-        for (var i = 0; i < projects.length; i++) {
-            if (projects[i].alias === studyID) {
-                return projects[i].projectId;
-            }
-        }
-    }
-
-    function getStudyId(projectId){
-        for (var i = 0; i < projects.length; i++) {
-            if (projects[i].projectId === projectId) {
-                return projects[i].alias;
-            }
-        }
-    }
-
-    var studyElement = document.registerElement('study-view', {'prototype': studyView});
-
-    window.onload = function() {
-
-    };
+        })
+    });
 
 </script>
