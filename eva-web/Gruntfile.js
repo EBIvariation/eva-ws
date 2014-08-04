@@ -25,37 +25,15 @@ module.exports = function (grunt) {
                 stripBanners: true
             },
 
-
             eva: {
                 src: [
                     /** eva app js **/
-                    'app/js/eva-config.js',
-                    'app/js/eva-manager.js',
-                    'app/js/app.js',
-
-                    /** ebi-compliance **/
-                    'lib/ebi-js-commons/ebi-compliance/js/ebi-complaince-directive.js',
-
-                    /** eva controllers **/
-                    'app/js/controllers/eva-main-controller.js',
-                    'app/js/controllers/backbone-event-manager.js',
-
-                    /** eva-directives **/
-                    'app/js/directives/eva-portal-home-drirective.js',
-                    'app/js/directives/variant-widget-directive.js',
-                    'app/js/directives/gene-widget-directive.js',
-                    'app/js/directives/file-browser-directive.js',
-
-                     /** eva-widgets **/
-                    'app/widgets/variant-browser-widget.js',
-                    'app/widgets/gene-browser-widget.js',
-                    'app/widgets/variant-genotype.js',
-                    'app/widgets/variant-effects.js',
-                    'app/widgets/variant-study.js',
-
-                    /** eva-services **/
-                    'app/js/ebi-var-services/ebivar-services-metadata.js'
-
+                    'src/eva.js',
+                    'src/eva-study-browser-panel.js',
+                    'src/eva-menu.js',
+                    'src/eva-adapter.js',
+                    'src/eva-manager.js',
+                    'src/eva-config.js'
                 ],
                 dest: 'build/<%= meta.version.eva %>/eva-<%= meta.version.eva %>.js'
             }
@@ -110,12 +88,16 @@ module.exports = function (grunt) {
 
             eva: {
                 files: [
-                    {   expand: true, src: ['app/views/*'], dest: 'build/<%= meta.version.eva %>/views', flatten: true},
-                    {   expand: true, src: ['vendor/**'], dest: 'build/<%= meta.version.eva %>'},
-                    {   expand: true, src: ['app/css/*'], dest: 'build/<%= meta.version.eva %>/css', flatten: true},
-                    {   expand: true, src: ['app/img/*'], dest: 'build/<%= meta.version.eva %>/img', flatten: true},
-                    {   expand: true, src: ['app/files/*'], dest: 'build/<%= meta.version.eva %>/files', flatten: true},
-                    {   expand: true, src: ['app/js/gv-config.js'], dest: 'build/<%= meta.version.eva %>/', flatten: true}
+                    {   expand: true, src: ['src/files/*'], dest: 'build/<%= meta.version.eva %>/files', flatten: true},
+                    {   expand: true, src: ['src/fonts/*'], dest: 'build/<%= meta.version.eva %>/fonts', flatten: true},
+                    {   expand: true, src: ['src/css/*'], dest: 'build/<%= meta.version.eva %>/css', flatten: true},
+                    {   expand: true, src: ['src/img/*'], dest: 'build/<%= meta.version.eva %>/img', flatten: true},
+                    {   expand: true, src: ['src/*.html'], dest: 'build/<%= meta.version.eva %>/', flatten: true, filter: 'isFile'},
+                    {   expand: true, src: ['lib/jsorolla/build/**'], dest: 'build/<%= meta.version.eva %>',flatten: false},
+                    {   expand: true, src: ['lib/jsorolla/vendor/**'], dest: 'build/<%= meta.version.eva %>',flatten: false},
+                    {   expand: true, src: ['lib/jsorolla/styles/**'], dest: 'build/<%= meta.version.eva %>',flatten: false},
+                    {   expand: true, src: ['vendor/**'], dest: 'build/<%= meta.version.eva %>'}
+
                 ]
             }
 
@@ -127,45 +109,43 @@ module.exports = function (grunt) {
 
         htmlbuild: {
             eva: {
-                src: 'app/index.html',
+                src: 'src/eva.html',
                 dest: 'build/<%= meta.version.eva %>/',
                 options: {
                     beautify: true,
                     scripts: {
                         'eva-js': '<%= concat.eva.dest %>',
+                        'lib': [
+                                'build/<%= meta.version.eva %>/lib/jsorolla/build/1.1.6/genome-viewer/gv-config.js',
+                                'build/<%= meta.version.eva %>/lib/jsorolla/build/1.1.6/genome-viewer/genome-viewer.js',
+                                'build/<%= meta.version.eva %>/lib/jsorolla/build/1.1.6/lib.js'
+                               ],
                         'vendor': [
-                            'build/<%= meta.version.eva %>/vendor/jquery.min.js',
-                            'build/<%= meta.version.eva %>/vendor/angular-1.2.16.min.js',
-                            'build/<%= meta.version.eva %>/vendor/underscore-1.5.2.min.js',
-                            'build/<%= meta.version.eva %>/vendor/backbone-1.1.2-min.js',
-                            'build/<%= meta.version.eva %>/vendor/bootstrap/js/bootstrap.min.js',
-                            'build/<%= meta.version.eva %>/vendor/ui-bootstrap-tpls-0.10.0.min.js',
-                            'build/<%= meta.version.eva %>/vendor/highcharts-4.0.1.min.js',
-                            'build/<%= meta.version.eva %>/vendor/extJS/js/ext-5.0.0-all.js',
-                            'build/<%= meta.version.eva %>/vendor/angular-ui-router.min.js',
-                            'build/<%= meta.version.eva %>/vendor/checklist-model.js',
-                            'build/<%= meta.version.eva %>/vendor/angular-scroll.min.js',
-                            'build/<%= meta.version.eva %>/vendor/extJS/ux/SlidingPager.js',
-                            'build/<%= meta.version.eva %>/vendor/extJS/ux/data/PagingMemoryProxy.js',
-//                            'build/<%= meta.version.eva %>/vendor/gv-config.js',
-                            'build/<%= meta.version.eva %>/vendor/genome-viewer-1.0.3.min.js'
+                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/underscore-min.js',
+                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/backbone-min.js',
+                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.min.js',
+                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/bootstrap-scoped-dist/js/bootstrap.min.js',
+                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.cookie.js',
+                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.sha1.js',
+                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/purl.min.js',
+                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.qtip.min.js'
                         ],
-                        'internal-dependencies': [
-                            'build/<%= meta.version.eva %>/gv-config.js'
+                        'platform': [
+                            'build/<%= meta.version.eva %>/vendor/platform.js'
                         ]
+//                        'internal-dependencies': [
+//                            'build/<%= meta.version.eva %>/gv-config.js'
+//                        ]
                     },
                     styles: {
-                        'eva-css': [
-//                            'build/<%= meta.version.eva %>/app/css/eva-portal-colours.css',
-                            'build/<%= meta.version.eva %>/app/css/eva-portal-visual.css',
-                            'build/<%= meta.version.eva %>/app/css/eva.css'
+                        'css': [
+                            'build/<%= meta.version.eva %>/lib/jsorolla/styles/css/style.css',
+                            'build/<%= meta.version.eva %>/css/eva.css'
                         ],
                         'vendor': [
-                            'build/<%= meta.version.eva %>/vendor/bootstrap/css/bootstrap.min.css',
-                            'build/<%= meta.version.eva %>/vendor/bootstrap/css/bootstrap-theme.min.css',
-                            'build/<%= meta.version.eva %>/vendor/extJS/css/resources/css/ext-all.css'
-
-
+                            'build/<%= meta.version.eva %>/vendor/ext-5/theme-ebi-embl/theme-ebi-embl-all.css',
+                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.qtip.min.css',
+                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/bootstrap-scoped-dist/css/bootstrap.min.css'
                         ]
                     }
                 }

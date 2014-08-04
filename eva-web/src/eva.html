@@ -2,16 +2,18 @@
 <html>
 <head lang="en">
 
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-    <script src="../vendor/platform.js"></script>
-    <!--<script src="//cdnjs.cloudflare.com/ajax/libs/polymer/0.3.3/polymer.js"></script>-->
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<!-- build:script platform -->
+<script src="../vendor/platform.js"></script>
+<!-- /build -->
+<!--<script src="//cdnjs.cloudflare.com/ajax/libs/polymer/0.3.3/polymer.js"></script>-->
 
-    <link rel="import" href="header.html">
-    <link rel="import" href="footer.html">
-    <link rel="import" href="content.html">
-    <link rel="import" href="study-view.html">
-    <link rel="import" href="variant-view.html">
-    <link rel="import" href="statistics.html">
+<link rel="import" href="header.html">
+<link rel="import" href="footer.html">
+<link rel="import" href="content.html">
+<link rel="import" href="study-view.html">
+<link rel="import" href="variant-view.html">
+<link rel="import" href="statistics.html">
 
 </head>
 <body class="eva">
@@ -28,8 +30,9 @@
 
 <!-- build:style css -->
 <link type="text/css" rel="stylesheet" href="../lib/jsorolla/styles/css/style.css"/>
+<link type="text/css" rel="stylesheet" href="css/eva.css"/>
 <!-- /build -->
-<link type="text/css" rel="stylesheet" href="eva.css"/>
+
 
 <script type="text/javascript" src="http://cdn.sencha.io/ext/gpl/5.0.0/build/ext-all.js"></script>
 
@@ -52,7 +55,7 @@
 
 <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/gv-config.js"></script>
 
-<!-- build:script js -->
+<!-- build:script lib -->
 <script type="text/javascript" src="../lib/jsorolla/src/lib/svg.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/lib/utils.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/lib/region.js"></script>
@@ -115,16 +118,16 @@
 <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/position-filter-form-panel.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/study-filter-form-panel.js"></script>
 <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/consequence-type-filter-form-panel.js"></script>
+<!-- /build -->
 
-
-<script type="text/javascript" src="../app/js/eva-config.js"></script>
-
+<!-- build:script eva-js -->
 <script type="text/javascript" src="eva.js"></script>
 <script type="text/javascript" src="eva-study-browser-panel.js"></script>
 <script type="text/javascript" src="eva-menu.js"></script>
 <script type="text/javascript" src="eva-adapter.js"></script>
 <script type="text/javascript" src="eva-manager.js"></script>
 <script type="text/javascript" src="eva-config.js"></script>
+<!-- /build -->
 
 <script type="text/javascript">
     var eva;
