@@ -100,6 +100,12 @@ Eva.prototype = {
         $(this.variantView).addClass('eva-child');
         this.childDivMenuMap['Variant'] = this.variantView;
 
+        /* beacon */
+        $(this.beacon).addClass('eva-child');
+        this.childDivMenuMap['beacon'] = this.beacon;
+
+
+
 
 
         /* Study Browser Panel*/
@@ -145,8 +151,8 @@ Eva.prototype = {
         $(this.genomeViewerDiv).addClass('genome-viewer-div');
         this.genomeBrowserOptionDiv.appendChild(this.genomeViewerDiv);
 
-        this.genomeViewer = this._createGenomeViewer(this.genomeViewerDiv);
-        this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
+//        this.genomeViewer = this._createGenomeViewer(this.genomeViewerDiv);
+//        this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
 
 
 //        this.genomeViewer.leftSidebarDiv.appendChild(this.formPanelGenomeFilterDiv);
@@ -165,8 +171,8 @@ Eva.prototype = {
         this.studyBrowser.draw();
 
         this.formPanelVariantFilter.draw();
-        this.genomeViewer.draw();
-        this.formPanelGenomeFilter.draw();
+//        this.genomeViewer.draw();
+//        this.formPanelGenomeFilter.draw();
 
         this._loadStudies();
 
@@ -198,9 +204,9 @@ Eva.prototype = {
             case 'Variant Browser':
                 this.formPanelVariantFilter.update();
                 break;
-            case 'Genome Browser':
-                this.formPanelGenomeFilter.update();
-                break;
+//            case 'Genome Browser':
+//                this.formPanelGenomeFilter.update();
+//                break;
         }
 //        this.studiesStore.clearFilter();
 
@@ -303,7 +309,8 @@ Eva.prototype = {
             defaultToolConfig: {
                 headerConfig: {
                     baseCls: 'eva-header-2'
-                }
+                },
+                genomeViewer: false
             },
             columns: columns,
             attributes: attributes,
@@ -523,7 +530,7 @@ Eva.prototype = {
                 'submit': function (e) {
                     var title = trackNameField.getValue();
                     if (title !== '') {
-                        _this._addGenomeBrowserTrack(title, e.values);
+                        _this.EvaAdapter(title, e.values);
                         trackNameField.setValue('');
                     }
                 }

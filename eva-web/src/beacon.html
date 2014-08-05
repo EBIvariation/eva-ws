@@ -1,0 +1,225 @@
+<template>
+    <style scoped>
+        @import url('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css');
+        .borderless tbody tr td, .borderless thead tr th {
+            border: none;
+        }
+
+    </style>
+    <div class="row">
+        <div class="col-md-12">
+            <div>
+                <h2>A Web Interface for Genomic Variant Queries - EBI</h2>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div id="resultShow"></div><br />
+                    </div>
+                </div>
+
+                <div>
+                    <form id="beacon-form">
+                        <div class="row">
+                            <div class="col-md-2 form-group"><p>Chromosome</p></div>
+                            <div class="col-md-2 form-group input-group-sm"><div id="chromosome-select"></div></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 form-group"><p>Coordinate</p></div>
+                            <div class="col-md-2 form-group input-group-sm"><input class="form-control" id="coordinate" name=coordinate type="text" required/></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 form-group"><p>Allele</p></div>
+                            <div class="col-md-2 form-group input-group-sm"><input class="form-control" id="allele" name=allele type="text"  required/></div>
+                        </div>
+                        <h4>Format Type</h4>
+                        <div class="row">
+                            <div class="col-md-2 form-group"><p>Text</p></div>
+                            <div class="col-md-4 form-group input-group-sm"> <input type="radio"  name="formatType" value="text"> </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 form-group"><p>JSON</p></div>
+                            <div class="col-md-4 form-group input-group-sm"> <input type="radio"  name="formatType" value="json"> </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 form-group"><button id="submit" class="btn btn-primary" type="submit">Submit</button>&nbsp;&nbsp;<span id="refresh-button"></span></div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-md-12"><p><b>Example queries:</b></p> <hr />
+                            <div class="row">
+                                <div class="col-md-2">
+                                 <table class="table table-bordered table-condensed">
+                                     <tr><td>Chrom</td><td>13</td></tr>
+                                     <tr><td>Coordinate</td><td>32888799</td></tr>
+                                     <tr><td>Allele</td><td>G</td></tr>
+                                     <tr><td>Project</td><td>PRJEB6040</td></tr>
+                                 </table>
+                                </div>
+                                <div class="col-md-2">
+                                    <table class="table table-bordered table-condensed">
+                                        <tr><td>Chrom</td><td>13</td></tr>
+                                        <tr><td>Coordinate</td><td>32888799</td></tr>
+                                        <tr><td>Allele</td><td>C</td></tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-2">
+                                    <table class="table table-bordered table-condensed">
+                                        <tr><td>Chrom</td><td>1</td></tr>
+                                        <tr><td>Coordinate</td><td>46403</td></tr>
+                                        <tr><td>Allele</td><td>TGT</td></tr>
+                                        <tr><td>Project</td><td>PRJEB4019</td></tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-2">
+                                    <table class="table table-bordered table-condensed">
+                                        <tr><td>Chrom</td><td>1</td></tr>
+                                        <tr><td>Coordinate</td><td>46403</td></tr>
+                                        <tr><td>Allele</td><td>INS</td></tr>
+                                        <tr><td>Project</td><td>PRJEB4019</td></tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-2">
+                                    <table class="table table-bordered table-condensed">
+                                        <tr><td>Chrom</td><td>1</td></tr>
+                                        <tr><td>Coordinate</td><td>1002921</td></tr>
+                                        <tr><td>Allele</td><td>DEL</td></tr>
+                                        <tr><td>Project</td><td>PRJEB4019</td></tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    // This document reference
+    var thisDoc = document._currentScript.ownerDocument;
+
+    var beacon = document.registerElement('eva-beacon', {
+        prototype: Object.create(HTMLElement.prototype, {
+            /*
+             * Lifecycle callback methods
+             */
+            createdCallback: {
+                value: function () {
+                    var _this = this;
+
+                    //Create a copy of the template node.
+                    var template = document.importNode(thisDoc.querySelector('template').content, true);
+                    _this.createShadowRoot().appendChild(template);
+                }
+            },
+            attachedCallback: {
+                value: function () {
+                    var _this = this;
+                    var chrSelectDiv =  _this.shadowRoot.querySelector("#chromosome-select");
+                    var chrSelectList = document.createElement("select");
+                    chrSelectList.setAttribute("id", "chrSelect");
+                    chrSelectDiv.appendChild(chrSelectList);
+                    for (var i = 1; i < 25; i++) {
+                        var option = document.createElement("option");
+                        if(i == 23){
+                            option.setAttribute("value", i);
+                            option.text = 'Chr X';
+                        }
+                        else if(i == 24){
+                            option.setAttribute("value", i);
+                            option.text = 'Chr Y';
+                        }else{
+                            option.setAttribute("value", i);
+                            option.text = 'Chr '+i;
+                        }
+
+                        chrSelectList.appendChild(option);
+                    }
+
+                    var submit = _this.shadowRoot.querySelector('#submit');
+                    submit.addEventListener('click', function(eve) {
+                        var chr = _this.shadowRoot.querySelector('#chrSelect').value;
+                        var coordinate =_this.shadowRoot.querySelector('#coordinate').value;
+                        var allele = _this.shadowRoot.querySelector('#allele').value;
+                        if(_this.shadowRoot.querySelector('input[name="formatType"]:checked')){
+                            var formatType = _this.shadowRoot.querySelector('input[name="formatType"]:checked').value;
+                        }
+                        var region = chr+':'+coordinate+':'+ allele;
+                        var data= {};
+                        data.formatType = formatType;
+                        data.result = 'test';
+                        if(chr && coordinate &&  allele){
+                            //                        EvaManager.get({
+//                            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+//                            category: 'variants',
+//                            resource: 'exists',
+//                            query:region,
+//                            success: function (response) {
+//                                try {
+//                                    data.result = response.response[0].result;
+//                                    data.result = 'test';
+//                                    console.log(response)
+//                                } catch (e) {
+//                                    console.log(e);
+//                                }
+//                                _this.renderResultData(result);
+//                            }
+//                        });
+                            _this.renderResultData(data);
+                        }else{
+                            alert('Please fill out all fields')
+                        }
+                        eve.preventDefault();
+
+                    }, true);
+
+                }
+            },
+            renderResultData: {
+                value: function (data) {
+                   var _this = this;
+                   var resultData;
+                   if(data.formatType == 'json'){
+                       resultData = data.result
+                   }else{
+                       resultData = '<table  class="table">' +
+                                     '<tr><td>Chromosome</td><td>Chromosome</td></tr>'+
+                                     '<tr><td>Coordinate</td><td>Coordinate</td></tr>'+
+                                     '<tr><td>Allele</td><td>Allele</td></tr>'+
+                                     '<tr><td>Exists</td><td>Exists</td></tr>'+
+                                    '</table>'
+                   }
+                    var showResultDiv =  _this.shadowRoot.querySelector("#resultShow");
+                    showResultDiv.innerHTML = "";
+                    var resultElDiv =  document.createElement("div");
+                    resultElDiv.innerHTML = resultData;
+                    showResultDiv.appendChild(resultElDiv);
+
+                    var refreshBtnDiv =  _this.shadowRoot.querySelector("#refresh-button");
+                    refreshBtnDiv.innerHTML = "";
+                    var refreshBtnEl =  document.createElement("button");
+                    refreshBtnEl.type = "submit";
+                    refreshBtnEl.textContent = "Reset";
+                    refreshBtnEl.className = "btn btn-primary";
+                    refreshBtnEl.id = "refresh";
+                    refreshBtnDiv.appendChild(refreshBtnEl);
+
+                    var refresh = _this.shadowRoot.querySelector('#refresh');
+                    refresh.addEventListener('click', function(eve) {
+                        eve.preventDefault();
+                        showResultDiv.innerHTML = "";
+                        _this.shadowRoot.getElementById("beacon-form").reset();
+
+                    }, true);
+
+                }
+            }
+
+        })
+    });
+
+
+
+
+</script>
