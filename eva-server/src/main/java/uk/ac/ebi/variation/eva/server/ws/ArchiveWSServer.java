@@ -26,6 +26,7 @@ import org.opencb.opencga.storage.variant.ArchiveDBAdaptor;
 import org.opencb.opencga.storage.variant.StudyDBAdaptor;
 import org.opencb.opencga.storage.variant.mongodb.StudyMongoDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
 
 /**
@@ -37,6 +38,7 @@ import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
 public class ArchiveWSServer extends EvaWSServer {
     
     private ArchiveDBAdaptor dbAdaptor;
+    private StudyDBAdaptor studyDgvaDbAdaptor;
     private StudyDBAdaptor studyEvaproDbAdaptor;
     private StudyDBAdaptor studyMongoDbAdaptor;
     
@@ -49,6 +51,7 @@ public class ArchiveWSServer extends EvaWSServer {
         super(version, uriInfo, hsr);
         try {
             dbAdaptor = new ArchiveEvaproDBAdaptor();
+            studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
             studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
             MongoCredentials credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
             studyMongoDbAdaptor = new StudyMongoDBAdaptor(credentials);
@@ -85,7 +88,8 @@ public class ArchiveWSServer extends EvaWSServer {
     @GET
     @Path("/studies/all")
     public Response getStudies(@QueryParam("species") String species,
-                               @QueryParam("type") String types) {
+                               @QueryParam("type") String types,
+                               @DefaultValue("false") @QueryParam("structural") boolean structural) {
         if (species != null && !species.isEmpty()) {
             queryOptions.put("species", Arrays.asList(species.split(",")));
         }
@@ -93,7 +97,11 @@ public class ArchiveWSServer extends EvaWSServer {
             queryOptions.put("type", Arrays.asList(types.split(",")));
         }
         
-        return createOkResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
+        if (structural) {
+            return createOkResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
+        } else {
+            return createOkResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
+        }
     }
     
     @GET

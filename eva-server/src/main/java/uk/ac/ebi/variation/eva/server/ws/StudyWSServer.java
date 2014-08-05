@@ -11,6 +11,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -23,6 +24,7 @@ import org.opencb.opencga.storage.variant.VariantSourceDBAdaptor;
 import org.opencb.opencga.storage.variant.mongodb.DBObjectToVariantSourceConverter;
 import org.opencb.opencga.storage.variant.mongodb.StudyMongoDBAdaptor;
 import org.opencb.opencga.storage.variant.mongodb.VariantSourceMongoDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
 
 /**
@@ -33,6 +35,7 @@ import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
 @Produces(MediaType.APPLICATION_JSON)
 public class StudyWSServer extends EvaWSServer {
     
+    private StudyDBAdaptor studyDgvaDbAdaptor;
     private StudyDBAdaptor studyEvaproDbAdaptor;
     private StudyDBAdaptor studyMongoDbAdaptor;
     private VariantSourceDBAdaptor variantSourceDbAdaptor;
@@ -45,6 +48,7 @@ public class StudyWSServer extends EvaWSServer {
     public StudyWSServer(@DefaultValue("") @PathParam("version") String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException {
         super(version, uriInfo, hsr);
         try {
+            studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
             studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
             credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
             studyMongoDbAdaptor = new StudyMongoDBAdaptor(credentials);
@@ -89,7 +93,12 @@ public class StudyWSServer extends EvaWSServer {
     
     @GET
     @Path("/{study}/summary")
-    public Response getStudySummary(@PathParam("study") String study) {
-        return createOkResponse(studyEvaproDbAdaptor.getStudyById(study, queryOptions));
+    public Response getStudySummary(@PathParam("study") String study,
+                                    @DefaultValue("false") @QueryParam("structural") boolean structural) {
+        if (structural) {
+            return createOkResponse(studyDgvaDbAdaptor.getStudyById(study, queryOptions));
+        } else {
+            return createOkResponse(studyEvaproDbAdaptor.getStudyById(study, queryOptions));
+        }
     }
 }
