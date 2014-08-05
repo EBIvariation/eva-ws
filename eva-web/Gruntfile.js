@@ -152,6 +152,7 @@ module.exports = function (grunt) {
             }
         },
 
+
         'curl-dir': {
             long: {
                 src: [
@@ -199,7 +200,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-rename');
     grunt.loadNpmTasks('grunt-html-build');
     grunt.loadNpmTasks('grunt-curl');
-
 
     grunt.registerTask('vendor', ['curl-dir']);
 
