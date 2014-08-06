@@ -4,6 +4,19 @@
         .borderless tbody tr td, .borderless thead tr th {
             border: none;
         }
+        #resultShow{
+            color: #426783;
+        }
+        .valid{
+            color:#25AC0F;
+        }
+        .invalid{
+            color:#CB4437;
+        }
+
+        h2{
+            color:#378080;
+        }
 
     </style>
     <div class="row">
@@ -150,23 +163,21 @@
                         data.formatType = formatType;
                         data.result = 'test';
                         if(chr && coordinate &&  allele){
-                            //                        EvaManager.get({
-//                            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-//                            category: 'variants',
-//                            resource: 'exists',
-//                            query:region,
-//                            success: function (response) {
-//                                try {
-//                                    data.result = response.response[0].result;
-//                                    data.result = 'test';
-//                                    console.log(response)
-//                                } catch (e) {
-//                                    console.log(e);
-//                                }
-//                                _this.renderResultData(result);
-//                            }
-//                        });
-                            _this.renderResultData(data);
+                                                    EvaManager.get({
+                            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                            category: 'variants',
+                            resource: 'exists',
+                            query:region,
+                            success: function (response) {
+                                try {
+                                    data.result = response.response[0].result;
+                                } catch (e) {
+                                    console.log(e);
+                                }
+                                _this.renderResultData(data, region);
+                            }
+                        });
+
                         }else{
                             alert('Please fill out all fields')
                         }
@@ -177,17 +188,26 @@
                 }
             },
             renderResultData: {
-                value: function (data) {
+                value: function (data,region) {
                    var _this = this;
-                   var resultData;
-                   if(data.formatType == 'json'){
-                       resultData = data.result
+                   var resultData
+                   var cssClass;
+
+                   if(data.result == 'true'){
+                       cssClass = 'valid';
                    }else{
-                       resultData = '<table  class="table">' +
-                                     '<tr><td>Chromosome</td><td>Chromosome</td></tr>'+
-                                     '<tr><td>Coordinate</td><td>Coordinate</td></tr>'+
-                                     '<tr><td>Allele</td><td>Allele</td></tr>'+
-                                     '<tr><td>Exists</td><td>Exists</td></tr>'+
+                       cssClass = 'invalid';
+                   }
+                   var _region = region.split(":");
+                    if(data.formatType == 'json'){
+                       _resultData = {query:{chrom:_region[0],pos:_region[1],allele:_region[2]},exist:data.result};
+                       resultData = JSON.stringify(_resultData);
+                   }else{
+                       resultData = '<table  class="table table-bordered">' +
+                                     '<tr><td>Chromosome</td><td>'+_region[0]+'</td></tr>'+
+                                     '<tr><td>Coordinate</td><td>'+_region[1]+'</td></tr>'+
+                                     '<tr><td>Allele</td><td>'+_region[2]+'</td></tr>'+
+                                     '<tr><td>Exist</td><td class="'+cssClass+'">'+data.result+'</td></tr>'+
                                     '</table>'
                    }
                     var showResultDiv =  _this.shadowRoot.querySelector("#resultShow");

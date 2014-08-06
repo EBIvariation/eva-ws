@@ -114,7 +114,7 @@ module.exports = function (grunt) {
                 options: {
                     beautify: true,
                     scripts: {
-                        'eva-js': '<%= concat.eva.dest %>',
+                        'eva-js': '<%= uglify.eva.dest %>',
                         'lib': [
                                 'build/<%= meta.version.eva %>/lib/jsorolla/build/1.1.6/genome-viewer/gv-config.js',
                                 'build/<%= meta.version.eva %>/lib/jsorolla/build/1.1.6/genome-viewer/genome-viewer.js',
