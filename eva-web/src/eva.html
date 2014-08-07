@@ -141,6 +141,7 @@
         var contactDiv = link.import.querySelector('#contact');
         var templatesDiv = link.import.querySelector('#submissionTemplates');
         var vcfDiv = link.import.querySelector('#vcf-format');
+        var clinicalDiv = link.import.querySelector('#clinical');
 
         var tab = getUrlParameters("");
         var tabId =  decodeURI(tab.id);
@@ -171,7 +172,8 @@
             vcfDiv:vcfDiv,
             studyView:studyView,
             variantView:variantView,
-            beacon:beaconView
+            beacon:beaconView,
+            clinicalDiv:clinicalDiv
         });
         eva.draw();
 

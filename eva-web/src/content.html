@@ -111,6 +111,51 @@
         <p>A completed EVA Clinical template for a fictional submission can be downloaded here.</p>
     </div>
 
+    <div id="beacon">
+        <h2>A Web Interface for Genomic Variant Queries - EBI</h2>
+        <div class="row">
+            <div class="col-md-12"><p><b>Example queries:</b></p>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div><p><span><a href="#"  onclick="loadEvaBeacon(this)" chrom="13" coordinate="32888799" allele="C">Chrom:13&nbsp;Coordinate:32888799 &nbsp;Allele:C&nbsp;Project:PRJEB6040 </a></span></p></div>
+                        <div><p><span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="46403" allele="INS">Chrom:1&nbsp;Coordinate:46403 &nbsp;Allele:INS&nbsp;Project:PRJEB4019</a></span></p></div>
+                        <div><p> <span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="1002921" allele="DEL">Chrom:1&nbsp;Coordinate:1002921 &nbsp;Allele:DEL&nbsp;Project:PRJEB4019</a></span></p><hr/></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row"><div class="col-md-12"><div id="beacon-element"><eva-beacon></eva-beacon></div></div></div>
+        <script>
+            function loadEvaBeacon(el) {
+                var chrom = el.getAttribute('chrom');
+                var coordinate = el.getAttribute('coordinate');
+                var allele = el.getAttribute('allele');
+                var el = document.querySelector("#beacon-element");
+                var elDiv = document.createElement("eva-beacon");
+                elDiv.setAttribute('chrom', chrom);
+                elDiv.setAttribute('coordinate', coordinate);
+                elDiv.setAttribute('allele', allele);
+                el.innerHTML= '';
+                el.appendChild(elDiv);
+                el.applyAuthorStyles = true;
+
+
+            }
+        </script>
+    </div>
+    <div id="clinical">
+        <h2>European Variation Archive Clinical</h2>
+        <div class="row">
+            <div class="col-md-12">
+                <p>EVA Clinical welcomes submission of clinically relevant variant data from clinical testing labs, locus-specific databases, expert panels and professional societies.
+                   EVA Clinical works in collaboration with the <a href="http://www.ncbi.nlm.nih.gov/clinvar" target="_blank">ClinVar resource at NCBI</a> to provide the most comprehensive dataset of clinically relevant variants available world-wide.
+                   Data submitted to EVA Clinical is brokered to ClinVar therefore it is unnecessary to submit to both resources.</p>
+                <p>To submit data to EVA Clinical please complete this  <a href="files/EVA_Submission_template.EVA.V1.0.1_live_plus_Clinical_Variants.xlsx" target="_blank">template</a> and submit to <a href="mailto:eva-helpdesk@ebi.ac.uk" target="_top">eva-helpdesk@ebi.ac.uk</a>.</p>
+                <p>If you would like to discuss any aspect of EVA Clinical, or if anything is unclear, please contact us directly at <a href="mailto:eva-helpdesk@ebi.ac.uk" target="_top">eva-helpdesk@ebi.ac.uk</a>. </p>
+            </div>
+        </div>
+    </div>
+
     <div id="vcf-format">
         <h2>EVA VCF Format</h2>
         <p> EVA only accepts VCF files that conform to <a href="http://www.1000genomes.org/wiki/Analysis/Variant%20Call%20Format/vcf-variant-call-format-version-41" target="_blank">VCF version 4.1 and above.</a></p>
@@ -265,38 +310,6 @@
         <div>
             <p dir="ltr">These guidlines are also avaialble in <a href="files/EVA_VCF_1.0.pdf" target="_blank">PDF format.</a> For any additional support, please contact us at eva-helpdesk@ebi.ac.uk.</p>
         </div>
-    </div>
-    <div id="beacon">
-        <h2>A Web Interface for Genomic Variant Queries - EBI</h2>
-        <div class="row">
-            <div class="col-md-12"><p><b>Example queries:</b></p>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div><p><span><a href="#"  onclick="loadEvaBeacon(this)" chrom="13" coordinate="32888799" allele="C">Chrom:13&nbsp;Coordinate:32888799 &nbsp;Allele:C&nbsp;Project:PRJEB6040 </a></span></p></div>
-                        <div><p><span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="46403" allele="INS">Chrom:1&nbsp;Coordinate:46403 &nbsp;Allele:INS&nbsp;Project:PRJEB4019</a></span></p></div>
-                        <div><p> <span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="1002921" allele="DEL">Chrom:1&nbsp;Coordinate:1002921 &nbsp;Allele:DEL&nbsp;Project:PRJEB4019</a></span></p><hr/></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row"><div class="col-md-12"><div id="beacon-element"><eva-beacon></eva-beacon></div></div></div>
-        <script>
-            function loadEvaBeacon(el) {
-                var chrom = el.getAttribute('chrom');
-                var coordinate = el.getAttribute('coordinate');
-                var allele = el.getAttribute('allele');
-                var el = document.querySelector("#beacon-element");
-                var elDiv = document.createElement("eva-beacon");
-                elDiv.setAttribute('chrom', chrom);
-                elDiv.setAttribute('coordinate', coordinate);
-                elDiv.setAttribute('allele', allele);
-                el.innerHTML= '';
-                el.appendChild(elDiv);
-                el.applyAuthorStyles = true;
-
-
-            }
-        </script>
     </div>
 </div>
 

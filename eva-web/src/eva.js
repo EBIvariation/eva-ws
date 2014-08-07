@@ -104,6 +104,10 @@ Eva.prototype = {
         $(this.beacon).addClass('eva-child');
         this.childDivMenuMap['beacon'] = this.beacon;
 
+        /* beacon */
+        $(this.clinicalDiv).addClass('eva-child');
+        this.childDivMenuMap['EVA Clinical'] = this.clinicalDiv;
+
 
 
 
@@ -367,12 +371,17 @@ Eva.prototype = {
         var positionFilter = new PositionFilterFormPanel({
             testRegion: '1:14000-20000'
         });
+
+
+
         var studyFilter = new StudyFilterFormPanel({
 //            studiesStore: this.studiesStore
         });
-//        this.on('studies:change', function (e) {
+        this.on('studies:change', function (e) {
 //            studyFilter.setStudies(e.studies);
-//        });
+        });
+
+        _this._loadListStudies(studyFilter);
 
 
         var conseqType = new ConsequenceTypeFilterFormPanel({
@@ -493,6 +502,7 @@ Eva.prototype = {
         var studyFilter = new StudyFilterFormPanel({
             studiesStore: this.studiesStore
         });
+//        _this._loadListStudies();
 //        this.on('studies:change', function (e) {
 //            studyFilter.setStudies(e.studies);
 //        });
@@ -777,9 +787,31 @@ Eva.prototype = {
                 } catch (e) {
                     console.log(e);
                 }
+                console.log(studies)
+                console.log('-------')
 //                _this.studiesStore.loadRawData(studies);
                 _this.studyBrowser.studiesStore.loadRawData(studies);
 //                _this.trigger('studies:change', {studies: studies, sender: _this});
+            }
+        });
+    },
+    _loadListStudies: function (filter) {
+        var _this = this;
+        console.log(filter)
+        console.log('=======')
+        var studies = [];
+        EvaManager.get({
+            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+            category: 'meta/studies',
+            resource: 'list',
+            success: function (response) {
+                try {
+                    studies = response.response[0].result;
+                } catch (e) {
+                    console.log(e);
+                }
+                filter.studiesStore.loadRawData(studies);
+               _this.trigger('studies:change', {studies: studies, sender: _this});
             }
         });
     },
