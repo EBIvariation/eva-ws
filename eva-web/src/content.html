@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-md-4">
                 <h3><span class="glyphicon glyphicon-tower"></span>&nbsp;Overview</h3>
-                <div><p> The EVA Data Portal provides users the ability to dynamically query EVA variants which are displayed at the variant, transcript, gene or genome level via our visualisation <tools class=""></tools></p></div>
+                <div><p>ArrayExpress  The EVA Data Portal provides users the ability to dynamically query EVA variants which are displayed at the variant, transcript, gene or genome level via our visualisation <tools class=""></tools></p></div>
                 <div><p> New features will be regularly added by the EVA development team. Please send all comments and feedback to eva-helpdesk@ebi.ac.uk </p></div>
                 <!--<div><p> Subscribe to our Twitter <a target="_blank" href="https://twitter.com/EBIvariation"><i class="icon-twitter"></i>feed</a> to get updates. </p></div>-->
             </div>
@@ -45,6 +45,7 @@
         <h2>European Variation Archive submissions</h2>
         <div>
             <p>EVA follows the infrastructure of fellow EMBL-EBI resources European Nucleotide Archive (<a href="http://www.ebi.ac.uk/ena/" target="_blank">ENA</a>) and European Genome-phenome Archive (<a href="http://www.ebi.ac.uk/ega/" target="_blank">EGA</a>)  to accept, archive, and accession <a target="_blank" href="?VCF">VCF files</a>. Submissions consist of VCF file(s) and metadata that describe sample(s), experiment(s), and analysis that produced the variant and/or genotype call(s).</p>
+            <p>​Data submitted to EVA is brokered to our collaborating database at <a href="http://www.ncbi.nlm.nih.gov/" target="_blank">NCBI</a>, <a href="http://www.ncbi.nlm.nih.gov/SNP/" target="_blank">dbSNP</a> . It is therefore  unnecessary to submit data to both resources. Please contact <a href="mailto:eva-helpdesk@ebi.ac.uk?subject=Sequence submissionto EVA&amp; target="_top">eva-helpdesk@ebi.ac.uk</a> if you would like any further information on this brokering process or collaboration.</p>
         </div>
 
         <h3>Key stages of EVA submissions</h3>
@@ -70,7 +71,7 @@
 
         <h4>Submit</h4>
         <div>
-            <p><img src="img/Upload.png" alt="" width="48" height="48"> Upload your data files to your private submission upload account or directly to the <a href="mailto:eva-helpdesk@ebi.ac.uk?subject=Sequence submissionto EVA&amp;body=**We will provide you with a submission package metadata templates guides for completing templates**" target="_top">EVA Helpdesk</a>.</p>
+            <p><img src="img/Upload.png" alt="" width="48" height="48"> Upload your data files to your private submission upload account or directly to the <a href="mailto:eva-helpdesk@ebi.ac.uk?subject=Sequence submissionto EVA&amp;body=**We will provide you with a submission package metadata templates guides for completing templates**" target="_top">eva-helpdesk@ebi.ac.uk</a>.</p>
         </div>
 
         <h4>Document</h4>
@@ -264,6 +265,38 @@
         <div>
             <p dir="ltr">These guidlines are also avaialble in <a href="files/EVA_VCF_1.0.pdf" target="_blank">PDF format.</a> For any additional support, please contact us at eva-helpdesk@ebi.ac.uk.</p>
         </div>
+    </div>
+    <div id="beacon">
+        <h2>A Web Interface for Genomic Variant Queries - EBI</h2>
+        <div class="row">
+            <div class="col-md-12"><p><b>Example queries:</b></p>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div><p><span><a href="#"  onclick="loadEvaBeacon(this)" chrom="13" coordinate="32888799" allele="C">Chrom:13&nbsp;Coordinate:32888799 &nbsp;Allele:C&nbsp;Project:PRJEB6040 </a></span></p></div>
+                        <div><p><span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="46403" allele="INS">Chrom:1&nbsp;Coordinate:46403 &nbsp;Allele:INS&nbsp;Project:PRJEB4019</a></span></p></div>
+                        <div><p> <span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="1002921" allele="DEL">Chrom:1&nbsp;Coordinate:1002921 &nbsp;Allele:DEL&nbsp;Project:PRJEB4019</a></span></p><hr/></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row"><div class="col-md-12"><div id="beacon-element"><eva-beacon></eva-beacon></div></div></div>
+        <script>
+            function loadEvaBeacon(el) {
+                var chrom = el.getAttribute('chrom');
+                var coordinate = el.getAttribute('coordinate');
+                var allele = el.getAttribute('allele');
+                var el = document.querySelector("#beacon-element");
+                var elDiv = document.createElement("eva-beacon");
+                elDiv.setAttribute('chrom', chrom);
+                elDiv.setAttribute('coordinate', coordinate);
+                elDiv.setAttribute('allele', allele);
+                el.innerHTML= '';
+                el.appendChild(elDiv);
+                el.applyAuthorStyles = true;
+
+
+            }
+        </script>
     </div>
 </div>
 

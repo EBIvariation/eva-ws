@@ -27,7 +27,9 @@ body.eva {
     max-width: 1350px;
     margin: 0 auto;
     background: #fff url(../img/pale_grey_slight_texture.jpg) top left repeat;
-    font-family: 'HelveticaNeueLT Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /*font-family: 'HelveticaNeueLT Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+    font-family: Verdana, sans-serif;
+
 }
 
 .eva a {

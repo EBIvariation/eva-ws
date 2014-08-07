@@ -119,7 +119,7 @@ Eva.prototype = {
         this.variantBrowserOptionDiv = document.createElement('div');
         $(this.variantBrowserOptionDiv).addClass('eva-child variant-browser-option-div');
         this.div.appendChild(this.variantBrowserOptionDiv);
-        this.childDivMenuMap['Variant Browser'] = this.variantBrowserOptionDiv;
+        this.childDivMenuMap['VCF Browser'] = this.variantBrowserOptionDiv;
 
         this.formPanelVariantFilterDiv = document.createElement('div');
         $(this.formPanelVariantFilterDiv).addClass('form-panel-variant-filter-div');
@@ -226,60 +226,67 @@ Eva.prototype = {
     _createVariantWidget: function (target) {
 //        var width = this.width - parseInt(this.div.style.paddingLeft) - parseInt(this.div.style.paddingRight);
 
-        var columns = [
-            {
-                text: "SNP Id",
-                dataIndex: 'id'
-            },
-            {
-                text: "Chromosome",
-                dataIndex: 'chromosome'
-            },
-            {
-                text: 'Position',
-                dataIndex: 'start'
-            },
-            //{
-            //text: 'End',
-            //dataIndex: 'end'
-            //},
-            {
-                text: 'Aleles',
-                xtype: "templatecolumn",
-                tpl: "{reference}>{alternate}"
-            },
-            {
-                text: 'Class',
-                dataIndex: 'type'
-            },
-            {
-                text: '1000G MAF',
-                dataIndex: ''
-            },
-            {
-                text: 'Consequence Type',
-                dataIndex: 'ct'
-            },
-            {
-                text: 'Gene',
-                dataIndex: 'gene'
-            },
-            {
-                text: 'HGVS Names',
-                dataIndex: 'hgvs_name'
-            },
-            {
-                text: 'View',
-                //dataIndex: 'id',
-                xtype: 'templatecolumn',
-                tpl: '<tpl if="id"><a href="?Variant={id}" target="_blank"><img class="eva-grid-img" src="img/eva_logo.png"/></a>&nbsp;' +
-                    '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
-                    '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>' +
-                    '<tpl else><a href="?Variant={chromosome}:{start}:{ref}:{alt}" target="_blank"><img class="eva-grid-img" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="in-active" src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="in-active">dbSNP</span></tpl>'
-            }
+        var columns ={
+            items:[
+                {
+                    text: "Chromosome",
+                    dataIndex: 'chromosome'
+                },
+                {
+                    text: 'Position',
+                    dataIndex: 'start'
+                },
+                {
+                    text: "SNP Id",
+                    dataIndex: 'id'
+                },
+                //{
+                //text: 'End',
+                //dataIndex: 'end'
+                //},
+                {
+                    text: 'Aleles',
+                    xtype: "templatecolumn",
+                    tpl: "{reference}>{alternate}"
+                },
+                {
+                    text: 'Class',
+                    dataIndex: 'type'
+                },
+//            {
+//                text: '1000G MAF',
+//                dataIndex: ''
+//            },
+//            {
+//                text: 'Consequence Type',
+//                dataIndex: 'ct'
+//            },
+                {
+                    text: 'Gene',
+                    dataIndex: 'gene'
+                },
+//            {
+//                text: 'HGVS Names',
+//                dataIndex: 'hgvs_name'
+//            },
+                {
+                    text: 'View',
+                    //dataIndex: 'id',
+                    xtype: 'templatecolumn',
+                    tpl: '<tpl if="id"><a href="?Variant={id}" target="_blank"><img class="eva-grid-img" src="img/eva_logo.png"/></a>&nbsp;' +
+                        '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
+                        '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>' +
+                        '<tpl else><a href="?Variant={chromosome}:{start}:{ref}:{alt}" target="_blank"><img class="eva-grid-img" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="in-active" src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="in-active">dbSNP</span></tpl>'
+                }
 
-            //
-        ];
+                //
+            ],
+            defaults: {
+                flex: 1,
+                align:'center' ,
+                sortable : true
+            }
+        } ;
 
         var attributes = [
             {name: 'id', type: 'string'},
@@ -310,7 +317,8 @@ Eva.prototype = {
                 headerConfig: {
                     baseCls: 'eva-header-2'
                 },
-                genomeViewer: false
+                genomeViewer: false,
+                effect:false
             },
             columns: columns,
             attributes: attributes,
@@ -391,7 +399,7 @@ Eva.prototype = {
             mode: 'accordion',
             target: target,
             submitButtonText: 'Submit',
-            filters: [positionFilter, studyFilter, conseqType],
+            filters: [positionFilter, studyFilter],
             width: 300,
 //            height: 1043,
             border: false,
