@@ -315,7 +315,10 @@ Eva.prototype = {
                 border: true
             },
             toolPanelConfig: {
-                title: 'Variant Data'
+                title: 'Variant Data',
+                headerConfig: {
+                    baseCls: 'eva-header-2'
+                }
             },
             defaultToolConfig: {
                 headerConfig: {
