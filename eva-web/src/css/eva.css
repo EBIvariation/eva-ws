@@ -36,9 +36,13 @@ body.eva {
     cursor: pointer;
 }
 
-.eva-grid-img {
+.eva-grid-img-active {
     width: 16px;
     height: 16px;
+}
+
+.eva-grid-img-inactive {
+    opacity:0.2;
 }
 
 .eva-child {
@@ -220,3 +224,4 @@ h3,h5 {
 h3 span{
     color:#BBBBBB;
 }
+
