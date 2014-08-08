@@ -72,15 +72,27 @@
                     //Create a copy of the template node.
                     var template = document.importNode(thisDoc.querySelector('template').content, true);
                     _this.createShadowRoot().appendChild(template);
+
+                }
+            },
+            attributeChangedCallback:{
+                value: function (attrName, oldValue, newValue) {
+                    var _this = this;
+                    _this.shadowRoot.querySelector('#'+attrName).value  =  newValue;
+                    _this.showResultDiv.innerHTML = "";
                 }
             },
             attachedCallback: {
                 value: function () {
                     var _this = this;
-                    var chrSelectDiv =  _this.shadowRoot.querySelector("#chromosome-select");
+                    _this.chrSelectDiv = _this.shadowRoot.querySelector("#chromosome-select");
+                    _this.showResultDiv =  _this.shadowRoot.querySelector("#resultShow");
+                    _this.beaconForm = _this.shadowRoot.querySelector('#beacon-form');
+
                     var chrSelectList = document.createElement("select");
-                    chrSelectList.setAttribute("id", "chrSelect");
-                    chrSelectDiv.appendChild(chrSelectList);
+                    chrSelectList.setAttribute("id", "chrom");
+                    chrSelectList.setAttribute("required" ,"");
+                    _this.chrSelectDiv.appendChild(chrSelectList);
                     for (var i = 1; i < 25; i++) {
                         var option = document.createElement("option");
                         if(i == 23){
@@ -98,44 +110,39 @@
                         chrSelectList.appendChild(option);
                     }
 
+                    //get Element
+                    _this.chromEl =  _this.shadowRoot.querySelector('#chrom');
+                    _this.coordinateEl =  _this.shadowRoot.querySelector('#coordinate');
+                    _this.alleleEl =  _this.shadowRoot.querySelector('#allele');
+                    _this.formatTypeEl =  _this.shadowRoot.querySelector('input[name="formatType"]:checked');
 
-                    var chromAttr = _this.getAttribute('chrom');
-                    var coordinateAttr  = _this.getAttribute('coordinate');
-                    var alleleAttr  = _this.getAttribute('allele');
-                    if(chromAttr && coordinateAttr && alleleAttr){
-                        _this.shadowRoot.querySelector('#chrSelect').value  =  chromAttr;
-                        _this.shadowRoot.querySelector('#coordinate').value  =  coordinateAttr;
-                        _this.shadowRoot.querySelector('#allele').value  =  alleleAttr;
-                    }
 
-                    var submit = _this.shadowRoot.querySelector('#beacon-form');
-                    submit.addEventListener('submit', function(eve) {
-                        var chr = _this.shadowRoot.querySelector('#chrSelect').value;
-                        var coordinate =_this.shadowRoot.querySelector('#coordinate').value;
-                        var allele = _this.shadowRoot.querySelector('#allele').value;
-                        if(_this.shadowRoot.querySelector('input[name="formatType"]:checked')){
-                            var formatType = _this.shadowRoot.querySelector('input[name="formatType"]:checked').value;
-                        }
-                        var region = chr+':'+coordinate+':'+ allele;
+
+                    //set element value from attribute
+                    _this.chromEl.value  = _this.getAttribute('chrom');
+                    _this.coordinateEl.value  =   _this.getAttribute('coordinate');
+                    _this.alleleEl.value  =  _this.getAttribute('allele');
+
+
+                    _this.beaconForm .addEventListener('submit', function(eve) {
                         var data= {};
-                        data.formatType = formatType;
-                        data.result = 'test';
-                        if(chr && coordinate &&  allele){
-                            EvaManager.get({
-                            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-                            category: 'variants',
-                            resource: 'exists',
-                            query:region,
-                            success: function (response) {
-                                    try {
-                                        data.result = response.response[0].result;
-                                    } catch (e) {
-                                        console.log(e);
-                                    }
-                                _this.renderResultData(data, region);
+                        if(_this.formatType){
+                            data.formatType = _this.formatTypeEl.value;                        }
+                        var region =  _this.chromEl.value+':'+ _this.coordinateEl.value+':'+  _this.alleleEl.value;
+                        EvaManager.get({
+                        host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                        category: 'variants',
+                        resource: 'exists',
+                        query:region,
+                        success: function (response) {
+                                try {
+                                    data.result = response.response[0].result;
+                                } catch (e) {
+                                    console.log(e);
                                 }
-                            });
-                        }
+                            _this.renderResultData(data, region);
+                            }
+                        });
                         eve.preventDefault();
 
                     }, true);
@@ -165,11 +172,11 @@
                                      '<tr><td>Exist</td><td class="'+cssClass+'">'+data.result+'</td></tr>'+
                                     '</table>'
                    }
-                    var showResultDiv =  _this.shadowRoot.querySelector("#resultShow");
-                    showResultDiv.innerHTML = "";
+
+                    _this.showResultDiv.innerHTML = "";
                     var resultElDiv =  document.createElement("div");
                     resultElDiv.innerHTML = resultData;
-                    showResultDiv.appendChild(resultElDiv);
+                    _this.showResultDiv.appendChild(resultElDiv);
 
                     var refreshBtnDiv =  _this.shadowRoot.querySelector("#refresh-button");
                     refreshBtnDiv.innerHTML = "";
@@ -183,9 +190,8 @@
                     var refresh = _this.shadowRoot.querySelector('#refresh');
                     refresh.addEventListener('click', function(eve) {
                         eve.preventDefault();
-                        showResultDiv.innerHTML = "";
-                        _this.shadowRoot.getElementById("beacon-form").reset();
-
+                        _this.showResultDiv.innerHTML = "";
+                        _this.beaconForm.reset();
                     }, true);
 
                 }

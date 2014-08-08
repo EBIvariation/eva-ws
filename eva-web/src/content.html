@@ -130,16 +130,10 @@
                 var chrom = el.getAttribute('chrom');
                 var coordinate = el.getAttribute('coordinate');
                 var allele = el.getAttribute('allele');
-                var el = document.querySelector("#beacon-element");
-                var elDiv = document.createElement("eva-beacon");
-                elDiv.setAttribute('chrom', chrom);
-                elDiv.setAttribute('coordinate', coordinate);
-                elDiv.setAttribute('allele', allele);
-                el.innerHTML= '';
-                el.appendChild(elDiv);
-                el.applyAuthorStyles = true;
-
-
+                var el = document.querySelector("eva-beacon");
+                el.setAttribute('chrom', chrom);
+                el.setAttribute('coordinate', coordinate);
+                el.setAttribute('allele', allele);
             }
         </script>
     </div>
