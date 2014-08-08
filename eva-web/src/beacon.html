@@ -191,6 +191,9 @@
                     refresh.addEventListener('click', function(eve) {
                         eve.preventDefault();
                         _this.showResultDiv.innerHTML = "";
+                        for (i = 0; i < _this.attributes.length;) {
+                            _this.removeAttribute(_this.attributes[i].nodeName)
+                        }
                         _this.beaconForm.reset();
                     }, true);
 
