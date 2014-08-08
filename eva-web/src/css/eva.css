@@ -106,6 +106,12 @@ body.eva {
     margin-top: 20px;
     color: #BF8230;
     font-size: 160%;
+    margin-left: 50px;
+}
+
+.ocb-variant-tab-panel .x-tab-bar-top>.x-tab-bar-strip-default {
+    border-width: 0;
+    height: 0px;
 }
 
 .eva .form-panel-variant-filter-title-div {
