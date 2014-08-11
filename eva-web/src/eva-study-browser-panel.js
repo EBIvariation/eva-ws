@@ -95,13 +95,11 @@ EvaStudyBrowserPanel.prototype = {
 
     load: function (values) {
         var _this = this;
-//        var values = panel.getValues();
         for (key in values) {
             if (values[key] == '') {
                 delete values[key]
             }
         }
-        console.log(values);
 
         this.studiesStore.clearFilter();
 
@@ -125,19 +123,6 @@ EvaStudyBrowserPanel.prototype = {
     },
     _createPanel: function () {
         var _this = this;
-
-        //        this.studiesStore = Ext.create('Ext.data.Store', {
-//            pageSize: 50,
-//            proxy: {
-//                type: 'memory'
-//            },
-//            fields: [
-//                {name: 'studyName', type: 'string'},
-//                {name: 'studyId', type: 'string'}
-//            ],
-//            data: this.studies
-//        });
-
         var stores = {
             species: Ext.create('Ext.data.Store', {
                 autoLoad: true,
@@ -180,30 +165,6 @@ EvaStudyBrowserPanel.prototype = {
         });
 
 
-        /* tag fields*/
-//        this.tagField = Ext.create('Ext.form.field.Tag', {
-//            fieldLabel: 'Select a study',
-//            labelAlign: 'top',
-//            store: this.studiesStore,
-//            reference: this.id + 'ConsequenceTypeSelectorStore',
-//            displayField: 'studyName',
-//            valueField: 'studyId',
-//            filterPickList: true,
-//            queryMode: 'local',
-//            publishes: 'value',
-//            flex: 1,
-//            grow: false,
-//            autoScroll: true,
-//            name: 'studies',
-//            listeners: {
-//                change: function () {
-//                    var form = this.up();
-//                    if (form) {
-//                        form.update();
-//                    }
-//                }
-//            }
-//        });
 
         this.speciesFieldTag = Ext.create('Ext.form.field.Tag', {
             fieldLabel: 'Organisms',
@@ -214,7 +175,12 @@ EvaStudyBrowserPanel.prototype = {
             displayField: 'display',
             valueField: 'display',
             publishes: 'value',
-            name: 'species'
+            name: 'species',
+            listeners: {
+                change: function () {
+                    _this.trigger('filter:change', { sender: _this});
+                }
+            }
         });
 
         this.assemblyFieldTag = Ext.create('Ext.form.field.Tag', {
@@ -226,7 +192,12 @@ EvaStudyBrowserPanel.prototype = {
             displayField: 'display',
             valueField: 'value',
             publishes: 'value',
-            name: 'assembly'
+            name: 'assembly',
+            listeners: {
+                change: function () {
+                    _this.trigger('filter:change', { sender: _this});
+                }
+            }
         });
 
 
@@ -239,7 +210,12 @@ EvaStudyBrowserPanel.prototype = {
             displayField: 'display',
             valueField: 'display',
             publishes: 'value',
-            name: 'type'
+            name: 'type',
+            listeners: {
+                change: function () {
+                    _this.trigger('filter:change', { sender: _this});
+                }
+            }
         });
 
         this.platformFieldTag = Ext.create('Ext.form.field.Tag', {
@@ -251,7 +227,13 @@ EvaStudyBrowserPanel.prototype = {
             displayField: 'display',
             valueField: 'value',
             publishes: 'value',
-            name: 'method'
+            name: 'method',
+            listeners: {
+                change: function () {
+                    _this.trigger('filter:change', { sender: _this});
+                }
+            }
+
         });
 
         var studySearchField = Ext.create('Ext.form.field.Text', {
@@ -273,6 +255,11 @@ EvaStudyBrowserPanel.prototype = {
                 }
             }
 
+        });
+
+       this.on('filter:change', function (e) {
+            var values = panel.getValues();
+            this.load(values)
         });
 
 
@@ -302,37 +289,7 @@ EvaStudyBrowserPanel.prototype = {
                     markDirty: false,
                     listeners: {
                         itemclick: function (este, record) {
-//                            var url = _this.host + "v1/studies/" + record.get("projectId") + "/summary"
-//                            $.ajax({
-//                                url: url,
-//                                dataType: 'json',
-//                                async: false,
-//                                success: function (response, textStatus, jqXHR) {
-//                                    var data = (response !== undefined && response.response.length > 0 ) ? response.response[0].result[0] : [];
-//
-//                                    var studyPanel = _this._createStudyPanel(data);
-//
-//                                    $.ajax({
-//                                        url: _this.host + "v1/studies/" + record.get("alias") + "/files",
-//                                        dataType: 'json',
-//                                        success: function (response, textStatus, jqXHR) {
-//                                            var files = (response !== undefined && response.response.length > 0 && response.response[0].numResults > 0) ? response.response[0].result : [];
-//
-//                                            var filesPanel = _this._createFilesPanel(files);
-//                                            _this.rightPanel.removeAll(true);
-//                                            _this.rightPanel.add(studyPanel);
-//                                            _this.rightPanel.add(filesPanel);
-//
-//                                        },
-//                                        error: function (jqXHR, textStatus, errorThrown) {
-//                                            console.log('Error loading studies');
-//                                        }
-//                                    });
-//                                },
-//                                error: function (jqXHR, textStatus, errorThrown) {
-//                                    console.log('Error loading studies');
-//                                }
-//                            });
+
                         },
                         itemcontextmenu: function (este, record, item, index, e) {
 
@@ -428,36 +385,9 @@ EvaStudyBrowserPanel.prototype = {
         var submitButton = Ext.create('Ext.button.Button', {
             text: 'Submit',
             handler: function (btn) {
-//                .../studies/list?species=hsapiens&assembly=37&methods=ngs,array&type=case-control&date=2013&search=rare
                 console.log(">>>>>>>>>"+panel);
                 var values = panel.getValues();
                 _this.load(values);
-
-//                var values = panel.getValues();
-//                for (key in values) {
-//                    if (values[key] == '') {
-//                        delete values[key]
-//                    }
-//                }
-//                console.log(values);
-//
-//                _this.studiesStore.clearFilter();
-//
-//                EvaManager.get({
-//                    host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-//                    category: 'meta/studies',
-//                    resource: 'all',
-//                    params: values,
-//                    success: function (response) {
-//                        var studies = [];
-//                        try {
-//                            studies = response.response[0].result;
-//                        } catch (e) {
-//                            console.log(e);
-//                        }
-//                        _this.studiesStore.loadRawData(studies);
-//                    }
-//                });
             }
         });
 
@@ -472,7 +402,7 @@ EvaStudyBrowserPanel.prototype = {
                 margin: 5
             },
             items: [
-                submitButton,
+//                submitButton,
                 studySearchField,
                 this.speciesFieldTag,
 //                this.assemblyFieldTag,
@@ -555,143 +485,5 @@ EvaStudyBrowserPanel.prototype = {
             this.panel.update();
         }
     }
-
-//    _createStudyPanel: function (file) {
-//
-//        var filePanel = Ext.create('Ext.container.Container', {
-//            layout: 'vbox',
-//            items: [
-//                {
-//                    xtype: 'container',
-//                    data: file,
-//                    tpl: new Ext.XTemplate(
-//                            '<table class="eva-stats-table">' +
-//                            '<tr>' +
-//                            '<td class="header">Species</td>' +
-//                            '<td>{species}</td>' +
-//                            '</tr>',
-//                            '<tr>' +
-//                            '<td class="header">Material</td>' +
-//                            '<td>{material}</td>' +
-//                            '</tr>',
-//                            '<tr>' +
-//                            '<td class="header">Scope</td>' +
-//                            '<td>{scope}</td>' +
-//                            '</tr>',
-//                            '<tr>' +
-//                            '<td class="header">Type</td>' +
-//                            '<td>{type}</td>' +
-//                            '</tr>',
-//                            '<tr>' +
-//                            '<td class="header">Sources</td>' +
-//                            '<td>{sources}</td>' +
-//                            '</tr>',
-//                            '<tr>' +
-//                            '<td class="header">Description</td>' +
-//                            '<td>{description}</td>' +
-//                            '</tr>',
-//                        '</table>'
-//                    ),
-//                    margin: '5 5 5 10'
-//                }
-//
-//            ]
-//        });
-//
-//        return filePanel;
-//
-//    },
-//
-//
-//    _createFilesPanel: function (files) {
-//        var filePanels = [];
-//        for (var i = 0; i < files.length; i++) {
-//            var file = files[i];
-//            filePanels.push(this._createFilePanel(file));
-//        }
-//
-//        var filesContainer = Ext.create('Ext.container.Container', {
-//            layout: {
-//                type: 'vbox',
-//                align: 'stretch'
-//            },
-//            overflowY: true,
-//            padding: 10,
-//            items: filePanels
-//
-//        });
-//
-//        var studyPanel = Ext.create('Ext.container.Container', {
-//            items: [
-//                filesContainer
-//            ]
-//        });
-//        return studyPanel;
-//
-//    },
-//    _createFilePanel: function (file) {
-//
-//        var filePanel = Ext.create('Ext.container.Container', {
-//            layout: 'vbox',
-//            items: [
-//                {
-//                    xtype: 'box',
-//                    cls: 'eva-header-5',
-//                    margin: '5 5 5 10',
-//                    html: file.fileName
-//                },
-//                {
-//                    xtype: 'container',
-//                    layout: 'hbox',
-//                    items: [
-//                        {
-//                            xtype: 'container',
-//                            data: file.stats,
-//                            tpl: new Ext.XTemplate(
-//                                    '<table class="eva-stats-table">' +
-//                                    '<tr>' +
-//                                    '<td class="header">Variants count:</td>' +
-//                                    '<td>{variantsCount}</td>' +
-//                                    '</tr>',
-//                                    '<tr>' +
-//                                    '<td class="header">Samples count:</td>' +
-//                                    '<td>{samplesCount}</td>' +
-//                                    '</tr>',
-//                                    '<tr>' +
-//                                    '<td class="header">SNPs count:</td>' +
-//                                    '<td>{snpsCount}</td>' +
-//                                    '</tr>',
-//                                    '<tr>' +
-//                                    '<td class="header">Indels count:</td>' +
-//                                    '<td>{indelsCount}</td>' +
-//                                    '</tr>',
-//                                    '<tr>' +
-//                                    '<td class="header">Pass count:</td>' +
-//                                    '<td>{passCount}</td>' +
-//                                    '</tr>',
-//                                    '<tr>' +
-//                                    '<td class="header">Ti/Tv Ratio:</td>' +
-//                                    '<td>{[this.titv(values)]}</td>' +
-//                                    '</tr>',
-//                                    '<tr>' +
-//                                    '<td class="header">Mean quality:</td>' +
-//                                    '<td>{meanQuality}</td>' +
-//                                    '</tr>',
-//                                '</table>', {
-//                                    titv: function (values) {
-//                                        var res = values.transitionsCount / values.transversionsCount;
-//                                        return res.toFixed(2);
-//                                    }
-//                                }
-//                            ),
-//                            margin: '5 5 5 10'
-//                        }
-//                    ]
-//                }
-//
-//            ]
-//        });
-//        return filePanel;
-//    },
 
 };

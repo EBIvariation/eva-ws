@@ -113,9 +113,6 @@ Eva.prototype = {
         this.childDivMenuMap['submission-form'] = this.submissionForm;
 
 
-
-
-
         /* Study Browser Panel*/
         this.studyBrowserDiv = document.createElement('div')
         $(this.studyBrowserDiv).addClass('eva-child eva-study-browser-div');
@@ -365,7 +362,6 @@ Eva.prototype = {
             },
             width: 1300,
             autoRender: false
-//            studiesStore: this.studiesStore
         });
 //        this.on('studies:change', function (e) {
 //            variantStudyBrowser.setStudies(e.studies);
