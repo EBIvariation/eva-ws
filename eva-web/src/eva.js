@@ -94,19 +94,23 @@ Eva.prototype = {
 
         /* studyView */
         $(this.studyView).addClass('eva-child');
-        this.childDivMenuMap['Study'] = this.studyView;
+        this.childDivMenuMap['study'] = this.studyView;
 
         /* variantView */
         $(this.variantView).addClass('eva-child');
-        this.childDivMenuMap['Variant'] = this.variantView;
+        this.childDivMenuMap['variant'] = this.variantView;
 
         /* beacon */
         $(this.beacon).addClass('eva-child');
         this.childDivMenuMap['beacon'] = this.beacon;
 
-        /* beacon */
+        /* clinical */
         $(this.clinicalDiv).addClass('eva-child');
         this.childDivMenuMap['EVA Clinical'] = this.clinicalDiv;
+
+        /* submision-form */
+        $(this.submissionForm).addClass('eva-child');
+        this.childDivMenuMap['submission-form'] = this.submissionForm;
 
 
 

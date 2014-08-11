@@ -15,6 +15,7 @@
 <link rel="import" href="variant-view.html">
 <link rel="import" href="statistics.html">
 <link rel="import" href="beacon.html">
+<link rel="import" href="submission-form.html">
 
 </head>
 <body class="eva">
@@ -145,16 +146,19 @@
 
         var tab = getUrlParameters("");
         var tabId =  decodeURI(tab.id);
-        if(tabId == 'Study'){
+        if(tabId == 'study'){
             var studyView = document.createElement('eva-study-view');
             studyView.setAttribute('id', tab.value);
         }
-        if(tabId == 'Variant'){
+        if(tabId == 'variant'){
             var variantView = document.createElement('eva-variant-view');
             variantView.setAttribute('id', tab.value);
         }
         if(tabId == 'beacon'){
             var beaconView = link.import.querySelector('#beacon');
+        }
+        if(tabId == 'submission-form'){
+            var submissionForm = document.createElement('eva-submission-form');
         }
 
         Ext.getBody().removeCls('x-body');
@@ -173,7 +177,8 @@
             studyView:studyView,
             variantView:variantView,
             beacon:beaconView,
-            clinicalDiv:clinicalDiv
+            clinicalDiv:clinicalDiv,
+            submissionForm:submissionForm
         });
         eva.draw();
 
