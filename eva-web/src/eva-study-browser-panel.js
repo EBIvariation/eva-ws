@@ -71,7 +71,6 @@ EvaStudyBrowserPanel.prototype = {
             this.div = document.createElement('div');
             this.div.setAttribute('id', this.id);
             this.panel = this._createPanel();
-
             this.rendered = true;
         }
     },
@@ -95,13 +94,20 @@ EvaStudyBrowserPanel.prototype = {
 
     load: function (values) {
         var _this = this;
+         if(!values){
+             if(_this.formPanel){
+                 values = _this.formPanel.getValues();
+                 console.log(values)
+             }
+         }
+
         for (key in values) {
             if (values[key] == '') {
                 delete values[key]
             }
         }
 
-        this.studiesStore.clearFilter();
+//        this.studiesStore.clearFilter();
 
         EvaManager.get({
             host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
@@ -166,7 +172,7 @@ EvaStudyBrowserPanel.prototype = {
 
 
 
-        this.speciesFieldTag = Ext.create('Ext.form.field.Tag', {
+        var speciesFieldTag = Ext.create('Ext.form.field.Tag', {
             fieldLabel: 'Organisms',
 //            labelWidth: this.labelWidth,
             labelAlign: 'top',
@@ -178,12 +184,12 @@ EvaStudyBrowserPanel.prototype = {
             name: 'species',
             listeners: {
                 change: function () {
-                    _this.trigger('filter:change', { sender: _this});
+                    _this.load()
                 }
             }
         });
 
-        this.assemblyFieldTag = Ext.create('Ext.form.field.Tag', {
+        var assemblyFieldTag = Ext.create('Ext.form.field.Tag', {
             fieldLabel: 'Assembly',
 //            labelWidth: this.labelWidth,
             labelAlign: 'top',
@@ -195,13 +201,13 @@ EvaStudyBrowserPanel.prototype = {
             name: 'assembly',
             listeners: {
                 change: function () {
-                    _this.trigger('filter:change', { sender: _this});
+                    _this.load()
                 }
             }
         });
 
 
-        this.typeFieldTag = Ext.create('Ext.form.field.Tag', {
+        var typeFieldTag = Ext.create('Ext.form.field.Tag', {
             fieldLabel: 'Type',
 //            labelWidth: this.labelWidth,
             labelAlign: 'top',
@@ -213,12 +219,12 @@ EvaStudyBrowserPanel.prototype = {
             name: 'type',
             listeners: {
                 change: function () {
-                    _this.trigger('filter:change', { sender: _this});
+                    _this.load()
                 }
             }
         });
 
-        this.platformFieldTag = Ext.create('Ext.form.field.Tag', {
+        var platformFieldTag = Ext.create('Ext.form.field.Tag', {
             fieldLabel: 'Platform',
 //            labelWidth: this.labelWidth,
             labelAlign: 'top',
@@ -230,7 +236,7 @@ EvaStudyBrowserPanel.prototype = {
             name: 'method',
             listeners: {
                 change: function () {
-                    _this.trigger('filter:change', { sender: _this});
+                    _this.load()
                 }
             }
 
@@ -255,11 +261,6 @@ EvaStudyBrowserPanel.prototype = {
                 }
             }
 
-        });
-
-       this.on('filter:change', function (e) {
-            var values = panel.getValues();
-            this.load(values)
         });
 
 
@@ -404,10 +405,10 @@ EvaStudyBrowserPanel.prototype = {
             items: [
 //                submitButton,
                 studySearchField,
-                this.speciesFieldTag,
+                speciesFieldTag,
 //                this.assemblyFieldTag,
-                this.typeFieldTag,
-                this.platformFieldTag
+                typeFieldTag,
+                platformFieldTag
             ]
         });
 
@@ -424,7 +425,7 @@ EvaStudyBrowserPanel.prototype = {
             items: [this.grid]
         });
 
-        var panel = Ext.create('Ext.form.Panel', {
+        this.formPanel = Ext.create('Ext.form.Panel', {
             title: this.title,
             border: this.border,
             header: this.headerConfig,
@@ -473,7 +474,7 @@ EvaStudyBrowserPanel.prototype = {
                 }
             }
         });
-        return panel;
+        return  this.formPanel;
     },
 
     setLoading: function (loading) {
