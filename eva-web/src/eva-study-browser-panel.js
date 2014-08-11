@@ -351,14 +351,6 @@ EvaStudyBrowserPanel.prototype = {
                         dataIndex: 'numVariants',
                         flex: 3
                     },
-//                    {
-//                        text: "Description",
-//                        dataIndex: 'description',
-//                        flex: 5
-////                        renderer: function (val){
-////                            return '<div style="white-space:normal !important;">'+ val +'</div>';
-////                        }
-//                    },
                     {
                         text: "Download",
 //                        xtype: 'checkcolumn',
@@ -373,12 +365,6 @@ EvaStudyBrowserPanel.prototype = {
                         }
                     }
                 ]
-//                tbar: {
-//                    height: 40,
-//                    items: [
-//
-//                    ]
-//                }
             }
         );
 
