@@ -315,7 +315,7 @@ EvaStudyBrowserPanel.prototype = {
                         // To render a link to FTP
                         renderer: function (value, p, record) {
                             return value ? Ext.String.format(
-                                '<a href="?Study={0}" target="_blank">{0}</a>',
+                                '<a href="?study={0}" target="_blank">{0}</a>',
                                 value
                             ) : '';
                         }
