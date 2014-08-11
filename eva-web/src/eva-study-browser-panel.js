@@ -61,31 +61,66 @@ function EvaStudyBrowserPanel(args) {
     if (this.autoRender) {
         this.render();
     }
+
+    this.load();
 }
 
 EvaStudyBrowserPanel.prototype = {
     render: function () {
-        var _this = this;
+        if(!this.rendered) {
+            this.div = document.createElement('div');
+            this.div.setAttribute('id', this.id);
+            this.panel = this._createPanel();
 
-        //HTML skel
-        this.div = document.createElement('div');
-        this.div.setAttribute('id', this.id);
-
-        this.panel = this._createPanel();
-
+            this.rendered = true;
+        }
     },
+
     draw: function () {
-        this.targetDiv = (this.target instanceof HTMLElement ) ? this.target : document.querySelector('#' + this.target);
-        if (!this.targetDiv) {
-            console.log('target not found');
-            return;
+        if(!this.rendered) {
+            this.render();
         }
 
+        // Checking whether 'this.target' is a HTMLElement or a string.
+        // A DIV Element is needed to append others HTML Elements
+        this.targetDiv = (this.target instanceof HTMLElement) ? this.target : document.querySelector('#' + this.target);
+        if (!this.targetDiv) {
+            console.log('EVAStudyBrowserPanel: target ' + this.target + ' not found');
+            return;
+        }
         this.targetDiv.appendChild(this.div);
-        this.panel.render(this.div);
 
+        this.panel.render(this.div);
     },
-    load: function (studies) {
+
+    load: function (values) {
+        var _this = this;
+//        var values = panel.getValues();
+        for (key in values) {
+            if (values[key] == '') {
+                delete values[key]
+            }
+        }
+        console.log(values);
+
+        this.studiesStore.clearFilter();
+
+        EvaManager.get({
+            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+            category: 'meta/studies',
+            resource: 'all',
+            params: values,
+            success: function (response) {
+                var studies = [];
+                try {
+                    studies = response.response[0].result;
+                } catch (e) {
+                    console.log(e);
+                }
+                _this.studiesStore.loadRawData(studies);
+            }
+        });
+
 
     },
     _createPanel: function () {
@@ -119,13 +154,12 @@ EvaStudyBrowserPanel.prototype = {
                 fields: ['display', 'count'],
                 data: []
             }),
-            meterial: Ext.create('Ext.data.Store', {
+            material: Ext.create('Ext.data.Store', {
                 autoLoad: true,
                 fields: ['display', 'count'],
                 data: []
             })
         };
-
 
         var assemblyStore = Ext.create('Ext.data.Store', {
             autoLoad: true,
@@ -397,30 +431,33 @@ EvaStudyBrowserPanel.prototype = {
 //                .../studies/list?species=hsapiens&assembly=37&methods=ngs,array&type=case-control&date=2013&search=rare
                 console.log(">>>>>>>>>"+panel);
                 var values = panel.getValues();
-                for (key in values) {
-                    if (values[key] == '') {
-                        delete values[key]
-                    }
-                }
-                console.log(values);
+                _this.load(values);
 
-                _this.studiesStore.clearFilter();
-
-                EvaManager.get({
-                    host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-                    category: 'meta/studies',
-                    resource: 'all',
-                    params: values,
-                    success: function (response) {
-                        var studies = [];
-                        try {
-                            studies = response.response[0].result;
-                        } catch (e) {
-                            console.log(e);
-                        }
-                        _this.studiesStore.loadRawData(studies);
-                    }
-                });
+//                var values = panel.getValues();
+//                for (key in values) {
+//                    if (values[key] == '') {
+//                        delete values[key]
+//                    }
+//                }
+//                console.log(values);
+//
+//                _this.studiesStore.clearFilter();
+//
+//                EvaManager.get({
+//                    host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+//                    category: 'meta/studies',
+//                    resource: 'all',
+//                    params: values,
+//                    success: function (response) {
+//                        var studies = [];
+//                        try {
+//                            studies = response.response[0].result;
+//                        } catch (e) {
+//                            console.log(e);
+//                        }
+//                        _this.studiesStore.loadRawData(studies);
+//                    }
+//                });
             }
         });
 
