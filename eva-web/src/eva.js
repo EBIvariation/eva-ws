@@ -108,9 +108,9 @@ Eva.prototype = {
         $(this.clinicalDiv).addClass('eva-child');
         this.childDivMenuMap['EVA Clinical'] = this.clinicalDiv;
 
-        /* submision-form */
+        /* submision-start */
         $(this.submissionForm).addClass('eva-child');
-        this.childDivMenuMap['submission-form'] = this.submissionForm;
+        this.childDivMenuMap['submission-start'] = this.submissionForm;
 
 
         /* Study Browser Panel*/

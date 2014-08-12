@@ -23,6 +23,11 @@
 
     </style>
     <div class="row">
+        <div class="col-md-5">
+            <div id="resultShow"></div><br />
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12">
             <form id="submission-form">
                 <h4>User Details</h4>
@@ -36,7 +41,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2 form-group"><h6>Institution/Company Name   <span class="required"></span></h6></div>
-                    <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="companyName"   type="text"/></div>
+                    <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="companyName"   type="text" /></div>
                 </div>
                 <div class="row">
                     <div class="col-md-2 form-group"><h6> Webpage </h6></div>
@@ -73,10 +78,10 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2 form-group"><h6>Preferred Centre Acronym (subject to availability)</h6></div>
-                    <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="name"  type="text"/></div>
+                    <div class="col-md-4 form-group input-group-sm"><input class="form-control" id="acronym"  type="text"/></div>
                 </div>
                 <div class="row">
-                    <div class="col-md-8 form-group"><p><h6>Comments</h6></p><textarea class="form-control" rows="3"></textarea></div>
+                    <div class="col-md-8 form-group"><p><h6>Comments</h6></p><textarea id="comments" class="form-control" rows="3"></textarea></div>
                 </div>
                 <div class="row">
                     <div class="col-md-4 form-group"><button class="btn btn-primary" type="submit">Submit</button></div>
@@ -84,11 +89,7 @@
             </form>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-5">
-            <div id="resultShow"></div><br />
-        </div>
-    </div>
+
 </template>
 
 <script>
@@ -125,8 +126,34 @@
 
 
                     _this.submissionForm.addEventListener('submit', function(eve) {
-
                         eve.preventDefault();
+                        _this.name =  _this.shadowRoot.querySelector('#name');
+                        _this.email =  _this.shadowRoot.querySelector('#email');
+                        _this.companyName =  _this.shadowRoot.querySelector('#companyName');
+                        _this.webpage =  _this.shadowRoot.querySelector('#webpage');
+                        _this.country =  _this.shadowRoot.querySelector('#country');
+                        _this.acronym =  _this.shadowRoot.querySelector('#acronym');
+                        _this.comments =  _this.shadowRoot.querySelector('#comments');
+                        _this.submissionType =  _this.shadowRoot.querySelectorAll('input[name=submissionType]:checked');
+                        var submissionType = ''
+                        for(var i = 0; i < _this.submissionType.length; i++){
+                            submissionType += _this.submissionType[i].value + ",";
+                        }
+                        console.log(_this.name.value)
+                        console.log(_this.email.value)
+                        console.log(_this.companyName.value)
+                        console.log(_this.webpage.value)
+                        console.log(_this.country.value)
+                        console.log(_this.acronym.value)
+                        console.log(_this.comments.value)
+                        console.log(submissionType)
+
+                        _this.showResultDiv =  _this.shadowRoot.querySelector("#resultShow");
+                        var resultElDiv =  document.createElement("div");
+                        resultElDiv.innerHTML = 'Your details has been submitted';
+                        _this.showResultDiv.appendChild(resultElDiv);
+
+
 
                     }, true);
 
