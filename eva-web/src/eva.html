@@ -16,6 +16,8 @@
 <link rel="import" href="statistics.html">
 <link rel="import" href="beacon.html">
 <link rel="import" href="submission-form.html">
+<link rel="import" href="eva-study-browser.html">
+<link rel="import" href="dgva-study-browser.html">
 
 </head>
 <body class="eva">
@@ -123,7 +125,7 @@
 
 <!-- build:script eva-js -->
 <script type="text/javascript" src="eva.js"></script>
-<script type="text/javascript" src="eva-study-browser-panel.js"></script>
+<!--<script type="text/javascript" src="eva-study-browser-panel.js"></script>-->
 <script type="text/javascript" src="eva-menu.js"></script>
 <script type="text/javascript" src="eva-adapter.js"></script>
 <script type="text/javascript" src="eva-manager.js"></script>
@@ -143,6 +145,7 @@
         var templatesDiv = link.import.querySelector('#submissionTemplates');
         var vcfDiv = link.import.querySelector('#vcf-format');
         var clinicalDiv = link.import.querySelector('#clinical');
+        var studyBrowserDiv = link.import.querySelector('#studyBrowser');
 
         var tab = getUrlParameters("");
         var tabId =  decodeURI(tab.id);
@@ -178,7 +181,8 @@
             variantView:variantView,
             beacon:beaconView,
             clinicalDiv:clinicalDiv,
-            submissionForm:submissionForm
+            submissionForm:submissionForm,
+            studyBrowserDiv:studyBrowserDiv
         });
         eva.draw();
 

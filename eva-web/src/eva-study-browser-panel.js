@@ -79,7 +79,6 @@ EvaStudyBrowserPanel.prototype = {
         if(!this.rendered) {
             this.render();
         }
-
         // Checking whether 'this.target' is a HTMLElement or a string.
         // A DIV Element is needed to append others HTML Elements
         this.targetDiv = (this.target instanceof HTMLElement) ? this.target : document.querySelector('#' + this.target);

@@ -305,6 +305,31 @@
             <p dir="ltr">These guidlines are also avaialble in <a href="files/EVA_VCF_1.0.pdf" target="_blank">PDF format.</a> For any additional support, please contact us at eva-helpdesk@ebi.ac.uk.</p>
         </div>
     </div>
+
+    <div id="studyBrowser">
+        <ul class="nav nav-pills" id="studyBrowserTabs" >
+            <li id="evaLi" class="active"><a href="#eva-browser-tab" role="tab" data-toggle="tab" id="eva">Single Nucleotide Variation</a></li>
+            <li id="dgvaLi" ><a href="#dgva-browser-tab" role="tab" data-toggle="tab" id="dgva" onclick="loadBrowser(this)">Structural Variation</a></li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="eva-browser-tab"><br /><eva-study-browser></eva-study-browser></div>
+            <div class="tab-pane" id="dgva-browser-tab"><br /></div>
+        </div>
+
+        <script>
+            function loadBrowser(target) {
+                var browserEl = target.id+'-study-browser';
+                var tabEl = target.id+'-browser-tab';
+                var el = document.getElementsByTagName(browserEl);
+                var tab = document.getElementById(tabEl);
+                if(el.length < 1){
+                    var studyBrowser = document.createElement(browserEl);
+                    tab.appendChild(studyBrowser);
+                }
+            }
+        </script>
+    </div>
 </div>
 
 

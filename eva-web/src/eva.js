@@ -114,11 +114,15 @@ Eva.prototype = {
 
 
         /* Study Browser Panel*/
-        this.studyBrowserDiv = document.createElement('div')
-        $(this.studyBrowserDiv).addClass('eva-child eva-study-browser-div');
-        this.div.appendChild(this.studyBrowserDiv);
+//        this.studyBrowserDiv = document.createElement('div')
+//        $(this.studyBrowserDiv).addClass('eva-child eva-study-browser-div');
+//        this.div.appendChild(this.studyBrowserDiv);
+//        this.childDivMenuMap['Study Browser'] = this.studyBrowserDiv;
+//        this.studyBrowser = this._createStudyBrowser(this.studyBrowserDiv);
+        $(this.studyBrowserDiv).addClass('eva-child');
         this.childDivMenuMap['Study Browser'] = this.studyBrowserDiv;
-        this.studyBrowser = this._createStudyBrowser(this.studyBrowserDiv);
+
+
 
         /* variant browser option*/
         this.variantBrowserOptionDiv = document.createElement('div');
@@ -173,7 +177,7 @@ Eva.prototype = {
 
         this.evaMenu.draw();
         this.variantWidget.draw();
-        this.studyBrowser.draw();
+//        this.studyBrowser.draw();
 
         this.formPanelVariantFilter.draw();
 //        this.genomeViewer.draw();
@@ -204,7 +208,7 @@ Eva.prototype = {
                 _this._twitterWidgetUpdate();
                 break;
             case 'Study Browser':
-                this.studyBrowser.update();
+//                this.studyBrowser.update();
                 break;
             case 'Variant Browser':
                 this.formPanelVariantFilter.update();
@@ -353,7 +357,6 @@ Eva.prototype = {
     },
     _createStudyBrowser: function (target) {
         var _this = this;
-
         var variantStudyBrowser = new EvaStudyBrowserPanel({
             target: target,
             title: 'Study Browser',
@@ -364,10 +367,8 @@ Eva.prototype = {
             autoRender: false
         });
 //        this.on('studies:change', function (e) {
-//            variantStudyBrowser.setStudies(e.studies);
+//        variantStudyBrowser.setStudies(e.studies);
 //        });
-
-
         return variantStudyBrowser;
     },
     _createFormPanelVariantFilter: function (target) {
