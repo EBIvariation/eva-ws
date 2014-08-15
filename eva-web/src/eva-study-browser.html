@@ -36,15 +36,19 @@
                     _this.studyBrowserDiv.setAttribute('class', 'eva-study-browser-div');
                     _this.studyBrowserDiv.setAttribute('id', 'eva-study-browser');
                     _this.evaStudyBrowser= _this.querySelector("#eva-study-browser");
-                    console.log('dsdf')
-//                   if(_this.evaStudyBrowser == null ){
+                   if(_this.evaStudyBrowser == null ){
                        _this.appendChild(this.studyBrowserDiv);
                        this.studyBrowser = _this._createStudyBrowser(this.studyBrowserDiv);
                        this.studyBrowser.draw();
 //                       this.studyBrowser.update();
-//                   }
+                   }
 
 
+
+                }
+            },
+            detachedCallback:{
+                value: function () {
 
                 }
             },
@@ -240,6 +244,15 @@
                 ]
             });
 
+            var scopeStore = Ext.create('Ext.data.Store', {
+                autoLoad: true,
+                fields: ['text', 'value'],
+                data: [
+                    {display: 'Single Isolate', value: 'single-isolate'},
+                    {display: 'Multi Isolate', value: 'multi-isolate'}
+                ]
+            });
+
 
 
             var speciesFieldTag = Ext.create('Ext.form.field.Tag', {
@@ -304,6 +317,25 @@
                 valueField: 'value',
                 publishes: 'value',
                 name: 'method',
+                listeners: {
+                    change: function () {
+                        _this.load()
+                    }
+                }
+
+            });
+
+
+            var scopeFieldTag = Ext.create('Ext.form.field.Tag', {
+                fieldLabel: 'Scope',
+//            labelWidth: this.labelWidth,
+                labelAlign: 'top',
+                store: scopeStore,
+                queryMode: 'local',
+                displayField: 'display',
+                valueField: 'value',
+                publishes: 'value',
+                name: 'scope',
                 listeners: {
                     change: function () {
                         _this.load()
@@ -464,7 +496,8 @@
                     speciesFieldTag,
 //                this.assemblyFieldTag,
                     typeFieldTag,
-                    platformFieldTag
+                    platformFieldTag,
+                    scopeFieldTag
                 ]
             });
 

@@ -201,7 +201,6 @@ Eva.prototype = {
         if (this.childDivMenuMap[option]) {
             this.div.appendChild(this.childDivMenuMap[option]);
         }
-        console.log(this)
 
         switch (option) {
             case 'Home':
@@ -308,7 +307,7 @@ Eva.prototype = {
             {name: 'hgvs_name', type: 'string'}
         ];
 
-        var variantWidget = new VariantWidget({
+        var evaVariantWidget = new EvaVariantWidget({
             width: 1020,
             target: target,
             headerConfig: {
@@ -353,7 +352,7 @@ Eva.prototype = {
             }
         }); //the div must exist
 
-        return variantWidget;
+        return evaVariantWidget;
     },
     _createStudyBrowser: function (target) {
         var _this = this;

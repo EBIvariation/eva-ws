@@ -28,22 +28,44 @@
             attributeChangedCallback:{
                 value: function (attrName, oldValue, newValue) {
                     var _this = this;
+                   if(attrName == 'display' &&  newValue == 'true'){
+                       $("#dgva-study-browser").attr('style', 'display: inline');
+                       $("#eva-study-browser").attr('style', 'display: none');
+                   }else{
+                       $("#eva-study-browser").attr('style', 'display: inline');
+                       $("#dgva-study-browser").attr('style', 'display: none');
+                   }
                 }
             },
             attachedCallback: {
                 value: function () {
                     var _this = this;
-                    _this.studyBrowserDiv = document.createElement('div');
-                    _this.studyBrowserDiv.setAttribute('class', 'eva-study-browser-div');
-                    _this.studyBrowserDiv.setAttribute('id', 'eva-study-browser');
-                    _this.evaStudyBrowser= _this.querySelector("#eva-study-browser");
+                    _this.dgvaStudyBrowserDiv = document.createElement('div');
+                    _this.dgvaStudyBrowserDiv.setAttribute('class', 'eva-study-browser-div');
+                    _this.dgvaStudyBrowserDiv.setAttribute('id', 'dgva-study-browser');
+                    _this.dgvaStudyBrowser= _this.querySelector("#dgva-study-browser");
                     console.log('dsdf')
-//                   if(_this.evaStudyBrowser == null ){
-                       _this.appendChild(this.studyBrowserDiv);
-                       this.studyBrowser = _this._createStudyBrowser(this.studyBrowserDiv);
+                   if(_this.dgvaStudyBrowser == null ){
+                       _this.appendChild(_this.dgvaStudyBrowserDiv);
+                       this.studyBrowser = _this._createStudyBrowser(_this.dgvaStudyBrowserDiv);
                        this.studyBrowser.draw();
 //                       this.studyBrowser.update();
-//                   }
+                   }
+//                    var display = this.getAttribute('display');
+//                    this.display = display;
+//                    var t = setTimeout(_this._toggleDisplay, 300);
+//
+//                    function function2(){
+//                        if(display == 'true'){
+//                            $("#dgva-study-browser").attr('style', 'display: inline');
+//                            $("#eva-study-browser").attr('style', 'display: none');
+//                        }else{
+//                            $("#eva-study-browser").attr('style', 'display: inline');
+//                            $("#dgva-study-browser").attr('style', 'display: none');
+//                        }
+//                    }
+
+
 
 
 
@@ -65,7 +87,20 @@
 
                     return variantStudyBrowser;
                 }
-            }
+            },
+            _toggleDisplay:{
+                value:function(){
+                    if(this.display == 'true'){
+                        $("#dgva-study-browser").attr('style', 'display: inline');
+                        $("#eva-study-browser").attr('style', 'display: none');
+                    }else{
+                        $("#eva-study-browser").attr('style', 'display: inline');
+                        $("#dgva-study-browser").attr('style', 'display: none');
+                    }
+                }
+            },
+
+
 
 
         })

@@ -232,3 +232,38 @@ h3 span{
     color:#BBBBBB;
 }
 
+.eva-button{
+    font-size:16px;
+    color: #FFFFFF;
+    border-radius: 0 0 0 0;
+    background-color: #70BDBD;
+}
+
+.studyBrowserTabs.nav-pills > li > a {
+    padding-top:3px !important;
+    padding-bottom:3px !important;
+    font-size:18px;
+    color:#ffffff;
+    background-color: #6BB6B7;
+}
+.studyBrowserTabs.nav-pills {
+    min-height:20px !important;
+    /*background-color: #CFDFF4;*/
+    border-color: #ffffff;
+    color:#ffffff;
+}
+
+.studyBrowserTabs.nav-pills li a, .nav-tabs{
+    border-radius: 0px;
+    border: 1px solid #ddd;
+    border-color: #156765;
+}
+
+.studyBrowserTabs.nav-pills > li.active > a{
+     background-color: #1F6D6D;
+ }
+
+.studyBrowserTabs.nav-pills > li > a:hover{
+    background-color: #1F6D6D;
+}
+

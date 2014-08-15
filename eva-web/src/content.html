@@ -307,42 +307,37 @@
     </div>
 
     <div id="studyBrowser">
-        <ul class="nav nav-pills" id="studyBrowserTabs" >
+        <ul class="nav nav-pills studyBrowserTabs" id="studyBrowserTabs" >
             <li id="evaLi" class="active"><a href="#eva-browser-tab" role="tab" data-toggle="tab" id="eva" onclick="loadBrowser('eva')">Single Nucleotide Variation</a></li>
-            <li id="dgvaLi"><a href="#eva-browser-tab" role="tab" data-toggle="tab" id="dgva" onclick="loadBrowser('dgva')">Structural Variation</a></li>
+            <li id="dgvaLi"><a href="#dgva-browser-tab" role="tab" data-toggle="tab" id="dgva" onclick="loadBrowser('dgva')">Structural Variation</a></li>
         </ul>
+        <!--<div class="btn-group">-->
+            <!--<button type="button" class="btn btn-default eva-button" href="#eva-browser-tab" role="tab" data-toggle="tab" id="eva" onclick="loadBrowser('eva')">Single Nucleotide Variation</button>-->
+            <!--<button type="button" class="btn btn-default eva-button" href="#dgva-browser-tab" role="tab" data-toggle="tab" id="dgva" onclick="loadBrowser('dgva')">Structural Variation</button>-->
+        <!--</div>-->
         <!-- Tab panes -->
         <div class="tab-content">
             <div class="tab-pane active" id="eva-browser-tab"><br />
-                <eva-study-browser id="eva-study-browser"></eva-study-browser>
-                <dgva-study-browser id="dgva-study-browser" style="display: none"></dgva-study-browser>
+                <eva-study-browser></eva-study-browser>
             </div>
-            <!--<div class="tab-pane active" id="dgva-browser-tab"><br /> <dgva-study-browser id="dgva-study-browser" style="display: none"></dgva-study-browser></div>-->
+            <div class="tab-pane active" id="dgva-browser-tab"><br /></div>
         </div>
-
         <script>
             function loadBrowser(target) {
-                if(target == "eva") {
-                    console.log("aaaa")
-//                    var browserEl = target+'-study-browser';
-//                    var el = document.querySelector("#"+browserEl);
-                    $("#eva-study-browser").attr('style', 'display: inline');
-                    $("#dgva-study-browser").attr('style', 'display: none');
-                } else {
-                    console.log("bbbb")
-//                    var browserEl = target+'-study-browser';
-//                    var el = document.querySelector("#"+browserEl);
-                    $("#dgva-study-browser").attr('style', 'display: inline');
-                    $("#eva-study-browser").attr('style', 'display: none');
-                }
-//                var browserEl = target+'-study-browser';
-//                var tabEl = target+'-browser-tab';
-//                var el = document.getElementsByTagName(browserEl);
-//                var tab = document.getElementById(tabEl);
-//                if(el.length < 1){
-//                    var studyBrowser = document.createElement(browserEl);
-//                    tab.appendChild(studyBrowser);
+//                var el = document.querySelector("dgva-study-browser");
+//                if(target == "eva") {
+//                    el.setAttribute('display', 'false');
+//                } else {
+//                    el.setAttribute('display', 'false');
 //                }
+                var browserEl = target+'-study-browser';
+                var tabEl = '#'+target+'-browser-tab';
+                var el = document.querySelector(browserEl);
+                var tab = document.querySelector(tabEl);
+                if(el == null){
+                    var studyBrowser = document.createElement(browserEl);
+                    tab.appendChild(studyBrowser);
+                }
             }
         </script>
     </div>
