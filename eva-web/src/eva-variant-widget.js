@@ -245,6 +245,87 @@ EvaVariantWidget.prototype = {
     _createVariantBrowserGrid: function (target) {
         var _this = this;
 
+        var columns ={
+            items:[
+                {
+                    text: "Chromosome",
+                    dataIndex: 'chromosome'
+                },
+                {
+                    text: 'Position',
+                    dataIndex: 'start'
+                },
+                {
+                    text: "SNP Id",
+                    dataIndex: 'id'
+                },
+                //{
+                //text: 'End',
+                //dataIndex: 'end'
+                //},
+                {
+                    text: 'Aleles',
+                    xtype: "templatecolumn",
+                    tpl: "{reference}>{alternate}"
+                },
+                {
+                    text: 'Class',
+                    dataIndex: 'type'
+                },
+//            {
+//                text: '1000G MAF',
+//                dataIndex: ''
+//            },
+//            {
+//                text: 'Consequence Type',
+//                dataIndex: 'ct'
+//            },
+                {
+                    text: 'Gene',
+                    dataIndex: 'gene'
+                },
+//            {
+//                text: 'HGVS Names',
+//                dataIndex: 'hgvs_name'
+//            },
+                {
+                    text: 'View',
+                    //dataIndex: 'id',
+                    xtype: 'templatecolumn',
+                    tpl: '<tpl if="id"><a href="?Variant={id}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;' +
+                        '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
+                        '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>' +
+                        '<tpl else><a href="?Variant={chromosome}:{start}:{ref}:{alt}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>'
+                }
+
+                //
+            ],
+            defaults: {
+                flex: 1,
+                align:'center' ,
+                sortable : true
+            }
+        } ;
+
+        var attributes = [
+            {name: 'id', type: 'string'},
+            {name: "chromosome", type: "string"},
+            {name: "start", type: "int"},
+            {name: "end", type: "int"},
+            {name: "type", type: "string"},
+            {name: "ref", type: "string"},
+            {name: "alt", type: "string"},
+            {name: 'hgvs_name', type: 'string'}
+        ];
+
+        var plugins =  [{
+                        ptype: 'rowexpander',
+                        rowBodyTpl : new Ext.XTemplate(
+                            '<p style="padding: 2px 2px 2px 15px"><b>chromosome:</b> {chromosome}</p>',
+                            '<p style="padding: 2px 2px 2px 15px"><b>start:</b> {start}</p>',
+                            '<p style="padding: 2px 2px 5px 15px"><b>end:</b> {end}</p>'
+                        )
+                     }];
 
         var variantBrowserGrid = new VariantBrowserGrid({
             title: this.browserGridConfig.title,
@@ -256,10 +337,11 @@ EvaVariantWidget.prototype = {
             responseTotal: this.responseTotal,
             responseParser: this.responseParser,
             startParam: this.startParam,
-            attributes: this.attributes,
-            columns: this.columns,
+            attributes: attributes,
+            columns:columns,
             samples: this.samples,
             headerConfig: this.headerConfig,
+            plugins:plugins,
             handlers: {
                 "variant:change": function (e) {
                     _this.lastVariant = e.args;
