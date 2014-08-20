@@ -57,7 +57,7 @@
                     var _this = this;
                     var variantStudyBrowser = new EvaStudyBrowserPanel({
                         target: target,
-                        title: 'SNV Study Browser',
+                        title: 'Short Genetic Variations Study Browser',
                         headerConfig: {
                             baseCls: 'eva-header-1'
                         },
@@ -443,13 +443,13 @@
                                 dataIndex: 'type',
                                 flex: 3
                             },
+//                            {
+//                                text: "Scope",
+//                                dataIndex: 'scope',
+//                                flex: 3
+//                            },
                             {
-                                text: "Scope",
-                                dataIndex: 'scope',
-                                flex: 3
-                            },
-                            {
-                                text: "Number Variants",
+                                text: "Number of Variants",
                                 dataIndex: 'numVariants',
                                 flex: 3
                             },
@@ -496,8 +496,7 @@
                     speciesFieldTag,
 //                this.assemblyFieldTag,
                     typeFieldTag,
-                    platformFieldTag,
-                    scopeFieldTag
+                    platformFieldTag
                 ]
             });
 
