@@ -125,7 +125,7 @@ module.exports = function (grunt) {
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/underscore-min.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/backbone-min.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.min.js',
-                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/bootstrap-scoped-dist/js/bootstrap.min.js',
+                            'build/<%= meta.version.eva %>/vendor/bootstrap-3.2.0/js/bootstrap.min.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.cookie.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.sha1.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/purl.min.js',
@@ -146,7 +146,7 @@ module.exports = function (grunt) {
                         'vendor': [
                             'build/<%= meta.version.eva %>/vendor/ext-5/theme-ebi-embl/theme-ebi-embl-all.css',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.qtip.min.css',
-                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/bootstrap-scoped-dist/css/bootstrap.min.css'
+                            'build/<%= meta.version.eva %>/vendor/bootstrap-3.2.0/css/bootstrap.min.css'
                         ]
                     }
                 }
