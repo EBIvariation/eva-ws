@@ -328,9 +328,8 @@ EvaVariantWidget.prototype = {
         var plugins =  [{
                         ptype: 'rowexpander',
                         rowBodyTpl : new Ext.XTemplate(
-                            '<p style="padding: 2px 2px 2px 15px"><b>chromosome:</b> {chromosome}</p>',
-                            '<p style="padding: 2px 2px 2px 15px"><b>start:</b> {start}</p>',
-                            '<p style="padding: 2px 2px 5px 15px"><b>end:</b> {end}</p>'
+                            '<p style="padding: 2px 2px 2px 15px"><b>File 1: </b> ...</p>',
+                            '<p style="padding: 2px 2px 2px 15px"><b>File 2: </b> ...</p>'
                         )
                      }];
 

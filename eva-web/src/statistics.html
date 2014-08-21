@@ -60,7 +60,10 @@
                     _this.drawChart(speciesChartData)
                     var typeArray=[];
                     for (key in type_data) {
-                        typeArray.push([key,  type_data[key]]);
+                        // TODO We must take care of the types returned
+                        if(key.indexOf(',') == -1) {
+                            typeArray.push([key,  type_data[key]]);
+                        }
                     }
                     var typeChartData = {id:'statistics-chart-type',title:'Type',chartData:typeArray};
                     _this.drawChart(typeChartData)
@@ -82,8 +85,8 @@
                                 plotBackgroundColor: null,
                                 plotBorderWidth: null,
                                 plotShadow: false,
-                                height:height,
-                                width:width
+                                height: height,
+                                width: width
 
                             },
                             title: {
@@ -99,7 +102,8 @@
                                 }
                             },
                             tooltip: {
-                                pointFormat: '<b>{point.y}</b>'
+//                                pointFormat: '<b>{point.y}</b>'
+                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
                             },
                             plotOptions: {
                                 pie: {
@@ -108,7 +112,7 @@
                                     dataLabels: {
                                         enabled: false
                                     },
-                                    showInLegend: false
+                                    showInLegend: true
                                 }
                             },
                             series: [{
@@ -124,7 +128,7 @@
                     });
 
                 }
-            },
+            }
 
         })
     });
