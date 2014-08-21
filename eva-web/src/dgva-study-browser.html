@@ -78,7 +78,7 @@
                         target: target,
                         title: 'Structural Variation Study Browser',
                         headerConfig: {
-                            baseCls: 'dgva-header-1'
+                            baseCls: 'eva-header-1'
                         },
                         width: 1300,
                         height: 800,
@@ -443,19 +443,28 @@
                                 dataIndex: 'numVariants',
                                 flex: 3
                             },
-                            {
-                                text: "Download",
-//                        xtype: 'checkcolumn',
-                                dataIndex: 'id',
-                                flex: 3,
-                                renderer: function (value, p, record) {
-                                    return value ? Ext.String.format(
-                                            '<a href="ftp://ftp.ebi.ac.uk/pub/databases/eva/{0}" target="_blank">FTP Download</a>',
-                                            value,
-                                            record.data.threadid
-                                    ) : '';
-                                }
-                            }
+//                            {
+//                                text: "Download",
+////                        xtype: 'checkcolumn',
+//                                dataIndex: 'id',
+//                                flex: 3,
+//                                renderer: function (value, p, record) {
+//                                    console.log(record)
+//                                    return value ? Ext.String.format(
+//                                            '<a href="ftp://ftp.ebi.ac.uk/pub/databases/eva/{id}_{name}" target="_blank">FTP Download</a>',
+//                                            value,
+//                                            record.data.threadid
+//                                    ) : '';
+//                                }
+//                            },
+                              {
+                                text: 'Download',
+                                //dataIndex: 'id',
+                                xtype: 'templatecolumn',
+                                tpl: '<tpl><a href="ftp://ftp.ebi.ac.uk/pub/databases/dgva/{id}_{name}" target="_blank">FTP Download</a></tpl>',
+                                flex: 3
+                               }
+
                         ]
                     }
             );

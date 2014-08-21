@@ -59,7 +59,7 @@
         </div>
     </div>
 </template>
-
+<script type="text/javascript" src="https://raw.githubusercontent.com/ehynds/jquery-ui-multiselect-widget/1.13/src/jquery.multiselect.min.js"></script>
 <script>
     // This document reference
     var beaconDoc = document._currentScript.ownerDocument;
@@ -83,8 +83,13 @@
             attributeChangedCallback:{
                 value: function (attrName, oldValue, newValue) {
                     var _this = this;
-                    console.log(newValue)
-                    _this.shadowRoot.querySelector('#'+attrName).value  =  newValue;
+
+                    if(attrName == 'project'){
+                        _this.shadowRoot.querySelector('#'+attrName).value  =  _this.getStudyId(newValue);
+                    }else{
+                        _this.shadowRoot.querySelector('#'+attrName).value  =  newValue;
+                    }
+
                     _this.showResultDiv.innerHTML = "";
                 }
             },
@@ -111,12 +116,7 @@
                         }
                     });
 
-                    //get Element
-                    _this.projectEl =  _this.shadowRoot.querySelector('#project');
-                    _this.chromEl =  _this.shadowRoot.querySelector('#chrom');
-                    _this.coordinateEl =  _this.shadowRoot.querySelector('#coordinate');
-                    _this.alleleEl =  _this.shadowRoot.querySelector('#allele');
-                    _this.formatTypeEl =  _this.shadowRoot.querySelector('input[name="formatType"]:checked');
+
 
                     if(_this.chromEl == null){
                         var chrSelectList = document.createElement("select");
@@ -141,9 +141,11 @@
                         }
                     }
 
-
-
-
+                    //get Element
+                    _this.chromEl =  _this.shadowRoot.querySelector('#chrom');
+                    _this.coordinateEl =  _this.shadowRoot.querySelector('#coordinate');
+                    _this.alleleEl =  _this.shadowRoot.querySelector('#allele');
+                    _this.formatTypeEl =  _this.shadowRoot.querySelector('input[name="formatType"]:checked');
 
                     //set element value from attribute
 //                    _this.projectEl.value  = _this.getAttribute('project');
@@ -151,17 +153,19 @@
                     _this.coordinateEl.value  =   _this.getAttribute('coordinate');
                     _this.alleleEl.value  =  _this.getAttribute('allele');
 
-
                     _this.beaconForm .addEventListener('submit', function(eve) {
                         var data= {};
                         if(_this.formatType){
                             data.formatType = _this.formatTypeEl.value;                        }
                         var region =  _this.chromEl.value+':'+ _this.coordinateEl.value+':'+  _this.alleleEl.value;
+                        _this.projectEl =  _this.shadowRoot.querySelector('#project');
+                        var params = {studies:_this.projectEl.value}
                         EvaManager.get({
                         host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                         category: 'variants',
                         resource: 'exists',
                         query:region,
+                        params:params,
                         success: function (response) {
                                 try {
                                     data.result = response.response[0].result;
@@ -232,16 +236,31 @@
                     var _this = this;
                     if(_this.projectEl == null){
                         var projectList = document.createElement("select");
-                        projectList.setAttribute("id", "project");//
+                        projectList.setAttribute("id", "project");
+//                        projectList.setAttribute("multiple", "");
                         _this.projectDiv.appendChild(projectList);
                         for (var i = 0; i < data.length; i++) {
                             var projectOption = document.createElement("option");
-                            projectOption.setAttribute("value", data[i].id);
-                            projectOption.text = data[i].id+' - '+data[i].name;
-                            projectList.appendChild(projectOption);
+                            var studyId = _this.getStudyId(data[i].id);
+                            if(studyId){
+                                projectOption.setAttribute("value", studyId);
+                                projectOption.text = data[i].id+' - '+data[i].name;
+                                projectList.appendChild(projectOption);
+                            }
+
                         }
                     }
 
+                }
+            },
+            getStudyId: {
+                value: function (data) {
+                    var _this = this;
+                    for (var i = 0; i < projects.length; i++) {
+                        if (projects[i].projectId === data) {
+                            return projects[i].alias;
+                        }
+                    }
                 }
             }
 
