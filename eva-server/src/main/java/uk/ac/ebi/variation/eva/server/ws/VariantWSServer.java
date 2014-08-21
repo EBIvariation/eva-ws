@@ -67,7 +67,12 @@ public class VariantWSServer extends EvaWSServer {
     
     @GET
     @Path("/{variantId}/exists")
-    public Response checkVariantExists(@PathParam("variantId") String variantId) {
+    public Response checkVariantExists(@PathParam("variantId") String variantId,
+                                       @QueryParam("studies") String studies) {
+        if (studies != null && !studies.isEmpty()) {
+            queryOptions.put("studies", Arrays.asList(studies.split(",")));
+        }
+        
         if (!variantId.contains(":")) { // Query by accession id
             return createErrorResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
         } else { // Query by chr:pos:ref:alt
