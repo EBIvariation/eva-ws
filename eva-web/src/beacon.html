@@ -111,36 +111,37 @@
                         }
                     });
 
-
-                    var chrSelectList = document.createElement("select");
-                    chrSelectList.setAttribute("id", "chrom");
-                    chrSelectList.setAttribute("required" ,"");
-                    _this.chrSelectDiv.appendChild(chrSelectList);
-                    for (var i = 1; i < 25; i++) {
-                        var option = document.createElement("option");
-                        if(i == 23){
-                            option.setAttribute("value", i);
-                            option.text = 'Chr X';
-                        }
-                        else if(i == 24){
-                            option.setAttribute("value", i);
-                            option.text = 'Chr Y';
-                        }else{
-                            option.setAttribute("value", i);
-                            option.text = 'Chr '+i;
-                        }
-
-                        chrSelectList.appendChild(option);
-                    }
-
-
-
                     //get Element
                     _this.projectEl =  _this.shadowRoot.querySelector('#project');
                     _this.chromEl =  _this.shadowRoot.querySelector('#chrom');
                     _this.coordinateEl =  _this.shadowRoot.querySelector('#coordinate');
                     _this.alleleEl =  _this.shadowRoot.querySelector('#allele');
                     _this.formatTypeEl =  _this.shadowRoot.querySelector('input[name="formatType"]:checked');
+
+                    if(_this.chromEl == null){
+                        var chrSelectList = document.createElement("select");
+                        chrSelectList.setAttribute("id", "chrom");
+                        chrSelectList.setAttribute("required" ,"");
+                        _this.chrSelectDiv.appendChild(chrSelectList);
+                        for (var i = 1; i < 25; i++) {
+                            var option = document.createElement("option");
+                            if(i == 23){
+                                option.setAttribute("value", i);
+                                option.text = 'Chr X';
+                            }
+                            else if(i == 24){
+                                option.setAttribute("value", i);
+                                option.text = 'Chr Y';
+                            }else{
+                                option.setAttribute("value", i);
+                                option.text = 'Chr '+i;
+                            }
+
+                            chrSelectList.appendChild(option);
+                        }
+                    }
+
+
 
 
 
@@ -229,15 +230,18 @@
             createProjectElement:{
                 value:function(data){
                     var _this = this;
-                    var projectList = document.createElement("select");
-                    projectList.setAttribute("id", "project");//
-                    _this.projectDiv.appendChild(projectList);
-                    for (var i = 0; i < data.length; i++) {
-                        var projectOption = document.createElement("option");
-                        projectOption.setAttribute("value", data[i].id);
-                        projectOption.text = data[i].id+' - '+data[i].name;
-                        projectList.appendChild(projectOption);
+                    if(_this.projectEl == null){
+                        var projectList = document.createElement("select");
+                        projectList.setAttribute("id", "project");//
+                        _this.projectDiv.appendChild(projectList);
+                        for (var i = 0; i < data.length; i++) {
+                            var projectOption = document.createElement("option");
+                            projectOption.setAttribute("value", data[i].id);
+                            projectOption.text = data[i].id+' - '+data[i].name;
+                            projectList.appendChild(projectOption);
+                        }
                     }
+
                 }
             }
 
