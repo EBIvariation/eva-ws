@@ -2,8 +2,6 @@ package uk.ac.ebi.variation.eva.server.ws;
 
 import com.mongodb.BasicDBObject;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
@@ -18,7 +16,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.StudyDBAdaptor;
 import org.opencb.opencga.storage.variant.VariantSourceDBAdaptor;
 import org.opencb.opencga.storage.variant.mongodb.DBObjectToVariantSourceConverter;
@@ -39,24 +36,18 @@ public class StudyWSServer extends EvaWSServer {
     private StudyDBAdaptor studyEvaproDbAdaptor;
     private StudyDBAdaptor studyMongoDbAdaptor;
     private VariantSourceDBAdaptor variantSourceDbAdaptor;
-    private MongoCredentials credentials;
 
-    public StudyWSServer() {
-
+    public StudyWSServer() throws IllegalOpenCGACredentialsException {
+        super();
     }
 
-    public StudyWSServer(@DefaultValue("") @PathParam("version") String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException {
+    public StudyWSServer(@DefaultValue("") @PathParam("version") String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
+            throws IOException, IllegalOpenCGACredentialsException, NamingException {
         super(version, uriInfo, hsr);
-        try {
-            studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
-            studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
-            credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
-            studyMongoDbAdaptor = new StudyMongoDBAdaptor(credentials);
-            variantSourceDbAdaptor = new VariantSourceMongoDBAdaptor(credentials);
-        } catch (IllegalOpenCGACredentialsException | NamingException ex) {
-            Logger.getLogger(StudyWSServer.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-        }
+        studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
+        studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
+        studyMongoDbAdaptor = new StudyMongoDBAdaptor(credentials);
+        variantSourceDbAdaptor = new VariantSourceMongoDBAdaptor(credentials);
     }
 
     @GET

@@ -16,7 +16,6 @@ import javax.ws.rs.core.UriInfo;
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.VariantDBAdaptor;
 import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
 
@@ -29,20 +28,15 @@ import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
 public class VariantWSServer extends EvaWSServer {
 
     private VariantDBAdaptor variantMongoQueryBuilder;
-    private MongoCredentials credentials;
 
-    public VariantWSServer() {
-
+    public VariantWSServer() throws IllegalOpenCGACredentialsException {
+        super();
     }
 
-    public VariantWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException {
+    public VariantWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
+            throws IOException, IllegalOpenCGACredentialsException {
         super(version, uriInfo, hsr);
-        try {
-            credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
-            variantMongoQueryBuilder = new VariantMongoDBAdaptor(credentials);
-        } catch (IllegalOpenCGACredentialsException e) {
-            e.printStackTrace();
-        }
+        variantMongoQueryBuilder = new VariantMongoDBAdaptor(credentials);
     }
 
     @GET

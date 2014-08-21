@@ -22,6 +22,8 @@ import org.opencb.biodata.models.feature.Genotype;
 import org.opencb.biodata.models.variant.ArchivedVariantFile;
 import org.opencb.biodata.models.variant.VariantSource;
 import org.opencb.biodata.models.variant.stats.VariantStats;
+import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
+import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.json.ArchivedVariantFileJsonMixin;
 import org.opencb.opencga.storage.variant.json.GenotypeJsonMixin;
 import org.opencb.opencga.storage.variant.json.VariantSourceJsonMixin;
@@ -51,6 +53,8 @@ public class EvaWSServer {
     protected static XmlMapper xmlObjectMapper;
 
     protected static Logger logger;
+    
+    protected MongoCredentials credentials;
 
 
     static {
@@ -68,17 +72,17 @@ public class EvaWSServer {
         logger.info("EvaWSServer: Initialising attributes inside static block");
     }
 
-    public EvaWSServer() {
+    public EvaWSServer() throws IllegalOpenCGACredentialsException {
+        credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
         logger.info("EvaWSServer: in 'constructor'");
     }
 
-    public EvaWSServer(@PathParam("version") String version,
-                        @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException {
-
-
+    public EvaWSServer(@PathParam("version") String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
+            throws IOException, IllegalOpenCGACredentialsException {
         this.version = version;
         this.uriInfo = uriInfo;
         this.httpServletRequest = hsr;
+        credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
 
         init(version, uriInfo);
 

@@ -1,8 +1,6 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
@@ -15,7 +13,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.VariantSourceDBAdaptor;
 import org.opencb.opencga.storage.variant.mongodb.VariantSourceMongoDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.VariantSourceEvaproDBAdaptor;
@@ -30,22 +27,16 @@ public class FilesWSServer extends EvaWSServer {
     
     private VariantSourceDBAdaptor variantSourceEvaproDbAdaptor;
     private VariantSourceDBAdaptor variantSourceMongoDbAdaptor;
-    private MongoCredentials credentials;
 
-    public FilesWSServer() {
-
+    public FilesWSServer() throws IllegalOpenCGACredentialsException {
+        super();
     }
 
-    public FilesWSServer(@DefaultValue("") @PathParam("version") String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException {
+    public FilesWSServer(@DefaultValue("") @PathParam("version") String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
+            throws IOException, IllegalOpenCGACredentialsException, NamingException {
         super(version, uriInfo, hsr);
-        try {
-            credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
-            variantSourceMongoDbAdaptor = new VariantSourceMongoDBAdaptor(credentials);
-            variantSourceEvaproDbAdaptor = new VariantSourceEvaproDBAdaptor();
-        } catch (NamingException | IllegalOpenCGACredentialsException ex) {
-            Logger.getLogger(FilesWSServer.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-        }
+        variantSourceMongoDbAdaptor = new VariantSourceMongoDBAdaptor(credentials);
+        variantSourceEvaproDbAdaptor = new VariantSourceEvaproDBAdaptor();
     }
 
     @GET

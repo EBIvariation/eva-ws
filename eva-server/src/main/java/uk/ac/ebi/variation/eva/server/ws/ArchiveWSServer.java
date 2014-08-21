@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
@@ -21,7 +19,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.ArchiveDBAdaptor;
 import org.opencb.opencga.storage.variant.StudyDBAdaptor;
 import org.opencb.opencga.storage.variant.mongodb.StudyMongoDBAdaptor;
@@ -42,23 +39,17 @@ public class ArchiveWSServer extends EvaWSServer {
     private StudyDBAdaptor studyEvaproDbAdaptor;
     private StudyDBAdaptor studyMongoDbAdaptor;
     
-    public ArchiveWSServer() {
-
+    public ArchiveWSServer() throws IllegalOpenCGACredentialsException {
+        super();
     }
 
     public ArchiveWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
-            throws IOException, NamingException {
+            throws IOException, NamingException, IllegalOpenCGACredentialsException {
         super(version, uriInfo, hsr);
-        try {
-            dbAdaptor = new ArchiveEvaproDBAdaptor();
-            studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
-            studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
-            MongoCredentials credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
-            studyMongoDbAdaptor = new StudyMongoDBAdaptor(credentials);
-        } catch (IllegalOpenCGACredentialsException ex) {
-            Logger.getLogger(StudyWSServer.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-        }
+        dbAdaptor = new ArchiveEvaproDBAdaptor();
+        studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
+        studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
+        studyMongoDbAdaptor = new StudyMongoDBAdaptor(credentials);
     }
 
     @GET

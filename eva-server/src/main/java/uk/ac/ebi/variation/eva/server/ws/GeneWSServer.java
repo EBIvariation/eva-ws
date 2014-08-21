@@ -14,7 +14,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.VariantDBAdaptor;
 import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
 
@@ -27,20 +26,15 @@ import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
 public class GeneWSServer extends EvaWSServer {
 
     private VariantDBAdaptor variantMongoQueryBuilder;
-    private MongoCredentials credentials;
 
-    public GeneWSServer() {
-
+    public GeneWSServer() throws IllegalOpenCGACredentialsException {
+        super();
     }
 
-    public GeneWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException {
+    public GeneWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
+            throws IOException, IllegalOpenCGACredentialsException {
         super(version, uriInfo, hsr);
-        try {
-            credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
-            variantMongoQueryBuilder = new VariantMongoDBAdaptor(credentials);
-        } catch (IllegalOpenCGACredentialsException e) {
-            e.printStackTrace();
-        }
+        variantMongoQueryBuilder = new VariantMongoDBAdaptor(credentials);
     }
 
     @GET
