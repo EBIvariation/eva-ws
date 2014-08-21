@@ -152,6 +152,7 @@
         var vcfDiv = link.import.querySelector('#vcf-format');
         var clinicalDiv = link.import.querySelector('#clinical');
         var studyBrowserDiv = link.import.querySelector('#studyBrowser');
+        var beaconDiv = link.import.querySelector('#beacon');
 
         var tab = getUrlParameters("");
         var tabId =  decodeURI(tab.id);
@@ -171,9 +172,7 @@
             var variantView = document.createElement('eva-variant-view');
             variantView.setAttribute('id', tab.value);
         }
-        if(tabId == 'beacon'){
-            var beaconView = link.import.querySelector('#beacon');
-        }
+
         if(tabId == 'submission-start'){
             var submissionForm = document.createElement('eva-submission-form');
         }
@@ -193,7 +192,7 @@
             vcfDiv:vcfDiv,
             studyView:studyView,
             variantView:variantView,
-            beacon:beaconView,
+            beacon:beaconDiv,
             clinicalDiv:clinicalDiv,
             submissionForm:submissionForm,
             studyBrowserDiv:studyBrowserDiv
