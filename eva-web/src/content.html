@@ -5,6 +5,7 @@
     </style>
 
     <div id="home">
+        <title>European Variation Archive &lt; EMBL-EBI</title>
         <div class="row">
             <div class="col-md-4">
                 <h3><span class="glyphicon glyphicon-tower"></span>&nbsp;Overview</h3>
@@ -16,8 +17,8 @@
 
             <div class="col-md-4">
                 <h3><span class="glyphicon glyphicon-info-sign"></span>&nbsp; Information</h3>
-                <div><p><a href="http://wwwint.ebi.ac.uk/eva/node/19">Download Data :</a> All of our data is open-access and can be downloaded.</p></div>
-                <div><p><a href="http://wwwint.ebi.ac.uk/eva/node/5">Submit: </a>EVA welcomes direct submission of all types of genetic variation from all species.</p></div>
+                <div><p><a href="?Study Browser">Download Data :</a> All of our data is open-access and can be downloaded.</p></div>
+                <div><p><a href="?Submit Data">Submit: </a>EVA welcomes direct submission of all types of genetic variation from all species.</p></div>
 
             </div>
 
@@ -43,6 +44,7 @@
         </div>
     </div>
     <div  id="submit">
+        <title>Submit  &lt; European Variation Archive &lt; EMBL-EBI</title>
         <h2>European Variation Archive submissions</h2>
         <div>
             <p>EVA follows the infrastructure of fellow EMBL-EBI resources European Nucleotide Archive (<a href="http://www.ebi.ac.uk/ena/" target="_blank">ENA</a>) and European Genome-phenome Archive (<a href="http://www.ebi.ac.uk/ega/" target="_blank">EGA</a>)  to accept, archive, and accession <a target="_blank" href="?VCF">VCF files</a>. Submissions consist of VCF file(s) and metadata that describe sample(s), experiment(s), and analysis that produced the variant and/or genotype call(s).</p>
@@ -81,6 +83,7 @@
         <!--</div>-->
     </div>
     <div id="about">
+        <title>About  &lt; European Variation Archive &lt; EMBL-EBI</title>
         <h2>About EVA</h2>
         <div>
             <p>The European Variation Archive (EVA) accepts submission of, and provides access to, all types of genetic variations from any species, observed germline or somatic sources, ranging from SNVs to large structural variation.</p>
@@ -91,6 +94,7 @@
     </div>
 
     <div id="contact">
+        <title>Contact  &lt; European Variation Archive &lt; EMBL-EBI</title>
         <h2>Contact Us</h2>
         <div>
             <p>If you have any questions related to the European Variation Archive resource, please <a href="mailto:eva-helpdesk@ebi.ac.uk">contact us</a>.</p>
@@ -99,6 +103,7 @@
     </div>
 
     <div id="submissionTemplates">
+        <title>Templates  &lt; European Variation Archive &lt; EMBL-EBI</title>
         <h2>Templates</h2>
         <div>
             <h3>EVA Submissions</h3>
@@ -113,14 +118,15 @@
     </div>
 
     <div id="beacon">
+        <title>Beacon  &lt; European Variation Archive &lt; EMBL-EBI</title>
         <h2>A Web Interface for Genomic Variant Queries - EBI</h2>
         <div class="row">
             <div class="col-md-12"><p><b>Example queries:</b></p>
                 <div class="row">
                     <div class="col-md-12">
-                        <div><p><span><a href="#"  onclick="loadEvaBeacon(this)" chrom="13" coordinate="32888799" allele="C">Chrom:13&nbsp;Coordinate:32888799 &nbsp;Allele:C&nbsp;Project:PRJEB6040 </a></span></p></div>
-                        <div><p><span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="46403" allele="INS">Chrom:1&nbsp;Coordinate:46403 &nbsp;Allele:INS&nbsp;Project:PRJEB4019</a></span></p></div>
-                        <div><p> <span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="1002921" allele="DEL">Chrom:1&nbsp;Coordinate:1002921 &nbsp;Allele:DEL&nbsp;Project:PRJEB4019</a></span></p><hr/></div>
+                        <div><p><span><a href="#"  onclick="loadEvaBeacon(this)" chrom="13" coordinate="32888799" allele="C" project="PRJEB6040">Chrom:13&nbsp;Coordinate:32888799 &nbsp;Allele:C&nbsp;Project:PRJEB6040 </a></span></p></div>
+                        <div><p><span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="46403" allele="INS" project="PRJEB4019">Chrom:1&nbsp;Coordinate:46403 &nbsp;Allele:INS&nbsp;Project:PRJEB4019</a></span></p></div>
+                        <div><p> <span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="1002921" allele="DEL" project="PRJEB4019">Chrom:1&nbsp;Coordinate:1002921 &nbsp;Allele:DEL&nbsp;Project:PRJEB4019</a></span></p><hr/></div>
                     </div>
                 </div>
             </div>
@@ -131,14 +137,17 @@
                 var chrom = el.getAttribute('chrom');
                 var coordinate = el.getAttribute('coordinate');
                 var allele = el.getAttribute('allele');
+                var project = el.getAttribute('project');
                 var el = document.querySelector("eva-beacon");
                 el.setAttribute('chrom', chrom);
                 el.setAttribute('coordinate', coordinate);
                 el.setAttribute('allele', allele);
+                el.setAttribute('project', project);
             }
         </script>
     </div>
     <div id="clinical">
+        <title>Clinical  &lt; European Variation Archive &lt; EMBL-EBI</title>
         <h2>European Variation Archive Clinical</h2>
         <div class="row">
             <div class="col-md-12">
@@ -152,6 +161,7 @@
     </div>
 
     <div id="vcf-format">
+        <title>VCF Format  &lt; European Variation Archive &lt; EMBL-EBI</title>
         <h2>EVA VCF Format</h2>
         <p> EVA only accepts VCF files that conform to <a href="http://www.1000genomes.org/wiki/Analysis/Variant%20Call%20Format/vcf-variant-call-format-version-41" target="_blank">VCF version 4.1 and above.</a></p>
         <h3>VCF Specification</h3>
@@ -308,6 +318,7 @@
     </div>
 
     <div id="studyBrowser">
+        <title>Study Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>
         <ul class="nav nav-pills studyBrowserTabs" id="studyBrowserTabs" >
             <li id="evaLi" class="active"><a href="#eva-browser-tab" role="tab" data-toggle="tab" id="eva" onclick="loadBrowser('eva')">Short Genetic Variations</a></li>
             <li id="dgvaLi"><a href="#dgva-browser-tab" role="tab" data-toggle="tab" id="dgva" onclick="loadBrowser('dgva')">Structural Variation</a></li>

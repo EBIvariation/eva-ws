@@ -127,6 +127,7 @@ Eva.prototype = {
 
         /* variant browser option*/
         this.variantBrowserOptionDiv = document.createElement('div');
+        this.variantBrowserOptionDiv.innerHTML = '<title>VCF Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
         $(this.variantBrowserOptionDiv).addClass('eva-child variant-browser-option-div');
         this.div.appendChild(this.variantBrowserOptionDiv);
         this.childDivMenuMap['VCF Browser'] = this.variantBrowserOptionDiv;

@@ -249,15 +249,18 @@ EvaVariantWidget.prototype = {
             items:[
                 {
                     text: "Chromosome",
-                    dataIndex: 'chromosome'
+                    dataIndex: 'chromosome',
+                    flex: 1
                 },
                 {
                     text: 'Position',
-                    dataIndex: 'start'
+                    dataIndex: 'start',
+                    flex: 1
                 },
                 {
                     text: "SNP Id",
-                    dataIndex: 'id'
+                    dataIndex: 'id',
+                    flex: 1
                 },
                 //{
                 //text: 'End',
@@ -266,11 +269,13 @@ EvaVariantWidget.prototype = {
                 {
                     text: 'Aleles',
                     xtype: "templatecolumn",
-                    tpl: "{reference}>{alternate}"
+                    tpl: "{reference}>{alternate}",
+                    flex: 1
                 },
                 {
                     text: 'Class',
-                    dataIndex: 'type'
+                    dataIndex: 'type',
+                    flex: 1
                 },
 //            {
 //                text: '1000G MAF',
@@ -282,7 +287,8 @@ EvaVariantWidget.prototype = {
 //            },
                 {
                     text: 'Gene',
-                    dataIndex: 'gene'
+                    dataIndex: 'gene',
+                    flex: 1
                 },
 //            {
 //                text: 'HGVS Names',
@@ -295,13 +301,14 @@ EvaVariantWidget.prototype = {
                     tpl: '<tpl if="id"><a href="?Variant={id}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;' +
                         '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
                         '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>' +
-                        '<tpl else><a href="?Variant={chromosome}:{start}:{ref}:{alt}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>'
+                        '<tpl else><a href="?Variant={chromosome}:{start}:{ref}:{alt}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>',
+                    flex: 1
                 }
 
                 //
             ],
             defaults: {
-                flex: 1,
+//                flex: 1,
                 align:'center' ,
                 sortable : true
             }

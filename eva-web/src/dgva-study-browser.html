@@ -485,8 +485,8 @@
                     studySearchField,
                     speciesFieldTag,
 //                this.assemblyFieldTag,
-                    typeFieldTag,
-                    platformFieldTag
+//                    typeFieldTag,
+//                    platformFieldTag
                 ]
             });
 
@@ -536,7 +536,8 @@
                             var arr = [];
                             for (key2 in stat) {
                                 var obj = {};
-                                obj['display'] = key2;
+//                                obj['display'] = key2;
+                                obj['display'] = key2.toLowerCase();
                                 obj['count'] = stat[key2];
                                 arr.push(obj);
                             }

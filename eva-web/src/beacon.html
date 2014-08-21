@@ -23,6 +23,10 @@
         <div class="col-md-12">
             <form id="beacon-form">
                 <div class="row">
+                    <div class="col-md-2 form-group"><p>Project</p></div>
+                    <div class="col-md-2 form-group input-group-sm"><div id="project-list"></div></div>
+                </div>
+                <div class="row">
                     <div class="col-md-2 form-group"><p>Chromosome</p></div>
                     <div class="col-md-2 form-group input-group-sm"><div id="chromosome-select"></div></div>
                 </div>
@@ -59,6 +63,7 @@
 <script>
     // This document reference
     var beaconDoc = document._currentScript.ownerDocument;
+    var project_ids = {};
 
     var beacon = document.registerElement('eva-beacon', {
         prototype: Object.create(HTMLElement.prototype, {
@@ -78,6 +83,7 @@
             attributeChangedCallback:{
                 value: function (attrName, oldValue, newValue) {
                     var _this = this;
+                    console.log(newValue)
                     _this.shadowRoot.querySelector('#'+attrName).value  =  newValue;
                     _this.showResultDiv.innerHTML = "";
                 }
@@ -85,9 +91,26 @@
             attachedCallback: {
                 value: function () {
                     var _this = this;
+                    _this.projectDiv = _this.shadowRoot.querySelector("#project-list");
                     _this.chrSelectDiv = _this.shadowRoot.querySelector("#chromosome-select");
                     _this.showResultDiv =  _this.shadowRoot.querySelector("#resultShow");
                     _this.beaconForm = _this.shadowRoot.querySelector('#beacon-form');
+
+                    EvaManager.get({
+                        host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                        category: 'meta/studies',
+                        resource: 'all',
+                        success: function (response) {
+                            try {
+                                project_ids = response.response[0].result;
+
+                            } catch (e) {
+                                console.log(e);
+                            }
+                            _this.createProjectElement(project_ids);
+                        }
+                    });
+
 
                     var chrSelectList = document.createElement("select");
                     chrSelectList.setAttribute("id", "chrom");
@@ -110,7 +133,10 @@
                         chrSelectList.appendChild(option);
                     }
 
+
+
                     //get Element
+                    _this.projectEl =  _this.shadowRoot.querySelector('#project');
                     _this.chromEl =  _this.shadowRoot.querySelector('#chrom');
                     _this.coordinateEl =  _this.shadowRoot.querySelector('#coordinate');
                     _this.alleleEl =  _this.shadowRoot.querySelector('#allele');
@@ -119,6 +145,7 @@
 
 
                     //set element value from attribute
+//                    _this.projectEl.value  = _this.getAttribute('project');
                     _this.chromEl.value  = _this.getAttribute('chrom');
                     _this.coordinateEl.value  =   _this.getAttribute('coordinate');
                     _this.alleleEl.value  =  _this.getAttribute('allele');
@@ -197,6 +224,20 @@
                         _this.beaconForm.reset();
                     }, true);
 
+                }
+            },
+            createProjectElement:{
+                value:function(data){
+                    var _this = this;
+                    var projectList = document.createElement("select");
+                    projectList.setAttribute("id", "project");//
+                    _this.projectDiv.appendChild(projectList);
+                    for (var i = 0; i < data.length; i++) {
+                        var projectOption = document.createElement("option");
+                        projectOption.setAttribute("value", data[i].id);
+                        projectOption.text = data[i].id+' - '+data[i].name;
+                        projectList.appendChild(projectOption);
+                    }
                 }
             }
 
