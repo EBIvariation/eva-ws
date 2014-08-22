@@ -59,7 +59,6 @@
         </div>
     </div>
 </template>
-<script type="text/javascript" src="https://raw.githubusercontent.com/ehynds/jquery-ui-multiselect-widget/1.13/src/jquery.multiselect.min.js"></script>
 <script>
     // This document reference
     var beaconDoc = document._currentScript.ownerDocument;
@@ -101,24 +100,23 @@
                     _this.showResultDiv =  _this.shadowRoot.querySelector("#resultShow");
                     _this.beaconForm = _this.shadowRoot.querySelector('#beacon-form');
 
-                    EvaManager.get({
-                        host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-                        category: 'meta/studies',
-                        resource: 'all',
-                        success: function (response) {
-                            try {
-                                project_ids = response.response[0].result;
-
-                            } catch (e) {
-                                console.log(e);
-                            }
-                            _this.createProjectElement(project_ids);
-                        }
-                    });
-
-
-
                     if(_this.chromEl == null){
+
+                        EvaManager.get({
+                            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                            category: 'meta/studies',
+                            resource: 'all',
+                            success: function (response) {
+                                try {
+                                    project_ids = response.response[0].result;
+
+                                } catch (e) {
+                                    console.log(e);
+                                }
+                                _this.createProjectElement(project_ids);
+                            }
+                        });
+
                         var chrSelectList = document.createElement("select");
                         chrSelectList.setAttribute("id", "chrom");
                         chrSelectList.setAttribute("required" ,"");

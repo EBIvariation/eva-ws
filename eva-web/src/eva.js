@@ -308,15 +308,26 @@ Eva.prototype = {
         });
 
 
+            this.studiesStore = Ext.create('Ext.data.Store', {
+                pageSize: 50,
+                proxy: {
+                    type: 'memory'
+                },
+                fields: [
+                    {name: 'studyName', type: 'string'},
+                    {name: 'studyId', type: 'string'}
+                ],
+                autoLoad: false
+        });
 
         var studyFilter = new StudyFilterFormPanel({
-//            studiesStore: this.studiesStore
+            studiesStore: this.studiesStore
         });
         this.on('studies:change', function (e) {
 //            studyFilter.setStudies(e.studies);
         });
 
-//        _this._loadListStudies(studyFilter);
+        _this._loadListStudies(studyFilter);
 
 
         var conseqType = new ConsequenceTypeFilterFormPanel({
@@ -730,26 +741,24 @@ Eva.prototype = {
 //            }
 //        });
 //    },
-//    _loadListStudies: function (filter) {
-//        var _this = this;
-//        console.log(filter)
-//        console.log('=======')
-//        var studies = [];
-//        EvaManager.get({
-//            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-//            category: 'meta/studies',
-//            resource: 'list',
-//            success: function (response) {
-//                try {
-//                    studies = response.response[0].result;
-//                } catch (e) {
-//                    console.log(e);
-//                }
-//                filter.studiesStore.loadRawData(studies);
-//               _this.trigger('studies:change', {studies: studies, sender: _this});
-//            }
-//        });
-//    },
+    _loadListStudies: function (filter) {
+        var _this = this;
+        var studies = [];
+        EvaManager.get({
+            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+            category: 'meta/studies',
+            resource: 'list',
+            success: function (response) {
+                try {
+                    studies = response.response[0].result;
+                } catch (e) {
+                    console.log(e);
+                }
+                filter.studiesStore.loadRawData(studies);
+               _this.trigger('studies:change', {studies: studies, sender: _this});
+            }
+        });
+    },
 
     _twitterWidgetUpdate : function (){
 
