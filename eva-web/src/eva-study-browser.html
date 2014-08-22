@@ -365,6 +365,67 @@
 
             });
 
+            this.columns =[
+                {
+                    text: "ID",
+                    dataIndex: 'id',
+                    flex: 3,
+                    // To render a link to FTP
+                    renderer: function (value, meta, rec, rowIndex, colIndex, store) {
+                        meta.tdAttr = 'data-qtip="Click to see  more detailed information"';
+                        return value ? Ext.String.format(
+                                '<a href="?eva-study='+value+'" target="_blank">'+value+'</a>',
+                                value
+                        ) : '';
+                    }
+                },
+                {
+                    text: "Name",
+                    dataIndex: 'name',
+                    flex: 7
+                },
+                {
+                    text: "Organism",
+                    dataIndex: 'speciesScientificName',
+                    flex: 3,
+                    renderer: function(value, p, record) {
+                        return value ? Ext.String.format(
+                                '<div data-toggle="popover" title="Organism" data-content="And her...">{0}</div>',
+                                value
+                        ) : '';
+                    }
+                },
+                {
+                    text: "Type",
+                    dataIndex: 'type',
+                    flex: 3
+                },
+//                            {
+//                                text: "Scope",
+//                                dataIndex: 'scope',
+//                                flex: 3
+//                            },
+                {
+                    text: "Number of Variants",
+                    dataIndex: 'numVariants',
+                    flex: 3
+                },
+                {
+                    text: "Download",
+//                        xtype: 'checkcolumn',
+                    dataIndex: 'id',
+                    flex: 3,
+                    renderer: function (value, p, record) {
+                        return value ? Ext.String.format(
+                                '<a href="ftp://ftp.ebi.ac.uk/pub/databases/eva/{0}" target="_blank">FTP Download</a>',
+                                value,
+                                record.data.threadid
+                        ) : '';
+                    }
+                }
+
+            ];
+
 
             this.grid = Ext.create('Ext.grid.Panel', {
                         title: 'Studies found',
@@ -378,8 +439,7 @@
                             rowBodyTpl : new Ext.XTemplate(
                                     '<p style="padding: 2px 2px 2px 15px"><b>Platform:</b> {platform}</p>',
                                     '<p style="padding: 2px 2px 2px 15px"><b>Centre:</b> {center}</p>',
-                                    '<p style="padding: 2px 2px 5px 15px"><b>Description:</b> {description}</p>',
-                                    {}
+                                    '<p style="padding: 2px 2px 5px 15px"><b>Description:</b> {description}</p>'
                             )
                         }],
                         height: 420,
@@ -409,64 +469,7 @@
                                 }
                             }
                         },
-                        columns: [
-                            {
-                                text: "ID",
-                                dataIndex: 'id',
-                                flex: 3,
-                                // To render a link to FTP
-                                renderer: function (value, p, record) {
-                                    return value ? Ext.String.format(
-                                            '<a href="?eva-study={0}" target="_blank">{0}</a>',
-                                            value
-                                    ) : '';
-                                }
-                            },
-                            {
-                                text: "Name",
-                                dataIndex: 'name',
-                                flex: 7
-                            },
-                            {
-                                text: "Organism",
-                                dataIndex: 'speciesScientificName',
-                                flex: 3,
-                                renderer: function(value, p, record) {
-                                    return value ? Ext.String.format(
-                                            '<div data-toggle="popover" title="Organism" data-content="And her...">{0}</div>',
-                                            value
-                                    ) : '';
-                                }
-                            },
-                            {
-                                text: "Type",
-                                dataIndex: 'type',
-                                flex: 3
-                            },
-//                            {
-//                                text: "Scope",
-//                                dataIndex: 'scope',
-//                                flex: 3
-//                            },
-                            {
-                                text: "Number of Variants",
-                                dataIndex: 'numVariants',
-                                flex: 3
-                            },
-                            {
-                                text: "Download",
-//                        xtype: 'checkcolumn',
-                                dataIndex: 'id',
-                                flex: 3,
-                                renderer: function (value, p, record) {
-                                    return value ? Ext.String.format(
-                                            '<a href="ftp://ftp.ebi.ac.uk/pub/databases/eva/{0}" target="_blank">EVA FTP</a>',
-                                            value,
-                                            record.data.threadid
-                                    ) : '';
-                                }
-                            }
-                        ]
+                        columns: this.columns
                     }
             );
 
@@ -546,7 +549,11 @@
                             var arr = [];
                             for (key2 in stat) {
                                 var obj = {};
-                                obj['display'] = key2;
+                                // TODO We must take care of the types returned
+                                if(key2.indexOf(',') == -1) {
+                                    obj['display'] = key2;
+                                }
+//                                obj['display'] = key2;
                                 obj['count'] = stat[key2];
                                 arr.push(obj);
                             }

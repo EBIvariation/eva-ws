@@ -157,14 +157,14 @@
         var tab = getUrlParameters("");
         var tabId =  decodeURI(tab.id);
         if(tabId == 'eva-study'){
-            console.log(tabId)
             var studyView = document.createElement('study-view');
+            studyView.innerHTML = '<title>Study View  &lt; European Variation Archive &lt; EMBL-EBI</title>';
             studyView.setAttribute('id', tab.value);
             studyView.setAttribute('type', 'eva');
         }
         if(tabId == 'dgva-study'){
-            console.log(tabId)
             var studyView = document.createElement('study-view');
+            studyView.innerHTML = '<title>Study View  &lt; European Variation Archive &lt; EMBL-EBI</title>';
             studyView.setAttribute('id', tab.value);
             studyView.setAttribute('type', 'dgva');
         }
