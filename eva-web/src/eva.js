@@ -321,6 +321,7 @@ Eva.prototype = {
         });
 
         var studyFilter = new StudyFilterFormPanel({
+            collapsed: true,
             studiesStore: this.studiesStore
         });
         this.on('studies:change', function (e) {
