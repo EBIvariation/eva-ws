@@ -44,7 +44,6 @@
                     _this.dgvaStudyBrowserDiv.setAttribute('class', 'eva-study-browser-div');
                     _this.dgvaStudyBrowserDiv.setAttribute('id', 'dgva-study-browser');
                     _this.dgvaStudyBrowser= _this.querySelector("#dgva-study-browser");
-                    console.log('dsdf')
                    if(_this.dgvaStudyBrowser == null ){
                        _this.appendChild(_this.dgvaStudyBrowserDiv);
                        this.studyBrowser = _this._createStudyBrowser(_this.dgvaStudyBrowserDiv);
@@ -198,6 +197,17 @@
             for (key in values) {
                 if (values[key] == '') {
                     delete values[key]
+                }else{
+                    // TO Be Removed
+                    if(key === 'species'){
+                        var tempArray = [];
+                        // changing values to lower case
+                        for (var i = 0; i < values[key].length; i++) {
+                            tempArray.push( values[key][i].toLowerCase());
+                        }
+                        values[key] = tempArray;
+                    }
+
                 }
             }
 
@@ -578,11 +588,12 @@
                             var arr = [];
                             for (key2 in stat) {
                                 var obj = {};
-//                                obj['display'] = key2;
-                                obj['display'] = key2.toLowerCase();
+                                obj['display'] = key2;
+//                                obj['display'] = key2.toLowerCase();
                                 obj['count'] = stat[key2];
                                 arr.push(obj);
                             }
+                            console.log(arr)
                             statsData[key] = arr;
                             if (typeof stores[key] !== 'undefined') {
                                 stores[key].loadRawData(statsData[key]);
