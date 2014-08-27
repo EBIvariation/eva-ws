@@ -143,7 +143,7 @@
                     _this.chromEl =  _this.shadowRoot.querySelector('#chrom');
                     _this.coordinateEl =  _this.shadowRoot.querySelector('#coordinate');
                     _this.alleleEl =  _this.shadowRoot.querySelector('#allele');
-                    _this.formatTypeEl =  _this.shadowRoot.querySelector('input[name="formatType"]:checked');
+                    _this.formatTypeEl =  _this.shadowRoot.querySelectorAll('input[type="radio"][name="formatType"]');
 
                     //set element value from attribute
 //                    _this.projectEl.value  = _this.getAttribute('project');
@@ -153,8 +153,14 @@
 
                     _this.beaconForm .addEventListener('submit', function(eve) {
                         var data= {};
-                        if(_this.formatType){
-                            data.formatType = _this.formatTypeEl.value;                        }
+                        for( key in _this.formatTypeEl ){
+                           if(_this.formatTypeEl[key].checked === true){
+                               data.formatType = _this.formatTypeEl[key].value;
+                           }
+                        }
+//                        if(_this.formatType){
+//                            data.formatType = _this.formatTypeEl.value;
+//                        }
                         var region =  _this.chromEl.value+':'+ _this.coordinateEl.value+':'+  _this.alleleEl.value;
                         _this.projectEl =  _this.shadowRoot.querySelector('#project');
                         var params = {studies:_this.projectEl.value}

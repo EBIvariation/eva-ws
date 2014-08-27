@@ -246,7 +246,7 @@ Eva.prototype = {
             },
             border: true,
             browserGridConfig: {
-                title: 'Variant Browser',
+                title: 'VCF Browser',
                 border: true
             },
             toolPanelConfig: {
