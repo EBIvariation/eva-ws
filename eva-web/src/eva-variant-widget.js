@@ -429,7 +429,25 @@ EvaVariantWidget.prototype = {
                 "load:finish": function (e) {
 //                    _this.grid.setLoading(false);
                 }
-            }
+            },
+            statsTpl : new Ext.XTemplate(
+                '<table class="ocb-attributes-table">' +
+                    '<tr>' +
+                    '<td class="header">Minor Allele Frequency</td>' +
+                    '<td class="header">Minor Genotype Frequency</td>' +
+                    '<td class="header">Mendelian Errors</td>' +
+                    '<td class="header">Missing Alleles</td>' +
+                    '<td class="header">Missing Genotypes</td>' +
+                    '</tr>',
+                '<tr>' +
+                    '<td>{maf} ({mafAllele})</td>' +
+                    '<td>{mgf} ({mgfAllele})</td>' +
+                    '<td>{mendelianErrors}</td>' +
+                    '<td>{missingAlleles}</td>' +
+                    '<td>{missingGenotypes}</td>' +
+                    '</tr>',
+                '</table>'
+            )
         });
 
         this.variantBrowserGrid.on("variant:clear", function (e) {

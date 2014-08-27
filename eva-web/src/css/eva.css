@@ -175,6 +175,7 @@ body.eva {
     padding: 5px;
     max-width: 200px;
     overflow: hidden;
+    text-align: center;
 }
 
 .ocb-attributes-table td.header {
