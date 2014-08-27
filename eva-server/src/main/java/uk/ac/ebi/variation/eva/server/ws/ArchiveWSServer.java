@@ -22,6 +22,7 @@ import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.variant.ArchiveDBAdaptor;
 import org.opencb.opencga.storage.variant.StudyDBAdaptor;
 import org.opencb.opencga.storage.variant.mongodb.StudyMongoDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
@@ -34,7 +35,9 @@ import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
 @Produces(MediaType.APPLICATION_JSON)
 public class ArchiveWSServer extends EvaWSServer {
     
-    private ArchiveDBAdaptor dbAdaptor;
+    private ArchiveDBAdaptor archiveDgvaDbAdaptor;
+    private ArchiveDBAdaptor archiveEvaproDbAdaptor;
+    
     private StudyDBAdaptor studyDgvaDbAdaptor;
     private StudyDBAdaptor studyEvaproDbAdaptor;
     private StudyDBAdaptor studyMongoDbAdaptor;
@@ -46,7 +49,8 @@ public class ArchiveWSServer extends EvaWSServer {
     public ArchiveWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
             throws IOException, NamingException, IllegalOpenCGACredentialsException {
         super(version, uriInfo, hsr);
-        dbAdaptor = new ArchiveEvaproDBAdaptor();
+        archiveDgvaDbAdaptor = new ArchiveDgvaDBAdaptor();
+        archiveEvaproDbAdaptor = new ArchiveEvaproDBAdaptor();
         studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
         studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
         studyMongoDbAdaptor = new StudyMongoDBAdaptor(credentials);
@@ -55,19 +59,19 @@ public class ArchiveWSServer extends EvaWSServer {
     @GET
     @Path("/files/count")
     public Response countFiles() {
-        return createOkResponse(dbAdaptor.countFiles());
+        return createOkResponse(archiveEvaproDbAdaptor.countFiles());
     }
     
     @GET
     @Path("/species/count")
     public Response countSpecies() {
-        return createOkResponse(dbAdaptor.countSpecies());
+        return createOkResponse(archiveEvaproDbAdaptor.countSpecies());
     }
     
     @GET
     @Path("/studies/count")
     public Response countStudies() {
-        return createOkResponse(dbAdaptor.countStudies());
+        return createOkResponse(archiveEvaproDbAdaptor.countStudies());
     }
     
     @GET
@@ -97,13 +101,23 @@ public class ArchiveWSServer extends EvaWSServer {
     
     @GET
     @Path("/studies/stats")
-    public Response getStudiesStats(@QueryParam("species") String species) {
+    public Response getStudiesStats(@QueryParam("species") String species,
+                                    @DefaultValue("false") @QueryParam("structural") boolean structural) {
         if (species != null && !species.isEmpty()) {
             queryOptions.put("species", Arrays.asList(species.split(",")));
         }
         
-        QueryResult<Map.Entry<String, Integer>> resultSpecies = dbAdaptor.countStudiesPerSpecies(queryOptions);
-        QueryResult<Map.Entry<String, Integer>> resultTypes = dbAdaptor.countStudiesPerType(queryOptions);
+//        QueryResult<Map.Entry<String, Integer>> resultSpecies = archiveEvaproDbAdaptor.countStudiesPerSpecies(queryOptions);
+//        QueryResult<Map.Entry<String, Integer>> resultTypes = archiveEvaproDbAdaptor.countStudiesPerType(queryOptions);
+        QueryResult<Map.Entry<String, Integer>> resultSpecies, resultTypes;
+        
+        if (structural) {
+            resultSpecies = archiveDgvaDbAdaptor.countStudiesPerSpecies(queryOptions);
+            resultTypes = archiveDgvaDbAdaptor.countStudiesPerType(queryOptions);
+        } else {
+            resultSpecies = archiveEvaproDbAdaptor.countStudiesPerSpecies(queryOptions);
+            resultTypes = archiveEvaproDbAdaptor.countStudiesPerType(queryOptions);
+        }
         
         QueryResult combinedQueryResult = new QueryResult();
         combinedQueryResult.setDbTime(resultSpecies.getDbTime() + resultTypes.getDbTime());
