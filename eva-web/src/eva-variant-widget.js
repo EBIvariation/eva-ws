@@ -338,10 +338,9 @@ EvaVariantWidget.prototype = {
                             files = response.response[0].result[0].files;
                             var content = '';
                             for (var key in files) {
-                                content +='<p style="padding: 2px 2px 2px 15px;">'+files[key].studyId+': '+files[key].attributes.src+'</p>';
+                                content +='<div style="padding: 2px 2px 2px 15px; width:800px;"><b>'+files[key].studyId+'</b>: '+files[key].attributes.src+'</div>';
                             }
                             body.innerHTML =content;
-
                         } catch (e) {
                             console.log(e);
                         }
