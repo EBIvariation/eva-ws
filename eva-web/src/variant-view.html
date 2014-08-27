@@ -23,6 +23,39 @@
         a, a:link, a:visited{
             border-bottom-style: none;
         }
+
+        .variantViewTabs.nav-pills > li > a {
+            padding-top:3px !important;
+            padding-bottom:3px !important;
+            font-size:16px;
+            /*font-weight: bold;*/
+            color:#ffffff;
+            background-color: #6BB6B7;
+        }
+        .variantViewTabs.nav-pills {
+            min-height:20px !important;
+            /*background-color: #CFDFF4;*/
+            border-color: #ffffff;
+            color:#ffffff;
+        }
+
+        .variantViewTabs.nav-pills li a, .nav-tabs{
+            border-radius: 0px;
+            border: 1px solid #ddd;
+            border-color: #156765;
+        }
+
+        .variantViewTabs.nav-pills > li.active > a{
+            background-color: #1F6D6D;
+        }
+
+        .variantViewTabs.nav-pills > li > a:hover{
+            background-color: #1F6D6D;
+        }
+        .variantViewTabs.nav-pills>li.active>a, .variantViewTabs.nav-pills>li.active>a:hover, .variantViewTabs.nav-pills>li.active>a:focus {
+            color: #fff;
+            background-color: #1F6D6D;
+        }
     </style>
 
     <div id="variant-view">
@@ -31,9 +64,9 @@
         </div>
         <div class="row">
             <div class="col-sm-3  col-md-2 col-lg-2" id="variantViewScrollspy">
-                <ul id="variantViewTabs" class="nav nav-pills nav-stacked affix-top" data-spy="affix" data-offset-top="125">
+                <ul id="variantViewTabs" class="nav nav-pills nav-stacked affix-top variantViewTabs" data-spy="affix" data-offset-top="125">
                     <li class="active"><a href="#summary">Summary</a></li>
-                    <li><a href="#effects">Effects</a></li>
+                    <!--<li><a href="#effects">Effects</a></li>-->
                     <li><a href="#files">Files</a></li>
                     <!--<li><a href="#other">Other</a></li>-->
                 </ul>
@@ -45,12 +78,12 @@
                         <div id="summary-grid"></div>
                     </div>
                 </div>
-                <div  id="effects" class="row">
-                    <div class="col-md-10">
-                        <h4>Effects</h4>
-                        <div id="effects-grid"></div>
-                    </div>
-                </div>
+                <!--<div  id="effects" class="row">-->
+                    <!--<div class="col-md-10">-->
+                        <!--<h4>Effects</h4>-->
+                        <!--<div id="effects-grid"></div>-->
+                    <!--</div>-->
+                <!--</div>-->
                 <div  id="files" class="row">
                     <div class="col-md-10">
                         <h4>Files</h4>
@@ -102,6 +135,12 @@
                              _this.draw();
                          }
                      });
+
+                     $('#variantViewTabs li').click(function(event) {
+                         $(this).toggleClass("active");
+                         $(this).siblings().removeClass("active");
+                     });
+
 
                  }
              },
@@ -164,12 +203,12 @@
                      summaryElDiv.innerHTML = summaryContent;
                      summaryEl.appendChild(summaryElDiv);
 
-                     var effectsEl = document.getElementById("effects-grid");
-                     var effectsElDiv = document.createElement("div");
-                     effectsElDiv.setAttribute('class', 'ocb-variant-effect-grid');
-            //       effectsElDiv.innerHTML = '<h4>Effects</h4>';
-                     effectsEl.appendChild(effectsElDiv);
-                     _this.createVariantEffectGrid(effectsElDiv);
+//                     var effectsEl = document.getElementById("effects-grid");
+//                     var effectsElDiv = document.createElement("div");
+//                     effectsElDiv.setAttribute('class', 'ocb-variant-effect-grid');
+//            //       effectsElDiv.innerHTML = '<h4>Effects</h4>';
+//                     effectsEl.appendChild(effectsElDiv);
+//                     _this.createVariantEffectGrid(effectsElDiv);
 
                      var studyEl = document.getElementById("files-grid");
                      var studyElDiv = document.createElement("div");
@@ -181,14 +220,14 @@
              },
              renderSummaryData: {
                  value: function (data) {
-                     var _summaryTable  = '<div class="row"><div class="col-md-12"><table class="table table-bordered">'
+                     var _summaryTable  = '<div class="row"><div class="col-md-8"><table class="table table-bordered">'
                      if(data[0].id){
-                         _summaryTable += '<tr><td><b>ID</b></td><td>'+data[0].id+'</td></tr>'
+                         _summaryTable += '<tr><td>ID</td><td>'+data[0].id+'</td></tr>'
                      }
-                     _summaryTable += '<tr><td><b>Type</b></td><td>'+data[0].type+'</td></tr>' +
-                             '<tr><td><b>Chromosome:Start-End</b></td><td>'+data[0].chromosome+':'+data[0].start+'-'+data[0].end+'</td></tr>' +
-                             '<tr><td><b>Ref</b></td><td>'+data[0].reference+'</td></tr>' +
-                             '<tr><td><b>Alt</b></td><td>'+data[0].alternate+'</td></tr>' +
+                     _summaryTable += '<tr><td>Type</td><td>'+data[0].type+'</td></tr>' +
+                             '<tr><td>Chromosome:Start-End</td><td>'+data[0].chromosome+':'+data[0].start+'-'+data[0].end+'</td></tr>' +
+                             '<tr><td>Ref</td><td>'+data[0].reference+'</td></tr>' +
+                             '<tr><td>Alt</td><td>'+data[0].alternate+'</td></tr>' +
                              '</table>'
 
                      _summaryTable += '</div></div>'
@@ -251,16 +290,17 @@
          })
      });
 
-    window.onload = function() {
-        $('#variantViewTabs li').click(function(event) {
-            $(this).toggleClass("active");
-            $(this).siblings().removeClass("active");
-        });
+//    window.onload = function() {
+//        $('#variantViewTabs li').click(function(event) {
+//            alert('sdf')
+//            $(this).toggleClass("active");
+//            $(this).siblings().removeClass("active");
+//        });
 
-        if (document.getElementsByTagName("eva-variant-view").length > 0)
-        {
-            $('body').scrollspy({ target: '#variantViewScrollspy' })
-        }
-    };
+//        if (document.getElementsByTagName("eva-variant-view").length > 0)
+//        {
+//            $('body').scrollspy({ target: '#variantViewScrollspy' })
+//        }
+//    };
 </script>
 

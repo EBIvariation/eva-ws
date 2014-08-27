@@ -301,7 +301,7 @@ EvaVariantWidget.prototype = {
                     tpl: '<tpl if="id"><a href="?Variant={id}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;' +
                         '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
                         '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>' +
-                        '<tpl else><a href="?Variant={chromosome}:{start}:{ref}:{alt}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>',
+                        '<tpl else><a href="?variant={chromosome}:{start}:{ref}:{alt}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>',
                     flex: 1
                 }
 
@@ -325,6 +325,30 @@ EvaVariantWidget.prototype = {
             {name: 'hgvs_name', type: 'string'}
         ];
 
+      var test =  {
+            expandbody : function( expander, record, body, rowIndex ) {
+                EvaManager.get({
+                    host: 'http://172.22.70.2:8080/eva/webservices/rest',
+                    category: 'segments',
+                    resource: 'variants',
+                    query: '1:237829805-237829805',
+                    success: function (response) {
+                        var files = [];
+                        try {
+                            files = response.response[0].result[0].files;
+                            var content = '';
+                            for (var key in files) {
+                                content +='<p style="padding: 2px 2px 2px 15px;">'+files[key].studyId+': '+files[key].attributes.src+'</p>';
+                            }
+                            body.innerHTML =content;
+
+                        } catch (e) {
+                            console.log(e);
+                        }
+                    }
+                });
+            }
+        };
         var plugins =  [{
                         ptype: 'rowexpander',
                         rowBodyTpl : new Ext.XTemplate(
@@ -357,7 +381,9 @@ EvaVariantWidget.prototype = {
                     //_this.lastVariant = e.args;
                     _this.trigger('variant:clear', {sender: _this});
                 }
-            }
+            },
+            viewConfigListeners:test
+
         });
         return variantBrowserGrid;
     },
