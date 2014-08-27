@@ -325,7 +325,7 @@ EvaVariantWidget.prototype = {
             {name: 'hgvs_name', type: 'string'}
         ];
 
-      var test =  {
+      var listeners =  {
             expandbody : function( expander, record, body, rowIndex ) {
                 EvaManager.get({
                     host: 'http://172.22.70.2:8080/eva/webservices/rest',
@@ -350,10 +350,7 @@ EvaVariantWidget.prototype = {
         };
         var plugins =  [{
                         ptype: 'rowexpander',
-                        rowBodyTpl : new Ext.XTemplate(
-                            '<p style="padding: 2px 2px 2px 15px"><b>File 1: </b> ...</p>',
-                            '<p style="padding: 2px 2px 2px 15px"><b>File 2: </b> ...</p>'
-                        )
+                        rowBodyTpl : new Ext.XTemplate()
                      }];
 
         var variantBrowserGrid = new VariantBrowserGrid({
@@ -381,7 +378,7 @@ EvaVariantWidget.prototype = {
                     _this.trigger('variant:clear', {sender: _this});
                 }
             },
-            viewConfigListeners:test
+            viewConfigListeners:listeners
 
         });
         return variantBrowserGrid;
