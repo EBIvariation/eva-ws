@@ -58,7 +58,8 @@
                             host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                             category: 'studies',
                             resource: 'files',
-                            query:studyID,
+//                            query:studyID,
+                            query:projectId,
                             success: function (response) {
                                 try {
                                     files = response.response[0].result;
@@ -101,7 +102,7 @@
                     var _this = this;
                     var data = {};
                     var divContent = '';
-                    if(files.length > 0 && _.isEmpty(summary) == false && this.type === 'eva'){
+                    if( _.isEmpty(summary) == false && this.type === 'eva'){
                          data = {summaryData: summary,filesData: files }
                          divContent =  _this.renderData(data)
                     }else if (_.isEmpty(summary) == false && this.type === 'dgva'){
@@ -116,6 +117,7 @@
                 value: function (data,content) {
                     var _this = this;
                     var el =  _this.shadowRoot.querySelector("#study-view");
+                    el.innerHTML = '';
                     var elDiv = document.createElement("div");
                     $(elDiv).html(content);
                     el.appendChild(elDiv);
@@ -147,48 +149,53 @@
                                 '<tr><td><b>Samples</b></td><td>'+data.summaryData[0].numSamples+'</td></tr>' +
                                 '<tr><td><b>Description</b></td><td>'+data.summaryData[0].description+'</td></tr>' +
                                 '</table>'
-                        _filesTable += '<div><h4>Files</h4></div><table class="table table-striped"><thead><tr>' +
-                                '<th>File Name</th>'+
-                                '<th>Samples Count</th>'+
-                                '<th>Variants Count</th>'+
-                                '<th>SNP Count</th>'+
-                                '<th>Indel Count</th>'+
-                                '<th>Pass Count</th>'+
-                                '<th>Transitions/Transversions Ratio</th>'+
-                                '<th>Mean Quality</th>'+
-                                '</tr></thead><tbody>'
-                        for (i = 0; i < data.filesData.length; i++) {
-                            var fileName = files[i].fileName
-                            $.ajax({
-                                type: 'GET',
-                                url: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/files/'+fileName+'/url',
-                                dataType: 'json',//still firefox 20 does not auto serialize JSON, You can force it to always do the parsing by adding dataType: 'json' to your call.
-                                async: false,
-                                success: function (data, textStatus, jqXHR) {
-                                    link = data.response[0].result;
-                                },
-                                error: function (jqXHR, textStatus, errorThrown) {
 
+                        if(data.filesData.length > 0){
+
+                            _filesTable += '<div><h4>Files</h4></div><table class="table table-striped"><thead><tr>' +
+                                    '<th>File Name</th>'+
+                                    '<th>Samples Count</th>'+
+                                    '<th>Variants Count</th>'+
+                                    '<th>SNP Count</th>'+
+                                    '<th>Indel Count</th>'+
+                                    '<th>Pass Count</th>'+
+                                    '<th>Transitions/Transversions Ratio</th>'+
+                                    '<th>Mean Quality</th>'+
+                                    '</tr></thead><tbody>'
+                            for (i = 0; i < data.filesData.length; i++) {
+                                var fileName = files[i].fileName
+                                $.ajax({
+                                    type: 'GET',
+                                    url: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/files/'+fileName+'/url',
+                                    dataType: 'json',//still firefox 20 does not auto serialize JSON, You can force it to always do the parsing by adding dataType: 'json' to your call.
+                                    async: false,
+                                    success: function (data, textStatus, jqXHR) {
+                                        link = data.response[0].result;
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+
+                                    }
+                                });
+                                if(link.length > 0){
+                                    var downloadLink = '<a href="'+link+'" target="_blank">'+data.filesData[i].fileName+'</a>';
+                                }else{
+                                    var downloadLink = data.filesData[i].fileName;
                                 }
-                            });
-                            if(link.length > 0){
-                                var downloadLink = '<a href="'+link+'" target="_blank">'+data.filesData[i].fileName+'</a>';
-                            }else{
-                                var downloadLink = data.filesData[i].fileName;
+                                _filesTable += '<tr>'+
+                                        '<td>'+downloadLink+'</td>' +
+                                        '<td>'+data.filesData[i].stats.samplesCount+'</td>' +
+                                        '<td>'+data.filesData[i].stats.variantsCount+'</td>' +
+                                        '<td>'+data.filesData[i].stats.snpsCount+'</td>' +
+                                        '<td>'+data.filesData[i].stats.indelsCount+'</td>' +
+                                        '<td>'+data.filesData[i].stats.passCount+'</td>' +
+                                        '<td>'+(data.filesData[i].stats.transitionsCount/data.filesData[i].stats.transversionsCount).toFixed(2)+'&nbsp;('+data.filesData[i].stats.transitionsCount+'/'+data.filesData[i].stats.transitionsCount+')</td>' +
+                                        '<td>'+data.filesData[i].stats.meanQuality+'</td>' +
+                                        '</tr>'
                             }
+                            _filesTable += '</tbody></table>'
 
-                            _filesTable += '<tr>'+
-                                    '<td>'+downloadLink+'</td>' +
-                                    '<td>'+data.filesData[i].stats.samplesCount+'</td>' +
-                                    '<td>'+data.filesData[i].stats.variantsCount+'</td>' +
-                                    '<td>'+data.filesData[i].stats.snpsCount+'</td>' +
-                                    '<td>'+data.filesData[i].stats.indelsCount+'</td>' +
-                                    '<td>'+data.filesData[i].stats.passCount+'</td>' +
-                                    '<td>'+(data.filesData[i].stats.transitionsCount/data.filesData[i].stats.transversionsCount).toFixed(2)+'&nbsp;('+data.filesData[i].stats.transitionsCount+'/'+data.filesData[i].stats.transitionsCount+')</td>' +
-                                    '<td>'+data.filesData[i].stats.meanQuality+'</td>' +
-                                    '</tr>'
                         }
-                        _filesTable += '</tbody></table></div></div>'
+                        _filesTable += '</div></div>'
                     }
                     else if(this.type === 'dgva'){
                         var _filesTable  = '<div><h3>'+data.summaryData[0].name+'</h3>' +
