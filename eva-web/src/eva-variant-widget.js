@@ -327,25 +327,12 @@ EvaVariantWidget.prototype = {
 
       var listeners =  {
             expandbody : function( expander, record, body, rowIndex ) {
-                EvaManager.get({
-                    host: 'http://172.22.70.2:8080/eva/webservices/rest',
-                    category: 'segments',
-                    resource: 'variants',
-                    query: '1:237829805-237829805',
-                    success: function (response) {
-                        var files = [];
-                        try {
-                            files = response.response[0].result[0].files;
-                            var content = '';
-                            for (var key in files) {
-                                content +='<div style="padding: 2px 2px 2px 15px; width:800px;"><b>'+files[key].studyId+'</b>: '+files[key].attributes.src+'</div>';
-                            }
-                            body.innerHTML =content;
-                        } catch (e) {
-                            console.log(e);
-                        }
-                    }
-                });
+                files = record.data.files;
+                var content = '';
+                for (var key in files) {
+                    content +='<div style="padding: 2px 2px 2px 15px; width:800px;"><b>'+files[key].studyId+'</b>: '+files[key].attributes.src+'</div>';
+                }
+                body.innerHTML =content;
             }
         };
         var plugins =  [{
