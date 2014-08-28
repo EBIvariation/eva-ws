@@ -92,7 +92,7 @@
                             _this.parseData();
                         }
                     });
-                    document.body.style.cursor = "default";
+
 
                 }
             },
@@ -118,6 +118,7 @@
                     var _this = this;
                     var el =  _this.shadowRoot.querySelector("#study-view");
                     el.innerHTML = '';
+                    document.body.style.cursor = "default";
                     var elDiv = document.createElement("div");
                     $(elDiv).html(content);
                     el.appendChild(elDiv);
