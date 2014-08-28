@@ -262,10 +262,12 @@ h3 span{
 }
 
 .studyBrowserTabs.nav-pills > li.active > a{
+     color:#ffffff !important;
      background-color: #1F6D6D;
  }
 
 .studyBrowserTabs.nav-pills > li > a:hover{
+    color:#ffffff !important;
     background-color: #1F6D6D;
 }
 

@@ -121,7 +121,7 @@ module.exports = function (grunt) {
                         'lib': [
 //                                'build/<%= meta.version.eva %>/lib/jsorolla/build/1.1.6/genome-viewer/gv-config.js',
 //                                'build/<%= meta.version.eva %>/lib/jsorolla/build/1.1.6/genome-viewer/genome-viewer.js',
-                                'build/<%= meta.version.eva %>/lib/jsorolla/build/1.1.6/lib.min.js'
+                                'build/<%= meta.version.eva %>/lib/jsorolla/build/*/lib.min.js'
                                ],
                         'vendor': [
                             'build/<%= meta.version.eva %>/vendor/ext-5.0.1/js/ext-all.js',
