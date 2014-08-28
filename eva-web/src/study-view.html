@@ -39,7 +39,8 @@
             createdCallback: {
                 value: function () {
                     var _this = this;
-                    document.body.style.cursor = "wait";
+//                    document.body.style.cursor = "wait";
+                    $('*').css('cursor','wait');
                     var template = studyViewDoc.querySelector("#study-view-template");
                     _this.createShadowRoot().appendChild(template.content.cloneNode(true));
                 }
@@ -118,7 +119,8 @@
                     var _this = this;
                     var el =  _this.shadowRoot.querySelector("#study-view");
                     el.innerHTML = '';
-                    document.body.style.cursor = "default";
+    //                    document.body.style.cursor = "default";
+                    $('*').css('cursor','default');
                     var elDiv = document.createElement("div");
                     $(elDiv).html(content);
                     el.appendChild(elDiv);

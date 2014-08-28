@@ -97,7 +97,10 @@ module.exports = function (grunt) {
                     {   expand: true, src: ['lib/jsorolla/build/*/*.js'], dest: 'build/<%= meta.version.eva %>',flatten: false},
                     {   expand: true, src: ['lib/jsorolla/vendor/**'], dest: 'build/<%= meta.version.eva %>',flatten: false},
                     {   expand: true, src: ['lib/jsorolla/styles/**'], dest: 'build/<%= meta.version.eva %>',flatten: false},
-                    {   expand: true, src: ['vendor/**'], dest: 'build/<%= meta.version.eva %>'}
+                    {   expand: true, src: ['vendor/bootstrap-*/**'], dest: 'build/<%= meta.version.eva %>'},
+                    {   expand: true, src: ['vendor/ext-*/**'], dest: 'build/<%= meta.version.eva %>'},
+                    {   expand: true, src: ['vendor/highchart-*/**'], dest: 'build/<%= meta.version.eva %>'},
+                    {   expand: true, src: ['vendor/platform-*/**'], dest: 'build/<%= meta.version.eva %>'}
                 ]
             }
 
@@ -121,17 +124,20 @@ module.exports = function (grunt) {
                                 'build/<%= meta.version.eva %>/lib/jsorolla/build/1.1.6/lib.js'
                                ],
                         'vendor': [
+                            'build/<%= meta.version.eva %>/vendor/ext-*/js/ext-all.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/underscore-min.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/backbone-min.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.min.js',
-                            'build/<%= meta.version.eva %>/vendor/bootstrap-3.2.0/js/bootstrap.min.js',
+                            'build/<%= meta.version.eva %>/vendor/bootstrap-*/js/bootstrap.min.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.cookie.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.sha1.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/purl.min.js',
-                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.qtip.min.js'
+                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.qtip.min.js',
+                            'build/<%= meta.version.eva %>/vendor/highchart-*/js/highcharts.js'
+
                         ],
                         'platform': [
-                            'build/<%= meta.version.eva %>/vendor/platform.js'
+                            'build/<%= meta.version.eva %>/vendor/platform-*/js/platform.js'
                         ]
 //                        'internal-dependencies': [
 //                            'build/<%= meta.version.eva %>/gv-config.js'
