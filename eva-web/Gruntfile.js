@@ -99,8 +99,8 @@ module.exports = function (grunt) {
                     {   expand: true, src: ['lib/jsorolla/styles/**'], dest: 'build/<%= meta.version.eva %>',flatten: false},
                     {   expand: true, src: ['vendor/bootstrap-*/**'], dest: 'build/<%= meta.version.eva %>'},
                     {   expand: true, src: ['vendor/ext-*/**'], dest: 'build/<%= meta.version.eva %>'},
-                    {   expand: true, src: ['vendor/highchart-*/**'], dest: 'build/<%= meta.version.eva %>'},
-                    {   expand: true, src: ['vendor/platform-*/**'], dest: 'build/<%= meta.version.eva %>'}
+                    {   expand: true, src: ['vendor/highcharts-4.0.3/**'], dest: 'build/<%= meta.version.eva %>'},
+                    {   expand: true, src: ['vendor/platform-0.3.5/**'], dest: 'build/<%= meta.version.eva %>'}
                 ]
             }
 
