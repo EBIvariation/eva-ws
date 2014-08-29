@@ -70,7 +70,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
         queryOptions.put("limit", limit);
         
         // Create the provided region, whose size can't excede 1 million positions
-        Region region = new Region(chromosome, start+1, end+1);
+        Region region = new Region(chromosome, start, end);
         int regionSize = region.getEnd()-region.getStart();
         
         if (histogram) {
