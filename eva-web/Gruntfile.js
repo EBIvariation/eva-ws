@@ -4,6 +4,12 @@ module.exports = function (grunt) {
     // Project configuration.
     grunt.initConfig({
 
+        hub: {
+            lib: {
+                src: ['lib/jsorolla/Gruntfile-lib.js'],
+                tasks: ['default']
+            }
+        },
         // Metadata.
         meta: {
             version: {
@@ -206,11 +212,12 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-rename');
     grunt.loadNpmTasks('grunt-html-build');
     grunt.loadNpmTasks('grunt-curl');
+    grunt.loadNpmTasks('grunt-hub');
 
     grunt.registerTask('vendor', ['curl-dir']);
 
     // Default task.
-    grunt.registerTask('default', ['clean:eva','concat:eva','uglify:eva', 'copy:eva', 'htmlbuild:eva'])
+    grunt.registerTask('default', ['hub:lib','clean:eva','concat:eva','uglify:eva', 'copy:eva', 'htmlbuild:eva'])
 
 
 //    grunt.registerTask('clean', ['clean:eva']);
