@@ -160,9 +160,9 @@ public class EvaWSServer {
 
         switch (outputFormat.toLowerCase()) {
             case "json":
-                return createJsonResponse();
+                return createJsonResponse(queryResponse);
             case "xml":
-                return createXmlResponse();
+                return createXmlResponse(queryResponse);
             default:
                 return buildResponse(Response.ok());
         }
@@ -185,27 +185,27 @@ public class EvaWSServer {
         
         switch (outputFormat.toLowerCase()) {
             case "json":
-                return createJsonResponse();
+                return createJsonResponse(queryResponse);
             case "xml":
-                return createXmlResponse();
+                return createXmlResponse(queryResponse);
             default:
                 return buildResponse(Response.ok());
         }
     }
 
     
-    protected Response createJsonResponse() {
+    protected Response createJsonResponse(Object object) {
         try {
-            return buildResponse(Response.ok(jsonObjectWriter.writeValueAsString(queryResponse), MediaType.APPLICATION_JSON_TYPE));
+            return buildResponse(Response.ok(jsonObjectWriter.writeValueAsString(object), MediaType.APPLICATION_JSON_TYPE));
         } catch (JsonProcessingException e) {
             logger.error("Error parsing queryResponse object", e);
             return null;
         }
     }
 
-    protected Response createXmlResponse() {
+    protected Response createXmlResponse(Object object) {
         try {
-            return buildResponse(Response.ok(xmlObjectMapper.writeValueAsString(queryResponse), MediaType.APPLICATION_XML_TYPE));
+            return buildResponse(Response.ok(xmlObjectMapper.writeValueAsString(object), MediaType.APPLICATION_XML_TYPE));
         } catch (JsonProcessingException e) {
             logger.error("Error parsing queryResponse object", e);
             return null;

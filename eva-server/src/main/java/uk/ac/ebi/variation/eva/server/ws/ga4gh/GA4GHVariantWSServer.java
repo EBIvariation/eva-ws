@@ -2,6 +2,7 @@ package uk.ac.ebi.variation.eva.server.ws.ga4gh;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -14,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
+import org.opencb.biodata.ga4gh.GASearchVariantsResponse;
+import org.opencb.biodata.ga4gh.GAVariant;
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.biodata.models.variant.Variant;
 import org.opencb.biodata.models.variant.ga4gh.GAVariantFactory;
@@ -64,8 +67,10 @@ public class GA4GHVariantWSServer extends EvaWSServer {
             queryOptions.put("studies", Arrays.asList(studies.split(",")));
         }
         
+        int idxCurrentPage = 0;
         if (pageToken != null && !pageToken.isEmpty() && StringUtils.isNumeric(pageToken)) {
-            queryOptions.put("skip", Integer.parseInt(pageToken) * limit);
+            idxCurrentPage = Integer.parseInt(pageToken);
+            queryOptions.put("skip", idxCurrentPage * limit);
         }
         queryOptions.put("limit", limit);
         
@@ -81,7 +86,13 @@ public class GA4GHVariantWSServer extends EvaWSServer {
         } else if (regionSize <= 1000000) {
             QueryResult<Variant> qr = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
             // Convert Variant objects to GAVariant
-            return createOkResponse(GAVariantFactory.create(qr.getResult()));
+            List<GAVariant> gaVariants = GAVariantFactory.create(qr.getResult());
+            // Calculate the next page token
+            int idxLastElement = idxCurrentPage * limit + limit;
+            String nextPageToken = (idxLastElement < qr.getNumTotalResults()) ? String.valueOf(idxCurrentPage + 1) : null;
+            
+            // Create the custom response for the GA4GH API
+            return createJsonResponse(new GASearchVariantsResponse(gaVariants, nextPageToken));
         } else {
             return createErrorResponse("The total size of all regions provided can't exceed 1 million positions. "
                     + "If you want to browse a larger number of positions, please provide the parameter 'histogram=true'");
