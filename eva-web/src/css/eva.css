@@ -226,6 +226,11 @@ body.eva {
     color: #156765;
 }
 
+.ocb-study-filter {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
 h2,h4{
     color:#426783;
 }
@@ -275,4 +280,5 @@ h3 span{
     color:#ffffff !important;
     background-color: #1F6D6D;
 }
+
 
