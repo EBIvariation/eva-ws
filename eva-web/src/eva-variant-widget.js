@@ -165,7 +165,7 @@ EvaVariantWidget.prototype = {
             this.variantGenotypeGridDiv.setAttribute('class', 'ocb-variant-genotype-grid');
             this.variantGenotypeGrid = this._createVariantGenotypeGrid(this.variantGenotypeGridDiv);
             tabPanelItems.push({
-                title: 'Genotype',
+                title: 'Genotypes',
 //                border: 0,
                 contentEl: this.variantGenotypeGridDiv
             });
