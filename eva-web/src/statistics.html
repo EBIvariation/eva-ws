@@ -1,6 +1,6 @@
 <template>
     <style scoped>
-        @import url('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css');
+        /*@import url('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css');*/
     </style>
     <div class="row">
         <div id="statistics-chart-species" class="col-md-6"></div>
@@ -23,7 +23,8 @@
 
                     //Create a copy of the template node.
                     var template = document.importNode(statisticsDoc.querySelector('template').content, true);
-                    _this.createShadowRoot().appendChild(template);
+//                    _this.createShadowRoot().appendChild(template);
+                    _this.appendChild(template);
                 }
             },
             attachedCallback: {
@@ -76,7 +77,8 @@
                     var height = _this.getAttribute('height');
                     var width = _this.getAttribute('width');
                     var id = '#'+data.id;
-                    var render_id = _this.shadowRoot.querySelector(id);
+//                    var render_id = _this.shadowRoot.querySelector(id);
+                    var render_id = _this.querySelector(id);
                     var dataArray  = data.chartData;
                     var title = data.title;
                     $(function () {
@@ -86,24 +88,36 @@
                                 plotBorderWidth: null,
                                 plotShadow: false,
                                 height: height,
-                                width: width
+                                width: width,
+                                marginLeft:-100
+
+                            },
+                            legend: {
+                                enabled: true,
+                                width: 220,
+                                margin: 0,
+                                labelFormatter: function() {
+                                    return '<div>' + this.name + '('+ this.y + ')</div>';
+                                }
 
                             },
                             title: {
                                 text: 'Studies',
                                 style: {
 //                                    display: 'none'
-                                }
+                                },
+                                align: 'left'
                             },
                             subtitle: {
                                 text: 'by ' + title,
                                 style: {
 //                                    display: 'none'
-                                }
+                                },
+                                align: 'left'
                             },
                             tooltip: {
-//                                pointFormat: '<b>{point.y}</b>'
-                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                pointFormat: '<b>{point.y}</b>'
+//                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
                             },
                             plotOptions: {
                                 pie: {

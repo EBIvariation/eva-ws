@@ -243,8 +243,14 @@
                         projectList.setAttribute("id", "project");
 //                        projectList.setAttribute("multiple", "");
                         _this.projectDiv.appendChild(projectList);
+
+                        var projectOption = document.createElement("option");
+                            projectOption.setAttribute("value", '');
+                            projectOption.text ='';
+                            projectList.appendChild(projectOption);
+
                         for (var i = 0; i < data.length; i++) {
-                            var projectOption = document.createElement("option");
+                            projectOption = document.createElement("option");
                             var studyId = _this.getStudyId(data[i].id);
                             if(studyId){
                                 projectOption.setAttribute("value", studyId);
