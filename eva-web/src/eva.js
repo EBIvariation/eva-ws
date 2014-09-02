@@ -379,7 +379,7 @@ Eva.prototype = {
                             species: 'hsapiens',
                             category: 'feature',
                             subCategory: 'gene',
-                            query: e.values.gene,
+                            query: e.values.gene.toUpperCase(),
                             resource: "info",
                             async: false,
                             params: {
