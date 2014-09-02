@@ -17,6 +17,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import org.opencb.biodata.models.feature.Genotype;
 import org.opencb.biodata.models.variant.ArchivedVariantFile;
@@ -198,8 +199,7 @@ public class EvaWSServer {
         try {
             return buildResponse(Response.ok(jsonObjectWriter.writeValueAsString(object), MediaType.APPLICATION_JSON_TYPE));
         } catch (JsonProcessingException e) {
-            logger.error("Error parsing queryResponse object", e);
-            return null;
+            return createErrorResponse("Error parsing QueryResponse object:\n" + Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -207,8 +207,7 @@ public class EvaWSServer {
         try {
             return buildResponse(Response.ok(xmlObjectMapper.writeValueAsString(object), MediaType.APPLICATION_XML_TYPE));
         } catch (JsonProcessingException e) {
-            logger.error("Error parsing queryResponse object", e);
-            return null;
+            return createErrorResponse("Error parsing QueryResponse object:\n" + Arrays.toString(e.getStackTrace()));
         }
     }
 
