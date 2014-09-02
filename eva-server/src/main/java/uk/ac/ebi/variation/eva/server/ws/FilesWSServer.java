@@ -1,6 +1,7 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
 import java.io.IOException;
+import java.util.Arrays;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
@@ -46,9 +47,9 @@ public class FilesWSServer extends EvaWSServer {
     }
     
     @GET
-    @Path("/{file}/url")
-    public Response getFileUrl(@PathParam("file") String filename) {
-        return createOkResponse(variantSourceEvaproDbAdaptor.getSourceDownloadUrlByName(filename));
+    @Path("/{files}/url")
+    public Response getFileUrl(@PathParam("files") String filenames) {
+        return createOkResponse(variantSourceEvaproDbAdaptor.getSourceDownloadUrlByName(Arrays.asList(filenames.split(","))));
     }
     
 }
