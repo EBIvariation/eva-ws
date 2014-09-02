@@ -89,7 +89,8 @@
                                 plotShadow: false,
                                 height: height,
                                 width: width,
-                                marginLeft:-100
+                                marginLeft:-50,
+                                marginTop:50
 
                             },
                             legend: {
@@ -102,19 +103,19 @@
 
                             },
                             title: {
-                                text: 'Studies',
+                                text: 'Studies <br> <span style="font-size:12px;">by '+title+'</span>',
                                 style: {
 //                                    display: 'none'
                                 },
                                 align: 'left'
                             },
-                            subtitle: {
-                                text: 'by ' + title,
-                                style: {
-//                                    display: 'none'
-                                },
-                                align: 'left'
-                            },
+//                            subtitle: {
+//                                text: 'by ' + title,
+//                                style: {
+////                                    display: 'none'
+//                                },
+//                                align: 'left'
+//                            },
                             tooltip: {
                                 pointFormat: '<b>{point.y}</b>'
 //                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
