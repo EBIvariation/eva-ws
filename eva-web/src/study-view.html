@@ -167,14 +167,14 @@
                                 }
                             }
                             var fileNameList = fileNameArr.join(',');
-                            var link = {};
+                            var ftpLink = {};
                             $.ajax({
                                 type: 'GET',
                                 url: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/files/'+fileNameList+'/url',
                                 dataType: 'json',//still firefox 20 does not auto serialize JSON, You can force it to always do the parsing by adding dataType: 'json' to your call.
                                 async: false,
                                 success: function (data, textStatus, jqXHR) {
-                                        link = data.response;
+                                    ftpLink = data.response;
                                     console.log(data)
                                 },
                                 error: function (jqXHR, textStatus, errorThrown) {
@@ -210,8 +210,8 @@
 //
 //                                    }
 //                                });
-                                if(link.length > 0){
-                                    var downloadLink = '<a href="'+link[i].result[0]+'" target="_blank">'+data.filesData[i].fileName+'</a>';
+                                if(ftpLink.length > 0){
+                                    var downloadLink = '<a href="'+ftpLink[i].result[0]+'" target="_blank">'+data.filesData[i].fileName+'</a>';
                                 }else{
                                     var downloadLink = data.filesData[i].fileName;
                                 }
