@@ -32,14 +32,14 @@
             attachedCallback: {
                 value: function () {
                     var _this = this;
-                    _this.studyBrowserDiv = document.createElement('div');
-                    _this.studyBrowserDiv.setAttribute('class', 'eva-study-browser-div');
-                    _this.studyBrowserDiv.setAttribute('id', 'eva-study-browser');
+                    _this.evaStudyBrowserDiv = document.createElement('div');
+                    _this.evaStudyBrowserDiv.setAttribute('class', 'eva-study-browser-div');
+                    _this.evaStudyBrowserDiv.setAttribute('id', 'eva-study-browser');
                     _this.evaStudyBrowser= _this.querySelector("#eva-study-browser");
                    if(_this.evaStudyBrowser == null ){
-                       _this.appendChild(this.studyBrowserDiv);
-                       this.studyBrowser = _this._createStudyBrowser(this.studyBrowserDiv);
-                       this.studyBrowser.draw();
+                       _this.appendChild(this.evaStudyBrowserDiv);
+                       this.studyBrowserEva = _this._createStudyBrowser(this.evaStudyBrowserDiv);
+                       this.studyBrowserEva.draw();
 //                       this.studyBrowser.update();
                    }
 
