@@ -267,7 +267,7 @@ EvaVariantWidget.prototype = {
                 //dataIndex: 'end'
                 //},
                 {
-                    text: 'Aleles',
+                    text: 'Alleles',
                     xtype: "templatecolumn",
                     tpl: "{reference}>{alternate}",
                     flex: 1
