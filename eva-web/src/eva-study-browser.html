@@ -1,7 +1,7 @@
 
 <template>
     <div class="row">
-        <div class="col-md-12">
+        <div id="eva-study-browser" class="col-md-12">
         </div>
     </div>
 </template>
@@ -32,16 +32,17 @@
             attachedCallback: {
                 value: function () {
                     var _this = this;
-                    _this.evaStudyBrowserDiv = document.createElement('div');
-                    _this.evaStudyBrowserDiv.setAttribute('class', 'eva-study-browser-div');
-                    _this.evaStudyBrowserDiv.setAttribute('id', 'eva-study-browser');
-                    _this.evaStudyBrowser= _this.querySelector("#eva-study-browser");
-                   if(_this.evaStudyBrowser == null ){
-                       _this.appendChild(this.evaStudyBrowserDiv);
+                    _this.evaStudyBrowserDiv = document.querySelector('eva-study-browser');
+                    _this.evaStudyBrowserDiv.innerHTML= '';
+//                    _this.evaStudyBrowserDiv.setAttribute('class', 'eva-study-browser-div');
+//                    _this.evaStudyBrowserDiv.setAttribute('id', 'eva-study-browser');
+//                    _this.evaStudyBrowser= _this.querySelector("#eva-study-browser");
+//                   if(_this.evaStudyBrowser == null ){
+//                       _this.appendChild(this.evaStudyBrowserDiv);
                        this.studyBrowserEva = _this._createStudyBrowser(this.evaStudyBrowserDiv);
                        this.studyBrowserEva.draw();
 //                       this.studyBrowser.update();
-                   }
+//                   }
 
 
 

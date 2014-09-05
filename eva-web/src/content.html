@@ -347,10 +347,11 @@
                 var tabEl = '#'+target+'-browser-tab';
                 var el = document.querySelector(browserEl);
                 var tab = document.querySelector(tabEl);
-                if(el == null){
+                tab.innerHTML = '';
+//                if(el == null){
                     var studyBrowser = document.createElement(browserEl);
                     tab.appendChild(studyBrowser);
-                }
+//                }
             }
         </script>
     </div>

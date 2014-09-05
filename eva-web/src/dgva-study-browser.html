@@ -1,7 +1,7 @@
 
 <template>
     <div class="row">
-        <div class="col-md-12">
+        <div id="dgva-study-browser" class="col-md-12">
 
         </div>
     </div>
@@ -40,16 +40,17 @@
             attachedCallback: {
                 value: function () {
                     var _this = this;
-                    _this.dgvaStudyBrowserDiv = document.createElement('div');
-                    _this.dgvaStudyBrowserDiv.setAttribute('class', 'eva-study-browser-div');
-                    _this.dgvaStudyBrowserDiv.setAttribute('id', 'dgva-study-browser');
-                    _this.dgvaStudyBrowser= _this.querySelector("#dgva-study-browser");
-                   if(_this.dgvaStudyBrowser == null ){
-                       _this.appendChild(_this.dgvaStudyBrowserDiv);
+                    _this.dgvaStudyBrowserDiv = document.querySelector('dgva-study-browser');
+                    _this.dgvaStudyBrowserDiv.innerHTML= '';
+//                    _this.dgvaStudyBrowserDiv.setAttribute('class', 'eva-study-browser-div');
+//                    _this.dgvaStudyBrowserDiv.setAttribute('id', 'dgva-study-browser');
+//                    _this.dgvaStudyBrowser= _this.querySelector("#dgva-study-browser");
+//                   if(_this.dgvaStudyBrowser == null ){
+//                       _this.appendChild(_this.dgvaStudyBrowserDiv);
                        this.studyBrowserDgva = _this._createStudyBrowser(_this.dgvaStudyBrowserDiv);
                        this.studyBrowserDgva.draw();
 //                       this.studyBrowser.update();
-                   }
+//                   }
 //                    var display = this.getAttribute('display');
 //                    this.display = display;
 //                    var t = setTimeout(_this._toggleDisplay, 300);

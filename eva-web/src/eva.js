@@ -126,22 +126,22 @@ Eva.prototype = {
 
 
         /* variant browser option*/
-        this.variantBrowserOptionDiv = document.createElement('div');
-        this.variantBrowserOptionDiv.innerHTML = '<title>VCF Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
-        $(this.variantBrowserOptionDiv).addClass('eva-child variant-browser-option-div');
-        this.div.appendChild(this.variantBrowserOptionDiv);
-        this.childDivMenuMap['VCF Browser'] = this.variantBrowserOptionDiv;
-
-        this.formPanelVariantFilterDiv = document.createElement('div');
-        $(this.formPanelVariantFilterDiv).addClass('form-panel-variant-filter-div');
-        this.variantBrowserOptionDiv.appendChild(this.formPanelVariantFilterDiv);
-
-        this.variantWidgetDiv = document.createElement('div');
-        $(this.variantWidgetDiv).addClass('variant-widget-div');
-        this.variantBrowserOptionDiv.appendChild(this.variantWidgetDiv);
-
-        this.formPanelVariantFilter = this._createFormPanelVariantFilter(this.formPanelVariantFilterDiv);
-        this.variantWidget = this._createVariantWidget(this.variantWidgetDiv);
+//        this.variantBrowserOptionDiv = document.createElement('div');
+//        this.variantBrowserOptionDiv.innerHTML = '<title>VCF Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
+//        $(this.variantBrowserOptionDiv).addClass('eva-child variant-browser-option-div');
+//        this.div.appendChild(this.variantBrowserOptionDiv);
+//        this.childDivMenuMap['VCF Browser'] = this.variantBrowserOptionDiv;
+//
+//        this.formPanelVariantFilterDiv = document.createElement('div');
+//        $(this.formPanelVariantFilterDiv).addClass('form-panel-variant-filter-div');
+//        this.variantBrowserOptionDiv.appendChild(this.formPanelVariantFilterDiv);
+//
+//        this.variantWidgetDiv = document.createElement('div');
+//        $(this.variantWidgetDiv).addClass('variant-widget-div');
+//        this.variantBrowserOptionDiv.appendChild(this.variantWidgetDiv);
+//
+//        this.formPanelVariantFilter = this._createFormPanelVariantFilter(this.formPanelVariantFilterDiv);
+//        this.variantWidget = this._createVariantWidget(this.variantWidgetDiv);
 
         /* genome browser option*/
         this.genomeBrowserOptionDiv = document.createElement('div');
@@ -178,10 +178,10 @@ Eva.prototype = {
         this.targetDiv.appendChild(this.div);
 
         this.evaMenu.draw();
-        this.variantWidget.draw();
-//        this.studyBrowser.draw();
-
-        this.formPanelVariantFilter.draw();
+//        this.variantWidget.draw();
+////        this.studyBrowser.draw();
+//
+//        this.formPanelVariantFilter.draw();
 //        this.genomeViewer.draw();
 //        this.formPanelGenomeFilter.draw();
 
@@ -211,8 +211,27 @@ Eva.prototype = {
             case 'Study Browser':
 //                this.studyBrowser.update();
                 break;
-            case 'Variant Browser':
+            case 'VCF Browser':
+                this.variantBrowserOptionDiv = document.createElement('div');
+                this.variantBrowserOptionDiv.innerHTML = '<title>VCF Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
+                $(this.variantBrowserOptionDiv).addClass('eva-child variant-browser-option-div');
+                this.div.appendChild(this.variantBrowserOptionDiv);
+//                this.childDivMenuMap['VCF Browser'] = this.variantBrowserOptionDiv;
+
+                this.formPanelVariantFilterDiv = document.createElement('div');
+                $(this.formPanelVariantFilterDiv).addClass('form-panel-variant-filter-div');
+                this.variantBrowserOptionDiv.appendChild(this.formPanelVariantFilterDiv);
+
+                this.variantWidgetDiv = document.createElement('div');
+                $(this.variantWidgetDiv).addClass('variant-widget-div');
+                this.variantBrowserOptionDiv.appendChild(this.variantWidgetDiv);
+
+                this.formPanelVariantFilter = this._createFormPanelVariantFilter(this.formPanelVariantFilterDiv);
+                this.variantWidget = this._createVariantWidget(this.variantWidgetDiv);
+                this.variantWidget.draw();
+                this.formPanelVariantFilter.draw();
                 this.formPanelVariantFilter.update();
+
                 break;
 //            case 'Genome Browser':
 //                this.formPanelGenomeFilter.update();
