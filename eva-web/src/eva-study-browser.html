@@ -544,7 +544,6 @@
                     try {
                         var statsData = {};
                         var responseStatsData = response.response[0].result[0];
-                        console.log(responseStatsData)
                         for (key in responseStatsData) {
                             var stat = responseStatsData[key];
                             var arr = [];
@@ -561,7 +560,6 @@
                             statsData[key] = arr;
                             if (typeof stores[key] !== 'undefined') {
                                 stores[key].loadRawData(statsData[key]);
-                                console.log(stores[key])
                             }
 
                         }

@@ -28,13 +28,13 @@
             attributeChangedCallback:{
                 value: function (attrName, oldValue, newValue) {
                     var _this = this;
-                   if(attrName == 'display' &&  newValue == 'true'){
-                       $("#dgva-study-browser").attr('style', 'display: inline');
-                       $("#eva-study-browser").attr('style', 'display: none');
-                   }else{
-                       $("#eva-study-browser").attr('style', 'display: inline');
-                       $("#dgva-study-browser").attr('style', 'display: none');
-                   }
+//                   if(attrName == 'display' &&  newValue == 'true'){
+//                       $("#dgva-study-browser").attr('style', 'display: inline');
+//                       $("#eva-study-browser").attr('style', 'display: none');
+//                   }else{
+//                       $("#eva-study-browser").attr('style', 'display: inline');
+//                       $("#dgva-study-browser").attr('style', 'display: none');
+//                   }
                 }
             },
             attachedCallback: {
@@ -188,7 +188,6 @@
             if(!values){
                 if(_this.formPanel){
                     values = _this.formPanel.getValues();
-                    console.log(values)
                     values['structural']= true;
                 }else{
                     values = {structural:true};
@@ -594,7 +593,6 @@
                     try {
                         var statsData = {};
                         var responseStatsData = response.response[0].result[0];
-                        console.log(responseStatsData)
                         for (key in responseStatsData) {
                             var stat = responseStatsData[key];
                             var arr = [];
@@ -605,11 +603,9 @@
                                 obj['count'] = stat[key2];
                                 arr.push(obj);
                             }
-                            console.log(arr)
                             statsData[key] = arr;
                             if (typeof stores[key] !== 'undefined') {
                                 stores[key].loadRawData(statsData[key]);
-                                console.log(stores[key])
                             }
 
                         }

@@ -158,7 +158,6 @@
 
                             for (i = 0; i < data.filesData.length; i++) {
                                 var fileName = files[i].fileName;
-                                console.log(fileName)
                                 var regex =/_accessioned.vcf/g;
                                 if(fileName.match(regex)){
                                     fileNameArr.push(fileName.replace(regex, ".vcf.gz"));
@@ -175,7 +174,6 @@
                                 async: false,
                                 success: function (data, textStatus, jqXHR) {
                                     ftpLink = data.response;
-                                    console.log(data)
                                 },
                                 error: function (jqXHR, textStatus, errorThrown) {
 
