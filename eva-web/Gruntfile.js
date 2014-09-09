@@ -155,7 +155,7 @@ module.exports = function (grunt) {
                             'build/<%= meta.version.eva %>/css/eva.css'
                         ],
                         'vendor': [
-                            'build/<%= meta.version.eva %>/vendor/ext-5.0.1/theme-ebi-embl/theme-ebi-embl-all.css',
+                            'build/<%= meta.version.eva %>/vendor/ext-5.0.1/theme/theme-eva-ebi-all.css',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.qtip.min.css',
                             'build/<%= meta.version.eva %>/vendor/bootstrap-3.2.0/css/bootstrap.min.css'
                         ]
