@@ -458,6 +458,19 @@ EvaVariantWidget.prototype = {
     },
     _createVariantGenotypeGrid: function (target) {
         var _this = this;
+        var genotypeColumns =   [
+            {
+                text: "Sample",
+                dataIndex: "sample",
+                flex: 1
+            },
+            {
+                text: "Genotype",
+                dataIndex: "genotype",
+                flex: 1
+            }
+        ];
+
         var variantGenotypeGrid = new VariantGenotypeGrid({
             target: target,
             headerConfig: this.defaultToolConfig.headerConfig,
@@ -471,7 +484,8 @@ EvaVariantWidget.prototype = {
                 "load:finish": function (e) {
 
                 }
-            }
+            },
+            columns:genotypeColumns
         });
 
         this.variantBrowserGrid.on("variant:clear", function (e) {
