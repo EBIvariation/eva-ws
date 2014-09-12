@@ -19,8 +19,8 @@
 <link rel="import" href="statistics.html">
 <link rel="import" href="beacon.html">
 <link rel="import" href="submission-form.html">
-<link rel="import" href="eva-study-browser.html">
-<link rel="import" href="dgva-study-browser.html">
+<!--<link rel="import" href="eva-study-browser.html">-->
+<!--<link rel="import" href="dgva-study-browser.html">-->
 
 </head>
 <body class="eva">
@@ -31,7 +31,6 @@
 
 <!-- build:style vendor -->
 <link type="text/css" rel="stylesheet" href="../vendor/ext-5.0.1/theme/theme-eva-ebi-all.css"/>
-">
 <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/jquery.qtip.min.css"/>
 <!--<link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/bootstrap-scoped-dist/css/bootstrap.min.css">-->
 <link rel="stylesheet" href="../vendor/bootstrap-3.2.0/css/bootstrap.min.css">
@@ -128,17 +127,23 @@
 
 <!-- build:script eva-js -->
 <script type="text/javascript" src="eva.js"></script>
+<script type="text/javascript" src="studyBrowserPanel.js"></script>
+<script type="text/javascript" src="eva-study-browser.js"></script>
+<script type="text/javascript" src="dgva-study-browser.js"></script>
 <!--<script type="text/javascript" src="eva-study-browser-panel.old.js"></script>-->
 <script type="text/javascript" src="eva-variant-widget.js"></script>
 <script type="text/javascript" src="eva-menu.js"></script>
 <script type="text/javascript" src="eva-adapter.js"></script>
 <script type="text/javascript" src="eva-manager.js"></script>
 <script type="text/javascript" src="eva-config.js"></script>
+
 <!-- /build -->
 
 <script type="text/javascript">
     var eva;
     var start = function () {
+
+
 
         // Bring in the import content.
         var link = document.querySelector('link[href="content.html"]');
@@ -149,7 +154,9 @@
         var templatesDiv = link.import.querySelector('#submissionTemplates');
         var vcfDiv = link.import.querySelector('#vcf-format');
         var clinicalDiv = link.import.querySelector('#clinical');
-        var studyBrowserDiv = link.import.querySelector('#studyBrowser');
+//        var studyBrowserDiv = link.import.querySelector('#studyBrowser');
+        var studyBrowserDiv = document.createElement('div');
+        studyBrowserDiv.innerHTML = '<title>Study Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
         var beaconDiv = link.import.querySelector('#beacon');
 
         var tab = getUrlParameters("");
@@ -197,6 +204,7 @@
             studyBrowserDiv:studyBrowserDiv
         });
         eva.draw();
+
 
         if(tab.id){
             eva.select(tabId);

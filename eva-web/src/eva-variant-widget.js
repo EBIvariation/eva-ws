@@ -269,7 +269,10 @@ EvaVariantWidget.prototype = {
                 {
                     text: 'Alleles',
                     xtype: "templatecolumn",
-                    tpl: "{reference}>{alternate}",
+                    tpl: '<tpl if="reference">{reference}<tpl else>-</tpl>/<tpl if="alternate">{alternate}<tpl else>-</tpl>',
+//                    renderer: function(value, metaData, record, row, col, store, gridView){
+////                        console.log(record)
+//                    },
                     flex: 1
                 },
                 {
@@ -285,11 +288,11 @@ EvaVariantWidget.prototype = {
 //                text: 'Consequence Type',
 //                dataIndex: 'ct'
 //            },
-                {
-                    text: 'Gene',
-                    dataIndex: 'gene',
-                    flex: 1
-                },
+//                {
+//                    text: 'Gene',
+//                    dataIndex: 'gene',
+//                    flex: 1
+//                },
 //            {
 //                text: 'HGVS Names',
 //                dataIndex: 'hgvs_name'
@@ -424,11 +427,16 @@ EvaVariantWidget.prototype = {
                     '<td class="header">Missing Genotypes</td>' +
                     '</tr>',
                 '<tr>' +
-                    '<td>{maf} ({mafAllele})</td>' +
-                    '<td>{mgf} ({mgfAllele})</td>' +
-                    '<td>{mendelianErrors}</td>' +
-                    '<td>{missingAlleles}</td>' +
-                    '<td>{missingGenotypes}</td>' +
+//                    '<td>{maf} ({mafAllele})</td>' +
+//                    '<td>{mgf} ({mgfAllele})</td>' +
+//                    '<td>{mendelianErrors}</td>' +
+//                    '<td>{missingAlleles}</td>' +
+//                    '<td>{missingGenotypes}</td>' +
+                    '<td><tpl if="maf == -1">NA ({mafAllele}) <tpl else>{maf} ({mafAllele})</tpl></td>' +
+                    '<td><tpl if="mgf == -1">NA ({mgfAllele}) <tpl else>{mgf} ({mgfAllele})</tpl></td>' +
+                    '<td><tpl if="mendelianErrors == -1">NA <tpl else>{mendelianErrors}</tpl></td>' +
+                    '<td><tpl if="missingAlleles == -1">NA <tpl else>{missingAlleles}</tpl></td>' +
+                    '<td><tpl if="missingGenotypes == -1">NA <tpl else>{missingGenotypes}</tpl></td>' +
                     '</tr>',
                 '</table>'
             )
