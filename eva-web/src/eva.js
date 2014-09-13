@@ -334,7 +334,9 @@ Eva.prototype = {
     _createFormPanelVariantFilter: function (target) {
         var _this = this;
         var positionFilter = new PositionFilterFormPanel({
-            testRegion: '1:14000-200000'
+            testRegion: '1:14000-200000',
+            emptyText: ''
+
         });
 
 
