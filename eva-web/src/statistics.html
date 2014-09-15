@@ -1,0 +1,153 @@
+<template>
+    <style scoped>
+        /*@import url('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css');*/
+    </style>
+    <div class="row">
+        <div id="statistics-chart-species" class="col-md-6"></div>
+        <div id="statistics-chart-type" class="col-md-6"></div>
+    </div>
+</template>
+
+<script>
+    // This document reference
+    var statisticsDoc = document._currentScript.ownerDocument;
+
+    var statisticsView = document.registerElement('eva-statistics', {
+        prototype: Object.create(HTMLElement.prototype, {
+            /*
+             * Lifecycle callback methods
+             */
+            createdCallback: {
+                value: function () {
+                    var _this = this;
+
+                    //Create a copy of the template node.
+                    var template = document.importNode(statisticsDoc.querySelector('template').content, true);
+//                    _this.createShadowRoot().appendChild(template);
+                    _this.appendChild(template);
+                }
+            },
+            attachedCallback: {
+                value: function () {
+                    var _this = this;
+                    EvaManager.get({
+                        host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                        category: 'meta/studies',
+                        resource: 'stats',
+//                        query:variantID,
+                        success: function (response) {
+                            try {
+                                var stats = response.response[0].result[0];
+                            } catch (e) {
+                                console.log(e);
+                            }
+                            _this.renderData(stats);
+                        }
+                    });
+
+                }
+            },
+
+            renderData: {
+                value: function (data) {
+                    var _this = this;
+                    var species_data  = data.species
+                    var type_data  = data.type
+                    var speciesArray=[];
+                    for (key in species_data) {
+                        speciesArray.push([key,  species_data[key]]);
+                    }
+                     var speciesChartData = {id:'statistics-chart-species',title:'Species',chartData:speciesArray};
+                    _this.drawChart(speciesChartData)
+                    var typeArray=[];
+                    for (key in type_data) {
+                        // TODO We must take care of the types returned
+                        if(key.indexOf(',') == -1) {
+                            typeArray.push([key,  type_data[key]]);
+                        }
+                    }
+                    var typeChartData = {id:'statistics-chart-type',title:'Type',chartData:typeArray};
+                    _this.drawChart(typeChartData)
+
+                }
+            },
+            drawChart: {
+                value: function (data) {
+                    var _this = this;
+                    var height = _this.getAttribute('height');
+                    var width = _this.getAttribute('width');
+                    var id = '#'+data.id;
+//                    var render_id = _this.shadowRoot.querySelector(id);
+                    var render_id = _this.querySelector(id);
+                    var dataArray  = data.chartData;
+                    var title = data.title;
+                    $(function () {
+                        $(render_id).highcharts({
+                            chart: {
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false,
+                                height: height,
+                                width: width,
+                                marginLeft:-50,
+                                marginTop:50
+
+                            },
+                            legend: {
+                                enabled: true,
+                                width: 220,
+                                margin: 0,
+                                labelFormatter: function() {
+                                    return '<div>' + this.name + '('+ this.y + ')</div>';
+                                },
+                                useHTML:true
+
+                            },
+                            title: {
+                                text: 'Studies <br> <span style="font-size:12px;">by '+title+'</span>',
+                                style: {
+//                                    display: 'none'
+                                },
+                                align: 'left'
+                            },
+//                            subtitle: {
+//                                text: 'by ' + title,
+//                                style: {
+////                                    display: 'none'
+//                                },
+//                                align: 'left'
+//                            },
+                            tooltip: {
+                                pointFormat: '<b>{point.y}</b>'
+//                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                        enabled: false
+                                    },
+                                    showInLegend: true
+                                }
+                            },
+                            series: [{
+                                type: 'pie',
+                                name: 'Studies by '+title,
+                                data: dataArray
+                            }],
+                            credits: {
+                                enabled: false
+                            }
+                        });
+
+                    });
+
+                }
+            }
+
+        })
+    });
+
+
+</script>

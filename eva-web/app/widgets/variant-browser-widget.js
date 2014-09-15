@@ -19,11 +19,12 @@ VariantWidget.prototype = {
 
     createTreePanel:function(args){
 
-        Ext.require([
-            'Ext.tree.*',
-            'Ext.data.*',
-            'Ext.window.MessageBox'
-        ]);
+//        Ext.require([
+//            'Ext.tree.*',
+//            'Ext.data.*',
+//            'Ext.window.MessageBox'
+//        ]);
+        Ext.QuickTips.init();
 
         Ext.define('Tree Model', {
             extend: 'Ext.data.Model',
@@ -44,28 +45,15 @@ VariantWidget.prototype = {
             }
         });
 
-        var tree = Ext.create('Ext.tree.Panel', {
-            header:false,
-            border :false,
-            autoWidth: true,
-            autoHeight: true,
-            renderTo: args.id,
-            collapsible: false,
-            useArrows: true,
-            rootVisible: false,
-            store: store,
-            frame: false,
-            hideHeaders: true,
-            bodyBorder:false,
-
-            //the 'columns' property is now 'headers'
-            columns: [
+        var columns;
+        if(args.link){
+             columns = [
                 {
-                    xtype: 'treecolumn', //this is so we know which column will show the tree
-                    //text: 'Task',
+                    xtype: 'treecolumn',
                     flex: 2,
                     sortable: false,
                     dataIndex: 'name',
+                    tooltipType: 'qtip'
 //                    renderer:function (value, meta, record) {
 //                        var link = "http://www.sequenceontology.org/miso/current_release/term/"+record.data.acc;
 //                        return value+' <a href='+link+' target="_blank">'+record.data.acc+'</a>';
@@ -82,7 +70,37 @@ VariantWidget.prototype = {
 
                 }
 
-            ],
+            ]
+        }else{
+            var columns = [
+                {
+                    xtype: 'treecolumn',
+                    flex: 2,
+                    sortable: false,
+                    dataIndex: 'name',
+                    tooltipType: 'qtip'
+                }
+            ]
+
+        }
+
+
+        var tree = Ext.create('Ext.tree.Panel', {
+            header:false,
+            border :false,
+            autoWidth: true,
+            autoHeight: true,
+            renderTo: args.id,
+            collapsible: false,
+            useArrows: true,
+            rootVisible: false,
+            store: store,
+            frame: false,
+            hideHeaders: true,
+            bodyBorder:false,
+
+            //the 'columns' property is now 'headers'
+            columns: columns,
 
 //            dockedItems: [{
 //                xtype: 'toolbar',
@@ -124,14 +142,14 @@ VariantWidget.prototype = {
                     if(record)
                     {
                         if(record.hasChildNodes()){
-                            var is_checked = record.firstChild.data.checked;
                             record.cascadeBy(function(){
-                                if(is_checked == false){
-                                    this.set( 'checked', true );
-                                }else{
-                                    this.set( 'checked', false );
-                                }
-                                record.set('checked', null);
+                               if(this.isLeaf()){
+                                   if(this.data.checked == false){
+                                       this.set( 'checked', true );
+                                   }else{
+                                       this.set( 'checked', false );
+                                   }
+                               }
                             });
                         }
                     }
@@ -152,25 +170,24 @@ VariantWidget.prototype = {
        this.grid = this._createBrowserGrid();
     },
     _createBrowserGrid:function(){
-
-        if(jQuery("#"+this.variantTableID+" div").length){
-            jQuery( "#"+this.variantTableID+" div").remove();
-        }
-
         var _this = this;
+        if(jQuery("#"+_this.variantTableID+" div").length){
+            jQuery( "#"+_this.variantTableID+" div").remove();
+        }
+        _this._clearGrid();
 
-            Ext.require([
-                'Ext.grid.*',
-                'Ext.data.*',
-                'Ext.util.*',
-                'Ext.state.*'
-            ]);
+//            Ext.require([
+//                'Ext.grid.*',
+//                'Ext.data.*',
+//                'Ext.util.*',
+//                'Ext.state.*'
+//            ]);
 
 
             Ext.define(this.variantTableID, {
                 extend: 'Ext.data.Model',
                 fields: [
-                    {name: 'id',type: 'string'},
+                    {name: 'id',type: 'string',type: 'auto'},
                     {name: 'type',type: 'string'},
                     {name: 'chr',type: 'int'},
                     {name: 'start',type: 'int'},
@@ -185,26 +202,20 @@ VariantWidget.prototype = {
                 idProperty: 'id'
             });
 
-
-
-            Ext.QuickTips.init();
-
-            // setup the state provider, all state information will be saved to a cookie
-            Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider'));
-
+            //add CORS support for ASN manifest request
             Ext.Ajax.useDefaultXhrHeader = false;
-            // Can also be specified in the request options
             Ext.Ajax.cors = true;
+
 
 
             var url = METADATA_HOST+'/'+METADATA_VERSION+'/segments/'+_this.location+'/variants?exclude=files,chunkIds'+_this.filters;
             // create the data store
             _this.vbStore = Ext.create('Ext.data.JsonStore', {
                 autoLoad: true,
-                autoSync: true,
+//                autoSync: true,
                 autoLoad: {start: 0, limit: 10},
                 pageSize: 10,
-                remoteSort: true,
+                remoteSort: false,
                 model: this.variantTableID,
                 proxy: {
                     type: 'ajax',
@@ -235,66 +246,64 @@ VariantWidget.prototype = {
                     items:[
                         {
                             text     : 'ID',
-                            sortable : false,
                             dataIndex: 'id',
-                            xtype: 'templatecolumn',
-                            tpl: '<tpl if="id"><a href="?variantID={id}" target="_blank">{id}</a><tpl else>-</tpl>'
+                            renderer: function (value, meta, record) {
+                                if(value.indexOf(_this.variantTableID)!== -1){
+                                    record.data.id = '';
+                                    return '-';
+                                }else{
+                                    return '<a href="?variantID='+value+'" target="_blank">'+value+'</a>';
+                                }
+                            },
+//                            xtype: 'templatecolumn',
+//                            tpl: '<tpl if="id"><a href="?variantID={id}" target="_blank">{id}</a><tpl else>-</tpl>'
 
                         },
                         {
                             text     : 'Chromosome',
-                            sortable : true,
                             dataIndex: 'chr'
                         },
                         {
                             text     : 'Start',
-                            sortable : true,
-                            dataIndex: 'start',
+                            dataIndex: 'start'
                         },
                         {
                             text     : 'End',
-                            sortable : true,
                             dataIndex: 'end'
                         },
                         {
                             text     : 'Type',
-                            sortable : true,
-                            //renderer : createLink,
                             dataIndex: 'type'
-
                         },
                         {
                             text     : 'REF/ALT',
-                            sortable : true,
                             dataIndex: 'ref',
                             xtype: 'templatecolumn',
                             tpl: '<tpl if="ref">{ref}<tpl else>-</tpl>/<tpl if="alt">{alt}<tpl else>-</tpl>'
-
                         },
                         {
                             text     : 'HGVS Name',
-                            sortable : true,
                             dataIndex: 'hgvsName',
                         },
                         {
                             text     : 'View',
-                            sortable : true,
                             dataIndex: 'id',
                             xtype: 'templatecolumn',
-                            align:'left',
                             tpl: '<tpl if="id"><a href="?variantID={id}" target="_blank"><img class="grid-img" src="img/eva_logo.png"/></a>&nbsp;' +
                                     '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
-                                    '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><img alt="NCBI Logo"  title="NCBI" src="//static.pubmed.gov/portal/portal3rc.fcgi/3986154/img/28977"></a>'+
-                                 '<tpl else><a href="?variantID={chr}:{start}:{ref}:{alt}" target="_blank"><img class="grid-img" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="in-active" src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<img alt="NCBI Logo"  class="in-active" title="NCBI" src="//static.pubmed.gov/portal/portal3rc.fcgi/3986154/img/28977"></tpl>'
+                                    '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>'+
+                                 '<tpl else><a href="?variantID={chr}:{start}:{ref}:{alt}" target="_blank"><img class="grid-img" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="in-active" src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="in-active">dbSNP</span></tpl>'
                         }
 
                     ],
                     defaults: {
                         flex: 1,
-                        align:'center'
+                        align:'center',
+                        sortable : false,
+                        cls:'customHeader'
                     }
                 },
-//                height: 350,
+//                 height: 360,
                 //width: 800,
                 autoHeight:true,
                 autoWidth: true,
@@ -303,14 +312,22 @@ VariantWidget.prototype = {
                 renderTo: this.variantTableID,
                 viewConfig: {
                     enableTextSelection: true,
-                    forceFit: true
+                    forceFit: true,
+                    loadMask: true,
+                    removeMask: true,
+                    deferEmptyText:false,
+                    emptyText: 'No Record to Display',
+                    stripeRows: false
+//                    selectedItemCls: 'selectedRow'
                 },
                 deferredRender: false,
                 dockedItems: [{
                     xtype: 'pagingtoolbar',
                     store: _this.vbStore,   // same store GridPanel is using
                     dock: 'top',
-                    displayInfo: true
+                    displayInfo: true,
+                    cls: 'customPagingToolbar',
+//                    defaultButtonUI :'default',
                 }],
                 listeners: {
                     itemclick : function() {
@@ -335,13 +352,16 @@ VariantWidget.prototype = {
                     },
                     render : function(grid){
                         grid.store.on('load', function(store, records, options){
-                            if(_this.vbStore.getCount() > 0){
+                            if(grid.store.getCount() > 0){
+                                grid.view.loadMask.hide();
                                 variant_present = 1;
                                 var variantGenotypeArgs = [];
                                 grid.getSelectionModel().select(0);
-                               // _this.gridEffect = _this._createEffectGrid();
                                 grid.fireEvent('itemclick', grid, grid.getSelectionModel().getLastSelected());
+
                             }else{
+                                grid.setHeight(250);
+                                grid.view.loadMask.hide();
                                 variant_present = 0;
                                 _this._clearGrid();
                             }
@@ -352,26 +372,37 @@ VariantWidget.prototype = {
 
 
             jQuery('#'+_this.variantSubTabsID+' a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-               // console.log(e)
-                if(variant_present === 1){
                     var grid = _this.vbGrid
                     var data = _this._getSelectedData();
+                    if(e.target.parentElement.id === _this.variantFilesTableID+'Li' ){
+                        if(variant_present === 1){
+                            var filesGridArgs = {render_id: _this.variantFilesTableID,variantID: data.variantId };
+                            _this._createFilesGrid(filesGridArgs);
+                        }else{
+                            _this._clearGrid();
+                        }
+                    }
                     if(e.target.parentElement.id === _this.variantEffectTableID+'Li' ){
-                        var effectsGridArgs = {render_id: _this.variantEffectTableID,position: data.position}
-                        _this._createEffectsGrid(effectsGridArgs);
+                        if(variant_present === 1){
+                            var effectsGridArgs = {render_id: _this.variantEffectTableID,position: data.position}
+                            _this._createEffectsGrid(effectsGridArgs);
+                        }else{
+                            _this._clearGrid();
+                        }
                     }
                     else if(e.target.parentElement.id === _this.variantGenoTypeTableID+'Li'){
-                        _this._createGenotypeGrid(data.variantId);
+                        if(variant_present === 1){
+                            _this._createGenotypeGrid(data.variantId);
+                        }else{
+                            _this._clearGrid();
+                        }
                     }
                     else if(e.target.parentElement.id  === _this.variantGenomeViewerID+'Li'){
                         var region = new Region();
                         region.parse(data.location);
                         genomeViewer.setRegion(region);
                     }
-                }else{
-                   // _this._clearGrid();
 
-                }
 
            });
 
@@ -397,14 +428,6 @@ VariantWidget.prototype = {
         });
         variantBrowserGenoTypeWidget.draw('genotype');
 
-        var variantGenotype = new VariantGenotypeWidget({
-            variantId       : args,
-            render_id : _this.variantGenoTypeTableID,
-            title: 'Genotypes',
-            pageSize:10
-        });
-        variantGenotype.draw();
-
     },
     _createEffectsGrid:function(args){
         var _this = this;
@@ -419,25 +442,30 @@ VariantWidget.prototype = {
     _getSelectedData:function(){
         var _this = this;
         var parseData = [];
-        var data =  _this.vbGrid.getSelectionModel().selected.items[0].data;
-        var data = _this.vbGrid.getSelectionModel().selected.items[0].data;
 
-         parseData['variantId'] = data.id;
-         parseData['position']  = data.chr + ":" + data.start + ":" + data.ref + ":" + data.alt;
-         parseData['location']  = data.chr + ":" + data.start + "-" + data.end;
+        if( _this.vbGrid.getSelectionModel().selected.items.length > 0){
+            var data =  _this.vbGrid.getSelectionModel().selected.items[0].data;
+            var data = _this.vbGrid.getSelectionModel().selected.items[0].data;
 
-         if(!parseData.variantId){
-             parseData.variantId = parseData.position;
-         }
-
-        return parseData;
+            parseData['variantId'] = data.id;
+            parseData['position']  = data.chr + ":" + data.start + ":" + data.ref + ":" + data.alt;
+            parseData['location']  = data.chr + ":" + data.start + "-" + data.end;
+            if(!parseData.variantId){
+                parseData.variantId = parseData.position;
+            }
+            return parseData;
+        }else{
+            return;
+        }
     },
 
 
     _clearGrid:function(){
          var _this = this;
-        _this._createGenotypeGrid();
-        _this._createEffectsGrid();
+        $( "#"+_this.variantFilesTableID).empty();
+        $( "#"+_this.variantGenoTypeTableID).empty();
+        $( "#"+_this.variantEffectTableID).empty();
+
 
     }
 

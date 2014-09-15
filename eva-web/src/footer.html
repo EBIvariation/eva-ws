@@ -1,0 +1,213 @@
+<template>
+<style>
+    .ebi-embl-footer-links-container a {
+        text-decoration: none !important;
+        color: #0f2559 !important;
+        border: 0px solid !important;
+        padding: 2px 4px;
+    }
+
+    .ebi-embl-footer-links-container a:visited {
+        color: #666 !important;
+    }
+
+    .ebi-embl-footer-links-container a:hover {
+        text-decoration: none;
+        color: #0e6a0e !important;
+        background-color: #e4e4e4 !important;
+        border: 0px solid !important;
+    }
+
+    .ebi-embl-footer-right > div > a {
+        font-family: 'HelveticaNeueLT Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+        text-decoration: none !important;
+        padding: .5em 2% 0 2% !important;
+        margin-bottom: .5em !important;
+        font-size: 16px !important;
+        color: #333 !important;
+        border-bottom: 2px solid #207A7A;
+        display: inline-block;
+        width: 96%;
+    }
+
+    .ebi-embl-footer-right > div > a:hover {
+        text-decoration: none !important;
+        background-color: #ddd !important;
+        color: #333 !important;
+        border-bottom: 2px solid #207A7A;
+    }
+
+    .ebi-embl-footer-right > div > a:visited {
+        color: #333 !important;
+        border-bottom: 2px solid #207A7A;
+    }
+
+    .ebi-embl-link-research, .ebi-embl-link-research:visited, .ebi-embl-link-research:hover {
+        border-bottom-color: #71B360 !important;
+    }
+
+    .ebi-embl-link-training, .ebi-embl-link-training:visited, .ebi-embl-link-training:hover {
+        border-bottom-color: #FAB700 !important;
+    }
+
+    .ebi-embl-link-industry, .ebi-embl-link-industry:visited, .ebi-embl-link-industry:hover {
+        border-bottom-color: #346189 !important;
+    }
+
+    .ebi-embl-footer-image-a {
+        text-decoration: none !important;
+        border: 0px solid !important;
+        height: 0px;
+        padding: 0px;
+    }
+
+    .ebi-embl-footer {
+        border-top: 5px solid #eee;
+        background-color: rgba(255, 255, 255, 0.85);
+        font-size: 11px;
+        line-height: 1.538;
+        font-family: Verdana, sans-serif;
+        position: relative;
+    }
+
+    .ebi-embl-footer-info > p.address {
+        color: #888;
+        padding: 0px 9px 9px 9px;
+        margin: 0px;
+    }
+
+    .ebi-embl-footer-info {
+        clear: both;
+    }
+
+    .ebi-embl-footer-info > p.legal {
+        padding: 0px 9px 9px 9px;
+        margin: 0px;
+    }
+
+    .ebi-embl-footer .ebi-embl-footer-links ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        text-transform: none;
+    }
+
+    .ebi-embl-footer-left {
+        width: 19%;
+        float: left;
+        margin-left: 1%;
+        margin-top: 20px;
+    }
+
+    .ebi-embl-footer-right {
+        width: 80%;
+        float: right;
+    }
+
+    .ebi-embl-footer-right > div {
+        margin-left: 1%;
+        float: left;
+        margin-top: 20px;
+        width: 19%;
+        position: relative;
+    }
+
+</style>
+<footer class="ebi-embl-footer">
+
+    <div class="ebi-embl-footer-links">
+        <div class="ebi-embl-footer-left">
+            <a class="ebi-embl-footer-image-a" href="http://www.ebi.ac.uk" title="EMBL-EBI">
+                <img src="img/EMBL_EBI_Logo_black.png" alt="EMBL European Bioinformatics Institute">
+            </a>
+            <ul class="ebi-embl-footer-links-container">
+                <li class="first"><a href="//www.ebi.ac.uk/about/news">News</a></li>
+                <li><a href="//www.ebi.ac.uk/about/brochures">Brochures</a></li>
+                <li><a href="//www.ebi.ac.uk/about/contact">Contact us</a></li>
+                <li class="last"><a href="http://intranet.ebi.ac.uk">Intranet</a></li>
+            </ul>
+        </div>
+
+        <div class="ebi-embl-footer-right">
+            <div>
+                <a href="//www.ebi.ac.uk/services">Services</a>
+                <ul class="ebi-embl-footer-links-container">
+                    <li><a href="//www.ebi.ac.uk/services">By topic</a></li>
+                    <li><a href="//www.ebi.ac.uk/services/all">By name (A-Z)</a></li>
+                    <li><a href="//www.ebi.ac.uk/support">Help &amp; Support</a></li>
+                </ul>
+            </div>
+            <div>
+                <a class="ebi-embl-link-research" href="//www.ebi.ac.uk/research">Research</a>
+                <ul class="ebi-embl-footer-links-container">
+                    <li><a href="//www.ebi.ac.uk/research">Overview</a></li>
+                    <li><a href="//www.ebi.ac.uk/research/publications">Publications</a></li>
+                    <li><a href="//www.ebi.ac.uk/research/groups">Research groups</a></li>
+                    <li><a href="//www.ebi.ac.uk/research/postdocs">Postdocs</a> &amp; <a href="//www.ebi.ac.uk/research/eipp">PhDs</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <a class="ebi-embl-link-training" href="//www.ebi.ac.uk/training">Training</a>
+                <ul class="ebi-embl-footer-links-container">
+                    <li><a href="//www.ebi.ac.uk/training">Overview</a></li>
+                    <li><a href="//www.ebi.ac.uk/training/handson">Train at EBI</a></li>
+                    <li><a href="//www.ebi.ac.uk/training/roadshow">Train outside EBI</a></li>
+                    <li><a href="//www.ebi.ac.uk/training/online">Train online</a></li>
+                    <li><a href="//www.ebi.ac.uk/training/contact-us">Contact organisers</a></li>
+                </ul>
+            </div>
+            <div>
+                <a class="ebi-embl-link-industry" href="//www.ebi.ac.uk/industry">Industry</a>
+                <ul class="ebi-embl-footer-links-container">
+                    <li><a href="//www.ebi.ac.uk/industry">Overview</a></li>
+                    <li><a href="//www.ebi.ac.uk/industry/private">Members Area</a></li>
+                    <li><a href="//www.ebi.ac.uk/industry/workshops">Workshops</a></li>
+                    <li><a href="//www.ebi.ac.uk/industry/sme-forum"><abbr title="Small Medium Enterprise">SME</abbr> Forum</a></li>
+                    <li><a href="//www.ebi.ac.uk/industry/contact">Contact Industry programme</a></li>
+                </ul>
+            </div>
+            <div>
+                <a href="//www.ebi.ac.uk/about">About us</a>
+                <ul class="ebi-embl-footer-links-container">
+                    <li><a href="//www.ebi.ac.uk/about">Overview</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/leadership">Leadership</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/funding">Funding</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/background">Background</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/partnerships">Collaboration</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/jobs" title="Jobs, postdocs, PhDs...">Jobs</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/people">People &amp; groups</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/news">News</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/events">Events</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/travel">Visit us</a></li>
+                    <li><a href="//www.ebi.ac.uk/about/contact">Contact us</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="ebi-embl-footer-info">
+        <p class="address">
+            EMBL-EBI, Wellcome Trust Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, UK &nbsp; &nbsp; +44 (0)1223 49 44 44
+        </p>
+
+        <p class="legal ebi-embl-footer-links-container">
+            Copyright © EMBL-EBI 2014 | EBI is an outstation of the
+            <a href="http://www.embl.org">European Molecular Biology Laboratory</a>
+            | <a href="http://www.ebi.ac.uk/about/privacy">Privacy</a>
+            | <a href="http://www.ebi.ac.uk/about/cookies">Cookies</a>
+            | <a href="http://www.ebi.ac.uk/about/terms-of-use">Terms of use</a>
+        </p>
+    </div>
+</footer>
+</template>
+
+<script>
+    var documentLocal = document._currentScript.ownerDocument;
+    var el = document.body.querySelector('#footer');
+    var shadow = el.createShadowRoot();
+    var template = documentLocal.querySelector('template');
+    shadow.appendChild(template.content.cloneNode(true));
+</script>

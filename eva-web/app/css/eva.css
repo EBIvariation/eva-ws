@@ -36,10 +36,10 @@ div#local-masthead h2{
 }
 
 .panel-ebi-primary > .panel-heading, .panel-ebi-secondary > .panel-heading{
-   /*background-color: #CFDFF4;*/
-   background-color: #70BDBD;
-   /*border-radius:0 0 0 0;*/
-   padding: 2px 3px;
+    /*background-color: #CFDFF4;*/
+    background-color: #70BDBD;
+    /*border-radius:0 0 0 0;*/
+    padding: 2px 3px;
 }
 
 .btn-ebi-primary {
@@ -50,7 +50,7 @@ div#local-masthead h2{
 }
 
 /*.accordion-toggle span{*/
-    /*float: right;*/
+/*float: right;*/
 
 /*}*/
 .panel-heading .accordion-toggle:after {
@@ -68,7 +68,7 @@ div#local-masthead h2{
 
 /*.my-table*/
 /*{*/
-    /*overflow-y:scroll;*/
+/*overflow-y:scroll;*/
 /*}*/
 
 .gridStyle {
@@ -133,16 +133,16 @@ div .ngHeaderText{
     border-collapse: collapse;
     vertical-align: top;
 }
- h2,h4{
-     color:#426783;
- }
- h3,h5 {
+h2,h4{
+    color:#426783;
+}
+h3,h5 {
     color:#BF8230;
- }
+}
 
- h3 span{
-     color:#BBBBBB;
- }
+h3 span{
+    color:#BBBBBB;
+}
 
 .no-icon {
     display : none;

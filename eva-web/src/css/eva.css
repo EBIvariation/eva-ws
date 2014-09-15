@@ -1,0 +1,284 @@
+/*
+ * Copyright (c) 2014 Francisco Salavert (SGL-CIPF)
+ * Copyright (c) 2014 Alejandro Alemán (SGL-CIPF)
+ * Copyright (c) 2014 Ignacio Medina (EBI-EMBL)
+ *
+ * This file is part of EVA.
+ *
+ * EVA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EVA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EVA. If not, see <http://www.gnu.org/licenses/>.
+ */
+@font-face {
+    font-family: 'HelveticaNeueLT Pro';
+    src: url('../fonts/helveticaneueltprolt.otf');
+}
+
+body.eva {
+    max-width: 1350px;
+    margin: 0 auto;
+    background: #fff url(../img/pale_grey_slight_texture.jpg) top left repeat;
+    /*font-family: 'HelveticaNeueLT Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+    font-family: Verdana, sans-serif;
+
+}
+
+.eva a {
+    cursor: pointer;
+}
+
+.eva-grid-img-active {
+    width: 16px;
+    height: 16px;
+}
+
+.eva-grid-img-inactive {
+    opacity:0.2;
+}
+
+.eva-child {
+
+}
+
+.eva #header {
+    margin: 0px;
+}
+
+.eva #content {
+    padding: 10px;
+    background-color: #ffffff;
+    margin: 0px;
+}
+
+.eva .eva-app {
+    position: relative;
+}
+
+.eva .variant-browser-option-div {
+    position: relative;
+    overflow: hidden;
+}
+
+.eva .form-panel-variant-filter-div {
+    width: 300px;
+    float: left;
+}
+
+.eva .variant-widget-div {
+    margin-left: 10px;
+    width: 1020px;
+    float: left;
+}
+
+.eva .genome-browser-option-div {
+    position: relative;
+    overflow: hidden;
+}
+
+.eva .form-panel-genome-filter-div {
+    width: 1318px;
+    position: relative;
+    /*border: 1px solid #d3d3d3;*/
+    margin-bottom: 10px;
+}
+
+.eva .genome-viewer-div {
+    font-size: 12px;
+    width: 1318px;
+    float: left;
+    border: 1px solid #d3d3d3;
+}
+
+.eva .genome-viewer-title-div {
+    margin: 15px 0 10px 0;
+}
+
+.eva .tracks-title-div {
+    margin: 15px 0 10px 0;
+}
+
+.ocb-variant-tab-panel-title {
+    margin-top: 20px;
+    color: #BF8230;
+    font-size: 160%;
+    margin-left: 50px;
+}
+
+.ocb-variant-tab-panel .x-tab-bar-top>.x-tab-bar-strip-default {
+    border-width: 0;
+    height: 0px;
+}
+
+.eva .form-panel-variant-filter-title-div {
+    margin: 0 0 10px 0;
+}
+
+.no-icon {
+    display: none;
+}
+
+.eva-underline {
+    text-decoration: underline;
+}
+
+.eva-pointer {
+    cursor: pointer;
+}
+
+
+.eva-header-1 {
+    color: #BF8230;
+    font-size: 160%;
+    padding: 4px 6px;
+    margin-bottom: 5px;
+    border: none;
+}
+.dgva-header-1 {
+    color: #426783;
+    font-size: 160%;
+    padding: 4px 6px;
+    margin-bottom: 5px;
+    border: none;
+}
+.eva-header-2 {
+    color: #426783;
+    font-size: 140%;
+    padding: 4px 6px;
+    margin-bottom: 0px;
+    border: none;
+}
+
+
+.ocb-attributes-table {
+    cellspacing: 0;
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+}
+
+.ocb-attributes-table tr {
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+}
+
+.ocb-attributes-table td {
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+    padding: 5px;
+    max-width: 200px;
+    overflow: hidden;
+    text-align: center;
+}
+
+.ocb-attributes-table td.header {
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+    padding: 5px;
+    background-color: whiteSmoke;
+    color: steelblue;
+    font-weight: bold;
+}
+
+.ocb-stats-table {
+    cellspacing: 0;
+    border-collapse: collapse;
+}
+
+.ocb-stats-table tr {
+    border-collapse: collapse;
+}
+
+.ocb-stats-table td {
+    border-collapse: collapse;
+    padding: 5px;
+}
+
+.ocb-stats-table td.header {
+    border-collapse: collapse;
+    padding: 5px;
+    color: steelblue;
+    /*font-weight:bold;*/
+}
+
+.ocb-header-4 h4{
+    color:#BF8230;
+}
+
+
+/* top Message*/
+.ocb-msg-hidden {
+    border: 1px solid #156765;
+}
+
+.ocb-msg-hidden :first-child {
+    background-color: #156765;
+}
+
+.ocb-msg-hidden :last-child {
+    color: #156765;
+}
+
+.ocb-study-filter {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+h2,h4{
+    color:#426783;
+}
+h3,h5 {
+    color:#BF8230;
+}
+
+h3 span{
+    color:#BBBBBB;
+}
+
+
+.eva-button{
+
+    color: #FFFFFF;
+    border-radius: 0 0 0 0;
+    background-color: #70BDBD;
+}
+
+.studyBrowserTabs.nav-pills > li > a {
+    padding-top:3px !important;
+    padding-bottom:3px !important;
+    font-size:16px;
+    font-weight: bold;
+    color:#ffffff;
+    background-color: #6BB6B7;
+}
+.studyBrowserTabs.nav-pills {
+    min-height:20px !important;
+    /*background-color: #CFDFF4;*/
+    border-color: #ffffff;
+    color:#ffffff;
+}
+
+.studyBrowserTabs.nav-pills li a, .nav-tabs{
+    border-radius: 0px;
+    border: 1px solid #ddd;
+    border-color: #156765;
+}
+
+.studyBrowserTabs.nav-pills > li.active > a{
+     color:#ffffff !important;
+     background-color: #1F6D6D;
+ }
+
+.studyBrowserTabs.nav-pills > li > a:hover{
+    color:#ffffff !important;
+    background-color: #1F6D6D;
+}
+
+

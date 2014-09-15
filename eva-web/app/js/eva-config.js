@@ -2,14 +2,18 @@
 consequenceTypes = [
     {
         name:'Transcript Variant',
-        cls: "task",
+        cls: "parent",
         expanded: true,
         leaf: false,
+        checked:false,
+        iconCls :'no-icon',
         children:[{
             name: 'Coding Variant',
+            cls: "parent",
             leaf: false ,
             iconCls :'no-icon',
             expanded: true,
+            checked:false,
             children: [
                 {acc: 'SO:0001587', name: 'stop_gained', qtip: 'A sequence variant whereby at least one base of a codon is changed, resulting in a premature stop codon, leading to a shortened transcript',leaf: true,checked: false,  iconCls :'no-icon' },
                 {acc: 'SO:0001578', name: 'stop_lost', qtip: 'A sequence variant where at least one base of the terminator codon (stop) is changed, resulting in an elongated transcript',leaf: true,checked: false,  iconCls :'no-icon' },
@@ -31,9 +35,11 @@ consequenceTypes = [
             {
 
                 name: 'Non-coding Variant',
+                cls: "parent",
                 leaf: false ,
                 iconCls :'no-icon',
                 expanded: true,
+                checked:false,
                 children: [
                     {acc: 'SO:0001623', name: '5_prime_UTR_variant', qtip: 'A UTR variant of the 5\' UTR',leaf: true,checked: false,  iconCls :'no-icon'},
                     {acc: 'SO:0001624', name: '3_prime_UTR_variant', qtip: 'A UTR variant of the 3\' UTR',leaf: true, checked: false,  iconCls :'no-icon'},
@@ -47,9 +53,11 @@ consequenceTypes = [
             {
 
                 name: 'Splice Variant',
+                cls: "parent",
                 leaf: false ,
                 iconCls :'no-icon',
                 expanded: true,
+                checked:false,
                 children: [
                     {acc: 'SO:0001575', name: 'splice_donor_variant', qtip: 'A splice variant that changes the 2 base region at the 5\' end of an intron',leaf: true,checked: false,  iconCls :'no-icon' },
                     {acc: 'SO:0001574', name: 'splice_acceptor_variant', qtip: 'A splice variant that changes the 2 base region at the 3\' end of an intron',leaf: true,checked: false,  iconCls :'no-icon' },
@@ -67,9 +75,11 @@ consequenceTypes = [
     },
     {
         name:'Regulatory Variant ',
-        cls: "task",
+        cls: "parent",
         expanded: true,
         leaf: false,
+        checked:false,
+        iconCls :'no-icon',
         children: [
             {acc: 'SO:0001782', name: 'TF_binding_site_variant', qtip: 'A sequence variant located within a transcription factor binding site',leaf: true,checked: false,  iconCls :'no-icon' },
             {acc: 'SO:0001895', name: 'TFBS_ablation', qtip: 'A feature ablation whereby the deleted region includes a transcription factor binding site',leaf: true,checked: false,  iconCls :'no-icon' },
@@ -82,9 +92,11 @@ consequenceTypes = [
     },
     {
         name:'Intergenic Variant',
-        cls: "task",
+        cls: "parent",
         expanded: true,
         leaf: false,
+        checked:false,
+        iconCls :'no-icon',
         children: [
             {acc: 'SO:0001631', name: 'upstream_gene_variant', qtip: 'A sequence variant located 5\' of a gene',leaf: true,checked: false,  iconCls :'no-icon' },
             {acc: 'SO:0001632', name: 'downstream_gene_variant', qtip: 'A sequence variant located 3\' of a gene',leaf: true,checked: false,  iconCls :'no-icon' },
@@ -96,7 +108,7 @@ consequenceTypes = [
 variationClasses = [
     {
         name:'Variation',
-        cls: "task",
+        cls: "parent",
         expanded: true,
         leaf: false,
         children: [

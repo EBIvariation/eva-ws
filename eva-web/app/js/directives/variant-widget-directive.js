@@ -9,8 +9,10 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
         transclude: true,
         templateUrl: 'views/variation-browser-view.html',
         controller: function($scope) {
+
         },
         link: function($scope, element, attr) {
+
 
             var location = '21:9411240-9711260';
             //var gene = 'TMEM51';
@@ -66,16 +68,19 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                 var studiesTreeArgs = [];
                 studiesTreeArgs.id =  $scope.studiesTreeId;
                 studiesTreeArgs.data = $scope.studies;
+                studiesTreeArgs.link = false;
 
 
                 var consequenceTypeTreeArgs = [];
                 consequenceTypeTreeArgs.id =  $scope.consequenceTypeTreeId;
                 consequenceTypeTreeArgs.data = consequenceTypes;
+                consequenceTypeTreeArgs.link = true;
 
 
                 var variationClassesTreeArgs = [];
                 variationClassesTreeArgs.id =  $scope.variationClassesTreeId;
                 variationClassesTreeArgs.data = variationClasses;
+                variationClassesTreeArgs.link = true;
 
                 if(e.target.parentElement.id === 'variationLi'){
 
@@ -117,7 +122,13 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                     $scope.CTfilter = '';
                 }
 
-                $scope.filters =  $scope.CTfilter;
+                if(studyFilter){
+                    $scope.studyFilter = '&studies='+studyFilter;
+                }else{
+                    $scope.studyFilter = '';
+                }
+
+                $scope.filters =  $scope.CTfilter+$scope.studyFilter;
 
                 var variantWidget;
                 variantWidget = new VariantWidget({
@@ -322,9 +333,9 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
                     });
 
                     var region = regionData[0][0].chromosome+':'+regionData[0][0].start+'-'+regionData[0][0].end;
-                    $scope.$apply(function(){
+                    //$scope.$apply(function(){
                         $scope.location = region;
-                    })
+                   // })
 
                 }
             }
@@ -344,7 +355,10 @@ angular.module('variantWidgetModule', []).directive('variantWidget', function ()
             //Function to clear checked filters
             function clearCheckedFilters(args){
                 args.store.getRootNode().cascadeBy(function(){
-                    this.set( 'checked', false );
+                    if(this.isLeaf()){
+                        this.set( 'checked', false );
+                    }
+
                 });
             }
 

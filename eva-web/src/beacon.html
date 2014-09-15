@@ -1,0 +1,283 @@
+<template>
+    <style scoped>
+        @import url('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css');
+        .borderless tbody tr td, .borderless thead tr th {
+            border: none;
+        }
+        #resultShow{
+            color: #426783;
+        }
+        .valid{
+            color:#25AC0F;
+        }
+        .invalid{
+            color:#CB4437;
+        }
+
+        h2{
+            color:#378080;
+        }
+
+    </style>
+    <div class="row">
+        <div class="col-md-12">
+            <form id="beacon-form">
+                <div class="row">
+                    <div class="col-md-2 form-group"><p>Project</p></div>
+                    <div class="col-md-2 form-group input-group-sm"><div id="project-list"></div></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 form-group"><p>Chromosome</p></div>
+                    <div class="col-md-2 form-group input-group-sm"><div id="chromosome-select"></div></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 form-group"><p>Coordinate</p></div>
+                    <div class="col-md-2 form-group input-group-sm"><input class="form-control" id="coordinate"  name=coordinate type="text" required/></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 form-group"><p>Allele</p></div>
+                    <div class="col-md-2 form-group input-group-sm"><input class="form-control" id="allele" name=allele type="text"  required/></div>
+                </div>
+                <h5>Format Type</h5>
+                <div class="row">
+                    <div class="col-md-2 form-group"><p>Text</p></div>
+                    <div class="col-md-4 form-group input-group-sm"> <input type="radio"  name="formatType" value="text" checked="true"> </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 form-group"><p>JSON</p></div>
+                    <div class="col-md-4 form-group input-group-sm"> <input type="radio"  name="formatType" value="json"> </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 form-group"><span id="refresh-button"></span> <input id="submit" class="btn btn-primary" type="submit"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5">
+            <div id="resultShow"></div><br />
+        </div>
+    </div>
+</template>
+<script>
+    // This document reference
+    var beaconDoc = document._currentScript.ownerDocument;
+    var project_ids = {};
+
+    var beacon = document.registerElement('eva-beacon', {
+        prototype: Object.create(HTMLElement.prototype, {
+            /*
+             * Lifecycle callback methods
+             */
+            createdCallback: {
+                value: function () {
+                    var _this = this;
+
+                    //Create a copy of the template node.
+                    var template = document.importNode(beaconDoc.querySelector('template').content, true);
+                    _this.createShadowRoot().appendChild(template);
+
+                }
+            },
+            attributeChangedCallback:{
+                value: function (attrName, oldValue, newValue) {
+                    var _this = this;
+
+                    if(attrName == 'project'){
+                        _this.shadowRoot.querySelector('#'+attrName).value  =  _this.getStudyId(newValue);
+                    }else{
+                        _this.shadowRoot.querySelector('#'+attrName).value  =  newValue;
+                    }
+
+                    _this.showResultDiv.innerHTML = "";
+                }
+            },
+            attachedCallback: {
+                value: function () {
+                    var _this = this;
+                    _this.projectDiv = _this.shadowRoot.querySelector("#project-list");
+                    _this.chrSelectDiv = _this.shadowRoot.querySelector("#chromosome-select");
+                    _this.showResultDiv =  _this.shadowRoot.querySelector("#resultShow");
+                    _this.beaconForm = _this.shadowRoot.querySelector('#beacon-form');
+
+                    if(_this.chromEl == null){
+
+                        EvaManager.get({
+                            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                            category: 'meta/studies',
+                            resource: 'all',
+                            success: function (response) {
+                                try {
+                                    project_ids = response.response[0].result;
+
+                                } catch (e) {
+                                    console.log(e);
+                                }
+                                _this.createProjectElement(project_ids);
+                            }
+                        });
+
+                        var chrSelectList = document.createElement("select");
+                        chrSelectList.setAttribute("id", "chrom");
+                        chrSelectList.setAttribute("required" ,"");
+                        _this.chrSelectDiv.appendChild(chrSelectList);
+                        for (var i = 1; i < 25; i++) {
+                            var option = document.createElement("option");
+                            if(i == 23){
+                                option.setAttribute("value", i);
+                                option.text = 'Chr X';
+                            }
+                            else if(i == 24){
+                                option.setAttribute("value", i);
+                                option.text = 'Chr Y';
+                            }else{
+                                option.setAttribute("value", i);
+                                option.text = 'Chr '+i;
+                            }
+
+                            chrSelectList.appendChild(option);
+                        }
+                    }
+
+                    //get Element
+                    _this.chromEl =  _this.shadowRoot.querySelector('#chrom');
+                    _this.coordinateEl =  _this.shadowRoot.querySelector('#coordinate');
+                    _this.alleleEl =  _this.shadowRoot.querySelector('#allele');
+                    _this.formatTypeEl =  _this.shadowRoot.querySelectorAll('input[type="radio"][name="formatType"]');
+
+                    //set element value from attribute
+//                    _this.projectEl.value  = _this.getAttribute('project');
+                    _this.chromEl.value  = _this.getAttribute('chrom');
+                    _this.coordinateEl.value  =   _this.getAttribute('coordinate');
+                    _this.alleleEl.value  =  _this.getAttribute('allele');
+
+                    _this.beaconForm .addEventListener('submit', function(eve) {
+                        var data= {};
+                        for( key in _this.formatTypeEl ){
+                           if(_this.formatTypeEl[key].checked === true){
+                               data.formatType = _this.formatTypeEl[key].value;
+                           }
+                        }
+//                        if(_this.formatType){
+//                            data.formatType = _this.formatTypeEl.value;
+//                        }
+                        var region =  _this.chromEl.value+':'+ _this.coordinateEl.value+':'+  _this.alleleEl.value;
+                        _this.projectEl =  _this.shadowRoot.querySelector('#project');
+                        var params = {studies:_this.projectEl.value}
+                        EvaManager.get({
+                        host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                        category: 'variants',
+                        resource: 'exists',
+                        query:region,
+                        params:params,
+                        success: function (response) {
+                                try {
+                                    data.result = response.response[0].result;
+                                } catch (e) {
+                                    console.log(e);
+                                }
+                            _this.renderResultData(data, region);
+                            }
+                        });
+                        eve.preventDefault();
+
+                    }, true);
+
+                }
+            },
+            renderResultData: {
+                value: function (data,region) {
+                   var _this = this;
+                   var resultData
+                   var cssClass;
+
+                   if(data.result == 'true'){
+                       cssClass = 'valid';
+                   }else{
+                       cssClass = 'invalid';
+                   }
+                   var _region = region.split(":");
+                    if(data.formatType == 'json'){
+                       _resultData = {query:{chrom:_region[0],pos:_region[1],allele:_region[2]},exist:data.result};
+                       resultData ='<h4>Result:</h4>'+ JSON.stringify(_resultData);
+                   }else{
+                       resultData = '<h4>Result:</h4><table  class="table table-bordered">' +
+                                     '<tr><td>Chromosome</td><td>'+_region[0]+'</td></tr>'+
+                                     '<tr><td>Coordinate</td><td>'+_region[1]+'</td></tr>'+
+                                     '<tr><td>Allele</td><td>'+_region[2]+'</td></tr>'+
+                                     '<tr><td>Exist</td><td class="'+cssClass+'">'+data.result+'</td></tr>'+
+                                    '</table>'
+                   }
+
+                    _this.showResultDiv.innerHTML = "";
+                    var resultElDiv =  document.createElement("div");
+                    resultElDiv.innerHTML = resultData;
+                    _this.showResultDiv.appendChild(resultElDiv);
+
+                    var refreshBtnDiv =  _this.shadowRoot.querySelector("#refresh-button");
+                    refreshBtnDiv.innerHTML = "";
+                    var refreshBtnEl =  document.createElement("button");
+                    refreshBtnEl.type = "submit";
+                    refreshBtnEl.textContent = "Reset";
+                    refreshBtnEl.className = "btn btn-primary";
+                    refreshBtnEl.id = "refresh";
+                    refreshBtnDiv.appendChild(refreshBtnEl);
+
+                    var refresh = _this.shadowRoot.querySelector('#refresh');
+                    refresh.addEventListener('click', function(eve) {
+                        eve.preventDefault();
+                        _this.showResultDiv.innerHTML = "";
+                        for (i = 0; i < _this.attributes.length;) {
+                            _this.removeAttribute(_this.attributes[i].nodeName)
+                        }
+                        _this.beaconForm.reset();
+                    }, true);
+
+                }
+            },
+            createProjectElement:{
+                value:function(data){
+                    var _this = this;
+                    if(_this.projectEl == null){
+                        var projectList = document.createElement("select");
+                        projectList.setAttribute("id", "project");
+//                        projectList.setAttribute("multiple", "");
+                        _this.projectDiv.appendChild(projectList);
+
+                        var projectOption = document.createElement("option");
+                            projectOption.setAttribute("value", '');
+                            projectOption.text ='';
+                            projectList.appendChild(projectOption);
+
+                        for (var i = 0; i < data.length; i++) {
+                            projectOption = document.createElement("option");
+                            var studyId = _this.getStudyId(data[i].id);
+                            if(studyId){
+                                projectOption.setAttribute("value", studyId);
+                                projectOption.text = data[i].id+' - '+data[i].name;
+                                projectList.appendChild(projectOption);
+                            }
+
+                        }
+                    }
+
+                }
+            },
+            getStudyId: {
+                value: function (data) {
+                    var _this = this;
+                    for (var i = 0; i < projects.length; i++) {
+                        if (projects[i].projectId === data) {
+                            return projects[i].alias;
+                        }
+                    }
+                }
+            }
+
+        })
+    });
+
+
+
+
+</script>
