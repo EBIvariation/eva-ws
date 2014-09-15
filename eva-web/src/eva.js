@@ -121,9 +121,7 @@ Eva.prototype = {
 //        this.childDivMenuMap['Study Browser'] = this.studyBrowserDiv;
 //        this.studyBrowser = this._createStudyBrowser(this.studyBrowserDiv);
         $(this.studyBrowserDiv).addClass('eva-child');
-        this.childDivMenuMap['Study Browser'] = this.studyBrowserDiv;
-
-
+        this.childDivMenuMap['Study Browser'] =  this.studyBrowserDiv;
 
         /* variant browser option*/
 //        this.variantBrowserOptionDiv = document.createElement('div');
@@ -178,6 +176,8 @@ Eva.prototype = {
         this.targetDiv.appendChild(this.div);
 
         this.evaMenu.draw();
+        var contentDiv = document.querySelector('#content');
+        this.studyPanel  = this._createStudyBrowserPanel(contentDiv);
 //        this.variantWidget.draw();
 ////        this.studyBrowser.draw();
 //
@@ -185,7 +185,7 @@ Eva.prototype = {
 //        this.genomeViewer.draw();
 //        this.formPanelGenomeFilter.draw();
 
-//        this._loadStudies();
+
 
 //        this.select('Study Browser');
         this.select('Home');
@@ -197,6 +197,7 @@ Eva.prototype = {
     },
     _selectHandler: function (option) {
         var _this = this;
+        this.studyPanel.hide();
         $('body').find('.eva-child').each(function (index, el) {
             _this.div.removeChild(el)
         });
@@ -209,11 +210,11 @@ Eva.prototype = {
                 _this._twitterWidgetUpdate();
                 break;
             case 'Study Browser':
-//                this.studyBrowser.update();
+                this.studyPanel.show();
                 break;
-            case 'VCF Browser':
+            case 'EVA Browser':
                 this.variantBrowserOptionDiv = document.createElement('div');
-                this.variantBrowserOptionDiv.innerHTML = '<title>VCF Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
+                this.variantBrowserOptionDiv.innerHTML = '<title>EVA Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
                 $(this.variantBrowserOptionDiv).addClass('eva-child variant-browser-option-div');
                 this.div.appendChild(this.variantBrowserOptionDiv);
 //                this.childDivMenuMap['VCF Browser'] = this.variantBrowserOptionDiv;
@@ -252,6 +253,16 @@ Eva.prototype = {
         });
         return evaMenu;
     },
+    _createStudyBrowserPanel: function(target){
+        console.log(target)
+        var studyBrowser = new StudyBrowser({
+            target: target
+        });
+
+        studyBrowser.draw();
+        return studyBrowser;
+
+    },
     _createVariantWidget: function (target) {
 //        var width = this.width - parseInt(this.div.style.paddingLeft) - parseInt(this.div.style.paddingRight);
 
@@ -265,7 +276,7 @@ Eva.prototype = {
             },
             border: true,
             browserGridConfig: {
-                title: 'VCF Browser',
+                title: 'EVA Browser',
                 border: true
             },
             toolPanelConfig: {
@@ -323,7 +334,9 @@ Eva.prototype = {
     _createFormPanelVariantFilter: function (target) {
         var _this = this;
         var positionFilter = new PositionFilterFormPanel({
-            testRegion: '1:14000-20000'
+            testRegion: '1:14000-200000',
+            emptyText: ''
+
         });
 
 
@@ -776,6 +789,11 @@ Eva.prototype = {
                     console.log(e);
                 }
                 filter.studiesStore.loadRawData(studies);
+                //set all records checked default
+                filter.studiesStore.each(function(rec){
+                    rec.set('uiactive', true)
+                })
+                console.log('dfv')
                _this.trigger('studies:change', {studies: studies, sender: _this});
             }
         });
