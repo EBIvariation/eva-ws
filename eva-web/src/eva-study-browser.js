@@ -354,6 +354,7 @@ EvaStudyBrowserPanel.prototype = {
 
         this.grid = Ext.create('Ext.grid.Panel', {
                 title: 'Studies found',
+                cls:'studybrowser',
                 store: this.studiesStore,
                 header: this.headerConfig,
                 loadMask: true,
@@ -503,6 +504,9 @@ EvaStudyBrowserPanel.prototype = {
         if (this.panel) {
             this.panel.update();
         }
+    },
+    getPanel: function(){
+        return this.panel;
     }
 
 };

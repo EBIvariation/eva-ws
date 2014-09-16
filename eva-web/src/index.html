@@ -127,7 +127,8 @@
 
 <!-- build:script eva-js -->
 <script type="text/javascript" src="eva.js"></script>
-<script type="text/javascript" src="studyBrowserPanel.js"></script>
+<script type="text/javascript" src="eva-variant-widget-panel.js"></script>
+<script type="text/javascript" src="eva-study-browser-panel.js"></script>
 <script type="text/javascript" src="eva-study-browser.js"></script>
 <script type="text/javascript" src="dgva-study-browser.js"></script>
 <!--<script type="text/javascript" src="eva-study-browser-panel.old.js"></script>-->
@@ -157,6 +158,9 @@
 //        var studyBrowserDiv = link.import.querySelector('#studyBrowser');
         var studyBrowserDiv = document.createElement('div');
         studyBrowserDiv.innerHTML = '<title>Study Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
+
+        var evaBrowserDiv = document.createElement('div');
+        evaBrowserDiv.innerHTML = '<title>EVA Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
         var beaconDiv = link.import.querySelector('#beacon');
 
         var tab = getUrlParameters("");
@@ -201,7 +205,8 @@
             beacon:beaconDiv,
             clinicalDiv:clinicalDiv,
             submissionForm:submissionForm,
-            studyBrowserDiv:studyBrowserDiv
+            studyBrowserDiv:studyBrowserDiv,
+            evaBrowserDiv:evaBrowserDiv,
         });
         eva.draw();
 

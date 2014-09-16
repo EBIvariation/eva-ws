@@ -33,21 +33,6 @@ function Eva(args) {
     this.on(this.handlers);
 
     this.childDivMenuMap = {};
-
-
-//    this.studiesStore = Ext.create('Ext.data.Store', {
-//        pageSize: 50,
-//        proxy: {
-//            type: 'memory'
-//        },
-//        fields: [
-//            {name: 'studyName', type: 'string'},
-//            {name: 'studyId', type: 'string'}
-//        ],
-//        autoLoad: false
-//    });
-
-
     this.rendered = false;
     if (this.autoRender) {
         this.render(this.targetId);
@@ -115,51 +100,32 @@ Eva.prototype = {
 
 
         /* Study Browser Panel*/
-//        this.studyBrowserDiv = document.createElement('div')
-//        $(this.studyBrowserDiv).addClass('eva-child eva-study-browser-div');
-//        this.div.appendChild(this.studyBrowserDiv);
-//        this.childDivMenuMap['Study Browser'] = this.studyBrowserDiv;
-//        this.studyBrowser = this._createStudyBrowser(this.studyBrowserDiv);
         $(this.studyBrowserDiv).addClass('eva-child');
         this.childDivMenuMap['Study Browser'] =  this.studyBrowserDiv;
 
         /* variant browser option*/
-//        this.variantBrowserOptionDiv = document.createElement('div');
-//        this.variantBrowserOptionDiv.innerHTML = '<title>VCF Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
-//        $(this.variantBrowserOptionDiv).addClass('eva-child variant-browser-option-div');
-//        this.div.appendChild(this.variantBrowserOptionDiv);
-//        this.childDivMenuMap['VCF Browser'] = this.variantBrowserOptionDiv;
-//
-//        this.formPanelVariantFilterDiv = document.createElement('div');
-//        $(this.formPanelVariantFilterDiv).addClass('form-panel-variant-filter-div');
-//        this.variantBrowserOptionDiv.appendChild(this.formPanelVariantFilterDiv);
-//
-//        this.variantWidgetDiv = document.createElement('div');
-//        $(this.variantWidgetDiv).addClass('variant-widget-div');
-//        this.variantBrowserOptionDiv.appendChild(this.variantWidgetDiv);
-//
-//        this.formPanelVariantFilter = this._createFormPanelVariantFilter(this.formPanelVariantFilterDiv);
-//        this.variantWidget = this._createVariantWidget(this.variantWidgetDiv);
+        $(this.evaBrowserDiv).addClass('eva-child');
+        this.childDivMenuMap['EVA Browser'] = this.evaBrowserDiv;
 
         /* genome browser option*/
-        this.genomeBrowserOptionDiv = document.createElement('div');
-        $(this.genomeBrowserOptionDiv).addClass('eva-child genome-browser-option-div');
-        this.div.appendChild(this.genomeBrowserOptionDiv);
-        this.childDivMenuMap['Genome Browser'] = this.genomeBrowserOptionDiv;
-
-        this.formPanelGenomeFilterDiv = document.createElement('div');
-        $(this.formPanelGenomeFilterDiv).addClass('form-panel-genome-filter-div');
-        this.genomeBrowserOptionDiv.appendChild(this.formPanelGenomeFilterDiv);
-
-        this.genomeViewerTitleDiv = document.createElement('div');
-        $(this.genomeViewerTitleDiv).addClass('genome-viewer-title-div eva-header-1');
-        this.genomeBrowserOptionDiv.appendChild(this.genomeViewerTitleDiv);
-        this.genomeViewerTitleDiv.innerHTML = 'Genome browser';
-
-        this.genomeViewerDiv = document.createElement('div');
-        $(this.genomeViewerDiv).addClass('genome-viewer-div');
-        this.genomeBrowserOptionDiv.appendChild(this.genomeViewerDiv);
-
+//        this.genomeBrowserOptionDiv = document.createElement('div');
+//        $(this.genomeBrowserOptionDiv).addClass('eva-child genome-browser-option-div');
+//        this.div.appendChild(this.genomeBrowserOptionDiv);
+//        this.childDivMenuMap['Genome Browser'] = this.genomeBrowserOptionDiv;
+//
+//        this.formPanelGenomeFilterDiv = document.createElement('div');
+//        $(this.formPanelGenomeFilterDiv).addClass('form-panel-genome-filter-div');
+//        this.genomeBrowserOptionDiv.appendChild(this.formPanelGenomeFilterDiv);
+//
+//        this.genomeViewerTitleDiv = document.createElement('div');
+//        $(this.genomeViewerTitleDiv).addClass('genome-viewer-title-div eva-header-1');
+//        this.genomeBrowserOptionDiv.appendChild(this.genomeViewerTitleDiv);
+//        this.genomeViewerTitleDiv.innerHTML = 'Genome browser';
+//
+//        this.genomeViewerDiv = document.createElement('div');
+//        $(this.genomeViewerDiv).addClass('genome-viewer-div');
+//        this.genomeBrowserOptionDiv.appendChild(this.genomeViewerDiv);
+//
 //        this.genomeViewer = this._createGenomeViewer(this.genomeViewerDiv);
 //        this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
 
@@ -174,22 +140,16 @@ Eva.prototype = {
             return;
         }
         this.targetDiv.appendChild(this.div);
-
         this.evaMenu.draw();
         var contentDiv = document.querySelector('#content');
-        this.studyPanel  = this._createStudyBrowserPanel(contentDiv);
-//        this.variantWidget.draw();
-////        this.studyBrowser.draw();
-//
-//        this.formPanelVariantFilter.draw();
-//        this.genomeViewer.draw();
-//        this.formPanelGenomeFilter.draw();
+        this.studyBrowserPanel  = this._createStudyBrowserPanel(contentDiv);
+        this.variantWidgetPanel  = this._createVariantWidgetPanel(contentDiv);
 
-
-
-//        this.select('Study Browser');
+        // this.formPanelVariantFilter.draw();
+        // this.genomeViewer.draw();
+        // this.formPanelGenomeFilter.draw();
         this.select('Home');
-//        this.panel.render(this.div);
+
     },
     select: function (option) {
         this.evaMenu.select(option);
@@ -197,7 +157,8 @@ Eva.prototype = {
     },
     _selectHandler: function (option) {
         var _this = this;
-        this.studyPanel.hide();
+        this.studyBrowserPanel.hide();
+        this.variantWidgetPanel.hide();
         $('body').find('.eva-child').each(function (index, el) {
             _this.div.removeChild(el)
         });
@@ -210,36 +171,15 @@ Eva.prototype = {
                 _this._twitterWidgetUpdate();
                 break;
             case 'Study Browser':
-                this.studyPanel.show();
+                this.studyBrowserPanel.show();
                 break;
             case 'EVA Browser':
-                this.variantBrowserOptionDiv = document.createElement('div');
-                this.variantBrowserOptionDiv.innerHTML = '<title>EVA Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
-                $(this.variantBrowserOptionDiv).addClass('eva-child variant-browser-option-div');
-                this.div.appendChild(this.variantBrowserOptionDiv);
-//                this.childDivMenuMap['VCF Browser'] = this.variantBrowserOptionDiv;
-
-                this.formPanelVariantFilterDiv = document.createElement('div');
-                $(this.formPanelVariantFilterDiv).addClass('form-panel-variant-filter-div');
-                this.variantBrowserOptionDiv.appendChild(this.formPanelVariantFilterDiv);
-
-                this.variantWidgetDiv = document.createElement('div');
-                $(this.variantWidgetDiv).addClass('variant-widget-div');
-                this.variantBrowserOptionDiv.appendChild(this.variantWidgetDiv);
-
-                this.formPanelVariantFilter = this._createFormPanelVariantFilter(this.formPanelVariantFilterDiv);
-                this.variantWidget = this._createVariantWidget(this.variantWidgetDiv);
-                this.variantWidget.draw();
-                this.formPanelVariantFilter.draw();
-                this.formPanelVariantFilter.update();
-
+                this.variantWidgetPanel.show();
                 break;
 //            case 'Genome Browser':
 //                this.formPanelGenomeFilter.update();
 //                break;
         }
-//        this.studiesStore.clearFilter();
-
     },
     _createEvaMenu: function (target) {
         var _this = this;
@@ -254,227 +194,20 @@ Eva.prototype = {
         return evaMenu;
     },
     _createStudyBrowserPanel: function(target){
-        console.log(target)
         var studyBrowser = new StudyBrowser({
             target: target
         });
-
         studyBrowser.draw();
         return studyBrowser;
 
     },
-    _createVariantWidget: function (target) {
-//        var width = this.width - parseInt(this.div.style.paddingLeft) - parseInt(this.div.style.paddingRight);
-
-
-
-        var evaVariantWidget = new EvaVariantWidget({
-            width: 1020,
-            target: target,
-            headerConfig: {
-                baseCls: 'eva-header-1'
-            },
-            border: true,
-            browserGridConfig: {
-                title: 'EVA Browser',
-                border: true
-            },
-            toolPanelConfig: {
-                title: 'Variant Data',
-                headerConfig: {
-                    baseCls: 'eva-header-2'
-                }
-            },
-            defaultToolConfig: {
-                headerConfig: {
-                    baseCls: 'eva-header-2'
-                },
-                genomeViewer: false,
-                effect:false
-            },
-//            columns: columns,
-//            attributes: attributes,
-            responseParser: function (response) {
-                var res = [];
-                try {
-                    res = response.response[0].result;
-                } catch (e) {
-                    console.log(e);
-                }
-                return  res;
-            },
-            dataParser: function (data) {
-                for (var i = 0; i < data.length; i++) {
-                    var variant = data[i];
-                    if (variant.hgvs && variant.hgvs.genomic > 0) {
-                        variant.hgvs_name = variant.hgvs.genomic[0];
-                    }
-                }
-            }
-        }); //the div must exist
-
-        return evaVariantWidget;
-    },
-    _createStudyBrowser: function (target) {
-        var _this = this;
-        var variantStudyBrowser = new EvaStudyBrowserPanel({
-            target: target,
-            title: 'Study Browser',
-            headerConfig: {
-                baseCls: 'eva-header-1'
-            },
-            width: 1300,
-            autoRender: false
+    _createVariantWidgetPanel: function(target){
+        var variantWidget= new EvaVariantWidgetPanel({
+            target: target
         });
-//        this.on('studies:change', function (e) {
-//        variantStudyBrowser.setStudies(e.studies);
-//        });
-        return variantStudyBrowser;
-    },
-    _createFormPanelVariantFilter: function (target) {
-        var _this = this;
-        var positionFilter = new PositionFilterFormPanel({
-            testRegion: '1:14000-200000',
-            emptyText: ''
+        variantWidget.draw();
+        return variantWidget;
 
-        });
-
-
-            this.studiesStore = Ext.create('Ext.data.Store', {
-                pageSize: 50,
-                proxy: {
-                    type: 'memory'
-                },
-                fields: [
-                    {name: 'studyName', type: 'string'},
-                    {name: 'studyId', type: 'string'}
-                ],
-                autoLoad: false
-        });
-
-        var studyFilter = new StudyFilterFormPanel({
-            collapsed: true,
-            studiesStore: this.studiesStore,
-            studyFilterTpl:'<tpl><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div></tpl>'
-        });
-        this.on('studies:change', function (e) {
-//            studyFilter.setStudies(e.studies);
-        });
-
-        _this._loadListStudies(studyFilter);
-
-
-        var conseqType = new ConsequenceTypeFilterFormPanel({
-            consequenceTypes: consequenceTypes,
-            collapsed: true,
-            fields: [
-                {name: 'name', type: 'string'}
-            ],
-            columns: [
-                {
-                    xtype: 'treecolumn',
-                    flex: 1,
-                    sortable: false,
-                    dataIndex: 'name'
-                }
-            ]
-        });
-
-        var formPanel = new FormPanel({
-            title: 'Filter',
-            headerConfig: {
-                baseCls: 'eva-header-1'
-            },
-            mode: 'accordion',
-            target: target,
-            submitButtonText: 'Submit',
-            filters: [positionFilter, studyFilter],
-            width: 300,
-//            height: 1043,
-            border: false,
-            handlers: {
-                'submit': function (e) {
-                    console.log(e.values);
-                    _this.variantWidget.setLoading(true);
-
-                    //POSITION CHECK
-                    var regions = [];
-                    if (typeof e.values.region !== 'undefined') {
-                        if (e.values.region !== "") {
-                            regions = e.values.region.split(",");
-                        }
-                        delete  e.values.region;
-                    }
-
-                    if (typeof e.values.gene !== 'undefined') {
-                        CellBaseManager.get({
-                            species: 'hsapiens',
-                            category: 'feature',
-                            subCategory: 'gene',
-                            query: e.values.gene.toUpperCase(),
-                            resource: "info",
-                            async: false,
-                            params: {
-                                include: 'chromosome,start,end'
-                            },
-                            success: function (data) {
-                                for (var i = 0; i < data.response.length; i++) {
-                                    var queryResult = data.response[i];
-                                    var region = new Region(queryResult.result[0]);
-                                    regions.push(region.toString());
-                                }
-                            }
-                        });
-                        delete  e.values.gene;
-                    }
-
-                    if (typeof e.values.snp !== 'undefined') {
-                        CellBaseManager.get({
-                            species: 'hsapiens',
-                            category: 'feature',
-                            subCategory: 'snp',
-                            query: e.values.snp,
-                            resource: "info",
-                            async: false,
-                            params: {
-                                include: 'chromosome,start,end'
-                            },
-                            success: function (data) {
-                                for (var i = 0; i < data.response.length; i++) {
-                                    var queryResult = data.response[i];
-                                    var region = new Region(queryResult.result[0]);
-                                    regions.push(region.toString());
-                                }
-                            }
-                        });
-                        delete  e.values.snp;
-                    }
-
-
-                    //CONSEQUENCE TYPES CHECK
-                    if (typeof e.values.ct !== 'undefined') {
-                        if (e.values.ct instanceof Array) {
-                            e.values.ct = e.values.ct.join(",");
-                        }
-                    }
-
-
-                    if (regions.length > 0) {
-                        e.values['region'] = regions.join(',');
-                    }
-
-                    var url = EvaManager.url({
-                        host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-                        category: 'segments',
-                        resource: 'variants',
-                        query: regions
-                    });
-                    _this.variantWidget.retrieveData(url, e.values)
-                }
-            }
-        });
-
-        return formPanel;
     },
     _createFormPanelGenomeFilter: function (target) {
         var _this = this;
@@ -754,51 +487,6 @@ Eva.prototype = {
 
         return genomeViewer;
     },
-//    _loadStudies: function () {
-//        var _this = this;
-//        var studies = [];
-//        EvaManager.get({
-//            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-//            category: 'meta/studies',
-//            resource: 'all',
-//            success: function (response) {
-//                try {
-//                    studies = response.response[0].result;
-//                } catch (e) {
-//                    console.log(e);
-//                }
-//                console.log(studies)
-//                console.log('-------')
-////                _this.studiesStore.loadRawData(studies);
-//                _this.studyBrowser.studiesStore.loadRawData(studies);
-////                _this.trigger('studies:change', {studies: studies, sender: _this});
-//            }
-//        });
-//    },
-    _loadListStudies: function (filter) {
-        var _this = this;
-        var studies = [];
-        EvaManager.get({
-            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-            category: 'meta/studies',
-            resource: 'list',
-            success: function (response) {
-                try {
-                    studies = response.response[0].result;
-                } catch (e) {
-                    console.log(e);
-                }
-                filter.studiesStore.loadRawData(studies);
-                //set all records checked default
-                filter.studiesStore.each(function(rec){
-                    rec.set('uiactive', true)
-                })
-                console.log('dfv')
-               _this.trigger('studies:change', {studies: studies, sender: _this});
-            }
-        });
-    },
-
     _twitterWidgetUpdate : function (){
 
         var twitterWidgetEl = document.getElementById('twitter-widget');

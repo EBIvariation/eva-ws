@@ -368,6 +368,7 @@ DgvaStudyBrowserPanel.prototype = {
         this.grid = Ext.create('Ext.grid.Panel', {
                 tbar: this.paging,
                 title: 'Studies found',
+                cls:'studybrowser',
                 store: this.studiesStore,
                 header: this.headerConfig,
                 loadMask: true,
@@ -382,7 +383,7 @@ DgvaStudyBrowserPanel.prototype = {
                         {}
                     )
                 }],
-                height: this.height,
+                height: 420,
                 features: [
                     {ftype: 'summary'}
                 ],
@@ -516,6 +517,9 @@ DgvaStudyBrowserPanel.prototype = {
         if (this.panel) {
             this.panel.update();
         }
+    },
+    getPanel: function(){
+        return this.panel;
     }
 
 };

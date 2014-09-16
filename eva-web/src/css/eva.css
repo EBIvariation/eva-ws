@@ -113,10 +113,23 @@ body.eva {
     margin-left: 50px;
 }
 
-.ocb-variant-tab-panel .x-tab-bar-top>.x-tab-bar-strip-default {
+.studybrowser .x-panel-header {
+    background-image: none;
+    background-color: #FFFFFF;
+    border:0px;
+
+}
+.studybrowser .x-panel-header-title >.x-title-text{
+ color: #BF8230;
+ text-transform: capitalize;
+}
+
+
+.eva .x-tab-bar-top>.x-tab-bar-strip-default {
     border-width: 0;
     height: 0px;
 }
+
 
 .eva .form-panel-variant-filter-title-div {
     margin: 0 0 10px 0;

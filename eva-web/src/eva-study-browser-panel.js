@@ -21,9 +21,6 @@ StudyBrowser.prototype = {
             this.div = document.createElement('div');
             this.div.setAttribute('id', this.id);
             this.panel = this._createPanel();
-            this.tabPanelDiv = document.createElement('div');
-            this.tabPanelDiv.setAttribute('class', 'ocb-variant-tab-panel');
-            this.div.appendChild(this.tabPanelDiv);
             this.rendered = true;
         }
 
@@ -67,8 +64,8 @@ StudyBrowser.prototype = {
                 activeTab: 0,
                 plain: true,
                 items: [
-                        evaStudyBrowser._createPanel(),
-                        dgvaStudyBrowser._createPanel()
+                        evaStudyBrowser.getPanel(),
+                        dgvaStudyBrowser.getPanel()
                        ]
             });
 
