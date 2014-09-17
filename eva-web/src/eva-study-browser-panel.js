@@ -64,9 +64,18 @@ StudyBrowser.prototype = {
                 activeTab: 0,
                 plain: true,
                 items: [
-                        evaStudyBrowser.getPanel(),
-                        dgvaStudyBrowser.getPanel()
-                       ]
+                    {
+                        title: evaStudyBrowser.getPanel().title,
+                        cls:'studybrowser ',
+                        items:[evaStudyBrowser.getPanel()]
+                    },
+                    {
+                        title:dgvaStudyBrowser.getPanel().title,
+                        cls:'studybrowser',
+                        items:[dgvaStudyBrowser.getPanel()]
+
+                    }
+                ]
             });
 
         this.toolTabPanel.setActiveTab(0);
