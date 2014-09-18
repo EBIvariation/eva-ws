@@ -290,7 +290,6 @@ EvaVariantWidgetPanel.prototype = {
                 filter.studiesStore.each(function(rec){
                     rec.set('uiactive', true)
                 })
-                console.log('dfv')
                 _this.trigger('studies:change', {studies: studies, sender: _this});
             }
         });
