@@ -255,6 +255,23 @@ h3 span{
     color:#BBBBBB;
 }
 
+.x-tab-default{
+    border-color: #adc9c9;
+    background-color: #adc9c9;
+    color: #156765;
+}
+
+.x-tab.x-tab-default .x-tab-inner-default {
+    color: #156765;
+}
+.x-tab.x-tab-active.x-tab-default{
+    background-color: #156765;
+    border-color: #adc9c9;
+}
+
+.x-tab.x-tab-active.x-tab-default .x-tab-inner-default {
+    color: #FFFFFF;
+}
 
 .eva-button{
 
