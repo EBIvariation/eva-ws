@@ -226,6 +226,7 @@ SvStudyBrowserPanel.prototype = {
             fieldLabel: 'Organisms',
             store: stores.species,
             multiSelect: true,
+            useArrows: true,
             rootVisible: false,
             columns: [
                 {
@@ -247,6 +248,7 @@ SvStudyBrowserPanel.prototype = {
             fieldLabel: 'Type',
             store: stores.type,
             multiSelect: true,
+            useArrows: true,
             rootVisible: false,
             columns: [
                 {

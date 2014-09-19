@@ -183,6 +183,7 @@ SgvStudyBrowserPanel.prototype = {
             fieldLabel: 'Organisms',
             store: stores.species,
             multiSelect: true,
+            useArrows: true,
             rootVisible: false,
             columns: [
                 {
@@ -204,6 +205,7 @@ SgvStudyBrowserPanel.prototype = {
             fieldLabel: 'Type',
             store: stores.type,
             multiSelect: true,
+            useArrows: true,
             rootVisible: false,
             columns: [
                 {
@@ -225,6 +227,7 @@ SgvStudyBrowserPanel.prototype = {
             fieldLabel: 'Platform',
             store: platformStore,
             multiSelect: true,
+            useArrows: true,
             rootVisible: false,
             columns: [
                 {
