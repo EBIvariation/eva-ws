@@ -447,7 +447,6 @@ SgvStudyBrowserPanel.prototype = {
                         for (key2 in stat) {
                             var obj = {};
                             // TODO We must take care of the types returned
-                            console.log(key2)
                             if(key2.indexOf(',') == -1) {
                                 obj['display'] = key2;
                                 obj['leaf'] = true;

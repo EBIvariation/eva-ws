@@ -45,7 +45,7 @@ module.exports = function (grunt) {
                     'src/js/eva-manager.js',
                     'src/js/eva-config.js'
                 ],
-                dest: 'build/<%= meta.version.eva %>/eva-<%= meta.version.eva %>.js'
+                dest: 'build/<%= meta.version.eva %>/js/eva-<%= meta.version.eva %>.js'
             }
 
         },
@@ -53,7 +53,7 @@ module.exports = function (grunt) {
 
             eva: {
                 src: '<%= concat.eva.dest %>',
-                dest: 'build/<%= meta.version.eva %>/eva-<%= meta.version.eva %>.min.js'
+                dest: 'build/<%= meta.version.eva %>/js/eva-<%= meta.version.eva %>.min.js'
             }
         },
         jshint: {
