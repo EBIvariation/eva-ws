@@ -265,6 +265,11 @@ EvaVariantWidgetPanel.prototype = {
                         resource: 'variants',
                         query: regions
                     });
+
+                    if(e.values.studies){
+                        e.values.studies = e.values.studies.join(',');
+                    }
+
                     _this.variantWidget.retrieveData(url, e.values)
                 }
             }
