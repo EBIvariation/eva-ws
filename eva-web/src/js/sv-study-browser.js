@@ -1,31 +1,12 @@
-/*
- * Copyright (c) 2014 Francisco Salavert (SGL-CIPF)
- * Copyright (c) 2014 Alejandro Alemán (SGL-CIPF)
- * Copyright (c) 2014 Ignacio Medina (EBI-EMBL)
- *
- * This file is part of JSorolla.
- *
- * JSorolla is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * JSorolla is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with JSorolla. If not, see <http://www.gnu.org/licenses/>.
- */
-function EvaStudyBrowserPanel(args) {
+function SvStudyBrowserPanel(args) {
     _.extend(this, Backbone.Events);
-    this.id = Utils.genId("EvaStudyBrowserPanel");
+    this.id = Utils.genId("DgvaStudyBrowserPanel");
 
     this.target;
     this.title = "Study Browser";
     this.height = 800;
     this.autoRender = true;
+    this.pageSize = 20;
 //    this.studies = [];
 //    this.studiesStore;
     this.border = false;
@@ -65,8 +46,9 @@ function EvaStudyBrowserPanel(args) {
     this.load();
 }
 
-EvaStudyBrowserPanel.prototype = {
+SvStudyBrowserPanel.prototype = {
     render: function () {
+
         if(!this.rendered) {
             this.div = document.createElement('div');
             this.div.setAttribute('id', this.id);
@@ -83,7 +65,7 @@ EvaStudyBrowserPanel.prototype = {
         // A DIV Element is needed to append others HTML Elements
         this.targetDiv = (this.target instanceof HTMLElement) ? this.target : document.querySelector('#' + this.target);
         if (!this.targetDiv) {
-            console.log('EVAStudyBrowserPanel: target ' + this.target + ' not found');
+            console.log('DGVAStudyBrowserPanel: target ' + this.target + ' not found');
             return;
         }
         this.targetDiv.appendChild(this.div);
@@ -96,177 +78,211 @@ EvaStudyBrowserPanel.prototype = {
         if(!values){
             if(_this.formPanel){
                 values = _this.formPanel.getValues();
-                console.log(values)
+                var species = this._getValues(this.speciesFieldTag);
+                var type = this._getValues(this.typeFieldTag);
+                _.extend(values, {species:species, type:type, structural:true});
+            }else{
+                values = {structural:true};
             }
         }
 
         for (key in values) {
             if (values[key] == '') {
                 delete values[key]
+            }else{
+                // TO Be Removed
+                if(key === 'species'){
+                    var tempArray = [];
+                    // changing values to lower case
+                    for (var i = 0; i < values[key].length; i++) {
+                        tempArray.push( values[key][i].toLowerCase());
+                    }
+                    values[key] = tempArray;
+                }
+
             }
         }
 
 //        this.studiesStore.clearFilter();
 
-        EvaManager.get({
-            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-            category: 'meta/studies',
-            resource: 'all',
-            params: values,
-            success: function (response) {
-                var studies = [];
-                try {
-                    studies = response.response[0].result;
-                } catch (e) {
-                    console.log(e);
+//            EvaManager.get({
+//                host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+//                category: 'meta/studies',
+//                resource: 'all',
+//                params: values,
+//                success: function (response) {
+//                    var studies = [];
+//                    try {
+//                        studies = response.response[0].result;
+//                    } catch (e) {
+//                        console.log(e);
+//                    }
+//                   _this.studiesStore.loadRawData(studies);
+//                }
+//            });
+
+        if(_this.grid){
+            var studies = [];
+            EvaManager.get({
+                host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                category: 'meta/studies',
+                resource: 'all',
+                params: values,
+                success: function (response) {
+                    var studies = [];
+                    try {
+                        studies = response.response[0].result;
+                        this.studiesStore = Ext.create('Ext.data.Store', {
+                            fields: [
+                                {name: 'id', type: 'string'},
+                                {name: 'name', type: 'string'}
+                            ],
+                            remoteSort: true,
+                            pageSize:_this.pageSize,
+                            proxy: {
+                                type: 'memory',
+                                data: studies,
+                                reader: {
+                                    type: 'json'
+                                },
+                                enablePaging: true
+                            }
+                        });
+
+                        var searchValue = values.search;
+                        if (searchValue == "") {
+                            this.studiesStore.clearFilter();
+                        } else {
+                            var regex = new RegExp(searchValue, "i");
+                            this.studiesStore.filterBy(function (e) {//
+                                return regex.test(e.get('name')) || regex.test(e.get('description'));
+                            });
+                        }
+                        _this.grid.reconfigure(this.studiesStore);
+                        _this.paging.bindStore(this.studiesStore);
+                        _this.paging.doRefresh();
+                    } catch (e) {
+                        console.log(e);
+                    }
                 }
-                _this.studiesStore.loadRawData(studies);
-            }
-        });
+            });
+        }
 
 
     },
     _createPanel: function () {
         var _this = this;
         var stores = {
-            species: Ext.create('Ext.data.Store', {
+            species: Ext.create('Ext.data.TreeStore', {
                 autoLoad: true,
-                fields: ['display', 'count'],
-                data: []
+                proxy: {
+                    type: 'memory',
+                    data: [],
+                    reader: {
+                        type: 'json'
+                    }
+                },
+                fields: [
+                    {name: 'display', type: 'string'}
+                ]
             }),
-            type: Ext.create('Ext.data.Store', {
+            type: Ext.create('Ext.data.TreeStore', {
                 autoLoad: true,
-                fields: ['display', 'count'],
-                data: []
-            }),
-            scope: Ext.create('Ext.data.Store', {
-                autoLoad: true,
-                fields: ['display', 'count'],
-                data: []
-            }),
-            material: Ext.create('Ext.data.Store', {
-                autoLoad: true,
-                fields: ['display', 'count'],
-                data: []
+                proxy: {
+                    type: 'memory',
+                    data: [],
+                    reader: {
+                        type: 'json'
+                    }
+                },
+                fields: [
+                    {name: 'display', type: 'string'}
+                ]
             })
         };
 
-        var assemblyStore = Ext.create('Ext.data.Store', {
+        var platformStore = Ext.create('Ext.data.TreeStore', {
             autoLoad: true,
-            fields: ['text', 'value'],
-            data: [
-                {display: '37', value: '37'}
-            ]
-        });
-
-        var platformStore = Ext.create('Ext.data.Store', {
-            autoLoad: true,
-            fields: ['text', 'value'],
-            data: [
-                {display: 'Illumina', value: 'ngs'},
-                {display: 'Roche', value: 'array'},
-                {display: 'ABI', value: 'array'}
-            ]
-        });
-
-        var scopeStore = Ext.create('Ext.data.Store', {
-            autoLoad: true,
-            fields: ['text', 'value'],
-            data: [
-                {display: 'Single Isolate', value: 'single-isolate'},
-                {display: 'Multi Isolate', value: 'multi-isolate'}
-            ]
+            fields: [
+                {name: 'display', type: 'string'}
+            ],
+            proxy: {
+                type: 'memory',
+                data: [
+                    {display: 'Illumina', value: 'ngs',leaf: true,checked: false,  iconCls :'no-icon'},
+                    {display: 'Roche', value: 'array',leaf: true,checked: false,  iconCls :'no-icon'},
+                    {display: 'ABI', value: 'array',leaf: true,checked: false,  iconCls :'no-icon'}
+                ],
+//                    root:'',
+                reader: {
+                    type: 'json'
+                }
+            }
         });
 
 
 
-        var speciesFieldTag = Ext.create('Ext.form.field.Tag', {
+        this.speciesFieldTag = Ext.create('Ext.tree.Panel', {
             fieldLabel: 'Organisms',
-//            labelWidth: this.labelWidth,
-            labelAlign: 'top',
             store: stores.species,
-            queryMode: 'local',
-            displayField: 'display',
-            valueField: 'display',
-            publishes: 'value',
-            name: 'species',
+            multiSelect: true,
+            rootVisible: false,
+            columns: [
+                {
+                    xtype: 'treecolumn',
+                    flex: 1,
+                    sortable: false,
+                    dataIndex: 'display',
+                    text:'Organism'
+                }
+            ],
             listeners: {
-                change: function () {
+                'checkchange': function (node, checked) {
                     _this.load()
                 }
             }
         });
 
-        var assemblyFieldTag = Ext.create('Ext.form.field.Tag', {
-            fieldLabel: 'Assembly',
-//            labelWidth: this.labelWidth,
-            labelAlign: 'top',
-            store: assemblyStore,
-            queryMode: 'local',
-            displayField: 'display',
-            valueField: 'value',
-            publishes: 'value',
-            name: 'assembly',
-            listeners: {
-                change: function () {
-                    _this.load()
-                }
-            }
-        });
-
-
-        var typeFieldTag = Ext.create('Ext.form.field.Tag', {
+        this.typeFieldTag = Ext.create('Ext.tree.Panel', {
             fieldLabel: 'Type',
-//            labelWidth: this.labelWidth,
-            labelAlign: 'top',
             store: stores.type,
-            queryMode: 'local',
-            displayField: 'display',
-            valueField: 'display',
-            publishes: 'value',
-            name: 'type',
+            multiSelect: true,
+            rootVisible: false,
+            columns: [
+                {
+                    xtype: 'treecolumn',
+                    flex: 1,
+                    sortable: false,
+                    dataIndex: 'display',
+                    text:'Type'
+                }
+            ],
             listeners: {
-                change: function () {
+                'checkchange': function (node, checked) {
                     _this.load()
                 }
             }
         });
 
-        var platformFieldTag = Ext.create('Ext.form.field.Tag', {
+        this.platformFieldTag = Ext.create('Ext.tree.Panel', {
             fieldLabel: 'Platform',
-//            labelWidth: this.labelWidth,
-            labelAlign: 'top',
             store: platformStore,
-            queryMode: 'local',
-            displayField: 'display',
-            valueField: 'value',
-            publishes: 'value',
-            name: 'method',
+            multiSelect: true,
+            rootVisible: false,
+            columns: [
+                {
+                    xtype: 'treecolumn',
+                    flex: 1,
+                    sortable: false,
+                    dataIndex: 'display',
+                    text:'Platform'
+                }
+            ],
             listeners: {
-                change: function () {
+                'checkchange': function (node, checked) {
                     _this.load()
                 }
             }
-
-        });
-
-
-        var scopeFieldTag = Ext.create('Ext.form.field.Tag', {
-            fieldLabel: 'Scope',
-//            labelWidth: this.labelWidth,
-            labelAlign: 'top',
-            store: scopeStore,
-            queryMode: 'local',
-            displayField: 'display',
-            valueField: 'value',
-            publishes: 'value',
-            name: 'scope',
-            listeners: {
-                change: function () {
-                    _this.load()
-                }
-            }
-
         });
 
         var studySearchField = Ext.create('Ext.form.field.Text', {
@@ -276,15 +292,7 @@ EvaStudyBrowserPanel.prototype = {
             name: 'search',
             listeners: {
                 change: function () {
-                    var value = this.getValue();
-                    if (value == "") {
-                        _this.studiesStore.clearFilter();
-                    } else {
-                        var regex = new RegExp(value, "i");
-                        _this.studiesStore.filterBy(function (e) {
-                            return regex.test(e.get('name')) || regex.test(e.get('description'));
-                        });
-                    }
+                    _this.load()
                 }
             }
 
@@ -299,7 +307,7 @@ EvaStudyBrowserPanel.prototype = {
                 renderer: function (value, meta, rec, rowIndex, colIndex, store) {
                     meta.tdAttr = 'data-qtip="Click to see  more detailed information"';
                     return value ? Ext.String.format(
-                        '<a href="?eva-study='+value+'" target="_blank">'+value+'</a>',
+                        '<a href="?dgva-study='+value+'" target="_blank">'+value+'</a>',
                         value
                     ) : '';
                 }
@@ -307,7 +315,7 @@ EvaStudyBrowserPanel.prototype = {
             {
                 text: "Name",
                 dataIndex: 'name',
-                flex: 7
+                flex: 4
             },
             {
                 text: "Organism",
@@ -325,34 +333,33 @@ EvaStudyBrowserPanel.prototype = {
                 dataIndex: 'type',
                 flex: 3
             },
-//                            {
-//                                text: "Scope",
-//                                dataIndex: 'scope',
-//                                flex: 3
-//                            },
             {
                 text: "Number of Variants",
                 dataIndex: 'numVariants',
                 flex: 3
             },
             {
-                text: "Download",
-//                        xtype: 'checkcolumn',
-                dataIndex: 'id',
-                flex: 3,
-                renderer: function (value, p, record) {
-                    return value ? Ext.String.format(
-                        '<a href="ftp://ftp.ebi.ac.uk/pub/databases/eva/{0}" target="_blank">FTP Download</a>',
-                        value,
-                        record.data.threadid
-                    ) : '';
-                }
+                text: 'Download',
+                //dataIndex: 'id',
+                xtype: 'templatecolumn',
+                tpl: '<tpl><a href="ftp://ftp.ebi.ac.uk/pub/databases/dgva/{id}_{name}" target="_blank">FTP Download</a></tpl>',
+                flex: 3
             }
 
         ];
 
 
+        this.paging = Ext.create('Ext.PagingToolbar', {
+            store: _this.studiesStore,
+            id: _this.id + "_pagingToolbar",
+            pageSize: _this.pageSize,
+            displayInfo: true,
+            displayMsg: 'Studies {0} - {1} of {2}',
+            emptyMsg: "No Studies to display"
+        });
+
         this.grid = Ext.create('Ext.grid.Panel', {
+                tbar: this.paging,
                 title: 'Studies found',
                 cls:'studybrowser',
                 store: this.studiesStore,
@@ -364,8 +371,9 @@ EvaStudyBrowserPanel.prototype = {
                     ptype: 'rowexpander',
                     rowBodyTpl : new Ext.XTemplate(
                         '<p style="padding: 2px 2px 2px 15px"><b>Platform:</b> {platform}</p>',
-                        '<p style="padding: 2px 2px 2px 15px"><b>Centre:</b> {center}</p>',
-                        '<p style="padding: 2px 2px 5px 15px"><b>Description:</b> {description}</p>'
+//                                    '<p style="padding: 2px 2px 2px 15px"><b>Centre:</b> {center}</p>',
+                        '<p style="padding: 2px 2px 5px 15px"><b>Description:</b> {description}</p>',
+                        {}
                     )
                 }],
                 height: 420,
@@ -395,7 +403,7 @@ EvaStudyBrowserPanel.prototype = {
                         }
                     }
                 },
-                columns: this.columns
+                columns:this.columns,
             }
         );
 
@@ -420,12 +428,10 @@ EvaStudyBrowserPanel.prototype = {
                 margin: 5
             },
             items: [
-//                submitButton,
+//              submitButton,
                 studySearchField,
-                speciesFieldTag,
-//                this.assemblyFieldTag,
-                typeFieldTag,
-                platformFieldTag
+                this.speciesFieldTag
+//                this.typeFieldTag
             ]
         });
 
@@ -443,7 +449,7 @@ EvaStudyBrowserPanel.prototype = {
         });
 
         this.formPanel = Ext.create('Ext.form.Panel', {
-            title: 'Short Genetic Variations',
+            title: 'Structural Variation',
             border: this.border,
             header: this.headerConfig,
             layout: {
@@ -475,12 +481,18 @@ EvaStudyBrowserPanel.prototype = {
                         for (key2 in stat) {
                             var obj = {};
                             // TODO We must take care of the types returned
+                            console.log(key2)
                             if(key2.indexOf(',') == -1) {
                                 obj['display'] = key2;
+                                obj['leaf'] = true;
+                                obj['checked'] = false;
+                                obj['iconCls'] = "no-icon";
+                                obj['count'] = stat[key2];
                             }
 //                                obj['display'] = key2;
-                            obj['count'] = stat[key2];
-                            arr.push(obj);
+                            if(!_.isEmpty(obj)){
+                                arr.push(obj);
+                            }
                         }
                         statsData[key] = arr;
                         if (typeof stores[key] !== 'undefined') {
@@ -493,7 +505,18 @@ EvaStudyBrowserPanel.prototype = {
                 }
             }
         });
+        this.load();
         return  this.formPanel;
+    },
+    _getValues:function(panel){
+        var nodes = panel.store.data.items;
+        var values = [];
+        for (i = 0; i < nodes.length; i++) {
+            if(nodes[i].data.checked){
+                values.push(nodes[i].data.display)
+            }
+        }
+        return values;
     },
 
     setLoading: function (loading) {

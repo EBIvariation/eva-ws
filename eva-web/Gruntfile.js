@@ -34,17 +34,16 @@ module.exports = function (grunt) {
             eva: {
                 src: [
                     /** eva app js **/
-                    'src/eva.js',
-                    'src/eva-variant-widget-panel.js',
-                    'src/eva-study-browser-panel.js',
-                    'src/eva-study-browser.js',
-                    'src/dgva-study-browser.js',
-//                    'src/eva-study-browser-panel.old.js',
-                    'src/eva-variant-widget.js',
-                    'src/eva-menu.js',
-                    'src/eva-adapter.js',
-                    'src/eva-manager.js',
-                    'src/eva-config.js'
+                    'src/js/eva.js',
+                    'src/js/eva-variant-widget-panel.js',
+                    'src/js/eva-study-browser-panel.js',
+                    'src/js/sgv-study-browser.js',
+                    'src/js/sv-study-browser.js',
+                    'src/js/eva-variant-widget.js',
+                    'src/js/eva-menu.js',
+                    'src/js/eva-adapter.js',
+                    'src/js/eva-manager.js',
+                    'src/js/eva-config.js'
                 ],
                 dest: 'build/<%= meta.version.eva %>/eva-<%= meta.version.eva %>.js'
             }
@@ -103,6 +102,7 @@ module.exports = function (grunt) {
                     {   expand: true, src: ['src/fonts/*'], dest: 'build/<%= meta.version.eva %>/fonts', flatten: true},
                     {   expand: true, src: ['src/css/*'], dest: 'build/<%= meta.version.eva %>/css', flatten: true},
                     {   expand: true, src: ['src/img/*'], dest: 'build/<%= meta.version.eva %>/img', flatten: true},
+                    {   expand: true, src: ['src/web-components/*'], dest: 'build/<%= meta.version.eva %>/web-components', flatten: true},
                     {   expand: true, src: ['src/*.html'], dest: 'build/<%= meta.version.eva %>/', flatten: true, filter: 'isFile'},
                     {   expand: true, src: ['lib/jsorolla/build/*/*.js'], dest: 'build/<%= meta.version.eva %>',flatten: false},
                     {   expand: true, src: ['lib/jsorolla/vendor/**'], dest: 'build/<%= meta.version.eva %>',flatten: false},
@@ -110,7 +110,7 @@ module.exports = function (grunt) {
                     {   expand: true, src: ['vendor/bootstrap-*/**'], dest: 'build/<%= meta.version.eva %>'},
                     {   expand: true, src: ['vendor/ext-*/**'], dest: 'build/<%= meta.version.eva %>'},
                     {   expand: true, src: ['vendor/highcharts-4.0.3/**'], dest: 'build/<%= meta.version.eva %>'},
-                    {   expand: true, src: ['vendor/platform-0.3.5/**'], dest: 'build/<%= meta.version.eva %>'}
+                    {   expand: true, src: ['vendor/platform-0.4.0/**'], dest: 'build/<%= meta.version.eva %>'}
                 ]
             }
 
@@ -147,7 +147,7 @@ module.exports = function (grunt) {
 
                         ],
                         'platform': [
-                            'build/<%= meta.version.eva %>/vendor/platform-0.3.5/js/platform.js'
+                            'build/<%= meta.version.eva %>/vendor/platform-0.4.0/js/platform.js'
                         ]
 //                        'internal-dependencies': [
 //                            'build/<%= meta.version.eva %>/gv-config.js'

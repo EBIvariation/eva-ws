@@ -53,10 +53,10 @@ StudyBrowser.prototype = {
     },
     _createPanel: function () {
 
-         var dgvaStudyBrowser = new DgvaStudyBrowserPanel({
+         var svStudyBrowser = new SvStudyBrowserPanel({
             pageSize:10
         });
-        var evaStudyBrowser = new EvaStudyBrowserPanel({
+        var sgvStudyBrowser = new SgvStudyBrowserPanel({
             pageSize:10
         });
 
@@ -65,14 +65,14 @@ StudyBrowser.prototype = {
                 plain: true,
                 items: [
                     {
-                        title: evaStudyBrowser.getPanel().title,
+                        title: sgvStudyBrowser.getPanel().title,
                         cls:'studybrowser ',
-                        items:[evaStudyBrowser.getPanel()]
+                        items:[sgvStudyBrowser.getPanel()]
                     },
                     {
-                        title:dgvaStudyBrowser.getPanel().title,
+                        title:svStudyBrowser.getPanel().title,
                         cls:'studybrowser',
-                        items:[dgvaStudyBrowser.getPanel()]
+                        items:[svStudyBrowser.getPanel()]
 
                     }
                 ]
