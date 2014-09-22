@@ -19,6 +19,7 @@
         "grunt-html-build": "~0.3.2",
         "grunt-curl": "~1.4.0",
         "grunt-contrib-rename": "0.0.3",
-        "grunt-regex-replace": "0.2.6"
+        "grunt-regex-replace": "0.2.6",
+        "grunt-hub":"0.7.0"
     }
 }
