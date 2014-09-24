@@ -130,6 +130,10 @@ body.eva {
     height: 0px;
 }
 
+.eva .x-tab-bar-horizontal>.x-tab-bar-body-default {
+    margin-left:-3px;
+}
+
 
 .eva .form-panel-variant-filter-title-div {
     margin: 0 0 10px 0;
