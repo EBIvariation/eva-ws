@@ -203,7 +203,7 @@
                                         '<td>'+data.filesData[i].stats.indelsCount+'</td>' +
                                         '<td>'+data.filesData[i].stats.passCount+'</td>' +
                                         '<td>'+(data.filesData[i].stats.transitionsCount/data.filesData[i].stats.transversionsCount).toFixed(2)+'&nbsp;('+data.filesData[i].stats.transitionsCount+'/'+data.filesData[i].stats.transitionsCount+')</td>' +
-                                        '<td>'+data.filesData[i].stats.meanQuality+'</td>' +
+                                        '<td>'+data.filesData[i].stats.meanQuality.toFixed(2)+'</td>' +
                                         '</tr>'
                             }
                             _filesTable += '</tbody></table>'
