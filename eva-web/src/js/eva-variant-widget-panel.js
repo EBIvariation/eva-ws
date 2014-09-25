@@ -214,10 +214,13 @@ EvaVariantWidgetPanel.prototype = {
                                 include: 'chromosome,start,end'
                             },
                             success: function (data) {
+                                console.log('seffr')
                                 for (var i = 0; i < data.response.length; i++) {
                                     var queryResult = data.response[i];
-                                    var region = new Region(queryResult.result[0]);
-                                    regions.push(region.toString());
+                                    if(!_.isEmpty(queryResult.result[0])){
+                                        var region = new Region(queryResult.result[0]);
+                                        regions.push(region.toString());
+                                    }
                                 }
                             }
                         });
