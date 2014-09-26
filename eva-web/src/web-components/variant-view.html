@@ -154,7 +154,25 @@
                              "load:finish": function (e) {
 //                    _this.grid.setLoading(false);
                              }
-                         }
+                         },
+                         statsTpl : new Ext.XTemplate(
+                                 '<table class="ocb-attributes-table">' +
+                                         '<tr>' +
+                                         '<td class="header">Minor Allele Frequency</td>' +
+                                         '<td class="header">Minor Genotype Frequency</td>' +
+                                         '<td class="header">Mendelian Errors</td>' +
+                                         '<td class="header">Missing Alleles</td>' +
+                                         '<td class="header">Missing Genotypes</td>' +
+                                         '</tr>',
+                                 '<tr>' +
+                                         '<td><tpl if="maf == -1">NA <tpl else>{maf:number( "0.000" )} </tpl><tpl if="mafAllele">({mafAllele}) <tpl else>(-) </tpl></td>' +
+                                         '<td><tpl if="mgf == -1">NA <tpl else>{mgf:number( "0.000" )} </tpl><tpl if="mgfAllele">({mgfAllele}) <tpl else>(-) </tpl></td>' +
+                                         '<td><tpl if="mendelianErrors == -1">NA <tpl else>{mendelianErrors}</tpl></td>' +
+                                         '<td><tpl if="missingAlleles == -1">NA <tpl else>{missingAlleles}</tpl></td>' +
+                                         '<td><tpl if="missingGenotypes == -1">NA <tpl else>{missingGenotypes}</tpl></td>' +
+                                         '</tr>',
+                                 '</table>'
+                         )
                      });
 
                      if (variant[0].files) {
@@ -224,10 +242,22 @@
                      if(data[0].id){
                          _summaryTable += '<tr><td>ID</td><td>'+data[0].id+'</td></tr>'
                      }
+                     var reference = '-';
+                     var alternate = '-';
+
+                     if(data[0].reference){
+                         reference = data[0].reference;
+                     }
+                     if(data[0].alternate){
+                         alternate = data[0].alternate;
+                     }
+
+                     console.log(data[0].alternate)
+                     console.log(data[0].alternate)
                      _summaryTable += '<tr><td>Type</td><td>'+data[0].type+'</td></tr>' +
                              '<tr><td>Chromosome:Start-End</td><td>'+data[0].chromosome+':'+data[0].start+'-'+data[0].end+'</td></tr>' +
-                             '<tr><td>Ref</td><td>'+data[0].reference+'</td></tr>' +
-                             '<tr><td>Alt</td><td>'+data[0].alternate+'</td></tr>' +
+                             '<tr><td>Ref</td><td>'+reference+'</td></tr>' +
+                             '<tr><td>Alt</td><td>'+alternate+'</td></tr>' +
                              '</table>'
 
                      _summaryTable += '</div></div>'

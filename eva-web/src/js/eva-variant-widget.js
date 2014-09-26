@@ -426,14 +426,9 @@ EvaVariantWidget.prototype = {
                     '<td class="header">Missing Alleles</td>' +
                     '<td class="header">Missing Genotypes</td>' +
                     '</tr>',
-                '<tr>' +
-//                    '<td>{maf} ({mafAllele})</td>' +
-//                    '<td>{mgf} ({mgfAllele})</td>' +
-//                    '<td>{mendelianErrors}</td>' +
-//                    '<td>{missingAlleles}</td>' +
-//                    '<td>{missingGenotypes}</td>' +
-                    '<td><tpl if="maf == -1">NA ({mafAllele}) <tpl else>{maf} ({mafAllele})</tpl></td>' +
-                    '<td><tpl if="mgf == -1">NA ({mgfAllele}) <tpl else>{mgf} ({mgfAllele})</tpl></td>' +
+                    '<tr>' +
+                    '<td><tpl if="maf == -1">NA <tpl else>{maf:number( "0.000" )} </tpl><tpl if="mafAllele">({mafAllele}) <tpl else>(-) </tpl></td>' +
+                    '<td><tpl if="mgf == -1">NA <tpl else>{mgf:number( "0.000" )} </tpl><tpl if="mgfAllele">({mgfAllele}) <tpl else>(-) </tpl></td>' +
                     '<td><tpl if="mendelianErrors == -1">NA <tpl else>{mendelianErrors}</tpl></td>' +
                     '<td><tpl if="missingAlleles == -1">NA <tpl else>{missingAlleles}</tpl></td>' +
                     '<td><tpl if="missingGenotypes == -1">NA <tpl else>{missingGenotypes}</tpl></td>' +
