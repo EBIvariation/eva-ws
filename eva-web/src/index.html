@@ -163,20 +163,22 @@
         var tab = getUrlParameters("");
         var tabId =  decodeURI(tab.id);
         var studyView;
+        var variantView;
         if(tabId == 'eva-study'){
             studyView = document.createElement('study-view');
-            studyView.innerHTML = '<title>Study View  &lt; European Variation Archive &lt; EMBL-EBI</title>';
+            studyView.innerHTML += '<title>Study View  &lt; European Variation Archive &lt; EMBL-EBI</title>';
             studyView.setAttribute('id', tab.value);
             studyView.setAttribute('type', 'eva');
         }
         if(tabId == 'dgva-study'){
             studyView = document.createElement('study-view');
-            studyView.innerHTML = '<title>Study View  &lt; European Variation Archive &lt; EMBL-EBI</title>';
+            studyView.innerHTML += '<title>Study View  &lt; European Variation Archive &lt; EMBL-EBI</title>';
             studyView.setAttribute('id', tab.value);
             studyView.setAttribute('type', 'dgva');
         }
         if(tabId == 'variant'){
-            var variantView = document.createElement('eva-variant-view');
+            variantView = document.createElement('eva-variant-view');
+            variantView.innerHTML += '<title>Variant View  &lt; European Variation Archive &lt; EMBL-EBI</title>';
             variantView.setAttribute('id', tab.value);
         }
 
