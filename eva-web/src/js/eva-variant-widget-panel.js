@@ -214,7 +214,6 @@ EvaVariantWidgetPanel.prototype = {
                                 include: 'chromosome,start,end'
                             },
                             success: function (data) {
-                                console.log('seffr')
                                 for (var i = 0; i < data.response.length; i++) {
                                     var queryResult = data.response[i];
                                     if(!_.isEmpty(queryResult.result[0])){

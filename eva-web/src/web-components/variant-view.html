@@ -65,7 +65,7 @@
                     <!--<li><a href="#other">Other</a></li>-->
                 </ul>
             </div>
-            <div id="scroll-able" class="col-sm-9 col-md-10 col-lg-10" data-spy="scroll" data-target="#variantViewScrollspy">
+            <div id="scroll-able" class="col-sm-9 col-md-10 col-lg-10">
                 <div id="summary" class="row">
                     <div class="col-md-10">
                         <h4>Summary</h4>
@@ -136,11 +136,7 @@
                      });
                      $( document ).ready(function() {
                          $('body').scrollspy({ 'target': '#variantViewScrollspy', 'offset': 250 });
-                         $('#nav').on('activate.bs.scrollspy', function() {
-                             console.log('scroll spy!!')
-                         });
                      });
-
 
                  }
              },
