@@ -307,9 +307,14 @@ SgvStudyBrowserPanel.prototype = {
 //                                dataIndex: 'scope',
 //                                flex: 3
 //                            },
+//            {
+//                text: "Number of Variants",
+//                dataIndex: 'numVariants',
+//                flex: 3
+//            },
             {
-                text: "Number of Variants",
-                dataIndex: 'numVariants',
+                text: "Platform",
+                dataIndex: 'platform',
                 flex: 3
             },
             {

@@ -335,11 +335,11 @@ SvStudyBrowserPanel.prototype = {
                 dataIndex: 'type',
                 flex: 3
             },
-            {
-                text: "Number of Variants",
-                dataIndex: 'numVariants',
-                flex: 3
-            },
+//            {
+//                text: "Number of Variants",
+//                dataIndex: 'numVariants',
+//                flex: 3
+//            },
             {
                 text: 'Download',
                 //dataIndex: 'id',
@@ -451,7 +451,7 @@ SvStudyBrowserPanel.prototype = {
         });
 
         this.formPanel = Ext.create('Ext.form.Panel', {
-            title: 'Structural Variation',
+            title: 'Structural Variations',
             border: this.border,
             header: this.headerConfig,
             layout: {

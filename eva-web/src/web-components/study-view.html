@@ -21,6 +21,9 @@
         a, a:link, a:visited{
             border-bottom-style: none;
         }
+        .eva-capitalize{
+            text-transform:capitalize;
+        }
     </style>
 
     <div class="row">
@@ -134,7 +137,7 @@
                     if(this.type === 'eva'){
 
                         if(data.summaryData[0].taxonomyId){
-                            var taxLink = 'http://www.uniprot.org/taxonomy/'+data.summaryData[0].taxonomyId;
+                            var taxLink = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id='+data.summaryData[0].taxonomyId;
                             taxonomyId ='<a href="'+taxLink+'" target="_blank">'+data.summaryData[0].taxonomyId+'</a>';
                         }
                         var _filesTable  = '<div><h3>'+data.summaryData[0].name+'</h3>' +
@@ -148,7 +151,7 @@
                                 '<tr><td><b>Type</b></td><td>'+data.summaryData[0].type+'</td></tr>' +
                                 '<tr><td><b>Source Type</b></td><td>'+data.summaryData[0].sourceType+'</td></tr>' +
                                 '<tr><td><b>Platform</b></td><td>'+data.summaryData[0].platform+'</td></tr>' +
-                                '<tr><td><b>Variants</b></td><td>'+data.summaryData[0].numVariants+'</td></tr>' +
+//                                '<tr><td><b>Variants</b></td><td>'+data.summaryData[0].numVariants+'</td></tr>' +
                                 '<tr><td><b>Samples</b></td><td>'+data.summaryData[0].numSamples+'</td></tr>' +
                                 '<tr><td><b>Description</b></td><td>'+data.summaryData[0].description+'</td></tr>' +
                                 '</table>'
@@ -214,7 +217,7 @@
                     else if(this.type === 'dgva'){
                         var _filesTable  = '<div><h3>'+data.summaryData[0].name+'</h3>' +
                                 '<div class="row study-view-data"><div class="col-md-12"><div><h4>General Information</h4></div><table class="table table-bordered">' +
-                                '<tr><td><b>Species</b></td><td>'+data.summaryData[0].speciesCommonName+'</td></tr>' +
+                                '<tr><td><b>Species</b></td><td class="eva-capitalize">'+data.summaryData[0].speciesCommonName+'</td></tr>' +
                                 '<tr><td><b>Sceintific Name</b></td><td>'+data.summaryData[0].speciesScientificName+'</td></tr>' +
 //                                '<tr><td><b>Taxonomy ID</b></td><td>'+data.summaryData[0].taxonomyId+'</td></tr>' +
 //                                '<tr><td><b>Center</b></td><td>'+data.summaryData[0].center+'</td></tr>' +

@@ -173,7 +173,7 @@ Eva.prototype = {
             case 'Study Browser':
                 this.studyBrowserPanel.show();
                 break;
-            case 'EVA Browser':
+            case 'VCF Browser':
                 this.variantWidgetPanel.show();
                 break;
 //            case 'Genome Browser':

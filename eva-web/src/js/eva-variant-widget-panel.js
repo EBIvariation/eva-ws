@@ -91,7 +91,7 @@ EvaVariantWidgetPanel.prototype = {
             },
             border: true,
             browserGridConfig: {
-                title: 'EVA Browser',
+                title: 'VCF Browser',
                 border: true
             },
             toolPanelConfig: {

@@ -278,7 +278,9 @@ EvaVariantWidget.prototype = {
                 {
                     text: 'Class',
                     dataIndex: 'type',
-                    flex: 1
+                    flex: 1,
+                    xtype: "templatecolumn",
+                    tpl: '<tpl if="type"><a href="http://www.ncbi.nlm.nih.gov/books/NBK44447/#Content.what_classes_of_genetic_variatio" target="_blank">{type}</a><tpl else>-</tpl>',
                 },
 //            {
 //                text: '1000G MAF',
@@ -427,8 +429,8 @@ EvaVariantWidget.prototype = {
                     '<td class="header">Missing Genotypes</td>' +
                     '</tr>',
                     '<tr>' +
-                    '<td><tpl if="maf == -1">NA <tpl else>{maf:number( "0.000" )} </tpl><tpl if="mafAllele">({mafAllele}) <tpl else>(-) </tpl></td>' +
-                    '<td><tpl if="mgf == -1">NA <tpl else>{mgf:number( "0.000" )} </tpl><tpl if="mgfAllele">({mgfAllele}) <tpl else>(-) </tpl></td>' +
+                    '<td><tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl><tpl if="mafAllele">({mafAllele}) <tpl else>(-) </tpl></td>' +
+                    '<td><tpl if="mgf == -1 || mgf == 0">NA <tpl else>{mgf:number( "0.000" )} </tpl><tpl if="mgfAllele">({mgfAllele}) <tpl else>(-) </tpl></td>' +
                     '<td><tpl if="mendelianErrors == -1">NA <tpl else>{mendelianErrors}</tpl></td>' +
                     '<td><tpl if="missingAlleles == -1">NA <tpl else>{missingAlleles}</tpl></td>' +
                     '<td><tpl if="missingGenotypes == -1">NA <tpl else>{missingGenotypes}</tpl></td>' +
