@@ -105,7 +105,7 @@ Eva.prototype = {
 
         /* variant browser option*/
         $(this.evaBrowserDiv).addClass('eva-child');
-        this.childDivMenuMap['EVA Browser'] = this.evaBrowserDiv;
+        this.childDivMenuMap['VCF Browser'] = this.evaBrowserDiv;
 
         /* genome browser option*/
 //        this.genomeBrowserOptionDiv = document.createElement('div');
