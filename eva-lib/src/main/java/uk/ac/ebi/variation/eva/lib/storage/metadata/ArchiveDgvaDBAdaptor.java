@@ -33,7 +33,7 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
     @Override
     public QueryResult countStudies() {
         try {
-            return EvaproUtils.count(ds, "dgva_study_mv");
+            return EvaproUtils.count(ds, "dgva_study_browser");
         } catch (SQLException ex) {
             Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             QueryResult qr = new QueryResult();
@@ -86,7 +86,7 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
 
     @Override
     public QueryResult countStudiesPerType(QueryOptions options) {
-        StringBuilder query = new StringBuilder("select study_type, count(*) as COUNT from dgva_study_mv ");
+        StringBuilder query = new StringBuilder("select study_type, count(*) as COUNT from dgva_study_browser ");
         if (options.containsKey("species")) {
             query.append("where ");
             query.append(EvaproUtils.getInClause("common_name", options.getListAs("species", String.class)));

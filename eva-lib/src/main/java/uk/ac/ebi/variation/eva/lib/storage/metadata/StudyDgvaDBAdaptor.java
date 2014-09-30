@@ -32,7 +32,7 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
 
     @Override
     public QueryResult getAllStudies(QueryOptions options) {
-        StringBuilder query = new StringBuilder("select * from dgva_study_mv ");
+        StringBuilder query = new StringBuilder("select * from dgva_study_browser ");
         boolean hasSpecies = options.containsKey("species") && !options.getList("species").isEmpty();
         boolean hasType = options.containsKey("type") && !options.getList("type").isEmpty();
         if (hasSpecies || hasType) {
@@ -106,7 +106,7 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
         QueryResult qr = null;
         try {
             conn = ds.getConnection();
-            pstmt = conn.prepareStatement("select * from dgva_study_mv where study_accession = ?");
+            pstmt = conn.prepareStatement("select * from dgva_study_browser where study_accession = ?");
             pstmt.setString(1, studyId);
             
             List result = new ArrayList<>();
