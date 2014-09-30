@@ -11,20 +11,14 @@
 <!-- /build -->
 <!--<script src="//cdnjs.cloudflare.com/ajax/libs/polymer/0.3.3/polymer.js"></script>-->
 
-<link rel="import" href="web-components/header.html">
-<link rel="import" href="web-components/footer.html">
+<!--<link rel="import" href="web-components/header.html">-->
+<!--<link rel="import" href="web-components/footer.html">-->
 <link rel="import" href="content.html">
 <link rel="import" href="web-components/study-view.html">
 <link rel="import" href="web-components/variant-view.html">
 <link rel="import" href="web-components/statistics.html">
 <link rel="import" href="web-components/beacon.html">
 <link rel="import" href="web-components/submission-form.html">
-</head>
-<body class="eva">
-
-<div id="header"></div>
-<div id="content"></div>
-<div id="footer"></div>
 
 <!-- build:style vendor -->
 <link type="text/css" rel="stylesheet" href="../vendor/ext-5.0.1/theme/theme-eva-ebi-all.css"/>
@@ -38,213 +32,353 @@
 <link type="text/css" rel="stylesheet" href="../lib/jsorolla/styles/css/style.css"/>
 <link type="text/css" rel="stylesheet" href="css/eva.css"/>
 <!-- /build -->
+</head>
+
+<body class="eva">
+
+    <div id="skip-to">
+        <ul>
+            <li><a href="#content">Skip to main content</a></li>
+            <li><a href="#local-nav">Skip to local navigation</a></li>
+            <li><a href="#global-nav">Skip to EBI global navigation menu</a></li>
+            <li><a href="#global-nav-expanded">Skip to expanded EBI global navigation menu (includes all sub-sections)</a></li>
+        </ul>
+    </div>
+
+    <div id="wrapper" class="container_24">
+        <header>
+            <div id="global-masthead" class="masthead grid_24">
+                <!--This has to be one line and no newline characters-->
+                <a href="//www.ebi.ac.uk/" title="Go to the EMBL-EBI homepage"><img src="//www.ebi.ac.uk/web_guidelines/images/logos/EMBL-EBI/EMBL_EBI_Logo_white.png" alt="EMBL European Bioinformatics Institute"></a>
+
+                <nav>
+                    <ul id="global-nav">
+                        <!-- set active class as appropriate -->
+                        <li class="first active" id="services"><a href="//www.ebi.ac.uk/services">Services</a></li>
+                        <li id="research"><a href="//www.ebi.ac.uk/research">Research</a></li>
+                        <li id="training"><a href="//www.ebi.ac.uk/training">Training</a></li>
+                        <li id="industry"><a href="//www.ebi.ac.uk/industry">Industry</a></li>
+                        <li id="about" class="last"><a href="//www.ebi.ac.uk/about">About us</a></li>
+                    </ul>
+                </nav>
+
+            </div>
+
+            <div id="local-masthead" class="masthead grid_24 nomenu">
+
+                <!-- local-title -->
+                <div class="grid_12 alpha" id="local-title">
+                    <h1><img src="img/eva_logo.png" alt="" width="75" height="64"><a href="" title="Back to European Variation Archive homepage">European Variation Archive</a></h1>
+                </div>
+                <!-- /local-title -->
+
+                <!-- local-search -->
+                <!--<div class="grid_12 omega">-->
+                    <!--<form id="local-search" name="local-search" action="[search-action]" method="post">-->
+
+                        <!--<fieldset>-->
+
+                            <!--<div class="left">-->
+                                <!--<label>-->
+                                    <!--<input type="text" name="first" id="local-searchbox">-->
+                                <!--</label>-->
+                                <!--&lt;!&ndash; Include some example searchterms - keep them short and few! &ndash;&gt;-->
+                                <!--<span class="examples">Examples: <a href="[search-url-1]">[search-text-1]</a>, <a href="[search-url-1]">[search-text-2]</a>, <a href="[search-url-1]">[search-text-3]</a></span>-->
+                            <!--</div>-->
+
+                            <!--<div class="right">-->
+                                <!--<input type="submit" name="submit" value="Search" class="submit">-->
+                                <!--&lt;!&ndash; If your search is more complex than just a keyword search, you can link to an Advanced Search,-->
+                                     <!--with whatever features you want available &ndash;&gt;-->
+                                <!--<span class="adv"><a href="../search" id="adv-search" title="Advanced">Advanced</a></span>-->
+                            <!--</div>-->
+
+                        <!--</fieldset>-->
+
+                    <!--</form>-->
+                <!--</div>-->
+                <!-- /local-search -->
+                <!-- local-nav -->
+                <nav>
+                    <ul class="left-ul">
+                        <li class="active"><a>Home</a></li>
+                        <li><a>Submit Data</a></li>
+                        <li><a>Study Browser</a></li>
+                        <li><a>VCF Browser</a></li>
+                        <li><a>EVA Clinical</a></li>
+                        <li><a>Beacon</a></li>
+                        <!--<li><a>Genome Browser</a></li>-->
+                        <li><a>About</a></li>
+                        <li><a>Contact</a></li>
+                        <!--<li class="hidden"><a>Templates</a></li>-->
+                        <!--<li class="hidden"><a>VCF</a></li>-->
+                        <!--<li class="hidden"><a>Study</a></li>-->
+                    </ul>
+                    <ul class="right-ul">
+                        <!--<li class="functional"><a href="#Login" class="icon icon-functional" data-icon="l">Login</a></li>-->
+                        <!--<li class="functional"><a href="#Feedback" class="icon icon-generic" data-icon="\">Feedback</a></li>-->
+                        <!--<li class="functional"><a href="#Share" class="icon icon-functional" data-icon="r">Share</a></li>-->
+                    </ul>
+                </nav>
+                <!-- /local-nav -->
+
+            </div>
+        </header>
+        <!--<div id="header"></div>-->
+        <div id="content" role="main" class="grid_24 clearfix"></div>
+        <!--<div id="footer"></div>-->
+
+        <footer>
+
+            <div id="global-footer" class="grid_24">
+
+                <nav id="global-nav-expanded">
+
+                    <div class="grid_4 alpha">
+                        <h3 class="embl-ebi"><a href="//www.ebi.ac.uk/" title="EMBL-EBI">EMBL-EBI</a></h3>
+                    </div>
+
+                    <div class="grid_4">
+                        <h3 class="services"><a href="//www.ebi.ac.uk/services">Services</a></h3>
+                    </div>
+
+                    <div class="grid_4">
+                        <h3 class="research"><a href="//www.ebi.ac.uk/research">Research</a></h3>
+                    </div>
+
+                    <div class="grid_4">
+                        <h3 class="training"><a href="//www.ebi.ac.uk/training">Training</a></h3>
+                    </div>
+
+                    <div class="grid_4">
+                        <h3 class="industry"><a href="//www.ebi.ac.uk/industry">Industry</a></h3>
+                    </div>
+
+                    <div class="grid_4 omega">
+                        <h3 class="about"><a href="//www.ebi.ac.uk/about">About us</a></h3>
+                    </div>
+
+                </nav>
+
+                <section id="ebi-footer-meta">
+                    <p class="address">EMBL-EBI, Wellcome Trust Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, UK &nbsp; &nbsp; +44 (0)1223 49 44 44</p>
+                    <p class="legal">Copyright &copy; EMBL-EBI 2013 | EBI is an outstation of the <a href="http://www.embl.org">European Molecular Biology Laboratory</a> | <a href="/about/privacy">Privacy</a> | <a href="/about/cookies">Cookies</a> | <a href="/about/terms-of-use">Terms of use</a></p>
+                </section>
+
+            </div>
+
+        </footer>
+    </div> <!--! end of #wrapper -->
+
+    <!-- JavaScript at the bottom for fast page loading -->
+    <!-- build:script vendor -->
+    <script type="text/javascript" src="../vendor/ext-5.0.1/js/ext-all.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/vendor/underscore-min.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/vendor/backbone-min.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/vendor/jquery.min.js"></script>
+
+    <!-- These dependencies must go AFTER jquery -->
+    <!--<script type="text/javascript" src="../lib/jsorolla/vendor/bootstrap-scoped-dist/js/bootstrap.min.js"></script>-->
+    <script type="text/javascript" src="../vendor/highcharts-4.0.3/js/highcharts.js"></script>
+    <script type="text/javascript" src="../vendor/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/vendor/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/vendor/jquery.sha1.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/vendor/purl.min.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/vendor/jquery.qtip.min.js"></script>
+    <!-- /build -->
+
+    <!-- build:script lib -->
+    <script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/gv-config.js"></script>
+
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/svg.js"></script>-->
+    <script type="text/javascript" src="../lib/jsorolla/src/lib/utils.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/src/lib/region.js"></script>
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/feature-binary-search-tree.js"></script>-->
+    <script type="text/javascript" src="../lib/jsorolla/src/lib/cellbase-manager.js"></script>
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/ensembl-manager.js"></script>-->
+
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/cache/feature-chunk-cache.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/cache/memory-store.js"></script>-->
+
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/data-adapter/feature/cellbase-adapter.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/data-adapter/feature/sequence-adapter.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/data-adapter/feature/ensembl-adapter.js"></script>-->
+
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/info-widget.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/gene-info-widget.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/protein-info-widget.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/snp-info-widget.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/transcript-info-widget.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/vcf-variant-info-widget.js"></script>-->
+
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/file/legend-panel.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/file/legend-widget.js"></script>-->
+
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/ux-window.js"></script>-->
+
+    <!--&lt;!&ndash; **** &ndash;&gt;-->
+
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/navigation-bar.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/chromosome-panel.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/karyotype-panel.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/status-bar.js"></script>-->
+
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/tracklist-panel.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/track.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/feature-track.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/sequence-track.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/gene-track.js"></script>-->
+
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/renderer.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/feature-renderer.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/feature-cluster-renderer.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/sequence-renderer.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/histogram-renderer.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/gene-renderer.js"></script>-->
 
 
-<!-- build:script vendor -->
-<script type="text/javascript" src="../vendor/ext-5.0.1/js/ext-all.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/vendor/underscore-min.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/vendor/backbone-min.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/vendor/jquery.min.js"></script>
-
-<!-- These dependencies must go AFTER jquery -->
-<!--<script type="text/javascript" src="../lib/jsorolla/vendor/bootstrap-scoped-dist/js/bootstrap.min.js"></script>-->
-<script type="text/javascript" src="../vendor/highcharts-4.0.3/js/highcharts.js"></script>
-<script type="text/javascript" src="../vendor/bootstrap-3.2.0/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/vendor/jquery.cookie.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/vendor/jquery.sha1.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/vendor/purl.min.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/vendor/jquery.qtip.min.js"></script>
-<!-- /build -->
-
-<!-- build:script lib -->
-<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/gv-config.js"></script>
-
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/svg.js"></script>-->
-<script type="text/javascript" src="../lib/jsorolla/src/lib/utils.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/region.js"></script>
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/feature-binary-search-tree.js"></script>-->
-<script type="text/javascript" src="../lib/jsorolla/src/lib/cellbase-manager.js"></script>
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/ensembl-manager.js"></script>-->
-
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/cache/feature-chunk-cache.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/cache/memory-store.js"></script>-->
-
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/data-adapter/feature/cellbase-adapter.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/data-adapter/feature/sequence-adapter.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/data-adapter/feature/ensembl-adapter.js"></script>-->
-
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/info-widget.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/gene-info-widget.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/protein-info-widget.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/snp-info-widget.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/transcript-info-widget.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/info/vcf-variant-info-widget.js"></script>-->
-
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/file/legend-panel.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/file/legend-widget.js"></script>-->
-
-<!--<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/ux-window.js"></script>-->
-
-<!--&lt;!&ndash; **** &ndash;&gt;-->
-
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/navigation-bar.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/chromosome-panel.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/karyotype-panel.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/status-bar.js"></script>-->
-
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/tracklist-panel.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/track.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/feature-track.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/sequence-track.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/tracks/gene-track.js"></script>-->
-
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/renderer.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/feature-renderer.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/feature-cluster-renderer.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/sequence-renderer.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/histogram-renderer.js"></script>-->
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/renderers/gene-renderer.js"></script>-->
+    <!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/genome-viewer.js"></script>-->
 
 
-<!--<script type="text/javascript" src="../lib/jsorolla/src/genome-viewer/genome-viewer.js"></script>-->
+    <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/variant/variant-browser-grid.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/variant/variant-effect-grid.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/variant/variant-genotype-grid.js"></script>
 
+    <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/variant/variant-widget.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/variant/variant-file-browser-panel.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/variant/variant-stats-panel.js"></script>
 
-<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/variant/variant-browser-grid.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/variant/variant-effect-grid.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/variant/variant-genotype-grid.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/form-panel.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/position-filter-form-panel.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/study-filter-form-panel.js"></script>
+    <script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/consequence-type-filter-form-panel.js"></script>
+    <!-- /build -->
 
-<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/variant/variant-widget.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/variant/variant-file-browser-panel.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/variant/variant-stats-panel.js"></script>
+    <!-- build:script eva-js -->
+    <script type="text/javascript" src="js/eva.js"></script>
+    <script type="text/javascript" src="js/eva-variant-widget-panel.js"></script>
+    <script type="text/javascript" src="js/eva-study-browser-panel.js"></script>
+    <script type="text/javascript" src="js/sgv-study-browser.js"></script>
+    <script type="text/javascript" src="js/sv-study-browser.js"></script>
+    <!--<script type="text/javascript" src="eva-study-browser-panel.old.js"></script>-->
+    <script type="text/javascript" src="js/eva-variant-widget.js"></script>
+    <script type="text/javascript" src="js/eva-menu.js"></script>
+    <script type="text/javascript" src="js/eva-adapter.js"></script>
+    <script type="text/javascript" src="js/eva-manager.js"></script>
+    <script type="text/javascript" src="js/eva-config.js"></script>
+    <!-- /build -->
 
-<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/form-panel.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/position-filter-form-panel.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/study-filter-form-panel.js"></script>
-<script type="text/javascript" src="../lib/jsorolla/src/lib/widgets/feature/form/consequence-type-filter-form-panel.js"></script>
-<!-- /build -->
+    <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/cookiebanner.js"></script>
+    <script defer="defer" src="//www.ebi.ac.uk/web_guidelines/js/foot.js"></script>
+    <!-- end scripts-->
 
-<!-- build:script eva-js -->
-<script type="text/javascript" src="js/eva.js"></script>
-<script type="text/javascript" src="js/eva-variant-widget-panel.js"></script>
-<script type="text/javascript" src="js/eva-study-browser-panel.js"></script>
-<script type="text/javascript" src="js/sgv-study-browser.js"></script>
-<script type="text/javascript" src="js/sv-study-browser.js"></script>
-<!--<script type="text/javascript" src="eva-study-browser-panel.old.js"></script>-->
-<script type="text/javascript" src="js/eva-variant-widget.js"></script>
-<script type="text/javascript" src="js/eva-menu.js"></script>
-<script type="text/javascript" src="js/eva-adapter.js"></script>
-<script type="text/javascript" src="js/eva-manager.js"></script>
-<script type="text/javascript" src="js/eva-config.js"></script>
-
-<!-- /build -->
-
-<script type="text/javascript">
-    var eva;
-    var start = function () {
+    <script type="text/javascript">
+        var eva;
+        var start = function () {
 
 
 
-        // Bring in the import content.
-        var link = document.querySelector('link[href="content.html"]');
-        var homeDiv = link.import.querySelector('#home');
-        var submitDiv = link.import.querySelector('#submit');
-        var aboutDiv = link.import.querySelector('#about');
-        var contactDiv = link.import.querySelector('#contact');
-        var templatesDiv = link.import.querySelector('#submissionTemplates');
-        var vcfDiv = link.import.querySelector('#vcf-format');
-        var clinicalDiv = link.import.querySelector('#clinical');
-//        var studyBrowserDiv = link.import.querySelector('#studyBrowser');
-        var studyBrowserDiv = document.createElement('div');
-        studyBrowserDiv.innerHTML = '<title>Study Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
+            // Bring in the import content.
+            var link = document.querySelector('link[href="content.html"]');
+            var homeDiv = link.import.querySelector('#home');
+            var submitDiv = link.import.querySelector('#submit');
+            var aboutDiv = link.import.querySelector('#about');
+            var contactDiv = link.import.querySelector('#contact');
+            var templatesDiv = link.import.querySelector('#submissionTemplates');
+            var vcfDiv = link.import.querySelector('#vcf-format');
+            var clinicalDiv = link.import.querySelector('#clinical');
+    //        var studyBrowserDiv = link.import.querySelector('#studyBrowser');
+            var studyBrowserDiv = document.createElement('div');
+            studyBrowserDiv.innerHTML = '<title>Study Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
 
-        var evaBrowserDiv = document.createElement('div');
-        evaBrowserDiv.innerHTML = '<title>VCF Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
-        var beaconDiv = link.import.querySelector('#beacon');
+            var evaBrowserDiv = document.createElement('div');
+            evaBrowserDiv.innerHTML = '<title>VCF Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
+            var beaconDiv = link.import.querySelector('#beacon');
 
-        var tab = getUrlParameters("");
-        var tabId =  decodeURI(tab.id);
-        var studyView;
-        var variantView;
-        if(tabId == 'eva-study'){
-            studyView = document.createElement('study-view');
-            studyView.innerHTML += '<title>Study View  &lt; European Variation Archive &lt; EMBL-EBI</title>';
-            studyView.setAttribute('id', tab.value);
-            studyView.setAttribute('type', 'eva');
-        }
-        if(tabId == 'dgva-study'){
-            studyView = document.createElement('study-view');
-            studyView.innerHTML += '<title>Study View  &lt; European Variation Archive &lt; EMBL-EBI</title>';
-            studyView.setAttribute('id', tab.value);
-            studyView.setAttribute('type', 'dgva');
-        }
-        if(tabId == 'variant'){
-            variantView = document.createElement('eva-variant-view');
-            variantView.innerHTML += '<title>Variant View  &lt; European Variation Archive &lt; EMBL-EBI</title>';
-            variantView.setAttribute('id', tab.value);
-        }
-
-        if(tabId == 'submission-start'){
-            var submissionForm = document.createElement('eva-submission-form');
-        }
-
-        Ext.getBody().removeCls('x-body');
-        var ulLocalNav = document.querySelector('#header').shadowRoot.querySelector('.left-ul');
-
-        eva = new Eva({
-            target: 'content',
-            targetMenu: ulLocalNav,
-            width: $('#content').width(),
-            homeDiv:homeDiv,
-            submitDiv:submitDiv,
-            aboutDiv:aboutDiv,
-            contactDiv:contactDiv,
-            templatesDiv:templatesDiv,
-            vcfDiv:vcfDiv,
-            studyView:studyView,
-            variantView:variantView,
-            beacon:beaconDiv,
-            clinicalDiv:clinicalDiv,
-            submissionForm:submissionForm,
-            studyBrowserDiv:studyBrowserDiv,
-            evaBrowserDiv:evaBrowserDiv,
-        });
-        eva.draw();
-
-
-        if(tab.id){
-            eva.select(tabId);
-        }
-    };
-
-
-    function getUrlParameters(staticURL) {
-        var data = [];
-
-        var currLocation = (staticURL.length) ? staticURL : window.location.search;
-        if (currLocation.indexOf("?") >= 0) {
-            parArr = currLocation.split("?")[1].split("&");
-            if (parArr) {
-                for (var i = 0; i < parArr.length; i++) {
-                    parr = parArr[i].split("=");
-                    data.id = parr[0];
-                    data.value = parr[1];
-                    return data;
-                }
+            var tab = getUrlParameters("");
+            var tabId =  decodeURI(tab.id);
+            var studyView;
+            var variantView;
+            if(tabId == 'eva-study'){
+                studyView = document.createElement('study-view');
+                studyView.innerHTML += '<title>Study View  &lt; European Variation Archive &lt; EMBL-EBI</title>';
+                studyView.setAttribute('id', tab.value);
+                studyView.setAttribute('type', 'eva');
             }
-        } else {
-            return false
+            if(tabId == 'dgva-study'){
+                studyView = document.createElement('study-view');
+                studyView.innerHTML += '<title>Study View  &lt; European Variation Archive &lt; EMBL-EBI</title>';
+                studyView.setAttribute('id', tab.value);
+                studyView.setAttribute('type', 'dgva');
+            }
+            if(tabId == 'variant'){
+                variantView = document.createElement('eva-variant-view');
+                variantView.innerHTML += '<title>Variant View  &lt; European Variation Archive &lt; EMBL-EBI</title>';
+                variantView.setAttribute('id', tab.value);
+            }
+
+            if(tabId == 'submission-start'){
+                var submissionForm = document.createElement('eva-submission-form');
+            }
+
+            Ext.getBody().removeCls('x-body');
+            var ulLocalNav = document.querySelector('.left-ul');
+
+            eva = new Eva({
+                target: 'content',
+                targetMenu: ulLocalNav,
+                width: $('#content').width(),
+                homeDiv:homeDiv,
+                submitDiv:submitDiv,
+                aboutDiv:aboutDiv,
+                contactDiv:contactDiv,
+                templatesDiv:templatesDiv,
+                vcfDiv:vcfDiv,
+                studyView:studyView,
+                variantView:variantView,
+                beacon:beaconDiv,
+                clinicalDiv:clinicalDiv,
+                submissionForm:submissionForm,
+                studyBrowserDiv:studyBrowserDiv,
+                evaBrowserDiv:evaBrowserDiv,
+            });
+            eva.draw();
+
+
+            if(tab.id){
+                eva.select(tabId);
+            }
+        };
+
+
+        function getUrlParameters(staticURL) {
+            var data = [];
+
+            var currLocation = (staticURL.length) ? staticURL : window.location.search;
+            if (currLocation.indexOf("?") >= 0) {
+                parArr = currLocation.split("?")[1].split("&");
+                if (parArr) {
+                    for (var i = 0; i < parArr.length; i++) {
+                        parr = parArr[i].split("=");
+                        data.id = parr[0];
+                        data.value = parr[1];
+                        return data;
+                    }
+                }
+            } else {
+                return false
+            }
         }
-    }
 
 
-    //Start point
-    window.addEventListener('HTMLImportsLoaded', function (e) {
-        // all imports loaded
-        Ext.QuickTips.init();
-        Ext.onReady(start);
+        //Start point
+        window.addEventListener('HTMLImportsLoaded', function (e) {
+            // all imports loaded
+            Ext.QuickTips.init();
+            Ext.onReady(start);
 
-    });
-</script>
+        });
+    </script>
 
 </body>
 </html>
