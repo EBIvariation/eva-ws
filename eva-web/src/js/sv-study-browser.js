@@ -472,7 +472,7 @@ SvStudyBrowserPanel.prototype = {
             host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
             category: 'meta/studies',
             resource: 'stats',
-            params: {},
+            params: {structural:true},
             success: function (response) {
                 try {
                     var statsData = {};

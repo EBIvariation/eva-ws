@@ -32,11 +32,9 @@ body.eva {
 
 }
 
-#local-masthead{
-    position: relative;
+div#local-masthead{
     background: #156765 url("../img/EBI_banner_Homepage.jpg") no-repeat right top;
     background-size: 100%;
-    height: 130px;
 }
 
 .eva a {
