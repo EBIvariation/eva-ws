@@ -32,7 +32,7 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
 
     @Override
     public QueryResult getAllStudies(QueryOptions options) {
-        StringBuilder query = new StringBuilder("select * from dgva_study_browser ");
+        StringBuilder query = new StringBuilder("select * from dgva_study_mv ");
         boolean hasSpecies = options.containsKey("species") && !options.getList("species").isEmpty();
         boolean hasType = options.containsKey("type") && !options.getList("type").isEmpty();
         if (hasSpecies || hasType) {
@@ -64,7 +64,7 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 VariantStudy study = new VariantStudy(rs.getString("display_name"), rs.getString("study_accession"), null, rs.getString("study_description"),
-                        -1, rs.getString("common_name"), rs.getString("scientific_name"), null, null, null, null, 
+                        -1, rs.getString("common_name"), rs.getString("scientific_name"), null, null, null, null, getStudyType(rs.getString("study_type")),
                         rs.getString("analysis_type"), "GRCh38", rs.getString("platform_name"), rs.getInt("variant_count"), -1);
                 result.add(study);
             }
@@ -106,7 +106,7 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
         QueryResult qr = null;
         try {
             conn = ds.getConnection();
-            pstmt = conn.prepareStatement("select * from dgva_study_browser where study_accession = ?");
+            pstmt = conn.prepareStatement("select * from dgva_study_mv where study_accession = ?");
             pstmt.setString(1, studyId);
             
             List result = new ArrayList<>();
@@ -115,7 +115,7 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
 
             if (rs.next()) {
                 VariantStudy study = new VariantStudy(rs.getString("display_name"), rs.getString("study_accession"), null, rs.getString("study_description"),
-                        -1, rs.getString("common_name"), rs.getString("scientific_name"), null, null, null, null, 
+                        -1, rs.getString("common_name"), rs.getString("scientific_name"), null, null, null, null, getStudyType(rs.getString("study_type")),
                         rs.getString("analysis_type"), "GRCh38", rs.getString("platform_name"), rs.getInt("variant_count"), -1);
                 result.add(study);
             }
@@ -144,4 +144,23 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    private VariantStudy.StudyType getStudyType(String studyType) {
+        switch (studyType) {
+            case "Collection":
+                return VariantStudy.StudyType.COLLECTION;
+            case "Control Set":
+            case "Control-Set":
+                return VariantStudy.StudyType.CONTROL;
+            case "Case Control":
+            case "Case-Control":
+                return VariantStudy.StudyType.CASE_CONTROL;
+            case "Case Set":
+            case "Case-Set":
+                return VariantStudy.StudyType.CASE;
+            case "Tumor vs. Matched-Normal":
+                return VariantStudy.StudyType.PAIRED;
+            default:
+                throw new IllegalArgumentException("Study type " + studyType + " is not valid");
+        }
+    }
 }

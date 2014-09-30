@@ -65,7 +65,7 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
             while (rs.next()) {
                 VariantStudy study = new VariantStudy(rs.getString("project_title"), rs.getString("project_accession"), null, rs.getString("description"),
                     rs.getInt("tax_id"), rs.getString("common_name"), rs.getString("scientific_name"), rs.getString("source_type"), rs.getString("center"),
-                    rs.getString("material"), rs.getString("scope"), rs.getString("experiment_type"), rs.getString("assembly_name"), 
+                    rs.getString("material"), rs.getString("scope"), null, rs.getString("experiment_type"), rs.getString("assembly_name"), 
                     rs.getString("platform"), rs.getInt("variant_count"), rs.getInt("samples"));
                 result.add(study);
             }
@@ -117,7 +117,7 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
             if (rs.next()) {
                 VariantStudy study = new VariantStudy(rs.getString("project_title"), rs.getString("project_accession"), null, rs.getString("description"),
                     rs.getInt("tax_id"), rs.getString("common_name"), rs.getString("scientific_name"), rs.getString("source_type"), rs.getString("center"),
-                    rs.getString("material"), rs.getString("scope"), rs.getString("experiment_type"), rs.getString("assembly_name"), 
+                    rs.getString("material"), rs.getString("scope"), null, rs.getString("experiment_type"), rs.getString("assembly_name"), 
                     rs.getString("platform"), rs.getInt("variant_count"), rs.getInt("samples"));
                 l.add(study);
             }

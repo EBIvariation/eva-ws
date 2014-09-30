@@ -33,7 +33,7 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
     @Override
     public QueryResult countStudies() {
         try {
-            return EvaproUtils.count(ds, "dgva_study_browser");
+            return EvaproUtils.count(ds, "dgva_study_mv");
         } catch (SQLException ex) {
             Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             QueryResult qr = new QueryResult();
@@ -50,16 +50,11 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
         try {
             conn = ds.getConnection();
             
-            // TODO Get all species entries from the database
-            String query = "SELECT distinct(tax_id) FROM dgva_study_browser";
+            // Get all species entries from the database
+            String query = "SELECT * from dgva_organism_mv ORDER BY study_count DESC";
             pstmt = conn.prepareStatement(query);
             long start = System.currentTimeMillis();
             ResultSet rs = pstmt.executeQuery();
-            
-
-            // TODO Store them in a set
-
-            // TODO For each of them, run a select tax_id, count(*) from dgva_study_browser, taxonomy where tax_id like '%tax_id%' (can't group thanks to marvelous text column ¬¬)
             
             pstmt = conn.prepareStatement(query);
             Map<String, Integer> result = new HashMap<>();
@@ -86,12 +81,53 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
             }
         }
         
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return qr;
     }
 
     @Override
     public QueryResult countStudiesPerType(QueryOptions options) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        StringBuilder query = new StringBuilder("select study_type, count(*) as COUNT from dgva_study_mv ");
+        if (options.containsKey("species")) {
+            query.append("where ");
+            query.append(EvaproUtils.getInClause("common_name", options.getListAs("species", String.class)));
+            query.append(" or ");
+            query.append(EvaproUtils.getInClause("scientific_name", options.getListAs("species", String.class)));
+        }
+        query.append(" group by study_type order by COUNT desc");
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        QueryResult qr = null;
+        try {
+            conn = ds.getConnection();
+            pstmt = conn.prepareStatement(query.toString());
+            long start = System.currentTimeMillis();
+            ResultSet rs = pstmt.executeQuery();
+            Map<String, Integer> result = new HashMap<>();
+            while (rs.next()) {
+                String species = rs.getString(1) != null ? rs.getString(1) : "Others";
+                int count = rs.getInt(2);
+                result.put(species, count);
+            }
+            long end = System.currentTimeMillis();
+            qr = new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, new ArrayList(result.entrySet()));
+        } catch (SQLException ex) {
+            Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            qr = new QueryResult();
+            qr.setErrorMsg(ex.getMessage());
+            return qr;
+        } finally {
+            try {
+                EvaproUtils.close(pstmt);
+                EvaproUtils.close(conn);
+            } catch (SQLException ex) {
+                Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                qr = new QueryResult();
+                qr.setErrorMsg(ex.getMessage());
+            }
+        }
+
+        return qr;
     }
 
     @Override
