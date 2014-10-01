@@ -51,7 +51,7 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
             conn = ds.getConnection();
             
             // Get all species entries from the database
-            String query = "SELECT * from dgva_organism_mv ORDER BY study_count DESC";
+            String query = "SELECT * from dgva_organism_mv ORDER BY count DESC";
             pstmt = conn.prepareStatement(query);
             long start = System.currentTimeMillis();
             ResultSet rs = pstmt.executeQuery();
