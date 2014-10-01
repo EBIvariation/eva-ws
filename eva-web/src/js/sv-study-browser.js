@@ -89,18 +89,19 @@ SvStudyBrowserPanel.prototype = {
         for (key in values) {
             if (values[key] == '') {
                 delete values[key]
-            }else{
-                // TO Be Removed
-                if(key === 'species'){
-                    var tempArray = [];
-                    // changing values to lower case
-                    for (var i = 0; i < values[key].length; i++) {
-                        tempArray.push( values[key][i].toLowerCase());
-                    }
-                    values[key] = tempArray;
-                }
-
             }
+//            else{
+//                // TO Be Removed
+//                if(key === 'species'){
+//                    var tempArray = [];
+//                    // changing values to lower case
+//                    for (var i = 0; i < values[key].length; i++) {
+//                        tempArray.push( values[key][i].toLowerCase());
+//                    }
+//                    values[key] = tempArray;
+//                }
+//
+//            }
         }
 
 //        this.studiesStore.clearFilter();
