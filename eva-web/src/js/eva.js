@@ -88,7 +88,7 @@ Eva.prototype = {
 
         /* beacon */
         $(this.beacon).addClass('eva-child');
-        this.childDivMenuMap['Beacon'] = this.beacon;
+        this.childDivMenuMap['GA4GH'] = this.beacon;
 
         /* clinical */
         $(this.clinicalDiv).addClass('eva-child');
