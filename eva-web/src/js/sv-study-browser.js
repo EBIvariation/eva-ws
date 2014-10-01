@@ -433,8 +433,8 @@ SvStudyBrowserPanel.prototype = {
             items: [
 //              submitButton,
                 studySearchField,
-                this.speciesFieldTag
-//                this.typeFieldTag
+                this.speciesFieldTag,
+                this.typeFieldTag
             ]
         });
 
