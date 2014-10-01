@@ -49,14 +49,7 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
             if (hasSpecies) {
                 query.append(" and ");
             }
-            
-            // Convert the types sent as the 
-            List<String> types = options.getListAs("type", String.class);
-            List<String> internalTypes = new ArrayList<>();
-            for (String type : types) {
-                internalTypes.add(EvaproUtils.studyTypeToString(VariantStudy.StudyType.valueOf(type)));
-            }
-            query.append(EvaproUtils.getInClause("experiment_type", internalTypes));
+            query.append(EvaproUtils.getInClause("study_type", options.getListAs("type", String.class)));
         }
         
         Connection conn = null;
