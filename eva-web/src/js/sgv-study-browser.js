@@ -299,7 +299,7 @@ SgvStudyBrowserPanel.prototype = {
             },
             {
                 text: "Type",
-                dataIndex: 'type',
+                dataIndex: 'experimentType',
                 flex: 3
             },
 //                            {
