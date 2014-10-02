@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,14 +59,14 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
             ResultSet rs = pstmt.executeQuery();
             
             pstmt = conn.prepareStatement(query);
-            Map<String, Integer> result = new HashMap<>();
+            List<Map.Entry<String, Integer>> result = new ArrayList<>();
             while (rs.next()) {
                 String species = rs.getString(1) != null ? rs.getString(1) : "Others";
                 int count = rs.getInt(2);
-                result.put(species, count);
+                result.add(new AbstractMap.SimpleEntry<>(species, count));
             }
             long end = System.currentTimeMillis();
-            qr = new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, new ArrayList(result.entrySet()));
+            qr = new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
         } catch (SQLException ex) {
             Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             qr = new QueryResult();
@@ -103,14 +105,14 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
             pstmt = conn.prepareStatement(query.toString());
             long start = System.currentTimeMillis();
             ResultSet rs = pstmt.executeQuery();
-            Map<String, Integer> result = new HashMap<>();
+            List<Map.Entry<String, Integer>> result = new ArrayList<>();
             while (rs.next()) {
-                String species = rs.getString(1) != null ? rs.getString(1) : "Others";
+                String type = rs.getString(1) != null ? rs.getString(1) : "Others";
                 int count = rs.getInt(2);
-                result.put(species, count);
+                result.add(new AbstractMap.SimpleEntry<>(type, count));
             }
             long end = System.currentTimeMillis();
-            qr = new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, new ArrayList(result.entrySet()));
+            qr = new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
         } catch (SQLException ex) {
             Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             qr = new QueryResult();
