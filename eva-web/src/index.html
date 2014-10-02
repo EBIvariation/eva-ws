@@ -323,7 +323,6 @@
 
             Ext.getBody().removeCls('x-body');
             var ulLocalNav = document.querySelector('.left-ul');
-
             eva = new Eva({
                 target: 'content',
                 targetMenu: ulLocalNav,
@@ -340,13 +339,21 @@
                 clinicalDiv:clinicalDiv,
                 submissionForm:submissionForm,
                 studyBrowserDiv:studyBrowserDiv,
-                evaBrowserDiv:evaBrowserDiv,
+                evaBrowserDiv:evaBrowserDiv
             });
             eva.draw();
 
 
             if(tab.id){
                 eva.select(tabId);
+            }else{
+                eva.select('Home');
+            }
+
+            window.onpopstate = function(event) {
+                if(event && event.state) {
+                    location.reload();
+                }
             }
         };
 

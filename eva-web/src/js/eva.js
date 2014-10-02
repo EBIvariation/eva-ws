@@ -148,11 +148,11 @@ Eva.prototype = {
         // this.formPanelVariantFilter.draw();
         // this.genomeViewer.draw();
         // this.formPanelGenomeFilter.draw();
-        this.select('Home');
+//        this.select('Home');
 
     },
     select: function (option) {
-        this.evaMenu.select(option);
+//        this.evaMenu.select(option);
         this._selectHandler(option);
     },
     _selectHandler: function (option) {
@@ -164,6 +164,12 @@ Eva.prototype = {
         });
         if (this.childDivMenuMap[option]) {
             this.div.appendChild(this.childDivMenuMap[option]);
+        }
+
+        var pageArray = ['eva-study', 'variant'];
+        if(_.indexOf(pageArray, option) < 0 && !_.isEmpty(option)  ){
+            var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?'+option;
+            window.history.pushState({path:newurl},'',newurl);
         }
 
         switch (option) {

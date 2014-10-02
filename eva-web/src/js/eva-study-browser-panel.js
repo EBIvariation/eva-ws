@@ -65,12 +65,12 @@ StudyBrowser.prototype = {
                 plain: true,
                 items: [
                     {
-                        title: sgvStudyBrowser.getPanel().title,
+                        title: sgvStudyBrowser.getPanel().title.replace('Browser',''),
                         cls:'studybrowser ',
                         items:[sgvStudyBrowser.getPanel()]
                     },
                     {
-                        title:svStudyBrowser.getPanel().title,
+                        title:svStudyBrowser.getPanel().title.replace('Browser',''),
                         cls:'studybrowser',
                         items:[svStudyBrowser.getPanel()]
 
