@@ -219,8 +219,8 @@
              },
              draw: {
                  value: function (data, content) {
-                     var _this = this
-                     var variantInfoTitle =  document.querySelector("#variantInfo").textContent = variantID+' Info';
+                     var _this = this;
+//                     var variantInfoTitle =  document.querySelector("#variantInfo").textContent = variantID+' Info';
                      var summaryContent =  _this.renderSummaryData(variant);
                      var summaryEl = document.querySelector("#summary-grid");
                      var summaryElDiv =  document.createElement("div");
@@ -246,6 +246,7 @@
              renderSummaryData: {
                  value: function (data) {
                      var _summaryTable  = '<div class="row"><div class="col-md-8"><table class="table table-bordered">'
+                     var variantInfoTitle =  document.querySelector("#variantInfo").textContent = data[0].chromosome+':'+data[0].start+':'+data[0].reference+':'+data[0].alternate+' Info';
                      if(data[0].id){
                          _summaryTable += '<tr><td>ID</td><td>'+data[0].id+'</td></tr>'
                      }
@@ -258,9 +259,6 @@
                      if(data[0].alternate){
                          alternate = data[0].alternate;
                      }
-
-                     console.log(data[0].alternate)
-                     console.log(data[0].alternate)
                      _summaryTable += '<tr><td>Type</td><td>'+data[0].type+'</td></tr>' +
                              '<tr><td>Chromosome:Start-End</td><td>'+data[0].chromosome+':'+data[0].start+'-'+data[0].end+'</td></tr>' +
                              '<tr><td>Ref</td><td>'+reference+'</td></tr>' +
