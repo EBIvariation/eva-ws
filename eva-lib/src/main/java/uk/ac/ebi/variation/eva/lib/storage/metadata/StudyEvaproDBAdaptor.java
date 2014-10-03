@@ -71,10 +71,11 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
                 }
                 
                 // Build the variant study object
-                VariantStudy study = new VariantStudy(rs.getString("project_title"), rs.getString("project_accession"), null, rs.getString("description"),
-                    taxIds, rs.getString("common_name"), rs.getString("scientific_name"), rs.getString("source_type"), rs.getString("center"),
-                    rs.getString("material"), rs.getString("scope"), null, rs.getString("experiment_type"), rs.getString("assembly_name"), 
-                    rs.getString("platform"), rs.getInt("variant_count"), rs.getInt("samples"));
+                VariantStudy study = new VariantStudy(rs.getString("project_title"), rs.getString("project_accession"), null, 
+                        rs.getString("description"), taxIds, rs.getString("common_name"), rs.getString("scientific_name"), 
+                        rs.getString("source_type"), rs.getString("center"), rs.getString("material"), rs.getString("scope"), 
+                        null, rs.getString("experiment_type"), rs.getString("experiment_type_abbreviation"), 
+                        rs.getString("assembly_name"), rs.getString("platform"), rs.getInt("variant_count"), rs.getInt("samples"));
                 result.add(study);
             }
             long end = System.currentTimeMillis();
@@ -131,10 +132,11 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
                 }
                 
                 // Build the variant study object
-                VariantStudy study = new VariantStudy(rs.getString("project_title"), rs.getString("project_accession"), null, rs.getString("description"),
-                    taxIds, rs.getString("common_name"), rs.getString("scientific_name"), rs.getString("source_type"), rs.getString("center"),
-                    rs.getString("material"), rs.getString("scope"), null, rs.getString("experiment_type"), rs.getString("assembly_name"), 
-                    rs.getString("platform"), rs.getInt("variant_count"), rs.getInt("samples"));
+                VariantStudy study = new VariantStudy(rs.getString("project_title"), rs.getString("project_accession"), null, 
+                        rs.getString("description"), taxIds, rs.getString("common_name"), rs.getString("scientific_name"), 
+                        rs.getString("source_type"), rs.getString("center"), rs.getString("material"), rs.getString("scope"), 
+                        null, rs.getString("experiment_type"), rs.getString("experiment_type_abbreviation"), 
+                        rs.getString("assembly_name"), rs.getString("platform"), rs.getInt("variant_count"), rs.getInt("samples"));
                 l.add(study);
             }
             long end = System.currentTimeMillis();
