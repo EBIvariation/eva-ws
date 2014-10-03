@@ -271,7 +271,7 @@ SgvStudyBrowserPanel.prototype = {
             {
                 text: "ID",
                 dataIndex: 'id',
-                flex: 2,
+                flex: 1.6,
                 // To render a link to FTP
                 renderer: function (value, meta, rec, rowIndex, colIndex, store) {
                     meta.tdAttr = 'data-qtip="Click to see  more detailed information"';
@@ -289,7 +289,7 @@ SgvStudyBrowserPanel.prototype = {
             {
                 text: "Organism",
                 dataIndex: 'speciesScientificName',
-                flex: 3,
+                flex: 2,
                 renderer: function(value, p, record) {
                     return value ? Ext.String.format(
                         '<div data-toggle="popover" title="Organism" data-content="And her...">{0}</div>',
@@ -300,7 +300,7 @@ SgvStudyBrowserPanel.prototype = {
             {
                 text: "Type",
                 dataIndex: 'experimentTypeAbbreviation',
-                flex: 3,
+                flex: 1.5,
                 renderer: function (value, meta, rec, rowIndex, colIndex, store) {
                     console.log(rec)
                     meta.tdAttr = 'data-qtip="'+rec.data.experimentType+'"';
@@ -401,7 +401,7 @@ SgvStudyBrowserPanel.prototype = {
 
 
         this.leftPanel = Ext.create('Ext.container.Container', {
-            flex: 1,
+            flex: 1.1,
             layout: {
                 type: 'vbox',
                 align: 'stretch'
