@@ -4,11 +4,15 @@
         .table {
             margin-left:10px;
         }
-        h2,h4{
+        h4{
             color:#426783;
         }
-        h3,h5 {
-            color:#BF8230;
+        .variant-view-h4{
+            color: #996a44;
+        }
+
+        .ocb-header-4 h4{
+            margin-left: -15px;
         }
 
         h3 span{
@@ -53,22 +57,23 @@
     </style>
 
     <div id="variant-view">
-        <div>
-            <h3 id="variantInfo"></h3>
+        <div class="row">
+            <div  class="col-sm-1  col-md-1 col-lg-1"></div>
+            <div  class="col-sm-11 col-md-11 col-lg-11"> <h2 id="variantInfo"></h2></div>
         </div>
         <div class="row">
-            <div class="col-sm-3  col-md-2 col-lg-2" id="variantViewScrollspy">
+            <div class="col-sm-1  col-md-1 col-lg-1" id="variantViewScrollspy">
                 <ul id="variantViewTabs" class="nav nav-pills nav-stacked affix variantViewTabs">
                     <li class="active"><a href="#summary">Summary</a></li>
                     <!--<li><a href="#effects">Effects</a></li>-->
-                    <li><a href="#files">Files</a></li>
+                    <li><a href="#studies">Studies</a></li>
                     <!--<li><a href="#other">Other</a></li>-->
                 </ul>
             </div>
-            <div id="scroll-able" class="col-sm-9 col-md-10 col-lg-10">
+            <div id="scroll-able" class="col-sm-11 col-md-11 col-lg-11">
                 <div id="summary" class="row">
                     <div class="col-md-10">
-                        <h4>Summary</h4>
+                        <h4 class="variant-view-h4"> Summary</h4>
                         <div id="summary-grid"></div>
                     </div>
                 </div>
@@ -78,10 +83,10 @@
                         <!--<div id="effects-grid"></div>-->
                     <!--</div>-->
                 <!--</div>-->
-                <div  id="files" class="row">
+                <div  id="studies" class="row">
                     <div class="col-md-12">
-                        <h4>Files</h4>
-                        <div id="files-grid"></div>
+                        <!--<h4>Files</h4>-->
+                        <div id="studies-grid"></div>
                     </div>
                 </div>
                 <!--<div class="row">-->
@@ -230,7 +235,7 @@
 //                     effectsEl.appendChild(effectsElDiv);
 //                     _this.createVariantEffectGrid(effectsElDiv);
 
-                     var studyEl = document.querySelector("#files-grid");
+                     var studyEl = document.querySelector("#studies-grid");
                      var studyElDiv = document.createElement("div");
                      studyElDiv.setAttribute('class', 'ocb-variant-stats-panel');
             //       studyElDiv.innerHTML = '<h4>Studies</h4>';
