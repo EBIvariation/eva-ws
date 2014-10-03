@@ -299,8 +299,16 @@ SgvStudyBrowserPanel.prototype = {
             },
             {
                 text: "Type",
-                dataIndex: 'experimentType',
-                flex: 3
+                dataIndex: 'experimentTypeAbbreviation',
+                flex: 3,
+                renderer: function (value, meta, rec, rowIndex, colIndex, store) {
+                    console.log(rec)
+                    meta.tdAttr = 'data-qtip="'+rec.data.experimentType+'"';
+                    return value ? Ext.String.format(
+                        '<tpl>'+value+'</tpl>',
+                        value
+                    ) : '';
+                }
             },
 //                            {
 //                                text: "Scope",
