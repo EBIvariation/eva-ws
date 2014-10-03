@@ -3,16 +3,16 @@
         /*@import url('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css');*/
     </style>
     <div class="row">
-        <div id="statistics-chart-species" class="col-md-6"></div>
-        <div id="statistics-chart-type" class="col-md-6"></div>
+        <div id="dgva-statistics-chart-species" class="col-md-6"></div>
+        <div id="dgva-statistics-chart-type" class="col-md-6"></div>
     </div>
 </template>
 
 <script>
     // This document reference
-    var statisticsDoc = document._currentScript.ownerDocument;
+    var dgvaStatisticsDoc = document._currentScript.ownerDocument;
 
-    var statisticsView = document.registerElement('eva-statistics', {
+    var dgvaStatisticsView = document.registerElement('dgva-statistics', {
         prototype: Object.create(HTMLElement.prototype, {
             /*
              * Lifecycle callback methods
@@ -22,7 +22,7 @@
                     var _this = this;
 
                     //Create a copy of the template node.
-                    var template = document.importNode(statisticsDoc.querySelector('template').content, true);
+                    var template = document.importNode(dgvaStatisticsDoc.querySelector('template').content, true);
 //                    _this.createShadowRoot().appendChild(template);
                     _this.appendChild(template);
                 }
@@ -34,6 +34,7 @@
                         host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                         category: 'meta/studies',
                         resource: 'stats',
+                        params: {structural:true},
 //                        query:variantID,
                         success: function (response) {
                             try {
@@ -57,7 +58,7 @@
                     for (key in species_data) {
                         speciesArray.push([key,  species_data[key]]);
                     }
-                     var speciesChartData = {id:'statistics-chart-species',title:'Species',chartData:speciesArray};
+                     var speciesChartData = {id:'dgva-statistics-chart-species',title:'Species',chartData:speciesArray};
                     _this.drawChart(speciesChartData)
                     var typeArray=[];
                     for (key in type_data) {
@@ -66,7 +67,7 @@
                             typeArray.push([key,  type_data[key]]);
                         }
                     }
-                    var typeChartData = {id:'statistics-chart-type',title:'Type',chartData:typeArray};
+                    var typeChartData = {id:'dgva-statistics-chart-type',title:'Type',chartData:typeArray};
                     _this.drawChart(typeChartData)
 
                 }
@@ -76,6 +77,9 @@
                     var _this = this;
                     var height = _this.getAttribute('height');
                     var width = _this.getAttribute('width');
+                    if(data.id == 'dgva-statistics-chart-type'){
+                        height = height-40;
+                    }
                     var id = '#'+data.id;
 //                    var render_id = _this.shadowRoot.querySelector(id);
                     var render_id = _this.querySelector(id);
