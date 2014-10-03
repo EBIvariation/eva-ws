@@ -192,9 +192,15 @@ var studyView = document.registerElement('study-view', {
                             }else{
                                 var downloadLink = data.filesData[i].fileName;
                             }
+                            var samples_count;
+                            if(data.filesData[i].stats.samplesCount){
+                                samples_count = data.filesData[i].stats.samplesCount;
+                            }else{
+                                samples_count = 'NA';
+                            }
                             _filesTable += '<tr>'+
                                     '<td>'+downloadLink+'</td>' +
-                                    '<td>'+data.filesData[i].stats.samplesCount+'</td>' +
+                                    '<td>'+samples_count+'</td>' +
                                     '<td>'+data.filesData[i].stats.variantsCount+'</td>' +
                                     '<td>'+data.filesData[i].stats.snpsCount+'</td>' +
                                     '<td>'+data.filesData[i].stats.indelsCount+'</td>' +
