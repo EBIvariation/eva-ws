@@ -265,7 +265,8 @@ EvaVariantWidgetPanel.prototype = {
                         host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                         category: 'segments',
                         resource: 'variants',
-                        query: regions
+                        query: regions,
+                        params:{merge:true}
                     });
 
                     if(e.values.studies){
