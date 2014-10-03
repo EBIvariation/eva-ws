@@ -166,7 +166,7 @@ Eva.prototype = {
             this.div.appendChild(this.childDivMenuMap[option]);
         }
 
-        var pageArray = ['eva-study', 'variant'];
+        var pageArray = ['eva-study','dgva-study', 'variant'];
         if(_.indexOf(pageArray, option) < 0 && !_.isEmpty(option)  ){
             var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?'+option;
             window.history.pushState({path:newurl},'',newurl);

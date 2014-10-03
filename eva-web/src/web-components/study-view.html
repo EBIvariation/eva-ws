@@ -130,15 +130,20 @@ var studyView = document.registerElement('study-view', {
 
                 if(this.type === 'eva'){
 
+                    var taxonomyId = new Array();
+
                     if(data.summaryData[0].taxonomyId){
-                        var taxLink = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id='+data.summaryData[0].taxonomyId;
-                        taxonomyId ='<a href="'+taxLink+'" target="_blank">'+data.summaryData[0].taxonomyId+'</a>';
+                        for (i = 0; i < data.summaryData[0].taxonomyId.length; i++) {
+                            console.log(data.summaryData[0].taxonomyId[i])
+                            var taxLink = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id='+data.summaryData[0].taxonomyId[i];
+                            taxonomyId.push(['<a href="'+taxLink+'" target="_blank">'+data.summaryData[0].taxonomyId[i]+'</a>']);
+                        }
                     }
                     var _filesTable  = '<div><h3>'+data.summaryData[0].name+'</h3>' +
                             '<div class="row study-view-data"><div class="col-md-12"><div><h4>General Information</h4></div><table class="table table-bordered study-view-table">' +
                             '<tr><td><b>Species</b></td><td>'+data.summaryData[0].speciesCommonName+'</td></tr>' +
                             '<tr><td><b>Sceintific Name</b></td><td>'+data.summaryData[0].speciesScientificName+'</td></tr>' +
-                            '<tr><td><b>Taxonomy ID</b></td><td>'+taxonomyId+'</td></tr>' +
+                            '<tr><td><b>Taxonomy ID</b></td><td>'+taxonomyId.join()+'</td></tr>' +
                             '<tr><td><b>Center</b></td><td>'+data.summaryData[0].center+'</td></tr>' +
                             '<tr><td><b>Material</b></td><td>'+data.summaryData[0].material+'</td></tr>' +
                             '<tr><td><b>Scope</b></td><td>'+data.summaryData[0].scope+'</td></tr>' +
@@ -215,15 +220,26 @@ var studyView = document.registerElement('study-view', {
                     _filesTable += '</div></div>'
                 }
                 else if(this.type === 'dgva'){
+                    var taxonomyId = new Array();
+
+                    if(data.summaryData[0].taxonomyId){
+                        for (i = 0; i < data.summaryData[0].taxonomyId.length; i++) {
+                            console.log(data.summaryData[0].taxonomyId[i])
+                            var taxLink = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id='+data.summaryData[0].taxonomyId[i];
+                            taxonomyId.push(['<a href="'+taxLink+'" target="_blank">'+data.summaryData[0].taxonomyId[i]+'</a>']);
+                        }
+                    }
+
                     var _filesTable  = '<div><h3>'+data.summaryData[0].name+'</h3>' +
                             '<div class="row study-view-data"><div class="col-md-12"><div><h4>General Information</h4></div><table class="table table-bordered">' +
                             '<tr><td><b>Species</b></td><td class="eva-capitalize">'+data.summaryData[0].speciesCommonName+'</td></tr>' +
                             '<tr><td><b>Sceintific Name</b></td><td>'+data.summaryData[0].speciesScientificName+'</td></tr>' +
-//                                '<tr><td><b>Taxonomy ID</b></td><td>'+data.summaryData[0].taxonomyId+'</td></tr>' +
+                            '<tr><td><b>Taxonomy ID</b></td><td>'+taxonomyId.join()+'</td></tr>' +
 //                                '<tr><td><b>Center</b></td><td>'+data.summaryData[0].center+'</td></tr>' +
 //                                '<tr><td><b>Material</b></td><td>'+data.summaryData[0].material+'</td></tr>' +
 //                                '<tr><td><b>Scope</b></td><td>'+data.summaryData[0].scope+'</td></tr>' +
-                            '<tr><td><b>Type</b></td><td>'+data.summaryData[0].experimentType+'</td></tr>' +
+                            '<tr><td><b>Study Type</b></td><td>'+data.summaryData[0].type+'</td></tr>' +
+                            '<tr><td><b>Experiment Type</b></td><td>'+data.summaryData[0].experimentType+'</td></tr>' +
 //                                '<tr><td><b>Source Type</b></td><td>'+data.summaryData[0].sourceType+'</td></tr>' +
                             '<tr><td><b>Platform</b></td><td>'+data.summaryData[0].platform+'</td></tr>' +
                             '<tr><td><b>Assembly</b></td><td>'+data.summaryData[0].assembly+'</td></tr>' +
