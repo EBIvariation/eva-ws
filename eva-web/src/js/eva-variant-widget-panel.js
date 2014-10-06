@@ -151,6 +151,7 @@ EvaVariantWidgetPanel.prototype = {
 
         var studyFilter = new StudyFilterFormPanel({
             collapsed: false,
+            height:420,
             studiesStore: this.studiesStore,
             studyFilterTpl:'<tpl><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div></tpl>'
         });
