@@ -92,7 +92,7 @@ Eva.prototype = {
 
         /* clinical */
         $(this.clinicalDiv).addClass('eva-child');
-        this.childDivMenuMap['EVA Clinical'] = this.clinicalDiv;
+        this.childDivMenuMap['Clinical'] = this.clinicalDiv;
 
         /* submision-start */
         $(this.submissionForm).addClass('eva-child');
