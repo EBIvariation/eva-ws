@@ -75,6 +75,7 @@ EvaVariantWidgetPanel.prototype = {
                 type: 'vbox',
                 align: 'center',
             },
+            overflowX:'auto',
             items: [view],
         });
 
