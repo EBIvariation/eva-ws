@@ -92,6 +92,7 @@ public class EvaproUtils {
     public static VariantStudy.StudyType stringToStudyType(String studyType) {
         switch (studyType) {
             case "Collection":
+            case "Curated Collection":
                 return VariantStudy.StudyType.COLLECTION;
             case "Control Set":
             case "Control-Set":
@@ -103,7 +104,7 @@ public class EvaproUtils {
             case "Case-Set":
                 return VariantStudy.StudyType.CASE;
             case "Tumor vs. Matched-Normal":
-                return VariantStudy.StudyType.PAIRED;
+                return VariantStudy.StudyType.PAIRED_TUMOR;
             default:
                 throw new IllegalArgumentException("Study type " + studyType + " is not valid");
         }
