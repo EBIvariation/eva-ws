@@ -333,7 +333,7 @@ SvStudyBrowserPanel.prototype = {
             },
             {
                 text: "Study Type",
-                dataIndex: 'type',
+                dataIndex: 'typeName',
                 flex: 3
             },
 //            {
