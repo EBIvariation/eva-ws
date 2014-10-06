@@ -345,7 +345,7 @@ SvStudyBrowserPanel.prototype = {
                 text: 'Download',
                 //dataIndex: 'id',
                 xtype: 'templatecolumn',
-                tpl: '<tpl><a href="ftp://ftp.ebi.ac.uk/pub/databases/dgva/{id}_{name}" target="_blank">FTP Download</a></tpl>',
+                tpl: '<tpl><a href="ftp://ftp.ebi.ac.uk/pub/databases/dgva/{id}_{name}" target="_blank">FTP</a></tpl>',
                 flex: 3
             }
 

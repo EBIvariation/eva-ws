@@ -70,8 +70,9 @@ div#local-masthead{
 
 .eva .variant-browser-option-div {
     position: relative;
-    overflow: hidden;
+    /*overflow: hidden;*/
 }
+
 
 .eva .form-panel-variant-filter-div {
     width: 300px;
@@ -83,10 +84,16 @@ div#local-masthead{
     width: 1020px;
     float: left;
 }
+  .x-panel{
+      overflow-x:auto;
+}
+  .x-container{
+      overflow-x:auto;
+  }
 
 .eva .genome-browser-option-div {
     position: relative;
-    overflow: hidden;
+    /*overflow: hidden;*/
 }
 
 .eva .form-panel-genome-filter-div {
@@ -200,7 +207,7 @@ div#local-masthead{
     border: 1px solid #d3d3d3;
     padding: 5px;
     max-width: 200px;
-    overflow: hidden;
+    /*overflow: hidden;*/
     text-align: center;
 }
 

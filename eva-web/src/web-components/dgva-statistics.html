@@ -78,7 +78,10 @@
                     var height = _this.getAttribute('height');
                     var width = _this.getAttribute('width');
                     if(data.id == 'dgva-statistics-chart-type'){
-                        height = height-40;
+//                        height = height-40;
+                    }else if(data.id == 'dgva-statistics-chart-species'){
+                         data.chartData = data.chartData.slice(0, 5);
+                        height = height-10;
                     }
                     var id = '#'+data.id;
 //                    var render_id = _this.shadowRoot.querySelector(id);
@@ -87,7 +90,7 @@
                     var title = data.title;
                     $(function () {
                         Highcharts.setOptions({
-                            colors: ['#207A7A', '#2BA32B','#2E4988','#295C5C', '#377A37','#344366','#0A4F4F', '#0E6A0E','#0F2559','#54BDBD', '#5DD15D','#6380C4', '#70BDBD', '#7CD17C','#7D92C4' ],
+                            colors: ['#207A7A', '#2BA32B','#2E4988','#70BDBD', '#7CD17C','#7D92C4','#54BDBD', '#5DD15D','#6380C4','#295C5C', '#377A37','#344366','#0A4F4F', '#0E6A0E','#0F2559'],
                             chart: {
                                 style: {
                                     fontFamily: 'sans-serif;'

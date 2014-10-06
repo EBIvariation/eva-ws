@@ -152,7 +152,7 @@ Eva.prototype = {
 
     },
     select: function (option) {
-//        this.evaMenu.select(option);
+        this.evaMenu.select(option);
         this._selectHandler(option);
     },
     _selectHandler: function (option) {

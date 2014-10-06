@@ -332,7 +332,7 @@ SgvStudyBrowserPanel.prototype = {
                 flex: 1.7,
                 renderer: function (value, p, record) {
                     return value ? Ext.String.format(
-                        '<a href="ftp://ftp.ebi.ac.uk/pub/databases/eva/{0}" target="_blank">FTP Download</a>',
+                        '<a href="ftp://ftp.ebi.ac.uk/pub/databases/eva/{0}" target="_blank">FTP</a>',
                         value,
                         record.data.threadid
                     ) : '';
