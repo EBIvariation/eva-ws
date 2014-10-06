@@ -264,6 +264,11 @@ div#local-masthead{
     white-space: pre-wrap;
     word-wrap: break-word;
 }
+.x-tree-node-text{
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding-left: 0px;
+}
 
 
 .x-tab-default{
