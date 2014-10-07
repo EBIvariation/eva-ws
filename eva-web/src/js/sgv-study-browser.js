@@ -271,7 +271,7 @@ SgvStudyBrowserPanel.prototype = {
             {
                 text: "ID",
                 dataIndex: 'id',
-                flex: 1.6,
+                flex: 1.7,
                 // To render a link to FTP
                 renderer: function (value, meta, rec, rowIndex, colIndex, store) {
                     meta.tdAttr = 'data-qtip="Click to see  more detailed information"';
@@ -319,11 +319,11 @@ SgvStudyBrowserPanel.prototype = {
 //                dataIndex: 'numVariants',
 //                flex: 3
 //            },
-            {
-                text: "Platform",
-                dataIndex: 'platform',
-                flex: 3
-            },
+//            {
+//                text: "Platform",
+//                dataIndex: 'platform',
+//                flex: 3
+//            },
             {
                 text: "Download",
 //                        xtype: 'checkcolumn',

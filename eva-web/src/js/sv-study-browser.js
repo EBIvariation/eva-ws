@@ -318,7 +318,7 @@ SvStudyBrowserPanel.prototype = {
             {
                 text: "Name",
                 dataIndex: 'name',
-                flex: 4
+                flex: 3
             },
             {
                 text: "Organism",
@@ -334,7 +334,7 @@ SvStudyBrowserPanel.prototype = {
             {
                 text: "Study Type",
                 dataIndex: 'typeName',
-                flex: 3
+                flex: 2
             },
 //            {
 //                text: "Number of Variants",
@@ -346,7 +346,7 @@ SvStudyBrowserPanel.prototype = {
                 //dataIndex: 'id',
                 xtype: 'templatecolumn',
                 tpl: '<tpl><a href="ftp://ftp.ebi.ac.uk/pub/databases/dgva/{id}_{name}" target="_blank">FTP</a></tpl>',
-                flex: 3
+                flex:1.5
             }
 
         ];
