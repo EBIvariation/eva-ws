@@ -92,7 +92,7 @@ EvaVariantWidgetPanel.prototype = {
             },
             border: true,
             browserGridConfig: {
-                title: 'VCF Browser',
+                title: 'VCF Browser <div style="float: right;">Assembly:GRCh37</div>',
                 border: true
             },
             toolPanelConfig: {
