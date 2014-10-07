@@ -154,10 +154,25 @@ variationClasses = [
     {acc: "SO:0000051", name: "probe", qtip: "A DNA sequence used experimentally to detect the presence or absence of a complementary nucleic acid.", call: "CNV probe", leaf: true,checked: false,  iconCls :'no-icon'}
 ];
 
-var projects = [
-    {projectId: "PRJEB4019", alias: "1000g", title: "1000 Genomes"},
-    {projectId: "PRJEB5439", alias: "evs", title: "Exome Variant Server NHLBI Exome Sequencing Project"},
-    {projectId: "PRJEB5829", alias: "gonl", title: "Genome of the Netherlands (GoNL) Release 5"},
-    {projectId: "PRJEB6040", alias: "uk10k", title: "UK10K"},
-    {projectId: "PRJEB6042", alias: "geuvadis", title: "GEUVADIS Genetic European Variation in Disease"}
-   ];
+//var projects = [
+//    {projectId: "PRJEB4019", alias: "1000g", title: "1000 Genomes"},
+//    {projectId: "PRJEB5439", alias: "evs", title: "Exome Variant Server NHLBI Exome Sequencing Project"},
+//    {projectId: "PRJEB5829", alias: "gonl", title: "Genome of the Netherlands (GoNL) Release 5"},
+//    {projectId: "PRJEB6040", alias: "uk10k", title: "UK10K"},
+//    {projectId: "PRJEB6042", alias: "geuvadis", title: "GEUVADIS Genetic European Variation in Disease"}
+//   ];
+
+
+
+EvaManager.get({
+    host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+    category: 'meta/studies',
+    resource: 'list',
+    success: function (response) {
+        try {
+            projects = response.response[0].result;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+});

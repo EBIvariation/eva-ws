@@ -302,7 +302,6 @@ SgvStudyBrowserPanel.prototype = {
                 dataIndex: 'experimentTypeAbbreviation',
                 flex: 1.5,
                 renderer: function (value, meta, rec, rowIndex, colIndex, store) {
-                    console.log(rec)
                     meta.tdAttr = 'data-qtip="'+rec.data.experimentType+'"';
                     return value ? Ext.String.format(
                         '<tpl>'+value+'</tpl>',
