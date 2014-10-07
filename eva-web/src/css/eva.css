@@ -364,6 +364,12 @@ h4{
     color:#426783;
 }
 
+.assembly{
+    position:absolute;
+    right:0;
+    top:0;
+}
+
 .highcharts-container{width:100% !important; height:100% !important;}
 
 
