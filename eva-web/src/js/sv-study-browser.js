@@ -156,7 +156,7 @@ SvStudyBrowserPanel.prototype = {
                         } else {
                             var regex = new RegExp(searchValue, "i");
                             this.studiesStore.filterBy(function (e) {//
-                                return regex.test(e.get('name')) || regex.test(e.get('description'));
+                                return regex.test(e.get('id')) || regex.test(e.get('name')) || regex.test(e.get('description'));
                             });
                         }
                         _this.grid.reconfigure(this.studiesStore);
