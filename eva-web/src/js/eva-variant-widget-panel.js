@@ -92,7 +92,8 @@ EvaVariantWidgetPanel.prototype = {
             },
             border: true,
             browserGridConfig: {
-                title: 'VCF Browser <span class="assembly">Assembly:GRCh37</span>',
+//                title: 'VCF Browser <span class="assembly">Assembly:GRCh37</span>',
+                title: 'VCF Browser',
                 border: true
             },
             toolPanelConfig: {
@@ -279,6 +280,15 @@ EvaVariantWidgetPanel.prototype = {
                 }
             }
         });
+
+
+        formPanel.panel.addDocked({
+                                    xtype: 'toolbar',
+                                    dock: 'top',
+                                    height: 45,
+                                    html: '<h5>Assembly: GRCh37</h5>',
+                                    margin:-10
+                                });
 
         return formPanel;
     },
