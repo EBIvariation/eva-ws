@@ -89,6 +89,7 @@ StudyBrowser.prototype = {
             defaults: {
                 margin: 5
             },
+            cls:'study-browser-panel',
             items: [this.toolTabPanel]
         });
 

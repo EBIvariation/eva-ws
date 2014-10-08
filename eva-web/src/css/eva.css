@@ -71,9 +71,9 @@ div#local-masthead{
 .eva .variant-widget-panel{
     overflow-x:auto;
 }
-/*.eva .x-container{*/
-    /*overflow-x:auto;*/
-/*}*/
+.eva .study-browser-panel{
+    overflow-x:auto;
+}
 
 .eva .variant-browser-option-div {
     position: relative;
@@ -267,10 +267,10 @@ div#local-masthead{
     white-space: pre-wrap;
     word-wrap: break-word;
 }
-.x-tree-node-text{
+.study-browser-panel .x-tree-node-text{
     white-space: pre-wrap;
     word-wrap: break-word;
-    padding-left: 0px;
+    padding-left: 0;
 }
 
 
@@ -292,42 +292,42 @@ div#local-masthead{
     color: #FFFFFF;
 }
 
-.eva-button{
-    color: #FFFFFF;
-    border-radius: 0 0 0 0;
-    background-color: #70BDBD;
-}
+/*.eva-button{*/
+    /*color: #FFFFFF;*/
+    /*border-radius: 0 0 0 0;*/
+    /*background-color: #70BDBD;*/
+/*}*/
 
-.studyBrowserTabs.nav-pills > li > a {
-    padding-top:3px !important;
-    padding-bottom:3px !important;
-    font-size:16px;
-    font-weight: bold;
-    color:#ffffff;
-    background-color: #6BB6B7;
-}
-.studyBrowserTabs.nav-pills {
-    min-height:20px !important;
+/*.studyBrowserTabs.nav-pills > li > a {*/
+    /*padding-top:3px !important;*/
+    /*padding-bottom:3px !important;*/
+    /*font-size:16px;*/
+    /*font-weight: bold;*/
+    /*color:#ffffff;*/
+    /*background-color: #6BB6B7;*/
+/*}*/
+/*.studyBrowserTabs.nav-pills {*/
+    /*min-height:20px !important;*/
     /*background-color: #CFDFF4;*/
-    border-color: #ffffff;
-    color:#ffffff;
-}
+    /*border-color: #ffffff;*/
+    /*color:#ffffff;*/
+/*}*/
 
-.studyBrowserTabs.nav-pills li a, .nav-tabs{
-    border-radius: 0px;
-    border: 1px solid #ddd;
-    border-color: #156765;
-}
+/*.studyBrowserTabs.nav-pills li a, .nav-tabs{*/
+    /*border-radius: 0px;*/
+    /*border: 1px solid #ddd;*/
+    /*border-color: #156765;*/
+/*}*/
 
-.studyBrowserTabs.nav-pills > li.active > a{
-     color:#ffffff !important;
-     background-color: #1F6D6D;
- }
+/*.studyBrowserTabs.nav-pills > li.active > a{*/
+     /*color:#ffffff !important;*/
+     /*background-color: #1F6D6D;*/
+ /*}*/
 
-.studyBrowserTabs.nav-pills > li > a:hover{
-    color:#ffffff !important;
-    background-color: #1F6D6D;
-}
+/*.studyBrowserTabs.nav-pills > li > a:hover{*/
+    /*color:#ffffff !important;*/
+    /*background-color: #1F6D6D;*/
+/*}*/
 
 table {
     border-collapse: collapse;
