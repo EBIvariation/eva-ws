@@ -266,9 +266,11 @@
             getStudyId: {
                 value: function (data) {
                     var _this = this;
+                    console.log(projects)
+                    console.log(data)
                     for (var i = 0; i < projects.length; i++) {
-                        if (projects[i].projectId === data) {
-                            return projects[i].alias;
+                        if (projects[i].studyId === data) {
+                            return projects[i].studyName;
                         }
                     }
                 }
