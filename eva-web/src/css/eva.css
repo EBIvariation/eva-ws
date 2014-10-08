@@ -68,6 +68,13 @@ div#local-masthead{
     position: relative;
 }
 
+.eva .variant-widget-panel{
+    overflow-x:auto;
+}
+/*.eva .x-container{*/
+    /*overflow-x:auto;*/
+/*}*/
+
 .eva .variant-browser-option-div {
     position: relative;
     /*overflow: hidden;*/
@@ -77,6 +84,7 @@ div#local-masthead{
 .eva .form-panel-variant-filter-div {
     width: 300px;
     float: left;
+    overflow: hidden;
 }
 
 .eva .variant-widget-div {
@@ -84,12 +92,7 @@ div#local-masthead{
     width: 1020px;
     float: left;
 }
-  .x-panel{
-      overflow-x:auto;
-}
-  .x-container{
-      overflow-x:auto;
-  }
+
 
 .eva .genome-browser-option-div {
     position: relative;
