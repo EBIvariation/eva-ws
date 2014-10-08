@@ -170,6 +170,7 @@ Eva.prototype = {
         if(_.indexOf(pageArray, option) < 0 && !_.isEmpty(option)  ){
             var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?'+option;
             window.history.pushState({path:newurl},'',newurl);
+            $( "a:contains('"+option+"')").parent('li').addClass('active');
         }
 
         switch (option) {
