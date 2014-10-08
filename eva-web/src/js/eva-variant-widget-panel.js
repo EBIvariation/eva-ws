@@ -154,7 +154,7 @@ EvaVariantWidgetPanel.prototype = {
 
         var studyFilter = new StudyFilterFormPanel({
             collapsed: false,
-            height:450,
+            height: 550,
             studiesStore: this.studiesStore,
             studyFilterTpl:'<tpl><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div></tpl>'
         });
@@ -245,6 +245,12 @@ EvaVariantWidgetPanel.prototype = {
                                 for (var i = 0; i < data.response.length; i++) {
                                     var queryResult = data.response[i];
                                     var region = new Region(queryResult.result[0]);
+                                    var fields2 = (""+region).split(/[:-]/);
+                                    if(parseInt(fields2[1]) > parseInt(fields2[2])) {
+                                        var swap = fields2[1];
+                                        region.start = fields2[2];
+                                        region.end = swap;
+                                    }
                                     regions.push(region.toString());
                                 }
                             }
