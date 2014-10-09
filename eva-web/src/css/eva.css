@@ -75,6 +75,17 @@ div#local-masthead{
     overflow-x:auto;
 }
 
+.study-browser-panel .x-tree-node-text{
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding-left: 0;
+}
+
+.study-browser-panel a, .study-browser-panel a:link, .study-browser-panel a:visited,
+.variant-widget-panel a, .variant-widget-panel a:link, .variant-widget-panel a:visited{
+    border-bottom-style: none;
+}
+
 .eva .variant-browser-option-div {
     position: relative;
     /*overflow: hidden;*/
@@ -267,12 +278,6 @@ div#local-masthead{
     white-space: pre-wrap;
     word-wrap: break-word;
 }
-.study-browser-panel .x-tree-node-text{
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    padding-left: 0;
-}
-
 
 .x-tab-default{
     border-color: #adc9c9;
@@ -351,9 +356,9 @@ th {
     color: black;
 }
 
-a, a:link, a:visited{
-    border-bottom-style: none;
-}
+/*a, a:link, a:visited{*/
+    /*border-bottom-style: none;*/
+/*}*/
 
 .ocb-header-4 h4{
     margin-left: -15px;
