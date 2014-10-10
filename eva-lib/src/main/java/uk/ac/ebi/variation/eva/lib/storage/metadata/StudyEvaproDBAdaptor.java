@@ -50,6 +50,9 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
                 query.append(" and ");
             }
             query.append(EvaproUtils.getInClause("experiment_type", options.getListAs("type", String.class)));
+            for (String t : options.getListAs("type", String.class)) {
+                query.append(" or experiment_type like '%").append(t).append("%'");
+            }
         }
         
         Connection conn = null;
