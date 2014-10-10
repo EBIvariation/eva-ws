@@ -32,7 +32,7 @@ else if ((verOffset=nAgt.indexOf("MSIE"))!=-1) {
     browserName = "Microsoft Internet Explorer";
     fullVersion = nAgt.substring(verOffset+5);
     majorVersion = getMajorVersion(fullVersion);
-    if(majorVersion <= 11){
+    if(majorVersion <= 10){
         msg = browser_support;
     }
 }
