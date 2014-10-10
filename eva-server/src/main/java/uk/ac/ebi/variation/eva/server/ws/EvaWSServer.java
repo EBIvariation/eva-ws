@@ -17,11 +17,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import org.opencb.biodata.models.feature.Genotype;
 import org.opencb.biodata.models.variant.ArchivedVariantFile;
 import org.opencb.biodata.models.variant.VariantSource;
 import org.opencb.biodata.models.variant.stats.VariantStats;
+import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
+import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.json.ArchivedVariantFileJsonMixin;
 import org.opencb.opencga.storage.variant.json.GenotypeJsonMixin;
 import org.opencb.opencga.storage.variant.json.VariantSourceJsonMixin;
@@ -51,6 +54,8 @@ public class EvaWSServer {
     protected static XmlMapper xmlObjectMapper;
 
     protected static Logger logger;
+    
+    protected MongoCredentials credentials;
 
 
     static {
@@ -68,17 +73,17 @@ public class EvaWSServer {
         logger.info("EvaWSServer: Initialising attributes inside static block");
     }
 
-    public EvaWSServer() {
+    public EvaWSServer() throws IllegalOpenCGACredentialsException {
+        credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
         logger.info("EvaWSServer: in 'constructor'");
     }
 
-    public EvaWSServer(@PathParam("version") String version,
-                        @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException {
-
-
+    public EvaWSServer(@PathParam("version") String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
+            throws IOException, IllegalOpenCGACredentialsException {
         this.version = version;
         this.uriInfo = uriInfo;
         this.httpServletRequest = hsr;
+        credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
 
         init(version, uriInfo);
 
@@ -156,9 +161,9 @@ public class EvaWSServer {
 
         switch (outputFormat.toLowerCase()) {
             case "json":
-                return createJsonResponse();
+                return createJsonResponse(queryResponse);
             case "xml":
-                return createXmlResponse();
+                return createXmlResponse(queryResponse);
             default:
                 return buildResponse(Response.ok());
         }
@@ -181,30 +186,28 @@ public class EvaWSServer {
         
         switch (outputFormat.toLowerCase()) {
             case "json":
-                return createJsonResponse();
+                return createJsonResponse(queryResponse);
             case "xml":
-                return createXmlResponse();
+                return createXmlResponse(queryResponse);
             default:
                 return buildResponse(Response.ok());
         }
     }
 
     
-    protected Response createJsonResponse() {
+    protected Response createJsonResponse(Object object) {
         try {
-            return buildResponse(Response.ok(jsonObjectWriter.writeValueAsString(queryResponse), MediaType.APPLICATION_JSON_TYPE));
+            return buildResponse(Response.ok(jsonObjectWriter.writeValueAsString(object), MediaType.APPLICATION_JSON_TYPE));
         } catch (JsonProcessingException e) {
-            logger.error("Error parsing queryResponse object", e);
-            return null;
+            return createErrorResponse("Error parsing QueryResponse object:\n" + Arrays.toString(e.getStackTrace()));
         }
     }
 
-    protected Response createXmlResponse() {
+    protected Response createXmlResponse(Object object) {
         try {
-            return buildResponse(Response.ok(xmlObjectMapper.writeValueAsString(queryResponse), MediaType.APPLICATION_XML_TYPE));
+            return buildResponse(Response.ok(xmlObjectMapper.writeValueAsString(object), MediaType.APPLICATION_XML_TYPE));
         } catch (JsonProcessingException e) {
-            logger.error("Error parsing queryResponse object", e);
-            return null;
+            return createErrorResponse("Error parsing QueryResponse object:\n" + Arrays.toString(e.getStackTrace()));
         }
     }
 

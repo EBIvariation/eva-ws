@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
@@ -21,11 +19,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.ArchiveDBAdaptor;
 import org.opencb.opencga.storage.variant.StudyDBAdaptor;
 import org.opencb.opencga.storage.variant.mongodb.StudyMongoDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
 
 /**
@@ -36,44 +35,43 @@ import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
 @Produces(MediaType.APPLICATION_JSON)
 public class ArchiveWSServer extends EvaWSServer {
     
-    private ArchiveDBAdaptor dbAdaptor;
+    private ArchiveDBAdaptor archiveDgvaDbAdaptor;
+    private ArchiveDBAdaptor archiveEvaproDbAdaptor;
+    
+    private StudyDBAdaptor studyDgvaDbAdaptor;
     private StudyDBAdaptor studyEvaproDbAdaptor;
     private StudyDBAdaptor studyMongoDbAdaptor;
     
-    public ArchiveWSServer() {
-
+    public ArchiveWSServer() throws IllegalOpenCGACredentialsException {
+        super();
     }
 
     public ArchiveWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
-            throws IOException, NamingException {
+            throws IOException, NamingException, IllegalOpenCGACredentialsException {
         super(version, uriInfo, hsr);
-        try {
-            dbAdaptor = new ArchiveEvaproDBAdaptor();
-            studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
-            MongoCredentials credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
-            studyMongoDbAdaptor = new StudyMongoDBAdaptor(credentials);
-        } catch (IllegalOpenCGACredentialsException ex) {
-            Logger.getLogger(StudyWSServer.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-        }
+        archiveDgvaDbAdaptor = new ArchiveDgvaDBAdaptor();
+        archiveEvaproDbAdaptor = new ArchiveEvaproDBAdaptor();
+        studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
+        studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
+        studyMongoDbAdaptor = new StudyMongoDBAdaptor(credentials);
     }
 
     @GET
     @Path("/files/count")
     public Response countFiles() {
-        return createOkResponse(dbAdaptor.countFiles());
+        return createOkResponse(archiveEvaproDbAdaptor.countFiles());
     }
     
     @GET
     @Path("/species/count")
     public Response countSpecies() {
-        return createOkResponse(dbAdaptor.countSpecies());
+        return createOkResponse(archiveEvaproDbAdaptor.countSpecies());
     }
     
     @GET
     @Path("/studies/count")
     public Response countStudies() {
-        return createOkResponse(dbAdaptor.countStudies());
+        return createOkResponse(archiveEvaproDbAdaptor.countStudies());
     }
     
     @GET
@@ -85,7 +83,8 @@ public class ArchiveWSServer extends EvaWSServer {
     @GET
     @Path("/studies/all")
     public Response getStudies(@QueryParam("species") String species,
-                               @QueryParam("type") String types) {
+                               @QueryParam("type") String types,
+                               @DefaultValue("false") @QueryParam("structural") boolean structural) {
         if (species != null && !species.isEmpty()) {
             queryOptions.put("species", Arrays.asList(species.split(",")));
         }
@@ -93,18 +92,32 @@ public class ArchiveWSServer extends EvaWSServer {
             queryOptions.put("type", Arrays.asList(types.split(",")));
         }
         
-        return createOkResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
+        if (structural) {
+            return createOkResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
+        } else {
+            return createOkResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
+        }
     }
     
     @GET
     @Path("/studies/stats")
-    public Response getStudiesStats(@QueryParam("species") String species) {
+    public Response getStudiesStats(@QueryParam("species") String species,
+                                    @DefaultValue("false") @QueryParam("structural") boolean structural) {
         if (species != null && !species.isEmpty()) {
             queryOptions.put("species", Arrays.asList(species.split(",")));
         }
         
-        QueryResult<Map.Entry<String, Integer>> resultSpecies = dbAdaptor.countStudiesPerSpecies(queryOptions);
-        QueryResult<Map.Entry<String, Integer>> resultTypes = dbAdaptor.countStudiesPerType(queryOptions);
+//        QueryResult<Map.Entry<String, Integer>> resultSpecies = archiveEvaproDbAdaptor.countStudiesPerSpecies(queryOptions);
+//        QueryResult<Map.Entry<String, Integer>> resultTypes = archiveEvaproDbAdaptor.countStudiesPerType(queryOptions);
+        QueryResult<Map.Entry<String, Integer>> resultSpecies, resultTypes;
+        
+        if (structural) {
+            resultSpecies = archiveDgvaDbAdaptor.countStudiesPerSpecies(queryOptions);
+            resultTypes = archiveDgvaDbAdaptor.countStudiesPerType(queryOptions);
+        } else {
+            resultSpecies = archiveEvaproDbAdaptor.countStudiesPerSpecies(queryOptions);
+            resultTypes = archiveEvaproDbAdaptor.countStudiesPerType(queryOptions);
+        }
         
         QueryResult combinedQueryResult = new QueryResult();
         combinedQueryResult.setDbTime(resultSpecies.getDbTime() + resultTypes.getDbTime());

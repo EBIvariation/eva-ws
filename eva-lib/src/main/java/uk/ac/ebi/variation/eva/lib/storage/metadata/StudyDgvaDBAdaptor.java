@@ -21,18 +21,18 @@ import uk.ac.ebi.variation.eva.lib.datastore.EvaproUtils;
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
+public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
 
     private DataSource ds;
 
-    public StudyEvaproDBAdaptor() throws NamingException {
+    public StudyDgvaDBAdaptor() throws NamingException {
         InitialContext cxt = new InitialContext();
         ds = (DataSource) cxt.lookup("java:/comp/env/jdbc/evapro");
     }
 
     @Override
     public QueryResult getAllStudies(QueryOptions options) {
-        StringBuilder query = new StringBuilder("select * from study_browser ");
+        StringBuilder query = new StringBuilder("select * from dgva_study_browser ");
         boolean hasSpecies = options.containsKey("species") && !options.getList("species").isEmpty();
         boolean hasType = options.containsKey("type") && !options.getList("type").isEmpty();
         if (hasSpecies || hasType) {
@@ -59,14 +59,13 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(query.toString());
 
+            List result = new ArrayList<>();
             long start = System.currentTimeMillis();
             ResultSet rs = pstmt.executeQuery();
-            List result = new ArrayList<>();
             while (rs.next()) {
-                VariantStudy study = new VariantStudy(rs.getString("project_title"), rs.getString("project_accession"), null, rs.getString("description"),
-                    rs.getInt("tax_id"), rs.getString("common_name"), rs.getString("scientific_name"), rs.getString("source_type"), rs.getString("center"),
-                    rs.getString("material"), rs.getString("scope"), rs.getString("experiment_type"), rs.getString("assembly_name"), 
-                    rs.getString("platform"), rs.getInt("variant_count"), rs.getInt("samples"));
+                VariantStudy study = new VariantStudy(rs.getString("display_name"), rs.getString("study_accession"), null, rs.getString("study_description"),
+                        -1, rs.getString("common_name"), rs.getString("scientific_name"), null, null, null, null, 
+                        rs.getString("analysis_type"), "GRCh38", rs.getString("platform_name"), rs.getInt("variant_count"), -1);
                 result.add(study);
             }
             long end = System.currentTimeMillis();
@@ -107,22 +106,21 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
         QueryResult qr = null;
         try {
             conn = ds.getConnection();
-            pstmt = conn.prepareStatement("select * from study_browser where project_accession = ?");
+            pstmt = conn.prepareStatement("select * from dgva_study_browser where study_accession = ?");
             pstmt.setString(1, studyId);
             
-            List l = new ArrayList<>();
+            List result = new ArrayList<>();
             long start = System.currentTimeMillis();
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                VariantStudy study = new VariantStudy(rs.getString("project_title"), rs.getString("project_accession"), null, rs.getString("description"),
-                    rs.getInt("tax_id"), rs.getString("common_name"), rs.getString("scientific_name"), rs.getString("source_type"), rs.getString("center"),
-                    rs.getString("material"), rs.getString("scope"), rs.getString("experiment_type"), rs.getString("assembly_name"), 
-                    rs.getString("platform"), rs.getInt("variant_count"), rs.getInt("samples"));
-                l.add(study);
+                VariantStudy study = new VariantStudy(rs.getString("display_name"), rs.getString("study_accession"), null, rs.getString("study_description"),
+                        -1, rs.getString("common_name"), rs.getString("scientific_name"), null, null, null, null, 
+                        rs.getString("analysis_type"), "GRCh38", rs.getString("platform_name"), rs.getInt("variant_count"), -1);
+                result.add(study);
             }
             long end = System.currentTimeMillis();
-            qr = new QueryResult(null, ((Long) (end - start)).intValue(), l.size(), l.size(), null, null, l);
+            qr = new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
         } catch (SQLException ex) {
             Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             qr = new QueryResult();

@@ -2,8 +2,6 @@ package uk.ac.ebi.variation.eva.server.ws;
 
 
 import org.opencb.biodata.models.feature.Region;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 
 /**
  * Created by imedina on 01/04/14.
@@ -25,21 +24,15 @@ import java.util.List;
 public class RegionWSServer extends EvaWSServer {
 
     private VariantMongoDBAdaptor variantMongoDbAdaptor;
-    private MongoCredentials credentials;
 
-    public RegionWSServer() {
-
+    public RegionWSServer() throws IllegalOpenCGACredentialsException {
+        super();
     }
 
-    public RegionWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException {
+    public RegionWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
+            throws IOException, IllegalOpenCGACredentialsException {
         super(version, uriInfo, hsr);
-        try {
-            credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
-//            credentials = new MongoCredentials("localhost", 27017, "eva-test", "biouser", "biopass");
-            variantMongoDbAdaptor = new VariantMongoDBAdaptor(credentials);
-        } catch (IllegalOpenCGACredentialsException e) {
-            e.printStackTrace();
-        }
+        variantMongoDbAdaptor = new VariantMongoDBAdaptor(credentials);
     }
 
     @GET
@@ -114,8 +107,8 @@ public class RegionWSServer extends EvaWSServer {
         } else if (regionsSize <= 1000000) {
             return createOkResponse(variantMongoDbAdaptor.getAllVariantsByRegionList(regions, queryOptions));
         } else {
-            return createErrorResponse("The total size of all regions provided can't excede 1 million positions. "
-                    + "If you want to browse a larger number of position, please provide the parameter 'histogram=true'");
+            return createErrorResponse("The total size of all regions provided can't exceed 1 million positions. "
+                    + "If you want to browse a larger number of positions, please provide the parameter 'histogram=true'");
         }
     }
     

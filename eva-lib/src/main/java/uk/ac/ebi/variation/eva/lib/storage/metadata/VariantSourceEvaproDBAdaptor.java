@@ -6,8 +6,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.InitialContext;
@@ -33,14 +36,34 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
     
     @Override
     public QueryResult countSources() {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        QueryResult qr = null;
         try {
-            return EvaproUtils.count(ds, "VCF_FILES");
+            conn = ds.getConnection();
+            pstmt = conn.prepareStatement("select count(*) from file where file_type in (\"vcf\", \"vcf_aggregate\")");
+            
+            long start = System.currentTimeMillis();
+            ResultSet rs = pstmt.executeQuery();
+            int count = rs.next() ? rs.getInt(1) : 0;
+            long end = System.currentTimeMillis();
+            qr = new QueryResult(null, ((Long) (end - start)).intValue(), 1, 1, null, null, Arrays.asList(count));
         } catch (SQLException ex) {
             Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
-            QueryResult qr = new QueryResult();
+            qr = new QueryResult();
             qr.setErrorMsg(ex.getMessage());
-            return qr;
+        } finally {
+            try {
+                EvaproUtils.close(pstmt);
+                EvaproUtils.close(conn);
+            } catch (SQLException ex) {
+                Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                qr = new QueryResult();
+                qr.setErrorMsg(ex.getMessage());
+            }
         }
+
+        return qr;
     }
 
     @Override
@@ -66,7 +89,7 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
         QueryResult qr = null;
         try {
             conn = ds.getConnection();
-            pstmt = conn.prepareStatement("select distinct(FTP_FILE) from FILE where FILENAME = ?");
+            pstmt = conn.prepareStatement("select distinct(ftp_file) from file where filename = ?");
             pstmt.setString(1, filename);
             System.out.println(pstmt);
             long start = System.currentTimeMillis();
@@ -118,6 +141,70 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
     }
 
     @Override
+    public List<QueryResult> getSourceDownloadUrlByName(List<String> filenames) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<QueryResult> results = new ArrayList<>();
+        String query = "select distinct filename, ftp_file from file where " + EvaproUtils.getInClause("filename", filenames);
+        
+        try {
+            conn = ds.getConnection();
+            pstmt = conn.prepareStatement(query);
+            System.out.println(pstmt);
+            long start = System.currentTimeMillis();
+            rs = pstmt.executeQuery();
+            
+//            List<Map.Entry<String,URL>> urls = new ArrayList();
+            while (rs.next()) {
+//                Map.Entry<String, URL> entry = new AbstractMap.SimpleEntry(rs.getString(1), new URL("ftp:/" + rs.getString(2)));
+                results.add(new QueryResult(rs.getString(1), ((Long) (System.currentTimeMillis() - start)).intValue(), 
+                        1, 1, null, null, Arrays.asList(new URL("ftp:/" + rs.getString(2)))));
+//                urls.add(entry);
+            }
+            
+        } catch (SQLException | MalformedURLException ex) {
+            Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            QueryResult qr = new QueryResult();
+            qr.setErrorMsg(ex.getMessage());
+            results.add(qr);
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                    QueryResult qr = new QueryResult();
+                    qr.setErrorMsg(ex.getMessage());
+                    results.add(qr);
+                }
+            }
+            if (pstmt != null) {
+                try {
+                    pstmt.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                    QueryResult qr = new QueryResult();
+                    qr.setErrorMsg(ex.getMessage());
+                    results.add(qr);
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                    QueryResult qr = new QueryResult();
+                    qr.setErrorMsg(ex.getMessage());
+                    results.add(qr);
+                }
+            }
+        }
+        
+        return results;
+    }
+    
+    @Override
     public QueryResult getSourceDownloadUrlById(String fileId, String studyId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -126,5 +213,5 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
     public boolean close() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

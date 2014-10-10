@@ -58,7 +58,7 @@ public class EvaproUtils {
             if (i > 0) {
                 query.append(", ");
             }
-            query.append("\"").append(s).append("\"");
+            query.append("'").append(s).append("'");
             i++;
         }
         query.append(") ");

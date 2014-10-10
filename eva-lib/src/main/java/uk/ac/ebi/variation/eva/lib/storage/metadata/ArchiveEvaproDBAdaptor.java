@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -33,7 +34,7 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
     @Override
     public QueryResult countStudies() {
         try {
-            return EvaproUtils.count(ds, "PROJECT");
+            return EvaproUtils.count(ds, "project");
         } catch (SQLException ex) {
             Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             QueryResult qr = new QueryResult();
@@ -44,14 +45,14 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
 
     @Override
     public QueryResult countStudiesPerSpecies(QueryOptions options) {
-        StringBuilder query = new StringBuilder("select TAXONOMY.SPECIES_COMMON_NAME, count(*) as COUNT from PROJECT left join PROJECT_TAXONOMY on ")
-                .append("PROJECT.PROJECT_ACCESSION = PROJECT_TAXONOMY.PROJECT_ACCESSION left join TAXONOMY on PROJECT_TAXONOMY.TAXONOMY_ID = TAXONOMY.TAXONOMY_ID ");
+        StringBuilder query = new StringBuilder("select common_name, count(*) as COUNT from study_browser ");
         if (options.containsKey("species")) {
-            query.append(EvaproUtils.getInClause("TAXONOMY.SPECIES_COMMON_NAME", options.getListAs("species", String.class)));
+            query.append("where ");
+            query.append(EvaproUtils.getInClause("common_name", options.getListAs("species", String.class)));
             query.append(" or ");
-            query.append(EvaproUtils.getInClause("TAXONOMY.SPECIES_LATIN_NAME", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("scientific_name", options.getListAs("species", String.class)));
         }
-        query.append(" group by TAXONOMY.SPECIES_LATIN_NAME order by COUNT desc");
+        query.append(" group by common_name order by COUNT desc");
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -90,14 +91,14 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
 
     @Override
     public QueryResult countStudiesPerType(QueryOptions options) {
-        StringBuilder query = new StringBuilder("select TYPE, count(*) as COUNT from PROJECT left join PROJECT_TAXONOMY on ")
-                .append("PROJECT.PROJECT_ACCESSION = PROJECT_TAXONOMY.PROJECT_ACCESSION left join TAXONOMY on PROJECT_TAXONOMY.TAXONOMY_ID = TAXONOMY.TAXONOMY_ID ");
+        StringBuilder query = new StringBuilder("select experiment_type, count(*) as COUNT from study_browser ");
         if (options.containsKey("species")) {
-            query.append(EvaproUtils.getInClause("TAXONOMY.SPECIES_COMMON_NAME", options.getListAs("species", String.class)));
+            query.append("where ");
+            query.append(EvaproUtils.getInClause("common_name", options.getListAs("species", String.class)));
             query.append(" or ");
-            query.append(EvaproUtils.getInClause("TAXONOMY.SPECIES_LATIN_NAME", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("scientific_name", options.getListAs("species", String.class)));
         }
-        query.append(" group by TYPE order by COUNT desc");
+        query.append(" group by experiment_type order by COUNT desc");
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -136,20 +137,43 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
 
     @Override
     public QueryResult countFiles() {
+        String query = "select count(*) from file where " 
+                    + EvaproUtils.getInClause("file_type", Arrays.asList("vcf", "vcf_aggregate"));
+        
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        QueryResult qr = null;
         try {
-            return EvaproUtils.count(ds, "VCF_FILES");
+            conn = ds.getConnection();
+            pstmt = conn.prepareStatement(query);
+            
+            long start = System.currentTimeMillis();
+            ResultSet rs = pstmt.executeQuery();
+            int count = rs.next() ? rs.getInt(1) : 0;
+            long end = System.currentTimeMillis();
+            qr = new QueryResult(null, ((Long) (end - start)).intValue(), 1, 1, null, null, Arrays.asList(count));
         } catch (SQLException ex) {
             Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
-            QueryResult qr = new QueryResult();
+            qr = new QueryResult();
             qr.setErrorMsg(ex.getMessage());
-            return qr;
+        } finally {
+            try {
+                EvaproUtils.close(pstmt);
+                EvaproUtils.close(conn);
+            } catch (SQLException ex) {
+                Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                qr = new QueryResult();
+                qr.setErrorMsg(ex.getMessage());
+            }
         }
+
+        return qr;
     }
 
     @Override
     public QueryResult countSpecies() {
         try {
-            return EvaproUtils.count(ds, "TAXONOMY");
+            return EvaproUtils.count(ds, "taxonomy");
         } catch (SQLException ex) {
             Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             QueryResult qr = new QueryResult();
