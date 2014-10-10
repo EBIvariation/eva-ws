@@ -110,7 +110,8 @@ module.exports = function (grunt) {
                     {   expand: true, src: ['vendor/bootstrap-*/**'], dest: 'build/<%= meta.version.eva %>'},
                     {   expand: true, src: ['vendor/ext-*/**'], dest: 'build/<%= meta.version.eva %>'},
                     {   expand: true, src: ['vendor/highcharts-4.0.3/**'], dest: 'build/<%= meta.version.eva %>'},
-                    {   expand: true, src: ['vendor/platform-0.4.1/**'], dest: 'build/<%= meta.version.eva %>'}
+                    {   expand: true, src: ['vendor/platform-0.4.1/**'], dest: 'build/<%= meta.version.eva %>'},
+                    {   expand: true, src: ['src/js/browser-detect.js'], dest: 'build/<%= meta.version.eva %>/js',flatten: true}
                 ]
             }
 
@@ -148,6 +149,9 @@ module.exports = function (grunt) {
                         ],
                         'platform': [
                             'build/<%= meta.version.eva %>/vendor/platform-0.4.1/js/platform.js'
+                        ],
+                        'browser-detect':[
+                            'build/<%= meta.version.eva %>/js/browser-detect.js'
                         ]
 //                        'internal-dependencies': [
 //                            'build/<%= meta.version.eva %>/gv-config.js'
