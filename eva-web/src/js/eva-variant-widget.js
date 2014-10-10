@@ -423,14 +423,14 @@ EvaVariantWidget.prototype = {
                 '<table class="ocb-attributes-table">' +
                     '<tr>' +
                     '<td class="header">Minor Allele Frequency</td>' +
-                    '<td class="header">Minor Genotype Frequency</td>' +
+//                    '<td class="header">Minor Genotype Frequency</td>' +
                     '<td class="header">Mendelian Errors</td>' +
                     '<td class="header">Missing Alleles</td>' +
                     '<td class="header">Missing Genotypes</td>' +
                     '</tr>',
                     '<tr>' +
                     '<td><tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl><tpl if="mafAllele">({mafAllele}) <tpl else></tpl></td>' +
-                    '<td><tpl if="mgf == -1 || mgf == 0">NA <tpl else>{mgf:number( "0.000" )} </tpl><tpl if="mgfGenotype">({mgfGenotype}) <tpl else></tpl></td>' +
+//                    '<td><tpl if="mgf == -1 || mgf == 0">NA <tpl else>{mgf:number( "0.000" )} </tpl><tpl if="mgfGenotype">({mgfGenotype}) <tpl else></tpl></td>' +
                     '<td><tpl if="mendelianErrors == -1">NA <tpl else>{mendelianErrors}</tpl></td>' +
                     '<td><tpl if="missingAlleles == -1">NA <tpl else>{missingAlleles}</tpl></td>' +
                     '<td><tpl if="missingGenotypes == -1">NA <tpl else>{missingGenotypes}</tpl></td>' +
