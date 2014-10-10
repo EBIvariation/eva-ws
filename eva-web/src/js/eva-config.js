@@ -163,16 +163,39 @@ variationClasses = [
 //   ];
 
 
-
-EvaManager.get({
-    host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-    category: 'meta/studies',
-    resource: 'list',
-    success: function (response) {
-        try {
-            projects = response.response[0].result;
-        } catch (e) {
-            console.log(e);
-        }
+var projects = [    {
+            studyId: "PRJEB5829",
+            studyName: "Genome of the Netherlands Release 5"
+    }, {
+        studyId: "PRJEB7218",
+        studyName: "UK10K_COHORT_TWINSUK REL-2012-06-02 haplotypes (sites)"
+    }, {
+        studyId: "PRJEB6041",
+        studyName: "UMCG Cardio GenePanel screening"
+    }, {
+        studyId: "PRJEB7217",
+        studyName: "UK10K_COHORT_ALSPAC REL-2012-06-02 haplotypes (sites only)"
+    }, {
+        studyId: "PRJEB6042",
+        studyName: "GEUVADIS: Genetic European Variation in Disease"
+    }, {
+        studyId: "PRJEB5439",
+        studyName: "Exome Variant Server NHLBI Exome Sequencing Project"
+    }, {
+        studyId: "PRJEB4019",
+        studyName: "1000 Genomes Phase 1 Analysis"
     }
-});
+];
+
+//EvaManager.get({
+//    host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+//    category: 'meta/studies',
+//    resource: 'list',
+//    success: function (response) {
+//        try {
+//            projects = response.response[0].result;
+//        } catch (e) {
+//            console.log(e);
+//        }
+//    }
+//});
