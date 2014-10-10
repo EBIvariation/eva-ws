@@ -62,7 +62,8 @@
     <div id="variant-view">
         <div class="row">
             <div  class="col-sm-1  col-md-1 col-lg-1"></div>
-            <div  class="col-sm-11 col-md-11 col-lg-11"> <h2 id="variantInfo"></h2><h4><div style="float: right;">Assembly:GRCh37</div></h4></div>
+            <div  class="col-sm-11 col-md-11 col-lg-11"> <h2 id="variantInfo"></h2></div>
+            <!--<div  class="col-sm-11 col-md-11 col-lg-11"> <h2 id="variantInfo"></h2><h4><div style="float: right;">Assembly:GRCh37</div></h4></div>-->
         </div>
         <div class="row">
             <div class="col-sm-1  col-md-1 col-lg-1" id="variantViewScrollspy">
@@ -163,11 +164,11 @@
                                  '<table class="ocb-stats-table">' +
                                          '<tr>' +
                                          '<td class="header">Minor Allele Frequency:</td>' +
-                                         '<td><tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl><tpl if="mafAllele">({mafAllele}) <tpl else>(-) </tpl></td>'+
+                                         '<td><tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl><tpl if="mafAllele">({mafAllele}) <tpl else></tpl></td>'+
                                          '</tr>',
                                  '<tr>' +
                                          '<td class="header">Minor Genotype Frequency:</td>' +
-                                         '<td><tpl if="mgf == -1 || mgf == 0">NA <tpl else>{mgf:number( "0.000" )} </tpl><tpl if="mgfGenotype">({mgfGenotype}) <tpl else>(-) </tpl></td>' +
+                                         '<td><tpl if="mgf == -1 || mgf == 0">NA <tpl else>{mgf:number( "0.000" )} </tpl><tpl if="mgfGenotype">({mgfGenotype}) <tpl else></tpl></td>' +
                                          '</tr>',
                                  '<tr>' +
                                          '<td class="header">Mendelian Errors:</td>' +
@@ -264,6 +265,7 @@
                      }
                      _summaryTable += '<tr><td>Type</td><td>'+data[0].type+'</td></tr>' +
                              '<tr><td>Chromosome:Start-End</td><td>'+data[0].chromosome+':'+data[0].start+'-'+data[0].end+'</td></tr>' +
+                             '<tr><td>Assembly</td><td>GRCh37</td></tr>' +
                              '<tr><td>Ref</td><td>'+reference+'</td></tr>' +
                              '<tr><td>Alt</td><td>'+alternate+'</td></tr>' +
                              '</table>'

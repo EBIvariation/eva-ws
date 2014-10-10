@@ -109,6 +109,7 @@
                         <li><a>Clinical</a></li>
                         <li><a>GA4GH</a></li>
                         <!--<li><a>Genome Browser</a></li>-->
+                        <!--<li><a>API</a></li>-->
                         <li><a>About</a></li>
                         <li><a>Contact</a></li>
                         <!--<li class="hidden"><a>Templates</a></li>-->
@@ -286,6 +287,7 @@
             var templatesDiv = link.import.querySelector('#submissionTemplates');
             var vcfDiv = link.import.querySelector('#vcf-format');
             var clinicalDiv = link.import.querySelector('#clinical');
+            var apiDiv = link.import.querySelector('#api');
     //        var studyBrowserDiv = link.import.querySelector('#studyBrowser');
             var studyBrowserDiv = document.createElement('div');
             studyBrowserDiv.innerHTML = '<title>Study Browser  &lt; European Variation Archive &lt; EMBL-EBI</title>';
@@ -338,7 +340,9 @@
                 clinicalDiv:clinicalDiv,
                 submissionForm:submissionForm,
                 studyBrowserDiv:studyBrowserDiv,
-                evaBrowserDiv:evaBrowserDiv
+                evaBrowserDiv:evaBrowserDiv,
+                apiDiv:apiDiv
+
             });
             eva.draw();
 

@@ -69,6 +69,10 @@ Eva.prototype = {
         $(this.contactDiv).addClass('eva-child');
         this.childDivMenuMap['Contact'] = this.contactDiv;
 
+        /* api */
+        $(this.apiDiv).addClass('eva-child');
+        this.childDivMenuMap['API'] = this.apiDiv;
+
         /* Templates */
         $(this.templatesDiv).addClass('eva-child');
         this.childDivMenuMap['Templates'] = this.templatesDiv;
