@@ -186,6 +186,7 @@ Eva.prototype = {
                 break;
             case 'VCF Browser':
                 this.variantWidgetPanel.show();
+                this.variantWidgetPanel.formPanelVariantFilter.trigger('submit', {values: this.variantWidgetPanel.formPanelVariantFilter.getValues(), sender: _this});
                 break;
 //            case 'Genome Browser':
 //                this.formPanelGenomeFilter.update();
