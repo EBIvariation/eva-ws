@@ -54,7 +54,7 @@ StudyBrowser.prototype = {
     _createPanel: function () {
 
          var svStudyBrowser = new SvStudyBrowserPanel({
-            pageSize:10
+            pageSize:20
         });
         var sgvStudyBrowser = new SgvStudyBrowserPanel({
             pageSize:10
