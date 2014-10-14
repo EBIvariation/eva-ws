@@ -1,0 +1,188 @@
+<template>
+    <style scoped>
+        @import url('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css');
+        .borderless tbody tr td, .borderless thead tr th {
+            border: none;
+        }
+        #variantSearchResultShow{
+            color: #426783;
+        }
+        .valid{
+            color:#25AC0F;
+        }
+        .invalid{
+            color:#CB4437;
+        }
+
+        h2{
+            color:#378080;
+        }
+
+    </style>
+    <div class="row">
+        <div class="col-md-12">
+            <form id="variant-search-form">
+                <div class="row">
+                    <div class="col-md-2 form-group"><p>Chromosome</p></div>
+                    <div class="col-md-2 form-group input-group-sm"><div id="chr"></div></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 form-group"><p>Start</p></div>
+                    <div class="col-md-2 form-group input-group-sm"><input class="form-control" id="start"  name=start type="text" required/></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 form-group"><p>End</p></div>
+                    <div class="col-md-2 form-group input-group-sm"><input class="form-control" id="end"  name=end type="text" required/></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 form-group"><span id="refresh-btn"></span> <input id="submit" class="btn btn-primary" type="submit"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5">
+            <div id="variantSearchResultShow"></div><br />
+        </div>
+    </div>
+</template>
+<script>
+    // This document reference
+    var variantSearchDoc = document._currentScript.ownerDocument;
+
+    var variantSearch = document.registerElement('eva-variant-search', {
+        prototype: Object.create(HTMLElement.prototype, {
+            /*
+             * Lifecycle callback methods
+             */
+            createdCallback: {
+                value: function () {
+                    var _this = this;
+
+                    //Create a copy of the template node.
+                    var template = document.importNode(variantSearchDoc.querySelector('template').content, true);
+                    _this.createShadowRoot().appendChild(template);
+
+                }
+            },
+            attributeChangedCallback:{
+                value: function (attrName, oldValue, newValue) {
+                    var _this = this;
+                    _this.shadowRoot.querySelector('#'+attrName).value  =  newValue;
+                    _this.showResultDiv.innerHTML = "";
+                }
+            },
+            attachedCallback: {
+                value: function () {
+                    var _this = this;
+                    _this.chrSelectDiv = _this.shadowRoot.querySelector("#chr");
+                    _this.showResultDiv =  _this.shadowRoot.querySelector("#variantSearchResultShow");
+                    _this.variantSearchForm = _this.shadowRoot.querySelector('#variant-search-form');
+
+                    if(_this.chromEl == null){
+
+                        var chrSelectList = document.createElement("select");
+                        chrSelectList.setAttribute("id", "referenceName");
+                        chrSelectList.setAttribute("required" ,"");
+                        _this.chrSelectDiv.appendChild(chrSelectList);
+                        for (var i = 1; i < 25; i++) {
+                            var option = document.createElement("option");
+                            if(i == 23){
+                                option.setAttribute("value", i);
+                                option.text = 'Chr X';
+                            }
+                            else if(i == 24){
+                                option.setAttribute("value", i);
+                                option.text = 'Chr Y';
+                            }else{
+                                option.setAttribute("value", i);
+                                option.text = 'Chr '+i;
+                            }
+
+                            chrSelectList.appendChild(option);
+                        }
+                    }
+
+                    //get Element
+                    _this.chromEl =  _this.shadowRoot.querySelector('#referenceName');
+                    _this.startEl =  _this.shadowRoot.querySelector('#start');
+                    _this.endEl =  _this.shadowRoot.querySelector('#end');
+
+                    //set element value from attribute
+                    _this.chromEl.value  = _this.getAttribute('referenceName');
+                    _this.startEl.value  =   _this.getAttribute('start');
+                    _this.endEl.value  =  _this.getAttribute('end');
+
+                    _this.variantSearchForm.addEventListener('submit', function(eve) {
+                        var data= {};
+
+                        var region =  _this.chromEl.value+':'+ _this.startEl.value+':'+  _this.endEl.value;
+                        var params = {referenceName: _this.chromEl.value,start:_this.startEl.value, end:_this.endEl.value}
+                        EvaManager.get({
+                        host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                        category: 'ga4gh/variants',
+                        resource: 'search',
+                        params:params,
+                        success: function (response) {
+                                try {
+                                    data.result = response.variants;
+                                } catch (e) {
+                                    console.log(e);
+                                }
+                            _this.renderResultData(data, region);
+                            }
+                        });
+                        eve.preventDefault();
+
+                    }, true);
+
+                }
+            },
+            renderResultData: {
+                value: function (data,region) {
+                   var _this = this;
+                   console.log(data)
+
+                  var resultData = '<h4>Result:</h4><table  class="table table-bordered">' +
+                                    '<tr><td>ID</td><td>'+data.result[0].id+'</td></tr>'+
+                                    '<tr><td>Referenc eName</td><td>'+data.result[0].referenceName+'</td></tr>'+
+                                    '<tr><td>Start</td><td>'+data.result[0].start+'</td></tr>'+
+                                    '<tr><td>End</td><td>'+data.result[0].end+'</td></tr>'+
+                                    '<tr><td>Varinat Set ID</td><td>'+data.result[0].variantSetId+'</td></tr>'+
+                                    '</table>'
+
+
+                    _this.showResultDiv.innerHTML = "";
+                    var resultElDiv =  document.createElement("div");
+                    resultElDiv.innerHTML = resultData;
+                    _this.showResultDiv.appendChild(resultElDiv);
+
+                    var refreshBtnDiv =  _this.shadowRoot.querySelector("#refresh-btn");
+                    refreshBtnDiv.innerHTML = "";
+                    var refreshBtnEl =  document.createElement("button");
+                    refreshBtnEl.type = "submit";
+                    refreshBtnEl.textContent = "Reset";
+                    refreshBtnEl.className = "btn btn-primary";
+                    refreshBtnEl.id = "reset";
+                    refreshBtnDiv.appendChild(refreshBtnEl);
+
+                    var refresh = _this.shadowRoot.querySelector('#reset');
+                    refresh.addEventListener('click', function(eve) {
+                        eve.preventDefault();
+                        _this.showResultDiv.innerHTML = "";
+                        for (i = 0; i < _this.attributes.length;) {
+                            _this.removeAttribute(_this.attributes[i].nodeName)
+                        }
+                        _this.variantSearchForm.reset();
+                    }, true);
+
+                }
+            }
+
+        })
+    });
+
+
+
+
+</script>
