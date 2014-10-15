@@ -16,9 +16,7 @@
         h3 span{
             color:#BBBBBB;
         }
-        a, a:link, a:visited{
-            border-bottom-style: none;
-        }
+
         .eva-capitalize{
             text-transform:capitalize;
         }
@@ -55,7 +53,7 @@ var studyView = document.registerElement('study-view', {
                 this.type = this.getAttribute('type');
                 var projectId = this.getAttribute('id');
                 if(this.type === 'eva'){
-                    var studyID = _this.getStudyId(projectId);
+//                    var studyID = _this.getStudyId(projectId);
                     EvaManager.get({
                         host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                         category: 'studies',
@@ -144,6 +142,9 @@ var studyView = document.registerElement('study-view', {
                             taxonomyId.push(['<a href="'+taxLink+'" target="_blank">'+data.summaryData[0].taxonomyId[i]+'</a>']);
                         }
                     }
+
+                    var projectURL = this.getProjectUrl(data.summaryData[0].id);
+
                     var _filesTable  = '<div><h3>'+data.summaryData[0].name+'</h3>' +
                             '<div class="row study-view-data"><div class="col-md-12"><div><h4>General Information</h4></div><table class="table table-bordered study-view-table">' +
                             '<tr><td><b>Species</b></td><td>'+data.summaryData[0].speciesCommonName+'</td></tr>' +
@@ -158,6 +159,7 @@ var studyView = document.registerElement('study-view', {
 //                                '<tr><td><b>Variants</b></td><td>'+data.summaryData[0].numVariants+'</td></tr>' +
                             '<tr><td><b>Samples</b></td><td>'+data.summaryData[0].numSamples+'</td></tr>' +
                             '<tr><td><b>Description</b></td><td>'+data.summaryData[0].description+'</td></tr>' +
+                            '<tr><td><b>Resource</b></td><td><a href="'+projectURL+'" target="_blank">'+projectURL+'</a></td></tr>' +
                             '<tr><td><b>Download</b></td><td><a href="ftp://ftp.ebi.ac.uk/pub/databases/eva/'+data.summaryData[0].id+'" target="_blank">FTP</a></td></tr>' +
                             '</table>'
 
@@ -236,6 +238,8 @@ var studyView = document.registerElement('study-view', {
                         }
                     }
 
+
+
                     var _filesTable  = '<div><h3>'+data.summaryData[0].name+'</h3>' +
                             '<div class="row study-view-data"><div class="col-md-12"><div><h4>General Information</h4></div><table class="table table-bordered">' +
                             '<tr><td><b>Species</b></td><td class="eva-capitalize">'+data.summaryData[0].speciesCommonName+'</td></tr>' +
@@ -274,8 +278,19 @@ var studyView = document.registerElement('study-view', {
             value: function (data) {
                 var _this = this;
                 for (var i = 0; i < projects.length; i++) {
-                    if (projects[i].projectId === data) {
+                    if (projects[i].studyId === data) {
                         return projects[i].alias;
+                    }
+                }
+            }
+        },
+        getProjectUrl:{
+            value: function (data) {
+                var _this = this;
+               console.log(projects)
+                for (var i = 0; i < projects.length; i++) {
+                    if (projects[i].studyId === data) {
+                        return projects[i].url;
                     }
                 }
             }

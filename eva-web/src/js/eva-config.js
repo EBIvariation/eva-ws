@@ -165,25 +165,40 @@ variationClasses = [
 
 var projects = [    {
             studyId: "PRJEB5829",
-            studyName: "Genome of the Netherlands Release 5"
+            studyName: "Genome of the Netherlands Release 5",
+            url:"http://www.nlgenome.nl/"
     }, {
         studyId: "PRJEB7218",
-        studyName: "UK10K_COHORT_TWINSUK REL-2012-06-02 haplotypes (sites)"
+        studyName: "UK10K_COHORT_TWINSUK REL-2012-06-02 haplotypes (sites)",
+        url:"http://www.uk10k.org/"
     }, {
         studyId: "PRJEB6041",
-        studyName: "UMCG Cardio GenePanel screening"
+        studyName: "UMCG Cardio GenePanel screening",
+        url:"https://www.umcg.nl/EN/Research/InstitutesProgrammes/GUIDE/Programmes/Pages/CVC.aspx"
     }, {
         studyId: "PRJEB7217",
-        studyName: "UK10K_COHORT_ALSPAC REL-2012-06-02 haplotypes (sites only)"
+        studyName: "UK10K_COHORT_ALSPAC REL-2012-06-02 haplotypes (sites only)",
+        url:"http://www.uk10k.org/"
     }, {
         studyId: "PRJEB6042",
-        studyName: "GEUVADIS: Genetic European Variation in Disease"
+        studyName: "GEUVADIS: Genetic European Variation in Disease",
+        url:"http://www.geuvadis.org/web/geuvadis/home"
     }, {
         studyId: "PRJEB5439",
-        studyName: "Exome Variant Server NHLBI Exome Sequencing Project"
+        studyName: "Exome Variant Server NHLBI Exome Sequencing Project",
+        url:"http://evs.gs.washington.edu/EVS/"
     }, {
         studyId: "PRJEB4019",
-        studyName: "1000 Genomes Phase 1 Analysis"
+        studyName: "1000 Genomes Phase 1 Analysis",
+        url:"http://www.1000genomes.org/"
+    }, {
+        studyId: "PRJEB6902",
+        studyName: "Complete Genomics 69 Genomes",
+        url:"http://www.completegenomics.com/public-data/69-Genomes/"
+    }, {
+        studyId: "PRJEB5473",
+        studyName: "SNP analysis in Medaka using wild and inbred individuals",
+        url:"http://www.ebi.ac.uk/birney-srv/medaka-ref-panel/"
     }
 ];
 
