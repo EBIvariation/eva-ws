@@ -287,7 +287,6 @@ var studyView = document.registerElement('study-view', {
         getProjectUrl:{
             value: function (data) {
                 var _this = this;
-               console.log(projects)
                 for (var i = 0; i < projects.length; i++) {
                     if (projects[i].studyId === data) {
                         return projects[i].url;
