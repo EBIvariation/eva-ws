@@ -137,7 +137,6 @@ var studyView = document.registerElement('study-view', {
 
                     if(data.summaryData[0].taxonomyId){
                         for (i = 0; i < data.summaryData[0].taxonomyId.length; i++) {
-                            console.log(data.summaryData[0].taxonomyId[i])
                             var taxLink = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id='+data.summaryData[0].taxonomyId[i];
                             taxonomyId.push(['<a href="'+taxLink+'" target="_blank">'+data.summaryData[0].taxonomyId[i]+'</a>']);
                         }
