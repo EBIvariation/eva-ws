@@ -104,38 +104,13 @@ Eva.prototype = {
 
 
         /* Study Browser Panel*/
-        $(this.studyBrowserDiv).addClass('eva-child');
-        this.childDivMenuMap['Study Browser'] =  this.studyBrowserDiv;
-
-        /* variant browser option*/
-        $(this.evaBrowserDiv).addClass('eva-child');
-        this.childDivMenuMap['VCF Browser'] = this.evaBrowserDiv;
-
-        /* genome browser option*/
-//        this.genomeBrowserOptionDiv = document.createElement('div');
-//        $(this.genomeBrowserOptionDiv).addClass('eva-child genome-browser-option-div');
-//        this.div.appendChild(this.genomeBrowserOptionDiv);
-//        this.childDivMenuMap['Genome Browser'] = this.genomeBrowserOptionDiv;
+//        $(this.studyBrowserDiv).addClass('eva-child');
+//        this.childDivMenuMap['Study Browser'] =  this.studyBrowserDiv;
 //
-//        this.formPanelGenomeFilterDiv = document.createElement('div');
-//        $(this.formPanelGenomeFilterDiv).addClass('form-panel-genome-filter-div');
-//        this.genomeBrowserOptionDiv.appendChild(this.formPanelGenomeFilterDiv);
-//
-//        this.genomeViewerTitleDiv = document.createElement('div');
-//        $(this.genomeViewerTitleDiv).addClass('genome-viewer-title-div eva-header-1');
-//        this.genomeBrowserOptionDiv.appendChild(this.genomeViewerTitleDiv);
-//        this.genomeViewerTitleDiv.innerHTML = 'Genome browser';
-//
-//        this.genomeViewerDiv = document.createElement('div');
-//        $(this.genomeViewerDiv).addClass('genome-viewer-div');
-//        this.genomeBrowserOptionDiv.appendChild(this.genomeViewerDiv);
-//
-//        this.genomeViewer = this._createGenomeViewer(this.genomeViewerDiv);
-//        this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
+//        /* variant browser option*/
+//        $(this.evaBrowserDiv).addClass('eva-child');
+//        this.childDivMenuMap['VCF Browser'] = this.evaBrowserDiv;
 
-
-//        this.genomeViewer.leftSidebarDiv.appendChild(this.formPanelGenomeFilterDiv);
-//        this.panel = this._createPanel();
     },
     draw: function () {
         this.targetDiv = (this.target instanceof HTMLElement ) ? this.target : document.querySelector('#' + this.target);
@@ -163,10 +138,14 @@ Eva.prototype = {
         var _this = this;
         this.studyBrowserPanel.hide();
         this.variantWidgetPanel.hide();
-        $('body').find('.eva-child').each(function (index, el) {
-            _this.div.removeChild(el)
+        $('body').find('.show-div').each(function (index, el) {
+            $(el).removeClass('show-div');
+            $(el).addClass('hide-div');
+//           _this.div.removeChild(el)
         });
         if (this.childDivMenuMap[option]) {
+            $(this.childDivMenuMap[option]).removeClass('hide-div');
+            $(this.childDivMenuMap[option]).addClass('show-div');
             this.div.appendChild(this.childDivMenuMap[option]);
         }
 
@@ -180,6 +159,10 @@ Eva.prototype = {
         switch (option) {
             case 'Home':
                 _this._twitterWidgetUpdate();
+                _this._drawStatisticsChart();
+                break;
+            case 'Submit Data':
+//                _this._twitterWidgetUpdate();
                 break;
             case 'Study Browser':
                 this.studyBrowserPanel.show();
@@ -221,284 +204,6 @@ Eva.prototype = {
         return variantWidget;
 
     },
-    _createFormPanelGenomeFilter: function (target) {
-        var _this = this;
-        var positionFilter = new PositionFilterFormPanel();
-        var studyFilter = new StudyFilterFormPanel({
-            studiesStore: this.studiesStore
-        });
-//        _this._loadListStudies();
-//        this.on('studies:change', function (e) {
-//            studyFilter.setStudies(e.studies);
-//        });
-
-        var conseqType = new ConsequenceTypeFilterFormPanel({
-            consequenceTypes: consequenceTypes,
-            collapsed: false,
-            fields: [
-                {name: 'name', type: 'string'}
-            ],
-            columns: [
-                {
-                    xtype: 'treecolumn',
-                    flex: 1,
-                    sortable: false,
-                    dataIndex: 'name'
-                }
-            ]
-        });
-
-        var trackNameField = Ext.create('Ext.form.field.Text', {
-            xtype: 'textfield',
-            emptyText: 'Track name',
-            flex: 5
-        });
-        var formPanel = new FormPanel({
-            title: 'Add tracks',
-            border: false,
-            headerConfig: {
-                baseCls: 'eva-header-1'
-            },
-            submitButtonText: 'Add track',
-            collapsible: false,
-            titleCollapse: false,
-            target: target,
-            filters: [studyFilter, conseqType],
-            width: 1318,
-            mode: 'tabs',
-            barItems: [
-                trackNameField
-            ],
-            handlers: {
-                'submit': function (e) {
-                    var title = trackNameField.getValue();
-                    if (title !== '') {
-                        _this.EvaAdapter(title, e.values);
-                        trackNameField.setValue('');
-                    }
-                }
-            }
-        });
-
-        return formPanel;
-    },
-    _addGenomeBrowserTrack: function (title, params) {
-        var eva = new FeatureTrack({
-            title: title,
-            featureType: 'eva',
-            minHistogramRegionSize: 10000,
-            maxLabelRegionSize: 3000,
-            height: 100,
-
-            renderer: new FeatureRenderer({
-                label: function (f) {
-                    var title = f.id;
-                    if (title == '') {
-                        title = f.chromosome + ":" + f.start + "-" + f.end;
-                    }
-                    return title;
-                },
-                tooltipTitle: function (f) {
-                    var title = f.id;
-                    if (title == '') {
-                        title = f.chromosome + ":" + f.start + "-" + f.end;
-                    }
-                    return f.type + ' - <span style="color:#399697">' + title + '</span>';
-                },
-                tooltipText: function (f) {
-                    var str = [
-                            'Location: ' + '<span style="color:#156765">' + f.chromosome + ":" + f.start + "-" + f.end + '</span>',
-                            'Alt. allele: ' + '<span style="color:#156765">' + f.allele + '</span>',
-                            'Variant class: ' + '<span style="color:#156765">' + f.type + '</span>'
-                    ];
-                    var hgvs = [];
-                    for (var key in f.hgvs) {
-                        hgvs.push('<span style="margin-left: 10px">' + Utils.camelCase(key) + '</span>' + ': <span style="color:#156765">' + f.hgvs[key] + '</span>');
-                    }
-                    if (hgvs.length > 0) {
-                        str.push('HGVS' + '<br><span>' + hgvs.join('<br>') + '</span>');
-                    }
-                    var files = [];
-                    for (var key in f.files) {
-                        files.push('<span style="margin-left: 10px">' + f.files[key].fileId + '</span>' + ' (<span style="color:#156765">' + f.files[key].studyId + '</span>)');
-                    }
-                    if (files.length > 0) {
-                        str.push('Files (study)' + '<br><span>' + files.join('<br>') + '</span>');
-                    }
-                    return str.join('<br>');
-                },
-                color: function (f) {
-                    return "#399697";
-                },
-                infoWidgetId: "id",
-                height: 10,
-                histogramColor: "#399697",
-                handlers: {
-                    'feature:mouseover': function (e) {
-//                        e.feature
-                        console.log(e);
-                    }
-                }
-            }),
-
-            dataAdapter: new EvaAdapter({
-                host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-                version: 'v1',
-                category: "segments",
-                resource: "variants",
-                params: params,
-                cacheConfig: {
-                    chunkSize: 10000
-                }
-            })
-        });
-
-        this.genomeViewer.addTrack(eva);
-    },
-    _createGenomeViewer: function (target) {
-        var _this = this;
-
-        var region = new Region({
-            chromosome: "13",
-            start: 32889611,
-            end: 32889611
-        });
-
-        var genomeViewer = new GenomeViewer({
-            sidePanel: false,
-            target: target,
-            border: false,
-            resizable: true,
-            width: 1328,
-            region: region,
-//            trackListTitle: '',
-            drawNavigationBar: true,
-            drawKaryotypePanel: false,
-            drawChromosomePanel: false,
-            drawRegionOverviewPanel: true,
-            overviewZoomMultiplier: 50,
-            navigationBarConfig: {
-                componentsConfig: {
-                    leftSideButton: true,
-                    restoreDefaultRegionButton: false,
-                    regionHistoryButton: false,
-                    speciesButton: false,
-                    chromosomesButton: false,
-                    karyotypeButton: false,
-                    chromosomeButton: false,
-                    regionButton: false,
-//                    zoomControl: false,
-                    windowSizeControl: false,
-//                    positionControl: false,
-//                    moveControl: false,
-//                    autoheightButton: false,
-//                    compactButton: false,
-//                    searchControl: false
-                }
-            }
-        }); //the div must exist
-
-        genomeViewer.navigationBar.on('leftSideButton:click', function () {
-            $(_this.formPanelGenomeFilterDiv).toggle();
-        });
-
-        var renderer = new FeatureRenderer(FEATURE_TYPES.gene);
-        renderer.on({
-            'feature:click': function (event) {
-                // feature click event example
-                console.log(event)
-            }
-        });
-        var geneOverview = new FeatureTrack({
-//        title: 'Gene overview',
-            minHistogramRegionSize: 20000000,
-            maxLabelRegionSize: 10000000,
-            height: 100,
-
-            renderer: renderer,
-
-            dataAdapter: new CellBaseAdapter({
-                category: "genomic",
-                subCategory: "region",
-                resource: "gene",
-                params: {
-                    exclude: 'transcripts,chunkIds'
-                },
-                species: genomeViewer.species,
-                cacheConfig: {
-                    chunkSize: 100000
-                }
-            })
-        });
-
-
-        var sequence = new SequenceTrack({
-//        title: 'Sequence',
-            height: 30,
-            visibleRegionSize: 200,
-
-            renderer: new SequenceRenderer(),
-
-            dataAdapter: new SequenceAdapter({
-                category: "genomic",
-                subCategory: "region",
-                resource: "sequence",
-                species: genomeViewer.species
-            })
-        });
-
-
-        var gene = new GeneTrack({
-            title: 'Gene',
-            minHistogramRegionSize: 20000000,
-            maxLabelRegionSize: 10000000,
-            minTranscriptRegionSize: 200000,
-            height: 140,
-
-            renderer: new GeneRenderer(),
-
-            dataAdapter: new CellBaseAdapter({
-                category: "genomic",
-                subCategory: "region",
-                resource: "gene",
-                species: genomeViewer.species,
-                params: {
-                    exclude: 'transcripts.tfbs,transcripts.xrefs,transcripts.exons.sequence'
-                },
-                cacheConfig: {
-                    chunkSize: 100000
-                }
-            })
-        });
-
-        var snp = new FeatureTrack({
-            title: 'SNP',
-            featureType: 'SNP',
-            minHistogramRegionSize: 10000,
-            maxLabelRegionSize: 3000,
-            height: 100,
-
-            renderer: new FeatureRenderer(FEATURE_TYPES.snp),
-
-            dataAdapter: new CellBaseAdapter({
-                category: "genomic",
-                subCategory: "region",
-                resource: "snp",
-                params: {
-                    exclude: 'transcriptVariations,xrefs,samples'
-                },
-                species: genomeViewer.species,
-                cacheConfig: {
-                    chunkSize: 10000
-                }
-            })
-        });
-
-        genomeViewer.addOverviewTrack(geneOverview);
-        genomeViewer.addTrack([sequence, gene, snp]);
-
-        return genomeViewer;
-    },
     _twitterWidgetUpdate : function (){
 
         var twitterWidgetEl = document.getElementById('twitter-widget');
@@ -506,6 +211,14 @@ Eva.prototype = {
         twitterWidgetEl.innerHTML = '<a  class="twitter-timeline" height=100 href="https://twitter.com/EBIvariation"  data-widget-id="437894469380100096">Tweets by @EBIvariation</a>';
         $.getScript('//platform.twitter.com/widgets.js', function(){
             twttr.widgets.load();
+        });
+    },
+    _drawStatisticsChart : function(){
+        var evaStatistics = new EvaStatistics({
+            targetId:'eva-statistics'
+        });
+        var dgvaStatistics = new DgvaStatistics({
+            targetId:'dgva-statistics'
         });
     }
 }

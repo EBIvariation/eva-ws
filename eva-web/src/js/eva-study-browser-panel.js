@@ -56,7 +56,7 @@ StudyBrowser.prototype = {
          var svStudyBrowser = new SvStudyBrowserPanel({
             pageSize:20
         });
-        var sgvStudyBrowser = new SgvStudyBrowserPanel({
+        var snvStudyBrowser = new SnvStudyBrowserPanel({
             pageSize:10
         });
 
@@ -65,9 +65,9 @@ StudyBrowser.prototype = {
                 plain: true,
                 items: [
                     {
-                        title: sgvStudyBrowser.getPanel().title.replace('Browser',''),
+                        title: snvStudyBrowser.getPanel().title.replace('Browser',''),
                         cls:'studybrowser ',
-                        items:[sgvStudyBrowser.getPanel()]
+                        items:[snvStudyBrowser.getPanel()]
                     },
                     {
                         title:svStudyBrowser.getPanel().title.replace('Browser',''),

@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with JSorolla. If not, see <http://www.gnu.org/licenses/>.
  */
-function SgvStudyBrowserPanel(args) {
+function SnvStudyBrowserPanel(args) {
     _.extend(this, Backbone.Events);
     this.id = Utils.genId("EvaStudyBrowserPanel");
 
@@ -65,7 +65,7 @@ function SgvStudyBrowserPanel(args) {
     this.load();
 }
 
-SgvStudyBrowserPanel.prototype = {
+SnvStudyBrowserPanel.prototype = {
     render: function () {
         if(!this.rendered) {
             this.div = document.createElement('div');

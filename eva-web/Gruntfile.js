@@ -36,9 +36,13 @@ module.exports = function (grunt) {
                     /** eva app js **/
                     'src/js/eva-variant-widget-panel.js',
                     'src/js/eva-study-browser-panel.js',
-                    'src/js/sgv-study-browser.js',
+                    'src/js/snv-study-browser.js',
                     'src/js/sv-study-browser.js',
                     'src/js/eva-variant-widget.js',
+                    'src/js/study-view.js',
+                    'src/js/variant-view.js',
+                    'src/js/eva-statistics.js',
+                    'src/js/dgva-statistics.js',
                     'src/js/eva-menu.js',
                     'src/js/eva-adapter.js',
                     'src/js/eva-manager.js',
@@ -146,13 +150,13 @@ module.exports = function (grunt) {
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.qtip.min.js',
                             'build/<%= meta.version.eva %>/vendor/highcharts-4.0.3/js/highcharts.js'
 
-                        ],
-                        'platform': [
-                            'build/<%= meta.version.eva %>/vendor/platform-0.4.1/js/platform.js'
-                        ],
-                        'browser-detect':[
-                            'build/<%= meta.version.eva %>/js/browser-detect.js'
                         ]
+//                        'platform': [
+//                            'build/<%= meta.version.eva %>/vendor/platform-0.4.1/js/platform.js'
+//                        ],
+//                        'browser-detect':[
+//                            'build/<%= meta.version.eva %>/js/browser-detect.js'
+//                        ]
 //                        'internal-dependencies': [
 //                            'build/<%= meta.version.eva %>/gv-config.js'
 //                        ]
