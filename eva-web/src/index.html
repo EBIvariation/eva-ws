@@ -275,20 +275,61 @@
                                 <div><p> <span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="1002921" allele="" project="PRJEB4019">Chrom:1&nbsp;Coordinate:1002921 &nbsp;Project:PRJEB4019</a></span></p><hr/></div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form id="beacon-form">
+                                    <div class="row">
+                                        <div class="col-md-2 form-group"><p>Project</p></div>
+                                        <div class="col-md-2 form-group input-group-sm"><div id="project-list-beacon"></div></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2 form-group"><p>Chromosome</p></div>
+                                        <div class="col-md-2 form-group input-group-sm"><div id="chromosome-select-beacon"></div></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2 form-group"><p>Coordinate</p></div>
+                                        <div class="col-md-2 form-group input-group-sm"><input class="form-control" id="beacon-coordinate"  name=coordinate type="text" required/></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2 form-group"><p>Allele</p></div>
+                                        <div class="col-md-2 form-group input-group-sm"><input class="form-control" id="beacon-allele" name=allele type="text"/></div>
+                                    </div>
+                                    <h5>Format Type</h5>
+                                    <div class="row">
+                                        <div class="col-md-2 form-group"><p>Text</p></div>
+                                        <div class="col-md-4 form-group input-group-sm"> <input type="radio"  name="beacon-formatType" value="text" checked="true"> </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-2 form-group"><p>JSON</p></div>
+                                        <div class="col-md-4 form-group input-group-sm"> <input type="radio"  name="beacon-formatType" value="json"> </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 form-group"><span id="refresh-button"></span> <input id="submit" class="btn btn-primary" type="submit"></div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div id="beacon-result-show"></div><br />
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="row"><div class="col-md-12"><div id="beacon-element"><eva-beacon></eva-beacon><eva-variant-search></eva-variant-search></div></div></div>
                 <script>
                     function loadEvaBeacon(el) {
                         var chrom = el.getAttribute('chrom');
                         var coordinate = el.getAttribute('coordinate');
                         var allele = el.getAttribute('allele');
                         var project = el.getAttribute('project');
-                        var el = document.querySelector("eva-beacon");
-                        el.setAttribute('chrom', chrom);
-                        el.setAttribute('coordinate', coordinate);
-                        el.setAttribute('allele', allele);
-                        el.setAttribute('project', project);
+                        var chromEl = document.querySelector('#beacon-chrom');
+                        var coordinateEl = document.querySelector('#beacon-coordinate');
+                        var alleleEl = document.querySelector('#beacon-allele');
+                        var projectEl =  document.querySelector('#beacon-project');
+                        chromEl.value = chrom;
+                        coordinateEl.value = coordinate;
+                        alleleEl.value = allele;
+                        projectEl.value = project;
                     }
                 </script>
             </div>
@@ -647,6 +688,7 @@
     <script type="text/javascript" src="js/variant-view.js"></script>
     <script type="text/javascript" src="js/eva-statistics.js"></script>
     <script type="text/javascript" src="js/dgva-statistics.js"></script>
+    <script type="text/javascript" src="js/beacon.js"></script>
     <script type="text/javascript" src="js/eva-menu.js"></script>
     <script type="text/javascript" src="js/eva-adapter.js"></script>
     <script type="text/javascript" src="js/eva-manager.js"></script>
@@ -661,7 +703,6 @@
     <script type="text/javascript">
         var eva;
         var start = function () {
-
             // Bring in the import content.
 //            var link = document.querySelector('link[href="content.html"]');
               var homeDiv = document.querySelector('#home');
@@ -699,6 +740,9 @@
                     position:tab.value
                 });
             }
+            if(tabId == 'GA4GH'){
+                var evaBeacon= new EvaBeacon({});
+            }
 //
 //            if(tabId == 'submission-start'){
 //                var submissionForm = document.createElement('eva-submission-form');
@@ -728,11 +772,6 @@
 
             });
             eva.draw();
-
-            var path = window.location.pathname.split('/')
-            if(path[2] == 'beacon'){
-                window.location = "http://www.ebi.ac.uk/eva/beacon/";
-            }
 
             if(tab.id){
                 eva.select(tabId);

@@ -441,6 +441,16 @@ h4{
     margin-left:100px;
 }
 
+#beacon-result-show{
+    color: #426783;
+}
+.valid{
+    color:#25AC0F;
+}
+.invalid{
+    color:#CB4437;
+}
+
 
 
 
