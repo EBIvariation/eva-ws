@@ -17,52 +17,51 @@ function EvaStudyView(args) {
 EvaStudyView.prototype = {
     render: function () {
         var _this = this;
-        if(!this.rendered) {
-            if(this.type === 'eva'){
-                EvaManager.get({
-                    host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-                    category: 'studies',
-                    resource: 'files',
-                    query:this.projectId,
-                    success: function (response) {
-                        try {
-                            files = response.response[0].result;
-                        } catch (e) {
-                            console.log(e);
-                        }
-                        _this.parseData();
-                    }
-                });
-            }
-
-            var params = {};
-
-            if(this.type === 'dgva'){
-                var params = {structural: 'true'};
-            }
-
+        $('*').css('cursor','wait');
+        if(this.type === 'eva'){
             EvaManager.get({
                 host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                 category: 'studies',
-                resource: 'summary',
+                resource: 'files',
                 query:this.projectId,
-                params:params,
                 success: function (response) {
                     try {
-                        summary = response.response[0].result;
-                        console.log(summary)
+                        files = response.response[0].result;
                     } catch (e) {
                         console.log(e);
                     }
-                    _this.parseData();
+                    _this._parseData();
                 }
             });
-            this.rendered = true;
         }
+
+        var params = {};
+
+        if(this.type === 'dgva'){
+            var params = {structural: 'true'};
+        }
+
+        EvaManager.get({
+            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+            category: 'studies',
+            resource: 'summary',
+            query:this.projectId,
+            params:params,
+            success: function (response) {
+                try {
+                    summary = response.response[0].result;
+                    console.log(summary)
+                } catch (e) {
+                    console.log(e);
+                }
+                _this._parseData();
+            }
+        });
+
     },
-    draw:function(data,content){
+    _draw:function(data,content){
         var _this = this;
-        var el =  document.querySelector("#"+this.targetId);
+        var el =  document.querySelector("#"+this.target);
         console.log(el)
         el.innerHTML = '';
         $('*').css('cursor','default');
@@ -72,24 +71,24 @@ EvaStudyView.prototype = {
         el.applyAuthorStyles = true;
 
     },
-    parseData:function(data){
+    _parseData:function(data){
         var _this = this;
         var data = {};
         var divContent = '';
         if( _.isEmpty(summary) == false && this.type === 'eva'){
             data = {summaryData: summary,filesData: files }
-            divContent =  _this.createContent(data)
+            divContent =  _this._createContent(data)
         }else if (_.isEmpty(summary) == false && this.type === 'dgva'){
             data = {summaryData: summary }
-            divContent =  _this.createContent(data)
+            divContent =  _this._createContent(data)
         }
-        _this.draw(data,divContent)
+        _this._draw(data,divContent)
 
     },
-    createContent: function (data){
+    _createContent: function (data){
             var _this = this;
 
-            if(this.type === 'eva'){
+            if(_this.type === 'eva'){
 
                 var taxonomyId = new Array();
 
@@ -100,7 +99,7 @@ EvaStudyView.prototype = {
                     }
                 }
 
-                var projectURL = this.getProjectUrl(data.summaryData[0].id);
+                var projectURL = _this._getProjectUrl(data.summaryData[0].id);
 
                 var _filesTable  = '<div><h3>'+data.summaryData[0].name+'</h3>' +
                     '<div class="row study-view-data"><div class="col-md-12"><div><h4>General Information</h4></div><table class="table table-bordered study-view-table">' +
@@ -183,7 +182,7 @@ EvaStudyView.prototype = {
                 }
                 _filesTable += '</div></div>'
             }
-            else if(this.type === 'dgva'){
+            else if(_this.type === 'dgva'){
                 var taxonomyId = new Array();
 
                 if(data.summaryData[0].taxonomyId){
@@ -214,7 +213,7 @@ EvaStudyView.prototype = {
 
             return _filesTable;
         },
-        getProjectUrl: function (data){
+        _getProjectUrl: function (data){
                 var _this = this;
                 for (var i = 0; i < projects.length; i++) {
                     if (projects[i].studyId === data) {

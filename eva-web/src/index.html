@@ -5,26 +5,10 @@
 <meta name="keywords" content="bioinformatics, europe, institute"><!-- A few keywords that relate to the content of THIS PAGE (not the whol project) -->
 <meta name="author" content="EMBL-EBI"><!-- Your [project-name] here -->
 <meta charset="utf-8">
-<!--<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">-->
-
-
-<!--<script src="//cdnjs.cloudflare.com/ajax/libs/polymer/0.3.3/polymer.js"></script>-->
-
-<!--<link rel="import" href="web-components/header.html">-->
-<!--<link rel="import" href="web-components/footer.html">-->
-<!--<link rel="import" href="content.html">-->
-<!--<link rel="import" href="web-components/study-view.html">-->
-<!--<link rel="import" href="web-components/variant-view.html">-->
-<!--<link rel="import" href="web-components/eva-statistics.html">-->
-<!--<link rel="import" href="web-components/dgva-statistics.html">-->
-<!--<link rel="import" href="web-components/beacon.html">-->
-<!--<link rel="import" href="web-components/submission-form.html">-->
-<!--<link rel="import" href="web-components/variant-search.html">-->
 
 <!-- build:style vendor -->
 <link type="text/css" rel="stylesheet" href="../vendor/ext-5.0.1/theme/theme-eva-ebi-all.css"/>
 <link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/jquery.qtip.min.css"/>
-<!--<link type="text/css" rel="stylesheet" href="../lib/jsorolla/vendor/bootstrap-scoped-dist/css/bootstrap.min.css">-->
 <link rel="stylesheet" href="../vendor/bootstrap-3.2.0/css/bootstrap.min.css">
 <!-- /build -->
 <link rel="stylesheet" href="//www.ebi.ac.uk/web_guidelines/css/compliance/mini/ebi-fluid-embl.css">
@@ -101,7 +85,7 @@
                 <!-- /local-search -->
                 <!-- local-nav -->
                 <nav>
-                    <ul class="left-ul">
+                    <ul class="eva-primary-menu">
                         <li class="active"><a>Home</a></li>
                         <li><a>Submit Data</a></li>
                         <li><a>Study Browser</a></li>
@@ -112,25 +96,15 @@
                         <!--<li><a>API</a></li>-->
                         <li><a>About</a></li>
                         <li><a>Contact</a></li>
-                        <!--<li class="hidden"><a>Templates</a></li>-->
-                        <!--<li class="hidden"><a>VCF</a></li>-->
-                        <!--<li class="hidden"><a>Study</a></li>-->
-                    </ul>
-                    <ul class="right-ul">
-                        <!--<li class="functional"><a href="#Login" class="icon icon-functional" data-icon="l">Login</a></li>-->
-                        <!--<li class="functional"><a href="#Feedback" class="icon icon-generic" data-icon="\">Feedback</a></li>-->
-                        <!--<li class="functional"><a href="#Share" class="icon icon-functional" data-icon="r">Share</a></li>-->
                     </ul>
                 </nav>
                 <!-- /local-nav -->
 
             </div>
         </header>
-        <!--<div id="header"></div>-->
         <div id="content" role="main" class="grid_24 clearfix">
             <title>European Variation Archive &lt; EMBL-EBI</title>
             <div id="home"  class="hide-div">
-                <!--<title>European Variation Archive &lt; EMBL-EBI</title>-->
                 <div class="jumbotron" style="height:120px;"><h2 style="margin-top:-30px;">Beta site</h2><p style="font-size:12px;">EVA is a work in progress. The current website is a beta version and we seek feedback from our users. Please contact <a href="mailto:eva-helpdesk@ebi.ac.uk?subject=&amp; target="_top">eva-helpdesk@ebi.ac.uk</a> with all suggestions, bug reports and feature requests for EVA.</p></div>
                 <div class="row">
                     <div class="col-md-6">
@@ -166,7 +140,6 @@
             </div>
 
             <div  id="submit" class="hide-div">
-                <!--<title>Submit  &lt; European Variation Archive &lt; EMBL-EBI</title>-->
                 <h2>European Variation Archive submissions</h2>
                 <div>
                     <p>EVA follows the infrastructure of fellow EMBL-EBI resources European Nucleotide Archive (<a href="http://www.ebi.ac.uk/ena/" target="_blank">ENA</a>) and European Genome-phenome Archive (<a href="http://www.ebi.ac.uk/ega/" target="_blank">EGA</a>)  to accept, archive, and accession <a target="_blank" href="?VCF">VCF files</a>. Submissions consist of VCF file(s) and metadata that describe sample(s), experiment(s), and analysis that produced the variant and/or genotype call(s).</p>
@@ -202,15 +175,9 @@
                     <!--<p><img src="img/Upload.png" alt="" width="48" height="48"> Upload your data files to your private submission upload account or directly to the <a href="mailto:eva-helpdesk@ebi.ac.uk?subject=Sequence submissionto EVA&amp;body=**We will provide you with a submission package metadata templates guides for completing templates**" target="_top">eva-helpdesk@ebi.ac.uk</a>.</p>-->
                     <p>Upload your data files to your private submission upload account or directly to the <a href="mailto:eva-helpdesk@ebi.ac.uk?subject=Sequence submissionto EVA&amp;body=**We will provide you with a submission package metadata templates guides for completing templates**" target="_top">eva-helpdesk@ebi.ac.uk</a>.</p>
                 </div>
-
-                <!--<h4>Document</h4>-->
-                <!--<div>-->
-                <!--<p><img src="img/Document.png" alt="" width="48" height="48"> Provide details of your study, samples, experiments, runs/analysis, policy and datasets </p>-->
-                <!--</div>-->
             </div>
 
             <div id="about-us" class="hide-div">
-                <!--<title>About  &lt; European Variation Archive &lt; EMBL-EBI</title>-->
                 <h2>About EVA</h2>
                 <div>
                     <p>The European Variation Archive (EVA) accepts submission of, and provides access to, all types of genetic variants from any species, observed in germline or somatic sources, ranging from SNVs to large structural <span> variants<sup>[1]</sup>.</span></p>
@@ -239,7 +206,6 @@
             </div>
 
             <div id="contact" class="hide-div">
-                <!--<title>Contact  &lt; European Variation Archive &lt; EMBL-EBI</title>-->
                 <h2>Contact Us</h2>
                 <div>
                     <p>If you have any questions related to the European Variation Archive resource, please <a href="mailto:eva-helpdesk@ebi.ac.uk">contact us</a>.</p>
@@ -248,7 +214,6 @@
             </div>
 
             <div id="submissionTemplates" class="hide-div">
-                <!--<title>Templates  &lt; European Variation Archive &lt; EMBL-EBI</title>-->
                 <h2>Templates</h2>
                 <div>
                     <h3>EVA Submissions</h3>
@@ -262,7 +227,6 @@
                 <p>A completed EVA Clinical template for a fictional submission can be downloaded <a href="files/EVA_Submission_template.EVA.V1.0.1_live_mockup_plus_Clinical_Variants.xlsx" target="_blank">here</a>.</p>
             </div>
             <div id="beacon" class="hide-div">
-                <!--<title>Beacon  &lt; European Variation Archive &lt; EMBL-EBI</title>-->
                 <h2>EBI GA4GH Beacon</h2>
                 <p>Learn more about the Global Alliance for Genomics and Health (GA4GH) at <a href="http://genomicsandhealth.org" target="_blank">http://genomicsandhealth.org</a>
                     as well as the GA4GH Beacon project: <a href="http://ga4gh.org/#/beacon" target="_blank">http://ga4gh.org/#/beacon</a> </p>
@@ -275,45 +239,7 @@
                                 <div><p> <span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="1002921" allele="" project="PRJEB4019">Chrom:1&nbsp;Coordinate:1002921 &nbsp;Project:PRJEB4019</a></span></p><hr/></div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <form id="beacon-form">
-                                    <div class="row">
-                                        <div class="col-md-2 form-group"><p>Project</p></div>
-                                        <div class="col-md-2 form-group input-group-sm"><div id="project-list-beacon"></div></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-2 form-group"><p>Chromosome</p></div>
-                                        <div class="col-md-2 form-group input-group-sm"><div id="chromosome-select-beacon"></div></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-2 form-group"><p>Coordinate</p></div>
-                                        <div class="col-md-2 form-group input-group-sm"><input class="form-control" id="beacon-coordinate"  name=coordinate type="text" required/></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-2 form-group"><p>Allele</p></div>
-                                        <div class="col-md-2 form-group input-group-sm"><input class="form-control" id="beacon-allele" name=allele type="text"/></div>
-                                    </div>
-                                    <h5>Format Type</h5>
-                                    <div class="row">
-                                        <div class="col-md-2 form-group"><p>Text</p></div>
-                                        <div class="col-md-4 form-group input-group-sm"> <input type="radio"  name="beacon-formatType" value="text" checked="true"> </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-2 form-group"><p>JSON</p></div>
-                                        <div class="col-md-4 form-group input-group-sm"> <input type="radio"  name="beacon-formatType" value="json"> </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4 form-group"><span id="refresh-button"></span> <input id="submit" class="btn btn-primary" type="submit"></div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-5">
-                                <div id="beacon-result-show"></div><br />
-                            </div>
-                        </div>
+                        <div id="beaconForm"></div>
                     </div>
                 </div>
                 <script>
@@ -334,7 +260,6 @@
                 </script>
             </div>
             <div id="clinical" class="hide-div">
-                <!--<title>Clinical  &lt; European Variation Archive &lt; EMBL-EBI</title>-->
                 <h2>Clinically Relevant Genetic Variants</h2>
                 <div class="row">
                     <div class="col-md-12">
@@ -347,7 +272,6 @@
                 </div>
             </div>
             <div id="vcf-format" class="hide-div">
-                <!--<title>VCF Format  &lt; European Variation Archive &lt; EMBL-EBI</title>-->
                 <h2>EVA VCF Format</h2>
                 <p> EVA only accepts VCF files that conform to <a href="http://www.1000genomes.org/wiki/Analysis/Variant%20Call%20Format/vcf-variant-call-format-version-41" target="_blank">VCF version 4.1 and above.</a></p>
                 <h3>VCF Specification</h3>
@@ -503,54 +427,9 @@
                 </div>
             </div>
             <div id="studyView" class="hide-div"></div>
-            <div id="variant" class="hide-div">
-                <div id="variant-view">
-                    <div class="row">
-                        <div  class="col-sm-1  col-md-1 col-lg-1"></div>
-                        <div  class="col-sm-11 col-md-11 col-lg-11"> <h2 id="variantInfo"></h2></div>
-                        <!--<div  class="col-sm-11 col-md-11 col-lg-11"> <h2 id="variantInfo"></h2><h4><div style="float: right;">Assembly:GRCh37</div></h4></div>-->
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-1  col-md-1 col-lg-1" id="variantViewScrollspy">
-                            <ul id="variantViewTabs" class="nav nav-pills nav-stacked affix variantViewTabs">
-                                <li class="active"><a href="#summary">Summary</a></li>
-                                <!--<li><a href="#effects">Effects</a></li>-->
-                                <li><a href="#studies">Studies</a></li>
-                                <!--<li><a href="#other">Other</a></li>-->
-                            </ul>
-                        </div>
-                        <div id="scroll-able" class="col-sm-11 col-md-11 col-lg-11">
-                            <div id="summary" class="row">
-                                <div class="col-md-10">
-                                    <h4 class="variant-view-h4"> Summary</h4>
-                                    <div id="summary-grid"></div>
-                                </div>
-                            </div>
-                            <!--<div  id="effects" class="row">-->
-                            <!--<div class="col-md-10">-->
-                            <!--<h4>Effects</h4>-->
-                            <!--<div id="effects-grid"></div>-->
-                            <!--</div>-->
-                            <!--</div>-->
-                            <div  id="studies" class="row">
-                                <div class="col-md-12">
-                                    <!--<h4>Files</h4>-->
-                                    <div id="studies-grid"></div>
-                                </div>
-                            </div>
-                            <!--<div class="row">-->
-                            <!--<div class="col-md-10">-->
-                            <!--<h4 id="other">other</h4>-->
-                            <!--<div id="other-grid"></div>-->
-                            <!--</div>-->
-                            <!--</div>-->
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div id="variantView" class="hide-div"></div>
+            <div id="submissionForm" class="hide-div"></div>
         </div>
-        <!--<div id="footer"></div>-->
-
         <footer>
 
             <div id="global-footer" class="grid_24">
@@ -678,21 +557,21 @@
     <!-- /build -->
 
     <!-- build:script eva-js -->
+    <script type="text/javascript" src="js/eva-menu.js"></script>
+    <script type="text/javascript" src="js/eva-adapter.js"></script>
+    <script type="text/javascript" src="js/eva-manager.js"></script>
+    <script type="text/javascript" src="js/eva-config.js"></script>
     <script type="text/javascript" src="js/eva-variant-widget-panel.js"></script>
     <script type="text/javascript" src="js/eva-study-browser-panel.js"></script>
     <script type="text/javascript" src="js/snv-study-browser.js"></script>
     <script type="text/javascript" src="js/sv-study-browser.js"></script>
-    <!--<script type="text/javascript" src="eva-study-browser-panel.old.jss"></script>-->
     <script type="text/javascript" src="js/eva-variant-widget.js"></script>
     <script type="text/javascript" src="js/eva-study-view.js"></script>
     <script type="text/javascript" src="js/eva-variant-view.js"></script>
     <script type="text/javascript" src="js/eva-statistics.js"></script>
     <script type="text/javascript" src="js/dgva-statistics.js"></script>
     <script type="text/javascript" src="js/eva-beacon.js"></script>
-    <script type="text/javascript" src="js/eva-menu.js"></script>
-    <script type="text/javascript" src="js/eva-adapter.js"></script>
-    <script type="text/javascript" src="js/eva-manager.js"></script>
-    <script type="text/javascript" src="js/eva-config.js"></script>
+    <script type="text/javascript" src="js/eva-submission-form.js"></script>
     <script type="text/javascript" src="js/eva.js"></script>
     <!-- /build -->
     <script src="//www.ebi.ac.uk/web_guidelines/js/libs/modernizr.custom.49274.js"></script>
@@ -713,15 +592,15 @@
               var vcfDiv = document.querySelector('#vcf-format');
               var clinicalDiv = document.querySelector('#clinical');
               var studyViewDiv = document.querySelector('#studyView');
-              var variantViewDiv = document.querySelector('#variant');
-//            var apiDiv = link.import.querySelector('#api');
+              var variantViewDiv = document.querySelector('#variantView');
               var beaconDiv =  document.querySelector('#beacon');
+              var submissionFormDiv =  document.querySelector('#submissionForm');
 
             var tab = getUrlParameters("");
             var tabId =  decodeURI(tab.id);
             if(tabId == 'eva-study'){
                 var evastudyView = new EvaStudyView({
-                    targetId:'studyView',
+                    target:'studyView',
                     type: 'eva',
                     projectId:tab.value
                 });
@@ -729,25 +608,20 @@
             }
             if(tabId == 'dgva-study'){
                 var dgvastudyView = new EvaStudyView({
-                    targetId:'studyView',
+                    target:'studyView',
                     type: 'dgva',
                     projectId:tab.value
                 });
             }
             if(tabId == 'variant'){
                 var evaVarinatView = new EvaVariantView({
-                    targetId:'VariantView',
+                    target:'variantView',
                     position:tab.value
                 });
             }
 
-//
-//            if(tabId == 'submission-start'){
-//                var submissionForm = document.createElement('eva-submission-form');
-//            }
-
             Ext.getBody().removeCls('x-body');
-            var ulLocalNav = document.querySelector('.left-ul');
+            var ulLocalNav = document.querySelector('.eva-primary-menu');
 
             eva = new Eva({
                 target: 'content',
@@ -763,15 +637,16 @@
                 variantView:variantViewDiv,
                 beacon:beaconDiv,
                 clinicalDiv:clinicalDiv,
-//                submissionForm:submissionForm,
-//                studyBrowserDiv:studyBrowserDiv,
-//                evaBrowserDiv:evaBrowserDiv,
-//                apiDiv:apiDiv
-
+                submissionForm:submissionFormDiv
             });
             eva.draw();
 
-            var evaBeacon= new EvaBeacon({});
+            var evaBeacon= new EvaBeacon({
+                target:'beaconForm'
+            });
+            var evaSubmission= new EvaSubmissionForm({
+                target:'submissionForm'
+            });
 
             if(tab.id){
                 eva.select(tabId);
@@ -804,12 +679,6 @@
             } else {
                 return false
             }
-        }
-
-
-
-        var getSegment = function (url, index) {
-            return url.replace(/^https?:\/\//, '').split('/')[index];
         }
 
 

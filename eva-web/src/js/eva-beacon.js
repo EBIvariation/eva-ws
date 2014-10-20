@@ -4,10 +4,7 @@
 
 function EvaBeacon(args) {
     _.extend(this, Backbone.Events);
-    this.projectDiv = document.querySelector("#project-list-beacon");
-    this.chrSelectDiv = document.querySelector("#chromosome-select-beacon");
-    this.showResultDiv =  document.querySelector("#beacon-result-show");
-    this.beaconForm = document.querySelector('#beacon-form');
+
     _.extend(this, args);
     this.rendered = false;
     this.render();
@@ -15,8 +12,20 @@ function EvaBeacon(args) {
 
 EvaBeacon.prototype = {
     render: function () {
-
         var _this =  this;
+
+        this.targetDiv = (this.target instanceof HTMLElement) ? this.target : document.querySelector('#' + this.target);
+        if (!this.targetDiv) {
+            console.log('EVABeacon: target ' + this.target + ' not found');
+            return;
+        }
+
+        this.targetDiv.innerHTML = _this._getBeaconForm();
+
+        this.projectDiv = document.querySelector("#project-list-beacon");
+        this.chrSelectDiv = document.querySelector("#chromosome-select-beacon");
+        this.showResultDiv =  document.querySelector("#beacon-result-show");
+        this.beaconForm = document.querySelector('#beacon-form');
         EvaManager.get({
             host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
             category: 'meta/studies',
@@ -84,7 +93,6 @@ EvaBeacon.prototype = {
                     _this._renderResultData(data, region,_this.projectEl.value);
                 }
             });
-
 
         }, true);
     },
@@ -162,6 +170,48 @@ EvaBeacon.prototype = {
             _this.beaconForm.reset();
         }, true);
 
+    },
+    _getBeaconForm:function(){
+        var form = '<div class="row">'+
+                        '<div class="col-md-12">'+
+                            '<form id="beacon-form">'+
+                               '<div class="row">'+
+                                    '<div class="col-md-2 form-group"><p>Project</p></div>'+
+                                    '<div class="col-md-2 form-group input-group-sm"><div id="project-list-beacon"></div></div>'+
+                                '</div>'+
+                                '<div class="row">'+
+                                    '<div class="col-md-2 form-group"><p>Chromosome</p></div>'+
+                                    '<div class="col-md-2 form-group input-group-sm"><div id="chromosome-select-beacon"></div></div>'+
+                                '</div>'+
+                                '<div class="row">'+
+                                    '<div class="col-md-2 form-group"><p>Coordinate</p></div>'+
+                                    '<div class="col-md-2 form-group input-group-sm"><input class="form-control" id="beacon-coordinate"  name=coordinate type="text" required/></div>'+
+                                '</div>'+
+                                '<div class="row">'+
+                                    '<div class="col-md-2 form-group"><p>Allele</p></div>'+
+                                    '<div class="col-md-2 form-group input-group-sm"><input class="form-control" id="beacon-allele" name=allele type="text"/></div>'+
+                                '</div>'+
+                                '<h5>Format Type</h5>'+
+                                '<div class="row">'+
+                                    '<div class="col-md-2 form-group"><p>Text</p></div>'+
+                                    '<div class="col-md-4 form-group input-group-sm"> <input type="radio"  name="beacon-formatType" value="text" checked="true"> </div>'+
+                                '</div>'+
+                                '<div class="row">'+
+                                    '<div class="col-md-2 form-group"><p>JSON</p></div>'+
+                                    '<div class="col-md-4 form-group input-group-sm"> <input type="radio"  name="beacon-formatType" value="json"> </div>'+
+                                    '</div>'+
+                                '<div class="row">'+
+                                    '<div class="col-md-4 form-group"><span id="refresh-button"></span> <input id="submit" value="Submit" class="btn btn-primary" type="submit"></div>'+
+                                '</div>'+
+                            '</form>'+
+                        '</div>'+
+                    '</div>'+
+                    '<div class="row">'+
+                        '<div class="col-md-5">'+
+                            '<div id="beacon-result-show" class="resultShow"></div><br />'+
+                        '</div>'+
+                   '</div>'
+        return form;
     }
 }
 

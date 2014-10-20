@@ -16,6 +16,14 @@ function EvaVariantView(args) {
 EvaVariantView.prototype = {
     render: function () {
         var _this = this
+
+        this.targetDiv = (this.target instanceof HTMLElement) ? this.target : document.querySelector('#' + this.target);
+        if (!this.targetDiv) {
+            console.log('EVAv-VariantView: target ' + this.target + ' not found');
+            return;
+        }
+
+        this.targetDiv.innerHTML = _this._varinatViewlayout();
         variantID = this.position;
         EvaManager.get({
             host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
@@ -110,7 +118,7 @@ EvaVariantView.prototype = {
     draw: function (data, content) {
             var _this = this;
 //                     var variantInfoTitle =  document.querySelector("#variantInfo").textContent = variantID+' Info';
-            var summaryContent =  _this.renderSummaryData(variant);
+            var summaryContent =  _this._renderSummaryData(variant);
             var summaryEl = document.querySelector("#summary-grid");
             var summaryElDiv =  document.createElement("div");
             //       summaryElDiv.innerHTML = '<h4>Summary</h4>';
@@ -132,7 +140,7 @@ EvaVariantView.prototype = {
             _this.createVariantStatsPanel(studyElDiv);
 
     },
-    renderSummaryData: function (data) {
+    _renderSummaryData: function (data) {
             var _summaryTable  = '<div class="row"><div class="col-md-8"><table class="table table-bordered">'
             var variantInfoTitle =  document.querySelector("#variantInfo").textContent = data[0].chromosome+':'+data[0].start+':'+data[0].reference+':'+data[0].alternate+' Info';
             if(data[0].id){
@@ -207,6 +215,37 @@ EvaVariantView.prototype = {
                 ]}, "frequencies": {"maf1000G": 0.6, "maf1000GAfrican": 0.5, "maf1000GAmerican": 0.4, "maf1000GAsian": 0.3, "maf1000GEuropean": 0.2, "mafNhlbiEspAfricanAmerican": 0.1, "mafNhlbiEspEuropeanAmerican": 0.2}, "proteinSubstitutionScores": {"polyphenScore": -1.0, "siftScore": -1.0}, "regulatoryEffect": {"motifPosition": 0, "motifScoreChange": 0.0, "highInformationPosition": false}}
                 ;
             return data;
+    },
+    _varinatViewlayout:function(){
+
+        var layout = '<div id="variant-view">'+
+                        '<div class="row">'+
+                            '<div  class="col-sm-1  col-md-1 col-lg-1"></div>'+
+                            '<div  class="col-sm-11 col-md-11 col-lg-11"> <h2 id="variantInfo"></h2></div>'+
+                        '</div>'+
+                        '<div class="row">'+
+                            '<div class="col-sm-1  col-md-1 col-lg-1" id="variantViewScrollspy">'+
+                                '<ul id="variantViewTabs" class="nav nav-pills nav-stacked affix variantViewTabs">'+
+                                    '<li class="active"><a href="#summary">Summary</a></li>'+
+                                    '<li><a href="#studies">Studies</a></li>'+
+                               '</ul>'+
+                            '</div>'+
+                            '<div id="scroll-able" class="col-sm-11 col-md-11 col-lg-11">'+
+                                '<div id="summary" class="row">'+
+                                    '<div class="col-md-10">'+
+                                        '<h4 class="variant-view-h4"> Summary</h4>'+
+                                        '<div id="summary-grid"></div>'+
+                                    '</div>'+
+                                '</div>'+
+                                '<div  id="studies" class="row">'+
+                                    '<div class="col-md-12">'+
+                                        '<div id="studies-grid"></div>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'
+        return layout;
     }
 
 }

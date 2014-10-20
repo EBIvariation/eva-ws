@@ -28,14 +28,14 @@ EvaStatistics.prototype = {
                     } catch (e) {
                         console.log(e);
                     }
-                    _this.parseData(stats);
+                    _this._parseData(stats);
                 }
             });
 
 
         }
     },
-    parseData: function (data) {
+    _parseData: function (data) {
             var _this = this;
             var species_data  = data.species
             var type_data  = data.type
@@ -44,7 +44,7 @@ EvaStatistics.prototype = {
                 speciesArray.push([key,  species_data[key]]);
             }
             var speciesChartData = {id:'eva-statistics-chart-species',title:'Species',chartData:speciesArray};
-            _this.drawChart(speciesChartData)
+            _this._drawChart(speciesChartData)
             var typeArray=[];
             for (key in type_data) {
                 // TODO We must take care of the types returned
@@ -53,11 +53,11 @@ EvaStatistics.prototype = {
                 }
             }
             var typeChartData = {id:'eva-statistics-chart-type',title:'Type',chartData:typeArray};
-            _this.drawChart(typeChartData)
+            _this._drawChart(typeChartData)
 
 
     },
-    drawChart: function (data) {
+    _drawChart: function (data) {
             var _this = this;
             var height = 250;
             var width = 200;
