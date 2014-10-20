@@ -4,9 +4,9 @@
 
 var msg = '';
 
-var browser_support = 'This web application makes an intensive use of new web technologies and standards like HTML5.'+
-                      'Browsers that are fully supported for this site are: Chrome 18+, Firefox 12+, Safari 6+ ,Opera 12+ and Internet Explore 8+'+
-                      'Internet Explorer 6 and 7 are not supported at all.'
+var browser_support = 'This web application makes an intensive use of new web technologies and standards like HTML5,Web Components.'+
+                      'Browsers that are fully supported for this site are: Chrome 22+, Firefox 24+, Safari 6+ and Opera 15+'+
+                      'Older browser like Chrome 21-, Firefox 23- or Internet Explorer 10 and 11 may give rise to errors. Internet Explorer 6,7,8 and 9 are not supported at all.'
 
 var nVer = navigator.appVersion;
 var nAgt = navigator.userAgent;
@@ -23,7 +23,7 @@ if ((verOffset=nAgt.indexOf("Opera"))!=-1) {
         fullVersion = nAgt.substring(verOffset+8);
     majorVersion = getMajorVersion(fullVersion);
     console.log(majorVersion)
-    if(majorVersion <= 11){
+    if(majorVersion <= 14){
         msg = browser_support;
     }
 }
@@ -32,7 +32,7 @@ else if ((verOffset=nAgt.indexOf("MSIE"))!=-1) {
     browserName = "Microsoft Internet Explorer";
     fullVersion = nAgt.substring(verOffset+5);
     majorVersion = getMajorVersion(fullVersion);
-    if(majorVersion <= 7){
+    if(majorVersion <= 10){
         msg = browser_support;
     }
 }
@@ -42,7 +42,7 @@ else if ((verOffset=nAgt.indexOf("Chrome"))!=-1) {
     fullVersion = nAgt.substring(verOffset+7);
     majorVersion = getMajorVersion(fullVersion);
     console.log(majorVersion)
-    if(majorVersion <= 17){
+    if(majorVersion <= 21){
         msg = browser_support;
     }
 }
@@ -54,7 +54,7 @@ else if ((verOffset=nAgt.indexOf("Safari"))!=-1) {
         fullVersion = nAgt.substring(verOffset+8);
     majorVersion = getMajorVersion(fullVersion);
     console.log(majorVersion)
-    if(majorVersion <= 6){
+    if(majorVersion <= 5){
         msg = browser_support;
     }
 }
@@ -64,7 +64,7 @@ else if ((verOffset=nAgt.indexOf("Firefox"))!=-1) {
     fullVersion = nAgt.substring(verOffset+8);
     majorVersion = getMajorVersion(fullVersion);
     console.log(majorVersion)
-    if(majorVersion <= 12){
+    if(majorVersion <= 23){
         msg = browser_support;
     }
 }

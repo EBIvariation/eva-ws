@@ -152,13 +152,13 @@ module.exports = function (grunt) {
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.qtip.min.js',
                             'build/<%= meta.version.eva %>/vendor/highcharts-4.0.3/js/highcharts.js'
 
-                        ]
+                        ],
 //                        'platform': [
 //                            'build/<%= meta.version.eva %>/vendor/platform-0.4.1/js/platform.js'
 //                        ],
-//                        'browser-detect':[
-//                            'build/<%= meta.version.eva %>/js/browser-detect.js'
-//                        ]
+                        'browser-detect':[
+                            'build/<%= meta.version.eva %>/js/browser-detect.js'
+                        ]
 //                        'internal-dependencies': [
 //                            'build/<%= meta.version.eva %>/gv-config.js'
 //                        ]
