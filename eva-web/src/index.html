@@ -684,11 +684,11 @@
     <script type="text/javascript" src="js/sv-study-browser.js"></script>
     <!--<script type="text/javascript" src="eva-study-browser-panel.old.jss"></script>-->
     <script type="text/javascript" src="js/eva-variant-widget.js"></script>
-    <script type="text/javascript" src="js/study-view.js"></script>
-    <script type="text/javascript" src="js/variant-view.js"></script>
+    <script type="text/javascript" src="js/eva-study-view.js"></script>
+    <script type="text/javascript" src="js/eva-variant-view.js"></script>
     <script type="text/javascript" src="js/eva-statistics.js"></script>
     <script type="text/javascript" src="js/dgva-statistics.js"></script>
-    <script type="text/javascript" src="js/beacon.js"></script>
+    <script type="text/javascript" src="js/eva-beacon.js"></script>
     <script type="text/javascript" src="js/eva-menu.js"></script>
     <script type="text/javascript" src="js/eva-adapter.js"></script>
     <script type="text/javascript" src="js/eva-manager.js"></script>
@@ -740,9 +740,7 @@
                     position:tab.value
                 });
             }
-            if(tabId == 'GA4GH'){
-                var evaBeacon= new EvaBeacon({});
-            }
+
 //
 //            if(tabId == 'submission-start'){
 //                var submissionForm = document.createElement('eva-submission-form');
@@ -772,6 +770,8 @@
 
             });
             eva.draw();
+
+            var evaBeacon= new EvaBeacon({});
 
             if(tab.id){
                 eva.select(tabId);

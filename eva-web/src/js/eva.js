@@ -146,7 +146,7 @@ Eva.prototype = {
         if (this.childDivMenuMap[option]) {
             $(this.childDivMenuMap[option]).removeClass('hide-div');
             $(this.childDivMenuMap[option]).addClass('show-div');
-            this.div.appendChild(this.childDivMenuMap[option]);
+//            this.div.appendChild(this.childDivMenuMap[option]);
         }
 
         var pageArray = ['eva-study','dgva-study', 'variant'];
