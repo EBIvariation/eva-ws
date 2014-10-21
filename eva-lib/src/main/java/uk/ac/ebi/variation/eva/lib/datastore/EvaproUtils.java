@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
+import org.opencb.biodata.models.variant.VariantStudy;
 import org.opencb.datastore.core.QueryResult;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
 
@@ -84,6 +85,48 @@ public class EvaproUtils {
                 Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
                 throw ex;
             }
+        }
+    }
+    
+    
+    public static VariantStudy.StudyType stringToStudyType(String studyType) {
+        switch (studyType) {
+            case "Collection":
+            case "Curated Collection":
+                return VariantStudy.StudyType.COLLECTION;
+            case "Control Set":
+            case "Control-Set":
+                return VariantStudy.StudyType.CONTROL;
+            case "Case Control":
+            case "Case-Control":
+                return VariantStudy.StudyType.CASE_CONTROL;
+            case "Case Set":
+            case "Case-Set":
+                return VariantStudy.StudyType.CASE;
+            case "Tumor vs. Matched-Normal":
+                return VariantStudy.StudyType.PAIRED_TUMOR;
+            default:
+                throw new IllegalArgumentException("Study type " + studyType + " is not valid");
+        }
+    }
+    
+    
+    public static String studyTypeToString(VariantStudy.StudyType studyType) {
+        switch (studyType) {
+            case COLLECTION:
+                return "Collection";
+            case CONTROL:
+                return "Control Set";
+            case CASE_CONTROL:
+                return "Case-Control";
+            case CASE:
+                return "Case-Set";
+            case PAIRED:
+                return "Tumor vs. Matched-Normal";
+            default:
+                StringBuilder lower = new StringBuilder(studyType.name().toLowerCase());
+                lower.replace(0, 1, studyType.name().substring(0, 1)); // First letter uppercase
+                return lower.toString();
         }
     }
 }

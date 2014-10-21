@@ -50,7 +50,8 @@ public class RegionWSServer extends EvaWSServer {
                                         @DefaultValue("=") @QueryParam("miss_gts_op") String missingGenotypesOperator,
                                         @DefaultValue("") @QueryParam("type") String variantType,
                                         @DefaultValue("false") @QueryParam("histogram") boolean histogram,
-                                        @DefaultValue("-1") @QueryParam("histogram_interval") int interval) {
+                                        @DefaultValue("-1") @QueryParam("histogram_interval") int interval,
+                                        @DefaultValue("false") @QueryParam("merge") boolean merge) {
         if (reference != null && !reference.isEmpty()) {
             queryOptions.put("reference", reference);
         }
@@ -84,6 +85,7 @@ public class RegionWSServer extends EvaWSServer {
                 queryOptions.put("opMissingGenotypes", missingGenotypesOperator);
             }
         }
+        queryOptions.put("merge", merge);
         
         // Parse the provided regions. The total size of all regions together 
         // can't excede 1 million positions
