@@ -132,7 +132,7 @@ module.exports = function (grunt) {
                 src: 'src/index.html',
                 dest: 'build/<%= meta.version.eva %>/',
                 options: {
-                    beautify: true,
+                    beautify: false,
                     scripts: {
                         'eva-js': '<%= uglify.eva.dest %>',
                         'lib': [
