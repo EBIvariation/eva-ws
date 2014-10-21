@@ -5,11 +5,27 @@
     <parent>
         <groupId>uk.ac.ebi.variation.eva</groupId>
         <artifactId>eva</artifactId>
-        <version>0.1.0</version>
+        <version>0.3.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>eva-lib</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.opencb.opencga</groupId>
+            <artifactId>opencga-storage</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
 
+    </dependencies>
+    
+    <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
+    </build>
+    
 </project>
