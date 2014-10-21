@@ -34,15 +34,21 @@ module.exports = function (grunt) {
             eva: {
                 src: [
                     /** eva app js **/
-                    'src/js/eva-variant-widget-panel.js',
-                    'src/js/eva-study-browser-panel.js',
-                    'src/js/sgv-study-browser.js',
-                    'src/js/sv-study-browser.js',
-                    'src/js/eva-variant-widget.js',
                     'src/js/eva-menu.js',
                     'src/js/eva-adapter.js',
                     'src/js/eva-manager.js',
                     'src/js/eva-config.js',
+                    'src/js/eva-variant-widget-panel.js',
+                    'src/js/eva-study-browser-panel.js',
+                    'src/js/snv-study-browser.js',
+                    'src/js/sv-study-browser.js',
+                    'src/js/eva-variant-widget.js',
+                    'src/js/eva-study-view.js',
+                    'src/js/eva-variant-view.js',
+                    'src/js/eva-statistics.js',
+                    'src/js/dgva-statistics.js',
+                    'src/js/eva-beacon.js',
+                    'src/js/eva-submission-form.js',
                     'src/js/eva.js'
                 ],
                 dest: 'build/<%= meta.version.eva %>/js/eva-<%= meta.version.eva %>.js'
@@ -102,7 +108,7 @@ module.exports = function (grunt) {
                     {   expand: true, src: ['src/fonts/*'], dest: 'build/<%= meta.version.eva %>/fonts', flatten: true},
                     {   expand: true, src: ['src/css/*'], dest: 'build/<%= meta.version.eva %>/css', flatten: true},
                     {   expand: true, src: ['src/img/*'], dest: 'build/<%= meta.version.eva %>/img', flatten: true},
-                    {   expand: true, src: ['src/web-components/*'], dest: 'build/<%= meta.version.eva %>/web-components', flatten: true},
+//                    {   expand: true, src: ['src/web-components/*'], dest: 'build/<%= meta.version.eva %>/web-components', flatten: true},
                     {   expand: true, src: ['src/*.html'], dest: 'build/<%= meta.version.eva %>/', flatten: true, filter: 'isFile'},
                     {   expand: true, src: ['lib/jsorolla/build/*/*.js'], dest: 'build/<%= meta.version.eva %>',flatten: false},
                     {   expand: true, src: ['lib/jsorolla/vendor/**'], dest: 'build/<%= meta.version.eva %>',flatten: false},
@@ -126,7 +132,7 @@ module.exports = function (grunt) {
                 src: 'src/index.html',
                 dest: 'build/<%= meta.version.eva %>/',
                 options: {
-                    beautify: true,
+                    beautify: false,
                     scripts: {
                         'eva-js': '<%= uglify.eva.dest %>',
                         'lib': [
@@ -147,9 +153,9 @@ module.exports = function (grunt) {
                             'build/<%= meta.version.eva %>/vendor/highcharts-4.0.3/js/highcharts.js'
 
                         ],
-                        'platform': [
-                            'build/<%= meta.version.eva %>/vendor/platform-0.4.1/js/platform.js'
-                        ],
+//                        'platform': [
+//                            'build/<%= meta.version.eva %>/vendor/platform-0.4.1/js/platform.js'
+//                        ],
                         'browser-detect':[
                             'build/<%= meta.version.eva %>/js/browser-detect.js'
                         ]
@@ -200,7 +206,6 @@ module.exports = function (grunt) {
 
         watch: {
             src: {
-                files: ['app/**'],
                 tasks: ['default'],
                 options: {spawn: false}
             }

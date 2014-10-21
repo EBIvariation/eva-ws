@@ -86,6 +86,27 @@ div#local-masthead{
     border-bottom-style: none;
 }
 
+.study-browser-panel table, .variant-widget-panel table{
+    border-collapse: collapse;
+    width: 100%;
+    background-color: white;
+    margin: 0   auto;
+    border: 0;
+}
+.study-browser-panel th, .study-browser-panel td, .variant-widget-panel th, .variant-widget-panel td  {
+    padding: 0 0 0 0;
+    border: 0;
+    border-collapse: collapse;
+    vertical-align: top;
+}
+
+.study-browser-panel th,.variant-widget-panel th {
+    font-weight: bold;
+    background-color: #F2F2EC;
+    border-bottom: 3px solid #f7f7f7;
+    color: black;
+}
+
 .eva .variant-browser-option-div {
     position: relative;
     /*overflow: hidden;*/
@@ -334,28 +355,6 @@ div#local-masthead{
     /*background-color: #1F6D6D;*/
 /*}*/
 
-table {
-    border-collapse: collapse;
-    width: 100%;
-    background-color: white;
-    margin: 0   auto;
-    border: 0;
-}
-th, td {
-    padding: 0 0 0 0;
-    border: 0;
-    border-collapse: collapse;
-    vertical-align: top;
-}
-th, td {
-    font-size: 99%}
-th {
-    font-weight: bold;
-    background-color: #F2F2EC;
-    border-bottom: 3px solid #f7f7f7;
-    color: black;
-}
-
 /*a, a:link, a:visited{*/
     /*border-bottom-style: none;*/
 /*}*/
@@ -379,6 +378,80 @@ h4{
 }
 
 .highcharts-container{width:100% !important; height:100% !important;}
+
+.hide-div{
+     display:none;
+}
+
+.show-div{
+    display:inline;
+}
+
+.table {
+    margin-left:5px;
+}
+
+.study-view-data{
+    margin-left:5px;
+}
+.study-view-table {
+    margin-left:5px;
+}
+
+.variant-view-h4{
+    color: #996a44;
+}
+
+.ocb-header-4 h4{
+    margin-left: -15px;
+}
+
+.variantViewTabs.nav-pills > li > a {
+    padding-top:3px !important;
+    padding-bottom:3px !important;
+    font-size:14px;
+    /*font-weight: bold;*/
+    color:#ffffff;
+    background-color: #6BB6B7;
+}
+.variantViewTabs.nav-pills {
+    min-height:20px !important;
+    border-color: #ffffff;
+    color:#ffffff;
+}
+
+.variantViewTabs.nav-pills li a{
+    border-radius: 1;
+    /*border: 1px solid #ddd;*/
+    /*border-color: #156765;*/
+}
+
+.variantViewTabs.nav-pills > li.active > a{
+    background-color: #1F6D6D;
+}
+
+.variantViewTabs.nav-pills > li > a:hover{
+    background-color: #1F6D6D;
+}
+.variantViewTabs.nav-pills>li.active>a, .variantViewTabs.nav-pills>li.active>a:hover, .variantViewTabs.nav-pills>li.active>a:focus {
+    color: #fff;
+    background-color: #1F6D6D;
+}
+#scroll-able{
+    margin-left:100px;
+}
+
+.resultShow{
+    color: #426783;
+}
+.valid{
+    color:#25AC0F;
+}
+.invalid{
+    color:#CB4437;
+}
+
+
 
 
 
