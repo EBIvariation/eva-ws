@@ -5,7 +5,7 @@
 var msg = '';
 
 var browser_support = 'This web application makes an intensive use of new web technologies and standards like HTML5.'+
-                      'Browsers that are fully supported for this site are: Chrome 18+, Firefox 12+, Safari 6+ ,Opera 12+ and Internet Explore 10+'+
+                      'Browsers that are fully supported for this site are: Chrome 18+, Firefox 12+, Safari 6+ ,Opera 12+ and Internet Explore 10+. '+
                       'Internet Explorer 6,7,8 and 9 are not supported at all.'
 
 var nVer = navigator.appVersion;
