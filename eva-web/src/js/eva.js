@@ -123,6 +123,7 @@ Eva.prototype = {
         var contentDiv = document.querySelector('#content');
         this.studyBrowserPanel  = this._createStudyBrowserPanel(contentDiv);
         this.variantWidgetPanel  = this._createVariantWidgetPanel(contentDiv);
+        this.genomeViewerPanel  = this._createGenomeViewerPanel(contentDiv);
 
         // this.formPanelVariantFilter.draw();
         // this.genomeViewer.draw();
@@ -138,6 +139,7 @@ Eva.prototype = {
         var _this = this;
         this.studyBrowserPanel.hide();
         this.variantWidgetPanel.hide();
+        this.genomeViewerPanel.hide();
         $('body').find('.show-div').each(function (index, el) {
             $(el).removeClass('show-div');
             $(el).addClass('hide-div');
@@ -161,9 +163,6 @@ Eva.prototype = {
                 _this._twitterWidgetUpdate();
                 _this._drawStatisticsChart();
                 break;
-            case 'Submit Data':
-//                _this._twitterWidgetUpdate();
-                break;
             case 'Study Browser':
                 this.studyBrowserPanel.show();
                 break;
@@ -171,9 +170,9 @@ Eva.prototype = {
                 this.variantWidgetPanel.show();
                 this.variantWidgetPanel.formPanelVariantFilter.trigger('submit', {values: this.variantWidgetPanel.formPanelVariantFilter.getValues(), sender: _this});
                 break;
-//            case 'Genome Browser':
-//                this.formPanelGenomeFilter.update();
-//                break;
+            case 'Genome Browser':
+                this.genomeViewerPanel.show();
+                break;
         }
     },
     _createEvaMenu: function (target) {
@@ -202,6 +201,14 @@ Eva.prototype = {
         });
         variantWidget.draw();
         return variantWidget;
+
+    },
+    _createGenomeViewerPanel: function(target){
+        var genomeViewer = new EvaGenomeViewerPanel({
+            target: target
+        });
+        genomeViewer.draw();
+        return genomeViewer;
 
     },
     _twitterWidgetUpdate : function (){

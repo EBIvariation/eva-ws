@@ -5,8 +5,8 @@ module.exports = function (grunt) {
     grunt.initConfig({
 
         hub: {
-            lib: {
-                src: ['lib/jsorolla/Gruntfile-lib.js'],
+            genomeViewer: {
+                src: ['lib/jsorolla/Gruntfile-genome-viewer.js'],
                 tasks: ['default']
             }
         },
@@ -40,6 +40,7 @@ module.exports = function (grunt) {
                     'src/js/eva-config.js',
                     'src/js/eva-variant-widget-panel.js',
                     'src/js/eva-study-browser-panel.js',
+                    'src/js/eva-genome-viewer-panel.js',
                     'src/js/snv-study-browser.js',
                     'src/js/sv-study-browser.js',
                     'src/js/eva-variant-widget.js',
@@ -230,7 +231,7 @@ module.exports = function (grunt) {
     grunt.registerTask('vendor', ['curl-dir']);
 
     // Default task.
-    grunt.registerTask('default', ['hub:lib','clean:eva','concat:eva','uglify:eva', 'copy:eva', 'htmlbuild:eva'])
+    grunt.registerTask('default', ['hub:genomeViewer','clean:eva','concat:eva','uglify:eva', 'copy:eva', 'htmlbuild:eva'])
 
 
 //    grunt.registerTask('clean', ['clean:eva']);

@@ -596,7 +596,7 @@ EvaVariantWidget.prototype = {
             minHistogramRegionSize: 20000000,
             maxLabelRegionSize: 10000000,
             minTranscriptRegionSize: 200000,
-            height: 140,
+            height: 60,
 
             renderer: new GeneRenderer(),
 
