@@ -543,7 +543,7 @@ EvaVariantWidget.prototype = {
                 }
             }
         });
-
+        genomeViewer.setZoom(80);
 
         var renderer = new FeatureRenderer(FEATURE_TYPES.gene);
         renderer.on({

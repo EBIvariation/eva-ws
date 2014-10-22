@@ -110,7 +110,7 @@ module.exports = function (grunt) {
                     {   expand: true, src: ['src/img/*'], dest: 'build/<%= meta.version.eva %>/img', flatten: true},
 //                    {   expand: true, src: ['src/web-components/*'], dest: 'build/<%= meta.version.eva %>/web-components', flatten: true},
                     {   expand: true, src: ['src/*.html'], dest: 'build/<%= meta.version.eva %>/', flatten: true, filter: 'isFile'},
-                    {   expand: true, src: ['lib/jsorolla/build/*/*.js'], dest: 'build/<%= meta.version.eva %>',flatten: false},
+                    {   expand: true, src: ['lib/jsorolla/build/*/genome-viewer/*.js'], dest: 'build/<%= meta.version.eva %>',flatten: false},
                     {   expand: true, src: ['lib/jsorolla/vendor/**'], dest: 'build/<%= meta.version.eva %>',flatten: false},
                     {   expand: true, src: ['lib/jsorolla/styles/**'], dest: 'build/<%= meta.version.eva %>',flatten: false},
                     {   expand: true, src: ['vendor/bootstrap-*/**'], dest: 'build/<%= meta.version.eva %>'},
@@ -136,9 +136,9 @@ module.exports = function (grunt) {
                     scripts: {
                         'eva-js': '<%= uglify.eva.dest %>',
                         'lib': [
-//                                'build/<%= meta.version.eva %>/lib/jsorolla/build/1.1.6/genome-viewer/gv-config.js',
-//                                'build/<%= meta.version.eva %>/lib/jsorolla/build/1.1.6/genome-viewer/genome-viewer.js',
-                                'build/<%= meta.version.eva %>/lib/jsorolla/build/*/lib.min.js'
+                                'build/<%= meta.version.eva %>/lib/jsorolla/build/*/genome-viewer/genome-viewer.js',
+                                'build/<%= meta.version.eva %>/lib/jsorolla/build/*/genome-viewer/gv-config.js'
+//                                'build/<%= meta.version.eva %>/lib/jsorolla/build/*/lib.min.js'
                                ],
                         'vendor': [
                             'build/<%= meta.version.eva %>/vendor/ext-5.0.1/js/ext-all.js',
