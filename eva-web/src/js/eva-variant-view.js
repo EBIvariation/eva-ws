@@ -118,6 +118,8 @@ EvaVariantView.prototype = {
     draw: function (data, content) {
             var _this = this;
 //                     var variantInfoTitle =  document.querySelector("#variantInfo").textContent = variantID+' Info';
+            var variantViewDiv = document.querySelector("#variantView");
+            $(variantViewDiv).addClass('show-div');
             var summaryContent =  _this._renderSummaryData(variant);
             var summaryEl = document.querySelector("#summary-grid");
             var summaryElDiv =  document.createElement("div");
