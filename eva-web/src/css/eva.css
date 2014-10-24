@@ -1,0 +1,466 @@
+/*
+ * Copyright (c) 2014 Francisco Salavert (SGL-CIPF)
+ * Copyright (c) 2014 Alejandro Alemán (SGL-CIPF)
+ * Copyright (c) 2014 Ignacio Medina (EBI-EMBL)
+ *
+ * This file is part of EVA.
+ *
+ * EVA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EVA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EVA. If not, see <http://www.gnu.org/licenses/>.
+ */
+@font-face {
+    font-family: 'HelveticaNeueLT Pro';
+    src: url('../fonts/helveticaneueltprolt.otf');
+}
+
+body.eva {
+    max-width: 1350px;
+    margin: 0 auto;
+    background: #fff url(../img/pale_grey_slight_texture.jpg) top left repeat;
+    /*font-family: 'HelveticaNeueLT Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+    font-family: Verdana, sans-serif;
+
+}
+
+div#local-masthead{
+    background: #156765 url("../img/EVA_homepage_banner.jpg") no-repeat right top;
+    background-size: 100%;
+}
+
+.eva a {
+    cursor: pointer;
+}
+
+.eva-grid-img-active {
+    width: 16px;
+    height: 16px;
+}
+
+.eva-grid-img-inactive {
+    opacity:0.2;
+}
+
+.eva-child {
+
+}
+
+.eva #header {
+    margin: 0px;
+}
+
+.eva #content {
+    padding: 10px;
+    background-color: #ffffff;
+    margin: 0px;
+}
+
+.eva .eva-app {
+    position: relative;
+}
+
+.eva .variant-widget-panel{
+    overflow-x:auto;
+}
+.eva .study-browser-panel{
+    overflow-x:auto;
+}
+
+.study-browser-panel .x-tree-node-text{
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding-left: 0;
+}
+
+.study-browser-panel a, .study-browser-panel a:link, .study-browser-panel a:visited,
+.variant-widget-panel a, .variant-widget-panel a:link, .variant-widget-panel a:visited{
+    border-bottom-style: none;
+}
+
+.study-browser-panel table, .variant-widget-panel table{
+    border-collapse: collapse;
+    width: 100%;
+    background-color: white;
+    margin: 0   auto;
+    border: 0;
+}
+.study-browser-panel th, .study-browser-panel td, .variant-widget-panel th, .variant-widget-panel td  {
+    padding: 0 0 0 0;
+    border: 0;
+    border-collapse: collapse;
+    vertical-align: top;
+}
+
+.study-browser-panel th,.variant-widget-panel th {
+    font-weight: bold;
+    background-color: #F2F2EC;
+    border-bottom: 3px solid #f7f7f7;
+    color: black;
+}
+
+.eva .variant-browser-option-div {
+    position: relative;
+    /*overflow: hidden;*/
+}
+
+
+.eva .form-panel-variant-filter-div {
+    width: 300px;
+    float: left;
+    overflow: hidden;
+}
+
+.eva .variant-widget-div {
+    margin-left: 10px;
+    width: 1020px;
+    float: left;
+}
+
+
+.eva .genome-browser-option-div {
+    position: relative;
+    /*overflow: hidden;*/
+}
+
+.eva .form-panel-genome-filter-div {
+    width: 1318px;
+    position: relative;
+    /*border: 1px solid #d3d3d3;*/
+    margin-bottom: 10px;
+}
+
+.eva .genome-viewer-div {
+    font-size: 12px;
+    width: 1318px;
+    float: left;
+    border: 1px solid #d3d3d3;
+}
+
+.eva .genome-viewer-title-div {
+    margin: 15px 0 10px 0;
+}
+
+.eva .tracks-title-div {
+    margin: 15px 0 10px 0;
+}
+
+.ocb-variant-tab-panel-title {
+    margin-top: 20px;
+    /*color: #BF8230;*/
+    color: #996a44;
+    font-size: 160%;
+    margin-left: 50px;
+}
+
+.studybrowser .x-panel-header {
+    background-image: none;
+    background-color: #FFFFFF;
+    border:0px;
+
+}
+.studybrowser .x-panel-header-title >.x-title-text{
+ /*color: #BF8230;*/
+ color: #996a44;
+ text-transform: capitalize;
+}
+
+
+.eva .x-tab-bar-top>.x-tab-bar-strip-default {
+    border-width: 0;
+    height: 0px;
+}
+
+.eva .x-tab-bar-horizontal>.x-tab-bar-body-default {
+    margin-left:-3px;
+}
+
+
+.eva .form-panel-variant-filter-title-div {
+    margin: 0 0 10px 0;
+}
+
+.no-icon {
+    display: none;
+}
+
+.eva-underline {
+    text-decoration: underline;
+}
+
+.eva-pointer {
+    cursor: pointer;
+}
+
+
+.eva-header-1 {
+    /*color: #BF8230;*/
+    color: #996a44;
+    font-size: 160%;
+    padding: 4px 6px;
+    margin-bottom: 5px;
+    border: none;
+}
+.dgva-header-1 {
+    /*color: #426783;*/
+    color: #996a44;
+    font-size: 160%;
+    padding: 4px 6px;
+    margin-bottom: 5px;
+    border: none;
+}
+.eva-header-2 {
+    color: #426783;
+    font-size: 140%;
+    padding: 4px 6px;
+    margin-bottom: 0px;
+    border: none;
+}
+
+
+.ocb-attributes-table {
+    cellspacing: 0;
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+}
+
+.ocb-attributes-table tr {
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+}
+
+.ocb-attributes-table td {
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+    padding: 5px;
+    max-width: 200px;
+    /*overflow: hidden;*/
+    text-align: center;
+}
+
+.ocb-attributes-table td.header {
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+    padding: 5px;
+    background-color: whiteSmoke;
+    color: steelblue;
+    font-weight: bold;
+}
+
+.ocb-stats-table {
+    cellspacing: 0;
+    border-collapse: collapse;
+}
+
+.ocb-stats-table tr {
+    border-collapse: collapse;
+}
+
+.ocb-stats-table td {
+    border-collapse: collapse;
+    padding: 5px;
+}
+
+.ocb-stats-table td.header {
+    border-collapse: collapse;
+    padding: 5px;
+    color: steelblue;
+    /*font-weight:bold;*/
+}
+
+.ocb-header-4 h4{
+    /*color:#BF8230;*/
+    color: #996a44;
+}
+
+
+/* top Message*/
+.ocb-msg-hidden {
+    border: 1px solid #156765;
+}
+
+.ocb-msg-hidden :first-child {
+    background-color: #156765;
+}
+
+.ocb-msg-hidden :last-child {
+    color: #156765;
+}
+
+.ocb-study-filter {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.x-tab-default{
+    border-color: #adc9c9;
+    background-color: #adc9c9;
+    color: #156765;
+}
+
+.x-tab.x-tab-default .x-tab-inner-default {
+    color: #156765;
+}
+.x-tab.x-tab-active.x-tab-default{
+    background-color: #156765;
+    border-color: #adc9c9;
+}
+
+.x-tab.x-tab-active.x-tab-default .x-tab-inner-default {
+    color: #FFFFFF;
+}
+
+/*.eva-button{*/
+    /*color: #FFFFFF;*/
+    /*border-radius: 0 0 0 0;*/
+    /*background-color: #70BDBD;*/
+/*}*/
+
+/*.studyBrowserTabs.nav-pills > li > a {*/
+    /*padding-top:3px !important;*/
+    /*padding-bottom:3px !important;*/
+    /*font-size:16px;*/
+    /*font-weight: bold;*/
+    /*color:#ffffff;*/
+    /*background-color: #6BB6B7;*/
+/*}*/
+/*.studyBrowserTabs.nav-pills {*/
+    /*min-height:20px !important;*/
+    /*background-color: #CFDFF4;*/
+    /*border-color: #ffffff;*/
+    /*color:#ffffff;*/
+/*}*/
+
+/*.studyBrowserTabs.nav-pills li a, .nav-tabs{*/
+    /*border-radius: 0px;*/
+    /*border: 1px solid #ddd;*/
+    /*border-color: #156765;*/
+/*}*/
+
+/*.studyBrowserTabs.nav-pills > li.active > a{*/
+     /*color:#ffffff !important;*/
+     /*background-color: #1F6D6D;*/
+ /*}*/
+
+/*.studyBrowserTabs.nav-pills > li > a:hover{*/
+    /*color:#ffffff !important;*/
+    /*background-color: #1F6D6D;*/
+/*}*/
+
+/*a, a:link, a:visited{*/
+    /*border-bottom-style: none;*/
+/*}*/
+
+.ocb-header-4 h4{
+    margin-left: -15px;
+}
+
+h5 {
+    color: #996a44;
+}
+
+h4{
+    color:#426783;
+}
+
+.assembly{
+    position:absolute;
+    right:0;
+    top:0;
+}
+
+.highcharts-container{width:100% !important; height:100% !important;}
+
+.hide-div{
+     display:none;
+}
+
+.show-div{
+    display:inline;
+}
+
+.table {
+    margin-left:5px;
+}
+
+.study-view-data{
+    margin-left:5px;
+}
+.study-view-table {
+    margin-left:5px;
+}
+
+.variant-view-h4{
+    color: #996a44;
+}
+
+.ocb-header-4 h4{
+    margin-left: -15px;
+}
+
+.variantViewTabs.nav-pills > li > a {
+    padding-top:3px !important;
+    padding-bottom:3px !important;
+    font-size:14px;
+    /*font-weight: bold;*/
+    color:#ffffff;
+    background-color: #6BB6B7;
+}
+.variantViewTabs.nav-pills {
+    min-height:20px !important;
+    border-color: #ffffff;
+    color:#ffffff;
+}
+
+.variantViewTabs.nav-pills li a{
+    border-radius: 1;
+    /*border: 1px solid #ddd;*/
+    /*border-color: #156765;*/
+}
+
+.variantViewTabs.nav-pills > li.active > a{
+    background-color: #1F6D6D;
+}
+
+.variantViewTabs.nav-pills > li > a:hover{
+    background-color: #1F6D6D;
+}
+.variantViewTabs.nav-pills>li.active>a, .variantViewTabs.nav-pills>li.active>a:hover, .variantViewTabs.nav-pills>li.active>a:focus {
+    color: #fff;
+    background-color: #1F6D6D;
+}
+#scroll-able{
+    margin-left:100px;
+}
+
+.resultShow{
+    color: #426783;
+}
+.valid{
+    color:#25AC0F;
+}
+.invalid{
+    color:#CB4437;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
