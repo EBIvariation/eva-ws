@@ -91,12 +91,12 @@ EvaBeaconPanel.prototype = {
                     {
                         title: 'GA4GH',
                         items:[GA4GHView],
-                        height:900
+                        height:950
                     },
                     {
                         title: 'Beacon',
                         items:[beaconView],
-                        height:900
+                        height:950
                     }
                 ]
             });

@@ -120,11 +120,10 @@ Eva.prototype = {
         }
         this.targetDiv.appendChild(this.div);
         this.evaMenu.draw();
-        var contentDiv = document.querySelector('#content');
-        this.studyBrowserPanel  = this._createStudyBrowserPanel(contentDiv);
-        this.variantWidgetPanel  = this._createVariantWidgetPanel(contentDiv);
-        this.genomeViewerPanel  = this._createGenomeViewerPanel(contentDiv);
-        this.beaconPanel  = this._createBeaconPanel(contentDiv);
+        this.contentDiv = document.querySelector('#content');
+        this.variantWidgetPanel  = this._createVariantWidgetPanel(this.contentDiv);
+        this.genomeViewerPanel  = this._createGenomeViewerPanel(this.contentDiv);
+        this.beaconPanel  = this._createBeaconPanel(this.contentDiv);
         // this.formPanelVariantFilter.draw();
         // this.genomeViewer.draw();
         // this.formPanelGenomeFilter.draw();
@@ -137,7 +136,9 @@ Eva.prototype = {
     },
     _selectHandler: function (option) {
         var _this = this;
-        this.studyBrowserPanel.hide();
+        if(this.studyBrowserPanel){
+            this.studyBrowserPanel.hide();
+        }
         this.variantWidgetPanel.hide();
         this.genomeViewerPanel.hide();
         this.beaconPanel.hide()
@@ -165,7 +166,11 @@ Eva.prototype = {
                 _this._drawStatisticsChart();
                 break;
             case 'Study Browser':
-                this.studyBrowserPanel.show();
+                if(this.studyBrowserPanel){
+                    this.studyBrowserPanel.show();
+                }else{
+                    this.studyBrowserPanel  = this._createStudyBrowserPanel(this.contentDiv);
+                }
                 break;
             case 'VCF Browser':
                 this.variantWidgetPanel.show();
@@ -220,10 +225,6 @@ Eva.prototype = {
             target: target
         });
         evaBeacon.draw();
-//        var evaBeacon= new EvaBeacon({
-//            target:'beaconForm'
-//        });
-
         return evaBeacon;
 
     },

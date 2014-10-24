@@ -41,6 +41,7 @@ module.exports = function (grunt) {
                     'src/js/eva-variant-widget-panel.js',
                     'src/js/eva-study-browser-panel.js',
                     'src/js/eva-genome-viewer-panel.js',
+                    'src/js/eva-beacon-panel.js',
                     'src/js/snv-study-browser.js',
                     'src/js/sv-study-browser.js',
                     'src/js/eva-variant-widget.js',

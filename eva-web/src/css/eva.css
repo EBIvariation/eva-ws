@@ -475,6 +475,20 @@ h4{
     color: #ffffff;
 }
 
+.eva-button{
+    background-color: #156765;
+    border-radius: 0 0 0 0;
+    border-color:#5f9796;
+    line-height: 0.52857143;
+    color: #ffffff;
+}
+.eva-button:hover,.eva-button:active,.eva-button:focus{
+    background-color:#5f9796;
+    border-color:#5f9796;
+}
+
+
+
 
 
 

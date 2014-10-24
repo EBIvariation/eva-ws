@@ -159,7 +159,7 @@ EvaBeacon.prototype = {
         var refreshBtnEl =  document.createElement("button");
         refreshBtnEl.type = "submit";
         refreshBtnEl.textContent = "Reset";
-        refreshBtnEl.className = "btn btn-primary";
+        refreshBtnEl.className = "btn btn-primary eva-button";
         refreshBtnEl.id = "refresh";
         refreshBtnDiv.appendChild(refreshBtnEl);
 
@@ -188,7 +188,7 @@ EvaBeacon.prototype = {
                                     '<div class="col-md-2 form-group input-group-sm"><input class="form-control" id="beacon-coordinate"  name=coordinate type="text" required/></div>'+
                                 '</div>'+
                                 '<div class="row">'+
-                                    '<div class="col-md-2 form-group input-group-sm""><p>Allele</p></div>'+
+                                    '<div class="col-md-2 form-group input-group-sm"    "><p>Allele</p></div>'+
                                     '<div class="col-md-2 form-group input-group-sm"><input class="form-control" id="beacon-allele" name=allele type="text"/></div>'+
                                 '</div>'+
                                 '<h5>Format Type</h5>'+
@@ -201,7 +201,7 @@ EvaBeacon.prototype = {
                                     '<div class="col-md-4 form-group input-group-sm"> <input type="radio"  name="beacon-formatType" value="json"> </div>'+
                                     '</div>'+
                                 '<div class="row">'+
-                                    '<div class="col-md-4 form-group"><span id="refresh-button"></span> <input id="submit" value="Submit" class="btn btn-primary" type="submit"></div>'+
+                                    '<div class="col-md-4 form-group"><span id="refresh-button"></span> <input id="submit" value="Submit" class="btn btn-primary eva-button" type="submit"></div>'+
                                 '</div>'+
                             '</form>'+
                         '</div>'+
