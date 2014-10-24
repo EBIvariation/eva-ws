@@ -1,4 +1,4 @@
-function StudyBrowser(args) {
+function EVAStudyBrowserPanel(args) {
     var _this = this;
     _.extend(this, Backbone.Events);
 
@@ -14,7 +14,7 @@ function StudyBrowser(args) {
 };
 
 
-StudyBrowser.prototype = {
+EVAStudyBrowserPanel.prototype = {
     render: function () {
         var _this = this;
         if(!this.rendered) {
@@ -53,10 +53,10 @@ StudyBrowser.prototype = {
     },
     _createPanel: function () {
 
-         var svStudyBrowser = new SvStudyBrowserPanel({
+         var svStudyBrowser = new SvStudyBrowser({
             pageSize:20
         });
-        var snvStudyBrowser = new SnvStudyBrowserPanel({
+        var snvStudyBrowser = new SnvStudyBrowser({
             pageSize:10
         });
 

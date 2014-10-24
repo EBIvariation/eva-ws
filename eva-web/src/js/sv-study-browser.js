@@ -1,4 +1,4 @@
-function SvStudyBrowserPanel(args) {
+function SvStudyBrowser(args) {
     _.extend(this, Backbone.Events);
     this.id = Utils.genId("DgvaStudyBrowserPanel");
 
@@ -46,7 +46,7 @@ function SvStudyBrowserPanel(args) {
     this.load();
 }
 
-SvStudyBrowserPanel.prototype = {
+SvStudyBrowser.prototype = {
     render: function () {
 
         if(!this.rendered) {

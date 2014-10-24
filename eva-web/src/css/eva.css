@@ -409,37 +409,38 @@ h4{
     margin-left: -15px;
 }
 
-.variantViewTabs.nav-pills > li > a {
-    padding-top:3px !important;
-    padding-bottom:3px !important;
-    font-size:14px;
+/*.variantViewTabs.nav-pills > li > a {*/
+    /*padding-top:3px !important;*/
+    /*padding-bottom:3px !important;*/
+    /*font-size:14px;*/
     /*font-weight: bold;*/
-    color:#ffffff;
-    background-color: #6BB6B7;
-}
-.variantViewTabs.nav-pills {
-    min-height:20px !important;
-    border-color: #ffffff;
-    color:#ffffff;
-}
+    /*color:#ffffff;*/
+    /*background-color: #6BB6B7;*/
+/*}*/
+/*.variantViewTabs.nav-pills {*/
+    /*min-height:20px !important;*/
+    /*border-color: #ffffff;*/
+    /*color:#ffffff;*/
+/*}*/
 
-.variantViewTabs.nav-pills li a{
-    border-radius: 1;
+/*.variantViewTabs.nav-pills li a{*/
+    /*border-radius: 1;*/
     /*border: 1px solid #ddd;*/
     /*border-color: #156765;*/
-}
+/*}*/
 
-.variantViewTabs.nav-pills > li.active > a{
-    background-color: #1F6D6D;
-}
 
-.variantViewTabs.nav-pills > li > a:hover{
-    background-color: #1F6D6D;
-}
-.variantViewTabs.nav-pills>li.active>a, .variantViewTabs.nav-pills>li.active>a:hover, .variantViewTabs.nav-pills>li.active>a:focus {
-    color: #fff;
-    background-color: #1F6D6D;
-}
+/*.variantViewTabs.nav-pills > li.active > a{*/
+    /*background-color: #156765;*/
+/*}*/
+
+/*.variantViewTabs.nav-pills > li > a:hover{*/
+    /*background-color: #1F6D6D;*/
+/*}*/
+/*.variantViewTabs.nav-pills>li.active>a, .variantViewTabs.nav-pills>li.active>a:hover, .variantViewTabs.nav-pills>li.active>a:focus {*/
+    /*color: #fff;*/
+    /*background-color: #156765;*/
+/*}*/
 #scroll-able{
     margin-left:100px;
 }
@@ -453,6 +454,28 @@ h4{
 .invalid{
     color:#CB4437;
 }
+
+.eva-tabs{
+    border-bottom:none;
+}
+.eva-tabs>li>a  {
+    margin-right: 2px;
+    line-height: 0.12857143;
+    border: 1px solid transparent;
+    border-radius: 0 0 0 0;
+    background-color: #adc9c9;
+    color: #156765
+}
+.eva-tabs>li>a:hover {
+    border-color:#5f9796;
+    background-color:#5f9796;
+}
+.eva-tabs>li.active>a, .eva-tabs>li.active>a:hover, .eva-tabs>li.active>a:focus{
+    background-color: #156765;
+    color: #ffffff;
+}
+
+
 
 
 

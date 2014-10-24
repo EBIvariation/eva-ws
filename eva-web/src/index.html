@@ -232,37 +232,48 @@
                 <p>A completed EVA Clinical template for a fictional submission can be downloaded <a href="files/EVA_Submission_template.EVA.V1.0.1_live_mockup_plus_Clinical_Variants.xlsx" target="_blank">here</a>.</p>
             </div>
             <div id="beacon" class="hide-div">
-                <h2>EBI GA4GH Beacon</h2>
-                <p>Learn more about the Global Alliance for Genomics and Health (GA4GH) at <a href="http://genomicsandhealth.org" target="_blank">http://genomicsandhealth.org</a>
-                    as well as the GA4GH Beacon project: <a href="http://ga4gh.org/#/beacon" target="_blank">http://ga4gh.org/#/beacon</a> </p>
-                <div class="row">
-                    <div class="col-md-12"><p><b>Example queries:</b></p>
+                <ul class="nav nav-tabs eva-tabs" id="myTab">
+                    <li><a href="#GA4GH" data-toggle="tab">GA4GH</a></li>
+                    <li><a href="#beaconTab" data-toggle="tab">Beacon</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="GA4GH" class="tab-pane active">
+                        <h2>EBI GA4GH Beacon</h2>
+                        <p>Learn more about the Global Alliance for Genomics and Health (GA4GH) at <a href="http://genomicsandhealth.org" target="_blank">http://genomicsandhealth.org</a>
+                            as well as the GA4GH Beacon project: <a href="http://ga4gh.org/#/beacon" target="_blank">http://ga4gh.org/#/beacon</a> </p>
                         <div class="row">
-                            <div class="col-md-12">
-                                <div><p><span><a href="#"  onclick="loadEvaBeacon(this)" chrom="13" coordinate="32888799" allele="C" project="PRJEB7217">Chrom:13&nbsp;Coordinate:32888799 &nbsp;Allele:C&nbsp;Project:PRJEB7217 </a></span></p></div>
-                                <div><p><span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="46403" allele="TGT" project="PRJEB4019">Chrom:1&nbsp;Coordinate:46403 &nbsp;Allele:TGT&nbsp;Project:PRJEB4019</a></span></p></div>
-                                <div><p> <span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="1002921" allele="" project="PRJEB4019">Chrom:1&nbsp;Coordinate:1002921 &nbsp;Project:PRJEB4019</a></span></p><hr/></div>
+                            <div class="col-md-12"><p><b>Example queries:</b></p>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div><p><span><a href="#"  onclick="loadEvaBeacon(this)" chrom="13" coordinate="32888799" allele="C" project="PRJEB7217">Chrom:13&nbsp;Coordinate:32888799 &nbsp;Allele:C&nbsp;Project:PRJEB7217 </a></span></p></div>
+                                        <div><p><span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="46403" allele="TGT" project="PRJEB4019">Chrom:1&nbsp;Coordinate:46403 &nbsp;Allele:TGT&nbsp;Project:PRJEB4019</a></span></p></div>
+                                        <div><p> <span><a href="#"  onclick="loadEvaBeacon(this)" chrom="1" coordinate="1002921" allele="" project="PRJEB4019">Chrom:1&nbsp;Coordinate:1002921 &nbsp;Project:PRJEB4019</a></span></p><hr/></div>
+                                    </div>
+                                </div>
+                                <div id="beaconForm"></div>
                             </div>
                         </div>
-                        <div id="beaconForm"></div>
+                        <script>
+                            function loadEvaBeacon(el) {
+                                var chrom = el.getAttribute('chrom');
+                                var coordinate = el.getAttribute('coordinate');
+                                var allele = el.getAttribute('allele');
+                                var project = el.getAttribute('project');
+                                var chromEl = document.querySelector('#beacon-chrom');
+                                var coordinateEl = document.querySelector('#beacon-coordinate');
+                                var alleleEl = document.querySelector('#beacon-allele');
+                                var projectEl =  document.querySelector('#beacon-project');
+                                chromEl.value = chrom;
+                                coordinateEl.value = coordinate;
+                                alleleEl.value = allele;
+                                projectEl.value = project;
+                            }
+                        </script>
+                    </div>
+                    <div id="beaconTab" class="tab-pane">
+                        <p>Section B content…</p>
                     </div>
                 </div>
-                <script>
-                    function loadEvaBeacon(el) {
-                        var chrom = el.getAttribute('chrom');
-                        var coordinate = el.getAttribute('coordinate');
-                        var allele = el.getAttribute('allele');
-                        var project = el.getAttribute('project');
-                        var chromEl = document.querySelector('#beacon-chrom');
-                        var coordinateEl = document.querySelector('#beacon-coordinate');
-                        var alleleEl = document.querySelector('#beacon-allele');
-                        var projectEl =  document.querySelector('#beacon-project');
-                        chromEl.value = chrom;
-                        coordinateEl.value = coordinate;
-                        alleleEl.value = allele;
-                        projectEl.value = project;
-                    }
-                </script>
             </div>
             <div id="clinical" class="hide-div">
                 <h2>Clinically Relevant Genetic Variants</h2>
@@ -632,7 +643,17 @@
             // all imports loaded
             Ext.QuickTips.init();
             Ext.onReady(start);
-
+            $(document).off('click.tab.data-api');
+            $(document).on('click.tab.data-api', '[data-toggle="tab"]', function (e) {
+                e.preventDefault();
+                var tab = $($(this).attr('href'));
+                var activate = !tab.hasClass('active');
+                $('div.tab-content>div.tab-pane.active').removeClass('active');
+                $('ul.nav.nav-tabs>li.active').removeClass('active');
+                if (activate) {
+                    $(this).tab('show')
+                }
+            });
         });
     </script>
 

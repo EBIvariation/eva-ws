@@ -124,7 +124,6 @@ Eva.prototype = {
         this.studyBrowserPanel  = this._createStudyBrowserPanel(contentDiv);
         this.variantWidgetPanel  = this._createVariantWidgetPanel(contentDiv);
         this.genomeViewerPanel  = this._createGenomeViewerPanel(contentDiv);
-
         // this.formPanelVariantFilter.draw();
         // this.genomeViewer.draw();
         // this.formPanelGenomeFilter.draw();
@@ -188,7 +187,7 @@ Eva.prototype = {
         return evaMenu;
     },
     _createStudyBrowserPanel: function(target){
-        var studyBrowser = new StudyBrowser({
+        var studyBrowser = new EVAStudyBrowserPanel({
             target: target
         });
         studyBrowser.draw();

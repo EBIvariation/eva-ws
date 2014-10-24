@@ -227,7 +227,7 @@ EvaVariantView.prototype = {
                         '</div>'+
                         '<div class="row">'+
                             '<div class="col-sm-1  col-md-1 col-lg-1" id="variantViewScrollspy">'+
-                                '<ul id="variantViewTabs" class="nav nav-pills nav-stacked affix variantViewTabs">'+
+                                '<ul id="variantViewTabs" class="nav nav-stacked affix eva-tabs">'+
                                     '<li class="active"><a href="#summary">Summary</a></li>'+
                                     '<li><a href="#studies">Studies</a></li>'+
                                '</ul>'+
