@@ -80,7 +80,12 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
     }
 
     @Override
-    public QueryResult getSamplesBySource(String fileId, String studyId, QueryOptions options) {
+    public QueryResult getSamplesBySource(String fileId, QueryOptions options) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public QueryResult getSamplesBySources(List<String> fileIds, QueryOptions options) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
