@@ -1,4 +1,4 @@
-function EVAStudyBrowserPanel(args) {
+function EvaStudyBrowserPanel(args) {
     var _this = this;
     _.extend(this, Backbone.Events);
 
@@ -14,7 +14,7 @@ function EVAStudyBrowserPanel(args) {
 };
 
 
-EVAStudyBrowserPanel.prototype = {
+EvaStudyBrowserPanel.prototype = {
     render: function () {
         var _this = this;
         if(!this.rendered) {

@@ -172,7 +172,7 @@ EvaBeacon.prototype = {
 
     },
     _getBeaconForm:function(){
-        var form = '<div class="row">'+
+        var form ='<div class="row" class="eva">'+
                         '<div class="col-md-12">'+
                             '<form id="beacon-form">'+
                                '<div class="row">'+
@@ -188,7 +188,7 @@ EvaBeacon.prototype = {
                                     '<div class="col-md-2 form-group input-group-sm"><input class="form-control" id="beacon-coordinate"  name=coordinate type="text" required/></div>'+
                                 '</div>'+
                                 '<div class="row">'+
-                                    '<div class="col-md-2 form-group"><p>Allele</p></div>'+
+                                    '<div class="col-md-2 form-group input-group-sm""><p>Allele</p></div>'+
                                     '<div class="col-md-2 form-group input-group-sm"><input class="form-control" id="beacon-allele" name=allele type="text"/></div>'+
                                 '</div>'+
                                 '<h5>Format Type</h5>'+
@@ -214,6 +214,10 @@ EvaBeacon.prototype = {
         return form;
     }
 }
+
+
+
+
 
 
 

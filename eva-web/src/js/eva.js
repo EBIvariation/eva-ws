@@ -124,6 +124,7 @@ Eva.prototype = {
         this.studyBrowserPanel  = this._createStudyBrowserPanel(contentDiv);
         this.variantWidgetPanel  = this._createVariantWidgetPanel(contentDiv);
         this.genomeViewerPanel  = this._createGenomeViewerPanel(contentDiv);
+        this.beaconPanel  = this._createBeaconPanel(contentDiv);
         // this.formPanelVariantFilter.draw();
         // this.genomeViewer.draw();
         // this.formPanelGenomeFilter.draw();
@@ -139,6 +140,7 @@ Eva.prototype = {
         this.studyBrowserPanel.hide();
         this.variantWidgetPanel.hide();
         this.genomeViewerPanel.hide();
+        this.beaconPanel.hide()
         $('body').find('.show-div').each(function (index, el) {
             $(el).removeClass('show-div');
             $(el).addClass('hide-div');
@@ -172,6 +174,9 @@ Eva.prototype = {
             case 'Genome Browser':
                 this.genomeViewerPanel.show();
                 break;
+            case 'GA4GH':
+                this.beaconPanel.show();
+                break;
         }
     },
     _createEvaMenu: function (target) {
@@ -187,7 +192,7 @@ Eva.prototype = {
         return evaMenu;
     },
     _createStudyBrowserPanel: function(target){
-        var studyBrowser = new EVAStudyBrowserPanel({
+        var studyBrowser = new EvaStudyBrowserPanel({
             target: target
         });
         studyBrowser.draw();
@@ -208,6 +213,18 @@ Eva.prototype = {
         });
         genomeViewer.draw();
         return genomeViewer;
+
+    },
+    _createBeaconPanel: function(target){
+        var evaBeacon = new EvaBeaconPanel({
+            target: target
+        });
+        evaBeacon.draw();
+//        var evaBeacon= new EvaBeacon({
+//            target:'beaconForm'
+//        });
+
+        return evaBeacon;
 
     },
     _twitterWidgetUpdate : function (){
