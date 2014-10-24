@@ -20,8 +20,6 @@ import org.apache.commons.lang.StringUtils;
 import org.opencb.biodata.ga4gh.GACallSet;
 import org.opencb.biodata.ga4gh.GASearchCallSetsRequest;
 import org.opencb.biodata.ga4gh.GASearchCallSetsResponse;
-import org.opencb.biodata.ga4gh.GASearchVariantSetsResponse;
-import org.opencb.biodata.models.variant.VariantSource;
 import org.opencb.biodata.models.variant.ga4gh.GACallSetFactory;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;

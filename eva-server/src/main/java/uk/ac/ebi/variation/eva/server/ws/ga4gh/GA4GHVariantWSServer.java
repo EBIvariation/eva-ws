@@ -60,14 +60,14 @@ public class GA4GHVariantWSServer extends EvaWSServer {
                                         @QueryParam("start") int start,
                                         @QueryParam("end") int end,
 //                                        @QueryParam("variantName") String id,
-                                        @QueryParam("variantSetIds") String studies,
+                                        @QueryParam("variantSetIds") String files,
 //                                        @QueryParam("callSetIds") String samples,
                                         @QueryParam("pageToken") String pageToken,
                                         @DefaultValue("10") @QueryParam("pageSize") int limit,
                                         @DefaultValue("false") @QueryParam("histogram") boolean histogram,
                                         @DefaultValue("-1") @QueryParam("histogram_interval") int interval) {
-        if (studies != null && !studies.isEmpty()) {
-            queryOptions.put("studies", Arrays.asList(studies.split(",")));
+        if (files != null && !files.isEmpty()) {
+            queryOptions.put("files", Arrays.asList(files.split(",")));
         }
         
         int idxCurrentPage = 0;
