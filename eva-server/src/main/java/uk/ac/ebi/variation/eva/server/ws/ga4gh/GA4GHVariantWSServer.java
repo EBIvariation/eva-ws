@@ -1,14 +1,11 @@
 package uk.ac.ebi.variation.eva.server.ws.ga4gh;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -66,7 +63,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
                                         @QueryParam("variantSetIds") String studies,
 //                                        @QueryParam("callSetIds") String samples,
                                         @QueryParam("pageToken") String pageToken,
-                                        @DefaultValue("10") @QueryParam("maxResults") int limit,
+                                        @DefaultValue("10") @QueryParam("pageSize") int limit,
                                         @DefaultValue("false") @QueryParam("histogram") boolean histogram,
                                         @DefaultValue("-1") @QueryParam("histogram_interval") int interval) {
         if (studies != null && !studies.isEmpty()) {
@@ -108,26 +105,12 @@ public class GA4GHVariantWSServer extends EvaWSServer {
     
     @POST
     @Path("/search")
-    @Consumes("application/x-www-form-urlencoded")
-    /**
-     * "start" and "end" are 0-based, whereas all the position stored are 1-based
-     * 
-     * @see http://ga4gh.org/documentation/api/v0.5/ga4gh_api.html#/schema/org.ga4gh.GASearchVariantsRequest
-     */
-    public Response getVariantsByRegion(@FormParam("request") String jsonRequest,
-                                        @DefaultValue("false") @QueryParam("histogram") boolean histogram,
-                                        @DefaultValue("-1") @QueryParam("histogram_interval") int interval) {
-        ObjectMapper requestMapper = new ObjectMapper();
-        ObjectReader requestReader = requestMapper.reader(GASearchVariantRequest.class);
-        
-        try {
-            GASearchVariantRequest request = requestReader.readValue(jsonRequest);
-            request.validate();
-            return getVariantsByRegion(request.getReferenceName(), (int) request.getStart(), (int) request.getEnd(), 
-                    StringUtils.join(request.getVariantSetIds(), ","), request.getPageToken(), request.getMaxResults(), 
-                    histogram, interval);
-        } catch (IllegalArgumentException | IOException ex) {
-            return createErrorResponse(ex.getMessage());
-        }
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response getVariantsByRegion(GASearchVariantRequest request) {
+        request.validate();
+        return getVariantsByRegion(request.getReferenceName(), (int) request.getStart(), (int) request.getEnd(), 
+                   StringUtils.join(request.getVariantSetIds(), ","), request.getPageToken(), request.getPageSize(), 
+                   false, -1);
     }
+    
 }
