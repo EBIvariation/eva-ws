@@ -55,6 +55,7 @@ EvaBeaconPanel.prototype = {
     _createPanel: function () {
 
         var evaBeaconForm = new EvaBeaconForm();
+        var evaVariantSearchForm = new EvaVariantSearchForm();
 
         this.toolTabPanel = Ext.create("Ext.tab.Panel", {
                 activeTab: 0,
@@ -63,7 +64,12 @@ EvaBeaconPanel.prototype = {
                     {
                         title: 'Beacon',
                         items:[evaBeaconForm.getPanel()],
-                        height:950
+                        height:700
+                    },
+                    {
+                        title: 'Variant Search',
+                        items:[evaVariantSearchForm.getPanel()],
+                        height:700
                     }
                 ]
             });

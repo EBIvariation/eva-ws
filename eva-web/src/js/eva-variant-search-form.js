@@ -2,7 +2,7 @@
  * Created by jag on 24/10/2014.
  */
 
-function EvaBeaconForm(args) {
+function EvaVariantSearchForm(args) {
     _.extend(this, Backbone.Events);
     this.id = Utils.genId("Beacon Form");
 
@@ -17,7 +17,7 @@ function EvaBeaconForm(args) {
 
 }
 
-EvaBeaconForm.prototype = {
+EvaVariantSearchForm.prototype = {
     render: function () {
         if(!this.rendered) {
             this.div = document.createElement('div');
@@ -77,7 +77,7 @@ EvaBeaconForm.prototype = {
                 ]
             });
 
-        var beaconView = Ext.create('Ext.view.View', {
+        var vSearchView = Ext.create('Ext.view.View', {
             width:1200,
             itemSelector: 'a.serviceLink',
             tpl: new Ext.XTemplate([
@@ -104,11 +104,10 @@ EvaBeaconForm.prototype = {
                         var coordinate = link.getAttribute('coordinate');
                         var allele = link.getAttribute('allele');
                         _this.project.setValue(project);
-
                         _this.formPanel.getForm().setValues({
-                            beaconChromosome:chrom,
-                            beaconCoordinate:coordinate,
-                            beaconAllele:allele
+                            vSearchChromosome:chrom,
+                            vSearchCoordinate:coordinate,
+                            vSearchAllele:allele
                         })
 
                     }
@@ -117,7 +116,7 @@ EvaBeaconForm.prototype = {
         });
 
         this.project =  Ext.create('Ext.form.ComboBox', {
-            id: 'beacon-project',
+            id: 'vSearchProject',
             fieldLabel: 'Project',
             store: this.projectStore,
             queryMode: 'local',
@@ -129,7 +128,7 @@ EvaBeaconForm.prototype = {
         });
         this.chromosome = {
                             xtype: 'numberfield',
-                            id:'beaconChromosome',
+                            id:'vSearchChromosome',
                             name: 'chromosome',
                             fieldLabel: 'Chromosome',
                             minValue: 1,
@@ -139,21 +138,21 @@ EvaBeaconForm.prototype = {
 
         this.coordinate = {
                             xtype: 'textfield',
-                            id: 'beaconCoordinate',
+                            id: 'vSearchCoordinate',
                             name: 'coordinate',
                             fieldLabel: 'Coordinate',
                             allowBlank: false
                           };
         this.allele =     {
                             xtype: 'textfield',
-                            id: 'beaconAllele',
+                            id: 'vSearchAllele',
                             name: 'allele',
                             fieldLabel: 'Allele',
                             allowBlank: true
                           };
         this.formatType = {
                             xtype      : 'radiogroup',
-                            id: 'beaconFormatType',
+                            id: 'vSearchFormatType',
                             fieldLabel : 'Format Type',
                             defaultType: 'radiofield',
                             allowBlank: false,
@@ -165,21 +164,21 @@ EvaBeaconForm.prototype = {
                             items: [
                                 {
                                     boxLabel  : 'Text',
-                                    name      : 'formatType',
+                                    name      : 'vSearchFormatType',
                                     inputValue: 'text',
-                                    id        : 'text'
+                                    id        : 'vSearchFormatTypeText'
                                 }, {
                                     boxLabel  : 'JSON',
-                                    name      : 'formatType',
+                                    name      : 'vSearchFormatType',
                                     inputValue: 'json',
-                                    id        : 'json'
+                                    id        : 'vSearchFormatTypeJson'
                                 }
                             ]
                          };
 
         this.resultPanel = {
             xtype: 'panel',
-            id: 'beacon-result-panel',
+            id: 'variant-search-result-panel',
             title: 'Result',
             region: 'center',
             height:225,
@@ -195,7 +194,7 @@ EvaBeaconForm.prototype = {
 //            width:650,
             items: [
 
-                beaconView,
+                vSearchView,
                 this.project,
                 this.chromosome,
                 this.coordinate,
@@ -219,8 +218,8 @@ EvaBeaconForm.prototype = {
                         console.log(form.getValues())
                         var region =  form.getValues().chromosome+':'+ form.getValues().coordinate+'::'+form.getValues().allele;
                         var params = form.getValues().project;
-                        var resultPanel = Ext.getCmp('beacon-result-panel');
-                        var studyName = Ext.getCmp('beacon-project').getRawValue();
+                        var resultPanel = Ext.getCmp('variant-search-result-panel');
+                        var studyName = Ext.getCmp('vSearchProject').getRawValue();
 
                         EvaManager.get({
                             category: 'variants',
@@ -232,7 +231,8 @@ EvaBeaconForm.prototype = {
                                     var exists = response.response[0].result[0];
                                     var resultTplMarkup;
                                     var cssClass;
-                                    if(form.getValues().formatType == 'text'){
+                                    console.log(form.getValues().vSearchFormatType)
+                                    if(form.getValues().vSearchFormatType == 'text'){
                                         if(exists){
                                             cssClass = 'valid';
                                         }else{
@@ -286,7 +286,7 @@ EvaBeaconForm.prototype = {
     },
     _resetForm:function(){
         var _this = this;
-        var resultPanel = Ext.getCmp('beacon-result-panel');
+        var resultPanel = Ext.getCmp('variant-search-result-panel');
         resultPanel.setVisible(false);
         _this.formPanel.getForm().reset();
     }
