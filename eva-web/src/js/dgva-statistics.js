@@ -22,6 +22,7 @@
 
 function DgvaStatistics(args) {
     _.extend(this, Backbone.Events);
+    this.id = Utils.genId("DGVAStatistcis");
     _.extend(this, args);
     this.rendered = false;
     this.render();

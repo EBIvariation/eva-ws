@@ -24,6 +24,7 @@ var variantID = '';
 
 function EvaVariantView(args) {
     _.extend(this, Backbone.Events);
+    this.id = Utils.genId("EVAVariantView");
     _.extend(this, args);
     this.rendered = false;
     this.render();
@@ -124,8 +125,6 @@ EvaVariantView.prototype = {
             });
 
             var effectData = _this._loadExampleData();
-            console.log('_____')
-            console.log(effectData)
             variantEffectGrid.load(effectData);
             variantEffectGrid.draw();
             return variantEffectGrid;

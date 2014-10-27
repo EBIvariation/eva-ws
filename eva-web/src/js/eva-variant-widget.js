@@ -203,7 +203,7 @@ EvaVariantWidget.prototype = {
         var _this = this;
         this.targetDiv = (this.target instanceof HTMLElement ) ? this.target : document.querySelector('#' + this.target);
         if (!this.targetDiv) {
-            console.log('target not found');
+            console.log('EVAVAriantWidget target not found');
             return;
         }
         this.targetDiv.appendChild(this.div);

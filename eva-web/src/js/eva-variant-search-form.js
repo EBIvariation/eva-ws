@@ -21,8 +21,7 @@
  */
 function EvaVariantSearchForm(args) {
     _.extend(this, Backbone.Events);
-    this.id = Utils.genId("Beacon Form");
-
+    this.id = Utils.genId("EVAVariantSearchForm");
     this.target;
     this.title = "Beacon";
     this.height = 800;
@@ -54,7 +53,6 @@ EvaVariantSearchForm.prototype = {
                 } catch (e) {
                     console.log(e);
                 }
-                console.log(studies)
                 _this.projectStore.loadRawData(studies);
             }
         });
@@ -68,7 +66,7 @@ EvaVariantSearchForm.prototype = {
         // A DIV Element is needed to append others HTML Elements
         this.targetDiv = (this.target instanceof HTMLElement) ? this.target : document.querySelector('#' + this.target);
         if (!this.targetDiv) {
-            console.log('EVAStudyBrowserPanel: target ' + this.target + ' not found');
+            console.log('EVAVariantSearchForm: target ' + this.target + ' not found');
             return;
         }
         this.targetDiv.appendChild(this.div);
@@ -232,7 +230,6 @@ EvaVariantSearchForm.prototype = {
                 handler: function() {
                     var form = this.up('form').getForm();
                     if (form.isValid()) {
-                        console.log(form.getValues())
                         var region =  form.getValues().chromosome+':'+ form.getValues().coordinate+'::'+form.getValues().allele;
                         var params = form.getValues().project;
                         var resultPanel = Ext.getCmp('variant-search-result-panel');
@@ -248,7 +245,6 @@ EvaVariantSearchForm.prototype = {
                                     var exists = response.response[0].result[0];
                                     var resultTplMarkup;
                                     var cssClass;
-                                    console.log(form.getValues().vSearchFormatType)
                                     if(form.getValues().vSearchFormatType == 'text'){
                                         if(exists){
                                             cssClass = 'valid';

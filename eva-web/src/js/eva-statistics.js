@@ -21,6 +21,7 @@
  */
 function EvaStatistics(args) {
     _.extend(this, Backbone.Events);
+    this.id = Utils.genId("EVAStatistics");
     _.extend(this, args);
     this.rendered = false;
     this.render();

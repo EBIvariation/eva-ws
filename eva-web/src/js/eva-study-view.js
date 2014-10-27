@@ -23,6 +23,7 @@ var summary = {};
 var files = [];
 function EvaStudyView(args) {
     _.extend(this, Backbone.Events);
+    this.id = Utils.genId("EVAStudyView");
     this.type ='eva';
     this.projectId = 'PRJEB5473';
     _.extend(this, args);
@@ -77,7 +78,6 @@ EvaStudyView.prototype = {
     _draw:function(data,content){
         var _this = this;
         var el =  document.querySelector("#"+this.target);
-        console.log(el)
         el.innerHTML = '';
         $('*').css('cursor','default');
         var elDiv = document.createElement("div");
@@ -202,7 +202,6 @@ EvaStudyView.prototype = {
 
                 if(data.summaryData[0].taxonomyId){
                     for (i = 0; i < data.summaryData[0].taxonomyId.length; i++) {
-                        console.log(data.summaryData[0].taxonomyId[i])
                         var taxLink = 'http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id='+data.summaryData[0].taxonomyId[i];
                         taxonomyId.push(['<a href="'+taxLink+'" target="_blank">'+data.summaryData[0].taxonomyId[i]+'</a>']);
                     }

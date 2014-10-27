@@ -23,9 +23,7 @@
 function EvaGenomeViewerPanel(args) {
     var _this = this;
     _.extend(this, Backbone.Events);
-
-    this.id = Utils.genId("StudyBrowserPanel");
-
+    this.id = Utils.genId("GenomeViewerPanel");
     this.target;
     this.tools = [];
     _.extend(this, args);
@@ -53,7 +51,7 @@ EvaGenomeViewerPanel.prototype = {
         }
         this.targetDiv = (this.target instanceof HTMLElement ) ? this.target : document.querySelector('#' + this.target);
         if (!this.targetDiv) {
-            console.log('target not found');
+            console.log('EVAGenomeViewerPanel target not found');
             return;
         }
         this.targetDiv.appendChild(this.div);

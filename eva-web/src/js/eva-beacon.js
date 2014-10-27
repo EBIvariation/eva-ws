@@ -2,7 +2,7 @@
 
 function EvaBeacon(args) {
     _.extend(this, Backbone.Events);
-
+    this.id = Utils.genId("EVABeacon");
     _.extend(this, args);
     this.rendered = false;
     this.render();

@@ -21,8 +21,7 @@
  */
 function EvaBeaconForm(args) {
     _.extend(this, Backbone.Events);
-    this.id = Utils.genId("Beacon Form");
-
+    this.id = Utils.genId("BeaconForm");
     this.target;
     this.title = "Beacon";
     this.height = 800;
@@ -54,7 +53,6 @@ EvaBeaconForm.prototype = {
                 } catch (e) {
                     console.log(e);
                 }
-                console.log(studies)
                 _this.projectStore.loadRawData(studies);
             }
         });
@@ -68,7 +66,7 @@ EvaBeaconForm.prototype = {
         // A DIV Element is needed to append others HTML Elements
         this.targetDiv = (this.target instanceof HTMLElement) ? this.target : document.querySelector('#' + this.target);
         if (!this.targetDiv) {
-            console.log('EVAStudyBrowserPanel: target ' + this.target + ' not found');
+            console.log('EVABeaconForm: target ' + this.target + ' not found');
             return;
         }
         this.targetDiv.appendChild(this.div);
@@ -233,7 +231,6 @@ EvaBeaconForm.prototype = {
                 handler: function() {
                     var form = this.up('form').getForm();
                     if (form.isValid()) {
-                        console.log(form.getValues())
                         var region =  form.getValues().chromosome+':'+ form.getValues().coordinate+'::'+form.getValues().allele;
                         var params = form.getValues().project;
                         var resultPanel = Ext.getCmp('beacon-result-panel');

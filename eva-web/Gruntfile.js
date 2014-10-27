@@ -50,7 +50,8 @@ module.exports = function (grunt) {
                     'src/js/eva-statistics.js',
                     'src/js/dgva-statistics.js',
                     'src/js/eva-beacon-form.js',
-                    'src/js/eva-submission-form.js',
+                    'src/js/eva-variant-search-form.js',
+//                    'src/js/eva-submission-form.js',
                     'src/js/eva.js'
                 ],
                 dest: 'build/<%= meta.version.eva %>/js/eva-<%= meta.version.eva %>.js'

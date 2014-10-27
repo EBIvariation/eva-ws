@@ -21,7 +21,7 @@
  */
 function EvaSubmissionForm(args) {
     _.extend(this, Backbone.Events);
-
+    this.id = Utils.genId("EVASubmissionForm");
     _.extend(this, args);
     this.rendered = false;
     this.render();
@@ -33,7 +33,7 @@ EvaSubmissionForm.prototype = {
 
         this.targetDiv = (this.target instanceof HTMLElement) ? this.target : document.querySelector('#' + this.target);
         if (!this.targetDiv) {
-            console.log('EVABeacon: target ' + this.target + ' not found');
+            console.log('EVASubmissionForm: target ' + this.target + ' not found');
             return;
         }
 

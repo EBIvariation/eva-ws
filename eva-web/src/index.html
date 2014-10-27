@@ -401,7 +401,7 @@
             </div>
             <div id="studyView" class="hide-div"></div>
             <div id="variantView" class="hide-div"></div>
-            <div id="submissionForm" class="hide-div"></div>
+            <!--<div id="submissionForm" class="hide-div"></div>-->
         </div>
         <footer>
 
@@ -509,7 +509,7 @@
               var studyViewDiv = document.querySelector('#studyView');
               var variantViewDiv = document.querySelector('#variantView');
               var beaconDiv =  document.querySelector('#beacon');
-              var submissionFormDiv =  document.querySelector('#submissionForm');
+//              var submissionFormDiv =  document.querySelector('#submissionForm');
 
             var tab = getUrlParameters("");
             var tabId =  decodeURI(tab.id);
@@ -551,14 +551,14 @@
                 studyView:studyViewDiv,
                 variantView:variantViewDiv,
                 beacon:beaconDiv,
-                clinicalDiv:clinicalDiv,
-                submissionForm:submissionFormDiv
+                clinicalDiv:clinicalDiv
+//                submissionForm:submissionFormDiv
             });
             eva.draw();
 
-            var evaSubmission= new EvaSubmissionForm({
-                target:'submissionForm'
-            });
+//            var evaSubmission= new EvaSubmissionForm({
+//                target:'submissionForm'
+//            });
 
             if(tab.id){
                 eva.select(tabId);

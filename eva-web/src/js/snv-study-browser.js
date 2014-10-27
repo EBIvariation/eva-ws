@@ -22,7 +22,7 @@
 
 function SnvStudyBrowser(args) {
     _.extend(this, Backbone.Events);
-    this.id = Utils.genId("EvaStudyBrowserPanel");
+    this.id = Utils.genId("EVAStudyBrowserPanel");
 
     this.target;
     this.title = "Study Browser";
@@ -393,7 +393,6 @@ SnvStudyBrowser.prototype = {
         var submitButton = Ext.create('Ext.button.Button', {
             text: 'Submit',
             handler: function (btn) {
-                console.log(">>>>>>>>>"+panel);
                 var values = panel.getValues();
                 _this.load(values);
             }

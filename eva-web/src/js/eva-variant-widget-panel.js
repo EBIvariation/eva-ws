@@ -24,7 +24,7 @@ function EvaVariantWidgetPanel(args) {
     var _this = this;
     _.extend(this, Backbone.Events);
 
-    this.id = Utils.genId("StudyBrowserPanel");
+    this.id = Utils.genId("VariantWidgetPanel");
 
     this.target;
     this.tools = [];
@@ -53,7 +53,7 @@ EvaVariantWidgetPanel.prototype = {
         }
         this.targetDiv = (this.target instanceof HTMLElement ) ? this.target : document.querySelector('#' + this.target);
         if (!this.targetDiv) {
-            console.log('target not found');
+            console.log('EVAVariantWidgetPanel target not found');
             return;
         }
         this.targetDiv.appendChild(this.div);

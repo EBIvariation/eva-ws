@@ -22,9 +22,7 @@
 function EvaBeaconPanel(args) {
     var _this = this;
     _.extend(this, Backbone.Events);
-
-    this.id = Utils.genId("StudyBrowserPanel");
-
+    this.id = Utils.genId("EVABeaconPanel");
     this.target;
     this.tools = [];
     _.extend(this, args);
@@ -52,7 +50,7 @@ EvaBeaconPanel.prototype = {
         }
         this.targetDiv = (this.target instanceof HTMLElement ) ? this.target : document.querySelector('#' + this.target);
         if (!this.targetDiv) {
-            console.log('target not found');
+            console.log('EVABeaconPanel target not found');
             return;
         }
         this.targetDiv.appendChild(this.div);

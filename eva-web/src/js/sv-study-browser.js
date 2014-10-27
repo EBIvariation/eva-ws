@@ -417,7 +417,6 @@ SvStudyBrowser.prototype = {
         var submitButton = Ext.create('Ext.button.Button', {
             text: 'Submit',
             handler: function (btn) {
-                console.log(">>>>>>>>>"+panel);
                 var values = panel.getValues();
                 _this.load(values);
             }
