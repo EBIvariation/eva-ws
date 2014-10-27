@@ -86,21 +86,26 @@ div#local-masthead{
     border-bottom-style: none;
 }
 
-.study-browser-panel table, .variant-widget-panel table{
+.study-browser-panel table, .variant-widget-panel table, .eva-beacon-panel table{
     border-collapse: collapse;
     width: 100%;
     background-color: white;
     margin: 0   auto;
     border: 0;
 }
-.study-browser-panel th, .study-browser-panel td, .variant-widget-panel th, .variant-widget-panel td  {
+.study-browser-panel th, .study-browser-panel td, .variant-widget-panel th, .variant-widget-panel td,
+.eva-beacon-panel th, .eva-beacon-panel td{
     padding: 0 0 0 0;
     border: 0;
     border-collapse: collapse;
     vertical-align: top;
 }
 
-.study-browser-panel th,.variant-widget-panel th {
+.eva-beacon-panel .x-toolbar-footer{
+    background-color: #ffffff;
+}
+
+.study-browser-panel th,.variant-widget-panel th ,.eva-beacon-panel th{
     font-weight: bold;
     background-color: #F2F2EC;
     border-bottom: 3px solid #f7f7f7;

@@ -141,7 +141,7 @@ Eva.prototype = {
         }
         this.variantWidgetPanel.hide();
         this.genomeViewerPanel.hide();
-        this.beaconPanel.hide()
+        this.beaconPanel.hide();
         $('body').find('.show-div').each(function (index, el) {
             $(el).removeClass('show-div');
             $(el).addClass('hide-div');

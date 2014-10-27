@@ -20,7 +20,6 @@ EvaStudyView.prototype = {
         $('*').css('cursor','wait');
         if(this.type === 'eva'){
             EvaManager.get({
-                host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                 category: 'studies',
                 resource: 'files',
                 query:this.projectId,
@@ -42,7 +41,6 @@ EvaStudyView.prototype = {
         }
 
         EvaManager.get({
-            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
             category: 'studies',
             resource: 'summary',
             query:this.projectId,
@@ -134,7 +132,7 @@ EvaStudyView.prototype = {
                     var ftpLink = {};
                     $.ajax({
                         type: 'GET',
-                        url: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/files/'+fileNameList+'/url',
+                        url: METADATA_HOST+'/v1/files/'+fileNameList+'/url',
                         dataType: 'json',//still firefox 20 does not auto serialize JSON, You can force it to always do the parsing by adding dataType: 'json' to your call.
                         async: false,
                         success: function (data, textStatus, jqXHR) {

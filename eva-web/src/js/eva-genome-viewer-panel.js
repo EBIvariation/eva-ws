@@ -145,7 +145,7 @@ EvaGenomeViewerPanel.prototype = {
         var trackNameField = Ext.create('Ext.form.field.Text', {
             xtype: 'textfield',
             emptyText: 'Track name',
-            flex: 3
+            flex: 2
         });
         var formPanel = new FormPanel({
             title: 'Add tracks',
@@ -234,7 +234,7 @@ EvaGenomeViewerPanel.prototype = {
                 }
             }),
             dataAdapter: new EvaAdapter({
-                host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                host: METADATA_HOST,
                 version: 'v1',
                 category: "segments",
                 resource: "variants",
@@ -375,7 +375,6 @@ EvaGenomeViewerPanel.prototype = {
         var _this = this;
         var studies = [];
         EvaManager.get({
-            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
             category: 'meta/studies',
             resource: 'list',
             success: function (response) {

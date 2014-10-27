@@ -26,7 +26,6 @@ EvaVariantView.prototype = {
         this.targetDiv.innerHTML = _this._varinatViewlayout();
         variantID = this.position;
         EvaManager.get({
-            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
             category: 'variants',
             resource: 'info',
             query:variantID,

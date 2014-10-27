@@ -18,7 +18,6 @@ DgvaStatistics.prototype = {
            var dgvaStatDiv = '<div class="row"><div id="dgva-statistics-chart-species" class="col-md-6"></div><div id="dgva-statistics-chart-type" class="col-md-6"></div></div>'
            el.innerHTML = dgvaStatDiv;
             EvaManager.get({
-                host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                 category: 'meta/studies',
                 resource: 'stats',
                 params: {structural:true},

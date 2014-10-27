@@ -19,8 +19,8 @@
  * along with EVA. If not, see <http://www.gnu.org/licenses/>.
  */
 var EvaManager = {
-    host: 'http://www.ebi.ac.uk/eva/webservices/rest',
-    version: 'v1',
+    host: METADATA_HOST,
+    version: METADATA_VERSION,
     get: function (args) {
         var success = args.success;
         var error = args.error;

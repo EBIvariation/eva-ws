@@ -18,7 +18,6 @@ EvaStatistics.prototype = {
            var evaStatDiv = '<div class="row"><div id="eva-statistics-chart-species" class="col-md-6"></div><div id="eva-statistics-chart-type" class="col-md-6"></div></div>'
            el.innerHTML = evaStatDiv;
             EvaManager.get({
-                host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                 category: 'meta/studies',
                 resource: 'stats',
 //                        query:variantID,

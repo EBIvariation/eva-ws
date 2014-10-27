@@ -1,4 +1,5 @@
-
+METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+METADATA_VERSION = 'v1';
 var TABS = [
     "Home",
     "Submit Data",
@@ -195,7 +196,6 @@ var projects = [    {
 ];
 
 //EvaManager.get({
-//    host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
 //    category: 'meta/studies',
 //    resource: 'list',
 //    success: function (response) {

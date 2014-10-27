@@ -27,7 +27,6 @@ EvaBeacon.prototype = {
         this.showResultDiv =  document.querySelector("#beacon-result-show");
         this.beaconForm = document.querySelector('#beacon-form');
         EvaManager.get({
-            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
             category: 'meta/studies',
             resource: 'all',
             success: function (response) {
@@ -79,7 +78,6 @@ EvaBeacon.prototype = {
             var region =  _this.chromEl.value+':'+ _this.coordinateEl.value+'::'+_this.alleleEl.value;
             var params = {studies:_this.projectEl.value}
             EvaManager.get({
-                host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                 category: 'variants',
                 resource: 'exists',
                 query:region,

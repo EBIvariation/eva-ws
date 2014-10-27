@@ -112,7 +112,6 @@ SnvStudyBrowser.prototype = {
 //        this.studiesStore.clearFilter();
 
         EvaManager.get({
-            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
             category: 'meta/studies',
             resource: 'all',
             params: values,
@@ -448,7 +447,6 @@ SnvStudyBrowser.prototype = {
 
 
         EvaManager.get({
-            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
             category: 'meta/studies',
             resource: 'stats',
             params: {},
@@ -470,9 +468,9 @@ SnvStudyBrowser.prototype = {
                                 obj['count'] = stat[key2];
                             }
 //                                obj['display'] = key2;
-                          if(!_.isEmpty(obj)){
-                              arr.push(obj);
-                          }
+                            if(!_.isEmpty(obj)){
+                                arr.push(obj);
+                            }
                         }
                         statsData[key] = arr;
                         if (typeof stores[key] !== 'undefined') {
@@ -492,9 +490,9 @@ SnvStudyBrowser.prototype = {
         var nodes = panel.store.data.items;
         var values = [];
         for (i = 0; i < nodes.length; i++) {
-                if(nodes[i].data.checked){
-                    values.push(nodes[i].data.display)
-                }
+            if(nodes[i].data.checked){
+                values.push(nodes[i].data.display)
+            }
         }
         return values;
     },

@@ -101,31 +101,12 @@ SvStudyBrowser.prototype = {
 //                    values[key] = tempArray;
 //                }
 //
-//            }
+//           }
         }
-
-//        this.studiesStore.clearFilter();
-
-//            EvaManager.get({
-//                host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-//                category: 'meta/studies',
-//                resource: 'all',
-//                params: values,
-//                success: function (response) {
-//                    var studies = [];
-//                    try {
-//                        studies = response.response[0].result;
-//                    } catch (e) {
-//                        console.log(e);
-//                    }
-//                   _this.studiesStore.loadRawData(studies);
-//                }
-//            });
 
         if(_this.grid){
             var studies = [];
             EvaManager.get({
-                host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                 category: 'meta/studies',
                 resource: 'all',
                 params: values,
@@ -470,7 +451,6 @@ SvStudyBrowser.prototype = {
 
 
         EvaManager.get({
-            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
             category: 'meta/studies',
             resource: 'stats',
             params: {structural:true},

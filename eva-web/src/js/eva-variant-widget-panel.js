@@ -272,7 +272,6 @@ EvaVariantWidgetPanel.prototype = {
                     }
 
                     var url = EvaManager.url({
-                        host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
                         category: 'segments',
                         resource: 'variants',
                         query: regions,
@@ -303,7 +302,6 @@ EvaVariantWidgetPanel.prototype = {
         var _this = this;
         var studies = [];
         EvaManager.get({
-            host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
             category: 'meta/studies',
             resource: 'list',
             success: function (response) {
