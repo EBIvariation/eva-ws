@@ -89,7 +89,7 @@ div#local-masthead{
 .study-browser-panel table, .variant-widget-panel table, .eva-beacon-panel table{
     border-collapse: collapse;
     width: 100%;
-    background-color: white;
+    /*background-color: white;*/
     margin: 0   auto;
     border: 0;
 }
