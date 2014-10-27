@@ -2,6 +2,7 @@
  * Copyright (c) 2014 Francisco Salavert (SGL-CIPF)
  * Copyright (c) 2014 Alejandro Alemán (SGL-CIPF)
  * Copyright (c) 2014 Ignacio Medina (EBI-EMBL)
+ * Copyright (c) 2014 Jag Kandasamy (EBI-EMBL)
  *
  * This file is part of EVA.
  *

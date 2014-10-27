@@ -2,22 +2,24 @@
  * Copyright (c) 2014 Francisco Salavert (SGL-CIPF)
  * Copyright (c) 2014 Alejandro Alemán (SGL-CIPF)
  * Copyright (c) 2014 Ignacio Medina (EBI-EMBL)
+ * Copyright (c) 2014 Jag Kandasamy (EBI-EMBL)
  *
- * This file is part of JSorolla.
+ * This file is part of EVA.
  *
- * JSorolla is free software: you can redistribute it and/or modify
+ * EVA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
  *
- * JSorolla is distributed in the hope that it will be useful,
+ * EVA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with JSorolla. If not, see <http://www.gnu.org/licenses/>.
+ * along with EVA. If not, see <http://www.gnu.org/licenses/>.
  */
+
 function SnvStudyBrowser(args) {
     _.extend(this, Backbone.Events);
     this.id = Utils.genId("EvaStudyBrowserPanel");

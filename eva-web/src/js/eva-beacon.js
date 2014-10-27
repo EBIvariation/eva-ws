@@ -1,6 +1,4 @@
-/**
- * Created by jag on 20/10/2014.
- */
+
 
 function EvaBeacon(args) {
     _.extend(this, Backbone.Events);
