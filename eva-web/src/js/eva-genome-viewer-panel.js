@@ -185,7 +185,7 @@ EvaGenomeViewerPanel.prototype = {
                 'submit': function (e) {
                     var title = trackNameField.getValue();
                     if (title !== '') {
-                        _this.EvaAdapter(title, e.values);
+                        _this._addGenomeBrowserTrack(title, e.values);
                         trackNameField.setValue('');
                     }
                 }
