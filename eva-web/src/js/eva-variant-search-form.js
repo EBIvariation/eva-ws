@@ -42,22 +42,7 @@ EvaVariantSearchForm.prototype = {
             this.rendered = true;
         }
     },
-    load:function(){
-        var _this = this;
-        EvaManager.get({
-            category: 'meta/studies',
-            resource: 'list',
-            success: function (response) {
-                try {
-                    studies = response.response[0].result;
-                } catch (e) {
-                    console.log(e);
-                }
-                _this.projectStore.loadRawData(studies);
-            }
-        });
-    },
-
+    
     draw: function () {
         if(!this.rendered) {
             this.render();
@@ -76,21 +61,7 @@ EvaVariantSearchForm.prototype = {
 
     _createPanel: function () {
         var _this = this;
-        this.projectStore = Ext.create('Ext.data.Store', {
-                autoLoad: true,
-                proxy: {
-                    type: 'memory',
-                    data: [],
-                    reader: {
-                        type: 'json'
-                    }
-                },
-                fields: [
-                    {name: 'studyId', type: 'string'},
-                    {name: 'studyName', type: 'string'},
 
-                ]
-            });
 
         var vSearchView = Ext.create('Ext.view.View', {
             width:1200,
@@ -101,9 +72,6 @@ EvaVariantSearchForm.prototype = {
                 '<p>Learn more about the Global Alliance for Genomics and Health (GA4GH) at <a href="http://genomicsandhealth.org" target="_blank">http://genomicsandhealth.org</a>as well as the GA4GH Beacon project: <a href="http://ga4gh.org/#/beacon" target="_blank">http://ga4gh.org/#/beacon</a> </p>',
                 '<div class="row">',
                 '<div class="col-md-12"><p><b>Example queries:</b></p>',
-                '<div><p><span><a href="#"  class="loadForm" chrom="13" coordinate="32888799" allele="C" project="PRJEB7217">Chrom:13&nbsp;Coordinate:32888799 &nbsp;Allele:C&nbsp;Project:PRJEB7217 </a></span></p></div>',
-                '<div><p><span><a href="#"  class="loadForm" chrom="1" coordinate="46403" allele="TGT" project="PRJEB4019">Chrom:1&nbsp;Coordinate:46403 &nbsp;Allele:TGT&nbsp;Project:PRJEB4019</a></span></p></div>',
-                '<div><p> <span><a href="#"  class="loadForm" chrom="1" coordinate="1002921" allele="" project="PRJEB4019">Chrom:1&nbsp;Coordinate:1002921 &nbsp;Project:PRJEB4019</a></span></p><hr/></div>',
                 '</div>',
                 '</div>',
                 '</div>'
@@ -130,17 +98,7 @@ EvaVariantSearchForm.prototype = {
             }
         });
 
-        this.project =  Ext.create('Ext.form.ComboBox', {
-            id: 'vSearchProject',
-            fieldLabel: 'Project',
-            store: this.projectStore,
-            queryMode: 'local',
-            valueField: 'studyId',
-            name: 'project',
-            width:650,
-            tpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '<div class="x-boundlist-item">{studyId} - {studyName}</div>', '</tpl>'),
-            displayTpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '{studyId} - {studyName}', '</tpl>')
-        });
+
         this.chromosome = {
                             xtype: 'numberfield',
                             id:'vSearchChromosome',
@@ -151,18 +109,28 @@ EvaVariantSearchForm.prototype = {
                             allowBlank: false
                           };
 
-        this.coordinate = {
+
+
+        this.start = {
+                        xtype: 'textfield',
+                        id: 'vSearchStart',
+                        name: 'start',
+                        fieldLabel: 'Start',
+                        allowBlank: false
+                      };
+
+        this.end = {
+                    xtype: 'textfield',
+                    id: 'vSearchEnd',
+                    name: 'end',
+                    fieldLabel: 'End',
+                    allowBlank: false
+                   };
+        this.reference =     {
                             xtype: 'textfield',
-                            id: 'vSearchCoordinate',
-                            name: 'coordinate',
-                            fieldLabel: 'Coordinate',
-                            allowBlank: false
-                          };
-        this.allele =     {
-                            xtype: 'textfield',
-                            id: 'vSearchAllele',
-                            name: 'allele',
-                            fieldLabel: 'Allele',
+                            id: 'vSearchReferenceName',
+                            name: 'referenceName',
+                            fieldLabel: 'Reference Name',
                             allowBlank: true
                           };
         this.formatType = {
@@ -210,10 +178,10 @@ EvaVariantSearchForm.prototype = {
             items: [
 
                 vSearchView,
-                this.project,
                 this.chromosome,
-                this.coordinate,
-                this.allele,
+                this.start,
+                this.end,
+                this.reference,
                 this.formatType,
                 this.resultPanel
             ],
@@ -279,8 +247,6 @@ EvaVariantSearchForm.prototype = {
             buttonAlign:'left'
         });
 
-        this.load();
-
         return  this.formPanel;
     },
 
@@ -294,7 +260,6 @@ EvaVariantSearchForm.prototype = {
         }
     },
     getPanel: function(){
-        this.load();
         return this.panel;
     },
     _resetForm:function(){
