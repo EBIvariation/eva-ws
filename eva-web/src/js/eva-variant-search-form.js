@@ -42,7 +42,7 @@ EvaVariantSearchForm.prototype = {
             this.rendered = true;
         }
     },
-    
+
     draw: function () {
         if(!this.rendered) {
             this.render();
@@ -99,40 +99,59 @@ EvaVariantSearchForm.prototype = {
         });
 
 
+        this.variantSetId = {
+            xtype: 'textfield',
+            id: 'vSearchVariantSetId',
+            name: 'variantSetId',
+            fieldLabel: 'Variant Set ID',
+            allowBlank: false,
+            labelWidth: 120
+        };
+        this.variantName = {
+            xtype: 'textfield',
+            id: 'vSearchVariantName',
+            name: 'variantName',
+            fieldLabel: 'Variant Name',
+            allowBlank: false,
+            labelWidth: 120
+        };
+
         this.chromosome = {
-                            xtype: 'numberfield',
-                            id:'vSearchChromosome',
-                            name: 'chromosome',
-                            fieldLabel: 'Chromosome',
-                            minValue: 1,
-                            maxValue: 24,
-                            allowBlank: false
-                          };
-
-
+            xtype: 'numberfield',
+            id:'vSearchChromosome',
+            name: 'chromosome',
+            fieldLabel: 'Chromosome',
+            minValue: 1,
+            maxValue: 24,
+            allowBlank: false,
+            labelWidth: 120
+          };
 
         this.start = {
-                        xtype: 'textfield',
-                        id: 'vSearchStart',
-                        name: 'start',
-                        fieldLabel: 'Start',
-                        allowBlank: false
-                      };
+            xtype: 'textfield',
+            id: 'vSearchStart',
+            name: 'start',
+            fieldLabel: 'Start',
+            allowBlank: false,
+            labelWidth: 120
+          };
 
         this.end = {
-                    xtype: 'textfield',
-                    id: 'vSearchEnd',
-                    name: 'end',
-                    fieldLabel: 'End',
-                    allowBlank: false
-                   };
-        this.reference =     {
-                            xtype: 'textfield',
-                            id: 'vSearchReferenceName',
-                            name: 'referenceName',
-                            fieldLabel: 'Reference Name',
-                            allowBlank: true
-                          };
+            xtype: 'textfield',
+            id: 'vSearchEnd',
+            name: 'end',
+            fieldLabel: 'End',
+            allowBlank: false,
+            labelWidth: 120
+           };
+        this.reference = {
+            xtype: 'textfield',
+            id: 'vSearchReferenceName',
+            name: 'referenceName',
+            fieldLabel: 'Reference Name',
+            allowBlank: true,
+            labelWidth: 120,
+          };
         this.formatType = {
                             xtype      : 'radiogroup',
                             id: 'vSearchFormatType',
@@ -140,6 +159,7 @@ EvaVariantSearchForm.prototype = {
                             defaultType: 'radiofield',
                             allowBlank: false,
                             width:300,
+                            labelWidth: 120,
                             defaults: {
                                 flex: 1
                             },
@@ -171,13 +191,16 @@ EvaVariantSearchForm.prototype = {
 
         this.formPanel = Ext.create('Ext.form.Panel', {
             border:false,
+            layout: 'vbox',
+//            labelWidth: 100,
             defaults: {
                 margin: 5
             },
 //            width:650,
             items: [
-
                 vSearchView,
+                this.variantSetId,
+                this.variantName,
                 this.chromosome,
                 this.start,
                 this.end,
@@ -201,45 +224,15 @@ EvaVariantSearchForm.prototype = {
                         var region =  form.getValues().chromosome+':'+ form.getValues().coordinate+'::'+form.getValues().allele;
                         var params = form.getValues().project;
                         var resultPanel = Ext.getCmp('variant-search-result-panel');
-                        var studyName = Ext.getCmp('vSearchProject').getRawValue();
 
-                        EvaManager.get({
-                            category: 'variants',
-                            resource: 'exists',
-                            query:region,
-                            params:params,
-                            success: function (response) {
-                                try {
-                                    var exists = response.response[0].result[0];
-                                    var resultTplMarkup;
-                                    var cssClass;
-                                    if(form.getValues().vSearchFormatType == 'text'){
-                                        if(exists){
-                                            cssClass = 'valid';
-                                        }else{
-                                            cssClass = 'invalid';
-                                        }
-                                        var projectName = '<a href="?eva-study='+form.getValues().project+'" target="_blank">'+studyName+'</a>';
-                                        resultTplMarkup ='<table  class="table table-bordered">' +
-                                                            '<tr><td>Project</td><td>'+projectName+'</td></tr>'+
-                                                            '<tr><td>Chromosome</td><td>'+form.getValues().chromosome+'</td></tr>'+
-                                                            '<tr><td>Coordinate</td><td>'+form.getValues().coordinate+'</td></tr>'+
-                                                            '<tr><td>Allele</td><td>'+form.getValues().allele+'</td></tr>'+
-                                                            '<tr><td>Exist</td><td class="'+cssClass+'">'+exists+'</td></tr>'+
-                                                          '</table>'
+                        console.log(form.getValues().variantSetId)
+                        console.log(form.getValues().variantName)
+                        console.log(form.getValues().chromosome)
+                        console.log(form.getValues().start)
+                        console.log(form.getValues().end)
+                        console.log(form.getValues().referenceName)
 
-                                    }else{
-                                        resultTplMarkup = {query:{Project:studyName,Chromosome:form.getValues().chromosome,Coordinate:form.getValues().coordinate,Allele:form.getValues().allele},Exist:exists};
-                                        resultTplMarkup = '<br/>'+JSON.stringify(resultTplMarkup);
-                                    }
 
-                                    resultPanel.setVisible(true);
-                                    resultPanel.update(resultTplMarkup);
-                                } catch (e) {
-                                    console.log(e);
-                                }
-                            }
-                        });
 
                     }
                 }
