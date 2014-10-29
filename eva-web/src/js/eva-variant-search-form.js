@@ -43,6 +43,23 @@ EvaVariantSearchForm.prototype = {
         }
     },
 
+    load:function(){
+        var _this = this;
+        EvaManager.get({
+            category: 'meta/studies',
+            resource: 'list',
+            success: function (response) {
+                try {
+                    studies = response.response[0].result;
+                } catch (e) {
+                    console.log(e);
+                }
+                _this.projectStore.loadRawData(studies);
+            }
+        });
+    },
+
+
     draw: function () {
         if(!this.rendered) {
             this.render();
@@ -62,16 +79,38 @@ EvaVariantSearchForm.prototype = {
     _createPanel: function () {
         var _this = this;
 
+        this.projectStore = Ext.create('Ext.data.Store', {
+            autoLoad: true,
+            proxy: {
+                type: 'memory',
+                data: [],
+                reader: {
+                    type: 'json'
+                }
+            },
+            fields: [
+                {name: 'studyId', type: 'string'},
+                {name: 'studyName', type: 'string'},
+
+            ]
+        });
+
+        this.chromosomeStore = Ext.create('Ext.data.Store', {
+            fields: ['text', 'value'],
+            data:this._chromosomeValues()
+
+        });
+
 
         var vSearchView = Ext.create('Ext.view.View', {
             width:1200,
             itemSelector: 'a.serviceLink',
             tpl: new Ext.XTemplate([
                 '<div>',
-                '<h2>EBI GA4GH Beacon</h2>',
-                '<p>Learn more about the Global Alliance for Genomics and Health (GA4GH) at <a href="http://genomicsandhealth.org" target="_blank">http://genomicsandhealth.org</a>as well as the GA4GH Beacon project: <a href="http://ga4gh.org/#/beacon" target="_blank">http://ga4gh.org/#/beacon</a> </p>',
+                '<h2> GA4GH Variant Search</h2>',
+//                '<p>Learn more about the Global Alliance for Genomics and Health (GA4GH) at <a href="http://genomicsandhealth.org" target="_blank">http://genomicsandhealth.org</a>as well as the GA4GH Beacon project: <a href="http://ga4gh.org/#/beacon" target="_blank">http://ga4gh.org/#/beacon</a> </p>',
                 '<div class="row">',
-                '<div class="col-md-12"><p><b>Example queries:</b></p>',
+//                '<div class="col-md-12"><p><b>Example queries:</b></p>',
                 '</div>',
                 '</div>',
                 '</div>'
@@ -86,8 +125,8 @@ EvaVariantSearchForm.prototype = {
                         var chrom = link.getAttribute('chrom');
                         var coordinate = link.getAttribute('coordinate');
                         var allele = link.getAttribute('allele');
-                        _this.project.setValue(project);
                         _this.formPanel.getForm().setValues({
+                            vSearchProject:project,
                             vSearchChromosome:chrom,
                             vSearchCoordinate:coordinate,
                             vSearchAllele:allele
@@ -98,39 +137,45 @@ EvaVariantSearchForm.prototype = {
             }
         });
 
-
-        this.variantSetId = {
-            xtype: 'textfield',
+        this.project = Ext.create('Ext.form.ComboBox', {
             id: 'vSearchVariantSetId',
-            name: 'variantSetId',
             fieldLabel: 'Variant Set ID',
-            allowBlank: false,
+            store: this.projectStore,
+            queryMode: 'local',
+            valueField: 'studyId',
+            name: 'vSearchProject',
+            width:650,
+            tpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '<div class="x-boundlist-item">{studyId} - {studyName}</div>', '</tpl>'),
+            displayTpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '{studyId} - {studyName}', '</tpl>'),
             labelWidth: 120
-        };
+        });
+
         this.variantName = {
             xtype: 'textfield',
             id: 'vSearchVariantName',
-            name: 'variantName',
+            name: 'vSearchName',
             fieldLabel: 'Variant Name',
             allowBlank: false,
             labelWidth: 120
         };
 
-        this.chromosome = {
-            xtype: 'numberfield',
-            id:'vSearchChromosome',
-            name: 'chromosome',
-            fieldLabel: 'Chromosome',
-            minValue: 1,
-            maxValue: 24,
-            allowBlank: false,
-            labelWidth: 120
-          };
+        this.chromosome = Ext.create('Ext.form.ComboBox', {
+            id: 'vSearchChromosome',
+            fieldLabel: 'Reference Name',
+            store: this.chromosomeStore,
+            queryMode: 'local',
+            valueField: 'value',
+            displayField: 'text',
+            name: 'vSearchChromosome',
+            labelWidth: 120,
+            allowBlank: false
+        });
+
 
         this.start = {
             xtype: 'textfield',
             id: 'vSearchStart',
-            name: 'start',
+            name: 'vSearchStart',
             fieldLabel: 'Start',
             allowBlank: false,
             labelWidth: 120
@@ -139,19 +184,11 @@ EvaVariantSearchForm.prototype = {
         this.end = {
             xtype: 'textfield',
             id: 'vSearchEnd',
-            name: 'end',
+            name: 'vSearchEnd',
             fieldLabel: 'End',
             allowBlank: false,
             labelWidth: 120
            };
-        this.reference = {
-            xtype: 'textfield',
-            id: 'vSearchReferenceName',
-            name: 'referenceName',
-            fieldLabel: 'Reference Name',
-            allowBlank: true,
-            labelWidth: 120,
-          };
         this.formatType = {
                             xtype      : 'radiogroup',
                             id: 'vSearchFormatType',
@@ -199,13 +236,11 @@ EvaVariantSearchForm.prototype = {
 //            width:650,
             items: [
                 vSearchView,
-                this.variantSetId,
+                this.project,
                 this.variantName,
                 this.chromosome,
                 this.start,
                 this.end,
-                this.reference,
-                this.formatType,
                 this.resultPanel
             ],
             buttons: [{
@@ -221,24 +256,21 @@ EvaVariantSearchForm.prototype = {
                 handler: function() {
                     var form = this.up('form').getForm();
                     if (form.isValid()) {
-                        var region =  form.getValues().chromosome+':'+ form.getValues().coordinate+'::'+form.getValues().allele;
+                        var region =  form.getValues().vSearchChromosome+':'+ form.getValues().coordinate+'::'+form.getValues().allele;
                         var params = form.getValues().project;
                         var resultPanel = Ext.getCmp('variant-search-result-panel');
 
-                        console.log(form.getValues().variantSetId)
-                        console.log(form.getValues().variantName)
-                        console.log(form.getValues().chromosome)
-                        console.log(form.getValues().start)
-                        console.log(form.getValues().end)
-                        console.log(form.getValues().referenceName)
-
-
-
+                        console.log(form.getValues().vSearchProject)
+                        console.log(form.getValues().vSearchName)
+                        console.log(form.getValues().vSearchChromosome)
+                        console.log(form.getValues().vSearchStart)
+                        console.log(form.getValues().vSearchEnd)
                     }
                 }
             }],
             buttonAlign:'left'
         });
+        this.load();
 
         return  this.formPanel;
     },
@@ -253,6 +285,7 @@ EvaVariantSearchForm.prototype = {
         }
     },
     getPanel: function(){
+        this.load();
         return this.panel;
     },
     _resetForm:function(){
@@ -260,6 +293,30 @@ EvaVariantSearchForm.prototype = {
         var resultPanel = Ext.getCmp('variant-search-result-panel');
         resultPanel.setVisible(false);
         _this.formPanel.getForm().reset();
+    },
+    _chromosomeValues : function(){
+        var chrmArr = [];
+        for (var i = 1; i < 25; i++) {
+            if(i == 23){
+                chrmArr.push({
+                    "text": "Chr X",
+                    "value": 23
+                });
+            }
+            else if(i == 24){
+                chrmArr.push({
+                    "text": "Chr Y",
+                    "value": 24
+                });
+            }else{
+                chrmArr.push({
+                    "text": i,
+                    "value":i
+                });
+            }
+
+        }
+        return chrmArr;
     }
 
 };

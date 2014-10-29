@@ -92,6 +92,12 @@ EvaBeaconForm.prototype = {
                 ]
             });
 
+        this.chromosomeStore = Ext.create('Ext.data.Store', {
+            fields: ['text', 'value'],
+            data:this._chromosomeValues()
+
+        });
+
         var beaconView = Ext.create('Ext.view.View', {
             width:1200,
             itemSelector: 'a.serviceLink',
@@ -137,32 +143,34 @@ EvaBeaconForm.prototype = {
             store: this.projectStore,
             queryMode: 'local',
             valueField: 'studyId',
-            name: 'project',
+            name: 'beaconProject',
             width:650,
             tpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '<div class="x-boundlist-item">{studyId} - {studyName}</div>', '</tpl>'),
             displayTpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '{studyId} - {studyName}', '</tpl>')
         });
-        this.chromosome = {
-                            xtype: 'numberfield',
-                            id:'beaconChromosome',
-                            name: 'chromosome',
-                            fieldLabel: 'Chromosome',
-                            minValue: 1,
-                            maxValue: 24,
-                            allowBlank: false
-                          };
+
+        this.chromosome = Ext.create('Ext.form.ComboBox', {
+            id: 'beaconChromosome',
+            fieldLabel: 'Chromosome',
+            store: this.chromosomeStore,
+            queryMode: 'local',
+            valueField: 'value',
+            displayField: 'text',
+            name: 'beaconChromosome',
+            allowBlank: false
+        });
 
         this.coordinate = {
                             xtype: 'textfield',
                             id: 'beaconCoordinate',
-                            name: 'coordinate',
+                            name: 'beaconCoordinate',
                             fieldLabel: 'Coordinate',
                             allowBlank: false
                           };
         this.allele =     {
                             xtype: 'textfield',
                             id: 'beaconAllele',
-                            name: 'allele',
+                            name: 'beaconAllele',
                             fieldLabel: 'Allele',
                             allowBlank: true
                           };
@@ -231,11 +239,10 @@ EvaBeaconForm.prototype = {
                 handler: function() {
                     var form = this.up('form').getForm();
                     if (form.isValid()) {
-                        var region =  form.getValues().chromosome+':'+ form.getValues().coordinate+'::'+form.getValues().allele;
-                        var params = form.getValues().project;
+                        var region =  form.getValues().beaconChromosome+':'+ form.getValues().beaconCoordinate+'::'+form.getValues().beaconAllele;
+                        var params ={studies:form.getValues().beaconProject};
                         var resultPanel = Ext.getCmp('beacon-result-panel');
                         var studyName = Ext.getCmp('beacon-project').getRawValue();
-
                         EvaManager.get({
                             category: 'variants',
                             resource: 'exists',
@@ -252,17 +259,17 @@ EvaBeaconForm.prototype = {
                                         }else{
                                             cssClass = 'invalid';
                                         }
-                                        var projectName = '<a href="?eva-study='+form.getValues().project+'" target="_blank">'+studyName+'</a>';
+                                        var projectName = '<a href="?eva-study='+form.getValues().beaconProject+'" target="_blank">'+studyName+'</a>';
                                         resultTplMarkup ='<table  class="table table-bordered">' +
                                                             '<tr><td>Project</td><td>'+projectName+'</td></tr>'+
-                                                            '<tr><td>Chromosome</td><td>'+form.getValues().chromosome+'</td></tr>'+
-                                                            '<tr><td>Coordinate</td><td>'+form.getValues().coordinate+'</td></tr>'+
-                                                            '<tr><td>Allele</td><td>'+form.getValues().allele+'</td></tr>'+
+                                                            '<tr><td>Chromosome</td><td>'+form.getValues().beaconChromosome+'</td></tr>'+
+                                                            '<tr><td>Coordinate</td><td>'+form.getValues().beaconCoordinate+'</td></tr>'+
+                                                            '<tr><td>Allele</td><td>'+form.getValues().beaconAllele+'</td></tr>'+
                                                             '<tr><td>Exist</td><td class="'+cssClass+'">'+exists+'</td></tr>'+
                                                           '</table>'
 
                                     }else{
-                                        resultTplMarkup = {query:{Project:studyName,Chromosome:form.getValues().chromosome,Coordinate:form.getValues().coordinate,Allele:form.getValues().allele},Exist:exists};
+                                        resultTplMarkup = {query:{Project:studyName,Chromosome:form.getValues().beaconChromosome,Coordinate:form.getValues().beaconCoordinate,Allele:form.getValues().beaconAllele},Exist:exists};
                                         resultTplMarkup = '<br/>'+JSON.stringify(resultTplMarkup);
                                     }
 
@@ -303,6 +310,30 @@ EvaBeaconForm.prototype = {
         var resultPanel = Ext.getCmp('beacon-result-panel');
         resultPanel.setVisible(false);
         _this.formPanel.getForm().reset();
+    },
+    _chromosomeValues : function(){
+        var chrmArr = [];
+        for (var i = 1; i < 25; i++) {
+            if(i == 23){
+                chrmArr.push({
+                    "text": "Chr X",
+                    "value": 23
+                });
+            }
+            else if(i == 24){
+                chrmArr.push({
+                    "text": "Chr Y",
+                    "value": 24
+                });
+            }else{
+                chrmArr.push({
+                    "text": i,
+                    "value":i
+                });
+            }
+
+        }
+        return chrmArr;
     }
 
 };
