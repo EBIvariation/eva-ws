@@ -138,8 +138,8 @@ EvaVariantSearchForm.prototype = {
         });
 
         this.project = Ext.create('Ext.form.ComboBox', {
-            id: 'vSearchVariantSetId',
-            fieldLabel: 'Variant Set ID',
+            id: 'vSearchDatasetId',
+            fieldLabel: 'Dataset ID',
             store: this.projectStore,
             queryMode: 'local',
             valueField: 'studyId',
@@ -152,10 +152,10 @@ EvaVariantSearchForm.prototype = {
 
         this.variantName = {
             xtype: 'textfield',
-            id: 'vSearchVariantName',
-            name: 'vSearchName',
-            fieldLabel: 'Variant Name',
-            allowBlank: false,
+            id: 'vSearchVariantsetId',
+            name: 'vSearchVariantsetId',
+            fieldLabel: 'Variant Set ID',
+//            allowBlank: false,
             labelWidth: 120
         };
 
@@ -168,7 +168,7 @@ EvaVariantSearchForm.prototype = {
             displayField: 'text',
             name: 'vSearchChromosome',
             labelWidth: 120,
-            allowBlank: false
+//            allowBlank: false
         });
 
 
@@ -177,7 +177,7 @@ EvaVariantSearchForm.prototype = {
             id: 'vSearchStart',
             name: 'vSearchStart',
             fieldLabel: 'Start',
-            allowBlank: false,
+//            allowBlank: false,
             labelWidth: 120
           };
 
@@ -186,7 +186,7 @@ EvaVariantSearchForm.prototype = {
             id: 'vSearchEnd',
             name: 'vSearchEnd',
             fieldLabel: 'End',
-            allowBlank: false,
+//            allowBlank: false,
             labelWidth: 120
            };
         this.formatType = {
@@ -249,7 +249,7 @@ EvaVariantSearchForm.prototype = {
                     _this._resetForm();
                 }
             }, {
-                text: 'Submit',
+                text: 'Search by Variantset ID',
                 formBind: true,
                 //only enabled once the form is valid
                 disabled: true,
@@ -259,15 +259,108 @@ EvaVariantSearchForm.prototype = {
                         var region =  form.getValues().vSearchChromosome+':'+ form.getValues().coordinate+'::'+form.getValues().allele;
                         var params = form.getValues().project;
                         var resultPanel = Ext.getCmp('variant-search-result-panel');
+                        var vSearchVariantsetId = form.getValues().vSearchVariantsetId;
+                        if(_.isEmpty(vSearchVariantsetId)){
+                            Ext.Msg.alert('','Please Enter a value in \'Variant Set ID\' ');
+                        }else{
+                            EvaManager.get({
+                                category: 'ga4gh',
+                                resource: 'callsets/search',
+                                params:{variantSetIds:vSearchVariantsetId,pageSize:1},
+                                success: function (response) {
+                                    try {
+                                        var resultTplMarkup = '<br/>'+JSON.stringify(response.callSets[0]);
+                                        resultPanel.setVisible(true);
+                                        resultPanel.update(resultTplMarkup);
+                                        resultPanel.setWidth(530);
 
-                        console.log(form.getValues().vSearchProject)
-                        console.log(form.getValues().vSearchName)
-                        console.log(form.getValues().vSearchChromosome)
-                        console.log(form.getValues().vSearchStart)
-                        console.log(form.getValues().vSearchEnd)
+                                    } catch (e) {
+                                        console.log(e);
+                                    }
+                                }
+                            });
+                        }
+
                     }
                 }
-            }],
+
+            }, {
+                text: 'Search by Dataset ID',
+                formBind: true,
+                //only enabled once the form is valid
+                disabled: true,
+                handler: function() {
+                    var form = this.up('form').getForm();
+                    if (form.isValid()) {
+                        var region =  form.getValues().vSearchChromosome+':'+ form.getValues().coordinate+'::'+form.getValues().allele;
+                        var params = form.getValues().project;
+                        var resultPanel = Ext.getCmp('variant-search-result-panel');
+                        var vSearchProject = form.getValues().vSearchProject;
+                        if(_.isEmpty(vSearchProject)){
+                            Ext.Msg.alert('','Please Enter a value in \'Dataset ID\' ');
+                        }else{
+                            EvaManager.get({
+                                category: 'ga4gh',
+                                resource: 'variantsets/search',
+                                params:{datasetIds:vSearchProject,pageSize:1},
+                                success: function (response) {
+                                    try {
+                                        var resultTplMarkup = '<br/>'+JSON.stringify(response.variantSets[0]);
+                                        resultPanel.setVisible(true);
+                                        resultPanel.update(resultTplMarkup);
+                                        resultPanel.setWidth(1230);
+
+                                    } catch (e) {
+                                        console.log(e);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+
+            },
+            {
+                text: 'Search by Reference',
+                formBind: true,
+                //only enabled once the form is valid
+                disabled: true,
+                handler: function() {
+                    var form = this.up('form').getForm();
+                    if (form.isValid()) {
+                        var region =  form.getValues().vSearchChromosome+':'+ form.getValues().coordinate+'::'+form.getValues().allele;
+                        var params = form.getValues().project;
+                        var resultPanel = Ext.getCmp('variant-search-result-panel');
+                        var vSearchChromosome = form.getValues().vSearchChromosome;
+                        var vSearchStart = form.getValues().vSearchStart;
+                        var vSearchEnd = form.getValues().vSearchEnd;
+
+                        if(_.isEmpty(vSearchChromosome)||_.isEmpty(vSearchStart)||_.isEmpty(vSearchEnd)){
+                            Ext.Msg.alert('','Please do not allow blank in \'Reference Name\' or \'Start\' or \'End Field\'');
+                        }else{
+                            EvaManager.get({
+                                category: 'ga4gh',
+                                resource: 'variants/search',
+                                params:{referenceName:vSearchChromosome,start:vSearchStart,end:vSearchEnd,pageSize:1},
+                                success: function (response) {
+                                    try {
+                                        var resultTplMarkup = '<br/>'+JSON.stringify(response.variants[0]);
+                                        resultPanel.setVisible(true);
+                                        resultPanel.update(resultTplMarkup);
+                                        resultPanel.setWidth(1230);
+
+                                    } catch (e) {
+                                        console.log(e);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+
+            }
+
+            ],
             buttonAlign:'left'
         });
         this.load();

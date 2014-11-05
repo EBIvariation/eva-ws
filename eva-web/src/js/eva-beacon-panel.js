@@ -93,7 +93,7 @@ EvaBeaconPanel.prototype = {
                 ]
             });
 
-        this.toolTabPanel.setActiveTab(0);
+        this.toolTabPanel.setActiveTab(1);
 
         this.panel = Ext.create('Ext.container.Container', {
             flex: 1,

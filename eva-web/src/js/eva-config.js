@@ -19,7 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with EVA. If not, see <http://www.gnu.org/licenses/>.
  */
-METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+METADATA_HOST = "http://172.22.70.137:8080/eva/webservices/rest";
+//METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
 METADATA_VERSION = 'v1';
 var TABS = [
     "Home",
