@@ -1,6 +1,6 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
-import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -9,13 +9,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.variant.VariantSourceDBAdaptor;
-import org.opencb.opencga.storage.variant.mongodb.VariantSourceMongoDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.VariantSourceEvaproDBAdaptor;
 
 /**
@@ -27,22 +28,22 @@ import uk.ac.ebi.variation.eva.lib.storage.metadata.VariantSourceEvaproDBAdaptor
 public class FilesWSServer extends EvaWSServer {
     
     private VariantSourceDBAdaptor variantSourceEvaproDbAdaptor;
-    private VariantSourceDBAdaptor variantSourceMongoDbAdaptor;
 
     public FilesWSServer() throws IllegalOpenCGACredentialsException {
         super();
     }
 
     public FilesWSServer(@DefaultValue("") @PathParam("version") String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
-            throws IOException, IllegalOpenCGACredentialsException, NamingException {
+            throws NamingException {
         super(version, uriInfo, hsr);
-        variantSourceMongoDbAdaptor = new VariantSourceMongoDBAdaptor(credentials);
         variantSourceEvaproDbAdaptor = new VariantSourceEvaproDBAdaptor();
     }
 
     @GET
     @Path("/all")
-    public Response getFiles() {
+    public Response getFiles(@QueryParam("species") String species) 
+            throws UnknownHostException, IllegalOpenCGACredentialsException {
+        VariantSourceDBAdaptor variantSourceMongoDbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor(species);
         return createOkResponse(variantSourceMongoDbAdaptor.getAllSources(queryOptions));
     }
     

@@ -1,6 +1,6 @@
 package uk.ac.ebi.variation.eva.server.ws.ga4gh;
 
-import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ import org.opencb.biodata.models.variant.ga4gh.GACallSetFactory;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.variant.VariantSourceDBAdaptor;
-import org.opencb.opencga.storage.variant.mongodb.VariantSourceMongoDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
 
 /**
@@ -35,16 +35,12 @@ import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
 @Produces(MediaType.APPLICATION_JSON)
 public class GA4GHVariantCallSetWSServer extends EvaWSServer {
     
-    private VariantSourceDBAdaptor dbAdaptor;
-
-    public GA4GHVariantCallSetWSServer() throws IllegalOpenCGACredentialsException {
+    public GA4GHVariantCallSetWSServer() {
         super();
     }
 
-    public GA4GHVariantCallSetWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
-            throws IOException, IllegalOpenCGACredentialsException {
+    public GA4GHVariantCallSetWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
         super(version, uriInfo, hsr);
-        dbAdaptor = new VariantSourceMongoDBAdaptor(credentials);
     }
 
     
@@ -58,7 +54,11 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
                                 @QueryParam("pageToken") String pageToken,
                                 @DefaultValue("10") @QueryParam("pageSize") int limit,
                                 @DefaultValue("false") @QueryParam("histogram") boolean histogram,
-                                @DefaultValue("-1") @QueryParam("histogram_interval") int interval) {
+                                @DefaultValue("-1") @QueryParam("histogram_interval") int interval)
+            throws UnknownHostException, IllegalOpenCGACredentialsException {
+        
+        VariantSourceDBAdaptor dbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor("hsapiens");
+        
         int idxCurrentPage = 0;
         if (pageToken != null && !pageToken.isEmpty() && StringUtils.isNumeric(pageToken)) {
             idxCurrentPage = Integer.parseInt(pageToken);
@@ -89,7 +89,8 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
     @POST
     @Path("/search")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getCallSets(GASearchCallSetsRequest request) {
+    public Response getCallSets(GASearchCallSetsRequest request)
+            throws UnknownHostException, IllegalOpenCGACredentialsException {
         return getCallSets(StringUtils.join(request.getVariantSetIds(), ","), request.getPageToken(), request.getPageSize(), false, -1);
     }
     

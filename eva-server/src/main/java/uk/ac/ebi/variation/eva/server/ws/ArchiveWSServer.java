@@ -2,7 +2,7 @@ package uk.ac.ebi.variation.eva.server.ws;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Map;
 import javax.naming.NamingException;
@@ -21,7 +21,7 @@ import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.variant.ArchiveDBAdaptor;
 import org.opencb.opencga.storage.variant.StudyDBAdaptor;
-import org.opencb.opencga.storage.variant.mongodb.StudyMongoDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyDgvaDBAdaptor;
@@ -40,20 +40,18 @@ public class ArchiveWSServer extends EvaWSServer {
     
     private StudyDBAdaptor studyDgvaDbAdaptor;
     private StudyDBAdaptor studyEvaproDbAdaptor;
-    private StudyDBAdaptor studyMongoDbAdaptor;
     
-    public ArchiveWSServer() throws IllegalOpenCGACredentialsException {
+    public ArchiveWSServer() {
         super();
     }
 
     public ArchiveWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
-            throws IOException, NamingException, IllegalOpenCGACredentialsException {
+            throws NamingException {
         super(version, uriInfo, hsr);
         archiveDgvaDbAdaptor = new ArchiveDgvaDBAdaptor();
         archiveEvaproDbAdaptor = new ArchiveEvaproDBAdaptor();
         studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
         studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
-        studyMongoDbAdaptor = new StudyMongoDBAdaptor(credentials);
     }
 
     @GET
@@ -76,7 +74,9 @@ public class ArchiveWSServer extends EvaWSServer {
     
     @GET
     @Path("/studies/list")
-    public Response getStudies() {
+    public Response getStudies(@QueryParam("species") String species) 
+            throws UnknownHostException, IllegalOpenCGACredentialsException {
+        StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
         return createOkResponse(studyMongoDbAdaptor.listStudies());
     }
     
@@ -107,8 +107,6 @@ public class ArchiveWSServer extends EvaWSServer {
             queryOptions.put("species", Arrays.asList(species.split(",")));
         }
         
-//        QueryResult<Map.Entry<String, Integer>> resultSpecies = archiveEvaproDbAdaptor.countStudiesPerSpecies(queryOptions);
-//        QueryResult<Map.Entry<String, Integer>> resultTypes = archiveEvaproDbAdaptor.countStudiesPerType(queryOptions);
         QueryResult<Map.Entry<String, Integer>> resultSpecies, resultTypes;
         
         if (structural) {

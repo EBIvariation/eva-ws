@@ -1,6 +1,7 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
@@ -17,7 +18,7 @@ import org.opencb.biodata.models.feature.Region;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.variant.VariantDBAdaptor;
-import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 
 /**
  *
@@ -27,28 +28,30 @@ import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
 @Produces(MediaType.APPLICATION_JSON)
 public class VariantWSServer extends EvaWSServer {
 
-    private VariantDBAdaptor variantMongoQueryBuilder;
-
-    public VariantWSServer() throws IllegalOpenCGACredentialsException {
+    public VariantWSServer() {
         super();
     }
 
     public VariantWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
-            throws IOException, IllegalOpenCGACredentialsException {
+            throws IOException {
         super(version, uriInfo, hsr);
-        variantMongoQueryBuilder = new VariantMongoDBAdaptor(credentials);
     }
 
     @GET
     @Path("/{variantId}/info")
     public Response getVariantById(@PathParam("variantId") String variantId,
-                                   @QueryParam("studies") String studies) {
+                                   @QueryParam("studies") String studies,
+                                   @QueryParam("species") String species) 
+            throws IllegalOpenCGACredentialsException, UnknownHostException {
+        
+        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
+        
         if (studies != null && !studies.isEmpty()) {
             queryOptions.put("studies", Arrays.asList(studies.split(",")));
         }
         
         if (!variantId.contains(":")) { // Query by accession id
-            return createOkResponse(variantMongoQueryBuilder.getVariantById(variantId, queryOptions));
+            return createOkResponse(variantMongoDbAdaptor.getVariantById(variantId, queryOptions));
         } else { // Query by chr:pos:ref:alt
             String parts[] = variantId.split(":", -1);
             if (parts.length < 3) {
@@ -61,14 +64,19 @@ public class VariantWSServer extends EvaWSServer {
                 queryOptions.put("alternate", parts[3]);
             }
             
-            return createOkResponse(variantMongoQueryBuilder.getAllVariantsByRegion(region, queryOptions));
+            return createOkResponse(variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions));
         }
     }
     
     @GET
     @Path("/{variantId}/exists")
     public Response checkVariantExists(@PathParam("variantId") String variantId,
-                                       @QueryParam("studies") String studies) {
+                                       @QueryParam("studies") String studies,
+                                   @QueryParam("species") String species) 
+            throws IllegalOpenCGACredentialsException, UnknownHostException {
+        
+        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
+        
         if (studies != null && !studies.isEmpty()) {
             queryOptions.put("studies", Arrays.asList(studies.split(",")));
         }
@@ -87,7 +95,7 @@ public class VariantWSServer extends EvaWSServer {
                 queryOptions.put("alternate", parts[3]);
             }
             
-            QueryResult queryResult = variantMongoQueryBuilder.getAllVariantsByRegion(region, queryOptions);
+            QueryResult queryResult = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
             queryResult.setResult(Arrays.asList(queryResult.getNumResults() > 0));
             queryResult.setResultType(Boolean.class.getCanonicalName());
             return createOkResponse(queryResult);
