@@ -43,6 +43,9 @@ public class FilesWSServer extends EvaWSServer {
     @Path("/all")
     public Response getFiles(@QueryParam("species") String species) 
             throws UnknownHostException, IllegalOpenCGACredentialsException {
+        if (species != null && !species.isEmpty()) {
+            queryOptions.put("species", species);
+        }
         VariantSourceDBAdaptor variantSourceMongoDbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor(species);
         return createOkResponse(variantSourceMongoDbAdaptor.getAllSources(queryOptions));
     }

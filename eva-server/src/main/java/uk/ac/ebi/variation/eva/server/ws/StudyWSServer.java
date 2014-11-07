@@ -52,6 +52,10 @@ public class StudyWSServer extends EvaWSServer {
                                     @QueryParam("species") String species) 
             throws UnknownHostException, IllegalOpenCGACredentialsException {
         
+        if (species != null && !species.isEmpty()) {
+            queryOptions.put("species", species);
+        }
+        
         StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
         VariantSourceDBAdaptor variantSourceDbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor(species);
         
@@ -73,6 +77,10 @@ public class StudyWSServer extends EvaWSServer {
     public Response getStudy(@PathParam("study") String study,
                              @QueryParam("species") String species) 
             throws UnknownHostException, IllegalOpenCGACredentialsException {
+        
+        if (species != null && !species.isEmpty()) {
+            queryOptions.put("species", species);
+        }
         
         StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
         

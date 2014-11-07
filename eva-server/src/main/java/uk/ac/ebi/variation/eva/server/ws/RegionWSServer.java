@@ -66,6 +66,9 @@ public class RegionWSServer extends EvaWSServer {
         if (studies != null && !studies.isEmpty()) {
             queryOptions.put("studies", Arrays.asList(studies.split(",")));
         }
+        if (species != null && !species.isEmpty()) {
+            queryOptions.put("species", species);
+        }
         if (!variantType.isEmpty()) {
             queryOptions.put("type", variantType);
         }

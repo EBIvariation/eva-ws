@@ -49,6 +49,9 @@ public class VariantWSServer extends EvaWSServer {
         if (studies != null && !studies.isEmpty()) {
             queryOptions.put("studies", Arrays.asList(studies.split(",")));
         }
+        if (species != null && !species.isEmpty()) {
+            queryOptions.put("species", species);
+        }
         
         if (!variantId.contains(":")) { // Query by accession id
             return createOkResponse(variantMongoDbAdaptor.getVariantById(variantId, queryOptions));
@@ -72,13 +75,16 @@ public class VariantWSServer extends EvaWSServer {
     @Path("/{variantId}/exists")
     public Response checkVariantExists(@PathParam("variantId") String variantId,
                                        @QueryParam("studies") String studies,
-                                   @QueryParam("species") String species) 
+                                       @QueryParam("species") String species) 
             throws IllegalOpenCGACredentialsException, UnknownHostException {
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         
         if (studies != null && !studies.isEmpty()) {
             queryOptions.put("studies", Arrays.asList(studies.split(",")));
+        }
+        if (species != null && !species.isEmpty()) {
+            queryOptions.put("species", species);
         }
         
         if (!variantId.contains(":")) { // Query by accession id

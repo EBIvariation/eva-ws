@@ -64,6 +64,9 @@ public class GeneWSServer extends EvaWSServer {
         if (studies != null) {
             queryOptions.put("studies", Arrays.asList(studies.split(",")));
         }
+        if (species != null && !species.isEmpty()) {
+            queryOptions.put("species", species);
+        }
         if (!variantType.isEmpty()) {
             queryOptions.put("type", variantType);
         }
@@ -102,6 +105,9 @@ public class GeneWSServer extends EvaWSServer {
         
         if (!variantType.isEmpty()) {
             queryOptions.put("type", variantType);
+        }
+        if (species != null && !species.isEmpty()) {
+            queryOptions.put("species", species);
         }
         
         if (sort.equalsIgnoreCase("desc")) {
