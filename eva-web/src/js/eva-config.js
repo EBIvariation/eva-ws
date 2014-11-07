@@ -217,6 +217,9 @@ var projects = [    {
     }
 ];
 
+var speciesList = [ {"value":"hsapiens", "name":"Human"},
+                    {"value":"mmusculus", "name":"Mouse"}]
+
 //EvaManager.get({
 //    category: 'meta/studies',
 //    resource: 'list',

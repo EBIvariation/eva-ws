@@ -485,7 +485,8 @@
     <script type="text/javascript" src="js/dgva-statistics.js"></script>
     <script type="text/javascript" src="js/eva-beacon-form.js"></script>
     <script type="text/javascript" src="js/eva-variant-search-form.js"></script>
-    <script type="text/javascript" src="js/eva-submission-form.js"></script>
+    <!--<script type="text/javascript" src="js/eva-submission-form.js"></script>-->
+    <script type="text/javascript" src="js/eva-species-filter-form-panel.js"></script>
     <script type="text/javascript" src="js/eva.js"></script>
     <!-- /build -->
 
@@ -529,9 +530,12 @@
                 });
             }
             if(tabId == 'variant'){
+
+                var varianttSpecies = $.urlParam('species');
                 var evaVarinatView = new EvaVariantView({
                     target:'variantView',
-                    position:tab.value
+                    position:tab.value,
+                    species:varianttSpecies
                 });
             }
 
@@ -593,7 +597,10 @@
             }
         }
 
-
+        $.urlParam = function(name){
+            var result = new RegExp(name + "=([^&]*)", "i").exec(window.location.search);
+            return result && result[1] || "";
+        }
         //Start point
         window.addEventListener('load', function (e) {
             // all imports loaded

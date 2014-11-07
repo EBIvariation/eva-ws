@@ -163,8 +163,8 @@ Eva.prototype = {
 
         switch (option) {
             case 'Home':
-                _this._twitterWidgetUpdate();
                 _this._drawStatisticsChart();
+                _this._twitterWidgetUpdate();
                 break;
             case 'Study Browser':
                 if(this.studyBrowserPanel){

@@ -43,10 +43,25 @@ EvaVariantView.prototype = {
 
         this.targetDiv.innerHTML = _this._varinatViewlayout();
         variantID = this.position;
+
+        EvaManager.get({
+            category: 'meta/studies',
+            resource: 'list',
+            params:{species:this.species},
+            success: function (response) {
+                try {
+                    projects = response.response[0].result;
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+        });
+
         EvaManager.get({
             category: 'variants',
             resource: 'info',
             query:variantID,
+            params:{species:this.species},
             success: function (response) {
                 try {
                     variant = response.response[0].result;
@@ -174,7 +189,8 @@ EvaVariantView.prototype = {
             }
             _summaryTable += '<tr><td>Type</td><td>'+data[0].type+'</td></tr>' +
                 '<tr><td>Chromosome:Start-End</td><td>'+data[0].chromosome+':'+data[0].start+'-'+data[0].end+'</td></tr>' +
-                '<tr><td>Assembly</td><td>GRCh37</td></tr>' +
+                '<tr><td>Species</td><td>'+this.species+'</td></tr>' +
+//                '<tr><td>Assembly</td><td>GRCh37</td></tr>' +
                 '<tr><td>Ref</td><td>'+reference+'</td></tr>' +
                 '<tr><td>Alt</td><td>'+alternate+'</td></tr>' +
                 '</table>'

@@ -156,10 +156,13 @@ EvaVariantWidgetPanel.prototype = {
     _createFormPanelVariantFilter: function (target) {
         var _this = this;
         var positionFilter = new PositionFilterFormPanel({
-            testRegion: '1:14000-200000',
+//            testRegion: '1:14000-200000',
+            testRegion: '1:3000760-3000790',
             emptyText: ''
 
         });
+
+        var speciesFilter = new SpeciesFilterFormPanel({});
 
 
         this.studiesStore = Ext.create('Ext.data.Store', {
@@ -180,11 +183,27 @@ EvaVariantWidgetPanel.prototype = {
             studiesStore: this.studiesStore,
             studyFilterTpl:'<tpl><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div></tpl>'
         });
-        this.on('studies:change', function (e) {
-//            studyFilter.setStudies(e.studies);
+
+        _this._loadListStudies(studyFilter, '');
+
+        speciesFilter.on('species:change', function (e) {
+            _this._loadListStudies(studyFilter, e.species);
+
+            EvaManager.get({
+                category: 'meta/studies',
+                resource: 'list',
+                params:{species:e.species},
+                success: function (response) {
+                    try {
+                         projects = response.response[0].result;
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }
+            });
         });
 
-        _this._loadListStudies(studyFilter);
+
 
         var conseqType = new ConsequenceTypeFilterFormPanel({
             consequenceTypes: consequenceTypes,
@@ -202,6 +221,8 @@ EvaVariantWidgetPanel.prototype = {
             ]
         });
 
+
+
         var formPanel = new FormPanel({
             title: 'Filter',
             headerConfig: {
@@ -210,7 +231,7 @@ EvaVariantWidgetPanel.prototype = {
             mode: 'accordion',
             target: target,
             submitButtonText: 'Submit',
-            filters: [positionFilter, studyFilter],
+            filters: [speciesFilter,positionFilter, studyFilter],
             width: 300,
 //            height: 1043,
             border: false,
@@ -218,7 +239,6 @@ EvaVariantWidgetPanel.prototype = {
                 'submit': function (e) {
                     console.log(e.values);
                     _this.variantWidget.setLoading(true);
-
                     //POSITION CHECK
                     var regions = [];
                     if (typeof e.values.region !== 'undefined') {
@@ -227,10 +247,9 @@ EvaVariantWidgetPanel.prototype = {
                         }
                         delete  e.values.region;
                     }
-
                     if (typeof e.values.gene !== 'undefined') {
                         CellBaseManager.get({
-                            species: 'hsapiens',
+                            species: e.values.species,
                             category: 'feature',
                             subCategory: 'gene',
                             query: e.values.gene.toUpperCase(),
@@ -254,7 +273,7 @@ EvaVariantWidgetPanel.prototype = {
 
                     if (typeof e.values.snp !== 'undefined') {
                         CellBaseManager.get({
-                            species: 'hsapiens',
+                            species: e.values.species,
                             category: 'feature',
                             subCategory: 'snp',
                             query: e.values.snp,
@@ -305,27 +324,34 @@ EvaVariantWidgetPanel.prototype = {
                     }
 
                     _this.variantWidget.retrieveData(url, e.values)
+
+                    var updateTpl = Ext.create('Ext.XTemplate', '<tpl if="id"><a href="?variant={chromosome}:{start}:{reference}:{alternate}&species='+ e.values.species+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;' +
+                        '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
+                        '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>' +
+                        '<tpl else><a href="?variant={chromosome}:{start}:{reference}:{alternate}&species='+ e.values.species+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>');
+                    Ext.getCmp('variant-grid-view-column').tpl = updateTpl;
                 }
             }
         });
 
 
-        formPanel.panel.addDocked({
-                                    xtype: 'toolbar',
-                                    dock: 'top',
-                                    height: 45,
-                                    html: '<h5>Assembly: GRCh37</h5>',
-                                    margin:-10
-                                });
+//        formPanel.panel.addDocked({
+//                                    xtype: 'toolbar',
+//                                    dock: 'top',
+//                                    height: 45,
+//                                    html: '<h5>Assembly: GRCh37</h5>',
+//                                    margin:-10
+//                                });
 
         return formPanel;
     },
-    _loadListStudies: function (filter) {
+    _loadListStudies: function (filter, species) {
         var _this = this;
         var studies = [];
         EvaManager.get({
             category: 'meta/studies',
             resource: 'list',
+            params:{species:species},
             success: function (response) {
                 try {
                     studies = response.response[0].result;

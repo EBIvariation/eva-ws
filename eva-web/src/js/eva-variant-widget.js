@@ -302,6 +302,7 @@ EvaVariantWidget.prototype = {
                 {
                     text: 'View',
                     //dataIndex: 'id',
+                    id:'variant-grid-view-column',
                     xtype: 'templatecolumn',
                     tpl: '<tpl if="id"><a href="?variant={chromosome}:{start}:{reference}:{alternate}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;' +
                         '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +

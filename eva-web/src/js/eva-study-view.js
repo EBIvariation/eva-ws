@@ -114,7 +114,12 @@ EvaStudyView.prototype = {
                     }
                 }
 
-                var projectURL = _this._getProjectUrl(data.summaryData[0].id);
+                if(_.isUndefined(_this._getProjectUrl(data.summaryData[0].id))){
+                    var projectURL = '-'
+                }else{
+                    var projectURL = '<a href="'+_this._getProjectUrl(data.summaryData[0].id)+'" target="_blank">'+_this._getProjectUrl(data.summaryData[0].id)+'</a>'
+                }
+
 
                 var _filesTable  = '<div><h3>'+data.summaryData[0].name+'</h3>' +
                     '<div class="row study-view-data"><div class="col-md-12"><div><h4>General Information</h4></div><table class="table table-bordered study-view-table">' +
@@ -129,7 +134,7 @@ EvaStudyView.prototype = {
                     '<tr><td><b>Platform</b></td><td>'+data.summaryData[0].platform+'</td></tr>' +
                     '<tr><td><b>Samples</b></td><td>'+data.summaryData[0].numSamples+'</td></tr>' +
                     '<tr><td><b>Description</b></td><td>'+data.summaryData[0].description+'</td></tr>' +
-                    '<tr><td><b>Resource</b></td><td><a href="'+projectURL+'" target="_blank">'+projectURL+'</a></td></tr>' +
+                    '<tr><td><b>Resource</b></td><td>'+projectURL+'</td></tr>' +
                     '<tr><td><b>Download</b></td><td><a href="ftp://ftp.ebi.ac.uk/pub/databases/eva/'+data.summaryData[0].id+'" target="_blank">FTP</a></td></tr>' +
                     '</table>'
 

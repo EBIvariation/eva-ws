@@ -51,6 +51,7 @@ module.exports = function (grunt) {
                     'src/js/dgva-statistics.js',
                     'src/js/eva-beacon-form.js',
                     'src/js/eva-variant-search-form.js',
+                    'src/js/eva-species-filter-form-panel.js',
 //                    'src/js/eva-submission-form.js',
                     'src/js/eva.js'
                 ],
