@@ -51,7 +51,11 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens");
         
         Region region = new Region(chromosome, start, start + allele.length());
-        queryOptions.put("alternate", allele);
+        if (allele.equalsIgnoreCase("INDEL")) {
+            queryOptions.put("type", "INDEL");
+        } else {
+            queryOptions.put("alternate", allele);
+        }
             
         QueryResult queryResult = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
 //        queryResult.setResult(Arrays.asList(queryResult.getNumResults() > 0));
