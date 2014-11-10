@@ -112,6 +112,7 @@ EvaGenomeViewerPanel.prototype = {
                 align: 'center',
             },
             overflowX:'auto',
+            height:1200,
             items: [view],
             cls: 'variant-widget-panel'
         });

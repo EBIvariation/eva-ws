@@ -59,17 +59,11 @@ EvaVariantWidgetPanel.prototype = {
         this.targetDiv.appendChild(this.div);
 
         this.panel.render(this.div);
-        this.variantPanelDiv = document.querySelector('#variant-widget');
-
-        this.formPanelVariantFilterDiv = document.createElement('div');
-        $(this.formPanelVariantFilterDiv).addClass('form-panel-variant-filter-div');
-        this.variantPanelDiv.appendChild(this.formPanelVariantFilterDiv);
+        this.formPanelVariantFilterDiv = document.querySelector('.form-panel-variant-filter-div');
         this.formPanelVariantFilter = this._createFormPanelVariantFilter(this.formPanelVariantFilterDiv);
         this.formPanelVariantFilter.draw();
 
-        this.variantWidgetDiv = document.createElement('div');
-        $(this.variantWidgetDiv).addClass('variant-widget-div');
-        this.variantPanelDiv.appendChild(this.variantWidgetDiv);
+        this.variantWidgetDiv = document.querySelector('.variant-widget-div');
         this.variantWidget = this._createVariantWidget(this.variantWidgetDiv);
         this.variantWidget.draw();
     },
@@ -87,7 +81,7 @@ EvaVariantWidgetPanel.prototype = {
         }
     },
     _createPanel: function () {
-        var tpl = new Ext.XTemplate(['<div  id="variant-widget" class="variant-browser-option-div"></div>']);
+        var tpl = new Ext.XTemplate(['<div  id="variant-widget" class="variant-browser-option-div form-panel-variant-filter-div"></div><div  id="variant-widget1" class="variant-browser-option-div variant-widget-div"></div>']);
         var view = Ext.create('Ext.view.View', {
             tpl: tpl
         });
@@ -99,6 +93,7 @@ EvaVariantWidgetPanel.prototype = {
             },
             overflowX:'auto',
             items: [view],
+            height:1200,
             cls: 'variant-widget-panel'
         });
 
@@ -201,6 +196,7 @@ EvaVariantWidgetPanel.prototype = {
                     }
                 }
             });
+
         });
 
 
@@ -333,6 +329,12 @@ EvaVariantWidgetPanel.prototype = {
                 }
             }
         });
+
+
+        _this.on('studies:change', function (e) {
+            _this.formPanelVariantFilter.trigger('submit', {values: _this.formPanelVariantFilter.getValues(), sender: _this});
+        });
+
 
 
 //        formPanel.panel.addDocked({

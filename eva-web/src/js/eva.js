@@ -102,16 +102,6 @@ Eva.prototype = {
         /* submision-start */
         $(this.submissionForm).addClass('eva-child');
         this.childDivMenuMap['submission-start'] = this.submissionForm;
-
-
-        /* Study Browser Panel*/
-//        $(this.studyBrowserDiv).addClass('eva-child');
-//        this.childDivMenuMap['Study Browser'] =  this.studyBrowserDiv;
-//
-//        /* variant browser option*/
-//        $(this.evaBrowserDiv).addClass('eva-child');
-//        this.childDivMenuMap['VCF Browser'] = this.evaBrowserDiv;
-
     },
     draw: function () {
         this.targetDiv = (this.target instanceof HTMLElement ) ? this.target : document.querySelector('#' + this.target);
@@ -122,12 +112,7 @@ Eva.prototype = {
         this.targetDiv.appendChild(this.div);
         this.evaMenu.draw();
         this.contentDiv = document.querySelector('#content');
-        this.variantWidgetPanel  = this._createVariantWidgetPanel(this.contentDiv);
-        this.genomeViewerPanel  = this._createGenomeViewerPanel(this.contentDiv);
-        this.beaconPanel  = this._createBeaconPanel(this.contentDiv);
-        // this.formPanelVariantFilter.draw();
-        // this.genomeViewer.draw();
-        // this.formPanelGenomeFilter.draw();
+
 //        this.select('Home');
 
     },
@@ -140,9 +125,17 @@ Eva.prototype = {
         if(this.studyBrowserPanel){
             this.studyBrowserPanel.hide();
         }
-        this.variantWidgetPanel.hide();
-        this.genomeViewerPanel.hide();
-        this.beaconPanel.hide();
+        if(this.variantWidgetPanel){
+            this.variantWidgetPanel.hide();
+        }
+        if(this.genomeViewerPanel){
+            this.genomeViewerPanel.hide();
+        }
+
+        if(this.beaconPanel){
+            this.beaconPanel.hide();
+        }
+
         $('body').find('.show-div').each(function (index, el) {
             $(el).removeClass('show-div');
             $(el).addClass('hide-div');
@@ -173,15 +166,28 @@ Eva.prototype = {
                     this.studyBrowserPanel  = this._createStudyBrowserPanel(this.contentDiv);
                 }
                 break;
-            case 'VCF Browser':
-                this.variantWidgetPanel.show();
-                this.variantWidgetPanel.formPanelVariantFilter.trigger('submit', {values: this.variantWidgetPanel.formPanelVariantFilter.getValues(), sender: _this});
+            case 'VCF Browser'://
+                if(this.variantWidgetPanel){
+                    this.variantWidgetPanel.show();
+                }else{
+                    this.variantWidgetPanel = this._createVariantWidgetPanel(this.contentDiv);
+                    this.variantWidgetPanel.formPanelVariantFilter.trigger('submit', {values: this.variantWidgetPanel.formPanelVariantFilter.getValues(), sender: _this});
+                }
+
                 break;
             case 'Genome Browser':
-                this.genomeViewerPanel.show();
+                if(this.genomeViewerPanel){
+                    this.genomeViewerPanel.show();
+                }else{
+                    this.genomeViewerPanel  = this._createGenomeViewerPanel(this.contentDiv);
+                }
                 break;
             case 'GA4GH':
-                this.beaconPanel.show();
+                if(this.beaconPanel){
+                    this.beaconPanel.show();
+                }else{
+                    this.beaconPanel  = this._createBeaconPanel(this.contentDiv);
+                }
                 break;
         }
     },
