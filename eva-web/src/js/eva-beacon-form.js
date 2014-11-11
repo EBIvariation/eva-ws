@@ -107,9 +107,9 @@ EvaBeaconForm.prototype = {
                 '<p>Learn more about the Global Alliance for Genomics and Health (GA4GH) at <a href="http://genomicsandhealth.org" target="_blank">http://genomicsandhealth.org</a>as well as the GA4GH Beacon project: <a href="http://ga4gh.org/#/beacon" target="_blank">http://ga4gh.org/#/beacon</a> </p>',
                 '<div class="row">',
                 '<div class="col-md-12"><p><b>Example queries:</b></p>',
-                '<div><p><span><a href="#"  class="loadForm" chrom="13" coordinate="32888799" allele="C" project="PRJEB7217">Chrom:13&nbsp;Coordinate:32888799 &nbsp;Allele:C&nbsp;Project:PRJEB7217 </a></span></p></div>',
-                '<div><p><span><a href="#"  class="loadForm" chrom="1" coordinate="46403" allele="TGT" project="PRJEB4019">Chrom:1&nbsp;Coordinate:46403 &nbsp;Allele:TGT&nbsp;Project:PRJEB4019</a></span></p></div>',
-                '<div><p> <span><a href="#"  class="loadForm" chrom="1" coordinate="1002921" allele="" project="PRJEB4019">Chrom:1&nbsp;Coordinate:1002921 &nbsp;Project:PRJEB4019</a></span></p><hr/></div>',
+                '<div><p> <span><a href="#"  class="loadForm" chrom="11" coordinate="110993" allele="INDEL" project="PRJEB4019">Reference:11&nbsp;Coordinate:110993 &nbsp;Allele:INDEL&nbsp;Project:PRJEB4019</a></span></p></div>',
+                '<div><p><span><a href="#"  class="loadForm" chrom="15" coordinate="20025703" allele="<DEL>" project="PRJEB4019">Reference:15&nbsp;Coordinate:20025703 &nbsp;Allele:&lt;DEL&gt;&nbsp;Project:PRJEB4019 </a></span></p></div>',
+                '<div><p><span><a href="#"  class="loadForm" chrom="15" coordinate="20025703" allele="<DEL>" project="PRJEB5439">Reference:15&nbsp;Coordinate:20025703 &nbsp;Allele:&lt;DEL&gt;&nbsp;Project:PRJEB5439</a></span></p><hr/></div>',
                 '</div>',
                 '</div>',
                 '</div>'
@@ -139,40 +139,44 @@ EvaBeaconForm.prototype = {
 
         this.project =  Ext.create('Ext.form.ComboBox', {
             id: 'beacon-project',
-            fieldLabel: 'Project',
+            fieldLabel: 'Dataset',
             store: this.projectStore,
             queryMode: 'local',
             valueField: 'studyId',
             name: 'beaconProject',
             width:650,
+            labelWidth: 120,
             tpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '<div class="x-boundlist-item">{studyId} - {studyName}</div>', '</tpl>'),
             displayTpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '{studyId} - {studyName}', '</tpl>')
         });
 
         this.chromosome = Ext.create('Ext.form.ComboBox', {
             id: 'beaconChromosome',
-            fieldLabel: 'Chromosome',
+            fieldLabel: 'Reference Name',
             store: this.chromosomeStore,
             queryMode: 'local',
             valueField: 'value',
             displayField: 'text',
             name: 'beaconChromosome',
-            allowBlank: false
+            allowBlank: false,
+            labelWidth: 120
         });
 
         this.coordinate = {
                             xtype: 'textfield',
                             id: 'beaconCoordinate',
                             name: 'beaconCoordinate',
-                            fieldLabel: 'Coordinate',
-                            allowBlank: false
+                            fieldLabel: 'Start',
+                            allowBlank: false,
+                            labelWidth: 120
                           };
         this.allele =     {
                             xtype: 'textfield',
                             id: 'beaconAllele',
                             name: 'beaconAllele',
                             fieldLabel: 'Allele',
-                            allowBlank: true
+                            allowBlank: true,
+                            labelWidth: 120
                           };
         this.formatType = {
                             xtype      : 'radiogroup',
@@ -181,6 +185,7 @@ EvaBeaconForm.prototype = {
                             defaultType: 'radiofield',
                             allowBlank: false,
                             width:300,
+                            labelWidth: 120,
                             defaults: {
                                 flex: 1
                             },
@@ -206,7 +211,7 @@ EvaBeaconForm.prototype = {
             title: 'Result',
             region: 'center',
             height:225,
-            width:530,
+            width:630,
             hidden: true
         };
 
@@ -240,17 +245,18 @@ EvaBeaconForm.prototype = {
                     var form = this.up('form').getForm();
                     if (form.isValid()) {
                         var region =  form.getValues().beaconChromosome+':'+ form.getValues().beaconCoordinate+'::'+form.getValues().beaconAllele;
-                        var params ={studies:form.getValues().beaconProject};
+//                        var params ={studies:form.getValues().beaconProject};
+                        var params ={referenceName:form.getValues().beaconChromosome,start:form.getValues().beaconCoordinate,allele:form.getValues().beaconAllele,datasetIds:form.getValues().beaconProject};
                         var resultPanel = Ext.getCmp('beacon-result-panel');
                         var studyName = Ext.getCmp('beacon-project').getRawValue();
                         EvaManager.get({
-                            category: 'variants',
-                            resource: 'exists',
-                            query:region,
+                            category: 'ga4gh',
+                            resource: 'beacon',
+//                            query:region,
                             params:params,
                             success: function (response) {
                                 try {
-                                    var exists = response.response[0].result[0];
+                                    var exists = response.exists;
                                     var resultTplMarkup;
                                     var cssClass;
                                     if(form.getValues().formatType == 'text'){
@@ -264,12 +270,12 @@ EvaBeaconForm.prototype = {
                                                             '<tr><td>Project</td><td>'+projectName+'</td></tr>'+
                                                             '<tr><td>Chromosome</td><td>'+form.getValues().beaconChromosome+'</td></tr>'+
                                                             '<tr><td>Coordinate</td><td>'+form.getValues().beaconCoordinate+'</td></tr>'+
-                                                            '<tr><td>Allele</td><td>'+form.getValues().beaconAllele+'</td></tr>'+
+                                                            '<tr><td>Allele</td><td>'+_.escape(form.getValues().beaconAllele)+'</td></tr>'+
                                                             '<tr><td>Exist</td><td class="'+cssClass+'">'+exists+'</td></tr>'+
                                                           '</table>'
 
                                     }else{
-                                        resultTplMarkup = {query:{Project:studyName,Chromosome:form.getValues().beaconChromosome,Coordinate:form.getValues().beaconCoordinate,Allele:form.getValues().beaconAllele},Exist:exists};
+                                        resultTplMarkup = {query:{Project:studyName,Chromosome:form.getValues().beaconChromosome,Coordinate:form.getValues().beaconCoordinate,Allele:_.escape(form.getValues().beaconAllele)},Exist:exists};
                                         resultTplMarkup = '<br/>'+JSON.stringify(resultTplMarkup);
                                     }
 

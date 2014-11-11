@@ -35,7 +35,7 @@ function EvaStudyView(args) {
 EvaStudyView.prototype = {
     render: function () {
         var _this = this;
-        $('*').css('cursor','wait');
+//        $('*').css('cursor','wait');
         if(this.type === 'eva'){
             EvaManager.get({
                 category: 'studies',
@@ -79,7 +79,7 @@ EvaStudyView.prototype = {
         var _this = this;
         var el =  document.querySelector("#"+this.target);
         el.innerHTML = '';
-        $('*').css('cursor','default');
+//        $('*').css('cursor','default');
         var elDiv = document.createElement("div");
         $(elDiv).html(content);
         el.appendChild(elDiv);

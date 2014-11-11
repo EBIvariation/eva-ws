@@ -166,7 +166,7 @@ Eva.prototype = {
                     this.studyBrowserPanel  = this._createStudyBrowserPanel(this.contentDiv);
                 }
                 break;
-            case 'VCF Browser'://
+            case 'VCF Browser':
                 if(this.variantWidgetPanel){
                     this.variantWidgetPanel.show();
                 }else{

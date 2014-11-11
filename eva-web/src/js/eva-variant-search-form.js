@@ -110,7 +110,10 @@ EvaVariantSearchForm.prototype = {
                 '<h2> GA4GH Variant Search</h2>',
 //                '<p>Learn more about the Global Alliance for Genomics and Health (GA4GH) at <a href="http://genomicsandhealth.org" target="_blank">http://genomicsandhealth.org</a>as well as the GA4GH Beacon project: <a href="http://ga4gh.org/#/beacon" target="_blank">http://ga4gh.org/#/beacon</a> </p>',
                 '<div class="row">',
-//                '<div class="col-md-12"><p><b>Example queries:</b></p>',
+                '<div class="col-md-12"><p><b>Example queries:</b></p>',
+                '<div><p> <span><a href="#"  class="loadForm"  project="PRJEB4019">DatasetID:PRJEB4019</a></span></p></div>',
+                '<div><p><span><a href="#"  class="loadForm" variantsetid="ERF218634">VariantSetId:ERF218634 </a></span></p></div>',
+                '<div><p><span><a href="#"  class="loadForm" chrom="22" start="25662282" end="25662332">Reference:22&nbsp;Start:25662282 &nbsp;End:25662332&nbsp;</a></span></p><hr/></div>',
                 '</div>',
                 '</div>',
                 '</div>'
@@ -122,14 +125,16 @@ EvaVariantSearchForm.prototype = {
                     fn: function(record,link){
                         _this._resetForm();
                         var project = link.getAttribute('project');
+                        var variantSetId = link.getAttribute('variantsetid');
                         var chrom = link.getAttribute('chrom');
-                        var coordinate = link.getAttribute('coordinate');
-                        var allele = link.getAttribute('allele');
+                        var start = link.getAttribute('start');
+                        var end = link.getAttribute('end');
                         _this.formPanel.getForm().setValues({
                             vSearchProject:project,
+                            vSearchVariantsetId:variantSetId,
                             vSearchChromosome:chrom,
-                            vSearchCoordinate:coordinate,
-                            vSearchAllele:allele
+                            vSearchStart:start,
+                            vSearchEnd:end
                         })
 
                     }
