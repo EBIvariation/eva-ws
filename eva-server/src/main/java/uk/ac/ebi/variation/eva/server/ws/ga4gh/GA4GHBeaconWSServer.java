@@ -40,12 +40,14 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
     @Path("/beacon")
     public Response beacon(@QueryParam("referenceName") String chromosome,
                            @QueryParam("start") Integer start,
-                           @QueryParam("allele") String allele) 
+                           @QueryParam("allele") String allele,
+                           @QueryParam("datasetIds") String studies) 
             throws UnknownHostException, IllegalOpenCGACredentialsException {
         
         if (chromosome == null || chromosome.isEmpty() ||
                 start == null || start < 0 || allele == null) {
-            return createJsonResponse(new GA4GHBeaconResponse(chromosome, start, allele, "Please provide chromosome, positive position and alternate allele"));
+            return createJsonResponse(new GA4GHBeaconResponse(chromosome, start, allele, studies, 
+                    "Please provide chromosome, positive position and alternate allele"));
         }
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens");
@@ -56,11 +58,15 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
         } else {
             queryOptions.put("alternate", allele);
         }
-            
+        
+        if (studies != null && !studies.isEmpty()) {
+            queryOptions.put("studies", Arrays.asList(studies.split(",")));
+        }
+        
         QueryResult queryResult = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
 //        queryResult.setResult(Arrays.asList(queryResult.getNumResults() > 0));
 //        queryResult.setResultType(Boolean.class.getCanonicalName());
-        return createJsonResponse(new GA4GHBeaconResponse(chromosome, start, allele, queryResult.getNumResults() > 0));
+        return createJsonResponse(new GA4GHBeaconResponse(chromosome, start, allele, studies, queryResult.getNumResults() > 0));
     }
     
     class GA4GHBeaconResponse {
@@ -71,21 +77,25 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
         
         private String allele;
         
+        private String datasetIds;
+        
         private boolean exists;
         
         private String errorMessage;
 
-        public GA4GHBeaconResponse(String chromosome, Integer start, String allele, boolean exists) {
+        public GA4GHBeaconResponse(String chromosome, Integer start, String allele, String datasetIds, boolean exists) {
             this.chromosome = chromosome;
             this.start = start;
             this.allele = allele;
+            this.datasetIds = datasetIds;
             this.exists = exists;
         }
 
-        public GA4GHBeaconResponse(String chromosome, Integer start, String allele, String errorMessage) {
+        public GA4GHBeaconResponse(String chromosome, Integer start, String allele, String datasetIds, String errorMessage) {
             this.chromosome = chromosome;
             this.start = start;
             this.allele = allele;
+            this.datasetIds = datasetIds;
             this.errorMessage = errorMessage;
         }
 
@@ -99,6 +109,10 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
 
         public String getAllele() {
             return allele;
+        }
+
+        public String getDatasetIds() {
+            return datasetIds;
         }
 
         public boolean isExists() {
