@@ -227,7 +227,7 @@ EvaClinicalWidgetPanel.prototype = {
             mode: 'accordion',
             target: target,
             submitButtonText: 'Submit',
-            filters: [speciesFilter,positionFilter, studyFilter],
+            filters: [positionFilter, studyFilter],
             width: 300,
 //            height: 1043,
             border: false,
