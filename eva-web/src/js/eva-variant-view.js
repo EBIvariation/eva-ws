@@ -90,15 +90,20 @@ EvaVariantView.prototype = {
                     }
                 },
                 statsTpl : new Ext.XTemplate(
-                    '<table class="ocb-stats-table">' +
+                    '<table class="ocb-stats-table" style="width:300px;">' +
                         '<tr>' +
                         '<td class="header">Minor Allele Frequency:</td>' +
-                        '<td><tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl><tpl if="mafAllele">({mafAllele}) <tpl else></tpl></td>'+
+                        '<td><tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl></td>'+
                         '</tr>',
 //                                 '<tr>' +
 //                                         '<td class="header">Minor Genotype Frequency:</td>' +
 //                                         '<td><tpl if="mgf == -1 || mgf == 0">NA <tpl else>{mgf:number( "0.000" )} </tpl><tpl if="mgfGenotype">({mgfGenotype}) <tpl else></tpl></td>' +
 //                                         '</tr>',
+                    '<tr>' +
+                        '<td class="header">MAF Allele:</td>' +
+                        '<td><tpl if="mafAllele">{mafAllele} <tpl else>NA</tpl></td>' +
+                        '</tr>',
+                    '<tr>'+
                     '<tr>' +
                         '<td class="header">Mendelian Errors:</td>' +
                         '<td><tpl if="mendelianErrors == -1">NA <tpl else>{mendelianErrors}</tpl></td>' +
@@ -173,10 +178,10 @@ EvaVariantView.prototype = {
 
     },
     _renderSummaryData: function (data) {
-            var _summaryTable  = '<div class="row"><div class="col-md-8"><table class="table table-bordered">'
+            var _summaryTable  = '<div class="row"><div class="col-md-8"><table class="table ocb-stats-table">'
             var variantInfoTitle =  document.querySelector("#variantInfo").textContent = data[0].chromosome+':'+data[0].start+':'+data[0].reference+':'+data[0].alternate+' Info';
             if(data[0].id){
-                _summaryTable += '<tr><td>ID</td><td>'+data[0].id+'</td></tr>'
+                _summaryTable += '<tr><td class="header">ID</td><td>'+data[0].id+'</td></tr>'
             }
             var reference = '-';
             var alternate = '-';
@@ -187,12 +192,12 @@ EvaVariantView.prototype = {
             if(data[0].alternate){
                 alternate = data[0].alternate;
             }
-            _summaryTable += '<tr><td>Type</td><td>'+data[0].type+'</td></tr>' +
-                '<tr><td>Chromosome:Start-End</td><td>'+data[0].chromosome+':'+data[0].start+'-'+data[0].end+'</td></tr>' +
-                '<tr><td>Species</td><td>'+this.species+'</td></tr>' +
+            _summaryTable += '<tr><td class="header">Type</td><td>'+data[0].type+'</td></tr>' +
+                '<tr><td class="header">Chromosome:Start-End</td><td>'+data[0].chromosome+':'+data[0].start+'-'+data[0].end+'</td></tr>' +
+                '<tr><td class="header">Species</td><td>'+this.species+'</td></tr>' +
 //                '<tr><td>Assembly</td><td>GRCh37</td></tr>' +
-                '<tr><td>Ref</td><td>'+reference+'</td></tr>' +
-                '<tr><td>Alt</td><td>'+alternate+'</td></tr>' +
+                '<tr><td class="header">Ref</td><td>'+reference+'</td></tr>' +
+                '<tr><td class="header">Alt</td><td>'+alternate+'</td></tr>' +
                 '</table>'
 
             _summaryTable += '</div></div>'
@@ -265,7 +270,7 @@ EvaVariantView.prototype = {
                             '</div>'+
                             '<div id="scroll-able" class="col-sm-11 col-md-11 col-lg-11">'+
                                 '<div id="summary" class="row">'+
-                                    '<div class="col-md-10">'+
+                                    '<div class="col-md-10" style="margin-left:10px;">'+
                                         '<h4 class="variant-view-h4"> Summary</h4>'+
                                         '<div id="summary-grid"></div>'+
                                     '</div>'+

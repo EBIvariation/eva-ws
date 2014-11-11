@@ -136,6 +136,10 @@ Eva.prototype = {
             this.beaconPanel.hide();
         }
 
+        if(this.clinicalWidgetPanel){
+            this.clinicalWidgetPanel.hide();
+        }
+
         $('body').find('.show-div').each(function (index, el) {
             $(el).removeClass('show-div');
             $(el).addClass('hide-div');
@@ -189,6 +193,15 @@ Eva.prototype = {
                     this.beaconPanel  = this._createBeaconPanel(this.contentDiv);
                 }
                 break;
+
+            case 'Clinical':
+                if(this.clinicalWidgetPanel){
+                    this.clinicalWidgetPanel.show();
+                }else{
+                    this.clinicalWidgetPanel = this._createClinicalWidgetPanel(this.contentDiv);
+                    this.clinicalWidgetPanel.formPanelVariantFilter.trigger('submit', {values: this.clinicalWidgetPanel.formPanelVariantFilter.getValues(), sender: _this});
+                }
+                break;
         }
     },
     _createEvaMenu: function (target) {
@@ -233,6 +246,14 @@ Eva.prototype = {
         });
         evaBeacon.draw();
         return evaBeacon;
+
+    },
+    _createClinicalWidgetPanel: function(target){
+        var evaClinicalWidgetPanel = new EvaClinicalWidgetPanel({
+            target: target
+        });
+        evaClinicalWidgetPanel.draw();
+        return evaClinicalWidgetPanel;
 
     },
     _twitterWidgetUpdate : function (){

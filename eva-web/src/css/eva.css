@@ -118,13 +118,13 @@ div#local-masthead{
 }
 
 
-.eva .form-panel-variant-filter-div {
+.eva .form-panel-variant-filter-div, .eva .form-panel-clinical-filter-div{
     width: 300px;
     float: left;
     overflow: hidden;
 }
 
-.eva .variant-widget-div {
+.eva .variant-widget-div, .eva .clinical-widget-div{
     margin-left: 10px;
     width: 1020px;
     float: left;
@@ -491,6 +491,8 @@ h4{
     background-color:#5f9796;
     border-color:#5f9796;
 }
+
+
 
 
 
