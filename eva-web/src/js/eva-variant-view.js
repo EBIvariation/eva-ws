@@ -84,6 +84,7 @@ EvaVariantView.prototype = {
             var _this = this;
             var variantStatsPanel = new VariantStatsPanel({
                 target: data,
+                height:'',
                 handlers: {
                     "load:finish": function (e) {
 //                    _this.grid.setLoading(false);
