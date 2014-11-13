@@ -52,6 +52,10 @@ module.exports = function (grunt) {
                     'src/js/eva-beacon-form.js',
                     'src/js/eva-variant-search-form.js',
                     'src/js/eva-species-filter-form-panel.js',
+                    'src/js/clinvar/eva-clinical-widget-panel.js',
+                    'src/js/clinvar/eva-clinvar-widget.js',
+                    'src/js/clinvar/eva-clinvar-browser-grid.js',
+                    'src/js/clinvar/eva-clinvar-position-filter-form-panel.js',
 //                    'src/js/eva-submission-form.js',
                     'src/js/eva.js'
                 ],
@@ -122,6 +126,7 @@ module.exports = function (grunt) {
                     {   expand: true, src: ['vendor/ext-*/**'], dest: 'build/<%= meta.version.eva %>'},
                     {   expand: true, src: ['vendor/highcharts-4.0.3/**'], dest: 'build/<%= meta.version.eva %>'},
                     {   expand: true, src: ['vendor/platform-0.4.1/**'], dest: 'build/<%= meta.version.eva %>'},
+                    {   expand: true, src: ['vendor/vkbeautify/**'], dest: 'build/<%= meta.version.eva %>'},
                     {   expand: true, src: ['src/js/browser-detect.js'], dest: 'build/<%= meta.version.eva %>/js',flatten: true},
                     {   expand: true, src: ['src/js/ebi-web-guidelines/*'], dest: 'build/<%= meta.version.eva %>/js/ebi-web-guidelines',flatten: true}
                 ]
@@ -156,7 +161,8 @@ module.exports = function (grunt) {
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.sha1.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/purl.min.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.qtip.min.js',
-                            'build/<%= meta.version.eva %>/vendor/highcharts-4.0.3/js/highcharts.js'
+                            'build/<%= meta.version.eva %>/vendor/highcharts-4.0.3/js/highcharts.js',
+                            'build/<%= meta.version.eva %>/vendor/vkbeautify/vkbeautify.0.99.00.beta.js'
 
                         ],
 //                        'platform': [

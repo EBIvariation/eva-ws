@@ -230,7 +230,7 @@ EvaVariantSearchForm.prototype = {
             fieldLabel: 'Start',
             allowBlank: false,
             labelWidth: 120,
-            regex: /^[1-9]+$/
+            regex: /^[1-9]/
           };
 
         this.end = {
@@ -240,7 +240,7 @@ EvaVariantSearchForm.prototype = {
             fieldLabel: 'End',
             allowBlank: false,
             labelWidth: 120,
-            regex: /^[1-9]+$/
+            regex: /^[1-9]/
            };
 
 
