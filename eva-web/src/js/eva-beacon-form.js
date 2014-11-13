@@ -168,7 +168,8 @@ EvaBeaconForm.prototype = {
                             name: 'beaconCoordinate',
                             fieldLabel: 'Start',
                             allowBlank: false,
-                            labelWidth: 120
+                            labelWidth: 120,
+                            regex: /^[1-9]+$/
                           };
         this.allele =     {
                             xtype: 'textfield',
@@ -273,14 +274,20 @@ EvaBeaconForm.prototype = {
                                                             '<tr><td>Allele</td><td>'+_.escape(form.getValues().beaconAllele)+'</td></tr>'+
                                                             '<tr><td>Exist</td><td class="'+cssClass+'">'+exists+'</td></tr>'+
                                                           '</table>'
-
+                                        resultPanel.setHeight(225);
+                                        resultPanel.setWidth(630);
                                     }else{
+                                        console.log()
                                         resultTplMarkup = {query:{Project:studyName,Chromosome:form.getValues().beaconChromosome,Coordinate:form.getValues().beaconCoordinate,Allele:_.escape(form.getValues().beaconAllele)},Exist:exists};
-                                        resultTplMarkup = '<br/>'+JSON.stringify(resultTplMarkup);
+                                        resultTplMarkup = '<br/><pre><code>'+vkbeautify.json(resultTplMarkup)+'</code></pre>';
+//                                        resultTplMarkup = '<br/>'+JSON.stringify(resultTplMarkup);
+                                        resultPanel.setHeight(300);
+                                        resultPanel.setWidth(900);
                                     }
 
                                     resultPanel.setVisible(true);
                                     resultPanel.update(resultTplMarkup);
+
                                 } catch (e) {
                                     console.log(e);
                                 }

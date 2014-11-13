@@ -83,12 +83,12 @@ EvaBeaconPanel.prototype = {
                     {
                         title: 'Beacon',
                         items:[evaBeaconForm.getPanel()],
-                        height:700
+                        height:1200
                     },
                     {
                         title: 'Variant Search',
                         items:[evaVariantSearchForm.getPanel()],
-                        height:700
+                        height:1200
                     }
                 ]
             });

@@ -63,9 +63,9 @@ EvaClinicalWidgetPanel.prototype = {
         this.formPanelVariantFilter = this._createFormPanelVariantFilter(this.formPanelVariantFilterDiv);
         this.formPanelVariantFilter.draw();
 
-        this.variantWidgetDiv = document.querySelector('.clinical-widget-div');
-        this.variantWidget = this._createVariantWidget(this.variantWidgetDiv);
-        this.variantWidget.draw();
+        this.clinvarWidgetDiv = document.querySelector('.clinical-widget-div');
+        this.clinvarWidget = this._createClinVarWidget(this.clinvarWidgetDiv);
+        this.clinvarWidget.draw();
     },
     show: function () {
         this.panel.show()
@@ -100,9 +100,9 @@ EvaClinicalWidgetPanel.prototype = {
 
         return  this.panel;
     },
-    _createVariantWidget: function (target) {
+    _createClinVarWidget: function (target) {
 //        var width = this.width - parseInt(this.div.style.paddingLeft) - parseInt(this.div.style.paddingRight);
-        var evaVariantWidget = new EvaVariantWidget({
+        var evaClinVarWidget = new EvaClinVarWidget({
             width: 1020,
             target: target,
             headerConfig: {
@@ -111,7 +111,7 @@ EvaClinicalWidgetPanel.prototype = {
             border: true,
             browserGridConfig: {
 //                title: 'VCF Browser <span class="assembly">Assembly:GRCh37</span>',
-                title: 'VCF Browser',
+                title: 'ClinVar Browser',
                 border: true
             },
             toolPanelConfig: {
@@ -146,75 +146,15 @@ EvaClinicalWidgetPanel.prototype = {
             }
         }); //the div must exist
 
-        return evaVariantWidget;
+        return evaClinVarWidget;
     },
     _createFormPanelVariantFilter: function (target) {
         var _this = this;
-        var positionFilter = new PositionFilterFormPanel({
+        var positionFilter = new ClinVarPositionFilterFormPanel({
 //            testRegion: '1:14000-200000',
-            testRegion: '1:3000760-3000790',
+            testRegion: '3:550000-1166666',
             emptyText: ''
 
-        });
-
-        var speciesFilter = new SpeciesFilterFormPanel({});
-
-
-        this.studiesStore = Ext.create('Ext.data.Store', {
-            pageSize: 50,
-            proxy: {
-                type: 'memory'
-            },
-            fields: [
-                {name: 'studyName', type: 'string'},
-                {name: 'studyId', type: 'string'}
-            ],
-            autoLoad: false
-        });
-
-        var studyFilter = new StudyFilterFormPanel({
-            collapsed: false,
-            height: 550,
-            studiesStore: this.studiesStore,
-            studyFilterTpl:'<tpl><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div></tpl>'
-        });
-
-        _this._loadListStudies(studyFilter, '');
-
-        speciesFilter.on('species:change', function (e) {
-            _this._loadListStudies(studyFilter, e.species);
-
-            EvaManager.get({
-                category: 'meta/studies',
-                resource: 'list',
-                params:{species:e.species},
-                success: function (response) {
-                    try {
-                        projects = response.response[0].result;
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-            });
-
-        });
-
-
-
-        var conseqType = new ConsequenceTypeFilterFormPanel({
-            consequenceTypes: consequenceTypes,
-            collapsed: true,
-            fields: [
-                {name: 'name', type: 'string'}
-            ],
-            columns: [
-                {
-                    xtype: 'treecolumn',
-                    flex: 1,
-                    sortable: false,
-                    dataIndex: 'name'
-                }
-            ]
         });
 
 
@@ -227,14 +167,15 @@ EvaClinicalWidgetPanel.prototype = {
             mode: 'accordion',
             target: target,
             submitButtonText: 'Submit',
-            filters: [positionFilter, studyFilter],
+            filters: [positionFilter],
             width: 300,
 //            height: 1043,
             border: false,
             handlers: {
                 'submit': function (e) {
-                    console.log(e.values);
-                    _this.variantWidget.setLoading(true);
+                    console.log( e.values);
+                    console.log( '+++');
+//                    _this.clinvarWidget.setLoading(true);
                     //POSITION CHECK
                     var regions = [];
                     if (typeof e.values.region !== 'undefined') {
@@ -245,7 +186,7 @@ EvaClinicalWidgetPanel.prototype = {
                     }
                     if (typeof e.values.gene !== 'undefined') {
                         CellBaseManager.get({
-                            species: e.values.species,
+                            species: 'hsapiens',
                             category: 'feature',
                             subCategory: 'gene',
                             query: e.values.gene.toUpperCase(),
@@ -267,33 +208,7 @@ EvaClinicalWidgetPanel.prototype = {
                         delete  e.values.gene;
                     }
 
-                    if (typeof e.values.snp !== 'undefined') {
-                        CellBaseManager.get({
-                            species: e.values.species,
-                            category: 'feature',
-                            subCategory: 'snp',
-                            query: e.values.snp,
-                            resource: "info",
-                            async: false,
-                            params: {
-                                include: 'chromosome,start,end'
-                            },
-                            success: function (data) {
-                                for (var i = 0; i < data.response.length; i++) {
-                                    var queryResult = data.response[i];
-                                    var region = new Region(queryResult.result[0]);
-                                    var fields2 = (""+region).split(/[:-]/);
-                                    if(parseInt(fields2[1]) > parseInt(fields2[2])) {
-                                        var swap = fields2[1];
-                                        region.start = fields2[2];
-                                        region.end = swap;
-                                    }
-                                    regions.push(region.toString());
-                                }
-                            }
-                        });
-                        delete  e.values.snp;
-                    }
+
 
 
                     //CONSEQUENCE TYPES CHECK
@@ -309,66 +224,37 @@ EvaClinicalWidgetPanel.prototype = {
                     }
 
                     var url = EvaManager.url({
-                        category: 'segments',
-                        resource: 'variants',
+                        host:'http://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
+                        version:'v3',
+                        category: 'hsapiens/genomic/region',
+                        resource: 'clinvar',
                         query: regions,
                         params:{merge:true}
                     });
 
-                    if(e.values.studies){
-                        e.values.studies = e.values.studies.join(',');
+                    if (typeof e.values.accessionId !== 'undefined') {
+                        regions = e.values.accessionId;
+                         url = EvaManager.url({
+                            host:'http://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
+                            version:'v3',
+                            category: 'hsapiens/feature/clinvar',
+                            resource: 'info',
+                            query: regions,
+                            params:{merge:true}
+                        });
                     }
 
-                    _this.variantWidget.retrieveData(url, e.values)
-
-                    var updateTpl = Ext.create('Ext.XTemplate', '<tpl if="id"><a href="?variant={chromosome}:{start}:{reference}:{alternate}&species='+ e.values.species+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;' +
-                        '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
-                        '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>' +
-                        '<tpl else><a href="?variant={chromosome}:{start}:{reference}:{alternate}&species='+ e.values.species+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>');
-                    Ext.getCmp('variant-grid-view-column').tpl = updateTpl;
+                    _this.clinvarWidget.retrieveData(url, e.values)
                 }
             }
         });
 
 
-        _this.on('studies:change', function (e) {
-            _this.formPanelVariantFilter.trigger('submit', {values: _this.formPanelVariantFilter.getValues(), sender: _this});
-        });
 
-
-
-//        formPanel.panel.addDocked({
-//                                    xtype: 'toolbar',
-//                                    dock: 'top',
-//                                    height: 45,
-//                                    html: '<h5>Assembly: GRCh37</h5>',
-//                                    margin:-10
-//                                });
 
         return formPanel;
-    },
-    _loadListStudies: function (filter, species) {
-        var _this = this;
-        var studies = [];
-        EvaManager.get({
-            category: 'meta/studies',
-            resource: 'list',
-            params:{species:species},
-            success: function (response) {
-                try {
-                    studies = response.response[0].result;
-                } catch (e) {
-                    console.log(e);
-                }
-                filter.studiesStore.loadRawData(studies);
-                //set all records checked default
-                filter.studiesStore.each(function(rec){
-                    rec.set('uiactive', true)
-                })
-                _this.trigger('studies:change', {studies: studies, sender: _this});
-            }
-        });
     }
+
 
 };
 
