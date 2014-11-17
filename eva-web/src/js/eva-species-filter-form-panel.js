@@ -73,7 +73,7 @@ SpeciesFilterFormPanel.prototype = {
 
         var speciesFormField  =  Ext.create('Ext.form.ComboBox', {
             fieldLabel: 'Select Species',
-            id:'species',
+//            id:'species',
             name:'species',
             labelAlign: 'top',
             store: speciesStore,
@@ -82,14 +82,15 @@ SpeciesFilterFormPanel.prototype = {
             valueField: 'value',
             width: '100%',
             listeners: {
+                afterrender: function (field) {
+                    field.setValue('hsapiens');
+                },
                 change: function (field, newValue, oldValue) {
                     _this.trigger('species:change', {species: newValue, sender: _this});
                 }
 
             }
         });
-
-        Ext.getCmp("species").setValue('hsapiens');
 
         return Ext.create('Ext.form.Panel', {
             bodyPadding: "5",
