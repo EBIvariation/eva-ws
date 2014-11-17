@@ -136,25 +136,26 @@ div#local-masthead{
     width: 1320px;
     /*overflow: hidden;*/
 }
-
 .eva .form-panel-genome-filter-div {
     width: 300px;
     float:left;
-    margin-top:-40px;
-    /*position: relative;*/
+    z-index: 10;
+    margin-left:-5px;
+    position: absolute;
     /*border: 1px solid #d3d3d3;*/
     /*margin-bottom: 10px;*/
 }
-
 .eva .genome-viewer-div {
     font-size: 12px;
-    width: 1020px;
+    width: 1325px;
     float: right;
     border: 1px solid #d3d3d3;
+    /*position: absolute;*/
 }
 
 .eva .genome-viewer-title-div {
     /*margin: 15px 0 10px 0;*/
+    float:right;
 }
 
 .eva .tracks-title-div {
@@ -232,7 +233,6 @@ div#local-masthead{
     margin-bottom: 0px;
     border: none;
 }
-
 
 .ocb-attributes-table {
     cellspacing: 0;
@@ -492,6 +492,9 @@ h4{
     border-color:#5f9796;
 }
 
+.eva .x-tool-img{
+    background-image: url("../img/tool-sprites-dark.png");
+}
 
 
 

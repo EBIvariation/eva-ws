@@ -60,10 +60,6 @@ EvaGenomeViewerPanel.prototype = {
         this.genomeViewerPanelDiv = document.querySelector('#genome-viewer');
 
 
-        this.formPanelGenomeFilterDiv = document.createElement('div');
-        $(this.formPanelGenomeFilterDiv).addClass('form-panel-genome-filter-div');
-        this.genomeViewerPanelDiv.appendChild(this.formPanelGenomeFilterDiv);
-
         this.genomeViewerDiv = document.createElement('div');
         $(this.genomeViewerDiv).addClass('genome-viewer-div');
         this.genomeViewerPanelDiv.appendChild(this.genomeViewerDiv);
@@ -78,14 +74,15 @@ EvaGenomeViewerPanel.prototype = {
         this.genomeViewerPanelDiv.appendChild(this.genomeViewerDiv);
 
         this.genomeViewer = this._createGenomeViewer(this.genomeViewerDiv);
+        this.formPanelGenomeFilterDiv = document.createElement('div');
+        $(this.formPanelGenomeFilterDiv).addClass('form-panel-genome-filter-div');
+        this.genomeViewerPanelDiv.appendChild(this.formPanelGenomeFilterDiv);
         this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
         this.genomeViewerPanelDiv.appendChild(this.formPanelGenomeFilterDiv);
 //        this.panel = this._createPanel();
 
         this.genomeViewer.draw();
         this.formPanelGenomeFilter.draw();
-
-
     },
     show: function () {
         this.panel.show()
@@ -105,12 +102,12 @@ EvaGenomeViewerPanel.prototype = {
         var view = Ext.create('Ext.view.View', {
             tpl: tpl
         });
-
         this.panel = Ext.create('Ext.panel.Panel', {
             layout: {
                 type: 'vbox',
-                align: 'center',
+                align: 'center'
             },
+            border:true,
             overflowX:'auto',
             height:1200,
             items: [view],
@@ -123,6 +120,9 @@ EvaGenomeViewerPanel.prototype = {
     _createFormPanelGenomeFilter: function (target) {
         var _this = this;
         var positionFilter = new PositionFilterFormPanel();
+
+        var speciesFilter = new SpeciesFilterFormPanel({});
+
         this.studiesStore = Ext.create('Ext.data.Store', {
             pageSize: 50,
             proxy: {
@@ -134,10 +134,29 @@ EvaGenomeViewerPanel.prototype = {
             ],
             autoLoad: false
         });
+
         var studyFilter = new StudyFilterFormPanel({
             studiesStore: this.studiesStore,
             height: 500,
             studyFilterTpl:'<tpl><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div></tpl>'
+
+        });
+
+        speciesFilter.on('species:change', function (e) {
+            _this._loadListStudies(studyFilter, e.species);
+
+            EvaManager.get({
+                category: 'meta/studies',
+                resource: 'list',
+                params:{species:e.species},
+                success: function (response) {
+                    try {
+                        projects = response.response[0].result;
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }
+            });
 
         });
 
@@ -172,10 +191,10 @@ EvaGenomeViewerPanel.prototype = {
                 baseCls: 'eva-header-1'
             },
             submitButtonText: 'Add',
-            collapsible: false,
+            collapsible: true,
             titleCollapse: false,
             target: target,
-            filters: [studyFilter],
+            filters: [speciesFilter,studyFilter],
 //            width: 300,
 //            height:600,
             mode: 'accordion',
@@ -192,6 +211,9 @@ EvaGenomeViewerPanel.prototype = {
                 }
             }
         });
+
+        formPanel.panel.collapse();
+
         return formPanel;
     },
     _addGenomeBrowserTrack: function (title, params) {
@@ -272,11 +294,12 @@ EvaGenomeViewerPanel.prototype = {
             end: 32889611
         });
         var genomeViewer = new GenomeViewer({
+            cellBaseHost:'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
             sidePanel: false,
             target: target,
             border: false,
             resizable: true,
-            width: 1020,
+            width: 1320,
             region: region,
             // trackListTitle: '',
             drawNavigationBar: true,
@@ -314,6 +337,8 @@ EvaGenomeViewerPanel.prototype = {
                 console.log(event)
             }
         });
+
+
         var geneOverview = new FeatureTrack({
             // title: 'Gene overview',
             minHistogramRegionSize: 20000000,
@@ -389,12 +414,13 @@ EvaGenomeViewerPanel.prototype = {
         genomeViewer.addTrack([sequence, gene, snp]);
         return genomeViewer;
     },
-    _loadListStudies: function (filter) {
+    _loadListStudies: function (filter,species) {
         var _this = this;
         var studies = [];
         EvaManager.get({
             category: 'meta/studies',
             resource: 'list',
+            params:{species:species},
             success: function (response) {
                 try {
                     studies = response.response[0].result;

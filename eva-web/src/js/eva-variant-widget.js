@@ -513,6 +513,7 @@ EvaVariantWidget.prototype = {
         });
 
         var genomeViewer = new GenomeViewer({
+            cellBaseHost:'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
             sidePanel: false,
             target: target,
             border: false,
