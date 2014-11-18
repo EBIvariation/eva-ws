@@ -151,7 +151,7 @@ Eva.prototype = {
 //            this.div.appendChild(this.childDivMenuMap[option]);
         }
 
-        var pageArray = ['eva-study','dgva-study', 'variant'];
+        var pageArray = ['eva-study','dgva-study', 'variant', 'Genome Browser'];
         if(_.indexOf(pageArray, option) < 0 && !_.isEmpty(option)  ){
             var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?'+option;
             window.history.pushState({path:newurl},'',newurl);
@@ -234,7 +234,8 @@ Eva.prototype = {
     },
     _createGenomeViewerPanel: function(target){
         var genomeViewer = new EvaGenomeViewerPanel({
-            target: target
+            target: target,
+            position:$.urlParam('position')
         });
         genomeViewer.draw();
         return genomeViewer;

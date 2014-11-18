@@ -257,7 +257,7 @@ EvaClinVarWidget.prototype = {
                 {
                     text: 'Description',
                     dataIndex: 'description',
-                    flex: 0.7
+                    flex: 0.8
                 },
                 {
                     text: "Trait",
@@ -275,6 +275,14 @@ EvaClinVarWidget.prototype = {
                     flex: 0.7
                 },
                 {
+                    text: "Gene",
+//                    dataIndex: 'accession',
+                    id:'clinvar-grid-gene-column',
+                    xtype: "templatecolumn",
+                    tpl: '<tpl></tpl>',
+                    flex: 0.5
+                },
+                {
                     text: "Xrefs",
                     flex: 1,
                     textAlign: 'center',
@@ -289,7 +297,15 @@ EvaClinVarWidget.prototype = {
                             dataIndex: "xref_db"
                         }
                     ]
+                },
+                {
+                    text: "View",
+                    id:'clinvar-grid-view-column',
+                    xtype: "templatecolumn",
+                    tpl: '<tpl></tpl>',
+                    flex: 1.2
                 }
+
             ],
             defaults: {
                 textAlign: 'center',
@@ -309,20 +325,6 @@ EvaClinVarWidget.prototype = {
             {name: 'xref_db', mapping: 'clinVarAssertion[0].observedIn[0].xref[0].db', type: 'string' }
         ];
 
-//      var listeners =  {
-//            expandbody : function( expander, record, body, rowIndex ) {
-//                files = record.data.files;
-//                var content = '';
-//                for (var key in files) {
-//                    content +='<div style="padding: 2px 2px 2px 15px; width:800px;"><b>'+files[key].studyId+'</b>: '+files[key].attributes.src+'</div>';
-//                }
-//                body.innerHTML =content;
-//            }
-//        };
-//        var plugins =  [{
-//                        ptype: 'rowexpander',
-//                        rowBodyTpl : new Ext.XTemplate()
-//                     }];
 
         var clinvarBrowserGrid = new ClinvarBrowserGrid({
             title: this.browserGridConfig.title,
@@ -337,20 +339,7 @@ EvaClinVarWidget.prototype = {
             attributes: attributes,
             columns:columns,
             samples: this.samples,
-            headerConfig: this.headerConfig,
-//            plugins:plugins,
-            handlers: {
-                "variant:change": function (e) {
-                    _this.lastVariant = e.args;
-                    _this.trigger('variant:change', {variant: _this.lastVariant, sender: _this});
-                },
-                "variant:clear": function (e) {
-                    //_this.lastVariant = e.args;
-                    _this.trigger('variant:clear', {sender: _this});
-                }
-            },
-//            viewConfigListeners:listeners
-
+            headerConfig: this.headerConfig
         });
         return clinvarBrowserGrid;
     },

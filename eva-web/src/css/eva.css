@@ -129,6 +129,9 @@ div#local-masthead{
     width: 1020px;
     float: left;
 }
+.eva .clinical-widget-div .x-column-header-inner,.eva .variant-widget-div .x-column-header-inner {
+    text-align: center;
+}
 
 
 .eva .genome-browser-option-div {

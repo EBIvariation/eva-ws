@@ -144,7 +144,7 @@ EvaClinicalWidgetPanel.prototype = {
                     }
                 }
             }
-        }); //the div must exist
+        });
 
         return evaClinVarWidget;
     },
@@ -173,8 +173,6 @@ EvaClinicalWidgetPanel.prototype = {
             border: false,
             handlers: {
                 'submit': function (e) {
-                    console.log( e.values);
-                    console.log( '+++');
 //                    _this.clinvarWidget.setLoading(true);
                     //POSITION CHECK
                     var regions = [];
@@ -184,8 +182,10 @@ EvaClinicalWidgetPanel.prototype = {
                         }
                         delete  e.values.region;
                     }
+                    var gene = e.values.gene;
                     if (typeof e.values.gene !== 'undefined') {
                         CellBaseManager.get({
+                            host:'http://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
                             species: 'hsapiens',
                             category: 'feature',
                             subCategory: 'gene',
@@ -220,8 +220,12 @@ EvaClinicalWidgetPanel.prototype = {
 
 
                     if (regions.length > 0) {
-                        e.values['region'] = regions.join(',');
+//                       e.values['region'] = regions.join(',');
+                         e.values['region'] = _.last(regions);
+                        regions = _.last(regions);
                     }
+
+
 
                     var url = EvaManager.url({
                         host:'http://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
@@ -245,6 +249,17 @@ EvaClinicalWidgetPanel.prototype = {
                     }
 
                     _this.clinvarWidget.retrieveData(url, e.values)
+                     var geneColumn = Ext.getCmp('clinvar-grid-gene-column');
+                     var viewColumn = Ext.getCmp('clinvar-grid-view-column');
+                     viewColumn.tpl =  Ext.create('Ext.XTemplate', '<tpl><a href="?Genome Browser&position='+ regions+'" target="_blank">Genome Viewer</a></tpl>')
+                    if(!_.isUndefined(gene)){
+                        var updateTpl = Ext.create('Ext.XTemplate', '<tpl>'+gene+'</tpl>');
+                        geneColumn.tpl = updateTpl;
+                        geneColumn.setVisible(true);
+                    }else{
+                        geneColumn.setVisible(false);
+                    }
+
                 }
             }
         });

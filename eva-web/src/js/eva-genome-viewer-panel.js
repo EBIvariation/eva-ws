@@ -26,6 +26,7 @@ function EvaGenomeViewerPanel(args) {
     this.id = Utils.genId("GenomeViewerPanel");
     this.target;
     this.tools = [];
+    this.position = '13:32889547-32889675';
     _.extend(this, args);
     this.rendered = false;
     if (this.autoRender) {
@@ -288,11 +289,22 @@ EvaGenomeViewerPanel.prototype = {
     },
     _createGenomeViewer: function (target) {
         var _this = this;
-        var region = new Region({
-            chromosome: "13",
-            start: 32889611,
-            end: 32889611
-        });
+
+        if(this.position){
+            var position = this._getRegion(this.position);
+            var region = new Region(position);
+        }else{
+            var region = new Region({
+                chromosome: "13",
+                start: 32889611,
+                end: 32889611
+            });
+
+
+        }
+
+
+
         var genomeViewer = new GenomeViewer({
             cellBaseHost:'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
             sidePanel: false,
@@ -431,6 +443,15 @@ EvaGenomeViewerPanel.prototype = {
                 _this.trigger('studies:change', {studies: studies, sender: _this});
             }
         });
+    },
+    _getRegion: function (value) {
+        var _this = this;
+        var temp = value.split(":");
+        var region = {chromosome:temp[0]};
+        var temp_position =  temp[1].split("-");
+        _.extend(region, {start: temp_position[0],end:temp_position[1]});
+
+        return region;
     }
 
 
