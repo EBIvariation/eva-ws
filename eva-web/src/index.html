@@ -401,13 +401,14 @@
             <div id="api" class="hide-div">
                 <h2>API</h2>
                 <div>
-                    <h3>The general structure of a EVA RESTful web service URL is:</h3><p><a href="http://www.ebi.ac.uk/eva/webservices/rest/{version}/{category}/IDs/{resource}?{filters}" target="#">http://www.ebi.ac.uk/eva/webservices/rest/{version}/{category}/IDs/{resource}?{filters}</a></p>
-                   <h3>Where:</h3>
-                    <p><i>   * <span class="api-span">version</span>: indicates the version of the API, this defines the available filters and JSON schema to be returned. Currently there is only version 'v1'.
+                    <h3>The general structure of a EVA RESTful web service URL is:</h3><p><a href="#">http://www.ebi.ac.uk/eva/webservices/rest/{version}/{category}/IDs/{resource}?{filters}</a></p>
+                    <h3>Where:</h3>
+                    <p>
+                       * <span class="api-span">version</span>: indicates the version of the API, this defines the available filters and JSON schema to be returned. Currently there is only version 'v1'.
                        <br/> * <span class="api-span">category</span>: this defines what objects we want to query. Currently there are five different categories: variants, segments, genes, files and studies.
                        <br/> * <span class="api-span">resource</span>: specifies the resource to be returned, therefore the JSON data model.
                        <br/> * <span class="api-span">filters</span>: each specific endpoint allows different filters.
-                   </i></p>
+                    </p>
                     <div>
                         <p>RESTfull web services have been implemented using GET protocol since only queries are allowed so far. Several IDs can be concatenated using comma as separator.<br/>For more detailed information about the API and filters you can visit the Swagger documentation at ...</p>
                     </div>
