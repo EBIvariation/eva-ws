@@ -81,7 +81,7 @@ EvaVariantWidgetPanel.prototype = {
         }
     },
     _createPanel: function () {
-        var tpl = new Ext.XTemplate(['<div  id="variant-widget" class="variant-browser-option-div form-panel-variant-filter-div"></div><div  id="variant-widget1" class="variant-browser-option-div variant-widget-div"></div>']);
+        var tpl = new Ext.XTemplate(['<div class="variant-browser-option-div form-panel-variant-filter-div"></div><div class="variant-browser-option-div variant-widget-div"></div>']);
         var view = Ext.create('Ext.view.View', {
             tpl: tpl
         });
