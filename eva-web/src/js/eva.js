@@ -151,9 +151,18 @@ Eva.prototype = {
 //            this.div.appendChild(this.childDivMenuMap[option]);
         }
 
-        var pageArray = ['eva-study','dgva-study', 'variant', 'Genome Browser'];
+        var pageArray = ['eva-study','dgva-study', 'variant'];
         if(_.indexOf(pageArray, option) < 0 && !_.isEmpty(option)  ){
-            var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?'+option;
+            var optionValue = option;
+            if(option == 'Genome Browser'){
+                var hash = document.URL.substring(document.URL.indexOf('?')+1);
+                if  (!_.isUndefined(hash.split("&")[1])){
+                    optionValue = hash;
+                }else{
+                    optionValue = option;
+                }
+            }
+            var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?'+optionValue;
             window.history.pushState({path:newurl},'',newurl);
             $( "a:contains('"+option+"')").parent('li').addClass('active');
         }
