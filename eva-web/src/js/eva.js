@@ -151,10 +151,12 @@ Eva.prototype = {
 //            this.div.appendChild(this.childDivMenuMap[option]);
         }
 
+        //<!---- Updating URL on Tab change ---->
         var pageArray = ['eva-study','dgva-study', 'variant'];
         if(_.indexOf(pageArray, option) < 0 && !_.isEmpty(option)  ){
             var optionValue = option;
-            if(option == 'Genome Browser'){
+            var tabArray = ['Genome Browser'];
+            if(_.indexOf(tabArray, option) >= 0){
                 var hash = document.URL.substring(document.URL.indexOf('?')+1);
                 if  (!_.isUndefined(hash.split("&")[1])){
                     optionValue = hash;
