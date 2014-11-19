@@ -321,7 +321,7 @@ EvaGenomeViewerPanel.prototype = {
             overviewZoomMultiplier: 50,
             navigationBarConfig: {
                 componentsConfig: {
-                    leftSideButton: true,
+                    leftSideButton: false,
                     restoreDefaultRegionButton: false,
                     regionHistoryButton: false,
                     speciesButton: false,
@@ -332,10 +332,11 @@ EvaGenomeViewerPanel.prototype = {
                     // zoomControl: false,
                     windowSizeControl: false,
                     // positionControl: false,
-                    // moveControl: false,
-                    // autoheightButton: false,
+                    moveControl: false,
+                    autoheightButton: false,
                     // compactButton: false,
                     // searchControl: false
+
                 }
             }
         }); //the div must exist
