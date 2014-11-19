@@ -96,7 +96,7 @@
                         <li><a>Clinical</a></li>
                         <li><a>GA4GH</a></li>
                         <li><a>Genome Browser</a></li>
-                        <!--<li><a>API</a></li>-->
+                        <li><a>API</a></li>
                         <li><a>About</a></li>
                         <li><a>Contact</a></li>
                     </ul>
@@ -398,6 +398,41 @@
                     <p dir="ltr">These guidlines are also avaialble in <a href="files/EVA_VCF_1.0.pdf" target="_blank">PDF format.</a> For any additional support, please contact us at <a href="mailto:eva-helpdesk@ebi.ac.uk">eva-helpdesk@ebi.ac.uk</a>.</p>
                 </div>
             </div>
+            <div id="api" class="hide-div">
+                <h2>API</h2>
+                <div>
+                    <h3>The general structure of a EVA RESTful web service URL is:</h3><p><a href="http://www.ebi.ac.uk/eva/webservices/rest/{version}/{category}/IDs/{resource}?{filters}" target="#">http://www.ebi.ac.uk/eva/webservices/rest/{version}/{category}/IDs/{resource}?{filters}</a></p>
+                   <h3>Where:</h3>
+                    <p><i>   * <span class="api-span">version</span>: indicates the version of the API, this defines the available filters and JSON schema to be returned. Currently there is only version 'v1'.
+                       <br/> * <span class="api-span">category</span>: this defines what objects we want to query. Currently there are five different categories: variants, segments, genes, files and studies.
+                       <br/> * <span class="api-span">resource</span>: specifies the resource to be returned, therefore the JSON data model.
+                       <br/> * <span class="api-span">filters</span>: each specific endpoint allows different filters.
+                   </i></p>
+                    <div>
+                        <p>RESTfull web services have been implemented using GET protocol since only queries are allowed so far. Several IDs can be concatenated using comma as separator.<br/>For more detailed information about the API and filters you can visit the Swagger documentation at ...</p>
+                    </div>
+                    <div>
+                        <h3>Some example of queries include:</h3>
+                        <p>* To fetch all the variants in a segment region:
+                        <br/> <a href="http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/segments/11:128446-128446/variants" target="_blank">http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/segments/11:128446-128446/variants</a></p>
+
+                        <p><br/> * To fetch all the info of a variant:
+                        <br/> <a href="http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/variants/rs666/info" target="_blank">http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/variants/rs666/info</a></p>
+
+                        <p><br/> * To fetch all the Short Genetics Variations studies:
+                        <br/> <a href="http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/all" target="_blank">http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/all</a></p>
+
+                        <p><br/> * To fetch all the Structural Variations studies:
+                        <br/> <a href="http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/all?structural=true" target="_blank">http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/all?structural=true</a></p>
+
+                        <p><br/> * To fetch all  info of a study:
+                        <br/> <a href="http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/PRJEB4019/summary" target="_blank">http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/PRJEB4019/summary</a></p>
+
+                        <p><br/> * To fetch all file information of a study:
+                        <br/> <a href="http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/PRJEB4019/files" target="_blank">http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/PRJEB4019/files</a></p>
+                    </div>
+                </div>
+            </div>
             <div id="studyView" class="hide-div"></div>
             <div id="variantView" class="hide-div"></div>
             <!--<div id="submissionForm" class="hide-div"></div>-->
@@ -513,6 +548,7 @@
               var studyViewDiv = document.querySelector('#studyView');
               var variantViewDiv = document.querySelector('#variantView');
               var beaconDiv =  document.querySelector('#beacon');
+              var apiDiv =  document.querySelector('#api');
 //              var submissionFormDiv =  document.querySelector('#submissionForm');
 
             var tab = getUrlParameters("");
@@ -558,7 +594,8 @@
                 studyView:studyViewDiv,
                 variantView:variantViewDiv,
                 beacon:beaconDiv,
-                clinicalDiv:clinicalDiv
+                clinicalDiv:clinicalDiv,
+                apiDiv:apiDiv
 //                submissionForm:submissionFormDiv
             });
             eva.draw();
