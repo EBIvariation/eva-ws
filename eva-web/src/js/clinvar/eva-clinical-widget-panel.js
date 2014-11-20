@@ -81,7 +81,7 @@ EvaClinicalWidgetPanel.prototype = {
         }
     },
     _createPanel: function () {
-        var tpl = new Ext.XTemplate(['<div  id="variant-widget1" class="variant-browser-option-div form-panel-clinical-filter-div"></div><div  id="variant-widget1" class="variant-browser-option-div clinical-widget-div"></div>']);
+        var tpl = new Ext.XTemplate(['<div   class="variant-browser-option-div form-panel-clinical-filter-div"></div><div class="variant-browser-option-div clinical-widget-div"></div>']);
         var view = Ext.create('Ext.view.View', {
             tpl: tpl
         });
@@ -115,7 +115,7 @@ EvaClinicalWidgetPanel.prototype = {
                 border: true
             },
             toolPanelConfig: {
-                title: 'Variant Data',
+                title: 'ClinVar Data',
                 headerConfig: {
                     baseCls: 'eva-header-2'
                 }
@@ -124,8 +124,8 @@ EvaClinicalWidgetPanel.prototype = {
                 headerConfig: {
                     baseCls: 'eva-header-2'
                 },
-                genomeViewer: true,
-                effect:false
+                assertion: true
+
             },
             responseParser: function (response) {
                 var res = [];
@@ -137,12 +137,7 @@ EvaClinicalWidgetPanel.prototype = {
                 return  res;
             },
             dataParser: function (data) {
-                for (var i = 0; i < data.length; i++) {
-                    var variant = data[i];
-                    if (variant.hgvs && variant.hgvs.genomic > 0) {
-                        variant.hgvs_name = variant.hgvs.genomic[0];
-                    }
-                }
+
             }
         });
 

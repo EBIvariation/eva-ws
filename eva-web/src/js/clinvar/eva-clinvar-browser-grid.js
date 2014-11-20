@@ -96,7 +96,7 @@ ClinvarBrowserGrid.prototype = {
                 },
                 listeners: {
                     beforeload: function (store, operation, eOpts) {
-                        _this.trigger("variant:clear", {sender: _this});
+                        _this.trigger("clinvar:clear", {sender: _this});
                     }
                 }
 
@@ -114,7 +114,7 @@ ClinvarBrowserGrid.prototype = {
             id: _this.id + "_pagingToolbar",
             pageSize: _this.pageSize,
             displayInfo: true,
-            displayMsg: 'Variants {0} - {1} of {2}',
+            displayMsg: 'Records {0} - {1} of {2}',
             emptyMsg: "No records to display"
         });
 
@@ -143,13 +143,13 @@ ClinvarBrowserGrid.prototype = {
 
         grid.getSelectionModel().on('selectionchange', function (sm, selectedRecord) {
             if (selectedRecord.length) {
-                var row = selectedRecord[0].data;
-                _this.trigger("variant:change", {sender: _this, args: row});
+                var clinVarAssertion = selectedRecord[0].data.clinVarAssertion;
+                _this.trigger("clinvar:change", {sender: _this, args: clinVarAssertion});
             }
         });
 
         this.grid = grid;
-        return grid;
+        return this.grid;
     },
     load: function (data) {
         var _this = this;
@@ -174,7 +174,7 @@ ClinvarBrowserGrid.prototype = {
             },
             listeners: {
                 beforeload: function (store, operation, eOpts) {
-                    _this.trigger("variant:clear", {sender: _this});
+                    _this.trigger("clinvar:clear", {sender: _this});
                 },
                 load: function (store, records, successful, operation, eOpts) {
                     _this.setLoading(false);
@@ -233,7 +233,7 @@ ClinvarBrowserGrid.prototype = {
                     _this.setLoading(false);
                 },
                 beforeload: function (store, operation, eOpts) {
-                    _this.trigger("variant:clear", {sender: _this});
+                    _this.trigger("clinvar:clear", {sender: _this});
                 }
             }
 
@@ -248,9 +248,9 @@ ClinvarBrowserGrid.prototype = {
         for (var i = 0; i < data.length; i++) {
             var variant = data[i];
 
-            if (variant.hgvs && variant.hgvs.genomic && variant.hgvs.genomic.length > 0) {
-                variant.hgvs_name = variant.hgvs.genomic[0];
-            }
+//            if (variant.hgvs && variant.hgvs.genomic && variant.hgvs.genomic.length > 0) {
+//                variant.hgvs_name = variant.hgvs.genomic[0];
+//            }
         }
 
     },

@@ -48,10 +48,8 @@ function EvaClinVarWidget(args) {
         headerConfig: {
             baseCls: 'ocb-title-2'
         },
-        effect: true,
         genomeViewer: true,
         genotype: true,
-        stats: true
     };
     this.tools = [];
     this.dataParser;
@@ -62,11 +60,11 @@ function EvaClinVarWidget(args) {
     this.startParam = "skip";
 
     this.browserGridConfig = {
-        title: 'variant browser grid',
+        title: 'ClinVar browser grid',
         border: false
     };
     this.toolPanelConfig = {
-        title: 'Variant data',
+        title: 'ClinVar data',
         border: false
     };
     this.toolsConfig = {
@@ -109,93 +107,60 @@ EvaClinVarWidget.prototype = {
 
         this.clinvarBrowserGrid = this._createClinVarBrowserGrid(this.clinvarBrowserGridDiv);
 
-//        this.tabPanelDiv = document.createElement('div');
-//        this.tabPanelDiv.setAttribute('class', 'ocb-variant-tab-panel');
-//        this.div.appendChild(this.tabPanelDiv);
+        this.tabPanelDiv = document.createElement('div');
+        this.tabPanelDiv.setAttribute('class', 'ocb-variant-tab-panel');
+        this.div.appendChild(this.tabPanelDiv);
 
-//        this.toolTabPanel = Ext.create("Ext.tab.Panel", {
-//            title: this.toolPanelConfig.title,
-//            border: this.toolPanelConfig.border,
-//            margin: '10 0 0 0',
-//            plain: true,
-//            animCollapse: false,
-//            header: this.toolPanelConfig.headerConfig,
-//            collapseDirection: Ext.Component.DIRECTION_BOTTOM,
-//            titleCollapse: true,
-//            overlapHeader: true,
-//            defaults: {
-//                hideMode: 'offsets',
-//                autoShow: true
-//            },
-//            listeners: {
-//                tabchange: function (tabPanel, newTab, oldTab, eOpts) {
-//                    _this.selectedToolDiv = newTab.contentEl;
-//                    if (_this.lastVariant) {
+        this.toolTabPanel = Ext.create("Ext.tab.Panel", {
+            title: this.toolPanelConfig.title,
+            border: this.toolPanelConfig.border,
+            margin: '10 0 0 0',
+            height:600,
+            plain: true,
+            animCollapse: false,
+            header: this.toolPanelConfig.headerConfig,
+            collapseDirection: Ext.Component.DIRECTION_BOTTOM,
+            titleCollapse: true,
+            overlapHeader: true,
+            defaults: {
+                hideMode: 'offsets',
+                autoShow: true
+            },
+            listeners: {
+                tabchange: function (tabPanel, newTab, oldTab, eOpts) {
+                    _this.selectedToolDiv = newTab.contentEl;
+                    if (_this.lastVariant) {
 //                        _this.trigger('variant:change', {variant: _this.lastVariant, sender: _this});
-//                    }
-//                }
-//            }
-//        });
-//
-//        var tabPanelItems = [];
-//
-//        if (this.defaultToolConfig.stats) {
-//            this.variantStatsPanelDiv = document.createElement('div');
-//            this.variantStatsPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
-//            this.variantStatsPanel = this._createVariantStatsPanel(this.variantStatsPanelDiv);
-//            tabPanelItems.push({
-//                title: 'File and Stats',
-////                border: 0,
-//                contentEl: this.variantStatsPanelDiv
-//            });
-//        }
-//
-//        if (this.defaultToolConfig.effect) {
-//            this.variantEffectGridDiv = document.createElement('div');
-//            this.variantEffectGridDiv.setAttribute('class', 'ocb-variant-effect-grid');
-//            this.variantEffectGrid = this._createVariantEffectGrid(this.variantEffectGridDiv);
-//            tabPanelItems.push({
-//                title: 'Effect and Annotation',
-//                contentEl: this.variantEffectGridDiv
-//            });
-//        }
-//
-//        if (this.defaultToolConfig.genotype) {
-//            this.variantGenotypeGridDiv = document.createElement('div');
-//            this.variantGenotypeGridDiv.setAttribute('class', 'ocb-variant-genotype-grid');
-//            this.variantGenotypeGrid = this._createVariantGenotypeGrid(this.variantGenotypeGridDiv);
-//            tabPanelItems.push({
-//                title: 'Genotypes',
-////                border: 0,
-//                contentEl: this.variantGenotypeGridDiv
-//            });
-//        }
-//
-//        if (this.defaultToolConfig.genomeViewer) {
-//            this.genomeViewerDiv = document.createElement('div');
-//            this.genomeViewerDiv.setAttribute('class', 'ocb-gv');
-//            $(this.genomeViewerDiv).css({border: '1px solid lightgray'});
-//            this.genomeViewer = this._createGenomeViewer(this.genomeViewerDiv);
-//            tabPanelItems.push({
-//                title: 'Genomic Context',
-//                border: 0,
-//                contentEl: this.genomeViewerDiv
-//            });
-//        }
-//
-//        for (var i = 0; i < this.tools.length; i++) {
-//            var tool = this.tools[i];
-//            var toolDiv = document.createElement('div');
-//
-//            tool.tool.target = toolDiv;
-//
-//            tabPanelItems.push({
-//                title: tool.title,
-//                contentEl: toolDiv
-//            });
-//        }
+                    }
+                }
+            }
+        });
 
-//        this.toolTabPanel.add(tabPanelItems);
+        var tabPanelItems = [];
+
+        if (this.defaultToolConfig.assertion) {
+            this.clinvarAssertionPanelDiv = document.createElement('div');
+            this.clinvarAssertionPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
+            this.clinvarAssertionPanel = this._createAssertionPanel(this.clinvarAssertionPanelDiv);
+            tabPanelItems.push({
+                title: 'Assertion',
+//                border: 0,
+                contentEl: this.clinvarAssertionPanelDiv
+            });
+        }
+        for (var i = 0; i < this.tools.length; i++) {
+            var tool = this.tools[i];
+            var toolDiv = document.createElement('div');
+
+            tool.tool.target = toolDiv;
+
+            tabPanelItems.push({
+                title: tool.title,
+                contentEl: toolDiv
+            });
+        }
+
+        this.toolTabPanel.add(tabPanelItems);
 
         this.rendered = true;
     },
@@ -210,37 +175,23 @@ EvaClinVarWidget.prototype = {
 
         this.clinvarBrowserGrid.draw();
 
-//        this.toolTabPanel.render(this.tabPanelDiv);
-//
-//
-//        for (var i = 0; i < this.toolTabPanel.items.items.length; i++) {
-//            this.toolTabPanel.setActiveTab(i);
-//        }
-//
-//        if (this.defaultToolConfig.effect) {
-//
-//            this.variantEffectGrid.draw();
-//        }
-//
-//        if (this.defaultToolConfig.genotype) {
-//
-//            this.variantGenotypeGrid.draw();
-//        }
-//
-//        if (this.defaultToolConfig.genomeViewer) {
-//            this.genomeViewer.draw();
-//        }
-//
-//        if (this.defaultToolConfig.stats) {
-//            this.variantStatsPanel.draw();
-//        }
-//
-//        for (var i = 0; i < this.tools.length; i++) {
-//            var tool = this.tools[i];
-//            tool.tool.draw();
-//        }
-//
-//        this.toolTabPanel.setActiveTab(0);
+        this.toolTabPanel.render(this.tabPanelDiv);
+
+
+        for (var i = 0; i < this.toolTabPanel.items.items.length; i++) {
+            this.toolTabPanel.setActiveTab(i);
+        }
+
+        if (this.defaultToolConfig.assertion) {
+            this.clinvarAssertionPanel.draw();
+        }
+
+        for (var i = 0; i < this.tools.length; i++) {
+            var tool = this.tools[i];
+            tool.tool.draw();
+        }
+
+        this.toolTabPanel.setActiveTab(0);
     },
     _createClinVarBrowserGrid: function (target) {
         var _this = this;
@@ -251,8 +202,8 @@ EvaClinVarWidget.prototype = {
                     text: "Accession",
 //                    dataIndex: 'accession',
                     xtype: "templatecolumn",
-                    tpl: '<tpl>{referenceClinVarAssertionAcc}/{clinVarAssertionAcc}</tpl>',
-                    flex: 1.5
+                    tpl: '<tpl>{referenceClinVarAssertionAcc}</tpl>',
+                    flex: 1
                 },
                 {
                     text: 'Description',
@@ -343,7 +294,31 @@ EvaClinVarWidget.prototype = {
         });
         return clinvarBrowserGrid;
     },
+    _createAssertionPanel: function (target) {
+        var _this = this;
+        var assertionPanel = new ClinvarAssertionPanel({
+            target: target,
+            headerConfig: this.defaultToolConfig.headerConfig,
+            handlers: {
+                "load:finish": function (e) {
+//                    _this.grid.setLoading(false);
+                }
+            }
 
+        });
+
+        this.clinvarBrowserGrid.on("clinvar:clear", function (e) {
+            assertionPanel.clear(true);
+        });
+
+        this.clinvarBrowserGrid.on("clinvar:change", function (e) {
+            if (target === _this.selectedToolDiv) {
+                assertionPanel.load(e.args);
+            }
+        });
+
+        return assertionPanel;
+    },
 
     _createGenomeViewer: function (target) {
         var _this = this;
@@ -485,7 +460,7 @@ EvaClinVarWidget.prototype = {
         genomeViewer.addTrack([sequence, gene, snp]);
 
 
-        this.on("variant:change", function (e) {
+        this.on("clinvar:change", function (e) {
             if (target === _this.selectedToolDiv) {
                 var variant = e.variant;
                 var region = new Region(variant);

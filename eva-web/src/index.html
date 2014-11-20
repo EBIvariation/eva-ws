@@ -436,7 +436,7 @@
             </div>
             <div id="studyView" class="hide-div"></div>
             <div id="variantView" class="hide-div"></div>
-            <!--<div id="submissionForm" class="hide-div"></div>-->
+            <div id="submissionForm" class="hide-div"></div>
         </div>
         <footer>
 
@@ -520,12 +520,13 @@
     <script type="text/javascript" src="js/dgva-statistics.js"></script>
     <script type="text/javascript" src="js/eva-beacon-form.js"></script>
     <script type="text/javascript" src="js/eva-variant-search-form.js"></script>
-    <!--<script type="text/javascript" src="js/eva-submission-form.js"></script>-->
+    <script type="text/javascript" src="js/eva-submission-form.js"></script>
     <script type="text/javascript" src="js/eva-species-filter-form-panel.js"></script>
     <script type="text/javascript" src="js/clinvar/eva-clinical-widget-panel.js"></script>
     <script type="text/javascript" src="js/clinvar/eva-clinvar-widget.js"></script>
     <script type="text/javascript" src="js/clinvar/eva-clinvar-browser-grid.js"></script>
     <script type="text/javascript" src="js/clinvar/eva-clinvar-position-filter-form-panel.js"></script>
+    <script type="text/javascript" src="js/clinvar/eva-clinvar-assertion-panel.js"></script>
     <script type="text/javascript" src="js/eva.js"></script>
     <!-- /build -->
 
@@ -550,7 +551,7 @@
               var variantViewDiv = document.querySelector('#variantView');
               var beaconDiv =  document.querySelector('#beacon');
               var apiDiv =  document.querySelector('#api');
-//              var submissionFormDiv =  document.querySelector('#submissionForm');
+              var submissionFormDiv =  document.querySelector('#submissionForm');
 
             var tab = getUrlParameters("");
             var tabId =  decodeURI(tab.id);
@@ -579,6 +580,12 @@
                 });
             }
 
+            if(tabId == 'submission-start'){
+                var evaSubmission= new EvaSubmissionForm({
+                    target:'submissionForm'
+                });
+            }
+
             Ext.getBody().removeCls('x-body');
             var ulLocalNav = document.querySelector('.eva-primary-menu');
 
@@ -596,14 +603,12 @@
                 variantView:variantViewDiv,
                 beacon:beaconDiv,
                 clinicalDiv:clinicalDiv,
-                apiDiv:apiDiv
-//                submissionForm:submissionFormDiv
+                apiDiv:apiDiv,
+                submissionForm:submissionFormDiv
             });
             eva.draw();
 
-//            var evaSubmission= new EvaSubmissionForm({
-//                target:'submissionForm'
-//            });
+
 
             if(tab.id){
                 eva.select(tabId);
