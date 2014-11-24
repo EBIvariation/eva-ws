@@ -72,7 +72,7 @@ SpeciesFilterFormPanel.prototype = {
         });
 
         var speciesFormField  =  Ext.create('Ext.form.ComboBox', {
-            fieldLabel: 'Select Species',
+            fieldLabel: 'Reference Assembly/Species',
 //            id:'species',
             name:'species',
             labelAlign: 'top',
