@@ -333,7 +333,7 @@ EvaVariantWidget.prototype = {
 
       var listeners =  {
             expandbody : function( expander, record, body, rowIndex ) {
-                files = record.data.files;
+                files = record.data.sourceEntries;
                 var content = '';
                 for (var key in files) {
                     content +='<div style="padding: 2px 2px 2px 15px; width:800px;"><b>'+files[key].studyId+'</b>: '+files[key].attributes.src+'</div>';
@@ -447,8 +447,8 @@ EvaVariantWidget.prototype = {
         this.on("variant:change", function (e) {
             if (target === _this.selectedToolDiv) {
                 var variant = e.variant;
-                if (variant.files) {
-                    variantStatsPanel.load(variant.files);
+                if (variant.sourceEntries) {
+                    variantStatsPanel.load(variant.sourceEntries);
                 }
             }
         });
@@ -493,8 +493,8 @@ EvaVariantWidget.prototype = {
         _this.on("variant:change", function (e) {
             if (target === _this.selectedToolDiv) {
                 var variant = e.variant;
-                if (variant.files) {
-                    variantGenotypeGrid.load(variant.files);
+                if (variant.sourceEntries) {
+                    variantGenotypeGrid.load(variant.sourceEntries);
                 }
             }
         });

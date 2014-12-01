@@ -121,8 +121,8 @@ EvaVariantView.prototype = {
                 )
             });
 
-            if (variant[0].files) {
-                variantStatsPanel.load(variant[0].files);
+            if (variant[0].sourceEntries) {
+                variantStatsPanel.load(variant[0].sourceEntries);
             }
             variantStatsPanel.draw();
 
