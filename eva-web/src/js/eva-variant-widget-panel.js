@@ -363,7 +363,7 @@ EvaVariantWidgetPanel.prototype = {
                 filter.studiesStore.loadRawData(studies);
                 //set all records checked default
                 filter.studiesStore.each(function(rec){
-//                    rec.set('uiactive', true)
+                    rec.set('uiactive', true)
                 })
                 _this.trigger('studies:change', {studies: studies, sender: _this});
             }
