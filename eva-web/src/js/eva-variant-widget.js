@@ -341,6 +341,10 @@ EvaVariantWidget.prototype = {
                 body.innerHTML =content;
             }
         };
+
+        Ext.Loader.setConfig({enabled: true});
+        Ext.Loader.setPath('Ext.ux', 'vendor/ext-5.0.1/ux');
+        Ext.require(['Ext.ux.ExportRecords']);
         var plugins =  [{
                         ptype: 'rowexpander',
                         rowBodyTpl : new Ext.XTemplate()
@@ -350,6 +354,7 @@ EvaVariantWidget.prototype = {
             title: this.browserGridConfig.title,
             target: target,
             data: this.data,
+            height:450,
             border: this.browserGridConfig.border,
             dataParser: this.dataParser,
             responseRoot: this.responseRoot,
@@ -373,6 +378,40 @@ EvaVariantWidget.prototype = {
             },
             viewConfigListeners:listeners
 
+        });
+
+        variantBrowserGrid.grid.addDocked({
+            xtype   : 'toolbar',
+            dock    : 'bottom',
+            items: [{
+                xtype   :   'button',
+                text    :   'Export Records',
+                listeners: {
+                    click: {
+                        element: 'el', //bind to the underlying el property on the panel
+                        fn: function(){
+                            variantBrowserGrid.grid.setLoading(true);
+                            var exportStore = Ext.create('Ext.data.Store', {
+                                pageSize:variantBrowserGrid.grid.store.getTotalCount(),
+                                autoLoad:true,
+                                fields: [
+                                    {name: 'id', type: 'string'}
+                                ],
+                                remoteSort: true,
+                                proxy: variantBrowserGrid.grid.store.proxy,
+                                listeners: {
+                                    load: function (store, records, successful, operation, eOpts) {
+                                        var exportData = _this._exportToExcel(records);
+                                        variantBrowserGrid.grid.setLoading(false);
+
+                                    }
+                                }
+
+                            });
+                        }
+                    }
+                }
+            }]
         });
         return variantBrowserGrid;
     },
@@ -709,5 +748,74 @@ EvaVariantWidget.prototype = {
             ]}, "frequencies": {"maf1000G": 0.6, "maf1000GAfrican": 0.5, "maf1000GAmerican": 0.4, "maf1000GAsian": 0.3, "maf1000GEuropean": 0.2, "mafNhlbiEspAfricanAmerican": 0.1, "mafNhlbiEspEuropeanAmerican": 0.2}, "proteinSubstitutionScores": {"polyphenScore": -1.0, "siftScore": -1.0}, "regulatoryEffect": {"motifPosition": 0, "motifScoreChange": 0.0, "highInformationPosition": false}}
             ;
         return data
+    },
+    _exportToExcel: function(records){
+        var csvContent      = '',
+        /*
+         Does this browser support the download attribute
+         in HTML 5, if so create a comma seperated value
+         file from the selected records / if not create
+         an old school HTML table that comes up in a
+         popup window allowing the users to copy and paste
+         the rows.
+         */
+            noCsvSupport     = ( 'download' in document.createElement('a') ) ? false : true,
+            sdelimiter      = noCsvSupport ? "<td>"   : "",
+            edelimiter      = noCsvSupport ? "</td>"  : ",",
+            snewLine        = noCsvSupport ? "<tr>"   : "",
+            enewLine        = noCsvSupport ? "</tr>"  : "\r\n",
+            printableValue  = '';
+
+        csvContent += snewLine;
+
+        /* Get the column headers from the store dataIndex */
+
+        var removeKeys = ['hgvs','sourceEntries','ref','alt','hgvs_name','iid','annotation'];
+
+        Ext.Object.each(records[0].data, function(key) {
+            if(_.indexOf(removeKeys, key) == -1){
+                csvContent += sdelimiter +  key + edelimiter;
+            }
+        });
+
+        csvContent += enewLine;
+        /*
+         Loop through the selected records array and change the JSON
+         object to teh appropriate format.
+         */
+
+        for (var i = 0; i < records.length; i++){
+            /* Put the record object in somma seperated format */
+            csvContent += snewLine;
+            Ext.Object.each(records[i].data, function(key, value) {
+                if(_.indexOf(removeKeys, key) == -1){
+                    printableValue = ((noCsvSupport) && value == '') ? '&nbsp;'  : value;
+                    printableValue = String(printableValue).replace(/,/g , "");
+                    printableValue = String(printableValue).replace(/(\r\n|\n|\r)/gm,"");
+                    csvContent += sdelimiter +  printableValue + edelimiter;
+                }
+            });
+            csvContent += enewLine;
+        }
+
+        if('download' in document.createElement('a')){
+            /*
+             This is the code that produces the CSV file and downloads it
+             to the users computer
+             */
+            var link = document.createElement("a");
+            link.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURI(csvContent));
+            link.setAttribute("download", "variants.csv");
+            link.click();
+        } else {
+            /*
+             The values below get printed into a blank window for
+             the luddites.
+             */
+            var newWin = open('windowName',"_blank");
+            newWin.document.write('<table border=1>' + csvContent + '</table>');
+        }
+
+        return true;
     }
 };
