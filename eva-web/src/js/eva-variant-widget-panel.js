@@ -152,7 +152,7 @@ EvaVariantWidgetPanel.prototype = {
         var _this = this;
         var positionFilter = new PositionFilterFormPanel({
 //            testRegion: '1:14000-200000',
-            testRegion: '1:3000760-3000790',
+            testRegion: '1:3000760-3004790',
             emptyText: ''
 
         });
