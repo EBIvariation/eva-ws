@@ -1,9 +1,5 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
-
-import org.opencb.biodata.models.feature.Region;
-import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -11,10 +7,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.opencb.biodata.models.feature.Region;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
+import org.opencb.opencga.storage.variant.VariantDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 
 /**
  * Created by imedina on 01/04/14.
@@ -23,16 +23,13 @@ import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 @Produces(MediaType.APPLICATION_JSON)
 public class RegionWSServer extends EvaWSServer {
 
-    private VariantMongoDBAdaptor variantMongoDbAdaptor;
-
-    public RegionWSServer() throws IllegalOpenCGACredentialsException {
+    public RegionWSServer() {
         super();
     }
 
     public RegionWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
-            throws IOException, IllegalOpenCGACredentialsException {
+            throws IOException {
         super(version, uriInfo, hsr);
-        variantMongoDbAdaptor = new VariantMongoDBAdaptor(credentials);
     }
 
     @GET
@@ -42,6 +39,7 @@ public class RegionWSServer extends EvaWSServer {
                                         @QueryParam("alt") String alternate,
                                         @QueryParam("effects") String effects,
                                         @QueryParam("studies") String studies,
+                                        @QueryParam("species") String species,
                                         @DefaultValue("-1f") @QueryParam("maf") float maf,
                                         @DefaultValue("-1") @QueryParam("miss_alleles") int missingAlleles,
                                         @DefaultValue("-1") @QueryParam("miss_gts") int missingGenotypes,
@@ -51,7 +49,11 @@ public class RegionWSServer extends EvaWSServer {
                                         @DefaultValue("") @QueryParam("type") String variantType,
                                         @DefaultValue("false") @QueryParam("histogram") boolean histogram,
                                         @DefaultValue("-1") @QueryParam("histogram_interval") int interval,
-                                        @DefaultValue("false") @QueryParam("merge") boolean merge) {
+                                        @DefaultValue("false") @QueryParam("merge") boolean merge) 
+            throws IllegalOpenCGACredentialsException, UnknownHostException {
+        
+        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
+        
         if (reference != null && !reference.isEmpty()) {
             queryOptions.put("reference", reference);
         }
@@ -63,6 +65,9 @@ public class RegionWSServer extends EvaWSServer {
         }
         if (studies != null && !studies.isEmpty()) {
             queryOptions.put("studies", Arrays.asList(studies.split(",")));
+        }
+        if (species != null && !species.isEmpty()) {
+            queryOptions.put("species", species);
         }
         if (!variantType.isEmpty()) {
             queryOptions.put("type", variantType);

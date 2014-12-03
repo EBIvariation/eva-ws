@@ -5,30 +5,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.base.Splitter;
-import org.opencb.datastore.core.QueryOptions;
-import org.opencb.datastore.core.QueryResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import org.opencb.biodata.models.feature.Genotype;
-import org.opencb.biodata.models.variant.ArchivedVariantFile;
+import org.opencb.biodata.models.variant.VariantSourceEntry;
 import org.opencb.biodata.models.variant.VariantSource;
 import org.opencb.biodata.models.variant.stats.VariantStats;
+import org.opencb.datastore.core.QueryOptions;
+import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.lib.auth.MongoCredentials;
-import org.opencb.opencga.storage.variant.json.ArchivedVariantFileJsonMixin;
+import org.opencb.opencga.storage.variant.json.VariantSourceEntryJsonMixin;
 import org.opencb.opencga.storage.variant.json.GenotypeJsonMixin;
 import org.opencb.opencga.storage.variant.json.VariantSourceJsonMixin;
 import org.opencb.opencga.storage.variant.json.VariantStatsJsonMixin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by imedina on 01/04/14.
@@ -55,14 +54,12 @@ public class EvaWSServer {
 
     protected static Logger logger;
     
-    protected MongoCredentials credentials;
-
 
     static {
         logger = LoggerFactory.getLogger(EvaWSServer.class);
 
         jsonObjectMapper = new ObjectMapper();
-        jsonObjectMapper.addMixInAnnotations(ArchivedVariantFile.class, ArchivedVariantFileJsonMixin.class);
+        jsonObjectMapper.addMixInAnnotations(VariantSourceEntry.class, VariantSourceEntryJsonMixin.class);
         jsonObjectMapper.addMixInAnnotations(Genotype.class, GenotypeJsonMixin.class);
         jsonObjectMapper.addMixInAnnotations(VariantStats.class, VariantStatsJsonMixin.class);
         jsonObjectMapper.addMixInAnnotations(VariantSource.class, VariantSourceJsonMixin.class);
@@ -73,27 +70,21 @@ public class EvaWSServer {
         logger.info("EvaWSServer: Initialising attributes inside static block");
     }
 
-    public EvaWSServer() throws IllegalOpenCGACredentialsException {
-        credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
+    public EvaWSServer() {
         logger.info("EvaWSServer: in 'constructor'");
     }
 
-    public EvaWSServer(@PathParam("version") String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
-            throws IOException, IllegalOpenCGACredentialsException {
+    public EvaWSServer(@PathParam("version") String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
         this.version = version;
         this.uriInfo = uriInfo;
         this.httpServletRequest = hsr;
-        credentials = new MongoCredentials("mongos-hxvm-001", 27017, "eva_hsapiens", "biouser", "biopass");
 
         init(version, uriInfo);
 
         logger.info("EvaWSServer: in 'constructor'");
-
-        // if(version != null && species != null) {
-        // }
     }
 
-    protected void init(String version, UriInfo uriInfo) throws IOException {
+    protected void init(String version, UriInfo uriInfo) {
 
         startTime = System.currentTimeMillis();
         queryResponse = new QueryResponse();
@@ -136,6 +127,7 @@ public class EvaWSServer {
         outputFormat = (multivaluedMap.get("of") != null) ? multivaluedMap.get("of").get(0) : "json";
 //        outputCompress = (multivaluedMap.get("outputcompress") != null) ? multivaluedMap.get("outputcompress").get(0) : "false";
     }
+    
     @GET
     @Path("/test")
     public Response help() {
@@ -197,7 +189,10 @@ public class EvaWSServer {
     
     protected Response createJsonResponse(Object object) {
         try {
-            return buildResponse(Response.ok(jsonObjectWriter.writeValueAsString(object), MediaType.APPLICATION_JSON_TYPE));
+//            Response r = buildResponse(Response.ok(jsonObjectWriter.writeValueAsString(object), MediaType.APPLICATION_JSON_TYPE));
+            Response r = Response.ok(jsonObjectWriter.writeValueAsString(object), MediaType.APPLICATION_JSON_TYPE).build();
+//            System.out.println(r.getEntity());
+            return r;
         } catch (JsonProcessingException e) {
             return createErrorResponse("Error parsing QueryResponse object:\n" + Arrays.toString(e.getStackTrace()));
         }
@@ -212,6 +207,9 @@ public class EvaWSServer {
     }
 
     private Response buildResponse(Response.ResponseBuilder responseBuilder) {
-        return responseBuilder.header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Headers", "x-requested-with, content-type").build();
+        return responseBuilder.header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Headers", "x-requested-with, content-type, accept")
+                .header("Access-Control-Allow-Methods", "POST, GET, OPTIONS").build();
     }
+    
 }

@@ -19,7 +19,12 @@
         <servlet-name>EvaServer</servlet-name>
         <url-pattern>/webservices/rest/*</url-pattern>
     </servlet-mapping>
-
+    
+    <context-param>
+        <param-name>resteasy.resources</param-name>
+        <param-value>uk.ac.ebi.variation.eva.server.ws.ga4gh.GA4GHVariantWSServer</param-value>
+    </context-param>
+        
     <resource-ref>
         <description>EVAPRO Connection</description>
         <res-ref-name>jdbc/evapro</res-ref-name>
