@@ -528,10 +528,7 @@ EvaVariantWidget.prototype = {
 
         _this.on("variant:change", function (e) {
             if (target === _this.selectedToolDiv) {
-
                 var variant = e.variant;
-                console.log(this.variantBrowserGrid.store.proxy)
-
                 var query = e.variant.chromosome+':'+e.variant.start+'-'+e.variant.end;
                 var params = _.omit(this.variantBrowserGrid.store.proxy.extraParams, 'region','studies');
 
@@ -549,7 +546,7 @@ EvaVariantWidget.prototype = {
 
                             console.log(e);
                         }
-                        
+
                         if (variantSourceEntries) {
                             variantGenotypeGrid.load(variantSourceEntries);
                         }
