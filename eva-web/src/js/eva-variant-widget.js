@@ -342,9 +342,6 @@ EvaVariantWidget.prototype = {
             }
         };
 
-        Ext.Loader.setConfig({enabled: true});
-        Ext.Loader.setPath('Ext.ux', 'vendor/ext-5.0.1/ux');
-        Ext.require(['Ext.ux.ExportRecords']);
         var plugins =  [{
                         ptype: 'rowexpander',
                         rowBodyTpl : new Ext.XTemplate()
