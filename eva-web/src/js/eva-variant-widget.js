@@ -528,10 +528,35 @@ EvaVariantWidget.prototype = {
 
         _this.on("variant:change", function (e) {
             if (target === _this.selectedToolDiv) {
+
                 var variant = e.variant;
-                if (variant.sourceEntries) {
-                    variantGenotypeGrid.load(variant.sourceEntries);
-                }
+                console.log(this.variantBrowserGrid.store.proxy)
+
+                var query = e.variant.chromosome+':'+e.variant.start+'-'+e.variant.end;
+                var params = _.omit(this.variantBrowserGrid.store.proxy.extraParams, 'region','studies');
+
+                EvaManager.get({
+                    category: 'segments',
+                    resource: 'variants',
+                    query:query,
+                    params:params,
+                    success: function (response) {
+                        try {
+
+                          var variantSourceEntries = response.response[0].result[0].sourceEntries;
+
+                        } catch (e) {
+
+                            console.log(e);
+                        }
+                        
+                        if (variantSourceEntries) {
+                            variantGenotypeGrid.load(variantSourceEntries);
+                        }
+
+                    }
+                });
+
             }
         });
         return variantGenotypeGrid;
