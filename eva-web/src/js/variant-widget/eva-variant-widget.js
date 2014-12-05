@@ -51,7 +51,8 @@ function EvaVariantWidget(args) {
         effect: true,
         genomeViewer: true,
         genotype: true,
-        stats: true
+        stats: true,
+        rawData: true
     };
     this.tools = [];
     this.dataParser;
@@ -171,6 +172,17 @@ EvaVariantWidget.prototype = {
             });
         }
 
+        if (this.defaultToolConfig.rawData) {
+            this.variantrawDataPanelDiv = document.createElement('div');
+            this.variantrawDataPanelDiv.setAttribute('class', 'ocb-variant-rawdata-panel');
+            this.variantrawDataPanel = this._createVariantRawDataPanel(this.variantrawDataPanelDiv);
+            tabPanelItems.push({
+                title: 'Raw Data',
+//                border: 0,
+                contentEl: this.variantrawDataPanelDiv
+            });
+        }
+
         if (this.defaultToolConfig.genomeViewer) {
             this.genomeViewerDiv = document.createElement('div');
             this.genomeViewerDiv.setAttribute('class', 'ocb-gv');
@@ -233,6 +245,10 @@ EvaVariantWidget.prototype = {
 
         if (this.defaultToolConfig.stats) {
             this.variantStatsPanel.draw();
+        }
+
+        if (this.defaultToolConfig.rawData) {
+            this.variantrawDataPanel.draw();
         }
 
         for (var i = 0; i < this.tools.length; i++) {
@@ -362,7 +378,7 @@ EvaVariantWidget.prototype = {
             columns:columns,
             samples: this.samples,
             headerConfig: this.headerConfig,
-            plugins:plugins,
+//            plugins:plugins,
             handlers: {
                 "variant:change": function (e) {
                     _this.lastVariant = e.args;
@@ -489,6 +505,50 @@ EvaVariantWidget.prototype = {
             }
         });
         return variantStatsPanel;
+    },
+    _createVariantRawDataPanel: function (target) {
+        var _this = this;
+        var variantRawDataPanel = new VariantRawDataPanel({
+            target: target,
+            headerConfig: this.defaultToolConfig.headerConfig,
+            handlers: {
+                "load:finish": function (e) {
+//                    _this.grid.setLoading(false);
+                }
+            },
+            statsTpl : new Ext.XTemplate(
+                '<table class="ocb-attributes-table">' +
+                    '<tr>' +
+                    '<td class="header">Minor Allele Frequency</td>' +
+//                    '<td class="header">Minor Genotype Frequency</td>' +
+                    '<td class="header">Mendelian Errors</td>' +
+                    '<td class="header">Missing Alleles</td>' +
+                    '<td class="header">Missing Genotypes</td>' +
+                    '</tr>',
+                '<tr>' +
+                    '<td><tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl><tpl if="mafAllele">({mafAllele}) <tpl else></tpl></td>' +
+//                    '<td><tpl if="mgf == -1 || mgf == 0">NA <tpl else>{mgf:number( "0.000" )} </tpl><tpl if="mgfGenotype">({mgfGenotype}) <tpl else></tpl></td>' +
+                    '<td><tpl if="mendelianErrors == -1">NA <tpl else>{mendelianErrors}</tpl></td>' +
+                    '<td><tpl if="missingAlleles == -1">NA <tpl else>{missingAlleles}</tpl></td>' +
+                    '<td><tpl if="missingGenotypes == -1">NA <tpl else>{missingGenotypes}</tpl></td>' +
+                    '</tr>',
+                '</table>'
+            )
+        });
+
+        this.variantBrowserGrid.on("variant:clear", function (e) {
+            variantRawDataPanel.clear(true);
+        });
+
+        this.on("variant:change", function (e) {
+            if (target === _this.selectedToolDiv) {
+                var variant = e.variant;
+                if (variant.sourceEntries) {
+                    variantRawDataPanel.load(variant.sourceEntries);
+                }
+            }
+        });
+        return variantRawDataPanel;
     },
     _createVariantGenotypeGrid: function (target) {
         var _this = this;

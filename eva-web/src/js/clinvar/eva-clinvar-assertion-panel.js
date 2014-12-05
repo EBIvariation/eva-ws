@@ -125,10 +125,11 @@ ClinvarAssertionPanel.prototype = {
         return panel;
     },
     _createAssertPanel: function (data) {
+        console.log(data)
         var lastEvaluated = new Date( data.clinicalSignificance.dateLastEvaluated ).toUTCString();
         var origin = data.observedIn[0].sample.origin;
         var citation= 'NA';
-        if(data.citation[0].id.source == 'PubMed'){
+        if(!_.isEmpty(data.citation) && data.citation[0].id.source == 'PubMed'){
             var citation = '<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+data.citation[0].id.value+'" target="_blank">Pubmed</a>';
         }
 
