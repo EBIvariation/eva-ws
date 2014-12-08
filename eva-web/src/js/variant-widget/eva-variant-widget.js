@@ -414,7 +414,7 @@ EvaVariantWidget.prototype = {
                                 proxy: variantBrowserGrid.grid.store.proxy,
                                 listeners: {
                                     load: function (store, records, successful, operation, eOpts) {
-                                        var exportData = _this._exportToExcel(records);
+                                        var exportData = _this._exportToExcel(records,store.proxy.extraParams);
                                         variantBrowserGrid.grid.setLoading(false);
 
                                     }
@@ -828,7 +828,7 @@ EvaVariantWidget.prototype = {
             ;
         return data
     },
-    _exportToExcel: function(records){
+    _exportToExcel: function(records,params){
         var csvContent      = '',
         /*
          Does this browser support the download attribute
@@ -843,7 +843,8 @@ EvaVariantWidget.prototype = {
             edelimiter      = noCsvSupport ? "</td>"  : ",",
             snewLine        = noCsvSupport ? "<tr>"   : "",
             enewLine        = noCsvSupport ? "</tr>"  : "\r\n",
-            printableValue  = '';
+            printableValue  = '',
+            speciesValue  = '';
 
         csvContent += snewLine;
 
@@ -856,6 +857,7 @@ EvaVariantWidget.prototype = {
                 csvContent += sdelimiter +  key + edelimiter;
             }
         });
+        csvContent += sdelimiter +  'species' + edelimiter;
 
         csvContent += enewLine;
         /*
@@ -874,6 +876,11 @@ EvaVariantWidget.prototype = {
                     csvContent += sdelimiter +  printableValue + edelimiter;
                 }
             });
+            var species = _.findWhere(speciesList, {value:params.species}).name;
+            speciesValue = ((noCsvSupport) && species == '') ? '&nbsp;'  : species;
+            speciesValue = String(species).replace(/,/g , "");
+            speciesValue = String(speciesValue).replace(/(\r\n|\n|\r)/gm,"");
+            csvContent += sdelimiter +  speciesValue + edelimiter;
             csvContent += enewLine;
         }
 
