@@ -193,9 +193,10 @@ EvaVariantView.prototype = {
             if(data[0].alternate){
                 alternate = data[0].alternate;
             }
+
             _summaryTable += '<tr><td class="header">Type</td><td>'+data[0].type+'</td></tr>' +
                 '<tr><td class="header">Chromosome:Start-End</td><td>'+data[0].chromosome+':'+data[0].start+'-'+data[0].end+'</td></tr>' +
-                '<tr><td class="header">Species</td><td>'+this.species+'</td></tr>' +
+                '<tr><td class="header">Species</td><td>'+_.findWhere(speciesList, {value:this.species}).name +'</td></tr>' +
 //                '<tr><td>Assembly</td><td>GRCh37</td></tr>' +
                 '<tr><td class="header">Ref</td><td>'+reference+'</td></tr>' +
                 '<tr><td class="header">Alt</td><td>'+alternate+'</td></tr>' +

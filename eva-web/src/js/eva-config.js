@@ -217,7 +217,7 @@ var projects = [    {
     }
 ];
 
-var speciesList = [ {"value":"hsapiens", "name":"Human"},
+var speciesList = [ {"value":"hsapiens", "name":"Human - GRCh37"},
                     {"value":"mmusculus", "name":"Mouse"}]
 
 //EvaManager.get({
