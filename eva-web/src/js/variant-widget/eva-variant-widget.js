@@ -177,7 +177,7 @@ EvaVariantWidget.prototype = {
             this.variantrawDataPanelDiv.setAttribute('class', 'ocb-variant-rawdata-panel');
             this.variantrawDataPanel = this._createVariantRawDataPanel(this.variantrawDataPanelDiv);
             tabPanelItems.push({
-                title: 'Raw Data',
+                title: 'VCF Data',
 //                border: 0,
                 contentEl: this.variantrawDataPanelDiv
             });
