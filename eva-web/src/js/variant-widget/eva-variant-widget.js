@@ -418,7 +418,7 @@ EvaVariantWidget.prototype = {
         variantBrowserGrid.grid.addDocked({
             xtype   : 'toolbar',
             dock    : 'bottom',
-            items: ['-', 'Results per Page: ',resultsPerPage,{
+            items: [ 'Results per Page: ',resultsPerPage,{
                 xtype   :   'button',
                 text    :   'Export Records',
                 listeners: {
