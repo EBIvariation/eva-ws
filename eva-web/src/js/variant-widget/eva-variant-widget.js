@@ -392,11 +392,33 @@ EvaVariantWidget.prototype = {
             viewConfigListeners:listeners
 
         });
+        var resultsPerPage = new Ext.form.ComboBox({
+            name : 'perpage',
+            width: 70,
+            store: new Ext.data.ArrayStore({
+                fields: ['id'],
+                data  : [
+                    ['10'],
+                    ['25'],
+                    ['50'],
+                    ['75'],
+                    ['100']
+                ]
+            }),
+            mode : 'local',
+            value: '10',
+            listWidth     : 40,
+            triggerAction : 'all',
+            displayField  : 'id',
+            valueField    : 'id',
+            editable      : false,
+            forceSelection: true
+        });
 
         variantBrowserGrid.grid.addDocked({
             xtype   : 'toolbar',
             dock    : 'bottom',
-            items: [{
+            items: ['-', 'Results per Page: ',resultsPerPage,{
                 xtype   :   'button',
                 text    :   'Export Records',
                 listeners: {
@@ -426,6 +448,16 @@ EvaVariantWidget.prototype = {
                 }
             }]
         });
+
+        resultsPerPage.on('select', function(combo, record) {
+            var _this = this;
+            var url = variantBrowserGrid.store.proxy.url;
+            var params = variantBrowserGrid.store.proxy.extraParams;
+            variantBrowserGrid.pageSize = record[0].id;
+            _this.retrieveData(url,params);
+        }, this);
+
+
         return variantBrowserGrid;
     },
 
