@@ -153,7 +153,7 @@ EvaVariantStatsPanel.prototype = {
             study_title = '<a href="?eva-study='+data.studyId+'" target="_blank">'+data.studyId+'</a>';
         }
         var vcfHeader = attributes['src'];
-        var vcfHeaderId = Utils.genId("vcf-header");
+        var vcfHeaderId = Utils.genId("vcf-data");
         var studyPanel = Ext.create('Ext.panel.Panel', {
             title: study_title,
             border: false,
@@ -180,7 +180,7 @@ EvaVariantStatsPanel.prototype = {
                     xtype: 'container',
                     cls: 'ocb-header-5',
                     margin: '5 5 10 10',
-                    html: '<h5>VCF header</h5>',
+                    html: '<h5>VCF data</h5>',
                     layout: 'vbox',
                     items: [
                         {
