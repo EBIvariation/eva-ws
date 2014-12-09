@@ -98,7 +98,7 @@ VariantRawDataPanel.prototype = {
                 {
                     xtype: 'box',
                     cls: 'ocb-header-4',
-                    html: '<h4>VCF data</h4>',
+                    html: '<h4>Raw Data</h4>',
                     margin: '5 0 10 10'
                 },
                 this.studiesContainer

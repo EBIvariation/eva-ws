@@ -82,7 +82,7 @@ EvaVariantView.prototype = {
     },
     createVariantStatsPanel: function (data) {
             var _this = this;
-            var variantStatsPanel = new VariantStatsPanel({
+            var variantStatsPanel = new EvaVariantStatsPanel({
                 target: data,
                 height:'',
                 handlers: {

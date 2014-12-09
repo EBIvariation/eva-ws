@@ -177,7 +177,7 @@ EvaVariantWidget.prototype = {
             this.variantrawDataPanelDiv.setAttribute('class', 'ocb-variant-rawdata-panel');
             this.variantrawDataPanel = this._createVariantRawDataPanel(this.variantrawDataPanelDiv);
             tabPanelItems.push({
-                title: 'VCF Data',
+                title: 'Raw Data',
 //                border: 0,
                 contentEl: this.variantrawDataPanelDiv
             });
@@ -464,7 +464,7 @@ EvaVariantWidget.prototype = {
     },
     _createVariantStatsPanel: function (target) {
         var _this = this;
-        var variantStatsPanel = new VariantStatsPanel({
+        var variantStatsPanel = new EvaVariantStatsPanel({
             target: target,
             headerConfig: this.defaultToolConfig.headerConfig,
             handlers: {
@@ -472,6 +472,7 @@ EvaVariantWidget.prototype = {
 //                    _this.grid.setLoading(false);
                 }
             },
+            height:3200,
             statsTpl : new Ext.XTemplate(
                 '<table class="ocb-attributes-table">' +
                     '<tr>' +
@@ -516,6 +517,7 @@ EvaVariantWidget.prototype = {
 //                    _this.grid.setLoading(false);
                 }
             },
+            height:2400,
             statsTpl : new Ext.XTemplate(
                 '<table class="ocb-attributes-table">' +
                     '<tr>' +
@@ -554,18 +556,21 @@ EvaVariantWidget.prototype = {
         var _this = this;
         var genotypeColumns =   [
             {
-                text: "Sample",
-                dataIndex: "sample",
-                flex: 1
+                text: "Study",
+                dataIndex: "studyId",
+                flex: 1,
+                xtype: 'templatecolumn',
+                tpl: '<tpl if="reference">{reference}<tpl else>-</tpl>/<tpl if="alternate">{alternate}<tpl else>-</tpl>',
+
             },
             {
-                text: "Genotype",
-                dataIndex: "genotype",
+                text: "Samples Count",
+                dataIndex: "samplesData",
                 flex: 1
             }
         ];
 
-        var variantGenotypeGrid = new VariantGenotypeGrid({
+        var variantGenotypeGrid = new EvaVariantGenotypeGrid({
             target: target,
             headerConfig: this.defaultToolConfig.headerConfig,
             gridConfig: {
@@ -574,12 +579,13 @@ EvaVariantWidget.prototype = {
                     align: 'stretch'
                 }
             },
+            height:3200,
             handlers: {
                 "load:finish": function (e) {
 
                 }
             },
-            columns:genotypeColumns
+//            columns:genotypeColumns
         });
 
         this.variantBrowserGrid.on("variant:clear", function (e) {
@@ -857,7 +863,7 @@ EvaVariantWidget.prototype = {
                 csvContent += sdelimiter +  key + edelimiter;
             }
         });
-        csvContent += sdelimiter +  'species' + edelimiter;
+        csvContent += sdelimiter +  'reference assembly' + edelimiter;
 
         csvContent += enewLine;
         /*
@@ -877,10 +883,10 @@ EvaVariantWidget.prototype = {
                 }
             });
             var species = _.findWhere(speciesList, {value:params.species}).name;
-            speciesValue = ((noCsvSupport) && species == '') ? '&nbsp;'  : species;
+            speciesValue = ((noCsvSupport) && species == '') ? '&nbsp;' : species;
             speciesValue = String(species).replace(/,/g , "");
             speciesValue = String(speciesValue).replace(/(\r\n|\n|\r)/gm,"");
-            csvContent += sdelimiter +  speciesValue + edelimiter;
+            csvContent += sdelimiter + speciesValue + edelimiter;
             csvContent += enewLine;
         }
 

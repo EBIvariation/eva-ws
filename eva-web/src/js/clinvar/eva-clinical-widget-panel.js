@@ -110,7 +110,7 @@ EvaClinicalWidgetPanel.prototype = {
             },
             border: true,
             browserGridConfig: {
-//                title: 'VCF Browser <span class="assembly">Assembly:GRCh37</span>',
+//                title: 'Variant Browser <span class="assembly">Assembly:GRCh37</span>',
                 title: 'ClinVar Browser',
                 border: true
             },

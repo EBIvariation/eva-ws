@@ -87,13 +87,14 @@ EvaVariantWidgetPanel.prototype = {
         });
 
         this.panel = Ext.create('Ext.panel.Panel', {
+            overflowX:'auto',
+            border:true,
             layout: {
                 type: 'vbox',
-                align: 'center',
+                align: 'left'
             },
-            overflowX:'auto',
             items: [view],
-            height:1200,
+            height:2400,
             cls: 'variant-widget-panel'
         });
 
@@ -110,8 +111,8 @@ EvaVariantWidgetPanel.prototype = {
             },
             border: true,
             browserGridConfig: {
-//                title: 'VCF Browser <span class="assembly">Assembly:GRCh37</span>',
-                title: 'VCF Browser',
+//                title: 'Variant Browser <span class="assembly">Assembly:GRCh37</span>',
+                title: 'Variant Browser',
                 border: true
             },
             toolPanelConfig: {
@@ -125,7 +126,8 @@ EvaVariantWidgetPanel.prototype = {
                     baseCls: 'eva-header-2'
                 },
                 genomeViewer: true,
-                effect:false
+                effect:false,
+                rawData:false
             },
             responseParser: function (response) {
                 var res = [];
