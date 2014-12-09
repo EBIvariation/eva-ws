@@ -101,6 +101,10 @@ div#local-masthead{
     vertical-align: top;
 }
 
+.genotype-grid .x-column-header-inner {
+    background-color:#DFE7E7;
+}
+
 .eva-beacon-panel .x-toolbar-footer{
     background-color: #ffffff;
 }
@@ -503,6 +507,7 @@ h4{
     color:#426783;
     font-style: italic;
 }
+
 
 
 

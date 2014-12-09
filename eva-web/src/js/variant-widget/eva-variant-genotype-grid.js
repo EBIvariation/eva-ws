@@ -186,7 +186,8 @@ EvaVariantGenotypeGrid.prototype = {
              store: store,
              loadMask: true,
              width: 800,
-//            height: 300,s
+//            height: 300,
+             cls:'genotype-grid',
              margin: 20,
              viewConfig: {
                  emptyText: 'No records to display',
