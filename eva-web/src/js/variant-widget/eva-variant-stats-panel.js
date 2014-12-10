@@ -114,9 +114,10 @@ EvaVariantStatsPanel.prototype = {
         var panel = Ext.create('Ext.container.Container', {
             layout: {
                 type: 'vbox',
-                align: 'stretch'
+                align: 'fit'
             },
-            overflowY: true,
+//            overflowY: true,
+            overflowX: true,
             padding: 10,
             items: [
                 {
@@ -158,7 +159,7 @@ EvaVariantStatsPanel.prototype = {
             title: study_title,
             border: false,
             layout: 'vbox',
-            overflowX: true,
+//            overflowX: true,
             items: [
                 {
                     xtype: 'container',

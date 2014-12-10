@@ -94,7 +94,7 @@ EvaVariantWidgetPanel.prototype = {
                 align: 'left'
             },
             items: [view],
-            height:2400,
+            height:1400,
             cls: 'variant-widget-panel'
         });
 
