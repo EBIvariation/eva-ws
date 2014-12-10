@@ -109,6 +109,7 @@ EvaVariantStatsPanel.prototype = {
 //                fill: false,
                 multi: true
             }
+
         });
 
         var panel = Ext.create('Ext.container.Container', {
@@ -156,13 +157,16 @@ EvaVariantStatsPanel.prototype = {
         var vcfHeader = attributes['src'];
         var vcfHeaderId = Utils.genId("vcf-data");
         var studyPanel = Ext.create('Ext.panel.Panel', {
+            header:{
+                titlePosition:1
+            },
             title: study_title,
             border: false,
             layout: {
                 type: 'vbox',
                 align: 'fit'
             },
-//            overflowX: true,
+//            overflowX: 'auto',
             items: [
                 {
                     xtype: 'container',
