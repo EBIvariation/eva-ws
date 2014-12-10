@@ -492,11 +492,28 @@ EvaVariantWidget.prototype = {
         _this.on("variant:change", function (e) {
             if (target === _this.selectedToolDiv) {
                 var variant = e.variant;
-                if (variant.files) {
-                    variantGenotypeGrid.load(variant.files);
-                }
+                var query = e.variant.chromosome+':'+e.variant.start+'-'+e.variant.end;
+                var params = _.omit(this.variantBrowserGrid.store.proxy.extraParams, 'region','studies');
+                EvaManager.get({
+                    host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
+                    category: 'segments',
+                    resource: 'variants',
+                    query:query,
+                    params:params,
+                    success: function (response) {
+                        try {
+                            var variantFiles = response.response[0].result[0].files;
+                        } catch (e) {
+                            console.log(e);
+                        }
+                        if (variantFiles) {
+                            variantGenotypeGrid.load(variantFiles);
+                        }
+                    }
+                });
             }
         });
+
         return variantGenotypeGrid;
     },
 
