@@ -194,7 +194,7 @@ EvaVariantStatsPanel.prototype = {
                         {
                             xtype: 'button',
                             text : '+',
-                            margin: '5 10 10 105',
+                            margin: '5 10 10 90',
                             enableToggle: true,
                             handler: function () {
                                 var vcfHeaderCtn = Ext.getCmp(vcfHeaderId);
