@@ -50,7 +50,7 @@ public class RegionWSServer extends EvaWSServer {
                                         @DefaultValue("false") @QueryParam("histogram") boolean histogram,
                                         @DefaultValue("-1") @QueryParam("histogram_interval") int interval,
                                         @DefaultValue("false") @QueryParam("merge") boolean merge) 
-            throws IllegalOpenCGACredentialsException, UnknownHostException {
+            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         

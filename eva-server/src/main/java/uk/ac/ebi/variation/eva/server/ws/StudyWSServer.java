@@ -50,7 +50,7 @@ public class StudyWSServer extends EvaWSServer {
     @Path("/{study}/files")
     public Response getFilesByStudy(@PathParam("study") String study,
                                     @QueryParam("species") String species) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException {
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         
         if (species != null && !species.isEmpty()) {
             queryOptions.put("species", species);
@@ -76,7 +76,7 @@ public class StudyWSServer extends EvaWSServer {
     @Path("/{study}/view")
     public Response getStudy(@PathParam("study") String study,
                              @QueryParam("species") String species) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException {
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         
         if (species != null && !species.isEmpty()) {
             queryOptions.put("species", species);
