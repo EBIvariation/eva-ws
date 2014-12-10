@@ -158,7 +158,10 @@ EvaVariantStatsPanel.prototype = {
         var studyPanel = Ext.create('Ext.panel.Panel', {
             title: study_title,
             border: false,
-            layout: 'vbox',
+            layout: {
+                type: 'vbox',
+                align: 'fit'
+            },
 //            overflowX: true,
             items: [
                 {
