@@ -115,7 +115,7 @@ EvaVariantStatsPanel.prototype = {
         var panel = Ext.create('Ext.container.Container', {
             layout: {
                 type: 'vbox',
-                align: 'fit'
+                align: 'stretch'
             },
 //            overflowY: true,
             overflowX: true,
@@ -166,7 +166,7 @@ EvaVariantStatsPanel.prototype = {
                 type: 'vbox',
                 align: 'fit'
             },
-//            overflowX: 'auto',
+            overflowX:true,
             items: [
                 {
                     xtype: 'container',
