@@ -922,21 +922,36 @@ EvaVariantWidget.prototype = {
             csvContent += enewLine;
         }
 
+        console.log(noCsvSupport)
+        console.log('+++++++')
+
         if('download' in document.createElement('a')){
             /*
              This is the code that produces the CSV file and downloads it
              to the users computer
              */
-            var link = document.createElement("a");
-            link.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURI(csvContent));
-            link.setAttribute("download", "variants.csv");
+//            var link = document.createElement("a");
+//            link.setAttribute("href", 'data:application/csv;charset=utf-8,' + encodeURIComponent(csvContent));
+//            link.setAttribute("download", "variants.csv");
+//            link.setAttribute("target", "_blank");
+//            link.click();
+
+            var link=document.createElement('a');
+            var mimeType='application/xls';
+            var blob=new Blob([csvContent],{type:mimeType});
+            var url=URL.createObjectURL(blob);
+            link.href=url;
+            link.setAttribute('download', 'variants.csv');
+            link.innerHTML = "Export to CSV";
+            document.body.appendChild(link);
             link.click();
+
         } else {
             /*
              The values below get printed into a blank window for
              the luddites.
              */
-            var newWin = open('windowName',"_blank");
+            var newWin = window.open();
             newWin.document.write('<table border=1>' + csvContent + '</table>');
         }
 
