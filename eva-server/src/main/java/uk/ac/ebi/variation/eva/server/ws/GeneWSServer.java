@@ -1,5 +1,6 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +49,7 @@ public class GeneWSServer extends EvaWSServer {
                                       @DefaultValue("=") @QueryParam("miss_alleles_op") String missingAllelesOperator,
                                       @DefaultValue("=") @QueryParam("miss_gts_op") String missingGenotypesOperator,
                                       @DefaultValue("") @QueryParam("type") String variantType)
-            throws IllegalOpenCGACredentialsException, UnknownHostException {
+            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         
@@ -99,7 +100,7 @@ public class GeneWSServer extends EvaWSServer {
                                                  @DefaultValue("10") @QueryParam("limit") int limit,
                                                  @DefaultValue("desc") @QueryParam("sort") String sort,
                                                  @DefaultValue("") @QueryParam("type") String variantType)
-            throws IllegalOpenCGACredentialsException, UnknownHostException {
+            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         

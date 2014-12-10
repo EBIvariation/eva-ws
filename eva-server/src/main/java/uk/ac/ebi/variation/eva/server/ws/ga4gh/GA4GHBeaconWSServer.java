@@ -1,5 +1,6 @@
 package uk.ac.ebi.variation.eva.server.ws.ga4gh;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +43,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
                            @QueryParam("start") Integer start,
                            @QueryParam("allele") String allele,
                            @QueryParam("datasetIds") String studies) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException {
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         
         if (chromosome == null || chromosome.isEmpty() ||
                 start == null || start < 0 || allele == null) {

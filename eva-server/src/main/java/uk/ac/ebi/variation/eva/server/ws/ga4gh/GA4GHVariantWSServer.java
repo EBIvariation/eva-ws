@@ -1,5 +1,6 @@
 package uk.ac.ebi.variation.eva.server.ws.ga4gh;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
@@ -62,7 +63,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
                                         @DefaultValue("10") @QueryParam("pageSize") int limit,
                                         @DefaultValue("false") @QueryParam("histogram") boolean histogram,
                                         @DefaultValue("-1") @QueryParam("histogram_interval") int interval) 
-            throws IllegalOpenCGACredentialsException, UnknownHostException {
+            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens");
         
@@ -107,7 +108,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
     @Path("/search")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getVariantsByRegion(GASearchVariantRequest request) 
-            throws IllegalOpenCGACredentialsException, UnknownHostException {
+            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         request.validate();
         return getVariantsByRegion(request.getReferenceName(), (int) request.getStart(), (int) request.getEnd(), 
                    StringUtils.join(request.getVariantSetIds(), ","), request.getPageToken(), request.getPageSize(), 

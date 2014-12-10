@@ -1,5 +1,6 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import javax.naming.NamingException;
@@ -42,7 +43,7 @@ public class FilesWSServer extends EvaWSServer {
     @GET
     @Path("/all")
     public Response getFiles(@QueryParam("species") String species) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException {
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         if (species != null && !species.isEmpty()) {
             queryOptions.put("species", species);
         }

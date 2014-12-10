@@ -42,7 +42,7 @@ public class VariantWSServer extends EvaWSServer {
     public Response getVariantById(@PathParam("variantId") String variantId,
                                    @QueryParam("studies") String studies,
                                    @QueryParam("species") String species) 
-            throws IllegalOpenCGACredentialsException, UnknownHostException {
+            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         
@@ -76,7 +76,7 @@ public class VariantWSServer extends EvaWSServer {
     public Response checkVariantExists(@PathParam("variantId") String variantId,
                                        @QueryParam("studies") String studies,
                                        @QueryParam("species") String species) 
-            throws IllegalOpenCGACredentialsException, UnknownHostException {
+            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         

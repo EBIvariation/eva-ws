@@ -1,6 +1,8 @@
 package uk.ac.ebi.variation.eva.lib.datastore;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Properties;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.lib.auth.MongoCredentials;
 import org.opencb.opencga.storage.variant.StudyDBAdaptor;
@@ -17,27 +19,33 @@ import org.opencb.opencga.storage.variant.mongodb.VariantSourceMongoDBAdaptor;
 public class DBAdaptorConnector {
     
     public static VariantDBAdaptor getVariantDBAdaptor(String species) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException {
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         return new VariantMongoDBAdaptor(getCredentials(species));
     }
     
     public static StudyDBAdaptor getStudyDBAdaptor(String species)
-            throws UnknownHostException, IllegalOpenCGACredentialsException {
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         return new StudyMongoDBAdaptor(getCredentials(species));
     }
     
     public static VariantSourceDBAdaptor getVariantSourceDBAdaptor(String species)
-            throws UnknownHostException, IllegalOpenCGACredentialsException {
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         return new VariantSourceMongoDBAdaptor(getCredentials(species));
     }
     
-    private static MongoCredentials getCredentials(String species) throws IllegalOpenCGACredentialsException {
+    private static MongoCredentials getCredentials(String species) throws IllegalOpenCGACredentialsException, IOException {
         if (species == null || species.isEmpty()) {
             species = "hsapiens"; // Assume human by default
         }
         
-//        return new MongoCredentials("localhost", 27017, "eva_" + species, "biouser", "biopass");
-        return new MongoCredentials("mongodb-hxvm-var-001", 27017, "eva_" + species, "biouser", "B10p@ss");
+        Properties properties = new Properties(); 
+        properties.load(DBAdaptorConnector.class.getResourceAsStream("/mongo.properties"));
+        
+        return new MongoCredentials(properties.getProperty("eva.mongo.host"),
+                Integer.parseInt(properties.getProperty("eva.mongo.port")),
+                "eva_" + species,
+                properties.getProperty("eva.mongo.user"),
+                properties.getProperty("eva.mongo.passwd"));
     }
     
 }

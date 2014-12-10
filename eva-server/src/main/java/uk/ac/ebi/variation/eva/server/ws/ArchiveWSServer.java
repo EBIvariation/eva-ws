@@ -2,6 +2,7 @@ package uk.ac.ebi.variation.eva.server.ws;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Map;
@@ -75,7 +76,7 @@ public class ArchiveWSServer extends EvaWSServer {
     @GET
     @Path("/studies/list")
     public Response getStudies(@QueryParam("species") String species) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException {
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
         return createOkResponse(studyMongoDbAdaptor.listStudies());
     }
