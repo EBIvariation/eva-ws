@@ -10,10 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiParam;
 import org.opencb.biodata.models.feature.Genotype;
 import org.opencb.biodata.models.variant.VariantSourceEntry;
 import org.opencb.biodata.models.variant.VariantSource;
@@ -28,18 +29,27 @@ import org.opencb.opencga.storage.variant.json.VariantSourceJsonMixin;
 import org.opencb.opencga.storage.variant.json.VariantStatsJsonMixin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.ebi.variation.eva.server.exception.SpeciesException;
+import uk.ac.ebi.variation.eva.server.exception.VersionException;
 
 /**
  * Created by imedina on 01/04/14.
  */
 @Path("/{version}")
-//@Produces(MediaType.APPLICATION_JSON)
+@Produces("application/json")
 public class EvaWSServer {
 
-    // output content format: txt or text, json, xml, das
-    protected String outputFormat;
-
+    @DefaultValue("")
+    @PathParam("version")
+    @ApiParam(name = "version", value = "EVA REST WS version", defaultValue = "v1")
     protected String version;
+
+    @DefaultValue("Homo sapiens")
+    @QueryParam("species")
+    @ApiParam(name = "species", value = "Excluded fields will not be returned. Comma separated JSON paths must be provided",
+            defaultValue = "hsapiens", allowableValues = "hsapiens,mmusculus")
+    protected String species;
+
     protected UriInfo uriInfo;
     protected HttpServletRequest httpServletRequest;
 
@@ -47,6 +57,36 @@ public class EvaWSServer {
     protected QueryResponse queryResponse;
     protected long startTime;
     protected long endTime;
+
+    @DefaultValue("")
+    @QueryParam("exclude")
+    @ApiParam(name = "excluded fields", value = "Excluded fields will not be returned. Comma separated JSON paths must be provided")
+    protected String exclude;
+
+    @DefaultValue("")
+    @QueryParam("include")
+    @ApiParam(name = "included fields", value = "Included fields are the only to be returned. Comma separated JSON path must be provided")
+    protected String include;
+
+    @DefaultValue("-1")
+    @QueryParam("limit")
+    @ApiParam(name = "limit", value = "Max number of results to be returned. No limit applied when -1 [-1]")
+    protected int limit;
+
+    @DefaultValue("-1")
+    @QueryParam("skip")
+    @ApiParam(name = "skip", value = "Number of results to be skipped. No skip applied when -1 [-1]")
+    protected int skip;
+
+    @DefaultValue("false")
+    @QueryParam("count")
+    @ApiParam(name = "count", value = "The total number of results is returned [false]")
+    protected String count;
+
+    @DefaultValue("json")
+    @QueryParam("of")
+    @ApiParam(name = "Output format", value = "Output format, Protobuf is not yet implemented", defaultValue = "json", allowableValues = "json,pb (Not implemented yet)")
+    protected String outputFormat;
 
     protected static ObjectMapper jsonObjectMapper;
     protected static ObjectWriter jsonObjectWriter;
@@ -70,6 +110,7 @@ public class EvaWSServer {
         logger.info("EvaWSServer: Initialising attributes inside static block");
     }
 
+    @Deprecated
     public EvaWSServer() {
         logger.info("EvaWSServer: in 'constructor'");
     }
@@ -89,49 +130,46 @@ public class EvaWSServer {
         startTime = System.currentTimeMillis();
         queryResponse = new QueryResponse();
 
-
+        // TODO A properties files may be needed to load valid versions and species
         // load properties file
         // ResourceBundle databaseConfig =
         // ResourceBundle.getBundle("org.bioinfo.infrared.ws.application");
         // config = new Config(databaseConfig);
-
 
         // mediaType = MediaType.valueOf("text/plain");
         queryOptions = new QueryOptions();
         // logger = new Logger();
         // logger.setLevel(Logger.DEBUG_LEVEL);
         logger.info("GenericrestWSServer: in 'init' method");
-
-        /**
-         * Check version parameter, must be: v1, v2, ... If 'latest' then is
-         * converted to appropriate version
-         */
-        // if(version != null && version.equals("latest") &&
-        // config.getProperty("CELLBASE.LATEST.VERSION") != null) {
-        // version = config.getProperty("CELLBASE.LATEST.VERSION");
-        // System.out.println("version init: "+version);
-        // }
-
-        // this code MUST be run before the checking
-        parseCommonQueryParameters(uriInfo.getQueryParameters());
     }
 
-    private void parseCommonQueryParameters(MultivaluedMap<String, String> multivaluedMap) {
+
+    protected void checkParams() throws VersionException, SpeciesException {
+        // TODO A Version and Species checker must be implemented
+        if (version == null || !version.equals("v1")) {
+            throw new VersionException("Version not valid: '" + version + "'");
+        }
+        if (species == null /*|| !isValidSpecies(species)*/) {
+            throw new SpeciesException("Species not valid: '" + species + "'");
+        }
+
+        MultivaluedMap<String, String> multivaluedMap = uriInfo.getQueryParameters();
+        queryOptions.put("species", (species != null && !species.equals("")) ? species : "Homo sapiens");
+
         queryOptions.put("metadata", (multivaluedMap.get("metadata") != null) ? multivaluedMap.get("metadata").get(0).equals("true") : true);
-        queryOptions.put("exclude", (multivaluedMap.get("exclude") != null) ? Splitter.on(",").splitToList(multivaluedMap.get("exclude").get(0)) : null);
-        queryOptions.put("include", (multivaluedMap.get("include") != null) ? Splitter.on(",").splitToList(multivaluedMap.get("include").get(0)) : null);
-        queryOptions.put("limit", (multivaluedMap.get("limit") != null) ? multivaluedMap.get("limit").get(0) : -1);
-        queryOptions.put("skip", (multivaluedMap.get("skip") != null) ? multivaluedMap.get("skip").get(0) : -1);
-        queryOptions.put("count", (multivaluedMap.get("count") != null) ? Boolean.parseBoolean(multivaluedMap.get("count").get(0)) : false);
+        queryOptions.put("exclude", (exclude != null && !exclude.equals("")) ? Splitter.on(",").splitToList(exclude) : null);
+        queryOptions.put("include", (include != null && !include.equals("")) ? Splitter.on(",").splitToList(include) : null);
+        queryOptions.put("limit", (limit > 0) ? limit : -1);
+        queryOptions.put("skip", (skip > 0) ? skip : -1);
+        queryOptions.put("count", (count != null && !count.equals("")) ? Boolean.parseBoolean(count) : false);
 
-        outputFormat = (multivaluedMap.get("of") != null) ? multivaluedMap.get("of").get(0) : "json";
-//        outputCompress = (multivaluedMap.get("outputcompress") != null) ? multivaluedMap.get("outputcompress").get(0) : "false";
+        outputFormat = (outputFormat != null && !outputFormat.equals("")) ? outputFormat : "json";
     }
-    
+
     @GET
     @Path("/test")
     public Response help() {
-        return createOkResponse("No help available");
+        return createOkResponse("No help available yet");
     }
 
 

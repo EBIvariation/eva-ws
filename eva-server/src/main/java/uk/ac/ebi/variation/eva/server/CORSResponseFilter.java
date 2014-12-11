@@ -1,4 +1,4 @@
-package uk.ac.ebi.variation.eva.server.ws;
+package uk.ac.ebi.variation.eva.server;
 
 import java.io.IOException;
 
