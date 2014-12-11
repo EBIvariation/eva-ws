@@ -533,7 +533,7 @@ EvaVariantWidget.prototype = {
             if (target === _this.selectedToolDiv) {
                 var variant = e.variant;
                 if (variant.sourceEntries) {
-                    variantStatsPanel.load(variant.sourceEntries);
+                    variantStatsPanel.load(variant.sourceEntries,this.variantBrowserGrid.store.proxy.extraParams);
                 }
             }
         });
@@ -922,8 +922,7 @@ EvaVariantWidget.prototype = {
             csvContent += enewLine;
         }
 
-        console.log(noCsvSupport)
-        console.log('+++++++')
+
 
         if('download' in document.createElement('a')){
             /*

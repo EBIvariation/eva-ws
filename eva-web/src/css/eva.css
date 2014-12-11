@@ -44,6 +44,13 @@ div#local-masthead{
 .eva-grid-img-active {
     width: 16px;
     height: 16px;
+
+}
+
+.eva-help-img {
+    width: 14px;
+    height: 14px;
+    margin-top: -3px;
 }
 
 .eva-grid-img-inactive {
@@ -507,6 +514,9 @@ h4{
     color:#426783;
     font-style: italic;
 }
+
+
+
 
 
 

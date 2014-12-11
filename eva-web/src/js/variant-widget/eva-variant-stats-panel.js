@@ -87,14 +87,14 @@ EvaVariantStatsPanel.prototype = {
     clear: function () {
         this.studiesContainer.removeAll(true);
     },
-    load: function (data) {
+    load: function (data,params) {
         this.clear();
 
         var panels = [];
 
         for (var key in data) {
             var study = data[key];
-            var studyPanel = this._createStudyPanel(study);
+            var studyPanel = this._createStudyPanel(study,params);
             panels.push(studyPanel);
 
         }
@@ -133,8 +133,9 @@ EvaVariantStatsPanel.prototype = {
         });
         return panel;
     },
-    _createStudyPanel: function (data) {
+    _createStudyPanel: function (data,params) {
 
+        console.log(params)
         var stats = (data.stats) ? data.stats : {};
         var attributes = (data.attributes) ? data.attributes : {};
         // removing src from attributes
@@ -154,6 +155,25 @@ EvaVariantStatsPanel.prototype = {
         }else{
             study_title = '<a href="?eva-study='+data.studyId+'" target="_blank">'+data.studyId+'</a>';
         }
+        var infoTags = '';
+        EvaManager.get({
+            category: 'studies',
+            resource: 'files',
+            query:data.studyId,
+            async: false,
+            params:{species:params.species},
+            success: function (response) {
+                try {
+                    infoTags = response.response[0].result[0].metadata.INFO;
+                } catch (e) {
+                    console.log(e);
+                }
+
+
+            }
+        });
+
+        attributesData =  _.invert(attributesData);
         var vcfHeader = attributes['src'];
         var vcfHeaderId = Utils.genId("vcf-data");
         var studyPanel = Ext.create('Ext.panel.Panel', {
@@ -174,14 +194,21 @@ EvaVariantStatsPanel.prototype = {
                     tpl: new Ext.XTemplate(
                         '<table class="ocb-attributes-table"><tr>',
                         '<tpl foreach=".">',
-                        '<td class="header">{$}</td>', // the special **`{$}`** variable contains the property name
+                        '<td class="header"  data-qtip="{[this.getInfo(values)]}"><span>{.}&nbsp;<if><img class="eva-help-img" src="img/help.jpg"/></if></span></td>', // the special **`{$}`** variable contains the property name
                             '</tpl>' +
                             '</tr><tr>',
                         '<tpl foreach=".">',
-                        '<td>{.}</td>', // within the loop, the **`{.}`** variable is set to the property value
+                        '<td>{$}</td>', // within the loop, the **`{.}`** variable is set to the property value
                         '</tpl>',
-                        '</tr></table>'
-                    ),
+                        '</tr></table>',
+                        {
+                            getInfo:function(value){
+                                var info =_.findWhere(infoTags, {id:value});
+                                if(!_.isUndefined(info)){
+                                    return info.description
+                                }
+                            }
+                        }),
                     margin: '10 5 5 10'
                 },
                 {
