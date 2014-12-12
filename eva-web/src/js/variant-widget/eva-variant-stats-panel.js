@@ -196,7 +196,6 @@ EvaVariantStatsPanel.prototype = {
         });
         var vcfHeaderButtonId = vcfHeaderId+'-button';
         var vcfHeaderButton = {
-                tpl: new Ext.XTemplate('<div>'+vcfData+'</div>'),
                 id:vcfHeaderButtonId,
                 xtype: 'button',
                 text : 'Show Full Header',
@@ -252,7 +251,7 @@ EvaVariantStatsPanel.prototype = {
                                 if(!_.isUndefined(info)){
                                     return info.description;
                                 }else{
-                                    return false;
+                                    return;
                                 }
                             }
                         }),

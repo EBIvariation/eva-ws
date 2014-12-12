@@ -164,6 +164,7 @@ div#local-masthead{
     width: 1325px;
     float: right;
     border: 1px solid #d3d3d3;
+    margin-top:50px;
     /*position: absolute;*/
 }
 

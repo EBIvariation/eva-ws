@@ -56,7 +56,7 @@ function EvaClinVarWidget(args) {
     this.responseParser;
 
     this.responseRoot = "response[0].result";
-    this.responseTotal = "response[0].numTotalResults";
+    this.responseTotal = "response[0].numResults";
     this.startParam = "skip";
 
     this.browserGridConfig = {
