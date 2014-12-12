@@ -273,7 +273,9 @@ EvaVariantStatsPanel.prototype = {
                                 borderStyle: 'solid'
                             },
                             handler: function () {
+                                var vcfHeaderCtn = Ext.getCmp(vcfHeaderId);
                                 var vcfDataCtn = Ext.getCmp(vcfDataId);
+                                var vcfSubButton = Ext.getCmp(vcfHeaderButtonId);
                                 if(vcfDataCtn.isHidden()) {
                                     vcfDataCtn.show();
                                     this.setText('-')
@@ -281,13 +283,18 @@ EvaVariantStatsPanel.prototype = {
                                 else {
                                     vcfDataCtn.hide();
                                     this.setText('+')
+                                    vcfSubButton.setText('Show Full Header')
+                                    vcfHeaderCtn.hide();
                                 }
-                                var vcfSubButton = Ext.getCmp(vcfHeaderButtonId);
+
+
+
                                 if(vcfSubButton.isHidden()) {
                                     vcfSubButton.show();
                                 }
                                 else {
                                     vcfSubButton.hide();
+
                                 }
 
                             }
