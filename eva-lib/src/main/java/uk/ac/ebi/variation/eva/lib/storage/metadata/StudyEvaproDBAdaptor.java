@@ -1,5 +1,7 @@
 package uk.ac.ebi.variation.eva.lib.storage.metadata;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -74,11 +76,17 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
                 }
                 
                 // Build the variant study object
+                URI uri = null;
+                try {
+                    uri = new URI(rs.getString("resource"));
+                } catch(URISyntaxException | SQLException | NullPointerException ex) {
+                }
                 VariantStudy study = new VariantStudy(rs.getString("project_title"), rs.getString("project_accession"), null, 
                         rs.getString("description"), taxIds, rs.getString("common_name"), rs.getString("scientific_name"), 
                         rs.getString("source_type"), rs.getString("center"), rs.getString("material"), rs.getString("scope"), 
                         null, rs.getString("experiment_type"), rs.getString("experiment_type_abbreviation"), 
-                        rs.getString("assembly_name"), rs.getString("platform"), rs.getInt("variant_count"), rs.getInt("samples"));
+                        rs.getString("assembly_name"), rs.getString("platform"), uri,
+                        rs.getInt("variant_count"), rs.getInt("samples"));
                 result.add(study);
             }
             long end = System.currentTimeMillis();
@@ -122,7 +130,7 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
             pstmt = conn.prepareStatement("select * from study_browser where project_accession = ?");
             pstmt.setString(1, studyId);
             
-            List l = new ArrayList<>();
+            List result = new ArrayList<>();
             long start = System.currentTimeMillis();
             ResultSet rs = pstmt.executeQuery();
 
@@ -135,15 +143,21 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
                 }
                 
                 // Build the variant study object
+                URI uri = null;
+                try {
+                    uri = new URI(rs.getString("resource"));
+                } catch(URISyntaxException | SQLException | NullPointerException ex) {
+                }
                 VariantStudy study = new VariantStudy(rs.getString("project_title"), rs.getString("project_accession"), null, 
                         rs.getString("description"), taxIds, rs.getString("common_name"), rs.getString("scientific_name"), 
                         rs.getString("source_type"), rs.getString("center"), rs.getString("material"), rs.getString("scope"), 
                         null, rs.getString("experiment_type"), rs.getString("experiment_type_abbreviation"), 
-                        rs.getString("assembly_name"), rs.getString("platform"), rs.getInt("variant_count"), rs.getInt("samples"));
-                l.add(study);
+                        rs.getString("assembly_name"), rs.getString("platform"), uri,
+                        rs.getInt("variant_count"), rs.getInt("samples"));
+                result.add(study);
             }
             long end = System.currentTimeMillis();
-            qr = new QueryResult(null, ((Long) (end - start)).intValue(), l.size(), l.size(), null, null, l);
+            qr = new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
         } catch (SQLException ex) {
             Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             qr = new QueryResult();

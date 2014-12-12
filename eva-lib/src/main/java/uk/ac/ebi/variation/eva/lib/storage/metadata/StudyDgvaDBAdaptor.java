@@ -1,5 +1,7 @@
 package uk.ac.ebi.variation.eva.lib.storage.metadata;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -71,10 +73,14 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
                 }
                 
                 // Build the variant study object
+                URI uri = null;
+                try {
+                    uri = new URI(rs.getString("study_url"));
+                } catch(URISyntaxException | SQLException | NullPointerException ex) { }
                 VariantStudy study = new VariantStudy(rs.getString("display_name"), rs.getString("study_accession"), null, 
                         rs.getString("study_description"), taxIds, rs.getString("common_name"), rs.getString("scientific_name"), 
                         null, null, null, null, EvaproUtils.stringToStudyType(rs.getString("study_type")), rs.getString("analysis_type"), 
-                        null, "GRCh38", rs.getString("platform_name"), rs.getInt("variant_count"), -1);
+                        null, "GRCh38", rs.getString("platform_name"), uri, rs.getInt("variant_count"), -1);
                 result.add(study);
             }
             long end = System.currentTimeMillis();
@@ -131,10 +137,14 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
                 }
                 
                 // Build the variant study object
+                URI uri = null;
+                try {
+                    uri = new URI(rs.getString("study_url"));
+                } catch(URISyntaxException | SQLException | NullPointerException ex) { }
                 VariantStudy study = new VariantStudy(rs.getString("display_name"), rs.getString("study_accession"), null, 
                         rs.getString("study_description"), taxIds, rs.getString("common_name"), rs.getString("scientific_name"), 
                         null, null, null, null, EvaproUtils.stringToStudyType(rs.getString("study_type")), rs.getString("analysis_type"), 
-                        null, "GRCh38", rs.getString("platform_name"), rs.getInt("variant_count"), -1);
+                        null, "GRCh38", rs.getString("platform_name"), uri, rs.getInt("variant_count"), -1);
                 result.add(study);
             }
             long end = System.currentTimeMillis();
