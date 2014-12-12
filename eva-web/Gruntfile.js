@@ -34,8 +34,8 @@ module.exports = function (grunt) {
             eva: {
                 src: [
                     /** eva app js **/
-                    'src/js/eva-config.js',
                     'src/js/eva-manager.js',
+                    'src/js/eva-config.js',
                     'src/js/eva-menu.js',
                     'src/js/eva-adapter.js',
                     'src/js/variant-widget/eva-variant-widget-panel.js',
