@@ -117,7 +117,7 @@ EvaVariantStatsPanel.prototype = {
                 type: 'vbox',
                 align: 'stretch'
             },
-//            overflowY: true,
+            overflowY: true,
             overflowX: true,
             padding: 10,
             items: [
@@ -166,7 +166,7 @@ EvaVariantStatsPanel.prototype = {
             success: function (response) {
                 try {
                     infoTags = response.response[0].result[0].metadata.INFO;
-                    vcfHeaderData = response.response[0].result[0].metadata.header;
+                    vcfHeaderData = response.response[0].result[0].metadata.header.trim();
                 } catch (e) {
                     console.log(e);
                 }
@@ -189,11 +189,14 @@ EvaVariantStatsPanel.prototype = {
         var vcfHeaderId = Utils.genId("vcf-header");
         var vcfHeaderView =  Ext.create('Ext.view.View', {
             id:vcfHeaderId,
-            tpl: new Ext.XTemplate('<div>'+vcfHeaderData+'</div>'),
+            tpl: new Ext.XTemplate('<div><pre>'+vcfHeaderData+'</pre></div>'),
             hidden:true,
             margin: '5 10 10 10'
 
         });
+
+        console.log(vcfHeaderData)
+        console.log('+++++=====')
         var vcfHeaderButtonId = vcfHeaderId+'-button';
         var vcfHeaderButton = {
                 id:vcfHeaderButtonId,
@@ -304,7 +307,7 @@ EvaVariantStatsPanel.prototype = {
 //                            tpl: new Ext.XTemplate('<div>{vcfData}</div>'),
                             margin: '5 5 5 10',
 //                            hidden: true,
-                            items:[vcfDataView,vcfHeaderButton,vcfHeaderView]
+                            items:[vcfHeaderButton,vcfHeaderView,vcfDataView]
                         }
                     ]
                 }

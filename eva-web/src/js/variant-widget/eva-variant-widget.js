@@ -266,7 +266,7 @@ EvaVariantWidget.prototype = {
                 {
                     text: "Chr",
                     dataIndex: 'chromosome',
-                    flex: 0.5
+                    flex: 0.
                 },
                 {
                     text: 'Position',
@@ -533,8 +533,8 @@ EvaVariantWidget.prototype = {
         this.on("variant:change", function (e) {
             if (target === _this.selectedToolDiv) {
                 var variant = e.variant;
-                if (variant.sourceEntries) {
-                    variantStatsPanel.load(variant.sourceEntries,this.variantBrowserGrid.store.proxy.extraParams);
+                if (variant.files) {
+                    variantStatsPanel.load(variant.files,this.variantBrowserGrid.store.proxy.extraParams);
                 }
             }
         });
@@ -552,7 +552,7 @@ EvaVariantWidget.prototype = {
             },
             height:2400,
             statsTpl : new Ext.XTemplate(
-                '<table class="ocb-attributes-table">' +
+                '<table class="table table-bordered ocb-attributes-table">' +
                     '<tr>' +
                     '<td class="header">Minor Allele Frequency</td>' +
 //                    '<td class="header">Minor Genotype Frequency</td>' +
@@ -639,7 +639,7 @@ EvaVariantWidget.prototype = {
                     success: function (response) {
                         try {
 
-                          var variantSourceEntries = response.response[0].result[0].sourceEntries;
+                          var variantSourceEntries = response.response[0].result[0].files;
 
                         } catch (e) {
 

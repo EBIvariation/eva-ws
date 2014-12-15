@@ -175,7 +175,7 @@ EvaVariantWidgetPanel.prototype = {
             autoLoad: false
         });
 
-        var studyFilter = new StudyFilterFormPanel({
+        var studyFilter = new EvaStudyFilterFormPanel({
             collapsed: false,
             height: 550,
             studiesStore: this.studiesStore,
@@ -183,6 +183,21 @@ EvaVariantWidgetPanel.prototype = {
         });
 
         _this._loadListStudies(studyFilter, '');
+
+        studyFilter.on('studies:change', function (e) {
+            var studies = _this.formPanelVariantFilter.getValues().studies;
+            var submitButton = Ext.getCmp(_this.formPanelVariantFilter.submitButtonId);
+            if(_.isUndefined(studies)){
+                Ext.Msg.alert('','Please Select at least one study');
+                submitButton.disable();
+
+            }else{
+                submitButton.enable();
+
+            }
+
+        });
+
 
         speciesFilter.on('species:change', function (e) {
             _this._loadListStudies(studyFilter, e.species);
@@ -230,6 +245,7 @@ EvaVariantWidgetPanel.prototype = {
             mode: 'accordion',
             target: target,
             submitButtonText: 'Submit',
+            submitButtonId: 'vb-submit-button',
             filters: [speciesFilter,positionFilter, studyFilter],
             width: 300,
 //            height: 1043,
@@ -319,8 +335,10 @@ EvaVariantWidgetPanel.prototype = {
                         params:{merge:true,exclude:'files.samp'}
                     });
 
-                    if(e.values.studies){
+                    if(!_.isEmpty(e.values.studies)){
                         e.values.studies = e.values.studies.join(',');
+                    }else{
+                        Ext.Msg.alert('','Please select at least one studies');
                     }
 
                     _this.variantWidget.retrieveData(url, e.values)
@@ -333,7 +351,6 @@ EvaVariantWidgetPanel.prototype = {
                 }
             }
         });
-
 
         _this.on('studies:change', function (e) {
             _this.formPanelVariantFilter.trigger('submit', {values: _this.formPanelVariantFilter.getValues(), sender: _this});

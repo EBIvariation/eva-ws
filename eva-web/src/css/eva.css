@@ -267,6 +267,9 @@ div#local-masthead{
     max-width: 200px;
     /*overflow: hidden;*/
     text-align: center;
+    word-wrap:break-word;
+    /*white-space:nowrap;*/
+
 }
 
 .ocb-attributes-table td.header {
