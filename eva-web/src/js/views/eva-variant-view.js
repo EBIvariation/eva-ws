@@ -121,8 +121,13 @@ EvaVariantView.prototype = {
                 )
             });
 
-            if (variant[0].sourceEntries) {
-                variantStatsPanel.load(variant[0].sourceEntries);
+//            if (variant[0].sourceEntries) {
+//                variantStatsPanel.load(variant[0].sourceEntries);
+//            }
+
+            if (variant[0].files) {
+
+                variantStatsPanel.load(variant[0].files,{species:this.species});
             }
             variantStatsPanel.draw();
 

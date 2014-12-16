@@ -518,6 +518,15 @@ h4{
     color:#426783;
     font-style: italic;
 }
+pre {
+    /*height: auto;*/
+    height: 20px !important;
+    overflow-y: scroll;
+    background-color: #eeeeee;
+    word-break: normal !important;
+    word-wrap: normal !important;
+    white-space: pre !important;
+}​
 
 
 

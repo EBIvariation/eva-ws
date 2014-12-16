@@ -117,7 +117,7 @@ EvaVariantStatsPanel.prototype = {
                 type: 'vbox',
                 align: 'stretch'
             },
-            overflowY: true,
+//            overflowY: true,
             overflowX: true,
             padding: 10,
             items: [
@@ -187,14 +187,14 @@ EvaVariantStatsPanel.prototype = {
         });
 
         var vcfHeaderId = Utils.genId("vcf-header");
+        var vcfHeaderId1 = Utils.genId("vcf-header1");
         var vcfHeaderView =  Ext.create('Ext.view.View', {
             id:vcfHeaderId,
-            tpl: new Ext.XTemplate('<div><pre>'+vcfHeaderData+'</pre></div>'),
+            tpl: new Ext.XTemplate('<div><pre>'+vcfHeaderData.escapeHTML()+'</pre></div>'),
             hidden:true,
             margin: '5 10 10 10'
 
         });
-
         console.log(vcfHeaderData)
         console.log('+++++=====')
         var vcfHeaderButtonId = vcfHeaderId+'-button';
@@ -335,7 +335,6 @@ EvaVariantStatsPanel.prototype = {
         });
 
 
-
         return studyPanel;
     },
     _getGenotypeCount: function (gc) {
@@ -349,3 +348,12 @@ EvaVariantStatsPanel.prototype = {
         return res;
     }
 };
+
+String.prototype.escapeHTML = function () {
+    return(
+        this.replace(/>/g,'&gt;').
+            replace(/</g,'&lt;').
+            replace(/"/g,'&quot;')
+        );
+};
+
