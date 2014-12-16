@@ -283,6 +283,13 @@ EvaVariantStatsPanel.prototype = {
                                     vcfDataCtn.show();
                                     vcfHeaderCtn.show();
                                     this.setText('-')
+                                    if(vcfHeaderCtn.isHidden()){
+                                        vcfSubButton.setText('Show Full Header')
+                                    }else{
+
+                                        vcfSubButton.setText('Hide Full Header')
+                                    }
+
                                 }
                                 else {
                                     vcfDataCtn.hide();
