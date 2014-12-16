@@ -520,8 +520,8 @@ h4{
 }
 pre {
     /*height: auto;*/
-    height: 20px !important;
-    overflow-y: scroll;
+    max-height: 200px !important;
+    overflow: auto;
     background-color: #eeeeee;
     word-break: normal !important;
     word-wrap: normal !important;
