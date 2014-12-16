@@ -505,7 +505,7 @@ EvaVariantWidget.prototype = {
 //                    _this.grid.setLoading(false);
                 }
             },
-            height:3200,
+            height:1800,
             statsTpl : new Ext.XTemplate(
                 '<table class="ocb-attributes-table">' +
                     '<tr>' +

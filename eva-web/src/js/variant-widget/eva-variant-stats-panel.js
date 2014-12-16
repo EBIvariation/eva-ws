@@ -117,7 +117,7 @@ EvaVariantStatsPanel.prototype = {
                 type: 'vbox',
                 align: 'stretch'
             },
-//            overflowY: true,
+            overflowY: true,
             overflowX: true,
             padding: 10,
             items: [
@@ -183,7 +183,7 @@ EvaVariantStatsPanel.prototype = {
             id:vcfDataId,
             tpl: new Ext.XTemplate('<div>'+vcfData+'</div>'),
             hidden:true,
-            margin: '5 10 10 10'
+            margin: '5 10 10 20'
         });
 
         var vcfHeaderId = Utils.genId("vcf-header");
@@ -201,7 +201,7 @@ EvaVariantStatsPanel.prototype = {
         var vcfHeaderButton = {
                 id:vcfHeaderButtonId,
                 xtype: 'button',
-                text : 'Show Full Header',
+                text : 'Hide Full Header',
                 margin: '5 10 10 10',
                 enableToggle: true,
                 hidden:true,
@@ -281,6 +281,7 @@ EvaVariantStatsPanel.prototype = {
                                 var vcfSubButton = Ext.getCmp(vcfHeaderButtonId);
                                 if(vcfDataCtn.isHidden()) {
                                     vcfDataCtn.show();
+                                    vcfHeaderCtn.show();
                                     this.setText('-')
                                 }
                                 else {
