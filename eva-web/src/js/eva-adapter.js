@@ -59,10 +59,12 @@ EvaAdapter.prototype = {
         }
         var chunkSize;
 
-        //debugger
         // two levels of cache. In this adapter, default are: species and type of track.
         this.cacheConfig.cacheId = this.params.species;
-        this.cacheConfig.subCacheId = this.resource + this.params.exclude;
+        this.cacheConfig.subCacheId = this.resource
+        + this.params.studies.reduce(function(previousValue, currentValue) {
+            return previousValue + currentValue;
+        });
         var combinedCacheId = _this.cacheConfig.cacheId + "_" + _this.cacheConfig.subCacheId;
 
         /** Check dataType histogram  **/
@@ -135,23 +137,23 @@ EvaAdapter.prototype = {
                         return Math.floor(b / n);
                     });
                     // Each element on queriesList contains and array of 50 or less regions
-                    var queriesList = _.toArray(lists); //Added this to convert the returned object to an array.
+                    queriesList = _.toArray(lists); //Added this to convert the returned object to an array.
 
-                    for (var i = 0; i < queriesList.length; i++) {
+                    queriesList.forEach(function(query, i) {
                         args.webServiceCallCount++;
                         EvaManager.get({
                             host: _this.host,
                             version: _this.version,
                             species: _this.species,
                             category: _this.category,
-                            query: queriesList[i],
+                            query: query,
                             resource: _this.resource,
                             params: params,
                             success: function (data) {
-                                _this._success(data, dataType, combinedCacheId, args);
+                                _this._success(data, dataType, combinedCacheId, query, args);
                             }
                         });
-                    }
+                    });
                 }
                 // Get chunks from cache
                 if (chunksByRegion.cached.length > 0) {
@@ -166,7 +168,7 @@ EvaAdapter.prototype = {
         }
     },
 
-    _success: function (data, dataType, combinedCacheId, args) {
+    _success: function (data, dataType, combinedCacheId, queries, args) {
         args.webServiceCallCount--;
         var timeId = this.resource + " save " + Utils.randomString(4);
         console.time(timeId);
@@ -176,11 +178,14 @@ EvaAdapter.prototype = {
 
         var regions = [];
         var chunks = [];
-        for (var i = 0; i < data.response.length; i++) {
-            var queryResult = data.response[i];
-
-            regions.push(new Region(queryResult.id));
-            chunks.push(queryResult.result);
+        if (queries.length == data.response.length) {
+            for (var i = 0; i < data.response.length; i++) {
+                var queryResult = data.response[i];
+                regions.push(new Region(queries[i]));
+                chunks.push(queryResult.result);
+            }
+        } else {
+            console.error("response has different number of regions than requested");
         }
         chunks = this.cache[combinedCacheId].putByRegions(regions, chunks);
 
