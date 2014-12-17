@@ -264,9 +264,9 @@ EvaVariantWidget.prototype = {
         var columns ={
             items:[
                 {
-                    text: "Chromosome",
+                    text: "Chr",
                     dataIndex: 'chromosome',
-                    flex: 1
+                    flex: 0.
                 },
                 {
                     text: 'Position',
@@ -274,7 +274,7 @@ EvaVariantWidget.prototype = {
                     flex: 1
                 },
                 {
-                    text: "SNP Id",
+                    text: "SNP ID",
                     dataIndex: 'id',
                     flex: 1
                 },
@@ -407,7 +407,7 @@ EvaVariantWidget.prototype = {
             }),
             mode : 'local',
             value: '10',
-            listWidth     : 40,
+//            listWidth     : 40,
             triggerAction : 'all',
             displayField  : 'id',
             valueField    : 'id',
@@ -415,12 +415,13 @@ EvaVariantWidget.prototype = {
             forceSelection: true
         });
 
-        variantBrowserGrid.grid.addDocked({
+        variantBrowserGrid.grid.addTool({
             xtype   : 'toolbar',
             dock    : 'bottom',
+            border:false,
             items: [ 'Results per Page: ',resultsPerPage,{
                 xtype   :   'button',
-                text    :   'Export Records',
+                text    :   'Export',
                 listeners: {
                     click: {
                         element: 'el', //bind to the underlying el property on the panel
@@ -504,7 +505,7 @@ EvaVariantWidget.prototype = {
 //                    _this.grid.setLoading(false);
                 }
             },
-            height:3200,
+            height:1800,
             statsTpl : new Ext.XTemplate(
                 '<table class="ocb-attributes-table">' +
                     '<tr>' +
@@ -532,8 +533,8 @@ EvaVariantWidget.prototype = {
         this.on("variant:change", function (e) {
             if (target === _this.selectedToolDiv) {
                 var variant = e.variant;
-                if (variant.sourceEntries) {
-                    variantStatsPanel.load(variant.sourceEntries,this.variantBrowserGrid.store.proxy.extraParams);
+                if (variant.files) {
+                    variantStatsPanel.load(variant.files,this.variantBrowserGrid.store.proxy.extraParams);
                 }
             }
         });
@@ -551,7 +552,7 @@ EvaVariantWidget.prototype = {
             },
             height:2400,
             statsTpl : new Ext.XTemplate(
-                '<table class="ocb-attributes-table">' +
+                '<table class="table table-bordered ocb-attributes-table">' +
                     '<tr>' +
                     '<td class="header">Minor Allele Frequency</td>' +
 //                    '<td class="header">Minor Genotype Frequency</td>' +
@@ -638,7 +639,7 @@ EvaVariantWidget.prototype = {
                     success: function (response) {
                         try {
 
-                          var variantSourceEntries = response.response[0].result[0].sourceEntries;
+                          var variantSourceEntries = response.response[0].result[0].files;
 
                         } catch (e) {
 

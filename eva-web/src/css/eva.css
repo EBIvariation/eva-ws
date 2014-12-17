@@ -164,6 +164,7 @@ div#local-masthead{
     width: 1325px;
     float: right;
     border: 1px solid #d3d3d3;
+    margin-top:50px;
     /*position: absolute;*/
 }
 
@@ -266,6 +267,9 @@ div#local-masthead{
     max-width: 200px;
     /*overflow: hidden;*/
     text-align: center;
+    word-wrap:break-word;
+    /*white-space:nowrap;*/
+
 }
 
 .ocb-attributes-table td.header {
@@ -514,6 +518,17 @@ h4{
     color:#426783;
     font-style: italic;
 }
+pre {
+    /*height: auto;*/
+    max-height: 200px !important;
+    overflow: auto;
+    background-color: #eeeeee;
+    word-break: normal !important;
+    word-wrap: normal !important;
+    white-space: pre !important;
+}​
+
+
 
 
 

@@ -117,7 +117,7 @@ EvaVariantStatsPanel.prototype = {
                 type: 'vbox',
                 align: 'stretch'
             },
-//            overflowY: true,
+            overflowY: true,
             overflowX: true,
             padding: 10,
             items: [
@@ -156,6 +156,7 @@ EvaVariantStatsPanel.prototype = {
             study_title = '<a href="?eva-study='+data.studyId+'" target="_blank">'+data.studyId+'</a>';
         }
         var infoTags = '';
+        var vcfHeaderData = '';
         EvaManager.get({
             category: 'studies',
             resource: 'files',
@@ -165,6 +166,7 @@ EvaVariantStatsPanel.prototype = {
             success: function (response) {
                 try {
                     infoTags = response.response[0].result[0].metadata.INFO;
+                    vcfHeaderData = response.response[0].result[0].metadata.header.trim();
                 } catch (e) {
                     console.log(e);
                 }
@@ -174,8 +176,53 @@ EvaVariantStatsPanel.prototype = {
         });
 
         attributesData =  _.invert(attributesData);
-        var vcfHeader = attributes['src'];
-        var vcfHeaderId = Utils.genId("vcf-data");
+        var vcfData = attributes['src'];
+        var vcfDataId = Utils.genId("vcf-data");
+
+       var vcfDataView =  Ext.create('Ext.view.View', {
+            id:vcfDataId,
+            tpl: new Ext.XTemplate('<div>'+vcfData+'</div>'),
+            hidden:true,
+            margin: '5 10 10 20'
+        });
+
+        var vcfHeaderId = Utils.genId("vcf-header");
+        var vcfHeaderId1 = Utils.genId("vcf-header1");
+        var vcfHeaderView =  Ext.create('Ext.view.View', {
+            id:vcfHeaderId,
+            tpl: new Ext.XTemplate('<div><pre>'+vcfHeaderData.escapeHTML()+'</pre></div>'),
+            hidden:true,
+            margin: '5 10 10 10'
+
+        });
+        console.log(vcfHeaderData)
+        console.log('+++++=====')
+        var vcfHeaderButtonId = vcfHeaderId+'-button';
+        var vcfHeaderButton = {
+                id:vcfHeaderButtonId,
+                xtype: 'button',
+                text : 'Hide Full Header',
+                margin: '5 10 10 10',
+                enableToggle: true,
+                hidden:true,
+                style: {
+                    borderStyle: 'solid'
+                },
+                handler: function () {
+                    var vcfHeaderCtn = Ext.getCmp(vcfHeaderId);
+                    if(vcfHeaderCtn.isHidden()) {
+                        vcfHeaderCtn.show();
+                        this.setText('Hide Full Header')
+                    }
+                    else {
+                        vcfHeaderCtn.hide();
+                        this.setText('Show Full Header')
+                    }
+
+                }
+
+            };
+
         var studyPanel = Ext.create('Ext.panel.Panel', {
             header:{
                 titlePosition:1
@@ -194,9 +241,9 @@ EvaVariantStatsPanel.prototype = {
                     tpl: new Ext.XTemplate(
                         '<table class="ocb-attributes-table"><tr>',
                         '<tpl foreach=".">',
-                        '<td class="header"  data-qtip="{[this.getInfo(values)]}"><span>{.}&nbsp;<if><img class="eva-help-img" src="img/help.jpg"/></if></span></td>', // the special **`{$}`** variable contains the property name
-                            '</tpl>' +
-                            '</tr><tr>',
+                        '<td class="header"  data-qtip="{[this.getInfo(values)]}"><span>{.}&nbsp;<tpl if="this.getInfo(values)"><img class="eva-help-img" src="img/help.jpg"/></tpl></span></td>', // the special **`{$}`** variable contains the property name
+                        '</tpl>' +
+                        '</tr><tr>',
                         '<tpl foreach=".">',
                         '<td>{$}</td>', // within the loop, the **`{.}`** variable is set to the property value
                         '</tpl>',
@@ -205,7 +252,9 @@ EvaVariantStatsPanel.prototype = {
                             getInfo:function(value){
                                 var info =_.findWhere(infoTags, {id:value});
                                 if(!_.isUndefined(info)){
-                                    return info.description
+                                    return info.description;
+                                }else{
+                                    return;
                                 }
                             }
                         }),
@@ -223,26 +272,50 @@ EvaVariantStatsPanel.prototype = {
                             text : '+',
                             margin: '5 10 10 90',
                             enableToggle: true,
+                            style: {
+                                borderStyle: 'solid'
+                            },
                             handler: function () {
                                 var vcfHeaderCtn = Ext.getCmp(vcfHeaderId);
-                                if(vcfHeaderCtn.isHidden()) {
+                                var vcfDataCtn = Ext.getCmp(vcfDataId);
+                                var vcfSubButton = Ext.getCmp(vcfHeaderButtonId);
+                                if(vcfDataCtn.isHidden()) {
+                                    vcfDataCtn.show();
                                     vcfHeaderCtn.show();
                                     this.setText('-')
+                                    if(vcfHeaderCtn.isHidden()){
+                                        vcfSubButton.setText('Show Full Header')
+                                    }else{
+
+                                        vcfSubButton.setText('Hide Full Header')
+                                    }
+
                                 }
                                 else {
-                                    vcfHeaderCtn.hide();
+                                    vcfDataCtn.hide();
                                     this.setText('+')
+                                    vcfSubButton.setText('Show Full Header')
+                                    vcfHeaderCtn.hide();
+                                }
+
+
+
+                                if(vcfSubButton.isHidden()) {
+                                    vcfSubButton.show();
+                                }
+                                else {
+                                    vcfSubButton.hide();
+
                                 }
 
                             }
                         },
                         {
                             xtype: 'container',
-                            id:vcfHeaderId,
-                            data: vcfHeader,
-                            tpl: new Ext.XTemplate('<div>{vcfHeader}</div>'),
+//                            tpl: new Ext.XTemplate('<div>{vcfData}</div>'),
                             margin: '5 5 5 10',
-                            hidden: true
+//                            hidden: true,
+                            items:[vcfHeaderButton,vcfHeaderView,vcfDataView]
                         }
                     ]
                 }
@@ -269,54 +342,6 @@ EvaVariantStatsPanel.prototype = {
             ]
         });
 
-        var gts = this._getGenotypeCount(stats.genotypesCount);
-
-        if (gts.length > 0) {
-            var store = Ext.create('Ext.data.Store', {
-                fields: ['genotype', 'count'],
-                data: gts
-            });
-
-//            var genotypeChart = Ext.create('Ext.chart.Chart', {
-//                xtype: 'chart',
-//                width: 200,
-//                height: 130,
-//                store: store,
-//                animate: true,
-//                shadow: true,
-//                legend: {
-//                    position: 'right'
-//                },
-//                theme: 'Base:gradients',
-//                series: [
-//                    {
-//                        type: 'pie',
-//                        field: 'count',
-//                        showInLegend: true,
-//                        tips: {
-//                            trackMouse: true,
-//                            renderer: function (storeItem, item) {
-//                                var name = storeItem.get('genotype');
-//                                this.setTitle(name + ': ' + storeItem.get('count'));
-//                            }
-//                        },
-//                        highlight: {
-//                            segment: {
-//                                margin: 20
-//                            }
-//                        },
-//                        label: {
-//                            field: 'genotype',
-//                            display: 'rotate',
-//                            contrast: true,
-//                            font: '10px Arial'
-//                        }
-//
-//                    }
-//                ]
-//            });
-//            studyPanel.down().nextSibling().nextSibling().add(genotypeChart);
-        }
 
         return studyPanel;
     },
@@ -331,3 +356,12 @@ EvaVariantStatsPanel.prototype = {
         return res;
     }
 };
+
+String.prototype.escapeHTML = function () {
+    return(
+        this.replace(/>/g,'&gt;').
+            replace(/</g,'&lt;').
+            replace(/"/g,'&quot;')
+        );
+};
+

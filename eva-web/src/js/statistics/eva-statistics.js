@@ -83,8 +83,8 @@ EvaStatistics.prototype = {
 
             }else if(data.id == 'eva-statistics-chart-species'){
                 data.chartData = data.chartData.slice(0, 5);
-                height = 280;
-                width = 220;
+//                height = 280;
+//                width = 220;
             }
             var id = '#'+data.id;
 //                    var render_id = _this.shadowRoot.querySelector(id);

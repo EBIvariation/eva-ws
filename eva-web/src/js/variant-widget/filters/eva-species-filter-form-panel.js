@@ -83,7 +83,7 @@ SpeciesFilterFormPanel.prototype = {
             width: '100%',
             listeners: {
                 afterrender: function (field) {
-                    field.setValue('hsapiens');
+                    field.setValue('hsapiens_grch37');
                 },
                 change: function (field, newValue, oldValue) {
                     _this.trigger('species:change', {species: newValue, sender: _this});
