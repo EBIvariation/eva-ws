@@ -186,7 +186,7 @@ Eva.prototype = {
                     this.variantWidgetPanel.show();
                 }else{
                     this.variantWidgetPanel = this._createVariantWidgetPanel(this.contentDiv);
-//                    this.variantWidgetPanel.formPanelVariantFilter.trigger('submit', {values: this.variantWidgetPanel.formPanelVariantFilter.getValues(), sender: _this});
+                    this.variantWidgetPanel.formPanelVariantFilter.trigger('submit', {values: this.variantWidgetPanel.formPanelVariantFilter.getValues(), sender: _this});
                 }
 
                 break;
