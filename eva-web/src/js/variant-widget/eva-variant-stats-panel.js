@@ -259,7 +259,7 @@ EvaVariantStatsPanel.prototype = {
                     tpl: new Ext.XTemplate(
                         '<table class="ocb-attributes-table"><tr>',
                         '<tpl foreach=".">',
-                        '<td class="header"  data-qtip="{[this.getInfo(values)]}"><span>{.}&nbsp;<tpl if="this.getInfo(values)"><img class="eva-help-img" src="img/help.jpg"/></tpl></span></td>', // the special **`{$}`** variable contains the property name
+                        '<td class="header"><span>{.}&nbsp;<tpl if="this.getInfo(values)"><img  data-qtip="{[this.getInfo(values)]}" class="eva-help-img" src="img/help.jpg"/></tpl></span></td>', // the special **`{$}`** variable contains the property name
                         '</tpl>' +
                         '</tr><tr>',
                         '<tpl foreach=".">',
