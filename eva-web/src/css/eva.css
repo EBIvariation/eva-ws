@@ -520,12 +520,15 @@ h4{
 }
 pre {
     /*height: auto;*/
-    max-height: 200px !important;
+    /*max-height: 200px !important;*/
     overflow: auto;
     background-color: #eeeeee;
     word-break: normal !important;
     word-wrap: normal !important;
     white-space: pre !important;
+    margin:0;
+    padding:0;
+
 }​
 
 

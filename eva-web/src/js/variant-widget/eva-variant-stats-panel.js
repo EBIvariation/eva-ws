@@ -166,6 +166,7 @@ EvaVariantStatsPanel.prototype = {
             success: function (response) {
                 try {
                     infoTags = response.response[0].result[0].metadata.INFO;
+                    console.log(response)
                     vcfHeaderData = response.response[0].result[0].metadata.header.trim();
                 } catch (e) {
                     console.log(e);
@@ -175,6 +176,8 @@ EvaVariantStatsPanel.prototype = {
             }
         });
 
+
+
         attributesData =  _.invert(attributesData);
         var vcfData = attributes['src'];
         var vcfDataId = Utils.genId("vcf-data");
@@ -183,7 +186,7 @@ EvaVariantStatsPanel.prototype = {
             id:vcfDataId,
             tpl: new Ext.XTemplate('<div>'+vcfData+'</div>'),
             hidden:true,
-            margin: '5 10 10 20'
+            margin: '5 10 10 10'
         });
 
         var vcfHeaderId = Utils.genId("vcf-header");
