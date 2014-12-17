@@ -350,9 +350,9 @@ EvaVariantWidgetPanel.prototype = {
             }
         });
 
-//        _this.on('studies:change', function (e) {
-//            _this.formPanelVariantFilter.trigger('submit', {values: _this.formPanelVariantFilter.getValues(), sender: _this});
-//        });
+        _this.on('studies:change', function (e) {
+            _this.formPanelVariantFilter.trigger('submit', {values: _this.formPanelVariantFilter.getValues(), sender: _this});
+        });
 
 
 

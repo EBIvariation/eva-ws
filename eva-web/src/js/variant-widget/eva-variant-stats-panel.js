@@ -156,7 +156,7 @@ EvaVariantStatsPanel.prototype = {
             success: function (response) {
                 try {
                     projectList = response.response[0].result;
-                    console.log(projectList)
+//                    console.log(projectList)
                 } catch (e) {
                     console.log(e);
                 }
