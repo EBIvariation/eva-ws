@@ -337,8 +337,6 @@ EvaVariantWidgetPanel.prototype = {
 
                     if(!_.isEmpty(e.values.studies)){
                         e.values.studies = e.values.studies.join(',');
-                    }else{
-                        Ext.Msg.alert('','Please select at least one studies');
                     }
 
                     _this.variantWidget.retrieveData(url, e.values)
@@ -352,9 +350,9 @@ EvaVariantWidgetPanel.prototype = {
             }
         });
 
-        _this.on('studies:change', function (e) {
-            _this.formPanelVariantFilter.trigger('submit', {values: _this.formPanelVariantFilter.getValues(), sender: _this});
-        });
+//        _this.on('studies:change', function (e) {
+//            _this.formPanelVariantFilter.trigger('submit', {values: _this.formPanelVariantFilter.getValues(), sender: _this});
+//        });
 
 
 

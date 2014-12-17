@@ -533,8 +533,8 @@ EvaVariantWidget.prototype = {
         this.on("variant:change", function (e) {
             if (target === _this.selectedToolDiv) {
                 var variant = e.variant;
-                if (variant.files) {
-                    variantStatsPanel.load(variant.files,this.variantBrowserGrid.store.proxy.extraParams);
+                if (variant.sourceEntries) {
+                    variantStatsPanel.load(variant.sourceEntries,this.variantBrowserGrid.store.proxy.extraParams);
                 }
             }
         });
@@ -639,7 +639,7 @@ EvaVariantWidget.prototype = {
                     success: function (response) {
                         try {
 
-                          var variantSourceEntries = response.response[0].result[0].files;
+                          var variantSourceEntries = response.response[0].result[0].sourceEntries;
 
                         } catch (e) {
 

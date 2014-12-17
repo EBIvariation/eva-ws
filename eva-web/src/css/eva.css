@@ -268,7 +268,7 @@ div#local-masthead{
     /*overflow: hidden;*/
     text-align: center;
     word-wrap:break-word;
-    /*white-space:nowrap;*/
+    white-space:nowrap;
 
 }
 
