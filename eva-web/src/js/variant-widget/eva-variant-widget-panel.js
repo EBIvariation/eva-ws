@@ -59,13 +59,14 @@ EvaVariantWidgetPanel.prototype = {
         this.targetDiv.appendChild(this.div);
 
         this.panel.render(this.div);
-        this.formPanelVariantFilterDiv = document.querySelector('.form-panel-variant-filter-div');
-        this.formPanelVariantFilter = this._createFormPanelVariantFilter(this.formPanelVariantFilterDiv);
-        this.formPanelVariantFilter.draw();
 
         this.variantWidgetDiv = document.querySelector('.variant-widget-div');
         this.variantWidget = this._createVariantWidget(this.variantWidgetDiv);
         this.variantWidget.draw();
+
+        this.formPanelVariantFilterDiv = document.querySelector('.form-panel-variant-filter-div');
+        this.formPanelVariantFilter = this._createFormPanelVariantFilter(this.formPanelVariantFilterDiv);
+        this.formPanelVariantFilter.draw();
     },
     show: function () {
         this.panel.show()
