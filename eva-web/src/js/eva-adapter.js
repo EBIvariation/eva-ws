@@ -59,121 +59,135 @@ EvaAdapter.prototype = {
         }
         var chunkSize;
 
+        // two levels of cache. In this adapter, default are: species and type of track.
+        this.cacheConfig.cacheId = this.params.species;
+        this.cacheConfig.subCacheId = this.resource
+        + this.params.studies.reduce(function(previousValue, currentValue) {
+            return previousValue + currentValue;
+        });
+        var combinedCacheId = _this.cacheConfig.cacheId + "_" + _this.cacheConfig.subCacheId;
 
         /** Check dataType histogram  **/
         if (dataType == 'histogram') {
             // Histogram chunks will be saved in different caches by interval size
             // The chunkSize will be the histogram interval
-            var histogramId = dataType + '_' + params.interval;
-            if (_.isUndefined(this.cache[histogramId])) {
-                this.cache[histogramId] = new FeatureChunkCache({chunkSize: params.interval});
+            var histogramId = dataType + params.interval;
+            if (_.isUndefined(this.cache[combinedCacheId])) {
+                this.cache[combinedCacheId] = new FeatureChunkCache(_.extend({chunkSize: params.interval}, _this.cacheConfig));
             }
-            chunkSize = this.cache[histogramId].chunkSize;
+            chunkSize = this.cache[combinedCacheId].chunkSize;
 
             // Extend region to be adjusted with the chunks
             //        --------------------             -> Region needed
             // |----|----|----|----|----|----|----|    -> Logical chunk division
             //      |----|----|----|----|----|         -> Chunks covered by needed region
             //      |------------------------|         -> Adjusted region
-            var adjustedRegions = this.cache[histogramId].getAdjustedRegions(region);
-            if (adjustedRegions.length > 0) {
-                args.webServiceCallCount++;
-                // Get CellBase data
-                EvaManager.get({
-                    host: this.host,
-                    version: this.version,
-                    species: this.species,
-                    category: this.category,
-                    query: adjustedRegions,
-                    resource: this.resource,
-                    params: params,
-                    success: function (data) {
-                        _this._histogramSuccess(data, dataType, histogramId, args);
+            this.cache[combinedCacheId].getAdjustedRegions(region, function (adjustedRegions) {
+                if (adjustedRegions.length > 0) {
+                    args.webServiceCallCount++;
+                    // Get CellBase data
+                    EvaManager.get({
+                        host: _this.host,
+                        version: _this.version,
+                        species: _this.species,
+                        category: _this.category,
+                        query: adjustedRegions,
+                        resource: _this.resource,
+                        params: params,
+                        success: function (data) {
+                            _this._histogramSuccess(data, dataType, combinedCacheId, histogramId, args);
+                        }
+                    });
+                }
+
+                // Get chunks from cache
+                _this.cache[combinedCacheId].getByRegion(region, function (cachedChunks) {
+                    _this.trigger('data:ready', {items: cachedChunks, dataType: dataType, chunkSize: chunkSize, sender: _this});
+                    if (args.webServiceCallCount === 0) {
+                        args.done();
                     }
-                });
-            }
-            // Get chunks from cache
-            var chunksByRegion = this.cache[histogramId].getCachedByRegion(region);
-            var chunksCached = this.cache[histogramId].getByRegions(chunksByRegion.cached);
-            this.trigger('data:ready', {items: chunksCached, dataType: dataType, chunkSize: chunkSize, sender: this});
+                }, histogramId);
+            }, histogramId);
 
 
             /** Features: genes, snps ... **/
         } else {
             // Features will be saved using the dataType features
-            if (_.isUndefined(this.cache[dataType])) {
-                this.cache[dataType] = new FeatureChunkCache(this.cacheConfig);
+            if (_.isUndefined(this.cache[combinedCacheId])) {
+                this.cache[combinedCacheId] = new FeatureChunkCache(this.cacheConfig);
             }
-            chunkSize = this.cache[dataType].chunkSize;
+            chunkSize = this.cache[combinedCacheId].chunkSize;
 
-            // Get cached chunks and not cached chunk regions
-            //        --------------------             -> Region needed
-            // |----|----|----|----|----|----|----|    -> Logical chunk division
-            //      |----|----|----|----|----|         -> Chunks covered by needed region
-            //      |----|++++|++++|----|----|         -> + means the chunk is cached so its region will not be retrieved
-            var chunksByRegion = this.cache[dataType].getCachedByRegion(region);
+// Get cached chunks and not cached chunk regions
+//        --------------------             -> Region needed
+// |----|----|----|----|----|----|----|    -> Logical chunk division
+//      |----|----|----|----|----|         -> Chunks covered by needed region
+//      |----|++++|++++|----|----|         -> + means the chunk is cached so its region will not be retrieved
+            this.cache[combinedCacheId].getCachedByRegion(region, function (chunksByRegion) {
 
-            if (chunksByRegion.notCached.length > 0) {
-                var queryRegionStrings = _.map(chunksByRegion.notCached, function (region) {
-                    return new Region(region).toString();
-                });
+                if (chunksByRegion.notCached.length > 0) {
+                    var queryRegionStrings = _.map(chunksByRegion.notCached, function (region) {
+                        return new Region(region).toString();
+                    });
 
-                // Multiple CellBase calls will be performed, each one will
-                // query 50 or less chunk regions
-                var n = 50;
-                var lists = _.groupBy(queryRegionStrings, function (a, b) {
-                    return Math.floor(b / n);
-                });
-                // Each element on queriesList contains and array of 50 or less regions
-                var queriesList = _.toArray(lists); //Added this to convert the returned object to an array.
+                    // Multiple CellBase calls will be performed, each one will
+                    // query 50 or less chunk regions
+                    var n = 50;
+                    var lists = _.groupBy(queryRegionStrings, function (a, b) {
+                        return Math.floor(b / n);
+                    });
+                    // Each element on queriesList contains and array of 50 or less regions
+                    queriesList = _.toArray(lists); //Added this to convert the returned object to an array.
 
-                for (var i = 0; i < queriesList.length; i++) {
-                    args.webServiceCallCount++;
-                    EvaManager.get({
-                        host: this.host,
-                        version: this.version,
-                        species: this.species,
-                        category: this.category,
-                        query: queriesList[i],
-                        resource: this.resource,
-                        params: params,
-                        success: function (data) {
-                            _this._success(data, dataType, args);
+                    queriesList.forEach(function(query, i) {
+                        args.webServiceCallCount++;
+                        EvaManager.get({
+                            host: _this.host,
+                            version: _this.version,
+                            species: _this.species,
+                            category: _this.category,
+                            query: query,
+                            resource: _this.resource,
+                            params: params,
+                            success: function (data) {
+                                _this._success(data, dataType, combinedCacheId, query, args);
+                            }
+                        });
+                    });
+                }
+                // Get chunks from cache
+                if (chunksByRegion.cached.length > 0) {
+                    _this.cache[combinedCacheId].getByRegions(chunksByRegion.cached, function (cachedChunks) {
+                        _this.trigger('data:ready', {items: cachedChunks, dataType: dataType, chunkSize: chunkSize, sender: _this});
+                        if (args.webServiceCallCount === 0) {
+                            args.done();
                         }
                     });
                 }
-            }
-            // Get chunks from cache
-            if (chunksByRegion.cached.length > 0) {
-                var chunksCached = this.cache[dataType].getByRegions(chunksByRegion.cached);
-                this.trigger('data:ready', {items: chunksCached, dataType: dataType, chunkSize: chunkSize, sender: this});
-            }
-        }
-        if (args.webServiceCallCount === 0) {
-            args.done();
+            });
         }
     },
 
-    _success: function (data, dataType, args) {
+    _success: function (data, dataType, combinedCacheId, queries, args) {
         args.webServiceCallCount--;
         var timeId = this.resource + " save " + Utils.randomString(4);
         console.time(timeId);
         /** time log **/
 
-        var chunkSize = this.cache[dataType].chunkSize;
+        var chunkSize = this.cache[combinedCacheId].chunkSize;
 
+        var regions = [];
         var chunks = [];
-        for (var i = 0; i < data.response.length; i++) {
-            var queryResult = data.response[i];
-
-            var queryId = data.query[i];//temporal
-
-//            var region = new Region(queryResult.id);
-            var region = new Region(queryId);
-            var features = queryResult.result;
-            var chunk = this.cache[dataType].putByRegion(region, features);
-            chunks.push(chunk);
+        if (queries.length == data.response.length) {
+            for (var i = 0; i < data.response.length; i++) {
+                var queryResult = data.response[i];
+                regions.push(new Region(queries[i]));
+                chunks.push(queryResult.result);
+            }
+        } else {
+            console.error("response has different number of regions than requested");
         }
+        chunks = this.cache[combinedCacheId].putByRegions(regions, chunks);
 
         /** time log **/
         console.timeEnd(timeId);
@@ -188,29 +202,28 @@ EvaAdapter.prototype = {
 
 
     },
-    _histogramSuccess: function (data, dataType, histogramId, args) {
+    _histogramSuccess: function (data, dataType, combinedCacheId, histogramId, args) {
         args.webServiceCallCount--;
         var timeId = Utils.randomString(4);
         console.time(this.resource + " save " + timeId);
         /** time log **/
 
-        var chunkSize = this.cache[histogramId].chunkSize;
+        var chunkSize = this.cache[combinedCacheId].chunkSize;
 
+        var regions = [];
         var chunks = [];
         for (var i = 0; i < data.response.length; i++) {
             var queryResult = data.response[i];
-            var queryId = data.query[i];//temporal
-
             for (var j = 0; j < queryResult.result.length; j++) {
                 var interval = queryResult.result[j];
-                var region = new Region(queryId);
-//                var region = new Region(queryResult.id);
-                region.load(interval);
-                chunks.push(this.cache[histogramId].putByRegion(region, interval));
+                var region = new Region(interval);
+                regions.push(region);
+                chunks.push(interval);
             }
         }
+        var items = this.cache[combinedCacheId].putByRegions(regions, chunks, false, histogramId); // TODO remove "histogram" from "_histogram_<interval>"
 
-        this.trigger('data:ready', {items: chunks, dataType: dataType, chunkSize: chunkSize, sender: this});
+        this.trigger('data:ready', {items: items, dataType: dataType, chunkSize: chunkSize, sender: this});
         if (args.webServiceCallCount === 0) {
             args.done();
         }
