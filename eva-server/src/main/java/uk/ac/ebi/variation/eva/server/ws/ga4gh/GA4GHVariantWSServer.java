@@ -1,14 +1,11 @@
 package uk.ac.ebi.variation.eva.server.ws.ga4gh;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -29,7 +26,7 @@ import org.opencb.biodata.models.variant.ga4gh.GAVariantFactory;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.variant.VariantDBAdaptor;
-import org.opencb.opencga.storage.variant.mongodb.VariantMongoDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
 
 /**
@@ -40,16 +37,12 @@ import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
 @Produces(MediaType.APPLICATION_JSON)
 public class GA4GHVariantWSServer extends EvaWSServer {
     
-    private VariantDBAdaptor variantMongoDbAdaptor;
-
-    public GA4GHVariantWSServer() throws IllegalOpenCGACredentialsException {
+    public GA4GHVariantWSServer() {
         super();
     }
 
-    public GA4GHVariantWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
-            throws IOException, IllegalOpenCGACredentialsException {
+    public GA4GHVariantWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
         super(version, uriInfo, hsr);
-        variantMongoDbAdaptor = new VariantMongoDBAdaptor(credentials);
     }
 
     @GET
@@ -63,14 +56,18 @@ public class GA4GHVariantWSServer extends EvaWSServer {
                                         @QueryParam("start") int start,
                                         @QueryParam("end") int end,
 //                                        @QueryParam("variantName") String id,
-                                        @QueryParam("variantSetIds") String studies,
+                                        @QueryParam("variantSetIds") String files,
 //                                        @QueryParam("callSetIds") String samples,
                                         @QueryParam("pageToken") String pageToken,
-                                        @DefaultValue("10") @QueryParam("maxResults") int limit,
+                                        @DefaultValue("10") @QueryParam("pageSize") int limit,
                                         @DefaultValue("false") @QueryParam("histogram") boolean histogram,
-                                        @DefaultValue("-1") @QueryParam("histogram_interval") int interval) {
-        if (studies != null && !studies.isEmpty()) {
-            queryOptions.put("studies", Arrays.asList(studies.split(",")));
+                                        @DefaultValue("-1") @QueryParam("histogram_interval") int interval) 
+            throws IllegalOpenCGACredentialsException, UnknownHostException {
+        
+        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens");
+        
+        if (files != null && !files.isEmpty()) {
+            queryOptions.put("files", Arrays.asList(files.split(",")));
         }
         
         int idxCurrentPage = 0;
@@ -108,26 +105,13 @@ public class GA4GHVariantWSServer extends EvaWSServer {
     
     @POST
     @Path("/search")
-    @Consumes("application/x-www-form-urlencoded")
-    /**
-     * "start" and "end" are 0-based, whereas all the position stored are 1-based
-     * 
-     * @see http://ga4gh.org/documentation/api/v0.5/ga4gh_api.html#/schema/org.ga4gh.GASearchVariantsRequest
-     */
-    public Response getVariantsByRegion(@FormParam("request") String jsonRequest,
-                                        @DefaultValue("false") @QueryParam("histogram") boolean histogram,
-                                        @DefaultValue("-1") @QueryParam("histogram_interval") int interval) {
-        ObjectMapper requestMapper = new ObjectMapper();
-        ObjectReader requestReader = requestMapper.reader(GASearchVariantRequest.class);
-        
-        try {
-            GASearchVariantRequest request = requestReader.readValue(jsonRequest);
-            request.validate();
-            return getVariantsByRegion(request.getReferenceName(), (int) request.getStart(), (int) request.getEnd(), 
-                    StringUtils.join(request.getVariantSetIds(), ","), request.getPageToken(), request.getMaxResults(), 
-                    histogram, interval);
-        } catch (IllegalArgumentException | IOException ex) {
-            return createErrorResponse(ex.getMessage());
-        }
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response getVariantsByRegion(GASearchVariantRequest request) 
+            throws IllegalOpenCGACredentialsException, UnknownHostException {
+        request.validate();
+        return getVariantsByRegion(request.getReferenceName(), (int) request.getStart(), (int) request.getEnd(), 
+                   StringUtils.join(request.getVariantSetIds(), ","), request.getPageToken(), request.getPageSize(), 
+                   false, -1);
     }
+    
 }
