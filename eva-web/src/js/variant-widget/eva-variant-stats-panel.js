@@ -198,8 +198,6 @@ EvaVariantStatsPanel.prototype = {
             margin: '5 10 10 10'
 
         });
-        console.log(vcfHeaderData)
-        console.log('+++++=====')
         var vcfHeaderButtonId = vcfHeaderId+'-button';
         var vcfHeaderButton = {
                 id:vcfHeaderButtonId,
