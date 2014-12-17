@@ -182,7 +182,7 @@ EvaVariantWidgetPanel.prototype = {
             studyFilterTpl:'<tpl><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div></tpl>'
         });
 
-        _this._loadListStudies(studyFilter, '');
+//        _this._loadListStudies(studyFilter, '');
 
         studyFilter.on('studies:change', function (e) {
             var studies = _this.formPanelVariantFilter.getValues().studies;

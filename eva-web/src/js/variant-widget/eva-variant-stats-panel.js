@@ -146,10 +146,27 @@ EvaVariantStatsPanel.prototype = {
 
         //TO BE REMOVED
         var study_title;
-        if(projects){
-            for (var i = 0; i < projects.length; i++) {
-                if (projects[i].studyId === data.studyId) {
-                    study_title = '<a href="?eva-study='+projects[i].studyId+'" target="_blank">'+projects[i].studyName+'</a> ('+ projects[i].studyId +')';
+        var projectList = '';
+        EvaManager.get({
+            category: 'meta/studies',
+            resource: 'list',
+            params:{species:params.species},
+            async: false,
+//            params:{species:params.species},
+            success: function (response) {
+                try {
+                    projectList = response.response[0].result;
+                    console.log(projectList)
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+        });
+
+        if(projectList){
+            for (var i = 0; i < projectList.length; i++) {
+                if (projectList[i].studyId === data.studyId) {
+                    study_title = '<a href="?eva-study='+projectList[i].studyId+'" target="_blank">'+projectList[i].studyName+'</a> ('+ projectList[i].studyId +')';
                 }
             }
         }else{

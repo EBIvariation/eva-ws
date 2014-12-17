@@ -80,11 +80,12 @@ EvaStatistics.prototype = {
             var height = 250;
             var width = 200;
             if(data.id == 'eva-statistics-chart-type'){
-
+                height = 270;
+                width = 210;
             }else if(data.id == 'eva-statistics-chart-species'){
                 data.chartData = data.chartData.slice(0, 5);
-//                height = 280;
-//                width = 220;
+                height = 280;
+                width = 230;
             }
             var id = '#'+data.id;
 //                    var render_id = _this.shadowRoot.querySelector(id);
