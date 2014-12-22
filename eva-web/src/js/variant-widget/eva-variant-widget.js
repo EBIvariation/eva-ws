@@ -951,8 +951,11 @@ EvaVariantWidget.prototype = {
              The values below get printed into a blank window for
              the luddites.
              */
-            var newWin = window.open();
-            newWin.document.write('<table border=1>' + csvContent + '</table>');
+            alert('Please allow pop up in settings if its not exporting');
+            window.open().document.write('<table>' + csvContent + '</table>');
+            return true;
+
+
         }
 
         return true;
