@@ -216,9 +216,26 @@ variationClasses = [
 //        url:"http://www.ebi.ac.uk/birney-srv/medaka-ref-panel/"
 //    }
 //];
+//agambiae_agamp4
+//btaurus_umd31
+//chircus_10
+//csabaeus_chlsab11
+//hsapiens_grch37
+//mmusculus_grcm38
+//oaries_oarv31
+//olatipes_hdrr
+//slycopersicum_sl240
 
-var speciesList = [ {"value":"hsapiens_grch37", "name":"Human - GRCh37"},
-                    {"value":"mmusculus", "name":"Mouse"}]
+var speciesList = [ {"value":"btaurus_umd31", "name":"Cow"},
+                    {"value":"chircus_10", "name":"Goat"},
+                    {"value":"hsapiens_grch37", "name":"Human - GRCh37"},
+                    {"value":"olatipes_hdrr", "name":"Medaka"},
+                    {"value":"mmusculus_grcm38", "name":"Mouse"},
+                    {"value":"agambiae_agamp4", "name":"Mosquito"},
+                    {"value":"oaries_oarv31", "name":"Sheep"},
+                    {"value":"slycopersicum_sl240", "name":"Tomato"},
+                    {"value":"csabaeus_chlsab11", "name":"Vervet Monkey"}
+                  ];
 var projects = '';
 EvaManager.get({
     category: 'meta/studies',
