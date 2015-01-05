@@ -426,7 +426,15 @@ EvaVariantWidget.prototype = {
                     click: {
                         element: 'el', //bind to the underlying el property on the panel
                         fn: function(){
-                            variantBrowserGrid.grid.setLoading(true);
+                            var proxy = variantBrowserGrid.grid.store.proxy;
+                            var url = EvaManager.url({
+                                category: 'segments',
+                                resource: 'variants',
+                                query: proxy.extraParams.region,//
+                                params:{merge:true,exclude:'files'}
+                            });
+                            proxy.url = url;
+                            console.log(proxy)
                             var exportStore = Ext.create('Ext.data.Store', {
                                 pageSize:variantBrowserGrid.grid.store.getTotalCount(),
                                 autoLoad:true,
@@ -434,7 +442,8 @@ EvaVariantWidget.prototype = {
                                     {name: 'id', type: 'string'}
                                 ],
                                 remoteSort: true,
-                                proxy: variantBrowserGrid.grid.store.proxy,
+                                proxy: proxy,
+                                extraParams: {exclude:files},
                                 listeners: {
                                     load: function (store, records, successful, operation, eOpts) {
                                         var exportData = _this._exportToExcel(records,store.proxy.extraParams);
