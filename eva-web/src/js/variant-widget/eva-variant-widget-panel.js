@@ -263,9 +263,11 @@ EvaVariantWidgetPanel.prototype = {
                         }
                         delete  e.values.region;
                     }
-                    var cellBaseSpecies = e.values.species.split("_")[0];
-                    if (typeof e.values.gene !== 'undefined') {
+                    if(!_.isUndefined(e.values.species)){
+                        var cellBaseSpecies = e.values.species.split("_")[0];
+                    }
 
+                    if (typeof e.values.gene !== 'undefined') {
                         CellBaseManager.get({
                             species: cellBaseSpecies,
                             category: 'feature',

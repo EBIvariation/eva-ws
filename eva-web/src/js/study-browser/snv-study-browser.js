@@ -289,11 +289,16 @@ SnvStudyBrowser.prototype = {
             },
             {
                 text: "Organism",
+                dataIndex: 'speciesCommonName',
+                flex: 2
+            },
+            {
+                text: "Species",
                 dataIndex: 'speciesScientificName',
-                flex: 2,
+                flex: 2.7,
                 renderer: function(value, p, record) {
                     return value ? Ext.String.format(
-                        '<div data-toggle="popover" title="Organism" data-content="And her...">{0}</div>',
+                        '<div data-toggle="popover" title="" data-content="And her...">{0}</div>',
                         value
                     ) : '';
                 }
@@ -329,7 +334,7 @@ SnvStudyBrowser.prototype = {
                 text: "Download",
 //                        xtype: 'checkcolumn',
                 dataIndex: 'id',
-                flex: 1.7,
+                flex: 1.5,
                 renderer: function (value, p, record) {
                     return value ? Ext.String.format(
                         '<a href="ftp://ftp.ebi.ac.uk/pub/databases/eva/{0}" target="_blank">FTP</a>',
