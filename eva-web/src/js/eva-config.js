@@ -226,14 +226,14 @@ variationClasses = [
 //olatipes_hdrr
 //slycopersicum_sl240
 
-var speciesList = [ {"value":"btaurus_umd31", "name":"Cow"},
+var speciesList = [ {"value":"btaurus_umd31", "name":"Cow/UMD31"},
                     {"value":"chircus_10", "name":"Goat"},
-                    {"value":"hsapiens_grch37", "name":"Human - GRCh37"},
+                    {"value":"hsapiens_grch37", "name":"Human/GRCh37"},
                     {"value":"olatipes_hdrr", "name":"Medaka"},
-                    {"value":"mmusculus_grcm38", "name":"Mouse"},
-                    {"value":"agambiae_agamp4", "name":"Mosquito"},
-                    {"value":"oaries_oarv31", "name":"Sheep"},
-                    {"value":"slycopersicum_sl240", "name":"Tomato"},
+                    {"value":"mmusculus_grcm38", "name":"Mouse/GRCm38"},
+                    {"value":"agambiae_agamp4", "name":"Mosquito/AgamP4"},
+                    {"value":"oaries_oarv31", "name":"Sheep/Oar v3.1"},
+                    {"value":"slycopersicum_sl240", "name":"Tomato/SL240"},
                     {"value":"csabaeus_chlsab11", "name":"Vervet Monkey"}
                   ];
 var projects = '';

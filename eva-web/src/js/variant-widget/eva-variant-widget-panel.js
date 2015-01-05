@@ -153,7 +153,7 @@ EvaVariantWidgetPanel.prototype = {
     },
     _createFormPanelVariantFilter: function (target) {
         var _this = this;
-        var positionFilter = new PositionFilterFormPanel({
+        var positionFilter = new EvaPositionFilterFormPanel({
 //            testRegion: '1:14000-200000',
 //            testRegion: '1:3000760-3004790',
             testRegion: '1:78383460-78383470',
@@ -263,9 +263,11 @@ EvaVariantWidgetPanel.prototype = {
                         }
                         delete  e.values.region;
                     }
+                    var cellBaseSpecies = e.values.species.split("_")[0];
                     if (typeof e.values.gene !== 'undefined') {
+
                         CellBaseManager.get({
-                            species: e.values.species,
+                            species: cellBaseSpecies,
                             category: 'feature',
                             subCategory: 'gene',
                             query: e.values.gene.toUpperCase(),
@@ -289,7 +291,7 @@ EvaVariantWidgetPanel.prototype = {
 
                     if (typeof e.values.snp !== 'undefined') {
                         CellBaseManager.get({
-                            species: e.values.species,
+                            species: cellBaseSpecies,
                             category: 'feature',
                             subCategory: 'snp',
                             query: e.values.snp,
@@ -342,14 +344,23 @@ EvaVariantWidgetPanel.prototype = {
 
                     _this.variantWidget.retrieveData(url, e.values)
 
-                    var updateTpl = Ext.create('Ext.XTemplate', '<tpl if="id"><a href="?variant={chromosome}:{start}:{reference}:{alternate}&species='+ e.values.species+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;' +
-                        '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
-                        '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>' +
-                        '<tpl else><a href="?variant={chromosome}:{start}:{reference}:{alternate}&species='+ e.values.species+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>');
+                    if(e.values.species == 'hsapiens_grch37'){
+                        var updateTpl = Ext.create('Ext.XTemplate', '<tpl if="id"><a href="?variant={chromosome}:{start}:{reference}:{alternate}&species='+ e.values.species+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;' +
+                            '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
+                            '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs={id}" target="_blank"><span>dbSNP</span></a>' +
+                            '<tpl else><a href="?variant={chromosome}:{start}:{reference}:{alternate}&species='+ e.values.species+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>');
+                    }else{
+                        var updateTpl = Ext.create('Ext.XTemplate', '<tpl><a href="?variant={chromosome}:{start}:{reference}:{alternate}&species='+ e.values.species+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>');
+                    }
+
+
                     Ext.getCmp('variant-grid-view-column').tpl = updateTpl;
                 }
             }
         });
+        console.log(Ext.getCmp('snp'));
+        console.log(formPanel.filtersPanel);
+
 
         _this.on('studies:change', function (e) {
             _this.formPanelVariantFilter.trigger('submit', {values: _this.formPanelVariantFilter.getValues(), sender: _this});

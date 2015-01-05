@@ -2,36 +2,36 @@
  * Copyright (c) 2014 Francisco Salavert (SGL-CIPF)
  * Copyright (c) 2014 Alejandro Alemán (SGL-CIPF)
  * Copyright (c) 2014 Ignacio Medina (EBI-EMBL)
- * Copyright (c) 2014 Jag Kandasamy (EBI-EMBL)
  *
- * This file is part of EVA.
+ * This file is part of JSorolla.
  *
- * EVA is free software: you can redistribute it and/or modify
+ * JSorolla is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
  *
- * EVA is distributed in the hope that it will be useful,
+ * JSorolla is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with EVA. If not, see <http://www.gnu.org/licenses/>.
+ * along with JSorolla. If not, see <http://www.gnu.org/licenses/>.
  */
-function SpeciesFilterFormPanel(args) {
+function EvaPositionFilterFormPanel(args) {
     _.extend(this, Backbone.Events);
 
     //set default args
-    this.id = Utils.genId("SpeciesFilterFormPanel");
+    this.id = Utils.genId("PositionFilterFormPanel");
     this.target;
     this.autoRender = true;
-    this.title = "Species";
+    this.title = "Position";
     this.border = false;
     this.collapsible = true;
     this.titleCollapse = false;
     this.headerConfig;
-    
+    this.testRegion = "";
+    this.emptyText = '1:1-1000000,2:1-1000000';
 
     //set instantiation args, must be last
     _.extend(this, args);
@@ -44,10 +44,11 @@ function SpeciesFilterFormPanel(args) {
     }
 }
 
-SpeciesFilterFormPanel.prototype = {
+EvaPositionFilterFormPanel.prototype = {
     render: function () {
         var _this = this;
         console.log("Initializing " + this.id);
+
         //HTML skel
         this.div = document.createElement('div');
         this.div.setAttribute('id', this.id);
@@ -65,31 +66,37 @@ SpeciesFilterFormPanel.prototype = {
         this.panel.render(this.div);
     },
     _createPanel: function () {
-        var _this = this;
-        var speciesStore = Ext.create('Ext.data.Store', {
-            fields: ['abbr', 'name'],
-            data : speciesList
+        var snp = Ext.create('Ext.form.field.TextArea', {
+            id: this.id + "snp",
+            name: "snp",
+            margin: '0 0 0 5',
+            //allowBlank: true,
+            width: '100%',
+            fieldLabel: 'dbSNP accession',
+            labelAlign: 'top',
+            regex: /^[rs]s\d+$/
         });
 
-        var speciesFormField  =  Ext.create('Ext.form.ComboBox', {
-            fieldLabel: 'Species / Genome Assembly',
-//            id:'species',
-            name:'species',
-            labelAlign: 'top',
-            store: speciesStore,
-            queryMode: 'local',
-            displayField: 'name',
-            valueField: 'value',
+        var regionList = Ext.create('Ext.form.field.TextArea', {
+            id: this.id + "region",
+            name: "region",
+            emptyText:  this.emptyText,
+            margin: '0 0 0 5',
+            //allowBlank: true,
             width: '100%',
-            listeners: {
-                afterrender: function (field) {
-                    field.setValue('hsapiens_grch37');
-                },
-                change: function (field, newValue, oldValue) {
-                    _this.trigger('species:change', {species: newValue, sender: _this});
-                }
+            fieldLabel: 'Chromosomal Location',
+            labelAlign: 'top',
+            value: this.testRegion
+        });
 
-            }
+        var gene = Ext.create('Ext.form.field.TextArea', {
+            id: this.id + "gene",
+            name: "gene",
+            margin: '0 0 0 5',
+            //allowBlank: true,
+            width: '100%',
+            fieldLabel: 'Gene / Transcript',
+            labelAlign: 'top'
         });
 
         return Ext.create('Ext.form.Panel', {
@@ -103,7 +110,7 @@ SpeciesFilterFormPanel.prototype = {
             titleCollapse: this.titleCollapse,
             header: this.headerConfig,
             allowBlank: false,
-            items: [speciesFormField]
+            items: [snp, regionList, gene]
         });
 
     },

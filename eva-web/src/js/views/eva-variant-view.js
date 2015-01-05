@@ -186,6 +186,7 @@ EvaVariantView.prototype = {
     _renderSummaryData: function (data) {
             var _summaryTable  = '<div class="row"><div class="col-md-8"><table class="table ocb-stats-table">'
             var variantInfoTitle =  document.querySelector("#variantInfo").textContent = data[0].chromosome+':'+data[0].start+':'+data[0].reference+':'+data[0].alternate+' Info';
+             _summaryTable += '<tr><td class="header">Species</td><td>'+_.findWhere(speciesList, {value:this.species}).name +'</td></tr>'
             if(data[0].id){
                 _summaryTable += '<tr><td class="header">ID</td><td>'+data[0].id+'</td></tr>'
             }
@@ -199,9 +200,8 @@ EvaVariantView.prototype = {
                 alternate = data[0].alternate;
             }
 
-            _summaryTable += '<tr><td class="header">Type</td><td>'+data[0].type+'</td></tr>' +
+            _summaryTable +='<tr><td class="header">Type</td><td>'+data[0].type+'</td></tr>' +
                 '<tr><td class="header">Chromosome:Start-End</td><td>'+data[0].chromosome+':'+data[0].start+'-'+data[0].end+'</td></tr>' +
-                '<tr><td class="header">Species</td><td>'+_.findWhere(speciesList, {value:this.species}).name +'</td></tr>' +
 //                '<tr><td>Assembly</td><td>GRCh37</td></tr>' +
                 '<tr><td class="header">Ref</td><td>'+reference+'</td></tr>' +
                 '<tr><td class="header">Alt</td><td>'+alternate+'</td></tr>' +

@@ -46,6 +46,7 @@ module.exports = function (grunt) {
                     'src/js/variant-widget/eva-genome-viewer-panel.js',
                     'src/js/variant-widget/filters/eva-species-filter-form-panel.js',
                     'src/js/variant-widget/filters/eva-study-filter-form-panel.js',
+                    'src/js/variant-widget/filters/eva-position-filter-form-panel.js',
                     'src/js/study-browser/eva-study-browser-panel.js',
                     'src/js/study-browser/snv-study-browser.js',
                     'src/js/study-browser/sv-study-browser.js',
