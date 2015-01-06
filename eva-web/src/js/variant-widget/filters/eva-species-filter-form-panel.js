@@ -66,8 +66,33 @@ SpeciesFilterFormPanel.prototype = {
     },
     _createPanel: function () {
         var _this = this;
+
+        Ext.define('SpeciesListModel', {
+            extend: 'Ext.data.Model',
+            fields: [
+                {name: 'taxonomyCommonName', type: 'string'},
+                {name: 'taxonomyCode',  type: 'string'},
+                {name: 'assemblyName',       type: 'string'},
+                {name: 'assemblyCode',  type: 'string'},
+                {
+                    name: 'displayName',
+                    type: 'string',
+                    convert: function( v, record ) {
+                        return record.get( 'taxonomyCommonName' ) + ' / ' + record.get( 'assemblyName' )
+                    }
+                },
+                {
+                    name: 'value',
+                    type: 'string',
+                    convert: function( v, record ) {
+                        console.log( record.get( 'taxonomyCommonName' ))
+                        return record.get( 'taxonomyCode' ) + '_' + record.get( 'assemblyCode' )
+                    }
+                }
+            ]
+        });
         var speciesStore = Ext.create('Ext.data.Store', {
-            fields: ['abbr', 'name'],
+            model: 'SpeciesListModel',
             data : speciesList
         });
 
@@ -78,7 +103,7 @@ SpeciesFilterFormPanel.prototype = {
             labelAlign: 'top',
             store: speciesStore,
             queryMode: 'local',
-            displayField: 'name',
+            displayField: 'displayName',
             valueField: 'value',
             width: '100%',
             listeners: {

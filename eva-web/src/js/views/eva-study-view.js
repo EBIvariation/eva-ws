@@ -62,13 +62,24 @@ EvaStudyView.prototype = {
         });
 
         if(this.type === 'eva'){
-            var speciesValue;
-            _.each(speciesList, function(speciesList){
-                if (speciesList.name.indexOf(summary[0].speciesCommonName) !=-1) {
-                    speciesValue =  speciesList.value
+            var studySpeciesList = '';
+            EvaManager.get({
+                category: 'meta/species',
+                resource: 'list',
+                async: false,
+                success: function (response) {
+                    try {
+                        studySpeciesList = response.response[0].result;
+                    } catch (e) {
+                        console.log(e);
+                    }
                 }
             });
-            var filesParams = {species:speciesValue};
+            if(!_.isUndefined(_.findWhere(studySpeciesList, {taxonomyEvaName:summary[0].speciesCommonName.toLowerCase()}))){
+                var speciesCode = _.findWhere(studySpeciesList, {taxonomyEvaName:summary[0].speciesCommonName.toLowerCase()}).taxonomyCode+'_'+_.findWhere(studySpeciesList, {taxonomyEvaName:summary[0].speciesCommonName.toLowerCase()}).assemblyCode
+                var filesParams = {species:speciesCode};
+            }
+
             EvaManager.get({
                 category: 'studies',
                 resource: 'files',

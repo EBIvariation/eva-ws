@@ -217,16 +217,23 @@ variationClasses = [
 //    }
 //];
 
-var speciesList = [ {"value":"btaurus_umd31", "name":"Cow / UMD31"},
-                    {"value":"chircus_10", "name":"Goat"},
-                    {"value":"hsapiens_grch37", "name":"Human / GRCh37"},
-                    {"value":"olatipes_hdrr", "name":"Medaka"},
-                    {"value":"mmusculus_grcm38", "name":"Mouse / GRCm38"},
-                    {"value":"agambiae_agamp4", "name":"Mosquito / AgamP4"},
-                    {"value":"oaries_oarv31", "name":"Sheep / Oar v3.1"},
-                    {"value":"slycopersicum_sl240", "name":"Tomato / SL240"},
-                    {"value":"csabaeus_chlsab11", "name":"Vervet Monkey"}
-                  ];
+
+
+var speciesList = '';
+EvaManager.get({
+    category: 'meta/species',
+    resource: 'list',
+    params:{loaded:true},
+    async: false,
+    success: function (response) {
+        try {
+           speciesList = response.response[0].result;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+});
+
 var projects = '';
 EvaManager.get({
     category: 'meta/studies',
