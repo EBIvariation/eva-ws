@@ -62,16 +62,18 @@ EvaStudyView.prototype = {
         });
 
         if(this.type === 'eva'){
+            var speciesValue;
             _.each(speciesList, function(speciesList){
                 if (speciesList.name.indexOf(summary[0].speciesCommonName) !=-1) {
-                    console.log(speciesList.name)
-                    console.log()
+                    speciesValue =  speciesList.value
                 }
             });
+            var filesParams = {species:speciesValue};
             EvaManager.get({
                 category: 'studies',
                 resource: 'files',
                 query:this.projectId,
+                params:filesParams,
                 async: false,
                 success: function (response) {
                     try {
@@ -162,19 +164,18 @@ EvaStudyView.prototype = {
                     }
                     var fileNameList = fileNameArr.join(',');
                     var ftpLink = {};
-//                    var info =_.findWhere(infoTags, {id:value});
-                    console.log('++++')
-                    console.log(speciesList)
-                    $.ajax({
-                        type: 'GET',
-                        url: METADATA_HOST+'/v1/files/'+fileNameList+'/url',
-                        dataType: 'json',//still firefox 20 does not auto serialize JSON, You can force it to always do the parsing by adding dataType: 'json' to your call.
+                    console.log(fileNameList)
+                    EvaManager.get({
+                        category: 'files',
+                        resource: 'url',
+                        query:fileNameList,
                         async: false,
-                        success: function (data, textStatus, jqXHR) {
-                            ftpLink = data.response;
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-
+                        success: function (response) {
+                            try {
+                                ftpLink = response.response;
+                            } catch (e) {
+                                console.log(e);
+                            }
                         }
                     });
                     _filesTable += '<div><h4>Files</h4></div><table class="table table-striped"><thead><tr>' +
@@ -188,26 +189,49 @@ EvaStudyView.prototype = {
                         '<th>Mean Quality</th>'+
                         '</tr></thead><tbody>'
                     for (i = 0; i < data.filesData.length; i++) {
-                        if(ftpLink.length > 0){
+                        if(ftpLink.length > 0 && ftpLink[i].result[0] != 'ftp:/null'){
                             var downloadLink = '<a href="'+ftpLink[i].result[0]+'" target="_blank">'+data.filesData[i].fileName+'</a>';
                         }else{
                             var downloadLink = data.filesData[i].fileName;
                         }
                         var samples_count;
-                        if(data.filesData[i].stats.samplesCount){
-                            samples_count = data.filesData[i].stats.samplesCount;
+                        var variantsCount;
+                        var snpsCount;
+                        var indelsCount;
+                        var passCount;
+                        var transitionsCount;
+                        var meanQuality;
+                        if(!_.isNull(data.filesData[i].stats)){
+                            if(data.filesData[i].stats.samplesCount){
+                                samples_count = data.filesData[i].stats.samplesCount;
+                            }else{
+                                samples_count = 'NA';
+                            }
+                            variantsCount = data.filesData[i].stats.variantsCount;
+                            snpsCount = data.filesData[i].stats.snpsCount;
+                            indelsCount = data.filesData[i].stats.indelsCount;
+                            passCount = data.filesData[i].stats.passCount;
+                            transitionsCount =(data.filesData[i].stats.transitionsCount/data.filesData[i].stats.transversionsCount).toFixed(2)+'&nbsp;('+data.filesData[i].stats.transitionsCount+'/'+data.filesData[i].stats.transversionsCount+')';
+                            meanQuality = data.filesData[i].stats.meanQuality.toFixed(2);
                         }else{
                             samples_count = 'NA';
+                            variantsCount = 'NA';
+                            snpsCount = 'NA';
+                            indelsCount = 'NA';
+                            passCount = 'NA';
+                            transitionsCount = 'NA';
+                            meanQuality = 'NA';
                         }
+
                         _filesTable += '<tr>'+
                             '<td>'+downloadLink+'</td>' +
                             '<td>'+samples_count+'</td>' +
-                            '<td>'+data.filesData[i].stats.variantsCount+'</td>' +
-                            '<td>'+data.filesData[i].stats.snpsCount+'</td>' +
-                            '<td>'+data.filesData[i].stats.indelsCount+'</td>' +
-                            '<td>'+data.filesData[i].stats.passCount+'</td>' +
-                            '<td>'+(data.filesData[i].stats.transitionsCount/data.filesData[i].stats.transversionsCount).toFixed(2)+'&nbsp;('+data.filesData[i].stats.transitionsCount+'/'+data.filesData[i].stats.transversionsCount+')</td>' +
-                            '<td>'+data.filesData[i].stats.meanQuality.toFixed(2)+'</td>' +
+                            '<td>'+variantsCount+'</td>' +
+                            '<td>'+snpsCount+'</td>' +
+                            '<td>'+indelsCount+'</td>' +
+                            '<td>'+passCount+'</td>' +
+                            '<td>'+transitionsCount+'</td>' +
+                            '<td>'+meanQuality+'</td>' +
                             '</tr>'
                     }
                     _filesTable += '</tbody></table>'
