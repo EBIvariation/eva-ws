@@ -337,7 +337,7 @@ EvaVariantWidgetPanel.prototype = {
                         resource: 'variants',
                         query: regions,
 //                        params:{merge:true}
-                        params:{merge:true,exclude:'files.samp'}
+                        params:{merge:true,exclude:'files'}
                     });
 
                     if(!_.isEmpty(e.values.studies)){

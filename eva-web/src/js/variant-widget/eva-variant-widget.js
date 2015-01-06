@@ -542,8 +542,26 @@ EvaVariantWidget.prototype = {
         this.on("variant:change", function (e) {
             if (target === _this.selectedToolDiv) {
                 var variant = e.variant;
+                var region = variant.chromosome+':'+variant.start+'-'+variant.end;
+                var proxy =  _.clone(this.variantBrowserGrid.store.proxy);
+//                proxy.extraParams.region = region;
+                EvaManager.get({
+                    category: 'segments',
+                    resource: 'variants',
+                    query:region,
+                    params:proxy.extraParams,
+                    async: false,
+                    success: function (response) {
+                        try {
+                            _.extend(variant, response.response[0].result[0])
+                        } catch (e) {
+                            console.log(e);
+                        }
+
+                    }
+                });
                 if (variant.sourceEntries) {
-                    variantStatsPanel.load(variant.sourceEntries,this.variantBrowserGrid.store.proxy.extraParams);
+                    variantStatsPanel.load(variant.sourceEntries,proxy.extraParams);
                 }
             }
         });

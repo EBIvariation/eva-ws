@@ -36,21 +36,7 @@ EvaStudyView.prototype = {
     render: function () {
         var _this = this;
 //        $('*').css('cursor','wait');
-        if(this.type === 'eva'){
-            EvaManager.get({
-                category: 'studies',
-                resource: 'files',
-                query:this.projectId,
-                success: function (response) {
-                    try {
-                        files = response.response[0].result;
-                    } catch (e) {
-                        console.log(e);
-                    }
-                    _this._parseData();
-                }
-            });
-        }
+
 
         var params = {};
 
@@ -63,6 +49,7 @@ EvaStudyView.prototype = {
             resource: 'summary',
             query:this.projectId,
             params:params,
+            async: false,
             success: function (response) {
                 try {
                     summary = response.response[0].result;
@@ -73,6 +60,29 @@ EvaStudyView.prototype = {
                 _this._parseData();
             }
         });
+
+        if(this.type === 'eva'){
+            _.each(speciesList, function(speciesList){
+                if (speciesList.name.indexOf(summary[0].speciesCommonName) !=-1) {
+                    console.log(speciesList.name)
+                    console.log()
+                }
+            });
+            EvaManager.get({
+                category: 'studies',
+                resource: 'files',
+                query:this.projectId,
+                async: false,
+                success: function (response) {
+                    try {
+                        files = response.response[0].result;
+                    } catch (e) {
+                        console.log(e);
+                    }
+                    _this._parseData();
+                }
+            });
+        }
 
     },
     _draw:function(data,content){
@@ -152,6 +162,9 @@ EvaStudyView.prototype = {
                     }
                     var fileNameList = fileNameArr.join(',');
                     var ftpLink = {};
+//                    var info =_.findWhere(infoTags, {id:value});
+                    console.log('++++')
+                    console.log(speciesList)
                     $.ajax({
                         type: 'GET',
                         url: METADATA_HOST+'/v1/files/'+fileNameList+'/url',
