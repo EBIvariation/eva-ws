@@ -56,7 +56,7 @@ EvaBeaconForm.prototype = {
                 _this.projectStore.loadRawData(studies);
             }
         });
-        
+
     },
 
     draw: function () {
