@@ -46,7 +46,7 @@ EvaBeaconForm.prototype = {
         var _this = this;
         EvaManager.get({
             category: 'meta/studies',
-            resource: 'list',
+            resource: 'all',
             success: function (response) {
                 try {
                     studies = response.response[0].result;
@@ -56,6 +56,7 @@ EvaBeaconForm.prototype = {
                 _this.projectStore.loadRawData(studies);
             }
         });
+        
     },
 
     draw: function () {
@@ -86,8 +87,8 @@ EvaBeaconForm.prototype = {
                     }
                 },
                 fields: [
-                    {name: 'studyId', type: 'string'},
-                    {name: 'studyName', type: 'string'},
+                    {name: 'id', type: 'string'},
+                    {name: 'name', type: 'string'},
 
                 ]
             });
@@ -142,12 +143,12 @@ EvaBeaconForm.prototype = {
             fieldLabel: 'Dataset',
             store: this.projectStore,
             queryMode: 'local',
-            valueField: 'studyId',
+            valueField: 'id',
             name: 'beaconProject',
             width:650,
             labelWidth: 120,
-            tpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '<div class="x-boundlist-item">{studyId} - {studyName}</div>', '</tpl>'),
-            displayTpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '{studyId} - {studyName}', '</tpl>')
+            tpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '<div class="x-boundlist-item">{id} - {name}</div>', '</tpl>'),
+            displayTpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '{id} - {name}', '</tpl>')
         });
 
         this.chromosome = Ext.create('Ext.form.ComboBox', {

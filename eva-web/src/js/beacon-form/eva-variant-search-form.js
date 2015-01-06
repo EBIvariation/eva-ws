@@ -47,7 +47,7 @@ EvaVariantSearchForm.prototype = {
         var _this = this;
         EvaManager.get({
             category: 'meta/studies',
-            resource: 'list',
+            resource: 'all',
             success: function (response) {
                 try {
                     studies = response.response[0].result;
@@ -89,8 +89,8 @@ EvaVariantSearchForm.prototype = {
                 }
             },
             fields: [
-                {name: 'studyId', type: 'string'},
-                {name: 'studyName', type: 'string'},
+                {name: 'id', type: 'string'},
+                {name: 'name', type: 'string'},
 
             ]
         });
@@ -196,8 +196,8 @@ EvaVariantSearchForm.prototype = {
             name: 'vSearchDatasetId',
             allowBlank: false,
             width:650,
-            tpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '<div class="x-boundlist-item">{studyId} - {studyName}</div>', '</tpl>'),
-            displayTpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '{studyId} - {studyName}', '</tpl>'),
+            tpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '<div class="x-boundlist-item">{id} - {name}</div>', '</tpl>'),
+            displayTpl: Ext.create('Ext.XTemplate', '<tpl for=".">', '{id} - {name}', '</tpl>'),
             labelWidth: 120
         });
 
