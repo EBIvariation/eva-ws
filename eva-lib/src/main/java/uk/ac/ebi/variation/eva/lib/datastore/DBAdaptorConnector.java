@@ -20,26 +20,34 @@ public class DBAdaptorConnector {
     
     public static VariantDBAdaptor getVariantDBAdaptor(String species) 
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return new VariantMongoDBAdaptor(getCredentials(species));
+        Properties properties = new Properties(); 
+        properties.load(DBAdaptorConnector.class.getResourceAsStream("/mongo.properties"));
+        return new VariantMongoDBAdaptor(getCredentials(species, properties), 
+                properties.getProperty("eva.mongo.collections.variants"), 
+                properties.getProperty("eva.mongo.collections.files"));
     }
     
     public static StudyDBAdaptor getStudyDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return new StudyMongoDBAdaptor(getCredentials(species));
+        Properties properties = new Properties(); 
+        properties.load(DBAdaptorConnector.class.getResourceAsStream("/mongo.properties"));
+        return new StudyMongoDBAdaptor(getCredentials(species, properties), 
+                properties.getProperty("eva.mongo.collections.files"));
     }
     
     public static VariantSourceDBAdaptor getVariantSourceDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return new VariantSourceMongoDBAdaptor(getCredentials(species));
-    }
-    
-    private static MongoCredentials getCredentials(String species) throws IllegalOpenCGACredentialsException, IOException {
-        if (species == null || species.isEmpty()) {
-            species = "hsapiens"; // Assume human by default
-        }
-        
         Properties properties = new Properties(); 
         properties.load(DBAdaptorConnector.class.getResourceAsStream("/mongo.properties"));
+        return new VariantSourceMongoDBAdaptor(getCredentials(species, properties), 
+                properties.getProperty("eva.mongo.collections.files"));
+    }
+    
+    private static MongoCredentials getCredentials(String species, Properties properties) 
+            throws IllegalOpenCGACredentialsException, IOException {
+        if (species == null || species.isEmpty()) {
+            throw new IllegalArgumentException("Please specify a species");
+        }
         
         return new MongoCredentials(properties.getProperty("eva.mongo.host"),
                 Integer.parseInt(properties.getProperty("eva.mongo.port")),
