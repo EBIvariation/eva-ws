@@ -36,7 +36,7 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
         try {
             return EvaproUtils.count(ds, "dgva_study_browser");
         } catch (SQLException ex) {
-            Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ArchiveDgvaDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             QueryResult qr = new QueryResult();
             qr.setErrorMsg(ex.getMessage());
             return qr;
@@ -67,7 +67,7 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
             long end = System.currentTimeMillis();
             qr = new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
         } catch (SQLException ex) {
-            Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ArchiveDgvaDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             qr = new QueryResult();
             qr.setErrorMsg(ex.getMessage());
             return qr;
@@ -76,7 +76,7 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
                 EvaproUtils.close(pstmt);
                 EvaproUtils.close(conn);
             } catch (SQLException ex) {
-                Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ArchiveDgvaDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
                 qr = new QueryResult();
                 qr.setErrorMsg(ex.getMessage());
             }
@@ -113,7 +113,7 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
             long end = System.currentTimeMillis();
             qr = new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
         } catch (SQLException ex) {
-            Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ArchiveDgvaDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             qr = new QueryResult();
             qr.setErrorMsg(ex.getMessage());
             return qr;
@@ -122,7 +122,7 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
                 EvaproUtils.close(pstmt);
                 EvaproUtils.close(conn);
             } catch (SQLException ex) {
-                Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ArchiveDgvaDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
                 qr = new QueryResult();
                 qr.setErrorMsg(ex.getMessage());
             }
@@ -141,5 +141,9 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    
+    @Override
+    public QueryResult getSpecies(String version, boolean loaded) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

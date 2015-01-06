@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
@@ -65,6 +68,18 @@ public class ArchiveWSServer extends EvaWSServer {
     @Path("/species/count")
     public Response countSpecies() {
         return createOkResponse(archiveEvaproDbAdaptor.countSpecies());
+    }
+    @GET
+    @Path("/species/list")
+    public Response getSpecies(@DefaultValue("false") @QueryParam("loaded") boolean loaded) {
+        try {
+            Properties properties = new Properties();
+            properties.load(DBAdaptorConnector.class.getResourceAsStream("/mongo.properties"));
+            
+            return createOkResponse(archiveEvaproDbAdaptor.getSpecies(properties.getProperty("eva.version"), loaded));
+        } catch (IOException ex) {
+            return createErrorResponse(ex.toString());
+        }
     }
     
     @GET

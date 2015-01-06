@@ -18,6 +18,7 @@ import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.variant.ArchiveDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.EvaproUtils;
+import uk.ac.ebi.variation.eva.lib.models.Assembly;
 
 /**
  *
@@ -37,7 +38,7 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
         try {
             return EvaproUtils.count(ds, "project");
         } catch (SQLException ex) {
-            Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             QueryResult qr = new QueryResult();
             qr.setErrorMsg(ex.getMessage());
             return qr;
@@ -72,7 +73,7 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
             long end = System.currentTimeMillis();
             qr = new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
         } catch (SQLException ex) {
-            Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             qr = new QueryResult();
             qr.setErrorMsg(ex.getMessage());
             return qr;
@@ -118,7 +119,7 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
             long end = System.currentTimeMillis();
             qr = new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
         } catch (SQLException ex) {
-            Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             qr = new QueryResult();
             qr.setErrorMsg(ex.getMessage());
             return qr;
@@ -154,7 +155,7 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
             long end = System.currentTimeMillis();
             qr = new QueryResult(null, ((Long) (end - start)).intValue(), 1, 1, null, null, Arrays.asList(count));
         } catch (SQLException ex) {
-            Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             qr = new QueryResult();
             qr.setErrorMsg(ex.getMessage());
         } finally {
@@ -176,11 +177,61 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
         try {
             return EvaproUtils.count(ds, "taxonomy");
         } catch (SQLException ex) {
-            Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             QueryResult qr = new QueryResult();
             qr.setErrorMsg(ex.getMessage());
             return qr;
         }
     }
 
+    @Override
+    public QueryResult getSpecies(String version, boolean loaded) {
+        StringBuilder query = new StringBuilder(
+                "select distinct(assembly.*), taxonomy.* " + 
+                "from assembly join browsable_file on assembly.assembly_accession=browsable_file.loaded_assembly " +
+                "join taxonomy on assembly.taxonomy_id=taxonomy.taxonomy_id " +
+                "where browsable_file.eva_release = '");
+        query.append(version);
+        query.append("' ");
+        if (loaded) {
+            query.append("and loaded=true");
+        }
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        QueryResult qr = null;
+        try {
+            conn = ds.getConnection();
+            pstmt = conn.prepareStatement(query.toString());
+            long start = System.currentTimeMillis();
+            ResultSet rs = pstmt.executeQuery();
+            List<Assembly> result = new ArrayList<>();
+            while (rs.next()) {
+                result.add(new Assembly(rs.getString("assembly_accession"), rs.getString("assembly_chain"), 
+                        rs.getString("assembly_version"),rs.getString("assembly_name"), rs.getString("assembly_code"), 
+                        rs.getInt("taxonomy_id"), rs.getString("common_name"), rs.getString("scientific_name"), 
+                        rs.getString("taxonomy_code"), rs.getString("eva_name")));
+            }
+            long end = System.currentTimeMillis();
+            qr = new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
+        } catch (SQLException ex) {
+            Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            qr = new QueryResult();
+            qr.setErrorMsg(ex.getMessage());
+            return qr;
+        } finally {
+            try {
+                EvaproUtils.close(pstmt);
+                EvaproUtils.close(conn);
+            } catch (SQLException ex) {
+                Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                qr = new QueryResult();
+                qr.setErrorMsg(ex.getMessage());
+            }
+        }
+
+        return qr;
+    }
+
+    
 }
