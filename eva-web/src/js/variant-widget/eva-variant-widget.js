@@ -363,7 +363,7 @@ EvaVariantWidget.prototype = {
                         rowBodyTpl : new Ext.XTemplate()
                      }];
 
-        var variantBrowserGrid = new VariantBrowserGrid({
+        var variantBrowserGrid = new EvaVariantBrowserGrid({
             title: this.browserGridConfig.title,
             target: target,
             data: this.data,
@@ -541,30 +541,36 @@ EvaVariantWidget.prototype = {
         });
 
         this.on("variant:change", function (e) {
-            if (target === _this.selectedToolDiv) {
-                var variant = e.variant;
-                var region = variant.chromosome+':'+variant.start+'-'+variant.end;
-                var proxy =  _.clone(this.variantBrowserGrid.store.proxy);
-//                proxy.extraParams.region = region;
-                EvaManager.get({
-                    category: 'segments',
-                    resource: 'variants',
-                    query:region,
-                    params:proxy.extraParams,
-                    async: false,
-                    success: function (response) {
-                        try {
-                            _.extend(variant, response.response[0].result[0])
-                        } catch (e) {
-                            console.log(e);
-                        }
 
+            if(_.isUndefined(e.variant)){
+                variantStatsPanel.clear(true);
+            }else{
+                if (target === _this.selectedToolDiv) {
+                    var variant = e.variant;
+                    var region = variant.chromosome+':'+variant.start+'-'+variant.end;
+                    var proxy =  _.clone(this.variantBrowserGrid.store.proxy);
+//                proxy.extraParams.region = region;
+                    EvaManager.get({
+                        category: 'segments',
+                        resource: 'variants',
+                        query:region,
+                        params:proxy.extraParams,
+                        async: false,
+                        success: function (response) {
+                            try {
+                                _.extend(variant, response.response[0].result[0])
+                            } catch (e) {
+                                console.log(e);
+                            }
+
+                        }
+                    });
+                    if (variant.sourceEntries) {
+                        variantStatsPanel.load(variant.sourceEntries,proxy.extraParams);
                     }
-                });
-                if (variant.sourceEntries) {
-                    variantStatsPanel.load(variant.sourceEntries,proxy.extraParams);
                 }
             }
+
         });
         return variantStatsPanel;
     },
@@ -654,34 +660,40 @@ EvaVariantWidget.prototype = {
         });
 
         _this.on("variant:change", function (e) {
-            if (target === _this.selectedToolDiv) {
-                var variant = e.variant;
-                var query = e.variant.chromosome+':'+e.variant.start+'-'+e.variant.end;
-                var params = _.omit(this.variantBrowserGrid.store.proxy.extraParams, 'region','studies');
 
-                EvaManager.get({
-                    category: 'segments',
-                    resource: 'variants',
-                    query:query,
-                    params:params,
-                    success: function (response) {
-                        try {
+            if(_.isUndefined(e.variant)){
+                variantGenotypeGrid.clear(true);
+            }else{
+                if (target === _this.selectedToolDiv) {
+                    var variant = e.variant;
+                    var query = e.variant.chromosome+':'+e.variant.start+'-'+e.variant.end;
+                    var params = _.omit(this.variantBrowserGrid.store.proxy.extraParams, 'region','studies');
 
-                          var variantSourceEntries = response.response[0].result[0].sourceEntries;
+                    EvaManager.get({
+                        category: 'segments',
+                        resource: 'variants',
+                        query:query,
+                        params:params,
+                        success: function (response) {
+                            try {
 
-                        } catch (e) {
+                                var variantSourceEntries = response.response[0].result[0].sourceEntries;
 
-                            console.log(e);
+                            } catch (e) {
+
+                                console.log(e);
+                            }
+
+                            if (variantSourceEntries) {
+                                variantGenotypeGrid.load(variantSourceEntries);
+                            }
+
                         }
+                    });
 
-                        if (variantSourceEntries) {
-                            variantGenotypeGrid.load(variantSourceEntries);
-                        }
-
-                    }
-                });
-
+                }
             }
+
         });
         return variantGenotypeGrid;
     },

@@ -82,7 +82,7 @@ EvaVariantGenotypeGrid.prototype = {
         this.panel.render(this.div);
     },
     clear: function () {
-        this.studiesContainer.removeAll(true);
+        this.panel.removeAll(true);
     },
     load: function (data) {
         this.clear();
