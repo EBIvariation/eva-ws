@@ -253,7 +253,6 @@ EvaVariantWidgetPanel.prototype = {
             border: false,
             handlers: {
                 'submit': function (e) {
-                    console.log(e.values);
                     _this.variantWidget.setLoading(true);
                     //POSITION CHECK
                     var regions = [];
@@ -346,7 +345,7 @@ EvaVariantWidgetPanel.prototype = {
 
                     _this.variantWidget.retrieveData(url, e.values)
 
-                    if(e.values.species != 'chircus_10'){
+                    if(e.values.species && e.values.species != 'chircus_10'){
                         var ensemblSepciesName = _.findWhere(speciesList, {taxonomyCode:e.values.species.split('_')[0]}).taxonomyScientificName;
                         ensemblSepciesName =  ensemblSepciesName.split(' ')[0]+'_'+ ensemblSepciesName.split(' ')[1];
                         var ensemblURL = 'http://www.ensembl.org/'+ensemblSepciesName+'/Variation/Explore?vdb=variation;v={id}';

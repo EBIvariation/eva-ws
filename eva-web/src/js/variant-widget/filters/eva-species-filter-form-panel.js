@@ -85,7 +85,6 @@ SpeciesFilterFormPanel.prototype = {
                     name: 'value',
                     type: 'string',
                     convert: function( v, record ) {
-                        console.log( record.get( 'taxonomyCommonName' ))
                         return record.get( 'taxonomyCode' ) + '_' + record.get( 'assemblyCode' )
                     }
                 }

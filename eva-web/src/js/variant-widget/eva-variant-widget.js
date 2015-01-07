@@ -437,7 +437,6 @@ EvaVariantWidget.prototype = {
                                 params:{merge:true,exclude:'files'}
                             });
                             proxy.url = url;
-                            console.log(proxy)
                             var exportStore = Ext.create('Ext.data.Store', {
                                 pageSize:variantBrowserGrid.grid.store.getTotalCount(),
                                 autoLoad:true,
@@ -498,7 +497,6 @@ EvaVariantWidget.prototype = {
         this.on("variant:change", function (e) {
             if (target === _this.selectedToolDiv) {
                 var variant = e.variant;
-
                 var effectData = _this._loadExampleData();
 
                 variantEffectGrid.load(effectData);

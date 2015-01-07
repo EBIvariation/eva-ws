@@ -135,7 +135,6 @@ EvaVariantStatsPanel.prototype = {
     },
     _createStudyPanel: function (data,params) {
 
-        console.log(params)
         var stats = (data.stats) ? data.stats : {};
         var attributes = (data.attributes) ? data.attributes : {};
         // removing src from attributes
@@ -183,7 +182,6 @@ EvaVariantStatsPanel.prototype = {
             success: function (response) {
                 try {
                     infoTags = response.response[0].result[0].metadata.INFO;
-                    console.log(response)
                     vcfHeaderData = response.response[0].result[0].metadata.header.trim();
                 } catch (e) {
                     console.log(e);
