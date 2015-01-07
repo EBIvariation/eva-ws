@@ -58,7 +58,7 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
                                 @DefaultValue("-1") @QueryParam("histogram_interval") int interval)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         
-        VariantSourceDBAdaptor dbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor("hsapiens");
+        VariantSourceDBAdaptor dbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor("hsapiens_grch37");
         
         int idxCurrentPage = 0;
         if (pageToken != null && !pageToken.isEmpty() && StringUtils.isNumeric(pageToken)) {
