@@ -180,10 +180,10 @@ EvaVariantWidgetPanel.prototype = {
             collapsed: false,
             height: 550,
             studiesStore: this.studiesStore,
-            studyFilterTpl:'<tpl><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div></tpl>'
+            studyFilterTpl:'<tpl if="studyId"><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div><tpl else><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a></div></tpl>'
         });
 
-//        _this._loadListStudies(studyFilter, '');
+        _this._loadListStudies(studyFilter, '');
 
         studyFilter.on('studies:change', function (e) {
             var studies = _this.formPanelVariantFilter.getValues().studies;
@@ -392,9 +392,15 @@ EvaVariantWidgetPanel.prototype = {
     _loadListStudies: function (filter, species) {
         var _this = this;
         var studies = [];
+        var resource = '';
+        if(_.isNull(species) ){
+            resource = 'all'
+        }else{
+            resource = 'list'
+        }
         EvaManager.get({
             category: 'meta/studies',
-            resource: 'list',
+            resource: resource,
             params:{species:species},
             success: function (response) {
                 try {
@@ -405,7 +411,9 @@ EvaVariantWidgetPanel.prototype = {
                 filter.studiesStore.loadRawData(studies);
                 //set all records checked default
                 filter.studiesStore.each(function(rec){
-                    rec.set('uiactive', true)
+                    if(!_.isNull(species) ){
+                        rec.set('uiactive', true)
+                    }
                 })
                 _this.trigger('studies:change', {studies: studies, sender: _this});
             }

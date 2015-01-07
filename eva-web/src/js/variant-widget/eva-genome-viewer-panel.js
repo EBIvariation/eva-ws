@@ -430,9 +430,15 @@ EvaGenomeViewerPanel.prototype = {
     _loadListStudies: function (filter,species) {
         var _this = this;
         var studies = [];
+        var resource = '';
+        if(_.isNull(species) ){
+            resource = 'all'
+        }else{
+            resource = 'list'
+        }
         EvaManager.get({
             category: 'meta/studies',
-            resource: 'list',
+            resource: resource,
             params:{species:species},
             success: function (response) {
                 try {
