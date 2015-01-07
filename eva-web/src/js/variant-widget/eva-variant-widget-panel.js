@@ -88,7 +88,7 @@ EvaVariantWidgetPanel.prototype = {
         });
 
         this.panel = Ext.create('Ext.panel.Panel', {
-//            overflowX:true,
+            overflowX:true,
             border:true,
             layout: {
                 type: 'vbox',
