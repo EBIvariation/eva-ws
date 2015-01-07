@@ -959,8 +959,8 @@ EvaVariantWidget.prototype = {
                     csvContent += sdelimiter +  printableValue + edelimiter;
                 }
             });
-
-            var species = _.findWhere(speciesList, {taxonomyCode:params.species.split('_')[0]}).taxonomyCommonName+'/'+_.findWhere(speciesList, {taxonomyCode:params.species.split('_')[0]}).assemblyName;
+            var speciesName = _.findWhere(speciesList, {taxonomyCode:params.species.split('_')[0]}).taxonomyEvaName;
+            var species = speciesName.substr(0,1).toUpperCase()+speciesName.substr(1)+'/'+_.findWhere(speciesList, {taxonomyCode:params.species.split('_')[0]}).assemblyName;
 //            var species = _.findWhere(speciesList, {value:params.species}).name;
             speciesValue = ((noCsvSupport) && species == '') ? '&nbsp;' : species;
             speciesValue = String(species).replace(/,/g , "");

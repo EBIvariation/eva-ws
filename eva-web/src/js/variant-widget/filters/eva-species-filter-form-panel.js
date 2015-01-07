@@ -78,7 +78,7 @@ SpeciesFilterFormPanel.prototype = {
                     name: 'displayName',
                     type: 'string',
                     convert: function( v, record ) {
-                        return record.get( 'taxonomyCommonName' ) + ' / ' + record.get( 'assemblyName' )
+                        return record.get( 'taxonomyEvaName').substr(0,1).toUpperCase()+record.get( 'taxonomyEvaName').substr(1) + ' / ' + record.get( 'assemblyName' )
                     }
                 },
                 {

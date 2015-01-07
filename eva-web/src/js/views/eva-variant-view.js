@@ -186,7 +186,8 @@ EvaVariantView.prototype = {
     _renderSummaryData: function (data) {
             var _summaryTable  = '<div class="row"><div class="col-md-8"><table class="table ocb-stats-table">'
             var variantInfoTitle =  document.querySelector("#variantInfo").textContent = data[0].chromosome+':'+data[0].start+':'+data[0].reference+':'+data[0].alternate+' Info';
-             _summaryTable += '<tr><td class="header">Species</td><td>'+_.findWhere(speciesList, {taxonomyCode:this.species.split("_")[0]}).taxonomyCommonName + ' / '+_.findWhere(speciesList, {taxonomyCode:this.species.split("_")[0]}).assemblyName +'</td></tr>'
+            var speciesName = _.findWhere(speciesList, {taxonomyCode:this.species.split("_")[0]}).taxonomyEvaName;
+             _summaryTable += '<tr><td class="header">Species</td><td>'+speciesName.substr(0,1).toUpperCase()+speciesName.substr(1) + ' / '+_.findWhere(speciesList, {taxonomyCode:this.species.split("_")[0]}).assemblyName +'</td></tr>'
             if(data[0].id){
                 _summaryTable += '<tr><td class="header">ID</td><td>'+data[0].id+'</td></tr>'
             }

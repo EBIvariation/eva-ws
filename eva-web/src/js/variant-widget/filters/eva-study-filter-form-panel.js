@@ -174,7 +174,7 @@ EvaStudyFilterFormPanel.prototype = {
 
         var grid = Ext.create('Ext.grid.Panel', {
                 store: this.studiesStore,
-            autoScroll:true,
+                autoScroll:true,
                 border: this.border,
                 loadMask: true,
                 hideHeaders: false,

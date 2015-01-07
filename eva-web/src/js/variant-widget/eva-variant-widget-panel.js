@@ -156,10 +156,11 @@ EvaVariantWidgetPanel.prototype = {
         var positionFilter = new EvaPositionFilterFormPanel({
 //            testRegion: '1:14000-200000',
 //            testRegion: '1:3000760-3004790',
-            testRegion: '1:78383460-78383470',
+            testRegion: '1:78383460-78389470',
             emptyText: ''
 
         });
+
 
         var speciesFilter = new SpeciesFilterFormPanel({});
 
@@ -344,8 +345,8 @@ EvaVariantWidgetPanel.prototype = {
                     }
 
                     _this.variantWidget.retrieveData(url, e.values)
-
-                    if(e.values.species && e.values.species != 'chircus_10'){
+                    var speciesArray = ['hsapiens_grch37','mmusculus_grcm38'];
+                    if(e.values.species && speciesArray.indexOf( e.values.species ) > -1){
                         var ensemblSepciesName = _.findWhere(speciesList, {taxonomyCode:e.values.species.split('_')[0]}).taxonomyScientificName;
                         ensemblSepciesName =  ensemblSepciesName.split(' ')[0]+'_'+ ensemblSepciesName.split(' ')[1];
                         var ensemblURL = 'http://www.ensembl.org/'+ensemblSepciesName+'/Variation/Explore?vdb=variation;v={id}';
@@ -366,8 +367,18 @@ EvaVariantWidgetPanel.prototype = {
         });
 
         _this.on('studies:change', function (e) {
-            _this.variantWidget.trigger('species:change', {values: _this.formPanelVariantFilter.getValues(), sender: _this});
-            _this.formPanelVariantFilter.trigger('submit', {values: _this.formPanelVariantFilter.getValues(), sender: _this});
+
+            var formValues = _this.formPanelVariantFilter.getValues();
+            var params = {id:positionFilter.id}
+            if(formValues.species == 'hsapiens_grch37'){
+                _.extend(params, {disable:false});
+               this._disableFields(params);
+            }else{
+                _.extend(params, {disable:true});
+                this._disableFields(params);
+            }
+            _this.variantWidget.trigger('species:change', {values: formValues, sender: _this});
+            _this.formPanelVariantFilter.trigger('submit', {values: formValues, sender: _this});
         });
 
 
@@ -412,6 +423,23 @@ EvaVariantWidgetPanel.prototype = {
                 _this.trigger('studies:change', {studies: studies, sender: _this});
             }
         });
+    },
+    _disableFields: function (params) {
+
+        var snpIdField = params.id+'snp';
+        var geneField  = params.id+'gene';
+        if(params.disable){
+             Ext.getCmp(snpIdField).disable();
+             Ext.getCmp(snpIdField).hide();
+             Ext.getCmp(geneField).disable();
+             Ext.getCmp(geneField).hide();
+        }else{
+            Ext.getCmp(snpIdField).enable();
+            Ext.getCmp(snpIdField).show();
+            Ext.getCmp(geneField).enable();
+            Ext.getCmp(geneField).show();
+        }
+
     }
 
 };
