@@ -192,7 +192,7 @@ EvaVariantSearchForm.prototype = {
             fieldLabel: 'Dataset ID',
             store: this.projectStore,
             queryMode: 'local',
-            valueField: 'studyId',
+            valueField: 'id',
             name: 'vSearchDatasetId',
             allowBlank: false,
             width:650,

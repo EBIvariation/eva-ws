@@ -126,7 +126,7 @@ EvaVariantWidgetPanel.prototype = {
                 headerConfig: {
                     baseCls: 'eva-header-2'
                 },
-                genomeViewer: true,
+                genomeViewer: false,
                 effect:false,
                 rawData:false
             },
@@ -346,18 +346,11 @@ EvaVariantWidgetPanel.prototype = {
 
                     _this.variantWidget.retrieveData(url, e.values)
 
-                    if(e.values.species){
-                        console.log(speciesList)
+                    if(e.values.species != 'chircus_10'){
                         var ensemblSepciesName = _.findWhere(speciesList, {taxonomyCode:e.values.species.split('_')[0]}).taxonomyScientificName;
                         ensemblSepciesName =  ensemblSepciesName.split(' ')[0]+'_'+ ensemblSepciesName.split(' ')[1];
                         var ensemblURL = 'http://www.ensembl.org/'+ensemblSepciesName+'/Variation/Explore?vdb=variation;v={id}';
-
-                        var ncbiURL = '';
-                        if(e.values.species == 'chircus_10'){
-                            ncbiURL = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?ss={id}';
-                        }else{
-                            ncbiURL = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs={id}';
-                        }
+                        var ncbiURL = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs={id}';
 
                         var updateTpl = Ext.create('Ext.XTemplate', '<tpl if="id"><a href="?variant={chromosome}:{start}:{reference}:{alternate}&species='+ e.values.species+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;' +
                             '<a href="'+ensemblURL+'" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
@@ -374,6 +367,7 @@ EvaVariantWidgetPanel.prototype = {
         });
 
         _this.on('studies:change', function (e) {
+            _this.variantWidget.trigger('species:change', {values: _this.formPanelVariantFilter.getValues(), sender: _this});
             _this.formPanelVariantFilter.trigger('submit', {values: _this.formPanelVariantFilter.getValues(), sender: _this});
         });
 

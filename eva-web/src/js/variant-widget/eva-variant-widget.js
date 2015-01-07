@@ -387,6 +387,9 @@ EvaVariantWidget.prototype = {
                 "variant:clear": function (e) {
                     //_this.lastVariant = e.args;
                     _this.trigger('variant:clear', {sender: _this});
+                },
+                "species:change": function (e) {
+                    alert('sef')
                 }
             },
             viewConfigListeners:listeners
@@ -706,8 +709,8 @@ EvaVariantWidget.prototype = {
             region: region,
             trackListTitle: '',
             drawNavigationBar: true,
-            drawKaryotypePanel: false,
-            drawChromosomePanel: false,
+            drawKaryotypePanel: true,
+            drawChromosomePanel: true,
             drawRegionOverviewPanel: true,
             overviewZoomMultiplier: 50,
             navigationBarConfig: {
@@ -825,8 +828,12 @@ EvaVariantWidget.prototype = {
 
         genomeViewer.addOverviewTrack(geneOverview);
         genomeViewer.addTrack([sequence, gene, snp]);
-
-
+        this.on("species:change", function (e) {
+            if (target === _this.selectedToolDiv) {
+                _.extend(e, {species: e.values.species.split('_')[0]});
+                genomeViewer._speciesChangeHandler(e);
+            }
+        });
         this.on("variant:change", function (e) {
             if (target === _this.selectedToolDiv) {
                 var variant = e.variant;
@@ -942,7 +949,9 @@ EvaVariantWidget.prototype = {
                     csvContent += sdelimiter +  printableValue + edelimiter;
                 }
             });
-            var species = _.findWhere(speciesList, {value:params.species}).name;
+
+            var species = _.findWhere(speciesList, {taxonomyCode:params.species.split('_')[0]}).taxonomyCommonName+'/'+_.findWhere(speciesList, {taxonomyCode:params.species.split('_')[0]}).assemblyName;
+//            var species = _.findWhere(speciesList, {value:params.species}).name;
             speciesValue = ((noCsvSupport) && species == '') ? '&nbsp;' : species;
             speciesValue = String(species).replace(/,/g , "");
             speciesValue = String(speciesValue).replace(/(\r\n|\n|\r)/gm,"");
