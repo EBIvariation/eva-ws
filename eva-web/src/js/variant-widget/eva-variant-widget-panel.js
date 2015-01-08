@@ -349,7 +349,7 @@ EvaVariantWidgetPanel.prototype = {
                         var start = region.split(':')[1].split('-')[0];
                         var end = region.split(':')[1].split('-')[1]
                         if(end-start > 1000000){
-                            Ext.Msg.alert('Limit Exceeds','Please Enter the region no more than 1000000 range');
+                            Ext.Msg.alert('Limit Exceeds','Please enter the region no more than 1000000 range');
                             limitExceeds = true;
                         }
                     });
