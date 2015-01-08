@@ -940,7 +940,7 @@ EvaVariantWidget.prototype = {
                 csvContent += sdelimiter +  key + edelimiter;
             }
         });
-        csvContent += sdelimiter +  'reference assembly' + edelimiter;
+        csvContent += sdelimiter +  'Organism / Assembly' + edelimiter;
 
         csvContent += enewLine;
         /*
