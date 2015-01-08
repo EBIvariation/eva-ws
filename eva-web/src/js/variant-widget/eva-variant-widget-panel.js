@@ -430,14 +430,22 @@ EvaVariantWidgetPanel.prototype = {
         var geneField  = params.id+'gene';
         if(params.disable){
              Ext.getCmp(snpIdField).disable();
-             Ext.getCmp(snpIdField).hide();
-             Ext.getCmp(geneField).disable();
-             Ext.getCmp(geneField).hide();
+             Ext.getCmp(snpIdField).emptyText = 'This option will be available soon';
+             Ext.getCmp(snpIdField).applyEmptyText();
+//             Ext.getCmp(snpIdField).hide();
+            Ext.getCmp(geneField).emptyText = 'This option will be available soon';
+            Ext.getCmp(geneField).applyEmptyText();
+            Ext.getCmp(geneField).disable();
+//             Ext.getCmp(geneField).hide();
         }else{
             Ext.getCmp(snpIdField).enable();
-            Ext.getCmp(snpIdField).show();
+            Ext.getCmp(snpIdField).emptyText = ' ';
+            Ext.getCmp(snpIdField).applyEmptyText();
+//            Ext.getCmp(snpIdField).show();
             Ext.getCmp(geneField).enable();
-            Ext.getCmp(geneField).show();
+            Ext.getCmp(geneField).emptyText = ' ';
+            Ext.getCmp(geneField).applyEmptyText();
+//            Ext.getCmp(geneField).show();
         }
 
     }
