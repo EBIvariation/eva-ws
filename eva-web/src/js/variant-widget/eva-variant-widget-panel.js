@@ -344,7 +344,22 @@ EvaVariantWidgetPanel.prototype = {
                         e.values.studies = e.values.studies.join(',');
                     }
 
-                    _this.variantWidget.retrieveData(url, e.values)
+                    var limitExceeds = false;
+                    _.each(regions, function(region){
+                        var start = region.split(':')[1].split('-')[0];
+                        var end = region.split(':')[1].split('-')[1]
+                        if(end-start > 1000000){
+                            Ext.Msg.alert('Limit Exceeds','Please Enter the region no more than 1000000 range');
+                            limitExceeds = true;
+                        }
+                    });
+
+                    if(!limitExceeds){
+                        _this.variantWidget.retrieveData(url, e.values)
+                    }else{
+                        _this.variantWidget.retrieveData('', '')
+                    }
+
                     var speciesArray = ['hsapiens_grch37','mmusculus_grcm38'];
                     if(e.values.species && speciesArray.indexOf( e.values.species ) > -1){
                         var ensemblSepciesName = _.findWhere(speciesList, {taxonomyCode:e.values.species.split('_')[0]}).taxonomyScientificName;
@@ -370,7 +385,8 @@ EvaVariantWidgetPanel.prototype = {
 
             var formValues = _this.formPanelVariantFilter.getValues();
             var params = {id:positionFilter.id}
-            if(formValues.species == 'hsapiens_grch37'){
+            var speciesArray = ['hsapiens_grch37','mmusculus_grcm38'];
+            if(speciesArray.indexOf( formValues.species ) > -1){
                 _.extend(params, {disable:false});
                this._disableFields(params);
             }else{
@@ -430,10 +446,10 @@ EvaVariantWidgetPanel.prototype = {
         var geneField  = params.id+'gene';
         if(params.disable){
              Ext.getCmp(snpIdField).disable();
-             Ext.getCmp(snpIdField).emptyText = 'This option will be available soon';
+             Ext.getCmp(snpIdField).emptyText = 'This option will be available soon for this species';
              Ext.getCmp(snpIdField).applyEmptyText();
 //             Ext.getCmp(snpIdField).hide();
-            Ext.getCmp(geneField).emptyText = 'This option will be available soon';
+            Ext.getCmp(geneField).emptyText = 'This option will be available soon for this species ';
             Ext.getCmp(geneField).applyEmptyText();
             Ext.getCmp(geneField).disable();
 //             Ext.getCmp(geneField).hide();
