@@ -325,6 +325,17 @@ SvStudyBrowser.prototype = {
             },
             {
                 text: "Organism",
+                dataIndex: 'speciesCommonName',
+                flex: 3,
+                renderer: function(value, p, record) {
+                    return value ? Ext.String.format(
+                        '<div data-toggle="popover" title="Organism" data-content="And her...">{0}</div>',
+                        value
+                    ) : '';
+                }
+            },
+            {
+                text: "Species",
                 dataIndex: 'speciesScientificName',
                 flex: 3,
                 renderer: function(value, p, record) {

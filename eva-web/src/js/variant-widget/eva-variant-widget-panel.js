@@ -384,7 +384,7 @@ EvaVariantWidgetPanel.prototype = {
         _this.on('studies:change', function (e) {
 
             var formValues = _this.formPanelVariantFilter.getValues();
-            var params = {id:positionFilter.id}
+            var params = {id:positionFilter.id,species:formValues.species}
             var speciesArray = ['hsapiens_grch37','mmusculus_grcm38'];
             if(speciesArray.indexOf( formValues.species ) > -1){
                 _.extend(params, {disable:false});
@@ -445,22 +445,37 @@ EvaVariantWidgetPanel.prototype = {
         var snpIdField = params.id+'snp';
         var geneField  = params.id+'gene';
         if(params.disable){
+
              Ext.getCmp(snpIdField).disable();
              Ext.getCmp(snpIdField).emptyText = 'This option will be available soon for this species';
              Ext.getCmp(snpIdField).applyEmptyText();
-//             Ext.getCmp(snpIdField).hide();
+    //             Ext.getCmp(snpIdField).hide();
+
             Ext.getCmp(geneField).emptyText = 'This option will be available soon for this species ';
             Ext.getCmp(geneField).applyEmptyText();
             Ext.getCmp(geneField).disable();
 //             Ext.getCmp(geneField).hide();
         }else{
-            Ext.getCmp(snpIdField).enable();
-            Ext.getCmp(snpIdField).emptyText = ' ';
-            Ext.getCmp(snpIdField).applyEmptyText();
+
+            if(params.species != 'hsapiens_grch37'){
+                Ext.getCmp(snpIdField).disable();
+                Ext.getCmp(snpIdField).emptyText = 'This option will be available soon for this species';
+                Ext.getCmp(snpIdField).applyEmptyText();
+//             Ext.getCmp(snpIdField).hide();
+
+                Ext.getCmp(geneField).enable();
+                Ext.getCmp(geneField).emptyText = ' ';
+                Ext.getCmp(geneField).applyEmptyText();
+            }else{
+                Ext.getCmp(snpIdField).enable();
+                Ext.getCmp(snpIdField).emptyText = ' ';
+                Ext.getCmp(snpIdField).applyEmptyText();
 //            Ext.getCmp(snpIdField).show();
-            Ext.getCmp(geneField).enable();
-            Ext.getCmp(geneField).emptyText = ' ';
-            Ext.getCmp(geneField).applyEmptyText();
+                Ext.getCmp(geneField).enable();
+                Ext.getCmp(geneField).emptyText = ' ';
+                Ext.getCmp(geneField).applyEmptyText();
+            }
+
 //            Ext.getCmp(geneField).show();
         }
 

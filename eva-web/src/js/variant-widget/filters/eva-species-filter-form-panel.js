@@ -96,7 +96,7 @@ SpeciesFilterFormPanel.prototype = {
         });
 
         var speciesFormField  =  Ext.create('Ext.form.ComboBox', {
-            fieldLabel: 'Species / Genome Assembly',
+            fieldLabel: 'Organism / Assembly',
 //            id:'species',
             name:'species',
             labelAlign: 'top',

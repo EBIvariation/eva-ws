@@ -95,7 +95,7 @@ EvaPositionFilterFormPanel.prototype = {
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'Gene / Transcript',
+            fieldLabel: 'Ensembl Gene / Transcript',
             labelAlign: 'top'
         });
 
