@@ -125,6 +125,7 @@ EvaVariantWidget.prototype = {
             titleCollapse: true,
             overlapHeader: true,
             defaults: {
+                border:false,
                 hideMode: 'offsets',
                 autoShow: true
             },
@@ -368,6 +369,7 @@ EvaVariantWidget.prototype = {
             target: target,
             data: this.data,
             height:450,
+            margin: '-8 0 0 0',
             border: this.browserGridConfig.border,
             dataParser: this.dataParser,
             responseRoot: this.responseRoot,

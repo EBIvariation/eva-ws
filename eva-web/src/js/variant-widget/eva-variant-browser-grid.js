@@ -39,6 +39,7 @@ function EvaVariantBrowserGrid(args) {
     this.responseTotal = "response[0].numTotalResults";
     this.startParam = "skip";
     this.plugins = 'bufferedrenderer';
+    this.margin = '0 0 0 0';
     this.viewConfigListeners = '';
 
     //set instantiation args, must be last
@@ -120,6 +121,7 @@ EvaVariantBrowserGrid.prototype = {
 
         var grid = Ext.create('Ext.grid.Panel', {
                 title: this.title,
+                margin:this.margin,
                 store: this.store,
                 border: this.border,
                 header: this.headerConfig,

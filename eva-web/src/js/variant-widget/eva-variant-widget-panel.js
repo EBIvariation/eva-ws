@@ -89,7 +89,7 @@ EvaVariantWidgetPanel.prototype = {
 
         this.panel = Ext.create('Ext.panel.Panel', {
             overflowX:true,
-            border:true,
+            border:false,
             layout: {
                 type: 'vbox',
                 align: 'left'
@@ -178,6 +178,7 @@ EvaVariantWidgetPanel.prototype = {
         });
 
         var studyFilter = new EvaStudyFilterFormPanel({
+            border:false,
             collapsed: false,
             height: 550,
             studiesStore: this.studiesStore,
