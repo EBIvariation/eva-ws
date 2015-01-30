@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.variant.VariantDBAdaptor;
+import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 
 /**
@@ -109,7 +109,7 @@ public class RegionWSServer extends EvaWSServer {
                 if (interval > 0) {
                     queryOptions.put("interval", interval);
                 }
-                return createOkResponse(variantMongoDbAdaptor.getVariantsHistogramByRegion(regions.get(0), queryOptions));
+                return createOkResponse(variantMongoDbAdaptor.getVariantFrequencyByRegion(regions.get(0), queryOptions));
             }
         } else if (regionsSize <= 1000000) {
             return createOkResponse(variantMongoDbAdaptor.getAllVariantsByRegionList(regions, queryOptions));

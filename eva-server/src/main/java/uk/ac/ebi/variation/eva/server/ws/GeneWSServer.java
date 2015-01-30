@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.variant.VariantDBAdaptor;
+import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 
 /**

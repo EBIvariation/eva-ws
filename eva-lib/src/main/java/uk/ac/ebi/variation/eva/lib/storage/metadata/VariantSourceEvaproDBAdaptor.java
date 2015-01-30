@@ -16,7 +16,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.storage.variant.VariantSourceDBAdaptor;
+import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.EvaproUtils;
 
 /**

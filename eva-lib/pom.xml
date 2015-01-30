@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>org.opencb.opencga</groupId>
-            <artifactId>opencga-storage</artifactId>
+            <artifactId>opencga-storage-mongodb</artifactId>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>

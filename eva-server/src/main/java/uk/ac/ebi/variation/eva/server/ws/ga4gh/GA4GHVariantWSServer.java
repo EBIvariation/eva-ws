@@ -26,7 +26,7 @@ import org.opencb.biodata.models.variant.Variant;
 import org.opencb.biodata.models.variant.ga4gh.GAVariantFactory;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.variant.VariantDBAdaptor;
+import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
 
@@ -86,7 +86,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
             if (interval > 0) {
                 queryOptions.put("interval", interval);
             }
-            return createOkResponse(variantMongoDbAdaptor.getVariantsHistogramByRegion(region, queryOptions));
+            return createOkResponse(variantMongoDbAdaptor.getVariantFrequencyByRegion(region, queryOptions));
         } else if (regionSize <= 1000000) {
             QueryResult<Variant> qr = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
             // Convert Variant objects to GAVariant

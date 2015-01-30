@@ -24,7 +24,7 @@ import org.opencb.biodata.ga4gh.GASearchCallSetsResponse;
 import org.opencb.biodata.models.variant.ga4gh.GACallSetFactory;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.variant.VariantSourceDBAdaptor;
+import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
 

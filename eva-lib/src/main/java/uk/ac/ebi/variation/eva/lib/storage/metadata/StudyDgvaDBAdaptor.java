@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 import org.opencb.biodata.models.variant.VariantStudy;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.storage.variant.StudyDBAdaptor;
+import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.EvaproUtils;
 
 /**

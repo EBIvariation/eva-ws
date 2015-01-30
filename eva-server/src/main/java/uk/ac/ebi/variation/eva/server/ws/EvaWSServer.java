@@ -21,11 +21,10 @@ import org.opencb.biodata.models.variant.stats.VariantStats;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.lib.auth.MongoCredentials;
-import org.opencb.opencga.storage.variant.json.VariantSourceEntryJsonMixin;
-import org.opencb.opencga.storage.variant.json.GenotypeJsonMixin;
-import org.opencb.opencga.storage.variant.json.VariantSourceJsonMixin;
-import org.opencb.opencga.storage.variant.json.VariantStatsJsonMixin;
+import org.opencb.opencga.storage.core.variant.io.json.VariantSourceEntryJsonMixin;
+import org.opencb.opencga.storage.core.variant.io.json.GenotypeJsonMixin;
+import org.opencb.opencga.storage.core.variant.io.json.VariantSourceJsonMixin;
+import org.opencb.opencga.storage.core.variant.io.json.VariantStatsJsonMixin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
