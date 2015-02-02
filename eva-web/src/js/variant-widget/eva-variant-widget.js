@@ -272,12 +272,12 @@ EvaVariantWidget.prototype = {
                 {
                     text: 'Position',
                     dataIndex: 'start',
-                    flex: 1
+                    flex: 0.5
                 },
                 {
                     text: "SNP ID",
                     dataIndex: 'id',
-                    flex: 1
+                    flex: 0.5
                 },
                 //{
                 //text: 'End',
@@ -290,12 +290,12 @@ EvaVariantWidget.prototype = {
 //                    renderer: function(value, metaData, record, row, col, store, gridView){
 ////                        console.log(record)
 //                    },
-                    flex: 1
+                    flex: 0.5
                 },
                 {
                     text: 'Class',
                     dataIndex: 'type',
-                    flex: 1,
+                    flex: 0.5,
                     xtype: "templatecolumn",
                     tpl: '<tpl if="type"><a href="http://www.ncbi.nlm.nih.gov/books/NBK44447/#Content.what_classes_of_genetic_variatio" target="_blank">{type}</a><tpl else>-</tpl>',
                 },
@@ -316,6 +316,28 @@ EvaVariantWidget.prototype = {
 //                text: 'HGVS Names',
 //                dataIndex: 'hgvs_name'
 //            },
+                {
+                    text: 'Gene',
+                    dataIndex: 'gene'
+                },
+                {
+                    text: 'SO Name',
+                    dataIndex: 'consequenceTypes',
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                        var tempArray = [];
+                        var consequenceTypes = rec.data.consequenceTypes;
+                        for (i = 0; i < consequenceTypes.length; i++) {
+                            tempArray.push(consequenceTypes[i].soTerms[0].soName)
+                        }
+                        meta.tdAttr = 'data-qtip="'+tempArray.join('\n')+'"';
+                        return value ? Ext.String.format(
+                            '<tpl>'+tempArray.join()+'</tpl>',
+                            value
+                        ) : '';
+//                        return tempArray.join();
+                    },
+                    flex: 1
+                },
                 {
                     text: 'View',
                     //dataIndex: 'id',
@@ -345,17 +367,19 @@ EvaVariantWidget.prototype = {
             {name: "type", type: "string"},
             {name: "ref", type: "string"},
             {name: "alt", type: "string"},
-            {name: 'hgvs_name', type: 'string'}
+            {name: 'hgvs_name', type: 'string'},
+            {name: 'gene', mapping: 'annotation.xrefs[0].id', type: 'string' },
+            {name: 'consequenceTypes', mapping: 'annotation.consequenceTypes', type:'auto' },
         ];
 
       var listeners =  {
             expandbody : function( expander, record, body, rowIndex ) {
-                files = record.data.sourceEntries;
                 var content = '';
-                for (var key in files) {
-                    content +='<div style="padding: 2px 2px 2px 15px; width:800px;"><b>'+files[key].studyId+'</b>: '+files[key].attributes.src+'</div>';
+                var consequenceTypes = record.data.consequenceTypes;
+                for (i = 0; i < consequenceTypes.length; i++) {
+                    content += '<div><a href="http://www.sequenceontology.org/miso/current_svn/term/'+consequenceTypes[i].soTerms[0].soAccession+'" target="_blank">'+consequenceTypes[i].soTerms[0].soAccession+'</a>:&nbsp;'+consequenceTypes[i].soTerms[0].soName+'</div>'
                 }
-                body.innerHTML =content;
+                body.innerHTML = content;
             }
         };
 
@@ -380,7 +404,7 @@ EvaVariantWidget.prototype = {
             columns:columns,
             samples: this.samples,
             headerConfig: this.headerConfig,
-//            plugins:plugins,
+            plugins:plugins,
             handlers: {
                 "variant:change": function (e) {
                     _this.lastVariant = e.args;

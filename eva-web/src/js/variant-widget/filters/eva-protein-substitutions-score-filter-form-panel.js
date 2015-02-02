@@ -2,36 +2,37 @@
  * Copyright (c) 2014 Francisco Salavert (SGL-CIPF)
  * Copyright (c) 2014 Alejandro Alemán (SGL-CIPF)
  * Copyright (c) 2014 Ignacio Medina (EBI-EMBL)
- * Copyright (c) 2014 Jag Kandasamy (EBI-EMBL)
  *
- * This file is part of EVA.
+ * This file is part of JSorolla.
  *
- * EVA is free software: you can redistribute it and/or modify
+ * JSorolla is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * (at your option) any later version.
  *
- * EVA is distributed in the hope that it will be useful,
+ * JSorolla is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with EVA. If not, see <http://www.gnu.org/licenses/>.
+ * along with JSorolla. If not, see <http://www.gnu.org/licenses/>.
  */
-function SpeciesFilterFormPanel(args) {
+function EvaProteinSubstitutionScoreFilterFormPanel(args) {
     _.extend(this, Backbone.Events);
 
     //set default args
-    this.id = Utils.genId("SpeciesFilterFormPanel");
+    this.id = Utils.genId("ProteinSubstitutionScoreFilterFormPanel");
     this.target;
     this.autoRender = true;
-    this.title = "Species";
+    this.title = "Protein Substitution Score";
     this.border = false;
     this.collapsible = true;
     this.titleCollapse = false;
     this.headerConfig;
-    
+    this.testRegion = "";
+    this.collapsed = false;
+    this.emptyText = '1:1-1000000,2:1-1000000';
 
     //set instantiation args, must be last
     _.extend(this, args);
@@ -44,10 +45,11 @@ function SpeciesFilterFormPanel(args) {
     }
 }
 
-SpeciesFilterFormPanel.prototype = {
+EvaProteinSubstitutionScoreFilterFormPanel.prototype = {
     render: function () {
         var _this = this;
         console.log("Initializing " + this.id);
+
         //HTML skel
         this.div = document.createElement('div');
         this.div.setAttribute('id', this.id);
@@ -65,59 +67,35 @@ SpeciesFilterFormPanel.prototype = {
         this.panel.render(this.div);
     },
     _createPanel: function () {
-        var _this = this;
 
-        Ext.define('SpeciesListModel', {
-            extend: 'Ext.data.Model',
-            fields: [
-                {name: 'taxonomyCommonName', type: 'string'},
-                {name: 'taxonomyCode',  type: 'string'},
-                {name: 'assemblyName',       type: 'string'},
-                {name: 'assemblyCode',  type: 'string'},
+
+        var items = {
+            xtype:'fieldset',
+            title: '',
+            collapsible: false,
+//            height:150,
+            width :280,
+            margin:'5 0 0 0',
+            defaultType: 'textfield',
+            items :[
                 {
-                    name: 'displayName',
-                    type: 'string',
-                    convert: function( v, record ) {
-                        return record.get( 'taxonomyEvaName').substr(0,1).toUpperCase()+record.get( 'taxonomyEvaName').substr(1) + ' / ' + record.get( 'assemblyName' )
-                    }
+                    fieldLabel: 'Polyphen2 \>',
+                    name: 'polyphen2',
+                    width  : 240,
+                    margin:'5 0 0 0'
                 },
                 {
-                    name: 'value',
-                    type: 'string',
-                    convert: function( v, record ) {
-                        return record.get( 'taxonomyCode' ) + '_' + record.get( 'assemblyCode' )
-                    }
+                    fieldLabel: 'Sift \< ',
+                    name: 'sift',
+                    width  : 240,
+                    margin:'5 0 5 0'
                 }
+
             ]
-        });
-        var speciesStore = Ext.create('Ext.data.Store', {
-            model: 'SpeciesListModel',
-            data : speciesList
-        });
-
-        var speciesFormField  =  Ext.create('Ext.form.ComboBox', {
-            fieldLabel: 'Organism / Assembly',
-//            id:'species',
-            name:'species',
-            labelAlign: 'top',
-            store: speciesStore,
-            queryMode: 'local',
-            displayField: 'displayName',
-            valueField: 'value',
-            width: '100%',
-            listeners: {
-                afterrender: function (field) {
-//                    field.setValue('hsapiens_grch37');
-                    field.setValue('hsapiens');
-                },
-                change: function (field, newValue, oldValue) {
-                    _this.trigger('species:change', {species: newValue, sender: _this});
-                }
-
-            }
-        });
+        }
 
         return Ext.create('Ext.form.Panel', {
+            id:this.id,
             bodyPadding: "5",
             margin: "0 0 5 0",
             buttonAlign: 'center',
@@ -128,7 +106,8 @@ SpeciesFilterFormPanel.prototype = {
             titleCollapse: this.titleCollapse,
             header: this.headerConfig,
             allowBlank: false,
-            items: [speciesFormField]
+            collapsed: this.collapsed,
+            items: [items]
         });
 
     },
@@ -137,12 +116,15 @@ SpeciesFilterFormPanel.prototype = {
     },
     getValues: function () {
         var values = this.panel.getValues();
+        var valuesArray = {};
         for (key in values) {
             if (values[key] == '') {
                 delete values[key]
+            }else{
+                valuesArray[key] = values[key];
             }
         }
-        return values;
+//        return {port_sub_score:valuesArray};
     },
     clear: function () {
         this.panel.reset();

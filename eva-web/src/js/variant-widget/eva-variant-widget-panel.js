@@ -155,8 +155,8 @@ EvaVariantWidgetPanel.prototype = {
         var _this = this;
         var positionFilter = new EvaPositionFilterFormPanel({
 //            testRegion: '1:14000-200000',
-//            testRegion: '1:3000760-3004790',
-            testRegion: '1:78383460-78389470',
+            testRegion: '22:21989550-21989670',
+//            testRegion: '1:78383460-78389470',
             emptyText: ''
 
         });
@@ -222,7 +222,7 @@ EvaVariantWidgetPanel.prototype = {
 
 
 
-        var conseqType = new ConsequenceTypeFilterFormPanel({
+        var conseqTypeFilter = new ConsequenceTypeFilterFormPanel({
             consequenceTypes: consequenceTypes,
             collapsed: true,
             fields: [
@@ -237,6 +237,12 @@ EvaVariantWidgetPanel.prototype = {
                 }
             ]
         });
+        var populationFrequencyFilter = new EvaPopulationFrequencyFilterFormPanel({
+            collapsed:true
+        });
+        var proteinSubScoreFilter = new EvaProteinSubstitutionScoreFilterFormPanel({
+            collapsed:true
+        });
 
 
 
@@ -249,7 +255,7 @@ EvaVariantWidgetPanel.prototype = {
             target: target,
             submitButtonText: 'Submit',
             submitButtonId: 'vb-submit-button',
-            filters: [speciesFilter,positionFilter, studyFilter],
+            filters: [speciesFilter,positionFilter, conseqTypeFilter,populationFrequencyFilter,proteinSubScoreFilter,studyFilter],
             width: 300,
 //            height: 1043,
             border: false,
