@@ -121,10 +121,16 @@ EvaProteinSubstitutionScoreFilterFormPanel.prototype = {
             if (values[key] == '') {
                 delete values[key]
             }else{
-                valuesArray[key] = values[key];
+                if(key == 'sift'){
+                   value = encodeURI('\<'+ values[key]);
+                }else{
+                    value = encodeURI('\>'+ values[key]);
+                }
+                valuesArray[key] = value;
             }
         }
-//        return {port_sub_score:valuesArray};
+        console.log(valuesArray)
+        return valuesArray;
     },
     clear: function () {
         this.panel.reset();

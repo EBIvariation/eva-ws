@@ -222,7 +222,7 @@ EvaVariantWidgetPanel.prototype = {
 
 
 
-        var conseqTypeFilter = new ConsequenceTypeFilterFormPanel({
+        var conseqTypeFilter = new EvaConsequenceTypeFilterFormPanel({
             consequenceTypes: consequenceTypes,
             collapsed: true,
             fields: [
@@ -360,6 +360,10 @@ EvaVariantWidgetPanel.prototype = {
                             limitExceeds = true;
                         }
                     });
+
+                    if(!_.isEmpty(e.values["annot-ct"])){
+                        e.values["annot-ct"] = e.values["annot-ct"].join(',');
+                    }
 
                     if(!limitExceeds){
                         _this.variantWidget.retrieveData(url, e.values)
