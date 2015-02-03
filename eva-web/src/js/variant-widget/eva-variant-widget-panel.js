@@ -243,6 +243,9 @@ EvaVariantWidgetPanel.prototype = {
         var proteinSubScoreFilter = new EvaProteinSubstitutionScoreFilterFormPanel({
             collapsed:true
         });
+        var conservationScoreFilter = new EvaConservationScoreFilterFormPanel({
+            collapsed:true
+        });
 
 
 
@@ -255,7 +258,7 @@ EvaVariantWidgetPanel.prototype = {
             target: target,
             submitButtonText: 'Submit',
             submitButtonId: 'vb-submit-button',
-            filters: [speciesFilter,positionFilter, conseqTypeFilter,populationFrequencyFilter,proteinSubScoreFilter,studyFilter],
+            filters: [speciesFilter,positionFilter, conseqTypeFilter,populationFrequencyFilter,proteinSubScoreFilter,conservationScoreFilter,studyFilter],
             width: 300,
 //            height: 1043,
             border: false,

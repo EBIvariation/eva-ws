@@ -236,6 +236,7 @@ EvaConsequenceTypeFilterFormPanel.prototype = {
             dockedItems: [{
                 xtype: 'toolbar',
                 dock: 'top',
+                border:false,
                 items: [{
                     xtype: 'trigger',
                     width:270,

@@ -18,20 +18,20 @@
  * You should have received a copy of the GNU General Public License
  * along with JSorolla. If not, see <http://www.gnu.org/licenses/>.
  */
-function EvaProteinSubstitutionScoreFilterFormPanel(args) {
+function EvaConservationScoreFilterFormPanel(args) {
     _.extend(this, Backbone.Events);
 
     //set default args
-    this.id = Utils.genId("ProteinSubstitutionScoreFilterFormPanel");
+    this.id = Utils.genId("ConservationScoreFilterFormPanel");
     this.target;
     this.autoRender = true;
-    this.title = "Protein Substitution Score";
+    this.title = "Conservation Score";
     this.border = false;
     this.collapsible = true;
     this.titleCollapse = false;
+    this.collapsed = false;
     this.headerConfig;
     this.testRegion = "";
-    this.collapsed = false;
     this.emptyText = '1:1-1000000,2:1-1000000';
 
     //set instantiation args, must be last
@@ -45,7 +45,7 @@ function EvaProteinSubstitutionScoreFilterFormPanel(args) {
     }
 }
 
-EvaProteinSubstitutionScoreFilterFormPanel.prototype = {
+EvaConservationScoreFilterFormPanel.prototype = {
     render: function () {
         var _this = this;
         console.log("Initializing " + this.id);
@@ -68,7 +68,6 @@ EvaProteinSubstitutionScoreFilterFormPanel.prototype = {
     },
     _createPanel: function () {
 
-
         var items = {
             xtype:'fieldset',
             title: '',
@@ -79,14 +78,14 @@ EvaProteinSubstitutionScoreFilterFormPanel.prototype = {
             defaultType: 'textfield',
             items :[
                 {
-                    fieldLabel: 'Polyphen2 \>',
-                    name: 'polyphen2',
+                    fieldLabel: 'PhastCons \<',
+                    name: 'phastCons',
                     width  : 240,
                     margin:'5 0 0 0'
                 },
                 {
-                    fieldLabel: 'Sift \< ',
-                    name: 'sift',
+                    fieldLabel: 'phyloP \>',
+                    name: 'phylop',
                     width  : 240,
                     margin:'5 0 5 0'
                 }
@@ -109,27 +108,30 @@ EvaProteinSubstitutionScoreFilterFormPanel.prototype = {
             collapsed: this.collapsed,
             items: [items]
         });
-
     },
     getPanel: function () {
         return this.panel;
     },
     getValues: function () {
         var values = this.panel.getValues();
-        var valuesArray = {};
+        var valuesArray = [];
         for (key in values) {
             if (values[key] == '') {
                 delete values[key]
             }else{
-                if(key == 'sift'){
-                   value = encodeURI('\<'+ values[key]);
+                if(key == 'phastCons'){
+                    value = encodeURI('\<'+ values[key]);
                 }else{
                     value = encodeURI('\>'+ values[key]);
                 }
-                valuesArray[key] = value;
+                valuesArray.push(key+':'+value);
             }
         }
-        return valuesArray;
+        if(!_.isEmpty(valuesArray)){
+            valuesArray =  valuesArray.join(',');
+            return {conserved_region:valuesArray};
+        }
+
     },
     clear: function () {
         this.panel.reset();
