@@ -321,7 +321,7 @@ EvaVariantWidget.prototype = {
                     dataIndex: 'gene'
                 },
                 {
-                    text: 'SO Name',
+                    text: 'Consequence Type',
                     dataIndex: 'consequenceTypes',
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){
                         var tempArray = [];
