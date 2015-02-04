@@ -72,34 +72,39 @@ EvaPopulationFrequencyFilterFormPanel.prototype = {
             xtype:'fieldset',
             title: '1000Genomes',
             collapsible: false,
-            height:200,
+            height:240,
             width :280,
             defaultType: 'textfield',
             items :[
                 {
-                    fieldLabel: 'All \< ',
+                    fieldLabel: 'All MAF \< ',
                     name: 'ALL',
-                    width  : 240
+                    width  : 240,
+                    labelWidth:120
                 },
                 {
-                    fieldLabel: 'African \< ',
+                    fieldLabel: 'African MAF \< ',
                     name: 'AFR',
-                    width  : 240
+                    width  : 240,
+                    labelWidth:120
                 },
                 {
-                    fieldLabel: 'American \< ',
+                    fieldLabel: 'American MAF \< ',
                     name: 'AMR',
-                    width  : 240
+                    width  : 240,
+                    labelWidth:120
                 },
                 {
-                    fieldLabel: 'Asian \< ',
+                    fieldLabel: 'Asian MAF \< ',
                     name: 'ASN',
-                    width  : 240
+                    width  : 240,
+                    labelWidth:120
                 },
                 {
-                    fieldLabel: 'European \<',
+                    fieldLabel: 'European MAF \<',
                     name: 'EUR',
-                    width  : 240
+                    width  : 240,
+                    labelWidth:120
                 }
             ]
         }
@@ -107,19 +112,21 @@ EvaPopulationFrequencyFilterFormPanel.prototype = {
             xtype:'fieldset',
             title: 'ESP6500',
             collapsible: false,
-            height:150,
+            height:180,
             width :280,
             defaultType: 'textfield',
             items :[
                 {
-                    fieldLabel: 'African-American \<',
+                    fieldLabel: 'African-American MAF \<',
                     name: 'AA_AF',
-                    width  : 240
+                    width  : 240,
+                    labelWidth:120
                 },
                 {
-                    fieldLabel: ' European-American \< ',
+                    fieldLabel: ' European-American MAF \< ',
                     name: 'EA_AF',
-                    width  : 240
+                    width  : 240,
+                    labelWidth:120
                 }
 
             ]
