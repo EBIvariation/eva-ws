@@ -95,7 +95,7 @@ EvaVariantWidgetPanel.prototype = {
                 align: 'left'
             },
             items: [view],
-            height:3800,
+            height:1200,
             cls: 'variant-widget-panel'
         });
 
@@ -120,7 +120,8 @@ EvaVariantWidgetPanel.prototype = {
                 title: 'Variant Data',
                 headerConfig: {
                     baseCls: 'eva-header-2'
-                }
+                },
+                border:false
             },
             defaultToolConfig: {
                 headerConfig: {
@@ -179,7 +180,7 @@ EvaVariantWidgetPanel.prototype = {
 
         var studyFilter = new EvaStudyFilterFormPanel({
             border:false,
-            collapsed: false,
+            collapsed: true,
             height: 550,
             studiesStore: this.studiesStore,
             studyFilterTpl:'<tpl if="studyId"><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div><tpl else><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a></div></tpl>'
@@ -260,7 +261,7 @@ EvaVariantWidgetPanel.prototype = {
             submitButtonId: 'vb-submit-button',
             filters: [speciesFilter,positionFilter, conseqTypeFilter,populationFrequencyFilter,proteinSubScoreFilter,conservationScoreFilter,studyFilter],
             width: 300,
-//            height: 1043,
+            height: 1043,
             border: false,
             handlers: {
                 'submit': function (e) {

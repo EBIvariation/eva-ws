@@ -518,10 +518,12 @@ h4{
     color:#426783;
     font-style: italic;
 }
-pre {
-    /*height: auto;*/
-    /*max-height: 200px !important;*/
+.vcf-header pre {
+    height: auto;
+    width:950px;
+    max-height: 200px !important;
     overflow: auto;
+    overflow-y: scroll;
     background-color: #eeeeee;
     word-break: normal !important;
     word-wrap: normal !important;

@@ -64,11 +64,11 @@ function EvaVariantWidget(args) {
 
     this.browserGridConfig = {
         title: 'variant browser grid',
-        border: false
+        border: true
     };
     this.toolPanelConfig = {
         title: 'Variant data',
-        border: false
+        border: true
     };
     this.toolsConfig = {
         headerConfig: {
@@ -393,7 +393,7 @@ EvaVariantWidget.prototype = {
             target: target,
             data: this.data,
             height:450,
-            margin: '-8 0 0 0',
+            margin: '5 0 0 0',
             border: this.browserGridConfig.border,
             dataParser: this.dataParser,
             responseRoot: this.responseRoot,
@@ -431,7 +431,8 @@ EvaVariantWidget.prototype = {
                     ['25'],
                     ['50'],
                     ['75'],
-                    ['100']
+                    ['100'],
+                    ['200']
                 ]
             }),
             mode : 'local',
@@ -444,13 +445,14 @@ EvaVariantWidget.prototype = {
             forceSelection: true
         });
 
-        variantBrowserGrid.grid.addTool({
+        variantBrowserGrid.grid.addDocked({
             xtype   : 'toolbar',
             dock    : 'bottom',
             border:false,
             items: [ 'Results per Page: ',resultsPerPage,{
                 xtype   :   'button',
                 text    :   'Export as CSV',
+                margin: '5 10 10 10',
                 listeners: {
                     click: {
                         element: 'el', //bind to the underlying el property on the panel
@@ -541,7 +543,7 @@ EvaVariantWidget.prototype = {
 //                    _this.grid.setLoading(false);
                 }
             },
-            height:1800,
+            height:800,
             statsTpl : new Ext.XTemplate(
                 '<table class="ocb-attributes-table">' +
                     '<tr>' +
@@ -610,7 +612,7 @@ EvaVariantWidget.prototype = {
 //                    _this.grid.setLoading(false);
                 }
             },
-            height:2400,
+            height:800,
             statsTpl : new Ext.XTemplate(
                 '<table class="table table-bordered ocb-attributes-table">' +
                     '<tr>' +
@@ -672,7 +674,7 @@ EvaVariantWidget.prototype = {
                     align: 'stretch'
                 }
             },
-            height:3200,
+            height:800,
             handlers: {
                 "load:finish": function (e) {
 
@@ -978,6 +980,13 @@ EvaVariantWidget.prototype = {
             /* Put the record object in somma seperated format */
             csvContent += snewLine;
             Ext.Object.each(records[i].data, function(key, value) {
+                if(key == 'consequenceTypes'){
+                    var consqTypeArr = [];
+                    Ext.Object.each(records[i].data[key], function(k, v) {
+                        consqTypeArr.push(v.soTerms[0].soName)
+                    });
+                    value = consqTypeArr.join(" ");
+                }
                 if(_.indexOf(removeKeys, key) == -1){
                     printableValue = ((noCsvSupport) && value == '') ? '&nbsp;'  : value;
                     printableValue = String(printableValue).replace(/,/g , "");
@@ -985,8 +994,18 @@ EvaVariantWidget.prototype = {
                     csvContent += sdelimiter +  printableValue + edelimiter;
                 }
             });
-            var speciesName = _.findWhere(speciesList, {taxonomyCode:params.species.split('_')[0]}).taxonomyEvaName;
-            var species = speciesName.substr(0,1).toUpperCase()+speciesName.substr(1)+'/'+_.findWhere(speciesList, {taxonomyCode:params.species.split('_')[0]}).assemblyName;
+
+            console.log(csvContent)
+            var speciesName;
+            var species;
+            if(!_.isEmpty(speciesList)){
+                speciesName = _.findWhere(speciesList, {taxonomyCode:params.species.split("_")[0]}).taxonomyEvaName;
+                species = speciesName.substr(0,1).toUpperCase()+speciesName.substr(1)+'/'+_.findWhere(speciesList, {taxonomyCode:params.species.split('_')[0]}).assemblyName;
+
+            } else {
+                species = params.species;
+            }
+
 //            var species = _.findWhere(speciesList, {value:params.species}).name;
             speciesValue = ((noCsvSupport) && species == '') ? '&nbsp;' : species;
             speciesValue = String(species).replace(/,/g , "");

@@ -208,7 +208,7 @@ EvaVariantStatsPanel.prototype = {
         var vcfHeaderId1 = Utils.genId("vcf-header1");
         var vcfHeaderView =  Ext.create('Ext.view.View', {
             id:vcfHeaderId,
-            tpl: new Ext.XTemplate('<div><pre>'+vcfHeaderData.escapeHTML()+'</pre></div>'),
+            tpl: new Ext.XTemplate('<div class="vcf-header"><pre>'+vcfHeaderData.escapeHTML()+'</pre></div>'),
             hidden:true,
             margin: '5 10 10 10'
 
