@@ -452,7 +452,9 @@ EvaVariantWidget.prototype = {
             items: [ 'Results per Page: ',resultsPerPage,{
                 xtype   :   'button',
                 text    :   'Export as CSV',
-                margin: '5 10 10 10',
+                style: {
+                    borderStyle: 'solid'
+                },
                 listeners: {
                     click: {
                         element: 'el', //bind to the underlying el property on the panel
