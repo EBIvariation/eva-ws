@@ -267,7 +267,7 @@ EvaVariantWidget.prototype = {
                 {
                     text: "Chr",
                     dataIndex: 'chromosome',
-                    flex: 0.
+                    flex: 0.5
                 },
                 {
                     text: 'Position',
@@ -326,14 +326,19 @@ EvaVariantWidget.prototype = {
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){
                         var tempArray = [];
                         var consequenceTypes = rec.data.consequenceTypes;
-                        for (i = 0; i < consequenceTypes.length; i++) {
-                            tempArray.push(consequenceTypes[i].soTerms[0].soName)
+                        if(consequenceTypes){
+                            for (i = 0; i < consequenceTypes.length; i++) {
+                                tempArray.push(consequenceTypes[i].soTerms[0].soName)
+                            }
+                            meta.tdAttr = 'data-qtip="'+tempArray.join('\n')+'"';
+                            return value ? Ext.String.format(
+                                '<tpl>'+tempArray.join()+'</tpl>',
+                                value
+                            ) : '';
+                        }else{
+                            return '';
                         }
-                        meta.tdAttr = 'data-qtip="'+tempArray.join('\n')+'"';
-                        return value ? Ext.String.format(
-                            '<tpl>'+tempArray.join()+'</tpl>',
-                            value
-                        ) : '';
+
 //                        return tempArray.join();
                     },
                     flex: 1
@@ -495,7 +500,8 @@ EvaVariantWidget.prototype = {
             var _this = this;
             var url = variantBrowserGrid.store.proxy.url;
             var params = variantBrowserGrid.store.proxy.extraParams;
-            variantBrowserGrid.pageSize = record[0].id;
+//            variantBrowserGrid.pageSize = record[0].id;
+            variantBrowserGrid.pageSize = record.id;
             _this.retrieveData(url,params);
         }, this);
 
@@ -571,11 +577,11 @@ EvaVariantWidget.prototype = {
         });
 
         this.on("variant:change", function (e) {
-
             if(_.isUndefined(e.variant)){
                 variantStatsPanel.clear(true);
             }else{
-                if (target === _this.selectedToolDiv) {
+//                if (target === _this.selectedToolDiv) {
+                if (target.id === _this.selectedToolDiv.id) {
                     var variant = e.variant;
                     var region = variant.chromosome+':'+variant.start+'-'+variant.end;
                     var proxy =  _.clone(this.variantBrowserGrid.store.proxy);
@@ -694,7 +700,8 @@ EvaVariantWidget.prototype = {
             if(_.isUndefined(e.variant)){
                 variantGenotypeGrid.clear(true);
             }else{
-                if (target === _this.selectedToolDiv) {
+//                if (target === _this.selectedToolDiv) {
+                if (target.id === _this.selectedToolDiv.id) {
                     var variant = e.variant;
                     var query = e.variant.chromosome+':'+e.variant.start+'-'+e.variant.end;
                     var params = _.omit(this.variantBrowserGrid.store.proxy.extraParams, 'region','studies');

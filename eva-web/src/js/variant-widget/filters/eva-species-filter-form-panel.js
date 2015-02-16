@@ -78,14 +78,21 @@ SpeciesFilterFormPanel.prototype = {
                     name: 'displayName',
                     type: 'string',
                     convert: function( v, record ) {
-                        return record.get( 'taxonomyEvaName').substr(0,1).toUpperCase()+record.get( 'taxonomyEvaName').substr(1) + ' / ' + record.get( 'assemblyName' )
+
+                        if( record.get( 'taxonomyEvaName')){
+                            return record.get( 'taxonomyEvaName').substr(0,1).toUpperCase()+record.get( 'taxonomyEvaName').substr(1) + ' / ' + record.get( 'assemblyName' )
+                        }
+
+
                     }
                 },
                 {
                     name: 'value',
                     type: 'string',
                     convert: function( v, record ) {
-                        return record.get( 'taxonomyCode' ) + '_' + record.get( 'assemblyCode' )
+                        if( record.get( 'taxonomyCode')){
+                            return record.get( 'taxonomyCode' ) + '_' + record.get( 'assemblyCode' )
+                        }
                     }
                 }
             ]

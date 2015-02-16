@@ -131,6 +131,7 @@ EvaVariantBrowserGrid.prototype = {
                 animCollapse: false,
                 height: this.height,
                 overflowX:true,
+                overflowY: true,
                 collapsible:true,
                 features: [
                     {ftype: 'summary'}
@@ -145,6 +146,7 @@ EvaVariantBrowserGrid.prototype = {
         );
 
         grid.getSelectionModel().on('selectionchange', function (sm, selectedRecord) {
+            console.log(selectedRecord.length)
             if (selectedRecord.length) {
                 var row = selectedRecord[0].data;
                 _this.trigger("variant:change", {sender: _this, args: row});

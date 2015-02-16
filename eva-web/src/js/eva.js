@@ -186,6 +186,7 @@ Eva.prototype = {
                     this.variantWidgetPanel.show();
                 }else{
                     this.variantWidgetPanel = this._createVariantWidgetPanel(this.contentDiv);
+                    this.select('Variant Browser');
 //                    this.variantWidgetPanel.formPanelVariantFilter.trigger('submit', {values: this.variantWidgetPanel.formPanelVariantFilter.getValues(), sender: _this});
                 }
 

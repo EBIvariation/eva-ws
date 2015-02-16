@@ -163,7 +163,8 @@ module.exports = function (grunt) {
 //                                'build/<%= meta.version.eva %>/lib/jsorolla/build/*/lib.min.js'
                                ],
                         'vendor': [
-                            'build/<%= meta.version.eva %>/vendor/ext-5.0.1/js/ext-all.js',
+//                            'build/<%= meta.version.eva %>/vendor/ext-5.0.1/js/ext-all.js',
+                            'build/<%= meta.version.eva %>/vendor/ext-5.1.0/js/ext-all.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/underscore-min.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/backbone-min.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.min.js',
@@ -192,7 +193,8 @@ module.exports = function (grunt) {
                             'build/<%= meta.version.eva %>/css/eva.css'
                         ],
                         'vendor': [
-                            'build/<%= meta.version.eva %>/vendor/ext-5.0.1/theme/theme-eva-ebi-all.css',
+//                            'build/<%= meta.version.eva %>/vendor/ext-5.0.1/theme/theme-eva-ebi-all.css',
+                            'build/<%= meta.version.eva %>/vendor/ext-5.1.0/theme/theme-ebi-embl-all.css',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.qtip.min.css',
                             'build/<%= meta.version.eva %>/vendor/bootstrap-3.2.0/css/bootstrap.min.css',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/font-awesome/css/font-awesome.min.css'
