@@ -1,4 +1,27 @@
-
+/*
+ * Copyright (c) 2014 Francisco Salavert (SGL-CIPF)
+ * Copyright (c) 2014 Alejandro Alemán (SGL-CIPF)
+ * Copyright (c) 2014 Ignacio Medina (EBI-EMBL)
+ * Copyright (c) 2014 Jag Kandasamy (EBI-EMBL)
+ *
+ * This file is part of EVA.
+ *
+ * EVA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EVA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EVA. If not, see <http://www.gnu.org/licenses/>.
+ */
+//METADATA_HOST = "http://172.22.70.137:8080/eva/webservices/rest";
+////METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+//METADATA_VERSION = 'v1';
 var TABS = [
     "Home",
     "Submit Data",
@@ -154,55 +177,74 @@ variationClasses = [
     {acc: "SO:0000051", name: "probe", qtip: "A DNA sequence used experimentally to detect the presence or absence of a complementary nucleic acid.", call: "CNV probe", leaf: true,checked: false,  iconCls :'no-icon'}
 ];
 
-
-var projects = [    {
-            studyId: "PRJEB5829",
-            studyName: "Genome of the Netherlands Release 5",
-            url:"http://www.nlgenome.nl/"
-    }, {
-        studyId: "PRJEB7218",
-        studyName: "UK10K_COHORT_TWINSUK REL-2012-06-02 haplotypes (sites)",
-        url:"http://www.uk10k.org/"
-    }, {
-        studyId: "PRJEB6041",
-        studyName: "UMCG Cardio GenePanel screening",
-        url:"https://www.umcg.nl/EN/Research/InstitutesProgrammes/GUIDE/Programmes/Pages/CVC.aspx"
-    }, {
-        studyId: "PRJEB7217",
-        studyName: "UK10K_COHORT_ALSPAC REL-2012-06-02 haplotypes (sites only)",
-        url:"http://www.uk10k.org/"
-    }, {
-        studyId: "PRJEB6042",
-        studyName: "GEUVADIS: Genetic European Variation in Disease",
-        url:"http://www.geuvadis.org/web/geuvadis/home"
-    }, {
-        studyId: "PRJEB5439",
-        studyName: "Exome Variant Server NHLBI Exome Sequencing Project",
-        url:"http://evs.gs.washington.edu/EVS/"
-    }, {
-        studyId: "PRJEB4019",
-        studyName: "1000 Genomes Phase 1 Analysis",
-        url:"http://www.1000genomes.org/"
-    }, {
-        studyId: "PRJEB6902",
-        studyName: "Complete Genomics 69 Genomes",
-        url:"http://www.completegenomics.com/public-data/69-Genomes/"
-    }, {
-        studyId: "PRJEB5473",
-        studyName: "SNP analysis in Medaka using wild and inbred individuals",
-        url:"http://www.ebi.ac.uk/birney-srv/medaka-ref-panel/"
-    }
-];
-
-//EvaManager.get({
-//    host: 'http://wwwdev.ebi.ac.uk/eva/webservices/rest',
-//    category: 'meta/studies',
-//    resource: 'list',
-//    success: function (response) {
-//        try {
-//            projects = response.response[0].result;
-//        } catch (e) {
-//            console.log(e);
-//        }
+//
+//var projects = [    {
+//            studyId: "PRJEB5829",
+//            studyName: "Genome of the Netherlands Release 5",
+//            url:"http://www.nlgenome.nl/"
+//    }, {
+//        studyId: "PRJEB7218",
+//        studyName: "UK10K_COHORT_TWINSUK REL-2012-06-02 haplotypes (sites)",
+//        url:"http://www.uk10k.org/"
+//    }, {
+//        studyId: "PRJEB6041",
+//        studyName: "UMCG Cardio GenePanel screening",
+//        url:"https://www.umcg.nl/EN/Research/InstitutesProgrammes/GUIDE/Programmes/Pages/CVC.aspx"
+//    }, {
+//        studyId: "PRJEB7217",
+//        studyName: "UK10K_COHORT_ALSPAC REL-2012-06-02 haplotypes (sites only)",
+//        url:"http://www.uk10k.org/"
+//    }, {
+//        studyId: "PRJEB6042",
+//        studyName: "GEUVADIS: Genetic European Variation in Disease",
+//        url:"http://www.geuvadis.org/web/geuvadis/home"
+//    }, {
+//        studyId: "PRJEB5439",
+//        studyName: "Exome Variant Server NHLBI Exome Sequencing Project",
+//        url:"http://evs.gs.washington.edu/EVS/"
+//    }, {
+//        studyId: "PRJEB4019",
+//        studyName: "1000 Genomes Phase 1 Analysis",
+//        url:"http://www.1000genomes.org/"
+//    }, {
+//        studyId: "PRJEB6902",
+//        studyName: "Complete Genomics 69 Genomes",
+//        url:"http://www.completegenomics.com/public-data/69-Genomes/"
+//    }, {
+//        studyId: "PRJEB5473",
+//        studyName: "SNP analysis in Medaka using wild and inbred individuals",
+//        url:"http://www.ebi.ac.uk/birney-srv/medaka-ref-panel/"
 //    }
-//});
+//];
+
+
+
+var speciesList = '';
+EvaManager.get({
+    category: 'meta/species',
+    resource: 'list',
+    params:{loaded:true},
+    async: false,
+    success: function (response) {
+        try {
+           speciesList = response.response[0].result;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+});
+
+var projects = '';
+EvaManager.get({
+    category: 'meta/studies',
+    resource: 'all',
+    async: false,
+    success: function (response) {
+        try {
+            projects = response.response[0].result;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+});
+

@@ -4,38 +4,40 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
+import uk.ac.ebi.variation.eva.server.exception.SpeciesException;
+import uk.ac.ebi.variation.eva.server.exception.VersionException;
 
 /**
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
 @Path("/{version}/genes")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces("application/json")
+@Api(value = "Gene", description = "Gene RESTful Web Services API")
 public class GeneWSServer extends EvaWSServer {
 
-    public GeneWSServer() {
-        super();
-    }
 
-    public GeneWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
+    public GeneWSServer(@DefaultValue("") @PathParam("version")String version,
+                        @Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
         super(version, uriInfo, hsr);
     }
 
     @GET
     @Path("/{gene}/variants")
+    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants of a gene", response = QueryResponse.class)
     public Response getVariantsByGene(@PathParam("gene") String geneId,
                                       @QueryParam("ref") String reference,
                                       @QueryParam("alt") String alternate, 
@@ -50,6 +52,11 @@ public class GeneWSServer extends EvaWSServer {
                                       @DefaultValue("=") @QueryParam("miss_gts_op") String missingGenotypesOperator,
                                       @DefaultValue("") @QueryParam("type") String variantType)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
+        try {
+            checkParams();
+        } catch (VersionException | SpeciesException ex) {
+            return createErrorResponse(ex.toString());
+        }
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         
@@ -64,9 +71,6 @@ public class GeneWSServer extends EvaWSServer {
         }
         if (studies != null) {
             queryOptions.put("studies", Arrays.asList(studies.split(",")));
-        }
-        if (species != null && !species.isEmpty()) {
-            queryOptions.put("species", species);
         }
         if (!variantType.isEmpty()) {
             queryOptions.put("type", variantType);
@@ -89,26 +93,29 @@ public class GeneWSServer extends EvaWSServer {
                 queryOptions.put("opMissingGenotypes", missingGenotypesOperator);
             }
         }
-        
+
         return createOkResponse(variantMongoDbAdaptor.getAllVariantsByGene(geneId, queryOptions));
     }
     
     @GET
     @Path("/ranking")
+    @ApiOperation(httpMethod = "GET", value = "Retrieves gene ranking", response = QueryResponse.class)
     public Response genesRankingByVariantsNumber(@PathParam("gene") String geneId,
                                                  @QueryParam("species") String species,
                                                  @DefaultValue("10") @QueryParam("limit") int limit,
                                                  @DefaultValue("desc") @QueryParam("sort") String sort,
                                                  @DefaultValue("") @QueryParam("type") String variantType)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
+        try {
+            checkParams();
+        } catch (VersionException | SpeciesException ex) {
+            return createErrorResponse(ex.toString());
+        }
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         
         if (!variantType.isEmpty()) {
             queryOptions.put("type", variantType);
-        }
-        if (species != null && !species.isEmpty()) {
-            queryOptions.put("species", species);
         }
         
         if (sort.equalsIgnoreCase("desc")) {

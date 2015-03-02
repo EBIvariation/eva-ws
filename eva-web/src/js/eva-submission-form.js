@@ -1,10 +1,27 @@
-/**
- * Created by jag on 20/10/2014.
+/*
+ * Copyright (c) 2014 Francisco Salavert (SGL-CIPF)
+ * Copyright (c) 2014 Alejandro Alemán (SGL-CIPF)
+ * Copyright (c) 2014 Ignacio Medina (EBI-EMBL)
+ * Copyright (c) 2014 Jag Kandasamy (EBI-EMBL)
+ *
+ * This file is part of EVA.
+ *
+ * EVA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * EVA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with EVA. If not, see <http://www.gnu.org/licenses/>.
  */
-
 function EvaSubmissionForm(args) {
     _.extend(this, Backbone.Events);
-
+    this.id = Utils.genId("EVASubmissionForm");
     _.extend(this, args);
     this.rendered = false;
     this.render();
@@ -16,7 +33,7 @@ EvaSubmissionForm.prototype = {
 
         this.targetDiv = (this.target instanceof HTMLElement) ? this.target : document.querySelector('#' + this.target);
         if (!this.targetDiv) {
-            console.log('EVABeacon: target ' + this.target + ' not found');
+            console.log('EVASubmissionForm: target ' + this.target + ' not found');
             return;
         }
 

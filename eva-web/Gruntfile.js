@@ -5,8 +5,8 @@ module.exports = function (grunt) {
     grunt.initConfig({
 
         hub: {
-            lib: {
-                src: ['lib/jsorolla/Gruntfile-lib.js'],
+            genomeViewer: {
+                src: ['lib/jsorolla/Gruntfile-genome-viewer.js'],
                 tasks: ['default']
             }
         },
@@ -34,20 +34,39 @@ module.exports = function (grunt) {
             eva: {
                 src: [
                     /** eva app js **/
-                    'src/js/eva-menu.js',
-                    'src/js/eva-adapter.js',
                     'src/js/eva-manager.js',
                     'src/js/eva-config.js',
-                    'src/js/eva-variant-widget-panel.js',
-                    'src/js/eva-study-browser-panel.js',
-                    'src/js/snv-study-browser.js',
-                    'src/js/sv-study-browser.js',
-                    'src/js/eva-variant-widget.js',
-                    'src/js/eva-study-view.js',
-                    'src/js/eva-variant-view.js',
-                    'src/js/eva-statistics.js',
-                    'src/js/dgva-statistics.js',
-                    'src/js/eva-beacon.js',
+                    'src/js/eva-menu.js',
+                    'src/js/eva-adapter.js',
+                    'src/js/variant-widget/eva-variant-widget-panel.js',
+                    'src/js/variant-widget/eva-variant-widget.js',
+//                    'src/js/variant-widget/eva-variant-rawdata-panel.js',
+                    'src/js/variant-widget/eva-variant-browser-grid.js',
+                    'src/js/variant-widget/eva-variant-stats-panel.js',
+                    'src/js/variant-widget/eva-variant-genotype-grid.js',
+                    'src/js/variant-widget/eva-genome-viewer-panel.js',
+                    'src/js/variant-widget/filters/eva-species-filter-form-panel.js',
+                    'src/js/variant-widget/filters/eva-study-filter-form-panel.js',
+                    'src/js/variant-widget/filters/eva-position-filter-form-panel.js',
+                    'src/js/variant-widget/filters/eva-popoulation-frequency-filter-form-panel.js',
+                    'src/js/variant-widget/filters/eva-protein-substitutions-score-filter-form-panel.js',
+                    'src/js/variant-widget/filters/eva-consequence-type-filter-form-panel.js',
+                    'src/js/variant-widget/filters/eva-conservation-score-filter-form-panel.js',
+                    'src/js/study-browser/eva-study-browser-panel.js',
+                    'src/js/study-browser/snv-study-browser.js',
+                    'src/js/study-browser/sv-study-browser.js',
+                    'src/js/views/eva-study-view.js',
+                    'src/js/views/eva-variant-view.js',
+                    'src/js/statistics/eva-statistics.js',
+                    'src/js/statistics/dgva-statistics.js',
+                    'src/js/beacon-form/eva-beacon-panel.js',
+                    'src/js/beacon-form/eva-beacon-form.js',
+                    'src/js/beacon-form/eva-variant-search-form.js',
+                    'src/js/clinvar/eva-clinical-widget-panel.js',
+                    'src/js/clinvar/eva-clinvar-widget.js',
+                    'src/js/clinvar/eva-clinvar-browser-grid.js',
+                    'src/js/clinvar/eva-clinvar-position-filter-form-panel.js',
+                    'src/js/clinvar/eva-clinvar-assertion-panel.js',
                     'src/js/eva-submission-form.js',
                     'src/js/eva.js'
                 ],
@@ -107,17 +126,20 @@ module.exports = function (grunt) {
                     {   expand: true, src: ['src/files/*'], dest: 'build/<%= meta.version.eva %>/files', flatten: true},
                     {   expand: true, src: ['src/fonts/*'], dest: 'build/<%= meta.version.eva %>/fonts', flatten: true},
                     {   expand: true, src: ['src/css/*'], dest: 'build/<%= meta.version.eva %>/css', flatten: true},
+                    {   expand: true, src: ['src/css/ebi-complaince/*'], dest: 'build/<%= meta.version.eva %>/css/ebi-complaince/', flatten: true},
                     {   expand: true, src: ['src/img/*'], dest: 'build/<%= meta.version.eva %>/img', flatten: true},
 //                    {   expand: true, src: ['src/web-components/*'], dest: 'build/<%= meta.version.eva %>/web-components', flatten: true},
                     {   expand: true, src: ['src/*.html'], dest: 'build/<%= meta.version.eva %>/', flatten: true, filter: 'isFile'},
-                    {   expand: true, src: ['lib/jsorolla/build/*/*.js'], dest: 'build/<%= meta.version.eva %>',flatten: false},
+                    {   expand: true, src: ['lib/jsorolla/build/*/genome-viewer/*.js'], dest: 'build/<%= meta.version.eva %>',flatten: false},
                     {   expand: true, src: ['lib/jsorolla/vendor/**'], dest: 'build/<%= meta.version.eva %>',flatten: false},
                     {   expand: true, src: ['lib/jsorolla/styles/**'], dest: 'build/<%= meta.version.eva %>',flatten: false},
                     {   expand: true, src: ['vendor/bootstrap-*/**'], dest: 'build/<%= meta.version.eva %>'},
                     {   expand: true, src: ['vendor/ext-*/**'], dest: 'build/<%= meta.version.eva %>'},
                     {   expand: true, src: ['vendor/highcharts-4.0.3/**'], dest: 'build/<%= meta.version.eva %>'},
                     {   expand: true, src: ['vendor/platform-0.4.1/**'], dest: 'build/<%= meta.version.eva %>'},
-                    {   expand: true, src: ['src/js/browser-detect.js'], dest: 'build/<%= meta.version.eva %>/js',flatten: true}
+                    {   expand: true, src: ['vendor/vkbeautify/**'], dest: 'build/<%= meta.version.eva %>'},
+                    {   expand: true, src: ['src/js/browser-detect.js'], dest: 'build/<%= meta.version.eva %>/js',flatten: true},
+                    {   expand: true, src: ['src/js/ebi-web-guidelines/*'], dest: 'build/<%= meta.version.eva %>/js/ebi-web-guidelines',flatten: true}
                 ]
             }
 
@@ -136,12 +158,13 @@ module.exports = function (grunt) {
                     scripts: {
                         'eva-js': '<%= uglify.eva.dest %>',
                         'lib': [
-//                                'build/<%= meta.version.eva %>/lib/jsorolla/build/1.1.6/genome-viewer/gv-config.js',
-//                                'build/<%= meta.version.eva %>/lib/jsorolla/build/1.1.6/genome-viewer/genome-viewer.js',
-                                'build/<%= meta.version.eva %>/lib/jsorolla/build/*/lib.min.js'
+                                'build/<%= meta.version.eva %>/lib/jsorolla/build/*/genome-viewer/genome-viewer.js',
+                                'build/<%= meta.version.eva %>/lib/jsorolla/build/*/genome-viewer/gv-config.js'
+//                                'build/<%= meta.version.eva %>/lib/jsorolla/build/*/lib.min.js'
                                ],
                         'vendor': [
-                            'build/<%= meta.version.eva %>/vendor/ext-5.0.1/js/ext-all.js',
+//                            'build/<%= meta.version.eva %>/vendor/ext-5.0.1/js/ext-all.js',
+                            'build/<%= meta.version.eva %>/vendor/ext-5.1.0/js/ext-all.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/underscore-min.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/backbone-min.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.min.js',
@@ -150,7 +173,8 @@ module.exports = function (grunt) {
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.sha1.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/purl.min.js',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.qtip.min.js',
-                            'build/<%= meta.version.eva %>/vendor/highcharts-4.0.3/js/highcharts.js'
+                            'build/<%= meta.version.eva %>/vendor/highcharts-4.0.3/js/highcharts.js',
+                            'build/<%= meta.version.eva %>/vendor/vkbeautify/vkbeautify.0.99.00.beta.js'
 
                         ],
 //                        'platform': [
@@ -169,9 +193,11 @@ module.exports = function (grunt) {
                             'build/<%= meta.version.eva %>/css/eva.css'
                         ],
                         'vendor': [
-                            'build/<%= meta.version.eva %>/vendor/ext-5.0.1/theme/theme-eva-ebi-all.css',
+//                            'build/<%= meta.version.eva %>/vendor/ext-5.0.1/theme/theme-eva-ebi-all.css',
+                            'build/<%= meta.version.eva %>/vendor/ext-5.1.0/theme/theme-ebi-embl-all.css',
                             'build/<%= meta.version.eva %>/lib/jsorolla/vendor/jquery.qtip.min.css',
-                            'build/<%= meta.version.eva %>/vendor/bootstrap-3.2.0/css/bootstrap.min.css'
+                            'build/<%= meta.version.eva %>/vendor/bootstrap-3.2.0/css/bootstrap.min.css',
+                            'build/<%= meta.version.eva %>/lib/jsorolla/vendor/font-awesome/css/font-awesome.min.css'
                         ]
                     }
                 }
@@ -230,7 +256,7 @@ module.exports = function (grunt) {
     grunt.registerTask('vendor', ['curl-dir']);
 
     // Default task.
-    grunt.registerTask('default', ['hub:lib','clean:eva','concat:eva','uglify:eva', 'copy:eva', 'htmlbuild:eva'])
+    grunt.registerTask('default', ['hub:genomeViewer','clean:eva','concat:eva','uglify:eva', 'copy:eva', 'htmlbuild:eva'])
 
 
 //    grunt.registerTask('clean', ['clean:eva']);

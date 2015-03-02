@@ -2,6 +2,7 @@
  * Copyright (c) 2014 Francisco Salavert (SGL-CIPF)
  * Copyright (c) 2014 Alejandro Alemán (SGL-CIPF)
  * Copyright (c) 2014 Ignacio Medina (EBI-EMBL)
+ * Copyright (c) 2014 Jag Kandasamy (EBI-EMBL)
  *
  * This file is part of EVA.
  *
@@ -101,16 +102,6 @@ Eva.prototype = {
         /* submision-start */
         $(this.submissionForm).addClass('eva-child');
         this.childDivMenuMap['submission-start'] = this.submissionForm;
-
-
-        /* Study Browser Panel*/
-//        $(this.studyBrowserDiv).addClass('eva-child');
-//        this.childDivMenuMap['Study Browser'] =  this.studyBrowserDiv;
-//
-//        /* variant browser option*/
-//        $(this.evaBrowserDiv).addClass('eva-child');
-//        this.childDivMenuMap['VCF Browser'] = this.evaBrowserDiv;
-
     },
     draw: function () {
         this.targetDiv = (this.target instanceof HTMLElement ) ? this.target : document.querySelector('#' + this.target);
@@ -120,13 +111,8 @@ Eva.prototype = {
         }
         this.targetDiv.appendChild(this.div);
         this.evaMenu.draw();
-        var contentDiv = document.querySelector('#content');
-        this.studyBrowserPanel  = this._createStudyBrowserPanel(contentDiv);
-        this.variantWidgetPanel  = this._createVariantWidgetPanel(contentDiv);
+        this.contentDiv = document.querySelector('#content');
 
-        // this.formPanelVariantFilter.draw();
-        // this.genomeViewer.draw();
-        // this.formPanelGenomeFilter.draw();
 //        this.select('Home');
 
     },
@@ -136,8 +122,24 @@ Eva.prototype = {
     },
     _selectHandler: function (option) {
         var _this = this;
-        this.studyBrowserPanel.hide();
-        this.variantWidgetPanel.hide();
+        if(this.studyBrowserPanel){
+            this.studyBrowserPanel.hide();
+        }
+        if(this.variantWidgetPanel){
+            this.variantWidgetPanel.hide();
+        }
+        if(this.genomeViewerPanel){
+            this.genomeViewerPanel.hide();
+        }
+
+        if(this.beaconPanel){
+            this.beaconPanel.hide();
+        }
+
+        if(this.clinicalWidgetPanel){
+            this.clinicalWidgetPanel.hide();
+        }
+
         $('body').find('.show-div').each(function (index, el) {
             $(el).removeClass('show-div');
             $(el).addClass('hide-div');
@@ -149,31 +151,69 @@ Eva.prototype = {
 //            this.div.appendChild(this.childDivMenuMap[option]);
         }
 
+        //<!---- Updating URL on Tab change ---->
         var pageArray = ['eva-study','dgva-study', 'variant'];
         if(_.indexOf(pageArray, option) < 0 && !_.isEmpty(option)  ){
-            var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?'+option;
+            var optionValue = option;
+            var tabArray = ['Genome Browser'];
+            if(_.indexOf(tabArray, option) >= 0){
+                var hash = document.URL.substring(document.URL.indexOf('?')+1);
+                if  (!_.isUndefined(hash.split("&")[1])){
+                    optionValue = hash;
+                }else{
+                    optionValue = option;
+                }
+            }
+            var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?'+optionValue;
             window.history.pushState({path:newurl},'',newurl);
             $( "a:contains('"+option+"')").parent('li').addClass('active');
         }
 
         switch (option) {
             case 'Home':
-                _this._twitterWidgetUpdate();
                 _this._drawStatisticsChart();
-                break;
-            case 'Submit Data':
-//                _this._twitterWidgetUpdate();
+                _this._twitterWidgetUpdate();
                 break;
             case 'Study Browser':
-                this.studyBrowserPanel.show();
+                if(this.studyBrowserPanel){
+                    this.studyBrowserPanel.show();
+                }else{
+                    this.studyBrowserPanel  = this._createStudyBrowserPanel(this.contentDiv);
+                }
                 break;
-            case 'VCF Browser':
-                this.variantWidgetPanel.show();
-                this.variantWidgetPanel.formPanelVariantFilter.trigger('submit', {values: this.variantWidgetPanel.formPanelVariantFilter.getValues(), sender: _this});
+            case 'Variant Browser':
+                if(this.variantWidgetPanel){
+                    this.variantWidgetPanel.show();
+                }else{
+                    this.variantWidgetPanel = this._createVariantWidgetPanel(this.contentDiv);
+                    this.select('Variant Browser');
+//                    this.variantWidgetPanel.formPanelVariantFilter.trigger('submit', {values: this.variantWidgetPanel.formPanelVariantFilter.getValues(), sender: _this});
+                }
+
                 break;
-//            case 'Genome Browser':
-//                this.formPanelGenomeFilter.update();
-//                break;
+            case 'Genome Browser':
+                if(this.genomeViewerPanel){
+                    this.genomeViewerPanel.show();
+                }else{
+                    this.genomeViewerPanel  = this._createGenomeViewerPanel(this.contentDiv);
+                }
+                break;
+            case 'GA4GH':
+                if(this.beaconPanel){
+                    this.beaconPanel.show();
+                }else{
+                    this.beaconPanel  = this._createBeaconPanel(this.contentDiv);
+                }
+                break;
+
+            case 'Clinical':
+                    if(this.clinicalWidgetPanel){
+                        this.clinicalWidgetPanel.show();
+                    }else{
+                        this.clinicalWidgetPanel = this._createClinicalWidgetPanel(this.contentDiv);
+                        this.clinicalWidgetPanel.formPanelVariantFilter.trigger('submit', {values: this.clinicalWidgetPanel.formPanelVariantFilter.getValues(), sender: _this});
+                    }
+                break;
         }
     },
     _createEvaMenu: function (target) {
@@ -189,7 +229,7 @@ Eva.prototype = {
         return evaMenu;
     },
     _createStudyBrowserPanel: function(target){
-        var studyBrowser = new StudyBrowser({
+        var studyBrowser = new EvaStudyBrowserPanel({
             target: target
         });
         studyBrowser.draw();
@@ -202,6 +242,31 @@ Eva.prototype = {
         });
         variantWidget.draw();
         return variantWidget;
+
+    },
+    _createGenomeViewerPanel: function(target){
+        var genomeViewer = new EvaGenomeViewerPanel({
+            target: target,
+            position:$.urlParam('position')
+        });
+        genomeViewer.draw();
+        return genomeViewer;
+
+    },
+    _createBeaconPanel: function(target){
+        var evaBeacon = new EvaBeaconPanel({
+            target: target
+        });
+        evaBeacon.draw();
+        return evaBeacon;
+
+    },
+    _createClinicalWidgetPanel: function(target){
+        var evaClinicalWidgetPanel = new EvaClinicalWidgetPanel({
+            target: target
+        });
+        evaClinicalWidgetPanel.draw();
+        return evaClinicalWidgetPanel;
 
     },
     _twitterWidgetUpdate : function (){
