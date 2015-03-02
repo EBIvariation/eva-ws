@@ -42,16 +42,16 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
         }
         if (hasSpecies) {
             query.append("(");
-            query.append(EvaproUtils.getInClause("common_name", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
             query.append(" or ");
-            query.append(EvaproUtils.getInClause("scientific_name", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
             query.append(")");
         }
         if (hasType) {
             if (hasSpecies) {
                 query.append(" and ");
             }
-            query.append(EvaproUtils.getInClause("study_type", options.getListAs("type", String.class)));
+            query.append(EvaproUtils.getInClause("study_type", options.getAsStringList("species")));
         }
         
         Connection conn = null;

@@ -42,17 +42,17 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
         }
         if (hasSpecies) {
             query.append("(");
-            query.append(EvaproUtils.getInClause("common_name", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
             query.append(" or ");
-            query.append(EvaproUtils.getInClause("scientific_name", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
             query.append(")");
         }
         if (hasType) {
             if (hasSpecies) {
                 query.append(" and ");
             }
-            query.append(EvaproUtils.getInClause("experiment_type", options.getListAs("type", String.class)));
-            for (String t : options.getListAs("type", String.class)) {
+            query.append(EvaproUtils.getInClause("experiment_type", options.getAsStringList("type")));
+            for (String t : options.getAsStringList("type")) {
                 query.append(" or experiment_type like '%").append(t).append("%'");
             }
         }

@@ -90,9 +90,9 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
         StringBuilder query = new StringBuilder("select study_type, count(*) as COUNT from dgva_study_browser ");
         if (options.containsKey("species")) {
             query.append("where ");
-            query.append(EvaproUtils.getInClause("common_name", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
             query.append(" or ");
-            query.append(EvaproUtils.getInClause("scientific_name", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
         }
         query.append(" group by study_type order by COUNT desc");
 

@@ -50,9 +50,9 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
         StringBuilder query = new StringBuilder("select common_name, count(*) as COUNT from study_browser ");
         if (options.containsKey("species")) {
             query.append("where ");
-            query.append(EvaproUtils.getInClause("common_name", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
             query.append(" or ");
-            query.append(EvaproUtils.getInClause("scientific_name", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
         }
         query.append(" group by common_name order by COUNT desc");
 
@@ -96,9 +96,9 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
         StringBuilder query = new StringBuilder("select experiment_type, count(*) as COUNT from study_browser ");
         if (options.containsKey("species")) {
             query.append("where ");
-            query.append(EvaproUtils.getInClause("common_name", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
             query.append(" or ");
-            query.append(EvaproUtils.getInClause("scientific_name", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
         }
         query.append(" group by experiment_type order by COUNT desc");
 

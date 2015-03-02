@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import org.opencb.biodata.models.variant.stats.VariantSourceStats;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
@@ -86,6 +87,11 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
 
     @Override
     public QueryResult getSamplesBySources(List<String> fileIds, QueryOptions options) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public QueryResult getSourceDownloadUrlById(String fileId, String studyId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -213,7 +219,7 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
     }
     
     @Override
-    public QueryResult getSourceDownloadUrlById(String fileId, String studyId) {
+    public QueryResult updateSourceStats(VariantSourceStats variantSourceStats, QueryOptions queryOptions) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
