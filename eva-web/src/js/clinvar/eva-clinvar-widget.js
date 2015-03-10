@@ -312,7 +312,8 @@ EvaClinVarWidget.prototype = {
         });
 
         this.clinvarBrowserGrid.on("clinvar:change", function (e) {
-            if (target === _this.selectedToolDiv) {
+//            if (target === _this.selectedToolDiv) {
+            if (target.id === _this.selectedToolDiv.id) {
                 assertionPanel.load(e.args);
             }
         });
