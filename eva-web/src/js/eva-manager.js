@@ -19,9 +19,16 @@
  * You should have received a copy of the GNU General Public License
  * along with EVA. If not, see <http://www.gnu.org/licenses/>.
  */
-//METADATA_HOST = "http://172.22.70.137:8080/eva/webservices/rest";
-METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
-//METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+
+if(window.location.protocol == 'https:'){
+//    METADATA_HOST = "https://wwwdev.ebi.ac.uk/eva/webservices/rest";
+      METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
+}else{
+    //METADATA_HOST = "http://172.22.70.137:8080/eva/webservices/rest";
+    METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
+    //METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+}
+
 METADATA_VERSION = 'v1';
 var EvaManager = {
     host: METADATA_HOST,
