@@ -359,7 +359,7 @@ EvaVariantWidget.prototype = {
             ],
             defaults: {
 //                flex: 1,
-                align:'center' ,
+                align:'left' ,
                 sortable : true
             }
         } ;
