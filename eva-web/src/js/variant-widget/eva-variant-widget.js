@@ -52,7 +52,8 @@ function EvaVariantWidget(args) {
         genomeViewer: true,
         genotype: true,
         stats: true,
-        rawData: true
+        rawData: true,
+        populationStats:true
     };
     this.tools = [];
     this.dataParser;
@@ -183,6 +184,16 @@ EvaVariantWidget.prototype = {
                 contentEl: this.variantrawDataPanelDiv
             });
         }
+        if (this.defaultToolConfig.populationStats) {
+            this.variantPopulationStatsPanelDiv = document.createElement('div');
+            this.variantPopulationStatsPanelDiv.setAttribute('class', 'ocb-variant-rawdata-panel');
+            this.variantPopulationStatsPanel = this._createVariantPopulationStatsPanel(this.variantPopulationStatsPanelDiv);
+            tabPanelItems.push({
+                title: 'Population Stats',
+//                border: 0,
+                contentEl: this.variantPopulationStatsPanelDiv
+            });
+        }
 
         if (this.defaultToolConfig.genomeViewer) {
             this.genomeViewerDiv = document.createElement('div');
@@ -250,6 +261,9 @@ EvaVariantWidget.prototype = {
 
         if (this.defaultToolConfig.rawData) {
             this.variantrawDataPanel.draw();
+        }
+        if (this.defaultToolConfig.populationStats) {
+            this.variantPopulationStatsPanel.draw();
         }
 
         for (var i = 0; i < this.tools.length; i++) {
@@ -654,6 +668,75 @@ EvaVariantWidget.prototype = {
             }
         });
         return variantRawDataPanel;
+    },
+    _createVariantPopulationStatsPanel: function (target) {
+        var _this = this;
+        var variantPopulationStatsPanel = new EvaVariantPopulationStatsPanel({
+            target: target,
+            headerConfig: this.defaultToolConfig.headerConfig,
+            handlers: {
+                "load:finish": function (e) {
+//                    _this.grid.setLoading(false);
+                }
+            },
+            height:820,
+            statsTpl : new Ext.XTemplate(
+                '<table class="ocb-attributes-table">' +
+                    '<tr>' +
+                    '<td class="header">Minor Allele Frequency</td>' +
+//                    '<td class="header">Minor Genotype Frequency</td>' +
+                    '<td class="header">Mendelian Errors</td>' +
+                    '<td class="header">Missing Alleles</td>' +
+                    '<td class="header">Missing Genotypes</td>' +
+                    '</tr>',
+                '<tr>' +
+                    '<td><tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl><tpl if="mafAllele">({mafAllele}) <tpl else></tpl></td>' +
+//                    '<td><tpl if="mgf == -1 || mgf == 0">NA <tpl else>{mgf:number( "0.000" )} </tpl><tpl if="mgfGenotype">({mgfGenotype}) <tpl else></tpl></td>' +
+                    '<td><tpl if="mendelianErrors == -1">NA <tpl else>{mendelianErrors}</tpl></td>' +
+                    '<td><tpl if="missingAlleles == -1">NA <tpl else>{missingAlleles}</tpl></td>' +
+                    '<td><tpl if="missingGenotypes == -1">NA <tpl else>{missingGenotypes}</tpl></td>' +
+                    '</tr>',
+                '</table>'
+            )
+        });
+
+        this.variantBrowserGrid.on("variant:clear", function (e) {
+            variantPopulationStatsPanel.clear(true);
+        });
+
+        this.on("variant:change", function (e) {
+            if(_.isUndefined(e.variant)){
+                variantPopulationStatsPanel.clear(true);
+            }else{
+//                if (target === _this.selectedToolDiv) {
+                if (target.id === _this.selectedToolDiv.id) {
+                    var variant = e.variant;
+                    var region = variant.chromosome+':'+variant.start+'-'+variant.end;
+                    var proxy =  _.clone(this.variantBrowserGrid.store.proxy);
+//                proxy.extraParams.region = region;
+                    EvaManager.get({
+                        category: 'segments',
+                        resource: 'variants',
+                        query:region,
+                        params:proxy.extraParams,
+                        async: false,
+                        success: function (response) {
+                            try {
+                                _.extend(variant, response.response[0].result[0])
+                            } catch (e) {
+                                console.log(e);
+                            }
+
+                        }
+                    });
+                    if (variant.sourceEntries) {
+                        variantPopulationStatsPanel.load(variant.sourceEntries,proxy.extraParams);
+                    }
+                }
+            }
+
+        });
+        return variantPopulationStatsPanel;
     },
     _createVariantGenotypeGrid: function (target) {
         var _this = this;
