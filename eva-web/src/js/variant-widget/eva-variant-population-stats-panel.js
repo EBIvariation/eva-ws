@@ -175,7 +175,7 @@ EvaVariantPopulationStatsPanel.prototype = {
             study_title = '<a href="?eva-study='+data.studyId+'" target="_blank">'+data.studyId+'</a>';
         }
 
-        var genotypeColumns = {
+        var populationStatsColumns = {
             items:[
                 {
                     text: "Population",
@@ -263,7 +263,7 @@ EvaVariantPopulationStatsPanel.prototype = {
                 emptyText: 'No records to display',
                 enableTextSelection: true
             },
-            columns: genotypeColumns,
+            columns: populationStatsColumns,
             plugins:plugins
 
 
