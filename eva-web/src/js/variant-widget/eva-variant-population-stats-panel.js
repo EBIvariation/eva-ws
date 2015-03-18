@@ -242,6 +242,11 @@ EvaVariantPopulationStatsPanel.prototype = {
             data: populationData,
             proxy: {
                     type: 'memory'
+            },
+            sorters:
+            {
+                property: 'id',
+                direction: 'ASC'
             }
         });
 
@@ -256,7 +261,7 @@ EvaVariantPopulationStatsPanel.prototype = {
             store: store,
             loadMask: true,
             width: 900,
-//            height: 300,
+            height: 600,
             cls:'genotype-grid',
             margin: 20,
             viewConfig: {
