@@ -1,10 +1,13 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.base.Splitter;
+import com.wordnik.swagger.annotations.ApiParam;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,17 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
-import com.wordnik.swagger.annotations.ApiParam;
 import org.opencb.biodata.models.feature.Genotype;
-import org.opencb.biodata.models.variant.VariantSourceEntry;
 import org.opencb.biodata.models.variant.VariantSource;
+import org.opencb.biodata.models.variant.VariantSourceEntry;
 import org.opencb.biodata.models.variant.stats.VariantStats;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResponse;
-import org.opencb.opencga.storage.core.variant.io.json.VariantSourceEntryJsonMixin;
 import org.opencb.opencga.storage.core.variant.io.json.GenotypeJsonMixin;
+import org.opencb.opencga.storage.core.variant.io.json.VariantSourceEntryJsonMixin;
 import org.opencb.opencga.storage.core.variant.io.json.VariantSourceJsonMixin;
 import org.opencb.opencga.storage.core.variant.io.json.VariantStatsJsonMixin;
+import org.opencb.opencga.storage.core.variant.io.json.VariantStatsJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.ebi.variation.eva.server.exception.SpeciesException;
@@ -99,6 +102,12 @@ public class EvaWSServer {
         jsonObjectMapper.addMixInAnnotations(Genotype.class, GenotypeJsonMixin.class);
         jsonObjectMapper.addMixInAnnotations(VariantStats.class, VariantStatsJsonMixin.class);
         jsonObjectMapper.addMixInAnnotations(VariantSource.class, VariantSourceJsonMixin.class);
+        jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
+        
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(VariantStats.class, new VariantStatsJsonSerializer());
+        jsonObjectMapper.registerModule(module);
+        
         jsonObjectWriter = jsonObjectMapper.writer();
 
         xmlObjectMapper = new XmlMapper();
