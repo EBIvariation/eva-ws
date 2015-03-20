@@ -391,7 +391,7 @@ EvaVariantWidget.prototype = {
             {name: 'consequenceTypes', mapping: 'annotation.consequenceTypes', type:'auto' },
         ];
 
-      var listeners =  {
+        var listeners =  {
             expandbody : function( expander, record, body, rowIndex ) {
                 var content = '';
                 var consequenceTypes = record.data.consequenceTypes;
@@ -403,9 +403,9 @@ EvaVariantWidget.prototype = {
         };
 
         var plugins =  [{
-                        ptype: 'rowexpander',
-                        rowBodyTpl : new Ext.XTemplate()
-                     }];
+            ptype: 'rowexpander',
+            rowBodyTpl : new Ext.XTemplate()
+        }];
 
         var variantBrowserGrid = new EvaVariantBrowserGrid({
             title: this.browserGridConfig.title,
@@ -575,7 +575,7 @@ EvaVariantWidget.prototype = {
                     '<td class="header">Missing Alleles</td>' +
                     '<td class="header">Missing Genotypes</td>' +
                     '</tr>',
-                    '<tr>' +
+                '<tr>' +
                     '<td><tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl><tpl if="mafAllele">({mafAllele}) <tpl else></tpl></td>' +
 //                    '<td><tpl if="mgf == -1 || mgf == 0">NA <tpl else>{mgf:number( "0.000" )} </tpl><tpl if="mgfGenotype">({mgfGenotype}) <tpl else></tpl></td>' +
                     '<td><tpl if="mendelianErrors == -1">NA <tpl else>{mendelianErrors}</tpl></td>' +

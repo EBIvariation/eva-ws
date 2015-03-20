@@ -244,16 +244,16 @@ EvaClinicalWidgetPanel.prototype = {
                     }
 
                     _this.clinvarWidget.retrieveData(url, e.values)
-                     var geneColumn = Ext.getCmp('clinvar-grid-gene-column');
+//                     var geneColumn = Ext.getCmp('clinvar-grid-gene-column');
                      var viewColumn = Ext.getCmp('clinvar-grid-view-column');
                      viewColumn.tpl =  Ext.create('Ext.XTemplate', '<tpl><a href="?Genome Browser&position='+ regions+'" target="_blank">Genome Viewer</a></tpl>')
-                    if(!_.isUndefined(gene)){
-                        var updateTpl = Ext.create('Ext.XTemplate', '<tpl>'+gene+'</tpl>');
-                        geneColumn.tpl = updateTpl;
-                        geneColumn.setVisible(true);
-                    }else{
-                        geneColumn.setVisible(false);
-                    }
+//                    if(!_.isUndefined(gene)){
+//                        var updateTpl = Ext.create('Ext.XTemplate', '<tpl>'+gene+'</tpl>');
+//                        geneColumn.tpl = updateTpl;
+//                        geneColumn.setVisible(true);
+//                    }else{
+//                        geneColumn.setVisible(false);
+//                    }
 
                 }
             }

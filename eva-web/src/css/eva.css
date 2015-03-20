@@ -533,6 +533,68 @@ h4{
 
 }​
 
+ .eva-attributes-table {
+     cellspacing: 0;
+     border-collapse: collapse;
+     border: 1px solid #d3d3d3;
+ }
+
+.eva-attributes-table tr {
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+}
+
+.eva-attributes-table td {
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+    padding: 5px;
+    text-align: center;
+}
+
+.eva-attributes-table td.header {
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+    padding: 5px;
+    background-color: whiteSmoke;
+    color: steelblue;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.eva-stats-table {
+    cellspacing: 0;
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+}
+
+.eva-stats-table tr {
+    border-collapse: collapse;
+    /*border: 1px solid #d3d3d3;*/
+}
+
+.eva-stats-table td {
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+    padding: 5px;
+    text-align: left;
+}
+
+.eva-stats-table td.header {
+    border-collapse: collapse;
+    /*border: 1px solid #d3d3d3;*/
+    padding: 5px;
+    background-color: whiteSmoke;
+    color: steelblue;
+    font-weight: bold;
+    text-align: left;
+}
+
+
+
+
+
+
 
 
 

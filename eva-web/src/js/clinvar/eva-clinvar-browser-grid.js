@@ -143,7 +143,7 @@ ClinvarBrowserGrid.prototype = {
 
         grid.getSelectionModel().on('selectionchange', function (sm, selectedRecord) {
             if (selectedRecord.length) {
-                var clinVarAssertion = selectedRecord[0].data.clinVarAssertion;
+                var clinVarAssertion = selectedRecord[0].data;
                 _this.trigger("clinvar:change", {sender: _this, args: clinVarAssertion});
             }
         });
@@ -161,6 +161,7 @@ ClinvarBrowserGrid.prototype = {
             this._parserFunction(data);
 
         }
+
 
         this.store = Ext.create('Ext.data.Store', {
             pageSize: this.pageSize,

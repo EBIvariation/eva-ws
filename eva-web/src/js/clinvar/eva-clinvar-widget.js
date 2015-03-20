@@ -50,6 +50,8 @@ function EvaClinVarWidget(args) {
         },
         genomeViewer: true,
         genotype: true,
+        assertion:true,
+        summary:true,
     };
     this.tools = [];
     this.dataParser;
@@ -130,7 +132,7 @@ EvaClinVarWidget.prototype = {
                 tabchange: function (tabPanel, newTab, oldTab, eOpts) {
                     _this.selectedToolDiv = newTab.contentEl;
                     if (_this.lastVariant) {
-//                        _this.trigger('variant:change', {variant: _this.lastVariant, sender: _this});
+                        _this.trigger('clinvar:change', {variant: _this.lastVariant, sender: _this});
                     }
                 }
             }
@@ -138,16 +140,28 @@ EvaClinVarWidget.prototype = {
 
         var tabPanelItems = [];
 
+        if (this.defaultToolConfig.summary) {
+            this.clinvarSummaryPanelDiv = document.createElement('div');
+            this.clinvarSummaryPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
+            this.clinvarSummaryPanel = this._createSummaryPanel(this.clinvarSummaryPanelDiv);
+            tabPanelItems.push({
+                title: 'Summary',
+//                border: 0,
+                contentEl: this.clinvarSummaryPanelDiv
+            });
+        }
+
         if (this.defaultToolConfig.assertion) {
             this.clinvarAssertionPanelDiv = document.createElement('div');
             this.clinvarAssertionPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
             this.clinvarAssertionPanel = this._createAssertionPanel(this.clinvarAssertionPanelDiv);
             tabPanelItems.push({
-                title: 'Assertion',
+                title: 'Clinical Assertion',
 //                border: 0,
                 contentEl: this.clinvarAssertionPanelDiv
             });
         }
+
         for (var i = 0; i < this.tools.length; i++) {
             var tool = this.tools[i];
             var toolDiv = document.createElement('div');
@@ -182,9 +196,15 @@ EvaClinVarWidget.prototype = {
             this.toolTabPanel.setActiveTab(i);
         }
 
+        if (this.defaultToolConfig.summary) {
+            this.clinvarSummaryPanel.draw();
+        }
+
         if (this.defaultToolConfig.assertion) {
             this.clinvarAssertionPanel.draw();
         }
+
+
 
         for (var i = 0; i < this.tools.length; i++) {
             var tool = this.tools[i];
@@ -198,63 +218,78 @@ EvaClinVarWidget.prototype = {
 
         var columns ={
             items:[
+//                {
+//                    text: "Accession",
+////                    dataIndex: 'accession',
+//                    xtype: "templatecolumn",
+//                    tpl: '<tpl>{referenceClinVarAssertionAcc}</tpl>',
+//                    flex: 1
+//                },
                 {
-                    text: "Accession",
-//                    dataIndex: 'accession',
-                    xtype: "templatecolumn",
-                    tpl: '<tpl>{referenceClinVarAssertionAcc}</tpl>',
-                    flex: 1
-                },
-                {
-                    text: 'Description',
+                    text: 'Clinical <br />Significance',
                     dataIndex: 'description',
-                    flex: 0.8
+                    flex: 0.2
                 },
                 {
                     text: "Trait",
                     dataIndex: 'trait',
-                    flex: 2
-                },
-                {
-                    text: 'Platform',
-                    dataIndex: 'platform',
-                    flex: 0.7
-                },
-                {
-                    text: 'Technology',
-                    dataIndex: 'technology',
-                    flex: 0.7
-                },
-                {
-                    text: "Gene",
-//                    dataIndex: 'accession',
-                    id:'clinvar-grid-gene-column',
-                    xtype: "templatecolumn",
-                    tpl: '<tpl></tpl>',
                     flex: 0.5
                 },
+//                {
+//                    text: 'Platform',
+//                    dataIndex: 'platform',
+//                    flex: 0.7
+//                },
+//                {
+//                    text: 'Technology',
+//                    dataIndex: 'technology',
+//                    flex: 0.7
+//                },
                 {
-                    text: "Xrefs",
-                    flex: 1,
+                    text: "Gene",
+                    dataIndex: 'gene',
+                    id:'clinvar-grid-gene-column',
+                    flex: 0.2
+                },
+                {
+                    text: "Accessions",
+                    flex: 3,
                     textAlign: 'center',
                     columns: [
                         {
-                            text: "ID",
-                            dataIndex: "xref_id"
+                            text: "ClinVar",
+                            dataIndex: "referenceClinVarAssertionAcc",
+                            flex: 3
 
                         },
                         {
-                            text: "Database",
-                            dataIndex: "xref_db"
+                            text: "Others",
+                            dataIndex: "accession_others_id"
                         }
                     ]
                 },
+//                {
+//                    text: "Xrefs",
+//                    flex: 1,
+//                    textAlign: 'center',
+//                    columns: [
+//                        {
+//                            text: "ID",
+//                            dataIndex: "xref_id"
+//
+//                        },
+//                        {
+//                            text: "Database",
+//                            dataIndex: "xref_db"
+//                        }
+//                    ]
+//                },
                 {
                     text: "View",
                     id:'clinvar-grid-view-column',
                     xtype: "templatecolumn",
                     tpl: '<tpl></tpl>',
-                    flex: 1.2
+                    flex: 0.5
                 }
 
             ],
@@ -270,10 +305,12 @@ EvaClinVarWidget.prototype = {
             {name: 'clinVarAssertionAcc', mapping: 'clinVarAssertion[0].clinVarAccession.acc', type: 'string' },
             {name: 'description', mapping: 'referenceClinVarAssertion.clinicalSignificance.description', type: 'string' },
             {name: 'trait', mapping: 'clinVarAssertion[0].observedIn[0].traitSet.trait[0].name[0].elementValue.value', type: 'auto' },
-            {name: 'platform', mapping: 'clinVarAssertion[0].observedIn[0].method[0].typePlatform', type: 'string' },
-            {name: 'technology', mapping: 'clinVarAssertion[0].observedIn[0].method[0].description', type: 'string' },
-            {name: 'xref_id', mapping: 'clinVarAssertion[0].observedIn[0].xref[0].id', type: 'string' },
-            {name: 'xref_db', mapping: 'clinVarAssertion[0].observedIn[0].xref[0].db', type: 'string' }
+//            {name: 'platform', mapping: 'clinVarAssertion[0].observedIn[0].method[0].typePlatform', type: 'string' },
+//            {name: 'technology', mapping: 'clinVarAssertion[0].observedIn[0].method[0].description', type: 'string' },
+//            {name: 'xref_id', mapping: 'clinVarAssertion[0].observedIn[0].xref[0].id', type: 'string' },
+//            {name: 'xref_db', mapping: 'clinVarAssertion[0].observedIn[0].xref[0].db', type: 'string' }
+            {name: 'accession_others_id', mapping: 'referenceClinVarAssertion.measureSet.measure[0].attributeSet[0].xref[0].id', type: 'string' },
+            {name: 'gene', mapping: 'referenceClinVarAssertion.measureSet.measure[0].measureRelationship[0].symbol[0].elementValue.value', type: 'string' }
         ];
 
 
@@ -290,7 +327,17 @@ EvaClinVarWidget.prototype = {
             attributes: attributes,
             columns:columns,
             samples: this.samples,
-            headerConfig: this.headerConfig
+            headerConfig: this.headerConfig,
+            handlers: {
+                "clinvar:change": function (e) {
+                    _this.lastVariant = e.args;
+                    _this.trigger('clinvar:change', {variant: _this.lastVariant, sender: _this});
+                },
+                "clinvar:clear": function (e) {
+                    //_this.lastVariant = e.args;
+                    _this.trigger('variant:clear', {sender: _this});
+                }
+            }
         });
         return clinvarBrowserGrid;
     },
@@ -311,14 +358,41 @@ EvaClinVarWidget.prototype = {
             assertionPanel.clear(true);
         });
 
-        this.clinvarBrowserGrid.on("clinvar:change", function (e) {
+        this.on("clinvar:change", function (e) {
 //            if (target === _this.selectedToolDiv) {
             if (target.id === _this.selectedToolDiv.id) {
-                assertionPanel.load(e.args);
+                assertionPanel.load(e.variant);
             }
         });
 
         return assertionPanel;
+    },
+    _createSummaryPanel: function (target) {
+        var _this = this;
+        var summaryPanel = new ClinvarSummaryPanel({
+            target: target,
+            headerConfig: this.defaultToolConfig.headerConfig,
+            handlers: {
+                "load:finish": function (e) {
+//                    _this.grid.setLoading(false);
+                }
+            }
+
+        });
+
+        this.clinvarBrowserGrid.on("clinvar:clear", function (e) {
+//            summaryPanel.clear(true);
+        });
+
+        this.on("clinvar:change", function (e) {
+//            if (target === _this.selectedToolDiv) {
+            if (target.id === _this.selectedToolDiv.id) {
+                console.log(e)
+                summaryPanel.load(e.variant);
+            }
+        });
+
+        return summaryPanel;
     },
 
     _createGenomeViewer: function (target) {

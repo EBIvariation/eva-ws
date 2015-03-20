@@ -40,9 +40,9 @@
  * You should have received a copy of the GNU General Public License
  * along with JSorolla. If not, see <http://www.gnu.org/licenses/>.
  */
-function ClinvarAssertionPanel(args) {
+function ClinvarSummaryPanel(args) {
     _.extend(this, Backbone.Events);
-    this.id = Utils.genId("ClinVarAssertionDataPanel");
+    this.id = Utils.genId("ClinVarSummaryDataPanel");
 
     this.target;
     this.title = "Stats";
@@ -59,7 +59,7 @@ function ClinvarAssertionPanel(args) {
     }
 }
 
-ClinvarAssertionPanel.prototype = {
+ClinvarSummaryPanel.prototype = {
     render: function () {
         var _this = this;
 
@@ -86,26 +86,30 @@ ClinvarAssertionPanel.prototype = {
     },
     load: function (data) {
         this.clear();
+        console.log(data)
+        var referenceClinVarAssertion = data.referenceClinVarAssertion;
+        console.log(referenceClinVarAssertion)
         var panels = [];
-        var clinVarAssertion = data.clinVarAssertion
-        for (var key in clinVarAssertion) {
-            var assertData = clinVarAssertion[key];
-            var asstPanel = this._createAssertPanel(assertData);
-            panels.push(asstPanel);
-        }
-        this.assertionContainer.add(panels);
+        var summaryPanel = this._createSummaryPanel(referenceClinVarAssertion);
+//        for (var key in data) {
+//            var assertData = data[key];
+//            var asstPanel = this._createSummaryPanel(assertData);
+//            panels.push(asstPanel);
+//        }
+        this.assertionContainer.removeAll();
+        this.assertionContainer.add(summaryPanel);
     },
     _createPanel: function () {
         this.assertionContainer = Ext.create('Ext.container.Container', {
             layout: {
-                type: 'accordion',
+                type: 'hbox',
                 titleCollapse: true,
 //                fill: false,
                 multi: true
             }
         });
 
-       var panel = Ext.create('Ext.container.Container', {
+      this.panel = Ext.create('Ext.container.Container', {
             layout: {
                 type: 'vbox',
                 align: 'stretch'
@@ -116,27 +120,25 @@ ClinvarAssertionPanel.prototype = {
                 {
                     xtype: 'box',
                     cls: 'ocb-header-4',
-                    html: '<h4>Clinical Assertions</h4>',
+                    html: '<h4>Summary</h4>',
                     margin: '5 0 10 10'
                 },
                 this.assertionContainer
             ],
             height: this.height
         });
-        return panel;
+        return this.panel;
     },
-    _createAssertPanel: function (data) {
+    _createSummaryPanel: function (data) {
         var lastEvaluated = new Date( data.clinicalSignificance.dateLastEvaluated ).toUTCString();
-        var submittedDate = new Date( data.clinVarSubmissionID.submitterDate ).toUTCString();
         var origin = data.observedIn[0].sample.origin;
-        var collectionMethod = data.observedIn[0].method[0].methodType;
         var citation= 'NA';
         if(!_.isEmpty(data.citation) && data.citation[0].id.source == 'PubMed'){
-            var citation = 'Pubmed:<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+data.citation[0].id.value+'" target="_blank">'+data.citation[0].id.value+'</a>';
+            var citation = '<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+data.citation[0].id.value+'" target="_blank">Pubmed</a>';
         }
 
         var assertPanel = Ext.create('Ext.panel.Panel', {
-            title: data.clinVarAccession.acc,
+//            title: 'Summary',
             border: false,
             layout: 'vbox',
             overflowX: true,
@@ -144,25 +146,42 @@ ClinvarAssertionPanel.prototype = {
                 xtype: 'container',
                 data: data,
                 width:970,
-                tpl: new Ext.XTemplate(
-                    '<div class="col-md-12"><table class="table table-bordered eva-attributes-table">',
-                        '<tr>',
-                            '<td class="header">Clinical Significance <br/> (Last evaluated)</td>',
-                            '<td class="header">Review status</td>',
-                            '<td class="header">Date of Submission</td>',
+//                tpl: new Ext.XTemplate(
+//                    '<div class="col-md-12"><table class="table table-bordered eva-attributes-table">',
+//                        '<tr>',
+////                            '<td class="header">Clinical Significance <br/> (Last evaluated)</td>',
+//                            '<td class="header">Review status</td>',
+//                            '<td class="header">Last Evaluated</td>',
 //                            '<td class="header">Origin </td>',
 //                            '<td class="header">Citations</td>',
-                            '<td class="header">Submitter</td>',
-                            '<td class="header">Collection Method</td>',
-                        '</tr>',
-                        '<tr>',
-                            '<td>{clinicalSignificance.description}<br/>('+lastEvaluated+')</td>',
-                            '<td>{clinicalSignificance.reviewStatus}</td>',
-                            '<td>'+submittedDate+'</td>',
+//                            '<td class="header">Submitter</td>',
+//                        '</tr>',
+//                        '<tr>',
+////                            '<td>{clinicalSignificance.description}<br/>('+lastEvaluated+')</td>',
+//                            '<td>{clinicalSignificance.reviewStatus}</td>',
+//                            '<td>'+lastEvaluated+'</td>',
 //                            '<td>'+origin+'</td>',
 //                            '<td>'+citation+'</td>',
-                            '<td>{clinVarSubmissionID.submitter}</td>',
-                            '<td>'+collectionMethod+'</td>',
+//                            '<td>{clinVarSubmissionID.submitter}</td>',
+//                        '</tr>',
+//                        '</table></div>'
+//                ),
+                tpl: new Ext.XTemplate(
+                    '<div class="col-md-12"><table class="table table-bordered eva-stats-table">',
+                        '<tr>',
+                            '<td class="header">Clinical Significance<br/> (Last evaluated)</td><td>{clinicalSignificance.description}<br/>('+lastEvaluated+')</td>',
+                        '</tr>',
+                        '<tr>',
+                            '<td class="header">Review status</td><td>{clinicalSignificance.reviewStatus}</td>',
+                            '</tr>',
+                        '<tr>',
+                            '<td class="header">Origin</td><td>'+origin+'</td>',
+                        '</tr>',
+                        '<tr>',
+                            '<td class="header">Citations</td><td>'+citation+'</td>',
+                        '</tr>',
+                        '<tr>',
+                            '<td class="header">Submitter</td><td>{clinVarSubmissionID.submitter}</td>',
                         '</tr>',
                         '</table></div>'
                 ),
