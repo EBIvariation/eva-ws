@@ -68,6 +68,7 @@ module.exports = function (grunt) {
                     'src/js/clinvar/eva-clinvar-browser-grid.js',
                     'src/js/clinvar/eva-clinvar-position-filter-form-panel.js',
                     'src/js/clinvar/eva-clinvar-assertion-panel.js',
+                    'src/js/clinvar/eva-clinvar-summary-panel.js',
                     'src/js/eva-submission-form.js',
                     'src/js/eva.js'
                 ],
