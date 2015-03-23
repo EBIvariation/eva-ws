@@ -387,7 +387,6 @@ EvaClinVarWidget.prototype = {
         this.on("clinvar:change", function (e) {
 //            if (target === _this.selectedToolDiv) {
             if (target.id === _this.selectedToolDiv.id) {
-                console.log(e)
                 summaryPanel.load(e.variant);
             }
         });

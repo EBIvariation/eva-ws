@@ -86,11 +86,8 @@ ClinvarSummaryPanel.prototype = {
     },
     load: function (data) {
         this.clear();
-        console.log(data)
-        var referenceClinVarAssertion = data.referenceClinVarAssertion;
-        console.log(referenceClinVarAssertion)
         var panels = [];
-        var summaryPanel = this._createSummaryPanel(referenceClinVarAssertion);
+        var summaryPanel = this._createSummaryPanel(data);
 //        for (var key in data) {
 //            var assertData = data[key];
 //            var asstPanel = this._createSummaryPanel(assertData);
@@ -130,11 +127,32 @@ ClinvarSummaryPanel.prototype = {
         return this.panel;
     },
     _createSummaryPanel: function (data) {
+        data = data.referenceClinVarAssertion;
         var lastEvaluated = new Date( data.clinicalSignificance.dateLastEvaluated ).toUTCString();
         var origin = data.observedIn[0].sample.origin;
         var citation= 'NA';
-        if(!_.isEmpty(data.citation) && data.citation[0].id.source == 'PubMed'){
-            var citation = '<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+data.citation[0].id.value+'" target="_blank">Pubmed</a>';
+
+        console.log(data.traitSet.trait[0])
+        console.log('++++++-----')
+        var publications = 'NA';
+        var citation = data.traitSet.trait[0].citation;
+        if(!_.isEmpty(citation) && citation[0].id.source == 'PubMed'){
+            publications = 'Pubmed:<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+citation[0].id.value+'" target="_blank">'+citation[0].id.value+'</a>';
+        }
+
+        var temp_hgvs = data.measureSet.measure[0].attributeSet
+
+
+        var hgvsArray = []
+        _.each(_.keys(temp_hgvs), function(key){
+           if(this[key].attribute.type.match(/HGVS/g)){
+             hgvsArray.push(this[key].attribute.value);
+           }
+        },temp_hgvs);
+       if(_.isEmpty(hgvsArray)){
+            hgvsArray  = '-';
+        }else{
+            hgvsArray = hgvsArray.join("<br\/>");
         }
 
         var assertPanel = Ext.create('Ext.panel.Panel', {
@@ -172,17 +190,20 @@ ClinvarSummaryPanel.prototype = {
                             '<td class="header">Clinical Significance<br/> (Last evaluated)</td><td>{clinicalSignificance.description}<br/>('+lastEvaluated+')</td>',
                         '</tr>',
                         '<tr>',
+                            '<td class="header">HGVS(s)</td><td>'+hgvsArray+'</td>',
+                        '</tr>',
+                        '<tr>',
                             '<td class="header">Review status</td><td>{clinicalSignificance.reviewStatus}</td>',
                             '</tr>',
                         '<tr>',
                             '<td class="header">Origin</td><td>'+origin+'</td>',
                         '</tr>',
                         '<tr>',
-                            '<td class="header">Citations</td><td>'+citation+'</td>',
+                            '<td class="header">Publications</td><td>'+publications+'</td>',
                         '</tr>',
-                        '<tr>',
-                            '<td class="header">Submitter</td><td>{clinVarSubmissionID.submitter}</td>',
-                        '</tr>',
+//                        '<tr>',
+//                            '<td class="header">Submitter</td><td>{clinVarSubmissionID.submitter}</td>',
+//                        '</tr>',
                         '</table></div>'
                 ),
                 margin: '10 5 5 10'

@@ -147,7 +147,7 @@ ClinvarAssertionPanel.prototype = {
                 tpl: new Ext.XTemplate(
                     '<div class="col-md-12"><table class="table table-bordered eva-attributes-table">',
                         '<tr>',
-                            '<td class="header">Clinical Significance <br/> (Last evaluated)</td>',
+                            '<td class="header">Clinical Significance</td>',
                             '<td class="header">Review status</td>',
                             '<td class="header">Date of Submission</td>',
 //                            '<td class="header">Origin </td>',
@@ -156,7 +156,7 @@ ClinvarAssertionPanel.prototype = {
                             '<td class="header">Collection Method</td>',
                         '</tr>',
                         '<tr>',
-                            '<td>{clinicalSignificance.description}<br/>('+lastEvaluated+')</td>',
+                            '<td>{clinicalSignificance.description}</td>',
                             '<td>{clinicalSignificance.reviewStatus}</td>',
                             '<td>'+submittedDate+'</td>',
 //                            '<td>'+origin+'</td>',
