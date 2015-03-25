@@ -43,10 +43,7 @@ EvaGeneView.prototype = {
 
         this.targetDiv.innerHTML = _this._varinatViewlayout();
         geneID = this.geneId;
-        console.log(this.geneId)
-
-        alert(geneID)
-        var geneData;
+        _this.geneData;
 
         CellBaseManager.get({
             species: 'hsapiens',
@@ -64,13 +61,13 @@ EvaGeneView.prototype = {
                     var queryResult = data.response[i];
                     console.log(queryResult)
                     if(!_.isEmpty(queryResult.result[0])){
-                        geneData = queryResult.result[0];
+                        _this.geneData = queryResult.result[0];
                     }
                 }
             }
         });
 
-        _this.draw(geneData);
+        _this.draw(_this.geneData);
 
         $('#geneViewTabs li').click(function(event) {
             $(this).toggleClass("active");
@@ -138,7 +135,7 @@ EvaGeneView.prototype = {
         return variantTranscriptGrid;
     },
     _createGenomeViewer: function (target) {
-//        var _this = this;
+        var _this = this;
 
         var View =  Ext.create('Ext.view.View', {
             tpl: new Ext.XTemplate('<div id="gene-view-gv"></div>'),
@@ -147,6 +144,7 @@ EvaGeneView.prototype = {
         this.headerConfig = {
             baseCls: 'eva-header-1'
         };
+        this.margin = '5 0 0 20';
 
         var panel = Ext.create('Ext.panel.Panel', {
             layout: {
@@ -160,18 +158,23 @@ EvaGeneView.prototype = {
             collapsible:true,
 //            padding: 10,
             renderTo:target,
-            items: [View]
+            items: [View],
+            margin:this.margin
         });
         var View =  Ext.create('Ext.view.View', {
             tpl: new Ext.XTemplate('<div id="gene-view-gv"></div>'),
-            margin: '5 10 10 10'
+            margin: this.margin
         });
 
+        console.log(_this.geneData)
+        console.log('+++')
+
         var region = new Region({
-            chromosome: "13",
-            start: 32889611,
-            end: 32889611
+            chromosome: _this.geneData.chromosome,
+            start:  _this.geneData.start,
+            end:  _this.geneData.end
         });
+
 
         var genomeViewer = new GenomeViewer({
             cellBaseHost:'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
@@ -179,7 +182,7 @@ EvaGeneView.prototype = {
             target: 'gene-view-gv',
             border: false,
             resizable: true,
-            width: 1200,
+            width: 1150,
             region: region,
             trackListTitle: '',
             drawNavigationBar: true,
