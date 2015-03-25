@@ -438,6 +438,7 @@
             </div>
             <div id="studyView" class="hide-div"></div>
             <div id="variantView" class="hide-div"></div>
+            <div id="geneView" class="hide-div"></div>
             <div id="submissionForm" class="hide-div"></div>
         </div>
         <footer>
@@ -522,8 +523,10 @@
     <script type="text/javascript" src="js/variant-widget/eva-variant-stats-panel.js"></script>
     <script type="text/javascript" src="js/variant-widget/eva-variant-genotype-grid.js"></script>
     <script type="text/javascript" src="js/variant-widget/eva-variant-population-stats-panel.js"></script>
+    <script type="text/javascript" src="js/variant-widget/eva-variant-transcript-grid.js"></script>
     <script type="text/javascript" src="js/views/eva-study-view.js"></script>
     <script type="text/javascript" src="js/views/eva-variant-view.js"></script>
+    <script type="text/javascript" src="js/views/eva-gene-view.js"></script>
     <script type="text/javascript" src="js/statistics/eva-statistics.js"></script>
     <script type="text/javascript" src="js/statistics/dgva-statistics.js"></script>
     <script type="text/javascript" src="js/beacon-form/eva-beacon-form.js"></script>
@@ -564,6 +567,7 @@
               var clinicalDiv = document.querySelector('#clinical');
               var studyViewDiv = document.querySelector('#studyView');
               var variantViewDiv = document.querySelector('#variantView');
+              var geneViewDiv = document.querySelector('#geneView');
               var beaconDiv =  document.querySelector('#beacon');
               var apiDiv =  document.querySelector('#api');
               var submissionFormDiv =  document.querySelector('#submissionForm');
@@ -595,6 +599,15 @@
                 });
             }
 
+            if(tabId == 'gene'){
+                var varianttSpecies = $.urlParam('species');
+                var evaGeneView = new EvaGeneView({
+                    target:'geneView',
+                    geneId:tab.value,
+                    species:varianttSpecies
+                });
+            }
+
             if(tabId == 'submission-start'){
                 var evaSubmission= new EvaSubmissionForm({
                     target:'submissionForm'
@@ -616,6 +629,7 @@
                 vcfDiv:vcfDiv,
                 studyView:studyViewDiv,
                 variantView:variantViewDiv,
+                geneView:geneViewDiv,
                 beacon:beaconDiv,
                 clinicalDiv:clinicalDiv,
                 apiDiv:apiDiv,

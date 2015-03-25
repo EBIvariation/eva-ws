@@ -91,6 +91,10 @@ Eva.prototype = {
         $(this.variantView).addClass('eva-child');
         this.childDivMenuMap['variant'] = this.variantView;
 
+        /* geneView */
+        $(this.geneView).addClass('eva-child');
+        this.childDivMenuMap['gene'] = this.geneView;
+
         /* beacon */
         $(this.beacon).addClass('eva-child');
         this.childDivMenuMap['GA4GH'] = this.beacon;
@@ -152,7 +156,7 @@ Eva.prototype = {
         }
 
         //<!---- Updating URL on Tab change ---->
-        var pageArray = ['eva-study','dgva-study', 'variant'];
+        var pageArray = ['eva-study','dgva-study', 'variant', 'gene'];
         if(_.indexOf(pageArray, option) < 0 && !_.isEmpty(option)  ){
             var optionValue = option;
             var tabArray = ['Genome Browser'];
