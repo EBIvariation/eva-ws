@@ -152,7 +152,7 @@ EvaClinicalWidgetPanel.prototype = {
 
         });
 
-        var clinVarSpeciesList = [{
+        clinVarSpeciesList = [{
                                       assemblyCode:"grch37",
                                       taxonomyCode:"hsapiens",
                                       taxonomyEvaName:"Human",

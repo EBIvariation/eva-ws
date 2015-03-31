@@ -425,7 +425,9 @@ EvaVariantWidget.prototype = {
             {name: 'hgvs_name', type: 'string'},
             {name: 'id', mapping: 'annotation.xrefs[0].id', type: 'string' },
             {name: 'consequenceTypes', mapping: 'annotation.consequenceTypes', type:'auto' },
-            {name: 'conservedRegionScores', mapping: 'annotation.conservedRegionScores', type:'auto'}
+            {name: 'conservedRegionScores', mapping: 'annotation.conservedRegionScores', type:'auto'},
+            {name: 'phylop',  mapping: 'annotation.conservedRegionScores', type:'auto'},
+            {name: 'phastCons', mapping: 'annotation.conservedRegionScores', type:'auto'}
         ];
 
 
@@ -520,7 +522,7 @@ EvaVariantWidget.prototype = {
                             var url = EvaManager.url({
                                 category: 'segments',
                                 resource: 'variants',
-                                query: proxy.extraParams.region,//
+                                query: proxy.extraParams.region,
                                 params:{merge:true,exclude:'files'}
                             });
                             proxy.url = url;
@@ -1091,7 +1093,7 @@ EvaVariantWidget.prototype = {
 
         /* Get the column headers from the store dataIndex */
 
-        var removeKeys = ['hgvs','sourceEntries','ref','alt','hgvs_name','iid','annotation'];
+        var removeKeys = ['hgvs','sourceEntries','ref','alt','hgvs_name','iid','annotation','ids','conservedRegionScores','length'];
 
         Ext.Object.each(records[0].data, function(key) {
             if(_.indexOf(removeKeys, key) == -1){
@@ -1116,27 +1118,35 @@ EvaVariantWidget.prototype = {
                         consqTypeArr.push(v.soTerms[0].soName)
                     });
                     value = consqTypeArr.join(" ");
+                }else if(key == 'phylop'){
+                   var phylop =  _.findWhere(records[i].data[key], {source: key});
+                   value = phylop.score.toFixed(3);
+
+                }else if(key == 'phastCons'){
+                    var phastCons =  _.findWhere(records[i].data[key], {source: key});
+                    value = phastCons.score.toFixed(3);
                 }
+
                 if(_.indexOf(removeKeys, key) == -1){
                     printableValue = ((noCsvSupport) && value == '') ? '&nbsp;'  : value;
                     printableValue = String(printableValue).replace(/,/g , "");
                     printableValue = String(printableValue).replace(/(\r\n|\n|\r)/gm,"");
                     csvContent += sdelimiter +  printableValue + edelimiter;
                 }
+
             });
 
-            console.log(csvContent)
+
             var speciesName;
             var species;
             if(!_.isEmpty(speciesList)){
                 speciesName = _.findWhere(speciesList, {taxonomyCode:params.species.split("_")[0]}).taxonomyEvaName;
-                species = speciesName.substr(0,1).toUpperCase()+speciesName.substr(1)+'/'+_.findWhere(speciesList, {taxonomyCode:params.species.split('_')[0]}).assemblyName;
+                species = speciesName.substr(0,1).toUpperCase()+speciesName.substr(1)+'/'+_.findWhere(speciesList, {assemblyCode:params.species.split('_')[1]}).assemblyName;
 
             } else {
                 species = params.species;
             }
 
-//            var species = _.findWhere(speciesList, {value:params.species}).name;
             speciesValue = ((noCsvSupport) && species == '') ? '&nbsp;' : species;
             speciesValue = String(species).replace(/,/g , "");
             speciesValue = String(speciesValue).replace(/(\r\n|\n|\r)/gm,"");

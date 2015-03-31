@@ -109,9 +109,11 @@ EvaGeneView.prototype = {
 
     },
     _renderSummaryData: function (data) {
+            var geneInfoTitle =  document.querySelector("#geneInfo").textContent = data.name;
             var source = '<a href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?g='+data.id+'" target="_blank">'+data.source+':'+data.id+'</a>'
             var _summaryTable  = '<div class="row"><div class="col-md-8"><table class="table ocb-stats-table">'
-            _summaryTable +='<tr><td class="header">Gene Type</td><td>'+data.biotype+'</td></tr>' +
+            _summaryTable +='<tr><td class="header">HGNC NAme</td><td>'+data.name+'</td></tr>' +
+                '<tr><td class="header">Gene Type</td><td>'+data.biotype+'</td></tr>' +
                 '<tr><td class="header">Location</td><td>'+data.chromosome+':'+data.start+'-'+data.end+'</td></tr>' +
                 '<tr><td class="header">Description</td><td>'+data.description+'</td></tr>' +
                 '<tr><td class="header">Source</td><td>'+source+'</td></tr>' +
@@ -314,8 +316,8 @@ EvaGeneView.prototype = {
 
         var layout = '<div id="gene-view">'+
                         '<div class="row">'+
-                            '<div  class="col-sm-1  col-md-1 col-lg-1"></div>'+
-                            '<div  class="col-sm-11 col-md-11 col-lg-11"> <h2 id="variantInfo"></h2></div>'+
+                            '<div  class="col-sm-2  col-md-2 col-lg-2"></div>'+
+                            '<div  class="col-sm-10 col-md-10 col-lg-10"> <h2 id="geneInfo"></h2></div>'+
                         '</div>'+
                         '<div class="row">'+
                             '<div class="col-sm-1  col-md-1 col-lg-1" id="geneViewScrollspy">'+

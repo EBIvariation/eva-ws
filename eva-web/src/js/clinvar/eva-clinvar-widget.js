@@ -225,7 +225,7 @@ EvaClinVarWidget.prototype = {
                 },
                 {
                     text: "Position",
-                    dataIndex: 'start',
+                    dataIndex: 'position',
                     flex:0.5
                 },
                 {
@@ -315,8 +315,10 @@ EvaClinVarWidget.prototype = {
 
         var attributes = [
             {name: 'chromosome', mapping: 'chromosome', type: 'string' },
+            {name: 'position', mapping: 'start', type: 'string' },
             {name: 'clincalSignificance', mapping: 'clinvarList[0].clinvarSet.referenceClinVarAssertion.clinicalSignificance.description', type: 'string' },
-            {name: 'clincalVarAcc', mapping: 'clinvarList[0].clinvarSet.referenceClinVarAssertion.clinVarAccession.acc', type: 'string' },
+            {name: 'clincalVarAcc', mapping: 'clinvarList', type: 'string' },
+            {name: 'otherAcc', mapping: 'clinvarList', type: 'string' },
             {name: 'clinvarList', mapping: 'clinvarList', type: 'auto' }
         ];
 
@@ -347,6 +349,54 @@ EvaClinVarWidget.prototype = {
                 }
             }
         });
+
+        clinvarBrowserGrid.grid.addDocked({
+            xtype   : 'toolbar',
+            dock    : 'bottom',
+            border:false,
+            items: [{
+                xtype   :   'button',
+                text    :   'Export as CSV',
+                style: {
+                    borderStyle: 'solid'
+                },
+                listeners: {
+                    click: {
+                        element: 'el', //bind to the underlying el property on the panel
+                        fn: function(){
+                            var proxy = clinvarBrowserGrid.grid.store.proxy;
+                            var url = EvaManager.url({
+                                host:CELLBASE_HOST,
+                                version:CELLBASE_VERSION,
+                                category: 'hsapiens/genomic/region',
+                                resource: 'clinvar',
+                                query: proxy.extraParams.region,
+                                params:{merge:true}
+                            });
+                            var exportStore = Ext.create('Ext.data.Store', {
+                                pageSize:clinvarBrowserGrid.grid.store.getTotalCount(),
+                                autoLoad:true,
+                                fields: [
+                                    {name: 'id', type: 'string'}
+                                ],
+                                remoteSort: true,
+                                proxy: proxy,
+                                extraParams: {exclude:files},
+                                listeners: {
+                                    load: function (store, records, successful, operation, eOpts) {
+                                        var exportData = _this._exportToExcel(records,store.proxy.extraParams);
+                                        clinvarBrowserGrid.grid.setLoading(false);
+
+                                    }
+                                }
+
+                            });
+                        }
+                    }
+                }
+            }]
+        });
+
         return clinvarBrowserGrid;
     },
     _createAssertionPanel: function (target) {
@@ -559,5 +609,138 @@ EvaClinVarWidget.prototype = {
     },
     setLoading: function (loading) {
         this.variantBrowserGrid.setLoading(loading);
+    },
+    _exportToExcel: function(records,params){
+        var csvContent      = '',
+        /*
+         Does this browser support the download attribute
+         in HTML 5, if so create a comma seperated value
+         file from the selected records / if not create
+         an old school HTML table that comes up in a
+         popup window allowing the users to copy and paste
+         the rows.
+         */
+            noCsvSupport     = ( 'download' in document.createElement('a') ) ? false : true,
+            sdelimiter      = noCsvSupport ? "<td>"   : "",
+            edelimiter      = noCsvSupport ? "</td>"  : ",",
+            snewLine        = noCsvSupport ? "<tr>"   : "",
+            enewLine        = noCsvSupport ? "</tr>"  : "\r\n",
+            printableValue  = '',
+            speciesValue  = '';
+
+        csvContent += snewLine;
+
+        /* Get the column headers from the store dataIndex */
+
+        var removeKeys = ['start','end','reference','alternate','clinvarList','iid'];
+
+        Ext.Object.each(records[0].data, function(key) {
+            if(_.indexOf(removeKeys, key) == -1){
+                csvContent += sdelimiter +  key + edelimiter;
+            }
+        });
+        csvContent += sdelimiter +  'Organism / Assembly' + edelimiter;
+
+        csvContent += enewLine;
+
+        console.log(csvContent)
+
+
+        /*
+         Loop through the selected records array and change the JSON
+         object to teh appropriate format.
+         */
+
+        for (var i = 0; i < records.length; i++){
+            /* Put the record object in somma seperated format */
+            csvContent += snewLine;
+            Ext.Object.each(records[i].data, function(key, value) {
+                var clinvarList = records[i].data.clinvarList;
+                if(key == 'clincalVarAcc'){
+                    var clincalVarAccArray = [];
+                    _.each(_.keys(clinvarList), function(key){
+                        clincalVarAccArray.push(this[key].clinvarSet.referenceClinVarAssertion.clinVarAccession.acc);
+                    },clinvarList);
+                    value = clincalVarAccArray.join("\n");
+                }else if(key == 'otherAcc'){
+                    var otherAccArray = [];
+                    _.each(_.keys(clinvarList), function(key){
+                        if(this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref){
+                            if(this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0].type){
+                                var other_id = this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0].type+this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0].id;
+                            }
+                            otherAccArray.push(other_id);
+                        }
+                    },clinvarList);
+                    value = otherAccArray.join("\n");
+                }
+                if(_.indexOf(removeKeys, key) == -1){
+                    printableValue = ((noCsvSupport) && value == '') ? '&nbsp;'  : value;
+                    printableValue = String(printableValue).replace(/,/g , "");
+                    printableValue = String(printableValue).replace(/(\r\n|\n|\r)/gm,"");
+                    csvContent += sdelimiter +  printableValue + edelimiter;
+                }
+
+            });
+
+
+
+            var speciesName;
+            var species;
+
+            if(!_.isEmpty(clinVarSpeciesList)){
+                speciesName = _.findWhere(clinVarSpeciesList, {taxonomyCode:params.species.split("_")[0]}).taxonomyEvaName;
+                species = speciesName.substr(0,1).toUpperCase()+speciesName.substr(1)+'/'+_.findWhere(clinVarSpeciesList, {assemblyCode:params.species.split('_')[1]}).assemblyName;
+
+            } else {
+                species = params.species;
+            }
+
+            speciesValue = ((noCsvSupport) && species == '') ? '&nbsp;' : species;
+            speciesValue = String(species).replace(/,/g , "");
+            speciesValue = String(speciesValue).replace(/(\r\n|\n|\r)/gm,"");
+            csvContent += sdelimiter + speciesValue + edelimiter;
+            csvContent += enewLine;
+        }
+
+
+
+
+
+
+        if('download' in document.createElement('a')){
+            /*
+             This is the code that produces the CSV file and downloads it
+             to the users computer
+             */
+//            var link = document.createElement("a");
+//            link.setAttribute("href", 'data:application/csv;charset=utf-8,' + encodeURIComponent(csvContent));
+//            link.setAttribute("download", "variants.csv");
+//            link.setAttribute("target", "_blank");
+//            link.click();
+
+            var link=document.createElement('a');
+            var mimeType='application/xls';
+            var blob=new Blob([csvContent],{type:mimeType});
+            var url=URL.createObjectURL(blob);
+            link.href=url;
+            link.setAttribute('download', 'clinvarVariants.csv');
+            link.innerHTML = "Export to CSV";
+            document.body.appendChild(link);
+            link.click();
+
+        } else {
+            /*
+             The values below get printed into a blank window for
+             the luddites.
+             */
+            alert('Please allow pop up in settings if its not exporting');
+            window.open().document.write('<table>' + csvContent + '</table>');
+            return true;
+
+
+        }
+
+        return true;
     }
 };
