@@ -408,29 +408,30 @@ EvaClinicalWidgetPanel.prototype = {
                     }
                     var gene = e.values.gene;
                     if (typeof e.values.gene !== 'undefined') {
-                        CellBaseManager.get({
-                            host:CELLBASE_HOST,
-                            version:CELLBASE_VERSION,
-                            species: 'hsapiens',
-                            category: 'feature',
-                            subCategory: 'gene',
-                            query: e.values.gene.toUpperCase(),
-                            resource: "info",
-                            async: false,
-                            params: {
-                                include: 'chromosome,start,end'
-                            },
-                            success: function (data) {
-                                for (var i = 0; i < data.response.length; i++) {
-                                    var queryResult = data.response[i];
-                                    if(!_.isEmpty(queryResult.result[0])){
-                                        var region = new Region(queryResult.result[0]);
-                                        regions.push(region.toString());
-                                    }
-                                }
-                            }
-                        });
-                        delete  e.values.gene;
+//                        CellBaseManager.get({
+//                            host:CELLBASE_HOST,
+//                            version:CELLBASE_VERSION,
+//                            species: 'hsapiens',
+//                            category: 'feature',
+//                            subCategory: 'gene',
+//                            query: e.values.gene.toUpperCase(),
+//                            resource: "info",
+//                            async: false,
+//                            params: {
+//                                include: 'chromosome,start,end'
+//                            },
+//                            success: function (data) {
+//                                for (var i = 0; i < data.response.length; i++) {
+//                                    var queryResult = data.response[i];
+//                                    if(!_.isEmpty(queryResult.result[0])){
+//                                        var region = new Region(queryResult.result[0]);
+//                                        regions.push(region.toString());
+//                                    }
+//                                }
+//                            }
+//                        });
+//                        delete  e.values.gene;
+
                     }
 
 
@@ -441,6 +442,11 @@ EvaClinicalWidgetPanel.prototype = {
                         if (e.values.ct instanceof Array) {
                             e.values.ct = e.values.ct.join(",");
                         }
+                    }
+
+                    if (typeof e.values.accessionId !== 'undefined') {
+                        e.values['rcv'] = e.values.accessionId;
+                        delete  e.values['accessionId'];
                     }
 
 
@@ -461,19 +467,21 @@ EvaClinicalWidgetPanel.prototype = {
                         params:{merge:true}
                     });
 
-                    if (typeof e.values.accessionId !== 'undefined') {
-                        regions = e.values.accessionId;
-                         url = EvaManager.url({
-                            host:CELLBASE_HOST,
-                            version:CELLBASE_VERSION,
-                            category: 'hsapiens/feature/clinvar',
-                            resource: 'info',
-                            query: regions,
-                            params:{merge:true}
-                        });
-                    }
+//                    if (typeof e.values.accessionId !== 'undefined') {
+//                        regions = e.values.accessionId;
+//                         url = EvaManager.url({
+//                            host:CELLBASE_HOST,
+//                            version:CELLBASE_VERSION,
+//                            category: 'hsapiens/feature/clinvar',
+//                            resource: 'info',
+//                            query: regions,
+//                            params:{merge:true}
+//                        });
+//                    }
 
                     _this.clinvarWidget.retrieveData(url, e.values)
+                    console.log(regions);
+                    return;
 //                     var geneColumn = Ext.getCmp('clinvar-grid-gene-column');
                      var viewColumn = Ext.getCmp('clinvar-grid-view-column');
                      viewColumn.tpl =  Ext.create('Ext.XTemplate', '<tpl><a href="?Genome Browser&position='+ regions+'" target="_blank">Genome Viewer</a></tpl>')
