@@ -89,11 +89,11 @@ EvaClinicalWidgetPanel.prototype = {
         this.panel = Ext.create('Ext.panel.Panel', {
             layout: {
                 type: 'vbox',
-                align: 'center',
+                align: 'left'
             },
-            overflowX:'auto',
+            overflowY:'auto',
             items: [view],
-            height:1200,
+//            height:1200,
             cls: 'variant-widget-panel'
         });
 
@@ -145,14 +145,243 @@ EvaClinicalWidgetPanel.prototype = {
     },
     _createFormPanelVariantFilter: function (target) {
         var _this = this;
-        var positionFilter = new ClinVarPositionFilterFormPanel({
+        var clinvarPositionFilter = new ClinVarPositionFilterFormPanel({
 //            testRegion: '1:14000-200000',
             testRegion: '3:550000-1166666',
             emptyText: ''
 
         });
 
+        var clinVarSpeciesList = [{
+                                      assemblyCode:"grch37",
+                                      taxonomyCode:"hsapiens",
+                                      taxonomyEvaName:"Human",
+                                      assemblyName:"GRCh37"
 
+                                  },
+                                  {
+                                        assemblyCode:"grch38",
+                                        taxonomyCode:"hsapiens",
+                                        taxonomyEvaName:"Human",
+                                        assemblyName:"GRCh38"
+
+                                  }]
+
+        var clinvarSpeciesFilter = new SpeciesFilterFormPanel({
+            defaultValue:'hsapiens_grch37',
+            speciesList:clinVarSpeciesList
+        });
+
+        clinvarSpeciesFilter.on('species:change', function (e) {
+           clinvarSelectedSpecies = e.species;
+        });
+
+        var clinvarConseqTypeFilter = new EvaConsequenceTypeFilterFormPanel({
+            consequenceTypes: consequenceTypes,
+            collapsed: false,
+            fields: [
+                {name: 'name', type: 'string'}
+            ],
+            columns: [
+                {
+                    xtype: 'treecolumn',
+                    flex: 1,
+                    sortable: false,
+                    dataIndex: 'name'
+                }
+            ]
+        });
+
+        var variationType = [
+            {
+                name:'Deletion',
+                cls: "parent",
+                value:'deletion',
+                leaf: true,
+                checked:false,
+                iconCls :'no-icon'
+            },
+            {
+                name:'Duplication',
+                cls: "parent",
+                leaf: true,
+                checked:false,
+                value:'duplication',
+                iconCls :'no-icon'
+            },
+            {
+                name:'Indel',
+                cls: "parent",
+                value:'indel',
+                leaf: true,
+                checked:false,
+                iconCls :'no-icon'
+            },
+            {
+                name:'Insertion',
+                cls: "parent",
+                value:'insertion',
+                leaf: true,
+                checked:false,
+                iconCls :'no-icon'
+            },
+            {
+                name:'Single Nucleotide',
+                cls: "parent",
+                value:'single_nucleotide',
+                leaf: true,
+                checked:false,
+                iconCls :'no-icon'
+            }];
+
+        var variationTypeFilter = new EvaClinVarFilterFormPanel({
+            data: variationType,
+            filterType:'variationType',
+            title:'Variation Type',
+            height:200,
+            collapsed: true,
+            fields: [
+                {name: 'name', type: 'string'}
+            ],
+            columns: [
+                {
+                    xtype: 'treecolumn',
+                    flex: 1,
+                    sortable: false,
+                    dataIndex: 'name'
+                }
+            ]
+        });
+
+        var reviewStatusType = [
+            {
+                name:'Professional society',
+                cls: "parent",
+                value:'professional_society',
+                leaf: true,
+                checked:false,
+                iconCls :'no-icon'
+            },
+            {
+                name:'Expert panel',
+                cls: "parent",
+                leaf: true,
+                checked:false,
+                value:'expert_panel',
+                iconCls :'no-icon'
+            },
+            {
+                name:'Multiple submitters',
+                cls: "parent",
+                value:'multiple_submitters',
+                leaf: true,
+                checked:false,
+                iconCls :'no-icon'
+            },
+            {
+                name:'Single submitter',
+                cls: "parent",
+                value:'single_submitter',
+                leaf: true,
+                checked:false,
+                iconCls :'no-icon'
+            }];
+
+        var reviewStatusFilter = new EvaClinVarFilterFormPanel({
+            data: reviewStatusType,
+            filterType:'reviewStatus',
+            title:'Review Status',
+            height:200,
+            collapsed: true,
+            fields: [
+                {name: 'name', type: 'string'}
+            ],
+            columns: [
+                {
+                    xtype: 'treecolumn',
+                    flex: 1,
+                    sortable: false,
+                    dataIndex: 'name'
+                }
+            ]
+        });
+
+        var clinicalSignfcType = [
+            {
+                name:'Conflicting interpretations',
+                cls: "parent",
+                value:'conflicting_interpretations',
+                leaf: true,
+                checked:false,
+                iconCls :'no-icon'
+            },
+            {
+                name:'Benign',
+                cls: "parent",
+                leaf: true,
+                checked:false,
+                value:'benign',
+                iconCls :'no-icon'
+            },
+            {
+                name:'Likely benign',
+                cls: "parent",
+                value:'likely_benign',
+                leaf: true,
+                checked:false,
+                iconCls :'no-icon'
+            },
+            {
+                name:'Uncertain significance',
+                cls: "parent",
+                value:'uncertain_significance',
+                leaf: true,
+                checked:false,
+                iconCls :'no-icon'
+            },
+            {
+                name:'Likely pathogenic',
+                cls: "parent",
+                value:'likely_pathogenic',
+                leaf: true,
+                checked:false,
+                iconCls :'no-icon'
+            },
+            {
+                name:'Pathogenic',
+                cls: "parent",
+                value:'pathogenic(1,245)',
+                leaf: true,
+                checked:false,
+                iconCls :'no-icon'
+            },
+            {
+                name:'Risk factor',
+                cls: "parent",
+                value:'risk_factor',
+                leaf: true,
+                checked:false,
+                iconCls :'no-icon'
+            }];
+
+        var  clinicalSignfcFilter = new EvaClinVarFilterFormPanel({
+            data: clinicalSignfcType,
+            filterType:' clinicalSignfc',
+            title:'Clinical Significance',
+            height:240,
+            collapsed: true,
+            fields: [
+                {name: 'name', type: 'string'}
+            ],
+            columns: [
+                {
+                    xtype: 'treecolumn',
+                    flex: 1,
+                    sortable: false,
+                    dataIndex: 'name'
+                }
+            ]
+        });
 
         var formPanel = new FormPanel({
             title: 'Filter',
@@ -162,9 +391,9 @@ EvaClinicalWidgetPanel.prototype = {
             mode: 'accordion',
             target: target,
             submitButtonText: 'Submit',
-            filters: [positionFilter],
+            filters: [clinvarSpeciesFilter,clinvarPositionFilter,clinvarConseqTypeFilter,variationTypeFilter,clinicalSignfcFilter,reviewStatusFilter],
             width: 300,
-//            height: 1043,
+            height: 1143,
             border: false,
             handlers: {
                 'submit': function (e) {
@@ -180,7 +409,8 @@ EvaClinicalWidgetPanel.prototype = {
                     var gene = e.values.gene;
                     if (typeof e.values.gene !== 'undefined') {
                         CellBaseManager.get({
-                            host:'http://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
+                            host:CELLBASE_HOST,
+                            version:CELLBASE_VERSION,
                             species: 'hsapiens',
                             category: 'feature',
                             subCategory: 'gene',
@@ -223,8 +453,8 @@ EvaClinicalWidgetPanel.prototype = {
 
 
                     var url = EvaManager.url({
-                        host:'http://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
-                        version:'v3',
+                        host:CELLBASE_HOST,
+                        version:CELLBASE_VERSION,
                         category: 'hsapiens/genomic/region',
                         resource: 'clinvar',
                         query: regions,
@@ -234,8 +464,8 @@ EvaClinicalWidgetPanel.prototype = {
                     if (typeof e.values.accessionId !== 'undefined') {
                         regions = e.values.accessionId;
                          url = EvaManager.url({
-                            host:'http://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
-                            version:'v3',
+                            host:CELLBASE_HOST,
+                            version:CELLBASE_VERSION,
                             category: 'hsapiens/feature/clinvar',
                             resource: 'info',
                             query: regions,
@@ -254,6 +484,7 @@ EvaClinicalWidgetPanel.prototype = {
 //                    }else{
 //                        geneColumn.setVisible(false);
 //                    }
+
 
                 }
             }

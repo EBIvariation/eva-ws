@@ -62,9 +62,11 @@ EvaVariantView.prototype = {
             resource: 'info',
             query:variantID,
             params:{species:this.species},
+            async:false,
             success: function (response) {
                 try {
                     variant = response.response[0].result;
+                    _this.variant = variant;
                 } catch (e) {
                     console.log(e);
                 }
@@ -168,6 +170,20 @@ EvaVariantView.prototype = {
             summaryElDiv.innerHTML = summaryContent;
             summaryEl.appendChild(summaryElDiv);
 
+
+            var consqTypeContent =  _this._renderConsequenceTypeData(_this.variant);
+            var consqTypeEl = document.querySelector("#consequence-types-grid");
+            var consqTypeElDiv =  document.createElement("div");
+//            //       summaryElDiv.innerHTML = '<h4>Summary</h4>';
+            consqTypeElDiv.innerHTML = consqTypeContent;
+            consqTypeEl.appendChild(consqTypeElDiv);
+
+            var conservedRegionContent =  _this._renderConservedRegionData(_this.variant);
+            var consRegionEl = document.querySelector("#conserved-region-grid");
+            var consRegionElDiv =  document.createElement("div");
+            consRegionElDiv.innerHTML = conservedRegionContent;
+            consRegionEl.appendChild(consRegionElDiv);
+
 //                     var effectsEl = document.getElementById("effects-grid");
 //                     var effectsElDiv = document.createElement("div");
 //                     effectsElDiv.setAttribute('class', 'ocb-variant-effect-grid');
@@ -181,6 +197,14 @@ EvaVariantView.prototype = {
             //       studyElDiv.innerHTML = '<h4>Studies</h4>';
             studyEl.appendChild(studyElDiv);
             _this.createVariantStatsPanel(studyElDiv);
+
+            var popStatsEl = document.querySelector("#population-stats-grid");
+            var popStatsElDiv = document.createElement("div");
+            popStatsElDiv.setAttribute('class', 'eva variant-widget-panel ocb-variant-stats-panel');
+            //       studyElDiv.innerHTML = '<h4>Population Stats</h4>';
+            popStatsEl.appendChild(popStatsElDiv);
+            var varinatData = {sourceEntries:_this.variant[0].sourceEntries, species:_this.species};
+            _this._createPopulationStatsPanel(popStatsElDiv,varinatData);
 
     },
     _renderSummaryData: function (data) {
@@ -218,6 +242,67 @@ EvaVariantView.prototype = {
 
             return _summaryTable;
 
+    },
+    _renderConsequenceTypeData: function (data) {
+        var annotation = data[0].annotation.consequenceTypes;
+//        var soTermsArray = [];
+
+
+        var _consequenceTypeTable  = '<div class="row"><div class="col-md-8"><table class="table ocb-stats-table">'
+        _consequenceTypeTable += '<tr><th>Accession</th><th>Name</th></tr>'
+        _.each(_.keys(annotation), function(key){
+            var soTerms = this[key].soTerms;
+            _.each(_.keys(soTerms), function(key){
+
+                var link = '<a href="http://www.sequenceontology.org/miso/current_svn/term/'+this[key].soAccession+'" target="_blank">'+this[key].soAccession+'</a>';
+                _consequenceTypeTable += '<tr><td>'+link+'</td><td>'+this[key].soName+'</td></tr>'
+            },soTerms);
+
+        },annotation);
+        _consequenceTypeTable += '</table></div></div>'
+
+        return _consequenceTypeTable;
+
+    },
+    _renderConservedRegionData: function (data) {
+        var conservedRegionScores = data[0].annotation.conservedRegionScores;
+//        var soTermsArray = [];
+        var _conservedRegionTable  = '<div class="row"><div class="col-md-8"><table class="table ocb-stats-table">'
+        _conservedRegionTable += '<tr><th>Source</th><th>Score</th></tr>'
+        _.each(_.keys(conservedRegionScores), function(key){
+            console.log(this[key])
+            _conservedRegionTable += '<tr><td>'+this[key].source+'</td><td>'+this[key].score+'</td></tr>'
+
+        },conservedRegionScores);
+        _conservedRegionTable += '</table></div></div>'
+
+        return _conservedRegionTable;
+
+    },
+    _createPopulationStatsPanel: function (target,data) {
+        var _this = this;
+        console.log(data)
+       this.defaultToolConfig = {
+            headerConfig: {
+                baseCls: 'eva-header-2'
+            }
+        };
+        var variantPopulationStatsPanel = new EvaVariantPopulationStatsPanel({
+            target: target,
+            headerConfig: this.defaultToolConfig.headerConfig,
+            handlers: {
+                "load:finish": function (e) {
+                }
+            },
+            height:800
+
+        });
+
+        variantPopulationStatsPanel.load(data.sourceEntries,data.species);
+        variantPopulationStatsPanel.draw();
+
+
+//        return variantTranscriptGrid;
     },
     _loadExampleData: function (data) {
             var data = {"chromosome": "1", "start": 10001, "end": 10001, "referenceAllele": "T", "genes": [], "effects": {"G": [
@@ -272,21 +357,41 @@ EvaVariantView.prototype = {
 
         var layout = '<div id="variant-view">'+
                         '<div class="row">'+
-                            '<div  class="col-sm-1  col-md-1 col-lg-1"></div>'+
-                            '<div  class="col-sm-11 col-md-11 col-lg-11"> <h2 id="variantInfo"></h2></div>'+
+                            '<div  class="col-sm-2  col-md-2 col-lg-2"></div>'+
+                            '<div  class="col-sm-10 col-md-10 col-lg-10"> <h2 id="variantInfo"></h2></div>'+
                         '</div>'+
                         '<div class="row">'+
-                            '<div class="col-sm-1  col-md-1 col-lg-1" id="variantViewScrollspy">'+
+                            '<div class="col-sm-1 col-md-1 col-lg-1" id="variantViewScrollspy">'+
                                 '<ul id="variantViewTabs" class="nav nav-stacked affix eva-tabs">'+
                                     '<li class="active"><a href="#summary">Summary</a></li>'+
+                                    '<li><a href="#consequenceTypes">Consequence Types</a></li>'+
+                                    '<li><a href="#conservedRegion">Conserved Region</a></li>'+
+                                    '<li><a href="#populationStats">Population Stats</a></li>'+
                                     '<li><a href="#studies">Studies</a></li>'+
                                '</ul>'+
                             '</div>'+
-                            '<div id="scroll-able" class="col-sm-11 col-md-11 col-lg-11">'+
+                            '<div id="scroll-able" class="col-sm-10 col-md-10 col-lg-10">'+
                                 '<div id="summary" class="row">'+
-                                    '<div class="col-md-10" style="margin-left:10px;">'+
+                                    '<div class="col-md-12" style="margin-left:10px;">'+
                                         '<h4 class="variant-view-h4"> Summary</h4>'+
                                         '<div id="summary-grid"></div>'+
+                                    '</div>'+
+                                '</div>'+
+                                '<div  id="consequenceTypes" class="row">'+
+                                    '<div class="col-md-12" style="margin-left:10px;">'+
+                                         '<h4 class="variant-view-h4"> Consequence Type</h4>'+
+                                        '<div id="consequence-types-grid"></div>'+
+                                    '</div>'+
+                                '</div>'+
+                                '<div  id="conservedRegion" class="row">'+
+                                    '<div class="col-md-12" style="margin-left:10px;">'+
+                                        '<h4 class="variant-view-h4"> Conserved Region</h4>'+
+                                        '<div id="conserved-region-grid"></div>'+
+                                    '</div>'+
+                                '</div>'+
+                                '<div  id="populationStats" class="row">'+
+                                    '<div class="col-md-12">'+
+                                        '<div id="population-stats-grid"></div>'+
                                     '</div>'+
                                 '</div>'+
                                 '<div  id="studies" class="row">'+

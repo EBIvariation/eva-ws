@@ -87,14 +87,15 @@ ClinvarSummaryPanel.prototype = {
     load: function (data) {
         this.clear();
         var panels = [];
-        var summaryPanel = this._createSummaryPanel(data);
-//        for (var key in data) {
-//            var assertData = data[key];
-//            var asstPanel = this._createSummaryPanel(assertData);
-//            panels.push(asstPanel);
-//        }
+//        var summaryPanel = this._createSummaryPanel(data.clinvarList);
+        var clinvarList = data.clinvarList;
+        for (var key in clinvarList) {
+            var summaryData = clinvarList[key];
+            var summaryPanel = this._createSummaryPanel(summaryData);
+            panels.push(summaryPanel);
+        }
         this.assertionContainer.removeAll();
-        this.assertionContainer.add(summaryPanel);
+        this.assertionContainer.add(panels);
     },
     _createPanel: function () {
         this.assertionContainer = Ext.create('Ext.container.Container', {
@@ -127,20 +128,34 @@ ClinvarSummaryPanel.prototype = {
         return this.panel;
     },
     _createSummaryPanel: function (data) {
-        data = data.referenceClinVarAssertion;
-        var lastEvaluated = new Date( data.clinicalSignificance.dateLastEvaluated ).toUTCString();
+        data = data.clinvarSet.referenceClinVarAssertion;
+        var lastEvaluated = new Date( data.clinVarAccession.dateUpdated ).toUTCString();
         var origin = data.observedIn[0].sample.origin;
+        var traitSet = data.traitSet.trait;
         var citation= 'NA';
 
-        console.log(data.traitSet.trait[0])
-        console.log('++++++-----')
-        var publications = 'NA';
-        var citation = data.traitSet.trait[0].citation;
-        if(!_.isEmpty(citation) && citation[0].id.source == 'PubMed'){
-            publications = 'Pubmed:<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+citation[0].id.value+'" target="_blank">'+citation[0].id.value+'</a>';
+        var publications = '-';
+        var pubArray = [];
+        _.each(_.keys(traitSet), function(key){
+            var citation = this[key].citation;
+            _.each(_.keys(citation), function(key){
+               if(this[key].id && this[key].id.source == 'PubMed'){
+                   pubArray.push('PMID:<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+this[key].id.value+'" target="_blank">'+this[key].id.value+'</a>')
+               }
+            },citation);
+        },traitSet);
+
+
+        if(!_.isEmpty(pubArray)){
+            publications = pubArray.join('<br/>');
         }
+//        var citation = data.traitSet.trait[0].citation;
+//        if(!_.isEmpty(citation) && citation[0].id.source == 'PubMed'){
+//            publications = 'Pubmed:<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+citation[0].id.value+'" target="_blank">'+citation[0].id.value+'</a>';
+//        }
 
         var temp_hgvs = data.measureSet.measure[0].attributeSet
+        var variation_type = data.measureSet.measure[0].type;
 
 
         var hgvsArray = []
@@ -186,17 +201,23 @@ ClinvarSummaryPanel.prototype = {
 //                ),
                 tpl: new Ext.XTemplate(
                     '<div class="col-md-12"><table class="table table-bordered eva-stats-table">',
-                        '<tr>',
-                            '<td class="header">Clinical Significance<br/> (Last evaluated)</td><td>{clinicalSignificance.description}<br/>('+lastEvaluated+')</td>',
-                        '</tr>',
-                        '<tr>',
-                            '<td class="header">HGVS(s)</td><td>'+hgvsArray+'</td>',
-                        '</tr>',
+//                        '<tr>',
+//                            '<td class="header">Clinical Significance<br/> (Last evaluated)</td><td>{clinicalSignificance.description}<br/>('+lastEvaluated+')</td>',
+//                        '</tr>',
                         '<tr>',
                             '<td class="header">Review status</td><td>{clinicalSignificance.reviewStatus}</td>',
-                            '</tr>',
+                        '</tr>',
                         '<tr>',
-                            '<td class="header">Origin</td><td>'+origin+'</td>',
+                            '<td class="header">Last Evaluated</td><td>'+lastEvaluated+'</td>',
+                        '</tr>',
+                        '<tr>',
+                            '<td class="header">HGVS(s)</td><td></td>',
+                        '</tr>',
+                        '<tr>',
+                            '<td class="header">Transcript(s)</td><td></td>',
+                        '</tr>',
+                        '<tr>',
+                            '<td class="header">Variation Type</td><td>'+variation_type+'</td>',
                         '</tr>',
                         '<tr>',
                             '<td class="header">Publications</td><td>'+publications+'</td>',

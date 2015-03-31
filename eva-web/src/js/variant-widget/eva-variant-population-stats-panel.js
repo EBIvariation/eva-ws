@@ -124,7 +124,7 @@ EvaVariantPopulationStatsPanel.prototype = {
                 {
                     xtype: 'box',
                     cls: 'ocb-header-4',
-                    html: '<h4>Studies</h4>',
+                    html: '<h4>Population Stats</h4>',
                     margin: '5 0 10 10'
                 },
                 this.studiesContainer

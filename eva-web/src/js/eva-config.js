@@ -22,6 +22,10 @@
 //METADATA_HOST = "http://172.22.70.137:8080/eva/webservices/rest";
 ////METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
 //METADATA_VERSION = 'v1';
+
+CELLBASE_HOST = 'http://172.22.70.137:8080/cellbase/webservices/rest';
+CELLBASE_VERSION = 'v3';
+
 var TABS = [
     "Home",
     "Submit Data",

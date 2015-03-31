@@ -218,82 +218,95 @@ EvaClinVarWidget.prototype = {
 
         var columns ={
             items:[
-//                {
-//                    text: "Accession",
-////                    dataIndex: 'accession',
-//                    xtype: "templatecolumn",
-//                    tpl: '<tpl>{referenceClinVarAssertionAcc}</tpl>',
-//                    flex: 1
-//                },
                 {
-                    text: 'Clinical <br />Significance',
-                    dataIndex: 'description',
-                    flex: 0.2
+                    text: 'Chrom',
+                    dataIndex: 'chromosome',
+                    flex:0.5
                 },
                 {
-                    text: "Trait",
-                    dataIndex: 'trait',
-                    flex: 0.5
+                    text: "Position",
+                    dataIndex: 'start',
+                    flex:0.5
                 },
-//                {
-//                    text: 'Platform',
-//                    dataIndex: 'platform',
-//                    flex: 0.7
-//                },
-//                {
-//                    text: 'Technology',
-//                    dataIndex: 'technology',
-//                    flex: 0.7
-//                },
                 {
                     text: "Gene",
                     dataIndex: 'gene',
                     id:'clinvar-grid-gene-column',
-                    flex: 0.2
+                    flex:0.5
+                },
+                {
+                    text: "Clinical <br /> Significance",
+                    dataIndex: 'clinvarList',
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                        var valueArray = [];
+                        var clinvarList = rec.data.clinvarList
+                        _.each(_.keys(clinvarList), function(key){
+                            valueArray.push(this[key].clinvarSet.referenceClinVarAssertion.clinicalSignificance.description);
+                        },clinvarList);
+                        return valueArray.join("<br>");
+                    }
                 },
                 {
                     text: "Accessions",
-                    flex: 3,
-                    textAlign: 'center',
                     columns: [
                         {
                             text: "ClinVar",
-                            dataIndex: "referenceClinVarAssertionAcc",
-                            flex: 3
+                            dataIndex: "clinvarList",
+                            width:130,
+                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                                var valueArray = [];
+                                var clinvarList = rec.data.clinvarList
+                                _.each(_.keys(clinvarList), function(key){
+                                    valueArray.push(this[key].clinvarSet.referenceClinVarAssertion.clinVarAccession.acc);
+                                },clinvarList);
+                                return valueArray.join("<br>");
+                            }
 
                         },
                         {
                             text: "Others",
-                            dataIndex: "accession_others_id"
+                            dataIndex: "accession_others_id",
+                            width:130,
+                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                                var valueArray = [];
+                                var clinvarList = rec.data.clinvarList;
+                                _.each(_.keys(clinvarList), function(key){
+                                   if(this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref){
+                                       if(this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0].type){
+                                           var other_id = this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0].type+this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0].id;
+                                       }
+                                       valueArray.push(other_id);
+                                   }
+
+                                },clinvarList);
+                                return valueArray.join("<br>");
+                            }
                         }
                     ]
                 },
-//                {
-//                    text: "Xrefs",
-//                    flex: 1,
-//                    textAlign: 'center',
-//                    columns: [
-//                        {
-//                            text: "ID",
-//                            dataIndex: "xref_id"
-//
-//                        },
-//                        {
-//                            text: "Database",
-//                            dataIndex: "xref_db"
-//                        }
-//                    ]
-//                },
                 {
                     text: "View",
                     id:'clinvar-grid-view-column',
                     xtype: "templatecolumn",
                     tpl: '<tpl></tpl>',
-                    flex: 0.5
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                        var valueArray = [];
+                        var clinvarList = rec.data.clinvarList;
+                        _.each(_.keys(clinvarList), function(key){
+//                            var genomicPosition = rec.data.chromosome+':'+rec.data.start+':'+rec.data.reference+':'+rec.data.alternate;
+                            var genomicPosition = rec.data.chromosome+':'+rec.data.start+'-'+rec.data.end;
+                            var links = '<a href="https://www.ncbi.nlm.nih.gov/clinvar/'+this[key].clinvarSet.referenceClinVarAssertion.clinVarAccession.acc+'" target="_blank">ClinVar</a>';
+                            links += '&nbsp;<a href="?Variant Browser&position='+genomicPosition+'&species='+clinvarSelectedSpecies+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>';
+                            valueArray.push(links);
+//                            valueArray.join('&nbsp')
+                        },clinvarList);
+                        return valueArray.join("<br/ >");
+                    }
                 }
 
             ],
             defaults: {
+                flex:1,
                 textAlign: 'center',
                 align:'left' ,
                 sortable : false
@@ -301,16 +314,10 @@ EvaClinVarWidget.prototype = {
         } ;
 
         var attributes = [
-            {name: 'referenceClinVarAssertionAcc', mapping: 'referenceClinVarAssertion.clinVarAccession.acc', type: 'string' },
-            {name: 'clinVarAssertionAcc', mapping: 'clinVarAssertion[0].clinVarAccession.acc', type: 'string' },
-            {name: 'description', mapping: 'referenceClinVarAssertion.clinicalSignificance.description', type: 'string' },
-            {name: 'trait', mapping: 'clinVarAssertion[0].observedIn[0].traitSet.trait[0].name[0].elementValue.value', type: 'auto' },
-//            {name: 'platform', mapping: 'clinVarAssertion[0].observedIn[0].method[0].typePlatform', type: 'string' },
-//            {name: 'technology', mapping: 'clinVarAssertion[0].observedIn[0].method[0].description', type: 'string' },
-//            {name: 'xref_id', mapping: 'clinVarAssertion[0].observedIn[0].xref[0].id', type: 'string' },
-//            {name: 'xref_db', mapping: 'clinVarAssertion[0].observedIn[0].xref[0].db', type: 'string' }
-            {name: 'accession_others_id', mapping: 'referenceClinVarAssertion.measureSet.measure[0].attributeSet[0].xref[0].id', type: 'string' },
-            {name: 'gene', mapping: 'referenceClinVarAssertion.measureSet.measure[0].measureRelationship[0].symbol[0].elementValue.value', type: 'string' }
+            {name: 'chromosome', mapping: 'chromosome', type: 'string' },
+            {name: 'clincalSignificance', mapping: 'clinvarList[0].clinvarSet.referenceClinVarAssertion.clinicalSignificance.description', type: 'string' },
+            {name: 'clincalVarAcc', mapping: 'clinvarList[0].clinvarSet.referenceClinVarAssertion.clinVarAccession.acc', type: 'string' },
+            {name: 'clinvarList', mapping: 'clinvarList', type: 'auto' }
         ];
 
 
@@ -326,6 +333,7 @@ EvaClinVarWidget.prototype = {
             startParam: this.startParam,
             attributes: attributes,
             columns:columns,
+            height:500,
             samples: this.samples,
             headerConfig: this.headerConfig,
             handlers: {

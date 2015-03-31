@@ -281,7 +281,8 @@ EvaVariantWidget.prototype = {
                 {
                     text: "Chr",
                     dataIndex: 'chromosome',
-                    flex: 0.5
+//                    flex: 0.5,/
+                    width:50
                 },
                 {
                     text: 'Position',
@@ -304,7 +305,8 @@ EvaVariantWidget.prototype = {
 //                    renderer: function(value, metaData, record, row, col, store, gridView){
 ////                        console.log(record)
 //                    },
-                    flex: 0.5
+//                    flex: 0.5
+                    width:80
                 },
                 {
                     text: 'Class',
@@ -330,10 +332,10 @@ EvaVariantWidget.prototype = {
 //                text: 'HGVS Names',
 //                dataIndex: 'hgvs_name'
 //            },
-                {
-                    text: 'Gene',
-                    dataIndex: 'gene'
-                },
+//                {
+//                    text: 'Gene',
+//                    dataIndex: 'gene'
+//                },
                 {
                     text: 'Consequence Type',
                     dataIndex: 'consequenceTypes',
@@ -358,6 +360,40 @@ EvaVariantWidget.prototype = {
                     flex: 1
                 },
                 {
+                    text: "Conserved Regions",
+                    columns: [
+                        {
+                            text: "phyloP",
+                            dataIndex: "conservedRegionScores",
+                            width:70,
+                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                                var conservedRegionScores = rec.data.conservedRegionScores;
+                                _.each(_.keys(conservedRegionScores), function(key){
+                                   if(this[key].source == 'phylop'){
+                                       value = this[key].score.toFixed(3);
+                                   }
+                                },conservedRegionScores);
+                                return value;
+                            }
+
+                        },
+                        {
+                            text: "PhastCons",
+                            dataIndex: "conservedRegionScores",
+                            width:80,
+                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                                var conservedRegionScores = rec.data.conservedRegionScores;
+                                _.each(_.keys(conservedRegionScores), function(key){
+                                    if(this[key].source == 'phastCons'){
+                                        value = this[key].score.toFixed(3);
+                                    }
+                                },conservedRegionScores);
+                                return value;
+                            }
+                        }
+                    ]
+                },
+                {
                     text: 'View',
                     //dataIndex: 'id',
                     id:'variant-grid-view-column',
@@ -379,7 +415,7 @@ EvaVariantWidget.prototype = {
         } ;
 
         var attributes = [
-            {name: 'id', type: 'string'},
+//            {name: 'id', type: 'string'},
             {name: "chromosome", type: "string"},
             {name: "start", type: "int"},
             {name: "end", type: "int"},
@@ -387,9 +423,11 @@ EvaVariantWidget.prototype = {
             {name: "ref", type: "string"},
             {name: "alt", type: "string"},
             {name: 'hgvs_name', type: 'string'},
-            {name: 'gene', mapping: 'annotation.xrefs[0].id', type: 'string' },
+            {name: 'id', mapping: 'annotation.xrefs[0].id', type: 'string' },
             {name: 'consequenceTypes', mapping: 'annotation.consequenceTypes', type:'auto' },
+            {name: 'conservedRegionScores', mapping: 'annotation.conservedRegionScores', type:'auto'}
         ];
+
 
         var listeners =  {
             expandbody : function( expander, record, body, rowIndex ) {

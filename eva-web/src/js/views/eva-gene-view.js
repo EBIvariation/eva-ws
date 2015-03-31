@@ -182,7 +182,7 @@ EvaGeneView.prototype = {
             target: 'gene-view-gv',
             border: false,
             resizable: true,
-            width: 1150,
+            width: 1050,
             region: region,
             trackListTitle: '',
             drawNavigationBar: true,
@@ -322,11 +322,11 @@ EvaGeneView.prototype = {
                                 '<ul id="geneViewTabs" class="nav nav-stacked affix eva-tabs">'+
                                     '<li class="active"><a href="#summary">Summary</a></li>'+
                                     '<li><a href="#transcripts">Transcripts</a></li>'+
-                                    '<li><a href="#genomeViewer">GV</a></li>'+
+                                    '<li><a href="#genomeViewer">Genomic Context</a></li>'+
 //                                    '<li><a href="#genomeViewer">Genomic Co</a></li>'+
                                '</ul>'+
                             '</div>'+
-                            '<div id="scroll-able" class="col-sm-11 col-md-11 col-lg-11">'+
+                            '<div id="scroll-able" class="col-sm-10 col-md-10 col-lg-10">'+
                                 '<div id="summary" class="row">'+
                                     '<div class="col-md-10" style="margin-left:10px;">'+
                                         '<h4 class="gene-view-h4"> Summary</h4>'+
