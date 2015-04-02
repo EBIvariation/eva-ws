@@ -232,7 +232,19 @@ EvaClinVarWidget.prototype = {
                     text: "Gene",
                     dataIndex: 'gene',
                     id:'clinvar-grid-gene-column',
-                    flex:0.5
+                    flex:0.5,
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                        var valueArray = [];
+                        var clinvarList = rec.data.clinvarList
+                        _.each(_.keys(clinvarList), function(key){
+                            if(this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].measureRelationship){
+                                var gene = this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].measureRelationship[0].symbol[0].elementValue.value;
+                                var geneLink = '<a href="?gene='+gene+'&species=hsapiens" target="_blank">'+gene+'</a>';
+                            }
+                            valueArray.push(geneLink);
+                        },clinvarList);
+                        return valueArray.join("<br>");
+                    }
                 },
                 {
                     text: "Clinical <br /> Significance",
@@ -316,6 +328,7 @@ EvaClinVarWidget.prototype = {
         var attributes = [
             {name: 'chromosome', mapping: 'chromosome', type: 'string' },
             {name: 'position', mapping: 'start', type: 'string' },
+            {name: 'gene', mapping: 'clinvarList', type: 'string' },
             {name: 'clincalSignificance', mapping: 'clinvarList[0].clinvarSet.referenceClinVarAssertion.clinicalSignificance.description', type: 'string' },
             {name: 'clincalVarAcc', mapping: 'clinvarList', type: 'string' },
             {name: 'otherAcc', mapping: 'clinvarList', type: 'string' },
@@ -673,6 +686,17 @@ EvaClinVarWidget.prototype = {
                         }
                     },clinvarList);
                     value = otherAccArray.join("\n");
+                }else if(key == 'gene'){
+                    var valueArray = [];
+                    _.each(_.keys(clinvarList), function(key){
+                        if(!_.isUndefined(this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].measureRelationship)){
+                            value = this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].measureRelationship[0].symbol[0].elementValue.value;
+                        }else{
+                            value = '-';
+                        }
+
+                    },clinvarList);
+
                 }
                 if(_.indexOf(removeKeys, key) == -1){
                     printableValue = ((noCsvSupport) && value == '') ? '&nbsp;'  : value;
@@ -702,9 +726,6 @@ EvaClinVarWidget.prototype = {
             csvContent += sdelimiter + speciesValue + edelimiter;
             csvContent += enewLine;
         }
-
-
-
 
 
 

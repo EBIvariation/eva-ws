@@ -41,9 +41,11 @@ EvaGeneView.prototype = {
             return;
         }
 
-        this.targetDiv.innerHTML = _this._varinatViewlayout();
+
         geneID = this.geneId;
         _this.geneData;
+
+
 
         CellBaseManager.get({
             species: 'hsapiens',
@@ -65,8 +67,9 @@ EvaGeneView.prototype = {
                     }
                 }
             }
-        });
+        })
 
+        this.targetDiv.innerHTML = _this._varinatViewlayout(_this.geneData);
         _this.draw(_this.geneData);
 
         $('#geneViewTabs li').click(function(event) {
@@ -78,8 +81,12 @@ EvaGeneView.prototype = {
         });
     },
     draw: function (data) {
+
+            if(!_.isUndefined(data))
             var _this = this;
+            var geneInfoTitle =  document.querySelector("#geneInfo").textContent = this.geneId;
 //                     var variantInfoTitle =  document.querySelector("#variantInfo").textContent = variantID+' Info';
+        if(!_.isUndefined(data)){
             var geneViewDiv = document.querySelector("#geneView");
             $(geneViewDiv).addClass('show-div');
             var summaryContent =  _this._renderSummaryData(data);
@@ -105,11 +112,12 @@ EvaGeneView.prototype = {
             gvEl.appendChild(gvElDiv);
             var genomeViewer = _this._createGenomeViewer(gvElDiv);
             genomeViewer.draw();
+        }
+
 
 
     },
     _renderSummaryData: function (data) {
-            var geneInfoTitle =  document.querySelector("#geneInfo").textContent = data.name;
             var source = '<a href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?g='+data.id+'" target="_blank">'+data.source+':'+data.id+'</a>'
             var _summaryTable  = '<div class="row"><div class="col-md-8"><table class="table ocb-stats-table">'
             _summaryTable +='<tr><td class="header">HGNC NAme</td><td>'+data.name+'</td></tr>' +
@@ -312,9 +320,10 @@ EvaGeneView.prototype = {
         return genomeViewer;
     },
 
-    _varinatViewlayout:function(){
-
-        var layout = '<div id="gene-view">'+
+    _varinatViewlayout:function(data){
+        var layout;
+        if(!_.isUndefined(data)){
+         layout = '<div id="gene-view">'+
                         '<div class="row">'+
                             '<div  class="col-sm-2  col-md-2 col-lg-2"></div>'+
                             '<div  class="col-sm-10 col-md-10 col-lg-10"> <h2 id="geneInfo"></h2></div>'+
@@ -350,7 +359,16 @@ EvaGeneView.prototype = {
                             '</div>'+
                         '</div>'+
                     '</div>'
-        return layout;
+       }else{
+            layout = '<div id="gene-view">'+
+                        '<div class="row">'+
+                            '<div  class="col-sm-12 col-md-12 col-lg-12"> <h2 id="geneInfo"></h2></div>'+
+                            '<div  class="col-sm-12 col-md-12 col-lg-12"><h5>Sorry No <D></D>ata Avalibale</h5></div>'+
+                        '</div>'+
+                    '</div>'
+
+       }
+       return layout;
     }
 
 }
