@@ -363,7 +363,7 @@ EvaGeneView.prototype = {
             layout = '<div id="gene-view">'+
                         '<div class="row">'+
                             '<div  class="col-sm-12 col-md-12 col-lg-12"> <h2 id="geneInfo"></h2></div>'+
-                            '<div  class="col-sm-12 col-md-12 col-lg-12"><h5>Sorry No <D></D>ata Avalibale</h5></div>'+
+                            '<div  class="col-sm-12 col-md-12 col-lg-12"><h5>Sorry No Data Avalibale</h5></div>'+
                         '</div>'+
                     '</div>'
 
