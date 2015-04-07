@@ -519,11 +519,18 @@ EvaVariantWidget.prototype = {
                         element: 'el', //bind to the underlying el property on the panel
                         fn: function(){
                             var proxy = variantBrowserGrid.grid.store.proxy;
+                            var category = 'segments';
+                            var query = proxy.extraParams.region;
+                            if(proxy.extraParams.gene){
+                                category = 'genes';
+                                query =  proxy.extraParams.gene;
+                            }
                             var url = EvaManager.url({
-                                category: 'segments',
+                                category: category,
                                 resource: 'variants',
-                                query: proxy.extraParams.region,
-                                params:{merge:true,exclude:'files'}
+                                query: query,
+//                                params:{merge:true,exclude:'files'}
+                                params:{merge:true,exclude:'sourceEntries'}
                             });
                             proxy.url = url;
                             var exportStore = Ext.create('Ext.data.Store', {
@@ -640,11 +647,14 @@ EvaVariantWidget.prototype = {
                     var region = variant.chromosome+':'+variant.start+'-'+variant.end;
                     var proxy =  _.clone(this.variantBrowserGrid.store.proxy);
 //                proxy.extraParams.region = region;
+                    console.log(proxy.extraParams)
+                    console.log('asdff')
                     EvaManager.get({
                         category: 'segments',
                         resource: 'variants',
                         query:region,
-                        params:proxy.extraParams,
+//                        params:proxy.extraParams,
+                        params:{species:proxy.extraParams.species},
                         async: false,
                         success: function (response) {
                             try {
@@ -656,7 +666,8 @@ EvaVariantWidget.prototype = {
                         }
                     });
                     if (variant.sourceEntries) {
-                        variantStatsPanel.load(variant.sourceEntries,proxy.extraParams);
+//                        variantStatsPanel.load(variant.sourceEntries,proxy.extraParams);
+                        variantStatsPanel.load(variant.sourceEntries,{species:proxy.extraParams.species});
                     }
                 }
             }
@@ -1120,11 +1131,20 @@ EvaVariantWidget.prototype = {
                     value = consqTypeArr.join(" ");
                 }else if(key == 'phylop'){
                    var phylop =  _.findWhere(records[i].data[key], {source: key});
-                   value = phylop.score.toFixed(3);
+                   if(phylop){
+                       value = phylop.score.toFixed(3);
+                   }else{
+                       value = '';
+                   }
+
 
                 }else if(key == 'phastCons'){
                     var phastCons =  _.findWhere(records[i].data[key], {source: key});
-                    value = phastCons.score.toFixed(3);
+                    if(phastCons){
+                        value = phastCons.score.toFixed(3);
+                    }else{
+                        value = '';
+                    }
                 }
 
                 if(_.indexOf(removeKeys, key) == -1){

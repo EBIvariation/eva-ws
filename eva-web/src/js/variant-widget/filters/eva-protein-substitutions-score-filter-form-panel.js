@@ -122,9 +122,9 @@ EvaProteinSubstitutionScoreFilterFormPanel.prototype = {
                 delete values[key]
             }else{
                 if(key == 'sift'){
-                   value = encodeURI('\<'+ values[key]);
+                   value = '<'+ values[key];
                 }else{
-                    value = encodeURI('\>'+ values[key]);
+                    value = '>'+ values[key];
                 }
                 valuesArray[key] = value;
             }

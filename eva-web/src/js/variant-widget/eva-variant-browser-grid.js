@@ -196,6 +196,7 @@ EvaVariantBrowserGrid.prototype = {
 
         console.log("filter");
         console.log(filterParams)
+        console.log('++++++')
 
         this.store = Ext.create('Ext.data.Store', {
             pageSize: this.pageSize,

@@ -346,12 +346,21 @@ EvaVariantWidgetPanel.prototype = {
                         e.values['region'] = regions.join(',');
                     }
 
+
+                    var category = 'segments';
+                    var query = regions;
+                    if(e.values.gene){
+                        category = 'genes';
+                        query =  e.values.gene;
+                    }
+
                     var url = EvaManager.url({
-                        category: 'segments',
+                        category: category,
                         resource: 'variants',
-                        query: regions,
+                        query: query,
 //                        params:{merge:true}
-                        params:{merge:true,exclude:'files'}
+//                        params:{merge:true,exclude:'files'}
+                        params:{merge:true,exclude:'sourceEntries'}
                     });
 
                     if(!_.isEmpty(e.values.studies)){
