@@ -231,7 +231,7 @@ EvaClinVarWidget.prototype = {
                 {
                     text: "Gene",
                     dataIndex: 'gene',
-                    id:'clinvar-grid-gene-column',
+//                    id:'clinvar-grid-gene-column',
                     flex:0.5,
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){
                         var valueArray = [];
@@ -298,7 +298,7 @@ EvaClinVarWidget.prototype = {
                 },
                 {
                     text: "View",
-                    id:'clinvar-grid-view-column',
+//                    id:'clinvar-grid-view-column',
                     xtype: "templatecolumn",
                     tpl: '<tpl></tpl>',
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){
