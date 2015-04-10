@@ -235,6 +235,7 @@ ClinvarBrowserGrid.prototype = {
                 },
                 beforeload: function (store, operation, eOpts) {
                     _this.trigger("clinvar:clear", {sender: _this});
+                    _this.trigger("clinvar:change", {sender: _this});
                 }
             }
 

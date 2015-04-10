@@ -82,7 +82,7 @@ ClinvarSummaryPanel.prototype = {
 
     },
     clear: function () {
-        this.assertionContainer.removeAll(true);
+        this.summaryContainer.removeAll(true);
     },
     load: function (data) {
         this.clear();
@@ -94,13 +94,13 @@ ClinvarSummaryPanel.prototype = {
             var summaryPanel = this._createSummaryPanel(summaryData);
             panels.push(summaryPanel);
         }
-        this.assertionContainer.removeAll();
-        this.assertionContainer.add(panels);
+        this.summaryContainer.removeAll();
+        this.summaryContainer.add(panels);
     },
     _createPanel: function () {
-        this.assertionContainer = Ext.create('Ext.container.Container', {
+        this.summaryContainer = Ext.create('Ext.container.Container', {
             layout: {
-                type: 'hbox',
+                type: 'accordion',
                 titleCollapse: true,
 //                fill: false,
                 multi: true
@@ -121,7 +121,7 @@ ClinvarSummaryPanel.prototype = {
                     html: '<h4>Summary</h4>',
                     margin: '5 0 10 10'
                 },
-                this.assertionContainer
+                this.summaryContainer
             ],
             height: this.height
         });
@@ -138,11 +138,14 @@ ClinvarSummaryPanel.prototype = {
         var pubArray = [];
         _.each(_.keys(traitSet), function(key){
             var citation = this[key].citation;
-            _.each(_.keys(citation), function(key){
-               if(this[key].id && this[key].id.source == 'PubMed'){
-                   pubArray.push('PMID:<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+this[key].id.value+'" target="_blank">'+this[key].id.value+'</a>')
-               }
-            },citation);
+          if(citation){
+              _.each(_.keys(citation), function(key){
+                  if(this[key].id && this[key].id.source == 'PubMed'){
+                      pubArray.push('PMID:<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+this[key].id.value+'" target="_blank">'+this[key].id.value+'</a>')
+                  }
+              },citation);
+          }
+
         },traitSet);
 
 
@@ -170,10 +173,11 @@ ClinvarSummaryPanel.prototype = {
             hgvsArray = hgvsArray.join("<br\/>");
         }
 
-        var assertPanel = Ext.create('Ext.panel.Panel', {
+        var summaryPanel = Ext.create('Ext.panel.Panel', {
 //            title: 'Summary',
+            title: data.clinVarAccession.acc,
             border: false,
-            layout: 'vbox',
+            layout: 'hbox',
             overflowX: true,
             items: [  {
                 xtype: 'container',
@@ -231,6 +235,6 @@ ClinvarSummaryPanel.prototype = {
             }]
         });
 
-        return assertPanel;
+        return summaryPanel;
     }
 };

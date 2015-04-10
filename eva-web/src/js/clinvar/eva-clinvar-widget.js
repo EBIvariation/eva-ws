@@ -52,6 +52,7 @@ function EvaClinVarWidget(args) {
         genotype: true,
         assertion:true,
         summary:true,
+        links:true
     };
     this.tools = [];
     this.dataParser;
@@ -161,6 +162,16 @@ EvaClinVarWidget.prototype = {
                 contentEl: this.clinvarAssertionPanelDiv
             });
         }
+        if (this.defaultToolConfig.links) {
+            this.clinvarLinksPanelDiv = document.createElement('div');
+            this.clinvarLinksPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
+            this.clinvarLinksPanel = this._createLinksPanel(this.clinvarLinksPanelDiv);
+            tabPanelItems.push({
+                title: 'External Links',
+//                border: 0,
+                contentEl: this.clinvarLinksPanelDiv
+            });
+        }
 
         for (var i = 0; i < this.tools.length; i++) {
             var tool = this.tools[i];
@@ -202,6 +213,10 @@ EvaClinVarWidget.prototype = {
 
         if (this.defaultToolConfig.assertion) {
             this.clinvarAssertionPanel.draw();
+        }
+
+        if (this.defaultToolConfig.links) {
+            this.clinvarLinksPanel.draw();
         }
 
 
@@ -269,7 +284,7 @@ EvaClinVarWidget.prototype = {
                                 var valueArray = [];
                                 var clinvarList = rec.data.clinvarList
                                 _.each(_.keys(clinvarList), function(key){
-                                    valueArray.push(this[key].clinvarSet.referenceClinVarAssertion.clinVarAccession.acc);
+                                    valueArray.push('<a href="https://www.ncbi.nlm.nih.gov/clinvar/'+this[key].clinvarSet.referenceClinVarAssertion.clinVarAccession.acc+'" target="_blank">'+this[key].clinvarSet.referenceClinVarAssertion.clinVarAccession.acc+'</a>');
                                 },clinvarList);
                                 return valueArray.join("<br>");
                             }
@@ -284,37 +299,47 @@ EvaClinVarWidget.prototype = {
                                 var clinvarList = rec.data.clinvarList;
                                 _.each(_.keys(clinvarList), function(key){
                                    if(this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref){
-                                       if(this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0].type){
+                                       if(this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0].type == 'rs'){
                                            var other_id = this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0].type+this[key].clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0].id;
-                                       }
-                                       valueArray.push(other_id);
-                                   }
+                                           if(other_id){
+                                               valueArray.push('<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs='+other_id+'" target="_blank">'+other_id+'</a>');
+                                           }
 
+
+                                       }
+
+
+                                   }
                                 },clinvarList);
-                                return valueArray.join("<br>");
+                                if(!_.isEmpty(valueArray) ){
+                                    return valueArray.join("<br>");
+                                }else{
+                                    return '-';
+                                }
+
                             }
                         }
                     ]
                 },
-                {
-                    text: "View",
-//                    id:'clinvar-grid-view-column',
-                    xtype: "templatecolumn",
-                    tpl: '<tpl></tpl>',
-                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
-                        var valueArray = [];
-                        var clinvarList = rec.data.clinvarList;
-                        _.each(_.keys(clinvarList), function(key){
-//                            var genomicPosition = rec.data.chromosome+':'+rec.data.start+':'+rec.data.reference+':'+rec.data.alternate;
-                            var genomicPosition = rec.data.chromosome+':'+rec.data.start+'-'+rec.data.end;
-                            var links = '<a href="https://www.ncbi.nlm.nih.gov/clinvar/'+this[key].clinvarSet.referenceClinVarAssertion.clinVarAccession.acc+'" target="_blank">ClinVar</a>';
-                            links += '&nbsp;<a href="?Variant Browser&position='+genomicPosition+'&species='+clinvarSelectedSpecies+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>';
-                            valueArray.push(links);
-//                            valueArray.join('&nbsp')
-                        },clinvarList);
-                        return valueArray.join("<br/ >");
-                    }
-                }
+//                {
+//                    text: "View",
+////                    id:'clinvar-grid-view-column',
+//                    xtype: "templatecolumn",
+//                    tpl: '<tpl></tpl>',
+//                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+//                        var valueArray = [];
+//                        var clinvarList = rec.data.clinvarList;
+//                        _.each(_.keys(clinvarList), function(key){
+////                            var genomicPosition = rec.data.chromosome+':'+rec.data.start+':'+rec.data.reference+':'+rec.data.alternate;
+//                            var genomicPosition = rec.data.chromosome+':'+rec.data.start+'-'+rec.data.end;
+//                            var links = '<a href="https://www.ncbi.nlm.nih.gov/clinvar/'+this[key].clinvarSet.referenceClinVarAssertion.clinVarAccession.acc+'" target="_blank">ClinVar</a>';
+//                            links += '&nbsp;<a href="?Variant Browser&position='+genomicPosition+'&species='+clinvarSelectedSpecies+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>';
+//                            valueArray.push(links);
+////                            valueArray.join('&nbsp')
+//                        },clinvarList);
+//                        return valueArray.join("<br/ >");
+//                    }
+//                }
 
             ],
             defaults: {
@@ -430,9 +455,12 @@ EvaClinVarWidget.prototype = {
         });
 
         this.on("clinvar:change", function (e) {
-//            if (target === _this.selectedToolDiv) {
-            if (target.id === _this.selectedToolDiv.id) {
-                assertionPanel.load(e.variant);
+            if(_.isUndefined(e.variant)){
+                assertionPanel.clear(true);
+            }else{
+                if (target.id === _this.selectedToolDiv.id) {
+                    assertionPanel.load(e.variant);
+                }
             }
         });
 
@@ -452,17 +480,51 @@ EvaClinVarWidget.prototype = {
         });
 
         this.clinvarBrowserGrid.on("clinvar:clear", function (e) {
-//            summaryPanel.clear(true);
+            summaryPanel.clear(true);
         });
 
         this.on("clinvar:change", function (e) {
 //            if (target === _this.selectedToolDiv) {
-            if (target.id === _this.selectedToolDiv.id) {
-                summaryPanel.load(e.variant);
-            }
+                if(_.isUndefined(e.variant)){
+                    summaryPanel.clear(true);
+                }else{
+                    if (target.id === _this.selectedToolDiv.id) {
+                        summaryPanel.load(e.variant);
+                    }
+                }
         });
 
         return summaryPanel;
+    },
+    _createLinksPanel: function (target) {
+        var _this = this;
+        var linksPanel = new ClinvarLinksPanel({
+            target: target,
+            headerConfig: this.defaultToolConfig.headerConfig,
+            handlers: {
+                "load:finish": function (e) {
+//                    _this.grid.setLoading(false);
+                }
+            }
+
+        });
+
+        this.clinvarBrowserGrid.on("clinvar:clear", function (e) {
+            linksPanel.clear(true);
+        });
+
+        this.on("clinvar:change", function (e) {
+//            if (target === _this.selectedToolDiv) {
+            if(_.isUndefined(e.variant)){
+                linksPanel.clear(true);
+            }else{
+                if (target.id === _this.selectedToolDiv.id) {
+                    linksPanel.load(e.variant);
+                }
+            }
+        });
+
+        return linksPanel;
     },
 
     _createGenomeViewer: function (target) {

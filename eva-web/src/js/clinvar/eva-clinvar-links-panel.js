@@ -40,9 +40,9 @@
  * You should have received a copy of the GNU General Public License
  * along with JSorolla. If not, see <http://www.gnu.org/licenses/>.
  */
-function ClinvarAssertionPanel(args) {
+function ClinvarLinksPanel(args) {
     _.extend(this, Backbone.Events);
-    this.id = Utils.genId("ClinVarAssertionDataPanel");
+    this.id = Utils.genId("ClinVarLinksDataPanel");
 
     this.target;
     this.title = "Stats";
@@ -59,7 +59,7 @@ function ClinvarAssertionPanel(args) {
     }
 }
 
-ClinvarAssertionPanel.prototype = {
+ClinvarLinksPanel.prototype = {
     render: function () {
         var _this = this;
 
@@ -82,26 +82,23 @@ ClinvarAssertionPanel.prototype = {
 
     },
     clear: function () {
-        this.assertionContainer.removeAll(true);
+        this.linksContainer.removeAll(true);
     },
     load: function (data) {
         this.clear();
         var panels = [];
+//        var summaryPanel = this._createSummaryPanel(data.clinvarList);
         var clinvarList = data.clinvarList;
-        console.log(data)
-        console.log('------')
         for (var key in clinvarList) {
-            var clinVarAssertion = clinvarList[key].clinvarSet.clinVarAssertion;
-            for (var key in clinVarAssertion) {
-                var assertData =  clinVarAssertion[key];
-                var asstPanel = this._createAssertPanel(assertData);
-            }
-            panels.push(asstPanel);
+            var linksData = clinvarList[key];
+            var linksPanel = this._createLinksPanel(linksData);
+            panels.push(linksPanel);
         }
-        this.assertionContainer.add(panels);
+        this.linksContainer.removeAll();
+        this.linksContainer.add(panels);
     },
     _createPanel: function () {
-        this.assertionContainer = Ext.create('Ext.container.Container', {
+        this.linksContainer = Ext.create('Ext.container.Container', {
             layout: {
                 type: 'accordion',
                 titleCollapse: true,
@@ -110,7 +107,7 @@ ClinvarAssertionPanel.prototype = {
             }
         });
 
-       var panel = Ext.create('Ext.container.Container', {
+      this.panel = Ext.create('Ext.container.Container', {
             layout: {
                 type: 'vbox',
                 align: 'stretch'
@@ -121,42 +118,38 @@ ClinvarAssertionPanel.prototype = {
                 {
                     xtype: 'box',
                     cls: 'ocb-header-4',
-                    html: '<h4>Clinical Assertions</h4>',
+                    html: '<h4>External Links</h4>',
                     margin: '5 0 10 10'
                 },
-                this.assertionContainer
+                this.linksContainer
             ],
             height: this.height
         });
-        return panel;
+        return this.panel;
     },
-    _createAssertPanel: function (data) {
-//        var lastEvaluated = new Date( data.clinicalSignificance.dateLastEvaluated ).toUTCString();
-        var submittedDate = new Date( data.clinVarSubmissionID.submitterDate ).toUTCString();
-        var origin = data.observedIn[0].sample.origin;
-        var collectionMethod = data.observedIn[0].method[0].methodType;
-        var alleOriginArray = [];
-        var methodTypeArray = [];
-        _.each(_.keys(data.observedIn), function(key){
-            alleOriginArray.push(this[key].sample.origin);
-            var method = this[key].method;
-            _.each(_.keys(method), function(key){
-                methodTypeArray.push(this[key].methodType);
-            },method);
+    _createLinksPanel: function (data) {
+        data = data.clinvarSet.referenceClinVarAssertion;
+        var measure = data.measureSet.measure;
+        var linksTable  = '<div class="row"><div class="col-md-8"><table class="table ocb-attributes-table">'
+        linksTable += '<tr><td class="header">ID</td><td class="header">DB</td><td class="header">Type</td><td class="header">Status</td></tr>'
+        _.each(_.keys(measure), function(key){
+            var xref = this[key].xref;
+            if(xref){
+                _.each(_.keys(xref), function(key){
+                    var id = this[key].id;
+                    if(this[key].type == 'rs'){
+                        id = '<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs='+id+'" target="_blank">rs'+id+'</a>'
+                    }
+                    linksTable += '<tr><td>'+id+'</td><td>'+this[key].db+'</td><td>'+this[key].type+'</td><td>'+this[key].status+'</td></tr>'
+                },xref);
+            }
+        },measure);
 
-        },data.observedIn);
+        linksTable += '</table></div></div>'
 
-        var alleOrigin = '-';
-        if(!_.isEmpty(alleOriginArray)){
-            alleOrigin = alleOriginArray.join('<br />');
-        }
 
-        var methodType = '-';
-        if(!_.isEmpty(methodTypeArray)){
-            methodType = methodTypeArray.join('<br />');
-        }
 
-        var assertPanel = Ext.create('Ext.panel.Panel', {
+        var linksPanel = Ext.create('Ext.panel.Panel', {
             title: data.clinVarAccession.acc,
             border: false,
             layout: 'vbox',
@@ -165,38 +158,11 @@ ClinvarAssertionPanel.prototype = {
                 xtype: 'container',
                 data: data,
                 width:970,
-                tpl: new Ext.XTemplate(
-                    '<div class="col-md-12"><table class="table table-bordered eva-attributes-table">',
-                        '<tr>',
-                            '<td class="header">Submission Accession</td>',
-                            '<td class="header">Clinical Significance</td>',
-                            '<td class="header">Review status</td>',
-                            '<td class="header">Date of Submission</td>',
-//                            '<td class="header">Origin </td>',
-//                            '<td class="header">Citations</td>',
-                            '<td class="header">Submitter</td>',
-                            '<td class="header">Method Type</td>',
-                            '<td class="header">Allele origin</td>',
-                            '<td class="header">Assertion Method</td>',
-                        '</tr>',
-                        '<tr>',
-                            '<td>{clinVarAccession.acc}</td>',
-                            '<td>{clinicalSignificance.description}</td>',
-                            '<td>{clinicalSignificance.reviewStatus}</td>',
-                            '<td>'+submittedDate+'</td>',
-//                            '<td>'+origin+'</td>',
-//                            '<td>'+alleOrigin+'</td>',
-                            '<td>{clinVarSubmissionID.submitter}</td>',
-                            '<td>'+methodType+'</td>',
-                            '<td>'+alleOrigin+'</td>',
-                            '<td>{assertion.type}</td>',
-                        '</tr>',
-                        '</table></div>'
-                ),
+                tpl: new Ext.XTemplate(linksTable),
                 margin: '10 5 5 10'
             }]
         });
 
-        return assertPanel;
+        return linksPanel;
     }
 };
