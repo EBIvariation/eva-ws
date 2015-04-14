@@ -47,6 +47,7 @@ EvaGeneView.prototype = {
 
 
 
+
         CellBaseManager.get({
             species: 'hsapiens',
             category: 'feature',
@@ -265,17 +266,30 @@ EvaGeneView.prototype = {
             }
         });
         evaClinVarWidget.draw();
+        evaClinVarWidget.species = _this.species;
 
-        var url = EvaManager.url({
+        evaClinVarWidget.clinvarBrowserGrid.setLoading(true);
+        var params = {merge:true,include:'clinvar',gene:_this.geneId};
+        EvaManager.get({
             host:CELLBASE_HOST,
             version:CELLBASE_VERSION,
-            category: 'hsapiens/genomic/region',
-            resource: 'clinvar',
-            query: '3:550000-1166666',
-            params:{merge:true}
+            category: 'hsapiens/feature',
+            resource: 'all',
+            query:'clinical',
+            params:params,
+            success: function (response) {
+                try {
+                    var data = response.response[0].result;
+                    console.log(data)
+                    console.log()
+                    evaClinVarWidget.clinvarBrowserGrid.load(data);
+                    evaClinVarWidget.clinvarBrowserGrid.setLoading(false);
+
+                } catch (e) {
+                    console.log(e);
+                }
+            }
         });
-        clinvarSelectedSpecies = 'hsapiens_grch37';
-        evaClinVarWidget.retrieveData(url, '3:550000-1166666')
 
 
         return evaClinVarWidget;
@@ -328,7 +342,7 @@ EvaGeneView.prototype = {
             target: 'gene-view-gv',
             border: false,
             resizable: true,
-            width: 1050,
+            width: 1250,
             region: region,
             trackListTitle: '',
             drawNavigationBar: true,

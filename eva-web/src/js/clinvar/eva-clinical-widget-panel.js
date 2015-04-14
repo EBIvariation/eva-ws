@@ -152,24 +152,14 @@ EvaClinicalWidgetPanel.prototype = {
 
         });
 
-        clinVarSpeciesList = [{
-                                      assemblyCode:"grch37",
-                                      taxonomyCode:"hsapiens",
-                                      taxonomyEvaName:"Human",
-                                      assemblyName:"GRCh37"
-
-                                  },
-                                  {
-                                        assemblyCode:"grch38",
-                                        taxonomyCode:"hsapiens",
-                                        taxonomyEvaName:"Human",
-                                        assemblyName:"GRCh38"
-
-                                  }]
 
         var clinvarSpeciesFilter = new SpeciesFilterFormPanel({
             defaultValue:'hsapiens_grch37',
             speciesList:clinVarSpeciesList
+        });
+
+        var phenotypeFilter = new ClinVarTraitFilterFormPanel({
+            collapsed: true
         });
 
         clinvarSpeciesFilter.on('species:change', function (e) {
@@ -391,13 +381,13 @@ EvaClinicalWidgetPanel.prototype = {
             mode: 'accordion',
             target: target,
             submitButtonText: 'Submit',
-            filters: [clinvarSpeciesFilter,clinvarPositionFilter,clinvarConseqTypeFilter,variationTypeFilter,clinicalSignfcFilter,reviewStatusFilter],
+            filters: [clinvarSpeciesFilter,clinvarPositionFilter,clinvarConseqTypeFilter,phenotypeFilter,variationTypeFilter,clinicalSignfcFilter,reviewStatusFilter],
             width: 300,
             height: 1143,
             border: false,
             handlers: {
                 'submit': function (e) {
-//                    _this.clinvarWidget.setLoading(true);
+                    _this.clinvarWidget.clinvarBrowserGrid.setLoading(true);
                     //POSITION CHECK
                     var regions = [];
                     if (typeof e.values.region !== 'undefined') {
@@ -457,15 +447,42 @@ EvaClinicalWidgetPanel.prototype = {
                     }
 
 
+                    var params = _.extend(e.values,{merge:true,include:'clinvar'});
+
+                    _this.clinvarWidget.formValues = e.values;
 
                     var url = EvaManager.url({
                         host:CELLBASE_HOST,
                         version:CELLBASE_VERSION,
-                        category: 'hsapiens/genomic/region',
-                        resource: 'clinvar',
-                        query: regions,
-                        params:{merge:true}
+                        category: 'hsapiens/feature/clinical',
+                        resource: 'all',
+//                        query: regions,
+                        params:{merge:true,include:'clinvar'}
                     });
+
+
+                    _this.clinvarWidget.clinvarBrowserGrid.setLoading(true);
+//                    _this.clinvarWidget.clinvarBrowserGrid.load();
+                    EvaManager.get({
+                        host:CELLBASE_HOST,
+                        version:CELLBASE_VERSION,
+                        category: 'hsapiens/feature',
+                        resource: 'all',
+                        query:'clinical',
+                        params:params,
+                        success: function (response) {
+                            console.log(response)
+                            try {
+                                var data = response.response[0].result;
+                                _this.clinvarWidget.clinvarBrowserGrid.load(data);
+                                _this.clinvarWidget.clinvarBrowserGrid.setLoading(false);
+                            } catch (e) {
+                                console.log(e);
+                            }
+                        }
+                    });
+
+
 
 //                    if (typeof e.values.accessionId !== 'undefined') {
 //                        regions = e.values.accessionId;
@@ -479,12 +496,11 @@ EvaClinicalWidgetPanel.prototype = {
 //                        });
 //                    }
 
-                    _this.clinvarWidget.retrieveData(url, e.values)
-                    console.log(regions);
-                    return;
+//                    _this.clinvarWidget.retrieveData(url, e.values)
+
 //                     var geneColumn = Ext.getCmp('clinvar-grid-gene-column');
-                     var viewColumn = Ext.getCmp('clinvar-grid-view-column');
-                     viewColumn.tpl =  Ext.create('Ext.XTemplate', '<tpl><a href="?Genome Browser&position='+ regions+'" target="_blank">Genome Viewer</a></tpl>')
+//                     var viewColumn = Ext.getCmp('clinvar-grid-view-column');
+//                     viewColumn.tpl =  Ext.create('Ext.XTemplate', '<tpl><a href="?Genome Browser&position='+ regions+'" target="_blank">Genome Viewer</a></tpl>')
 //                    if(!_.isUndefined(gene)){
 //                        var updateTpl = Ext.create('Ext.XTemplate', '<tpl>'+gene+'</tpl>');
 //                        geneColumn.tpl = updateTpl;

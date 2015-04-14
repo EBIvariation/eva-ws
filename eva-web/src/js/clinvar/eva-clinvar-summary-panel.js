@@ -88,14 +88,21 @@ ClinvarSummaryPanel.prototype = {
         this.clear();
         var panels = [];
 //        var summaryPanel = this._createSummaryPanel(data.clinvarList);
-        var clinvarList = data.clinvarList;
-        for (var key in clinvarList) {
-            var summaryData = clinvarList[key];
-            var summaryPanel = this._createSummaryPanel(summaryData);
-            panels.push(summaryPanel);
-        }
-        this.summaryContainer.removeAll();
-        this.summaryContainer.add(panels);
+//        var clinvarList = data.clinvarList;
+//        for (var key in clinvarList) {
+//            var summaryData = clinvarList[key];
+//            var summaryPanel = this._createSummaryPanel(summaryData);
+//            panels.push(summaryPanel);
+//        }
+//        this.summaryContainer.removeAll();
+//        this.summaryContainer.add(panels);
+
+          var summaryData = data.clinvarSet;
+          var panel = this._createSummaryPanel(summaryData);
+          this.summaryContainer.removeAll();
+          this.summaryContainer.add(panel);
+
+
     },
     _createPanel: function () {
         this.summaryContainer = Ext.create('Ext.container.Container', {
@@ -128,7 +135,7 @@ ClinvarSummaryPanel.prototype = {
         return this.panel;
     },
     _createSummaryPanel: function (data) {
-        data = data.clinvarSet.referenceClinVarAssertion;
+        data = data.referenceClinVarAssertion;
         var lastEvaluated = new Date( data.clinVarAccession.dateUpdated ).toUTCString();
         var origin = data.observedIn[0].sample.origin;
         var traitSet = data.traitSet.trait;

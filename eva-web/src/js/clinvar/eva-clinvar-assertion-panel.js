@@ -87,17 +87,25 @@ ClinvarAssertionPanel.prototype = {
     load: function (data) {
         this.clear();
         var panels = [];
-        var clinvarList = data.clinvarList;
-        console.log(data)
-        console.log('------')
-        for (var key in clinvarList) {
-            var clinVarAssertion = clinvarList[key].clinvarSet.clinVarAssertion;
-            for (var key in clinVarAssertion) {
+//        var clinvarList = data.clinvarList;
+//        console.log(data)
+//        console.log('------')
+//        for (var key in clinvarList) {
+//            var clinVarAssertion = clinvarList[key].clinVarAssertion;
+//            for (var key in clinVarAssertion) {
+//                var assertData =  clinVarAssertion[key];
+//                var asstPanel = this._createAssertPanel(assertData);
+//            }
+//            panels.push(asstPanel);
+//        }
+        var panels = [];
+        var clinVarAssertion = data.clinvarSet.clinVarAssertion;
+        for (var key in clinVarAssertion) {
                 var assertData =  clinVarAssertion[key];
                 var asstPanel = this._createAssertPanel(assertData);
-            }
-            panels.push(asstPanel);
+                panels.push(asstPanel);
         }
+
         this.assertionContainer.add(panels);
     },
     _createPanel: function () {

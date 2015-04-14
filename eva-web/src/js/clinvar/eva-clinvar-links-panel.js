@@ -88,14 +88,19 @@ ClinvarLinksPanel.prototype = {
         this.clear();
         var panels = [];
 //        var summaryPanel = this._createSummaryPanel(data.clinvarList);
-        var clinvarList = data.clinvarList;
-        for (var key in clinvarList) {
-            var linksData = clinvarList[key];
-            var linksPanel = this._createLinksPanel(linksData);
-            panels.push(linksPanel);
-        }
+//        var clinvarList = data.clinvarList;
+//        for (var key in clinvarList) {
+//            var linksData = clinvarList[key];
+//            var linksPanel = this._createLinksPanel(linksData);
+//            panels.push(linksPanel);
+//        }
+//        this.linksContainer.removeAll();
+//        this.linksContainer.add(panels);
+
+        var linksData = data.clinvarSet;
+        var panel = this._createLinksPanel(linksData);
         this.linksContainer.removeAll();
-        this.linksContainer.add(panels);
+        this.linksContainer.add(panel);
     },
     _createPanel: function () {
         this.linksContainer = Ext.create('Ext.container.Container', {
@@ -128,11 +133,12 @@ ClinvarLinksPanel.prototype = {
         return this.panel;
     },
     _createLinksPanel: function (data) {
-        data = data.clinvarSet.referenceClinVarAssertion;
+        data = data.referenceClinVarAssertion;
         var measure = data.measureSet.measure;
         var linksTable  = '<div class="row"><div class="col-md-8"><table class="table ocb-attributes-table">'
         linksTable += '<tr><td class="header">ID</td><td class="header">DB</td><td class="header">Type</td><td class="header">Status</td></tr>'
         _.each(_.keys(measure), function(key){
+            console.log(this[key])
             var xref = this[key].xref;
             if(xref){
                 _.each(_.keys(xref), function(key){
