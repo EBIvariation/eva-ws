@@ -260,7 +260,7 @@ EvaVariantWidgetPanel.prototype = {
             target: target,
             submitButtonText: 'Submit',
             submitButtonId: 'vb-submit-button',
-            filters: [speciesFilter,positionFilter, conseqTypeFilter,populationFrequencyFilter,proteinSubScoreFilter,conservationScoreFilter,studyFilter],
+            filters: [speciesFilter,positionFilter, conseqTypeFilter,proteinSubScoreFilter,conservationScoreFilter,studyFilter],
             width: 300,
             height: 1343,
             border: false,

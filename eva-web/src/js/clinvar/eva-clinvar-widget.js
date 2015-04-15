@@ -248,9 +248,7 @@ EvaClinVarWidget.prototype = {
                     dataIndex: 'gene',
 //                    id:'clinvar-grid-gene-column',
                     flex:0.5,
-                    xtype: "templatecolumn",
-                    tpl: '<tpl><a href="?gene={gene}&species=hsapiens_grch37" target="_blank">{gene}</a></tpl>'
-//                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
 //                        var valueArray = [];
 //                        var clinvarList = rec.data.clinvarList
 //
@@ -262,7 +260,32 @@ EvaClinVarWidget.prototype = {
 //                            valueArray.push(geneLink);
 //                        },clinvarList);
 //                        return valueArray.join("<br>");
-//                    }
+                              if(value.measureSet.measure[0].measureRelationship){
+                                  var gene = value.measureSet.measure[0].measureRelationship[0].symbol[0].elementValue.value;
+                                  value = '<a href="?gene='+gene+'&species=hsapiens" target="_blank">'+gene+'</a>'
+                              }else{
+                                  value = '';
+                              }
+//
+//
+                        return value;
+
+                    }
+                },
+                {
+                    text: "Trait",
+                    dataIndex: 'trait',
+                    flex:0.5,
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                        _.each(_.keys(value), function(key){
+                            if(this[key].elementValue.type == 'Preferred'){
+                               meta.tdAttr = 'data-qtip="'+this[key].elementValue.value+'"';
+                               value = this[key].elementValue.value;
+                            }
+
+                        },value);
+                     return value ;
+                    }
                 },
                 {
                     text: "Clinical <br /> Significance",
@@ -351,7 +374,8 @@ EvaClinVarWidget.prototype = {
         var attributes = [
             {name: 'chromosome', mapping: 'chromosome', type: 'string' },
             {name: 'position', mapping: 'start', type: 'string' },
-            {name: 'gene', mapping: 'clinvarSet.referenceClinVarAssertion.measureSet.measure[0].measureRelationship[0].symbol[0].elementValue.value', type: 'auto' },
+            {name: 'gene', mapping: 'clinvarSet.referenceClinVarAssertion', type: 'auto' },
+            {name: 'trait', mapping: 'clinvarSet.referenceClinVarAssertion.traitSet.trait[0].name', type: 'auto' },
             {name: 'clincalSignificance', mapping: 'clinvarSet.referenceClinVarAssertion.clinicalSignificance.description', type: 'string' },
             {name: 'clincalVarAcc', mapping: 'clinvarSet.referenceClinVarAssertion.clinVarAccession.acc', type: 'string' },
             {name: 'otherAcc', mapping: 'clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0]', type: 'auto' },
@@ -421,7 +445,7 @@ EvaClinVarWidget.prototype = {
 //                                        var exportData = _this._exportToExcel(records,store.proxy.extraParams);
                                         if(_.isUndefined(_this.formValues)){
                                             _this.formValues = {species:_this.species};
-                                        }                                      
+                                        }
                                         var exportData = _this._exportToExcel(records,_this.formValues);
                                         clinvarBrowserGrid.grid.setLoading(false);
 
@@ -776,6 +800,23 @@ EvaClinVarWidget.prototype = {
                     }else{
                         value =  '';
                     }
+                }else if(key == 'trait'){
+                    var triatValue = value;
+                    value = '';
+                    _.each(_.keys(triatValue), function(key){
+                        if(this[key].elementValue.type == 'Preferred'){
+                            value = this[key].elementValue.value;
+                        }
+                    },triatValue);
+
+                }else if( key == "gene"){
+                    if(value.measureSet.measure[0].measureRelationship){
+                        var gene = value.measureSet.measure[0].measureRelationship[0].symbol[0].elementValue.value;
+                        value = gene
+                    }else{
+                        value = '';
+                    }
+
                 }
                 if(_.indexOf(removeKeys, key) == -1){
                     printableValue = ((noCsvSupport) && value == '') ? '&nbsp;'  : value;
