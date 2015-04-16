@@ -383,7 +383,7 @@ EvaClinicalWidgetPanel.prototype = {
             submitButtonText: 'Submit',
             filters: [clinvarSpeciesFilter,clinvarPositionFilter,clinvarConseqTypeFilter,phenotypeFilter,variationTypeFilter,clinicalSignfcFilter,reviewStatusFilter],
             width: 300,
-            height: 1143,
+            height: 1243,
             border: false,
             handlers: {
                 'submit': function (e) {

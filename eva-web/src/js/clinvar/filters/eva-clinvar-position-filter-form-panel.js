@@ -72,9 +72,19 @@ ClinVarPositionFilterFormPanel.prototype = {
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'Accession ID',
+            fieldLabel: 'ClinVar Accession',
             labelAlign: 'top',
-            regex: /^[R][C][V]\d+$/
+//            regex: /^[R][C][V]\d+$/
+        });
+        var rsId = Ext.create('Ext.form.field.TextArea', {
+            id: this.id + "rsId",
+            name: "rs",
+            margin: '0 0 0 5',
+            //allowBlank: true,
+            width: '100%',
+            fieldLabel: 'dbSNP Accession',
+            labelAlign: 'top',
+//            regex: /^[rs]s\d+$/
         });
 
         var regionList = Ext.create('Ext.form.field.TextArea', {
@@ -110,7 +120,7 @@ ClinVarPositionFilterFormPanel.prototype = {
             titleCollapse: this.titleCollapse,
             header: this.headerConfig,
             allowBlank: false,
-            items: [accessionId, regionList, gene]
+            items: [accessionId, rsId,regionList, gene]
         });
 
     },
