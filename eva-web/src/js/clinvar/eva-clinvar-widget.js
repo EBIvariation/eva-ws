@@ -236,18 +236,18 @@ EvaClinVarWidget.prototype = {
                 {
                     text: 'Chrom',
                     dataIndex: 'chromosome',
-                    flex:0.5
+                    flex:0.2
                 },
                 {
                     text: "Position",
                     dataIndex: 'position',
-                    flex:0.5
+                    flex:0.3
                 },
                 {
                     text: "Gene",
                     dataIndex: 'gene',
 //                    id:'clinvar-grid-gene-column',
-                    flex:0.5,
+                    flex:0.3,
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){
 //                        var valueArray = [];
 //                        var clinvarList = rec.data.clinvarList
@@ -275,7 +275,7 @@ EvaClinVarWidget.prototype = {
                 {
                     text: "Trait",
                     dataIndex: 'trait',
-                    flex:0.5,
+                    flex:0.8,
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){
                         _.each(_.keys(value), function(key){
                             if(this[key].elementValue.type == 'Preferred'){
@@ -290,6 +290,7 @@ EvaClinVarWidget.prototype = {
                 {
                     text: "Clinical <br /> Significance",
                     dataIndex: 'clincalSignificance',
+                    flex:0.5,
 //                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
 //                        var valueArray = [];
 //                        var clinvarList = rec.data.clinvarList
