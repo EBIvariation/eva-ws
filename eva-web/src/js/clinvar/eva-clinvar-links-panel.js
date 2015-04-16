@@ -105,7 +105,8 @@ ClinvarLinksPanel.prototype = {
     _createPanel: function () {
         this.linksContainer = Ext.create('Ext.container.Container', {
             layout: {
-                type: 'accordion',
+//                type: 'accordion',
+                type: 'vbox',
                 titleCollapse: true,
 //                fill: false,
                 multi: true
@@ -159,7 +160,7 @@ ClinvarLinksPanel.prototype = {
 
 
         var linksPanel = Ext.create('Ext.panel.Panel', {
-            title: data.clinVarAccession.acc,
+//            title: data.clinVarAccession.acc,
             border: false,
             layout: 'vbox',
             overflowX: true,
