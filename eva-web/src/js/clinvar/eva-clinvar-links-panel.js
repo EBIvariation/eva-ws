@@ -145,6 +145,9 @@ ClinvarLinksPanel.prototype = {
                     var id = this[key].id;
                     if(this[key].type == 'rs'){
                         id = '<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs='+id+'" target="_blank">rs'+id+'</a>'
+                    }else if(this[key].db == 'OMIM'){
+                        var OMIMId = id.split('.');
+                        id = '<a href="http://www.omim.org/entry/'+OMIMId[0]+'#'+OMIMId[1]+'" target="_blank">'+id+'</a>'
                     }
                     linksTable += '<tr><td>'+id+'</td><td>'+this[key].db+'</td><td>'+this[key].type+'</td><td>'+this[key].status+'</td></tr>'
                 },xref);
