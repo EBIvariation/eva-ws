@@ -52,7 +52,8 @@ function EvaClinVarWidget(args) {
         genotype: true,
         assertion:true,
         summary:true,
-        links:true
+        links:true,
+        annot:true
     };
     this.tools = [];
     this.dataParser;
@@ -118,9 +119,10 @@ EvaClinVarWidget.prototype = {
             title: this.toolPanelConfig.title,
             border: this.toolPanelConfig.border,
             margin: '10 0 0 0',
-            height:600,
+            height:850,
             plain: true,
             animCollapse: false,
+            overflowY:true,
             header: this.toolPanelConfig.headerConfig,
             collapseDirection: Ext.Component.DIRECTION_BOTTOM,
             titleCollapse: true,
@@ -162,6 +164,18 @@ EvaClinVarWidget.prototype = {
                 contentEl: this.clinvarAssertionPanelDiv
             });
         }
+
+        if (this.defaultToolConfig.annot) {
+            this.clinvarAnnotPanelDiv = document.createElement('div');
+            this.clinvarAnnotPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
+            this.clinvarAnnotPanel = this._createAnnotPanel(this.clinvarAnnotPanelDiv);
+            tabPanelItems.push({
+                title: 'Annotation',
+//                border: 0,
+                contentEl: this.clinvarAnnotPanelDiv
+            });
+        }
+
         if (this.defaultToolConfig.links) {
             this.clinvarLinksPanelDiv = document.createElement('div');
             this.clinvarLinksPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
@@ -213,6 +227,10 @@ EvaClinVarWidget.prototype = {
 
         if (this.defaultToolConfig.assertion) {
             this.clinvarAssertionPanel.draw();
+        }
+
+        if (this.defaultToolConfig.annot) {
+            this.clinvarAnnotPanel.draw();
         }
 
         if (this.defaultToolConfig.links) {
@@ -306,7 +324,7 @@ EvaClinVarWidget.prototype = {
                         {
                             text: "ClinVar",
                             dataIndex: "clincalVarAcc",
-                            width:130,
+                            width:120,
                             xtype: "templatecolumn",
                             tpl: '<tpl><a href="https://www.ncbi.nlm.nih.gov/clinvar/{clincalVarAcc}" target="_blank">{clincalVarAcc}</a></tpl>'
 //                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
@@ -320,9 +338,9 @@ EvaClinVarWidget.prototype = {
 
                         },
                         {
-                            text: "Others",
-                            dataIndex: "otherAcc",
-                            width:130,
+                            text: "dbSNP",
+                            dataIndex: "dbSNPAcc",
+                            width:110,
                             renderer: function(value, meta, rec, rowIndex, colIndex, store){
 //                                var valueArray = [];
 //                                var clinvarList = rec.data.clinvarList;
@@ -359,6 +377,41 @@ EvaClinVarWidget.prototype = {
 
 
                             }
+                        },
+                        {
+                            text: "SO Term(s)",
+                            dataIndex: 'so_terms',
+                            flex:1,
+                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+
+                                if(!_.isUndefined(value)){
+                                    var tempArray = [];
+                                    _.each(_.keys(value), function(key){
+                                        var so_terms = this[key].soTerms;
+                                        _.each(_.keys(so_terms), function(key){
+                                            tempArray.push(this[key].soName)
+                                        },so_terms);
+                                    },value);
+
+                                    var groupedArr = _.groupBy(tempArray);
+                                    var so_array = [];
+                                    _.each(_.keys(groupedArr), function(key){
+                                       var index =  _.indexOf(consequenceTypesHierarchy, key);
+//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+//                                        so_array.push(key+' ('+this[key].length+')')
+                                        so_array[index] = key+' ('+this[key].length+')';
+                                    },groupedArr);
+                                    so_array =  _.compact(so_array);
+                                    meta.tdAttr = 'data-qtip="'+so_array.join('\n')+'"';
+                                    return value ? Ext.String.format(
+                                        '<tpl>'+so_array.join()+'</tpl>',
+                                        value
+                                    ) : '';
+                                }else{
+                                    return '';
+                                }
+
+                            }
                         }
                     ]
                 }
@@ -379,8 +432,10 @@ EvaClinVarWidget.prototype = {
             {name: 'trait', mapping: 'clinvarSet.referenceClinVarAssertion.traitSet.trait[0].name', type: 'auto' },
             {name: 'clincalSignificance', mapping: 'clinvarSet.referenceClinVarAssertion.clinicalSignificance.description', type: 'string' },
             {name: 'clincalVarAcc', mapping: 'clinvarSet.referenceClinVarAssertion.clinVarAccession.acc', type: 'string' },
-            {name: 'otherAcc', mapping: 'clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0]', type: 'auto' },
-            {name: 'clinvarList', mapping: 'clinvarList', type: 'auto' }
+            {name: 'dbSNPAcc', mapping: 'clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0]', type: 'auto' },
+//            {name: 'clinvarList', mapping: 'clinvarList', type: 'auto' }
+            {name: 'annot', mapping: 'annot', type: 'auto' },
+            {name: 'so_terms', mapping: 'annot.consequenceTypes', type: 'auto' }
         ];
 
 
@@ -520,6 +575,36 @@ EvaClinVarWidget.prototype = {
         });
 
         return summaryPanel;
+    },
+    _createAnnotPanel: function (target) {
+        var _this = this;
+        var annotPanel = new ClinvarAnnotationPanel({
+            target: target,
+            headerConfig: this.defaultToolConfig.headerConfig,
+            handlers: {
+                "load:finish": function (e) {
+//                    _this.grid.setLoading(false);
+                }
+            }
+
+        });
+
+        this.clinvarBrowserGrid.on("clinvar:clear", function (e) {
+            annotPanel.clear(true);
+        });
+
+        this.on("clinvar:change", function (e) {
+//            if (target === _this.selectedToolDiv) {
+            if(_.isUndefined(e.variant)){
+                annotPanel.clear(true);
+            }else{
+                if (target.id === _this.selectedToolDiv.id) {
+                    annotPanel.load(e.variant);
+                }
+            }
+        });
+
+        return annotPanel;
     },
     _createLinksPanel: function (target) {
         var _this = this;
@@ -732,7 +817,7 @@ EvaClinVarWidget.prototype = {
 
         /* Get the column headers from the store dataIndex */
 
-        var removeKeys = ['start','end','reference','alternate','clinvarList','clinvarSet','iid','variantString','_id'];
+        var removeKeys = ['start','end','reference','alternate','clinvarList','clinvarSet','iid','variantString','_id','annot'];
 
         Ext.Object.each(records[0].data, function(key) {
             if(_.indexOf(removeKeys, key) == -1){
@@ -791,7 +876,7 @@ EvaClinVarWidget.prototype = {
 //                    },clinvarList);
 //                    value = clincalSignificanceArray.join("\n");
 //                }
-                if(key == 'otherAcc'){
+                if(key == 'dbSNPAcc'){
                     if(!_.isUndefined(value)){
                         if(value.type == 'rs'){
                             value =  'rs'+value.id;
@@ -818,6 +903,28 @@ EvaClinVarWidget.prototype = {
                         value = '';
                     }
 
+                }else if( key == "so_terms"){
+                    if(!_.isUndefined(value)){
+                        var tempArray = [];
+                        _.each(_.keys(value), function(key){
+                            var so_terms = this[key].soTerms;
+                            _.each(_.keys(so_terms), function(key){
+                                tempArray.push(this[key].soName)
+                            },so_terms);
+                        },value);
+
+                        var groupedArr = _.groupBy(tempArray);
+                        var so_array = [];
+                        _.each(_.keys(groupedArr), function(key){
+                            var index =  _.indexOf(consequenceTypesHierarchy, key);
+//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+//                                        so_array.push(key+' ('+this[key].length+')')
+                            so_array[index] = key+' ('+this[key].length+')';
+                        },groupedArr);
+                        so_array =  _.compact(so_array);
+                        value = so_array.join();
+
+                    }
                 }
                 if(_.indexOf(removeKeys, key) == -1){
                     printableValue = ((noCsvSupport) && value == '') ? '&nbsp;'  : value;

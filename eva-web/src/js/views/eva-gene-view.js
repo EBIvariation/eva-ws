@@ -100,12 +100,12 @@ EvaGeneView.prototype = {
 
 
 
-            var transcriptEl = document.querySelector("#transcripts-grid");
-            var transcriptElDiv = document.createElement("div");
-            transcriptElDiv.setAttribute('class', 'eva variant-widget-panel ocb-variant-stats-panel');
-            //       transcriptElDiv.innerHTML = '<h4>Studies</h4>';
-            transcriptEl.appendChild(transcriptElDiv);
-            _this.createTranscriptsPanel(transcriptElDiv,data);
+//            var transcriptEl = document.querySelector("#transcripts-grid");
+//            var transcriptElDiv = document.createElement("div");
+//            transcriptElDiv.setAttribute('class', 'eva variant-widget-panel ocb-variant-stats-panel');
+//            //       transcriptElDiv.innerHTML = '<h4>Studies</h4>';
+//            transcriptEl.appendChild(transcriptElDiv);
+//            _this.createTranscriptsPanel(transcriptElDiv,data);
 
             var clinVariantsEl = document.querySelector("#clinvar-variants-grid");
             var clinVariantsElDiv = document.createElement("div");
@@ -216,7 +216,7 @@ EvaGeneView.prototype = {
             },
             autoHeight: true,
             overflowY: true,
-            height: 1200,
+            height: 1300,
             cls: 'eva-panel',
             header:  {
                 titlePosition:1

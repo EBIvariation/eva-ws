@@ -46,7 +46,7 @@ function ClinvarSummaryPanel(args) {
 
     this.target;
     this.title = "Stats";
-    this.height = 500;
+    this.height = 700;
     this.autoRender = true;
     _.extend(this, args);
 
@@ -97,7 +97,7 @@ ClinvarSummaryPanel.prototype = {
 //        this.summaryContainer.removeAll();
 //        this.summaryContainer.add(panels);
 
-          var summaryData = data.clinvarSet;
+          var summaryData = data;
           var panel = this._createSummaryPanel(summaryData);
           this.summaryContainer.removeAll();
           this.summaryContainer.add(panel);
@@ -136,7 +136,8 @@ ClinvarSummaryPanel.prototype = {
         return this.panel;
     },
     _createSummaryPanel: function (data) {
-        data = data.referenceClinVarAssertion;
+        var annotData = data.annot;
+        data = data.clinvarSet.referenceClinVarAssertion;
         var lastEvaluated = new Date( data.clinVarAccession.dateUpdated ).toUTCString();
         var origin = data.observedIn[0].sample.origin;
         var traitSet = data.traitSet.trait;
@@ -167,19 +168,43 @@ ClinvarSummaryPanel.prototype = {
 
         var temp_hgvs = data.measureSet.measure[0].attributeSet
         var variation_type = data.measureSet.measure[0].type;
+       var hgvs = '-';
+       var soTerms = '-';
+       if(!_.isUndefined(annotData)){
+           var hgvsArray = []
+           var hgvs_data = annotData.hgvs.sort().reverse()
+           _.each(_.keys(hgvs_data), function(key){
+               if(this[key]){
+                   hgvsArray.push(this[key]);
+               }
+           },hgvs_data);
+           hgvs = hgvsArray.join("<br\/>");
+
+           var tempArray = [];
+           _.each(_.keys(annotData.consequenceTypes), function(key){
+               var so_terms = this[key].soTerms;
+               _.each(_.keys(so_terms), function(key){
+                   tempArray.push(this[key].soName)
+               },so_terms);
+           },annotData.consequenceTypes);
+
+           var groupedArr = _.groupBy(tempArray);
+           console.log(groupedArr)
+           var so_array = [];
+           _.each(_.keys(groupedArr), function(key){
+               var index =  _.indexOf(consequenceTypesHierarchy, key);
+//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+//                                        so_array.push(key+' ('+this[key].length+')')
+               so_array[index] = key+' ('+this[key].length+')';
+           },groupedArr);
+
+           so_array =  _.compact(so_array);
+
+           soTerms = so_array.join("<br\/>");
+
+       }
 
 
-        var hgvsArray = []
-        _.each(_.keys(temp_hgvs), function(key){
-           if(this[key].attribute.type.match(/HGVS/g)){
-             hgvsArray.push(this[key].attribute.value);
-           }
-        },temp_hgvs);
-       if(_.isEmpty(hgvsArray)){
-            hgvsArray  = '-';
-        }else{
-            hgvsArray = hgvsArray.join("<br\/>");
-        }
 
         var summaryPanel = Ext.create('Ext.panel.Panel', {
 //            title: 'Summary',
@@ -187,6 +212,7 @@ ClinvarSummaryPanel.prototype = {
             border: false,
             layout: 'hbox',
             overflowX: true,
+            overflowY: true,
             items: [  {
                 xtype: 'container',
                 data: data,
@@ -223,10 +249,10 @@ ClinvarSummaryPanel.prototype = {
                             '<td class="header">Last Evaluated</td><td>'+lastEvaluated+'</td>',
                         '</tr>',
                         '<tr>',
-                            '<td class="header">HGVS(s)</td><td></td>',
+                            '<td class="header">HGVS(s)</td><td>'+hgvs+'</td>',
                         '</tr>',
                         '<tr>',
-                            '<td class="header">Transcript(s)</td><td></td>',
+                            '<td class="header">SO Terms(s)</td><td>'+soTerms+'</td>',
                         '</tr>',
                         '<tr>',
                             '<td class="header">Variation Type</td><td>'+variation_type+'</td>',

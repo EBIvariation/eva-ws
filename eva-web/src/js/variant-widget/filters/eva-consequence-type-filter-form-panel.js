@@ -32,6 +32,7 @@ function EvaConsequenceTypeFilterFormPanel(args) {
     this.titleCollapse = false;
     this.collapsed = false;
     this.headerConfig;
+    this.filterType = 'eva';
     this.consequenceTypes = [];
     this.fields = [
         {name: 'name', type: 'string'},
@@ -97,11 +98,16 @@ EvaConsequenceTypeFilterFormPanel.prototype = {
         });
     },
     getValues: function () {
+        var _this = this;
         var node = this.panel.getRootNode();
         var consequence_types = [];
         node.cascadeBy(function (n) {
             if (n.get('checked') && n.isLeaf()) {
-                consequence_types.push(n.get('acc'));
+                if(_this.filterType == 'eva'){
+                    consequence_types.push(n.get('acc'));
+                }else{
+                    consequence_types.push(n.get('name'));
+                }
             }
         });
 

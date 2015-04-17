@@ -147,7 +147,8 @@ EvaClinicalWidgetPanel.prototype = {
         var _this = this;
         var clinvarPositionFilter = new ClinVarPositionFilterFormPanel({
 //            testRegion: '1:14000-200000',
-            testRegion: '3:550000-1166666',
+//            testRegion: '3:550000-1166666',
+            testRegion: '',
             emptyText: ''
 
         });
@@ -168,6 +169,7 @@ EvaClinicalWidgetPanel.prototype = {
 
         var clinvarConseqTypeFilter = new EvaConsequenceTypeFilterFormPanel({
             consequenceTypes: consequenceTypes,
+            filterType:'clinVar',
             collapsed: false,
             fields: [
                 {name: 'name', type: 'string'}
@@ -186,7 +188,7 @@ EvaClinicalWidgetPanel.prototype = {
             {
                 name:'Deletion',
                 cls: "parent",
-                value:'deletion',
+                value:'Deletion',
                 leaf: true,
                 checked:false,
                 iconCls :'no-icon'
@@ -196,13 +198,13 @@ EvaClinicalWidgetPanel.prototype = {
                 cls: "parent",
                 leaf: true,
                 checked:false,
-                value:'duplication',
+                value:'Duplication',
                 iconCls :'no-icon'
             },
             {
                 name:'Indel',
                 cls: "parent",
-                value:'indel',
+                value:'Indel',
                 leaf: true,
                 checked:false,
                 iconCls :'no-icon'
@@ -210,7 +212,7 @@ EvaClinicalWidgetPanel.prototype = {
             {
                 name:'Insertion',
                 cls: "parent",
-                value:'insertion',
+                value:'Insertion',
                 leaf: true,
                 checked:false,
                 iconCls :'no-icon'
@@ -226,7 +228,7 @@ EvaClinicalWidgetPanel.prototype = {
 
         var variationTypeFilter = new EvaClinVarFilterFormPanel({
             data: variationType,
-            filterType:'variationType',
+            filterType:'type',
             title:'Variation Type',
             height:200,
             collapsed: true,
@@ -247,7 +249,7 @@ EvaClinicalWidgetPanel.prototype = {
             {
                 name:'Professional society',
                 cls: "parent",
-                value:'professional_society',
+                value:'REVIEWED_BY_PROFESSIONAL_SOCIETY',
                 leaf: true,
                 checked:false,
                 iconCls :'no-icon'
@@ -257,13 +259,13 @@ EvaClinicalWidgetPanel.prototype = {
                 cls: "parent",
                 leaf: true,
                 checked:false,
-                value:'expert_panel',
+                value:'REVIEWED_BY_EXPERT_PANEL',
                 iconCls :'no-icon'
             },
             {
                 name:'Multiple submitters',
                 cls: "parent",
-                value:'multiple_submitters',
+                value:'CLASSIFIED_BY_MULTIPLE_SUBMITTERS',
                 leaf: true,
                 checked:false,
                 iconCls :'no-icon'
@@ -271,7 +273,7 @@ EvaClinicalWidgetPanel.prototype = {
             {
                 name:'Single submitter',
                 cls: "parent",
-                value:'single_submitter',
+                value:'CLASSIFIED_BY_SINGLE_SUBMITTER',
                 leaf: true,
                 checked:false,
                 iconCls :'no-icon'
@@ -279,7 +281,7 @@ EvaClinicalWidgetPanel.prototype = {
 
         var reviewStatusFilter = new EvaClinVarFilterFormPanel({
             data: reviewStatusType,
-            filterType:'reviewStatus',
+            filterType:'review',
             title:'Review Status',
             height:200,
             collapsed: true,
@@ -298,9 +300,9 @@ EvaClinicalWidgetPanel.prototype = {
 
         var clinicalSignfcType = [
             {
-                name:'Conflicting interpretations',
+                name:'Confers Sensitivity',
                 cls: "parent",
-                value:'conflicting_interpretations',
+                value:'confers_sensitivity',
                 leaf: true,
                 checked:false,
                 iconCls :'no-icon'
@@ -310,13 +312,29 @@ EvaClinicalWidgetPanel.prototype = {
                 cls: "parent",
                 leaf: true,
                 checked:false,
-                value:'benign',
+                value:'Benign',
+                iconCls :'no-icon'
+            },
+            {
+                name:'Protective',
+                cls: "parent",
+                leaf: true,
+                checked:false,
+                value:'protective',
+                iconCls :'no-icon'
+            },
+            {
+                name:'Association',
+                cls: "parent",
+                leaf: true,
+                checked:false,
+                value:'association',
                 iconCls :'no-icon'
             },
             {
                 name:'Likely benign',
                 cls: "parent",
-                value:'likely_benign',
+                value:'Likely_benign',
                 leaf: true,
                 checked:false,
                 iconCls :'no-icon'
@@ -324,7 +342,7 @@ EvaClinicalWidgetPanel.prototype = {
             {
                 name:'Uncertain significance',
                 cls: "parent",
-                value:'uncertain_significance',
+                value:'Uncertain_significance',
                 leaf: true,
                 checked:false,
                 iconCls :'no-icon'
@@ -332,7 +350,7 @@ EvaClinicalWidgetPanel.prototype = {
             {
                 name:'Likely pathogenic',
                 cls: "parent",
-                value:'likely_pathogenic',
+                value:'Likely_pathogenic',
                 leaf: true,
                 checked:false,
                 iconCls :'no-icon'
@@ -340,7 +358,15 @@ EvaClinicalWidgetPanel.prototype = {
             {
                 name:'Pathogenic',
                 cls: "parent",
-                value:'pathogenic(1,245)',
+                value:'Pathogenic',
+                leaf: true,
+                checked:false,
+                iconCls :'no-icon'
+            },
+            {
+                name:'Drug Response',
+                cls: "parent",
+                value:'drug_response',
                 leaf: true,
                 checked:false,
                 iconCls :'no-icon'
@@ -356,7 +382,7 @@ EvaClinicalWidgetPanel.prototype = {
 
         var  clinicalSignfcFilter = new EvaClinVarFilterFormPanel({
             data: clinicalSignfcType,
-            filterType:' clinicalSignfc',
+            filterType:'significance',
             title:'Clinical Significance',
             height:240,
             collapsed: true,
@@ -383,7 +409,7 @@ EvaClinicalWidgetPanel.prototype = {
             submitButtonText: 'Submit',
             filters: [clinvarSpeciesFilter,clinvarPositionFilter,clinvarConseqTypeFilter,phenotypeFilter,variationTypeFilter,clinicalSignfcFilter,reviewStatusFilter],
             width: 300,
-            height: 1243,
+            height: 1300,
             border: false,
             handlers: {
                 'submit': function (e) {
@@ -428,10 +454,13 @@ EvaClinicalWidgetPanel.prototype = {
 
 
                     //CONSEQUENCE TYPES CHECK
-                    if (typeof e.values.ct !== 'undefined') {
-                        if (e.values.ct instanceof Array) {
-                            e.values.ct = e.values.ct.join(",");
+
+                    console.log(e.values)
+                    if (typeof e.values['annot-ct'] !== 'undefined') {
+                        if (e.values['annot-ct'] instanceof Array) {
+                            e.values['so'] = e.values['annot-ct'].join(",");
                         }
+                        delete  e.values['annot-ct'];
                     }
 
                     if (typeof e.values.accessionId !== 'undefined') {

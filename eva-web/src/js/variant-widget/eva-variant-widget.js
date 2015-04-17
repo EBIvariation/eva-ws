@@ -311,7 +311,7 @@ EvaVariantWidget.prototype = {
                 {
                     text: 'Class',
                     dataIndex: 'type',
-                    flex: 0.5,
+                    flex: 0.3,
                     xtype: "templatecolumn",
                     tpl: '<tpl if="type"><a href="http://www.ncbi.nlm.nih.gov/books/NBK44447/#Content.what_classes_of_genetic_variatio" target="_blank">{type}</a><tpl else>-</tpl>',
                 },
@@ -342,13 +342,28 @@ EvaVariantWidget.prototype = {
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){
                         var tempArray = [];
                         var consequenceTypes = rec.data.consequenceTypes;
-                        if(consequenceTypes){
-                            for (i = 0; i < consequenceTypes.length; i++) {
-                                tempArray.push(consequenceTypes[i].soTerms[0].soName)
-                            }
-                            meta.tdAttr = 'data-qtip="'+tempArray.join('\n')+'"';
+                        if(!_.isUndefined(value)){
+                            var tempArray = [];
+                            _.each(_.keys(consequenceTypes), function(key){
+                                var so_terms = this[key].soTerms;
+                                _.each(_.keys(so_terms), function(key){
+                                    tempArray.push(this[key].soName)
+                                },so_terms);
+                            },consequenceTypes);
+
+
+                            var groupedArr = _.groupBy(tempArray);
+                            var so_array = [];
+                            _.each(_.keys(groupedArr), function(key){
+                                var index =  _.indexOf(consequenceTypesHierarchy, key);
+//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+//                                        so_array.push(key+' ('+this[key].length+')')
+                                so_array[index] = key+' ('+this[key].length+')';
+                            },groupedArr);
+                            so_array =  _.compact(so_array);
+                            meta.tdAttr = 'data-qtip="'+so_array.join('\n')+'"';
                             return value ? Ext.String.format(
-                                '<tpl>'+tempArray.join()+'</tpl>',
+                                '<tpl>'+so_array.join()+'</tpl>',
                                 value
                             ) : '';
                         }else{
@@ -402,7 +417,7 @@ EvaVariantWidget.prototype = {
                         '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
                         '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>' +
                         '<tpl else><a href="?variant={chromosome}:{start}:{reference}:{alternate}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>',
-                    flex: 1
+                    flex: 0.5
                 }
 
                 //
@@ -463,7 +478,7 @@ EvaVariantWidget.prototype = {
             columns:columns,
             samples: this.samples,
             headerConfig: this.headerConfig,
-            plugins:plugins,
+//            plugins:plugins,
             handlers: {
                 "variant:change": function (e) {
                     _this.lastVariant = e.args;
@@ -647,8 +662,6 @@ EvaVariantWidget.prototype = {
                     var region = variant.chromosome+':'+variant.start+'-'+variant.end;
                     var proxy =  _.clone(this.variantBrowserGrid.store.proxy);
 //                proxy.extraParams.region = region;
-                    console.log(proxy.extraParams)
-                    console.log('asdff')
                     EvaManager.get({
                         category: 'segments',
                         resource: 'variants',
@@ -1124,11 +1137,25 @@ EvaVariantWidget.prototype = {
             csvContent += snewLine;
             Ext.Object.each(records[i].data, function(key, value) {
                 if(key == 'consequenceTypes'){
-                    var consqTypeArr = [];
-                    Ext.Object.each(records[i].data[key], function(k, v) {
-                        consqTypeArr.push(v.soTerms[0].soName)
-                    });
-                    value = consqTypeArr.join(" ");
+                    var tempArray = [];
+                    _.each(_.keys(value), function(key){
+                        var so_terms = this[key].soTerms;
+                        _.each(_.keys(so_terms), function(key){
+                            tempArray.push(this[key].soName)
+                        },so_terms);
+                    },value);
+
+
+                    var groupedArr = _.groupBy(tempArray);
+                    var so_array = [];
+                    _.each(_.keys(groupedArr), function(key){
+                        var index =  _.indexOf(consequenceTypesHierarchy, key);
+//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+//                                        so_array.push(key+' ('+this[key].length+')')
+                        so_array[index] = key+' ('+this[key].length+')';
+                    },groupedArr);
+                    so_array =  _.compact(so_array);
+                    value = so_array.join(" ");
                 }else if(key == 'phylop'){
                    var phylop =  _.findWhere(records[i].data[key], {source: key});
                    if(phylop){

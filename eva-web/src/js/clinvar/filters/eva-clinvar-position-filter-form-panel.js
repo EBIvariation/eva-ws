@@ -130,6 +130,8 @@ ClinVarPositionFilterFormPanel.prototype = {
     getValues: function () {
         var values = this.panel.getValues();
         for (key in values) {
+            console.log(key)
+            console.log(values)
             if (values[key] == '') {
                 delete values[key]
             }

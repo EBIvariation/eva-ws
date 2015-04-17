@@ -71,6 +71,7 @@ module.exports = function (grunt) {
                     'src/js/clinvar/eva-clinvar-assertion-panel.js',
                     'src/js/clinvar/eva-clinvar-summary-panel.js',
                     'src/js/clinvar/eva-clinvar-links-panel.js',
+                    'src/js/clinvar/eva-clinvar-annotation-panel.js',
                     'src/js/clinvar/filters/eva-clinvar-position-filter-form-panel.js',
                     'src/js/clinvar/filters/eva-clinvar-trait-filter-form-panel.js',
                     'src/js/clinvar/filters/eva-clinvar-filter-form-panel.js',
