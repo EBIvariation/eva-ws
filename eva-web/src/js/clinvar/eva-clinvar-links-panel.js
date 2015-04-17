@@ -97,7 +97,7 @@ ClinvarLinksPanel.prototype = {
 //        this.linksContainer.removeAll();
 //        this.linksContainer.add(panels);
 
-        var linksData = data.clinvarSet;
+        var linksData = data;
         var panel = this._createLinksPanel(linksData);
         this.linksContainer.removeAll();
         this.linksContainer.add(panel);
@@ -134,12 +134,12 @@ ClinvarLinksPanel.prototype = {
         return this.panel;
     },
     _createLinksPanel: function (data) {
-        data = data.referenceClinVarAssertion;
+        var chromosome = data.chromosome;
+        data = data.clinvarSet.referenceClinVarAssertion;
         var measure = data.measureSet.measure;
         var linksTable  = '<div class="row"><div class="col-md-8"><table class="table ocb-attributes-table">'
         linksTable += '<tr><td class="header">ID</td><td class="header">DB</td><td class="header">Type</td><td class="header">Status</td></tr>'
         _.each(_.keys(measure), function(key){
-            console.log(this[key])
             var xref = this[key].xref;
             if(xref){
                 _.each(_.keys(xref), function(key){
@@ -156,6 +156,11 @@ ClinvarLinksPanel.prototype = {
         },measure);
 
         linksTable += '</table></div></div>'
+
+        var lovd_link = 'http://databases.ebi.lovd.nl/shared/variants#order=VariantOnGenome%2FDNA%2CASC&skip[allele_]=allele_&skip[screeningids]=screeningids&skip[created_by]=created_by&skip[created_date]=created_date&search_chromosome='+chromosome+'&page_size=100&page=1';
+
+        linksTable += '<br /><div><a href="'+lovd_link+'" target="_blank">LOVD</a></div>'
+
 
 
 

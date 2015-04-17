@@ -144,7 +144,6 @@ ClinvarAnnotationPanel.prototype = {
             annotData = data.consequenceTypes;
         }
 
-        console.log(annotData)
         var annotColumns = {
             items:[
                 {

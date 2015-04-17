@@ -454,8 +454,6 @@ EvaClinicalWidgetPanel.prototype = {
 
 
                     //CONSEQUENCE TYPES CHECK
-
-                    console.log(e.values)
                     if (typeof e.values['annot-ct'] !== 'undefined') {
                         if (e.values['annot-ct'] instanceof Array) {
                             e.values['so'] = e.values['annot-ct'].join(",");
@@ -500,7 +498,6 @@ EvaClinicalWidgetPanel.prototype = {
                         query:'clinical',
                         params:params,
                         success: function (response) {
-                            console.log(response)
                             try {
                                 var data = response.response[0].result;
                                 _this.clinvarWidget.clinvarBrowserGrid.load(data);

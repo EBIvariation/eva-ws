@@ -189,7 +189,6 @@ ClinvarSummaryPanel.prototype = {
            },annotData.consequenceTypes);
 
            var groupedArr = _.groupBy(tempArray);
-           console.log(groupedArr)
            var so_array = [];
            _.each(_.keys(groupedArr), function(key){
                var index =  _.indexOf(consequenceTypesHierarchy, key);
