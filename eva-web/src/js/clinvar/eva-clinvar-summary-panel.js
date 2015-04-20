@@ -171,14 +171,18 @@ ClinvarSummaryPanel.prototype = {
        var hgvs = '-';
        var soTerms = '-';
        if(!_.isUndefined(annotData)){
-           var hgvsArray = []
-           var hgvs_data = annotData.hgvs.sort().reverse()
-           _.each(_.keys(hgvs_data), function(key){
-               if(this[key]){
-                   hgvsArray.push(this[key]);
-               }
-           },hgvs_data);
-           hgvs = hgvsArray.join("<br\/>");
+          var hgvsArray = []
+          if(!_.isUndefined(annotData.hgvs)){
+              var hgvs_data = annotData.hgvs.sort().reverse();
+              _.each(_.keys(hgvs_data), function(key){
+                  if(this[key]){
+                      hgvsArray.push(this[key]);
+                  }
+              },hgvs_data);
+              hgvs = hgvsArray.join("<br\/>");
+          }
+
+
 
            var tempArray = [];
            _.each(_.keys(annotData.consequenceTypes), function(key){
