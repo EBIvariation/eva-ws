@@ -151,26 +151,26 @@ ClinvarAnnotationPanel.prototype = {
                 {
                     text: "Gene ID",
                     dataIndex: "ensemblGeneId",
-                    flex: 1,
+                    flex: 1.2,
                     xtype: "templatecolumn",
                     tpl: '<tpl><a href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?g={ensemblGeneId}" target="_blank">{ensemblGeneId}</a>',
                 },
                 {
                     text: "Transcript ID",
                     dataIndex: "ensemblTranscriptId",
-                    flex: 1,
+                    flex: 1.2,
                     xtype: "templatecolumn",
                     tpl: '<tpl><a href="http://www.ensembl.org/Homo_sapiens/transview?transcript={ensemblTranscriptId}" target="_blank">{ensemblTranscriptId}</a>',
                 },
                 {
                     text: "Name",
                     dataIndex: "geneName",
-                    flex: 0.5
+                    flex: 0.7
                 },
                 {
                     text: "SO Terms",
                     dataIndex: "soTerms",
-                    flex: 1.5,
+                    flex: 1.7,
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){
 
                         if(!_.isUndefined(value)){
@@ -204,22 +204,22 @@ ClinvarAnnotationPanel.prototype = {
                 {
                     text: "Biotype",
                     dataIndex: "biotype",
-                    flex: 1
+                    flex: 1.3
                 },
                 {
                     text: "Codon",
                     dataIndex: "codon",
-                    flex: 1
+                    flex: 0.6
                 },
                 {
-                    text: "cDna Position",
+                    text: "cDna <br />Position",
                     dataIndex: "cDnaPosition",
-                    flex: 1
+                    flex: 0.6
                 },
                 {
-                    text: "AAChange",
+                    text: "AA <br />Change",
                     dataIndex: "aaChange",
-                    flex: 1
+                    flex: 0.6
                 }
 
             ],
