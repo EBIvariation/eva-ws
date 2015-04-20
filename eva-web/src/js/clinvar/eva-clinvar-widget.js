@@ -252,20 +252,20 @@ EvaClinVarWidget.prototype = {
         var columns ={
             items:[
                 {
-                    text: 'Chrom',
+                    text: 'Chr',
                     dataIndex: 'chromosome',
                     flex:0.2
                 },
                 {
                     text: "Position",
                     dataIndex: 'position',
-                    flex:0.3
+                    flex:0.4
                 },
                 {
                     text: "Gene",
                     dataIndex: 'gene',
 //                    id:'clinvar-grid-gene-column',
-                    flex:0.3,
+                    flex:0.4,
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){
 //                        var valueArray = [];
 //                        var clinvarList = rec.data.clinvarList
@@ -287,6 +287,41 @@ EvaClinVarWidget.prototype = {
 //
 //
                         return value;
+
+                    }
+                },
+                {
+                    text: "Most Severe <br />SO Term",
+                    dataIndex: 'so_terms',
+                    flex:0.8,
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+
+                        if(!_.isUndefined(value)){
+                            var tempArray = [];
+                            _.each(_.keys(value), function(key){
+                                var so_terms = this[key].soTerms;
+                                _.each(_.keys(so_terms), function(key){
+                                    tempArray.push(this[key].soName)
+                                },so_terms);
+                            },value);
+
+                            var groupedArr = _.groupBy(tempArray);
+                            var so_array = [];
+                            _.each(_.keys(groupedArr), function(key){
+                                var index =  _.indexOf(consequenceTypesHierarchy, key);
+//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+//                                        so_array.push(key+' ('+this[key].length+')')
+                                so_array[index] = key;
+                            },groupedArr);
+                            so_array =  _.compact(so_array);
+                            meta.tdAttr = 'data-qtip="'+_.first(so_array)+'"';
+                            return value ? Ext.String.format(
+                                '<tpl>'+_.first(so_array)+'</tpl>',
+                                value
+                            ) : '';
+                        }else{
+                            return '';
+                        }
 
                     }
                 },
@@ -377,42 +412,8 @@ EvaClinVarWidget.prototype = {
 
 
                             }
-                        },
-                        {
-                            text: "SO Term(s)",
-                            dataIndex: 'so_terms',
-                            flex:1,
-                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
-
-                                if(!_.isUndefined(value)){
-                                    var tempArray = [];
-                                    _.each(_.keys(value), function(key){
-                                        var so_terms = this[key].soTerms;
-                                        _.each(_.keys(so_terms), function(key){
-                                            tempArray.push(this[key].soName)
-                                        },so_terms);
-                                    },value);
-
-                                    var groupedArr = _.groupBy(tempArray);
-                                    var so_array = [];
-                                    _.each(_.keys(groupedArr), function(key){
-                                       var index =  _.indexOf(consequenceTypesHierarchy, key);
-//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
-//                                        so_array.push(key+' ('+this[key].length+')')
-                                        so_array[index] = key+' ('+this[key].length+')';
-                                    },groupedArr);
-                                    so_array =  _.compact(so_array);
-                                    meta.tdAttr = 'data-qtip="'+so_array.join('\n')+'"';
-                                    return value ? Ext.String.format(
-                                        '<tpl>'+so_array.join()+'</tpl>',
-                                        value
-                                    ) : '';
-                                }else{
-                                    return '';
-                                }
-
-                            }
                         }
+
                     ]
                 }
 
@@ -429,13 +430,14 @@ EvaClinVarWidget.prototype = {
             {name: 'chromosome', mapping: 'chromosome', type: 'string' },
             {name: 'position', mapping: 'start', type: 'string' },
             {name: 'gene', mapping: 'clinvarSet.referenceClinVarAssertion', type: 'auto' },
+            {name: 'so_terms', mapping: 'annot.consequenceTypes', type: 'auto' },
             {name: 'trait', mapping: 'clinvarSet.referenceClinVarAssertion.traitSet.trait[0].name', type: 'auto' },
             {name: 'clincalSignificance', mapping: 'clinvarSet.referenceClinVarAssertion.clinicalSignificance.description', type: 'string' },
             {name: 'clincalVarAcc', mapping: 'clinvarSet.referenceClinVarAssertion.clinVarAccession.acc', type: 'string' },
             {name: 'dbSNPAcc', mapping: 'clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0]', type: 'auto' },
 //            {name: 'clinvarList', mapping: 'clinvarList', type: 'auto' }
-            {name: 'annot', mapping: 'annot', type: 'auto' },
-            {name: 'so_terms', mapping: 'annot.consequenceTypes', type: 'auto' }
+            {name: 'annot', mapping: 'annot', type: 'auto' }
+
         ];
 
 

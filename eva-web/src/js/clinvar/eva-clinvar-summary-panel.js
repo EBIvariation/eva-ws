@@ -182,27 +182,31 @@ ClinvarSummaryPanel.prototype = {
               hgvs = hgvsArray.join("<br\/>");
           }
 
-
-
            var tempArray = [];
            _.each(_.keys(annotData.consequenceTypes), function(key){
                var so_terms = this[key].soTerms;
+               var transcript_id = this[key].ensemblTranscriptId;
                _.each(_.keys(so_terms), function(key){
-                   tempArray.push(this[key].soName)
+                   tempArray.push({name:this[key].soName,transcript_id:transcript_id})
                },so_terms);
            },annotData.consequenceTypes);
 
-           var groupedArr = _.groupBy(tempArray);
+
+           var groupedArr = _.groupBy(tempArray,'name');
            var so_array = [];
            _.each(_.keys(groupedArr), function(key){
                var index =  _.indexOf(consequenceTypesHierarchy, key);
-//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
-//                                        so_array.push(key+' ('+this[key].length+')')
-               so_array[index] = key+' ('+this[key].length+')';
+               var  transcript_array = [];
+               _.each(_.keys(this[key]), function(key){
+                   if(!_.isUndefined(this[key].transcript_id)){
+                        transcript_array.push(this[key].transcript_id)
+                   }
+               },this[key]);
+               var transcripts = transcript_array.join('\n');
+               so_array[index] = ''+key+' (<span title="'+transcripts+'">'+this[key].length+'</span>)';
            },groupedArr);
 
            so_array =  _.compact(so_array);
-
            soTerms = so_array.join("<br\/>");
 
        }

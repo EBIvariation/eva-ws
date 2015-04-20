@@ -144,6 +144,8 @@ ClinvarAnnotationPanel.prototype = {
             annotData = data.consequenceTypes;
         }
 
+
+
         var annotColumns = {
             items:[
                 {
@@ -166,6 +168,40 @@ ClinvarAnnotationPanel.prototype = {
                     flex: 0.5
                 },
                 {
+                    text: "SO Terms",
+                    dataIndex: "soTerms",
+                    flex: 1.5,
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+
+                        if(!_.isUndefined(value)){
+
+                            var tempArray = [];
+                            _.each(_.keys(value), function(key){
+                                tempArray.push(this[key].soName);
+                            },value);
+
+                            var groupedArr = _.groupBy(tempArray);
+                            var so_array = [];
+                            _.each(_.keys(groupedArr), function(key){
+                                var index =  _.indexOf(consequenceTypesHierarchy, key);
+//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+//                                        so_array.push(key+' ('+this[key].length+')')
+                                so_array[index] = key;
+                            },groupedArr);
+                            so_array =  _.compact(so_array);
+                            value =
+                                meta.tdAttr = 'data-qtip="'+ so_array.join('\n')+'"';
+                            return value ? Ext.String.format(
+                                '<tpl>'+so_array.join('<br />')+'</tpl>',
+                                value
+                            ) : '';
+                        }else{
+                            return '';
+                        }
+
+                    }
+                },
+                {
                     text: "Biotype",
                     dataIndex: "biotype",
                     flex: 1
@@ -185,6 +221,7 @@ ClinvarAnnotationPanel.prototype = {
                     dataIndex: "aaChange",
                     flex: 1
                 }
+
             ],
             defaults: {
                 align:'left' ,
@@ -196,10 +233,11 @@ ClinvarAnnotationPanel.prototype = {
 
         var store = Ext.create("Ext.data.Store", {
             //storeId: "GenotypeStore",
-            pageSize: 10,
+            pageSize: 20,
             fields: [
                 {name: 'ensemblGeneId', type: 'string'},
-                {name: "geneName", type: "string"}
+                {name: "geneName", type: "string"},
+                {name: "soTerms", type: "auto"}
             ],
             data: annotData,
             proxy: {
@@ -216,7 +254,7 @@ ClinvarAnnotationPanel.prototype = {
         var paging = Ext.create('Ext.PagingToolbar', {
             store: store,
             id: _this.id + "_pagingToolbar",
-            pageSize: 10,
+            pageSize: 20,
             displayInfo: true,
             displayMsg: 'Transcripts {0} - {1} of {2}',
             emptyMsg: "No records to display"
@@ -226,8 +264,10 @@ ClinvarAnnotationPanel.prototype = {
         var grid = Ext.create('Ext.grid.Panel', {
             store: store,
             loadMask: true,
-            width: 900,
-            height: 370,
+            width: 970,
+//            height: 370,
+            maxHeight:550,
+            autoHeight: true,
             cls:'genotype-grid',
             margin: 20,
             viewConfig: {

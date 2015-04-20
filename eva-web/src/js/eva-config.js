@@ -24,24 +24,26 @@
 //METADATA_VERSION = 'v1';
 
 //CELLBASE_HOST = 'http://172.22.70.137:8080/cellbase/webservices/rest';
-CELLBASE_HOST = 'http://172.22.68.41:8080/cellbase/webservices/rest';
-//CELLBASE_HOST = 'http://wwwdev.ebi.ac.uk/cellbase/webservices/rest';
+//CELLBASE_HOST = 'http://172.22.68.41:8080/cellbase/webservices/rest';
+CELLBASE_HOST = 'http://wwwdev.ebi.ac.uk/cellbase/webservices/rest';
 CELLBASE_VERSION = 'v3';
 
-clinVarSpeciesList = [{
+clinVarSpeciesList = [
+                        {
                         assemblyCode:"grch37",
                         taxonomyCode:"hsapiens",
                         taxonomyEvaName:"Human",
                         assemblyName:"GRCh37"
 
-                        },
-                        {
-                            assemblyCode:"grch38",
-                            taxonomyCode:"hsapiens",
-                            taxonomyEvaName:"Human",
-                            assemblyName:"GRCh38"
-
-                        }];
+                        }
+//                        {
+//                            assemblyCode:"grch38",
+//                            taxonomyCode:"hsapiens",
+//                            taxonomyEvaName:"Human",
+//                            assemblyName:"GRCh38"
+//
+//                        }
+                    ];
 
 var TABS = [
     "Home",
