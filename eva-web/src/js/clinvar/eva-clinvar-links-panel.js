@@ -159,7 +159,7 @@ ClinvarLinksPanel.prototype = {
 
         var lovd_link = 'http://databases.ebi.lovd.nl/shared/variants#order=VariantOnGenome%2FDNA%2CASC&skip[allele_]=allele_&skip[screeningids]=screeningids&skip[created_by]=created_by&skip[created_date]=created_date&search_chromosome='+chromosome+'&page_size=100&page=1';
 
-        linksTable += '<br /><div><a href="'+lovd_link+'" target="_blank">LOVD</a></div>'
+        linksTable += '<br /><div><a href="'+lovd_link+'" target="_blank">LOVD - Leiden Open Variation Database</a></div>'
 
 
 
