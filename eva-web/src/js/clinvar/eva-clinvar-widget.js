@@ -344,14 +344,10 @@ EvaClinVarWidget.prototype = {
                     text: "Clinical <br /> Significance",
                     dataIndex: 'clincalSignificance',
                     flex:0.5,
-//                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
-//                        var valueArray = [];
-//                        var clinvarList = rec.data.clinvarList
-//                        _.each(_.keys(clinvarList), function(key){
-//                            valueArray.push(this[key].referenceClinVarAssertion.clinicalSignificance.description);
-//                        },clinvarList);
-//                        return valueArray.join("<br>");
-//                    }
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                        meta.tdAttr = 'data-qtip="'+value+'"';
+                        return value;
+                    }
                 },
                 {
                     text: "Accessions",
