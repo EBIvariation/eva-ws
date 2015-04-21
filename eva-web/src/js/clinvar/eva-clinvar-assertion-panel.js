@@ -140,7 +140,10 @@ ClinvarAssertionPanel.prototype = {
     },
     _createAssertPanel: function (data) {
 //        var lastEvaluated = new Date( data.clinicalSignificance.dateLastEvaluated ).toUTCString();
-        var submittedDate = new Date( data.clinVarSubmissionID.submitterDate ).toUTCString();
+        var submittedDate = '-';
+        if(data.clinVarSubmissionID.submitterDate){
+             submittedDate = new Date( data.clinVarSubmissionID.submitterDate ).toUTCString();
+        }
         var origin = data.observedIn[0].sample.origin;
         var collectionMethod = data.observedIn[0].method[0].methodType;
         var alleOriginArray = [];
