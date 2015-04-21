@@ -120,7 +120,6 @@ SpeciesFilterFormPanel.prototype = {
             listeners: {
                 afterrender: function (field) {
 //                    field.setValue('hsapiens_grch37');
-                    console.log()
                     field.setValue(_this.defaultValue);
                 },
                 change: function (field, newValue, oldValue) {

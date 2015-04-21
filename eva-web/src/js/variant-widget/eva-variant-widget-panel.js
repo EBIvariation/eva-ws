@@ -129,7 +129,8 @@ EvaVariantWidgetPanel.prototype = {
                 },
                 genomeViewer: false,
                 effect:false,
-                rawData:false
+                rawData:false,
+                populationStats:false
             },
             responseParser: function (response) {
                 var res = [];
@@ -181,7 +182,7 @@ EvaVariantWidgetPanel.prototype = {
 
         var studyFilter = new EvaStudyFilterFormPanel({
             border:false,
-            collapsed: true,
+            collapsed: false,
             height: 550,
             studiesStore: this.studiesStore,
             studyFilterTpl:'<tpl if="studyId"><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div><tpl else><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a></div></tpl>'
@@ -260,7 +261,8 @@ EvaVariantWidgetPanel.prototype = {
             target: target,
             submitButtonText: 'Submit',
             submitButtonId: 'vb-submit-button',
-            filters: [speciesFilter,positionFilter, conseqTypeFilter,proteinSubScoreFilter,conservationScoreFilter,studyFilter],
+//            filters: [speciesFilter,positionFilter, conseqTypeFilter,proteinSubScoreFilter,conservationScoreFilter,studyFilter],
+            filters: [speciesFilter,positionFilter,studyFilter],
             width: 300,
             height: 1343,
             border: false,
@@ -280,57 +282,57 @@ EvaVariantWidgetPanel.prototype = {
                     }
 
                     if (typeof e.values.gene !== 'undefined') {
-//                        CellBaseManager.get({
-//                            species: cellBaseSpecies,
-//                            category: 'feature',
-//                            subCategory: 'gene',
-//                            query: e.values.gene.toUpperCase(),
-//                            resource: "info",
-//                            async: false,
-//                            params: {
-//                                include: 'chromosome,start,end'
-//                            },
-//                            success: function (data) {
-//                                for (var i = 0; i < data.response.length; i++) {
-//                                    var queryResult = data.response[i];
-//                                    if(!_.isEmpty(queryResult.result[0])){
-//                                        var region = new Region(queryResult.result[0]);
-//                                        regions.push(region.toString());
-//                                    }
-//                                }
-//                            }
-//                        });
-//                        delete  e.values.gene;
-                        e.values.gene = e.values.gene;
+                        CellBaseManager.get({
+                            species: cellBaseSpecies,
+                            category: 'feature',
+                            subCategory: 'gene',
+                            query: e.values.gene.toUpperCase(),
+                            resource: "info",
+                            async: false,
+                            params: {
+                                include: 'chromosome,start,end'
+                            },
+                            success: function (data) {
+                                for (var i = 0; i < data.response.length; i++) {
+                                    var queryResult = data.response[i];
+                                    if(!_.isEmpty(queryResult.result[0])){
+                                        var region = new Region(queryResult.result[0]);
+                                        regions.push(region.toString());
+                                    }
+                                }
+                            }
+                        });
+                        delete  e.values.gene;
+//                        e.values.gene = e.values.gene;
                     }
 
                     if (typeof e.values.snp !== 'undefined') {
-//                        CellBaseManager.get({
-//                            species: cellBaseSpecies,
-//                            category: 'feature',
-//                            subCategory: 'snp',
-//                            query: e.values.snp,
-//                            resource: "info",
-//                            async: false,
-//                            params: {
-//                                include: 'chromosome,start,end'
-//                            },
-//                            success: function (data) {
-//                                for (var i = 0; i < data.response.length; i++) {
-//                                    var queryResult = data.response[i];
-//                                    var region = new Region(queryResult.result[0]);
-//                                    var fields2 = (""+region).split(/[:-]/);
-//                                    if(parseInt(fields2[1]) > parseInt(fields2[2])) {
-//                                        var swap = fields2[1];
-//                                        region.start = fields2[2];
-//                                        region.end = swap;
-//                                    }
-//                                    regions.push(region.toString());
-//                                }
-//                            }
-//                        });
-                        e.values.id = e.values.snp;
-//                        delete  e.values.snp;
+                        CellBaseManager.get({
+                            species: cellBaseSpecies,
+                            category: 'feature',
+                            subCategory: 'snp',
+                            query: e.values.snp,
+                            resource: "info",
+                            async: false,
+                            params: {
+                                include: 'chromosome,start,end'
+                            },
+                            success: function (data) {
+                                for (var i = 0; i < data.response.length; i++) {
+                                    var queryResult = data.response[i];
+                                    var region = new Region(queryResult.result[0]);
+                                    var fields2 = (""+region).split(/[:-]/);
+                                    if(parseInt(fields2[1]) > parseInt(fields2[2])) {
+                                        var swap = fields2[1];
+                                        region.start = fields2[2];
+                                        region.end = swap;
+                                    }
+                                    regions.push(region.toString());
+                                }
+                            }
+                        });
+//                        e.values.id = e.values.snp;
+                        delete  e.values.snp;
                     }
 
 

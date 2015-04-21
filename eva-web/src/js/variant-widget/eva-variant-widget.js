@@ -336,78 +336,78 @@ EvaVariantWidget.prototype = {
 //                    text: 'Gene',
 //                    dataIndex: 'gene'
 //                },
-                {
-                    text: 'Consequence Type',
-                    dataIndex: 'consequenceTypes',
-                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
-                        var tempArray = [];
-                        var consequenceTypes = rec.data.consequenceTypes;
-                        if(!_.isUndefined(value)){
-                            var tempArray = [];
-                            _.each(_.keys(consequenceTypes), function(key){
-                                var so_terms = this[key].soTerms;
-                                _.each(_.keys(so_terms), function(key){
-                                    tempArray.push(this[key].soName)
-                                },so_terms);
-                            },consequenceTypes);
-
-
-                            var groupedArr = _.groupBy(tempArray);
-                            var so_array = [];
-                            _.each(_.keys(groupedArr), function(key){
-                                var index =  _.indexOf(consequenceTypesHierarchy, key);
-//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
-//                                        so_array.push(key+' ('+this[key].length+')')
-                                so_array[index] = key+' ('+this[key].length+')';
-                            },groupedArr);
-                            so_array =  _.compact(so_array);
-                            meta.tdAttr = 'data-qtip="'+so_array.join('\n')+'"';
-                            return value ? Ext.String.format(
-                                '<tpl>'+so_array.join()+'</tpl>',
-                                value
-                            ) : '';
-                        }else{
-                            return '';
-                        }
-
-//                        return tempArray.join();
-                    },
-                    flex: 1
-                },
-                {
-                    text: "Conserved Regions",
-                    columns: [
-                        {
-                            text: "phyloP",
-                            dataIndex: "conservedRegionScores",
-                            width:70,
-                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
-                                var conservedRegionScores = rec.data.conservedRegionScores;
-                                _.each(_.keys(conservedRegionScores), function(key){
-                                   if(this[key].source == 'phylop'){
-                                       value = this[key].score.toFixed(3);
-                                   }
-                                },conservedRegionScores);
-                                return value;
-                            }
-
-                        },
-                        {
-                            text: "PhastCons",
-                            dataIndex: "conservedRegionScores",
-                            width:80,
-                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
-                                var conservedRegionScores = rec.data.conservedRegionScores;
-                                _.each(_.keys(conservedRegionScores), function(key){
-                                    if(this[key].source == 'phastCons'){
-                                        value = this[key].score.toFixed(3);
-                                    }
-                                },conservedRegionScores);
-                                return value;
-                            }
-                        }
-                    ]
-                },
+//                {
+//                    text: 'Consequence Type',
+//                    dataIndex: 'consequenceTypes',
+//                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+//                        var tempArray = [];
+//                        var consequenceTypes = rec.data.consequenceTypes;
+//                        if(!_.isUndefined(value)){
+//                            var tempArray = [];
+//                            _.each(_.keys(consequenceTypes), function(key){
+//                                var so_terms = this[key].soTerms;
+//                                _.each(_.keys(so_terms), function(key){
+//                                    tempArray.push(this[key].soName)
+//                                },so_terms);
+//                            },consequenceTypes);
+//
+//
+//                            var groupedArr = _.groupBy(tempArray);
+//                            var so_array = [];
+//                            _.each(_.keys(groupedArr), function(key){
+//                                var index =  _.indexOf(consequenceTypesHierarchy, key);
+////                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+////                                        so_array.push(key+' ('+this[key].length+')')
+//                                so_array[index] = key+' ('+this[key].length+')';
+//                            },groupedArr);
+//                            so_array =  _.compact(so_array);
+//                            meta.tdAttr = 'data-qtip="'+so_array.join('\n')+'"';
+//                            return value ? Ext.String.format(
+//                                '<tpl>'+so_array.join()+'</tpl>',
+//                                value
+//                            ) : '';
+//                        }else{
+//                            return '';
+//                        }
+//
+////                        return tempArray.join();
+//                    },
+//                    flex: 1
+//                },
+//                {
+//                    text: "Conserved Regions",
+//                    columns: [
+//                        {
+//                            text: "phyloP",
+//                            dataIndex: "conservedRegionScores",
+//                            width:70,
+//                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+//                                var conservedRegionScores = rec.data.conservedRegionScores;
+//                                _.each(_.keys(conservedRegionScores), function(key){
+//                                   if(this[key].source == 'phylop'){
+//                                       value = this[key].score.toFixed(3);
+//                                   }
+//                                },conservedRegionScores);
+//                                return value;
+//                            }
+//
+//                        },
+//                        {
+//                            text: "PhastCons",
+//                            dataIndex: "conservedRegionScores",
+//                            width:80,
+//                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+//                                var conservedRegionScores = rec.data.conservedRegionScores;
+//                                _.each(_.keys(conservedRegionScores), function(key){
+//                                    if(this[key].source == 'phastCons'){
+//                                        value = this[key].score.toFixed(3);
+//                                    }
+//                                },conservedRegionScores);
+//                                return value;
+//                            }
+//                        }
+//                    ]
+//                },
                 {
                     text: 'View',
                     //dataIndex: 'id',
@@ -430,7 +430,7 @@ EvaVariantWidget.prototype = {
         } ;
 
         var attributes = [
-//            {name: 'id', type: 'string'},
+            {name: 'id', type: 'string'},
             {name: "chromosome", type: "string"},
             {name: "start", type: "int"},
             {name: "end", type: "int"},
@@ -438,11 +438,11 @@ EvaVariantWidget.prototype = {
             {name: "ref", type: "string"},
             {name: "alt", type: "string"},
             {name: 'hgvs_name', type: 'string'},
-            {name: 'id', mapping: 'annotation.xrefs[0].id', type: 'string' },
-            {name: 'consequenceTypes', mapping: 'annotation.consequenceTypes', type:'auto' },
-            {name: 'conservedRegionScores', mapping: 'annotation.conservedRegionScores', type:'auto'},
-            {name: 'phylop',  mapping: 'annotation.conservedRegionScores', type:'auto'},
-            {name: 'phastCons', mapping: 'annotation.conservedRegionScores', type:'auto'}
+//            {name: 'id', mapping: 'annotation.xrefs[0].id', type: 'string' },
+//            {name: 'consequenceTypes', mapping: 'annotation.consequenceTypes', type:'auto' },
+//            {name: 'conservedRegionScores', mapping: 'annotation.conservedRegionScores', type:'auto'},
+//            {name: 'phylop',  mapping: 'annotation.conservedRegionScores', type:'auto'},
+//            {name: 'phastCons', mapping: 'annotation.conservedRegionScores', type:'auto'}
         ];
 
 

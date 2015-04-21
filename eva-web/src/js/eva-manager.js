@@ -21,12 +21,12 @@
  */
 
 if(window.location.protocol == 'https:'){
-//    METADATA_HOST = "https://wwwdev.ebi.ac.uk/eva/webservices/rest";
-      METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
+    METADATA_HOST = "https://wwwdev.ebi.ac.uk/eva/webservices/rest";
+//      METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
 }else{
     //METADATA_HOST = "http://172.22.70.137:8080/eva/webservices/rest";
-    METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
-    //METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+//    METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
+    METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
 }
 
 METADATA_VERSION = 'v1';
