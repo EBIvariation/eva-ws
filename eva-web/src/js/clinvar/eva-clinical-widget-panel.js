@@ -399,6 +399,7 @@ EvaClinicalWidgetPanel.prototype = {
             ]
         });
 
+
         var formPanel = new FormPanel({
             title: 'Filter',
             headerConfig: {
@@ -407,12 +408,13 @@ EvaClinicalWidgetPanel.prototype = {
             mode: 'accordion',
             target: target,
             submitButtonText: 'Submit',
-            filters: [clinvarSpeciesFilter,clinvarPositionFilter,clinvarConseqTypeFilter,phenotypeFilter,variationTypeFilter,clinicalSignfcFilter,reviewStatusFilter],
+            filters: [clinvarPositionFilter,clinvarConseqTypeFilter,phenotypeFilter,variationTypeFilter,clinicalSignfcFilter,reviewStatusFilter],
             width: 300,
             height: 1300,
             border: false,
             handlers: {
                 'submit': function (e) {
+                    console.log(e.values)
                     _this.clinvarWidget.clinvarBrowserGrid.setLoading(true);
                     //POSITION CHECK
                     var regions = [];
@@ -422,6 +424,7 @@ EvaClinicalWidgetPanel.prototype = {
                         }
                         delete  e.values.region;
                     }
+
                     var gene = e.values.gene;
                     if (typeof e.values.gene !== 'undefined') {
 //                        CellBaseManager.get({
@@ -468,13 +471,13 @@ EvaClinicalWidgetPanel.prototype = {
 
 
                     if (regions.length > 0) {
-//                       e.values['region'] = regions.join(',');
-                         e.values['region'] = _.last(regions);
-                        regions = _.last(regions);
+                       e.values['region'] = regions.join(',');
+//                         e.values['region'] = _.last(regions);
+//                        regions = _.last(regions);
                     }
 
 
-                    var params = _.extend(e.values,{merge:true,include:'clinvar'});
+                    var params = _.extend(e.values,{merge:true,include:'clinvar',species:'hsapiens_grch37'});
 
                     _this.clinvarWidget.formValues = e.values;
 

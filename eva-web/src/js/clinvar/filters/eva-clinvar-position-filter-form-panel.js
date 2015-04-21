@@ -105,9 +105,18 @@ ClinVarPositionFilterFormPanel.prototype = {
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'Gene / Transcript',
-            labelAlign: 'top'
+            fieldLabel: 'HGNC Gene Symbol',
+            labelAlign: 'top',
+
         });
+
+        var assemblyText = {
+            xtype: 'label',
+            forId: 'myFieldId',
+            html: '<span style="font-size:14px;color:#996a44;"> Assembly : GRCh37</span>',
+            margin: '0 0 10 5',
+            cls:'color:red'
+        };
 
         return Ext.create('Ext.form.Panel', {
             bodyPadding: "5",
@@ -120,7 +129,7 @@ ClinVarPositionFilterFormPanel.prototype = {
             titleCollapse: this.titleCollapse,
             header: this.headerConfig,
             allowBlank: false,
-            items: [accessionId, rsId,regionList, gene]
+            items: [assemblyText,accessionId,regionList, gene]
         });
 
     },
@@ -130,8 +139,13 @@ ClinVarPositionFilterFormPanel.prototype = {
     getValues: function () {
         var values = this.panel.getValues();
         for (key in values) {
+            if(key == 'gene'){
+                values['gene'] = values.gene.toUpperCase();
+            }
             if (values[key] == '') {
                 delete values[key]
+            }else{
+                values[key] = values[key].replace(/\s/g, "");
             }
         }
         return values;

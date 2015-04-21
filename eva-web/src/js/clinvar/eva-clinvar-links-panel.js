@@ -135,10 +135,11 @@ ClinvarLinksPanel.prototype = {
     },
     _createLinksPanel: function (data) {
         var chromosome = data.chromosome;
+        var position = data.start;
         data = data.clinvarSet.referenceClinVarAssertion;
         var measure = data.measureSet.measure;
         var linksTable  = '<div class="row"><div class="col-md-8"><table class="table ocb-attributes-table">'
-        linksTable += '<tr><td class="header">ID</td><td class="header">DB</td><td class="header">Type</td><td class="header">Status</td></tr>'
+        linksTable += '<tr><td class="header">Database</td><td class="header">Accession</td><td class="header">Type</td><td class="header">Status</td></tr>'
         _.each(_.keys(measure), function(key){
             var xref = this[key].xref;
             if(xref){
@@ -150,16 +151,19 @@ ClinvarLinksPanel.prototype = {
                         var OMIMId = id.split('.');
                         id = '<a href="http://www.omim.org/entry/'+OMIMId[0]+'#'+OMIMId[1]+'" target="_blank">'+id+'</a>'
                     }
-                    linksTable += '<tr><td>'+id+'</td><td>'+this[key].db+'</td><td>'+this[key].type+'</td><td>'+this[key].status+'</td></tr>'
+                    linksTable += '<tr><td>'+this[key].db+'</td><td>'+id+'</td><td>'+this[key].type+'</td><td>'+this[key].status+'</td></tr>'
                 },xref);
             }
         },measure);
 
         linksTable += '</table></div></div>'
 
-        var lovd_link = 'http://databases.ebi.lovd.nl/shared/variants#order=VariantOnGenome%2FDNA%2CASC&skip[allele_]=allele_&skip[screeningids]=screeningids&skip[created_by]=created_by&skip[created_date]=created_date&search_chromosome='+chromosome+'&page_size=100&page=1';
 
-        linksTable += '<br /><div><a href="'+lovd_link+'" target="_blank">LOVD - Leiden Open Variation Database</a></div>'
+
+
+        var lovd_link = 'http://databases.ebi.lovd.nl/shared/variants#order=VariantOnGenome%2FDNA%2CASC&skip[allele_]=allele_&skip[screeningids]=screeningids&skip[created_by]=created_by&skip[created_date]=created_date&search_chromosome='+chromosome+'&search_VariantOnGenome/DNA='+position+'&page_size=100&page=1';
+
+        linksTable += '<br /><div><a href="'+lovd_link+'" target="_blank">Search for variant at LOVD</a></div>'
 
 
 

@@ -150,8 +150,8 @@ EvaGeneView.prototype = {
                 hgnc_name = '<a href="http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=HGNC:'+text_to_get.split(':')[2]+'" target="_blank">'+data.name+'</a>'
             }
 
-            _summaryTable +='<tr><td class="header">HGNC Name</td><td>'+hgnc_name+'</td></tr>' +
-                '<tr><td class="header">Gene Type</td><td>'+data.biotype+'</td></tr>' +
+            _summaryTable +='<tr><td class="header">HGNC Symbol</td><td>'+hgnc_name+'</td></tr>' +
+                '<tr><td class="header">Gene Biotype</td><td>'+data.biotype+'</td></tr>' +
                 '<tr><td class="header">Location</td><td>'+data.chromosome+':'+data.start+'-'+data.end+'</td></tr>' +
                 '<tr><td class="header">Description</td><td>'+data.description+'</td></tr>' +
                 '<tr><td class="header">Source</td><td>'+source+'</td></tr>' +
@@ -317,6 +317,7 @@ EvaGeneView.prototype = {
             overflowY: true,
             height: 900,
             collapsible:true,
+//            collapsed:true,
 //            padding: 10,
             renderTo:target,
             items: [View],
@@ -466,6 +467,8 @@ EvaGeneView.prototype = {
 
         genomeViewer.addOverviewTrack(geneOverview);
         genomeViewer.addTrack([sequence, gene, snp]);
+
+        panel.collapse();
 
         return genomeViewer;
     },

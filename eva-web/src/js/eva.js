@@ -101,7 +101,7 @@ Eva.prototype = {
 
         /* clinical */
         $(this.clinicalDiv).addClass('eva-child');
-        this.childDivMenuMap['Clinical'] = this.clinicalDiv;
+        this.childDivMenuMap['Clinical Browser'] = this.clinicalDiv;
 
         /* submision-start */
         $(this.submissionForm).addClass('eva-child');
@@ -210,12 +210,12 @@ Eva.prototype = {
                 }
                 break;
 
-            case 'Clinical':
+            case 'Clinical Browser':
                     if(this.clinicalWidgetPanel){
                         this.clinicalWidgetPanel.show();
                     }else{
                         this.clinicalWidgetPanel = this._createClinicalWidgetPanel(this.contentDiv);
-                        this.select('Clinical');
+                        this.select('Clinical Browser');
                         this.clinicalWidgetPanel.formPanelVariantFilter.trigger('submit', {values: this.clinicalWidgetPanel.formPanelVariantFilter.getValues(), sender: _this});
                     }
                 break;

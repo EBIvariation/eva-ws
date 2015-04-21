@@ -280,7 +280,7 @@ EvaClinVarWidget.prototype = {
 //                        return valueArray.join("<br>");
                               if(value.measureSet.measure[0].measureRelationship){
                                   var gene = value.measureSet.measure[0].measureRelationship[0].symbol[0].elementValue.value;
-                                  value = '<a href="?gene='+gene+'&species=hsapiens" target="_blank">'+gene+'</a>'
+                                  value = '<a href="?gene='+gene+'&species=hsapiens_grch37" target="_blank">'+gene+'</a>'
                               }else{
                                   value = '';
                               }
@@ -291,9 +291,9 @@ EvaClinVarWidget.prototype = {
                     }
                 },
                 {
-                    text: "Most Severe <br />SO Term",
+                    text: "Most Severe <br />Consequence Type",
                     dataIndex: 'so_terms',
-                    flex:0.8,
+                    flex:0.6,
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){
 
                         if(!_.isUndefined(value)){
@@ -350,68 +350,84 @@ EvaClinVarWidget.prototype = {
                     }
                 },
                 {
-                    text: "Accessions",
-                    columns: [
-                        {
-                            text: "ClinVar",
-                            dataIndex: "clincalVarAcc",
-                            width:120,
-                            xtype: "templatecolumn",
-                            tpl: '<tpl><a href="https://www.ncbi.nlm.nih.gov/clinvar/{clincalVarAcc}" target="_blank">{clincalVarAcc}</a></tpl>'
+                    text: "ClinVar Accession",
+                    dataIndex: "clincalVarAcc",
+                    flex:0.41,
+                    xtype: "templatecolumn",
+                    tpl: '<tpl><a href="https://www.ncbi.nlm.nih.gov/clinvar/{clincalVarAcc}" target="_blank">{clincalVarAcc}</a></tpl>'
+//                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+//                        var valueArray = [];
+//                        var clinvarList = rec.data.clinvarList
+//                        _.each(_.keys(clinvarList), function(key){
+//                            valueArray.push('<a href="https://www.ncbi.nlm.nih.gov/clinvar/'+this[key].referenceClinVarAssertion.clinVarAccession.acc+'" target="_blank">'+this[key].referenceClinVarAssertion.clinVarAccession.acc+'</a>');
+//                        },clinvarList);
+//                        return valueArray.join("<br>");
+//                    }
+
+                },
+//                {
+//                    text: "Accessions",
+//                    columns: [
+//                        {
+//                            text: "ClinVar",
+//                            dataIndex: "clincalVarAcc",
+//                            width:120,
+//                            xtype: "templatecolumn",
+//                            tpl: '<tpl><a href="https://www.ncbi.nlm.nih.gov/clinvar/{clincalVarAcc}" target="_blank">{clincalVarAcc}</a></tpl>'
+////                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+////                                var valueArray = [];
+////                                var clinvarList = rec.data.clinvarList
+////                                _.each(_.keys(clinvarList), function(key){
+////                                    valueArray.push('<a href="https://www.ncbi.nlm.nih.gov/clinvar/'+this[key].referenceClinVarAssertion.clinVarAccession.acc+'" target="_blank">'+this[key].referenceClinVarAssertion.clinVarAccession.acc+'</a>');
+////                                },clinvarList);
+////                                return valueArray.join("<br>");
+////                            }
+//
+//                        },
+//                        {
+//                            text: "dbSNP",
+//                            dataIndex: "dbSNPAcc",
+//                            width:110,
 //                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
-//                                var valueArray = [];
-//                                var clinvarList = rec.data.clinvarList
-//                                _.each(_.keys(clinvarList), function(key){
-//                                    valueArray.push('<a href="https://www.ncbi.nlm.nih.gov/clinvar/'+this[key].referenceClinVarAssertion.clinVarAccession.acc+'" target="_blank">'+this[key].referenceClinVarAssertion.clinVarAccession.acc+'</a>');
-//                                },clinvarList);
-//                                return valueArray.join("<br>");
-//                            }
-
-                        },
-                        {
-                            text: "dbSNP",
-                            dataIndex: "dbSNPAcc",
-                            width:110,
-                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
-//                                var valueArray = [];
-//                                var clinvarList = rec.data.clinvarList;
-//                                _.each(_.keys(clinvarList), function(key){
-//                                   if(this[key].referenceClinVarAssertion.measureSet.measure[0].xref){
-//                                       if(this[key].referenceClinVarAssertion.measureSet.measure[0].xref[0].type == 'rs'){
-//                                           var other_id = this[key].referenceClinVarAssertion.measureSet.measure[0].xref[0].type+this[key].referenceClinVarAssertion.measureSet.measure[0].xref[0].id;
-//                                           if(other_id){
-//                                               valueArray.push('<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs='+other_id+'" target="_blank">'+other_id+'</a>');
-//                                           }
-//
-//
-//                                       }
-//
-//
+////                                var valueArray = [];
+////                                var clinvarList = rec.data.clinvarList;
+////                                _.each(_.keys(clinvarList), function(key){
+////                                   if(this[key].referenceClinVarAssertion.measureSet.measure[0].xref){
+////                                       if(this[key].referenceClinVarAssertion.measureSet.measure[0].xref[0].type == 'rs'){
+////                                           var other_id = this[key].referenceClinVarAssertion.measureSet.measure[0].xref[0].type+this[key].referenceClinVarAssertion.measureSet.measure[0].xref[0].id;
+////                                           if(other_id){
+////                                               valueArray.push('<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs='+other_id+'" target="_blank">'+other_id+'</a>');
+////                                           }
+////
+////
+////                                       }
+////
+////
+////                                   }
+////                                },clinvarList);
+////                                if(!_.isEmpty(valueArray) ){
+////                                    return valueArray.join("<br>");
+////                                }else{
+////                                    return '-';
+////                                }
+//                                if(!_.isUndefined(value)){
+//                                   if(value.type == 'rs'){
+//                                       var other_id = value.id;
+//                                       return '<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs='+other_id+'" target="_blank">rs'+other_id+'</a>';
+//                                   }else{
+//                                       return '';
 //                                   }
-//                                },clinvarList);
-//                                if(!_.isEmpty(valueArray) ){
-//                                    return valueArray.join("<br>");
+//
 //                                }else{
-//                                    return '-';
+//                                    return '';
 //                                }
-                                if(!_.isUndefined(value)){
-                                   if(value.type == 'rs'){
-                                       var other_id = value.id;
-                                       return '<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs='+other_id+'" target="_blank">rs'+other_id+'</a>';
-                                   }else{
-                                       return '';
-                                   }
-
-                                }else{
-                                    return '';
-                                }
-
-
-                            }
-                        }
-
-                    ]
-                }
+//
+//
+//                            }
+//                        }
+//
+//                    ]
+//                }
 
             ],
             defaults: {
@@ -430,7 +446,7 @@ EvaClinVarWidget.prototype = {
             {name: 'trait', mapping: 'clinvarSet.referenceClinVarAssertion.traitSet.trait[0].name', type: 'auto' },
             {name: 'clincalSignificance', mapping: 'clinvarSet.referenceClinVarAssertion.clinicalSignificance.description', type: 'string' },
             {name: 'clincalVarAcc', mapping: 'clinvarSet.referenceClinVarAssertion.clinVarAccession.acc', type: 'string' },
-            {name: 'dbSNPAcc', mapping: 'clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0]', type: 'auto' },
+//            {name: 'dbSNPAcc', mapping: 'clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0]', type: 'auto' },
 //            {name: 'clinvarList', mapping: 'clinvarList', type: 'auto' }
             {name: 'annot', mapping: 'annot', type: 'auto' }
 

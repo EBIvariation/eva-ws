@@ -156,12 +156,14 @@ ClinvarAssertionPanel.prototype = {
 
         var alleOrigin = '-';
         if(!_.isEmpty(alleOriginArray)){
-            alleOrigin = alleOriginArray.join('<br />');
+            alleOriginArray = _.groupBy(alleOriginArray);
+            alleOrigin = _.keys(alleOriginArray).join('<br />');
         }
 
         var methodType = '-';
         if(!_.isEmpty(methodTypeArray)){
-            methodType = methodTypeArray.join('<br />');
+            methodTypeArray = _.groupBy(methodTypeArray);
+            methodType =  _.keys(methodTypeArray).join('<br />');
         }
 
         var assertPanel = Ext.create('Ext.panel.Panel', {
