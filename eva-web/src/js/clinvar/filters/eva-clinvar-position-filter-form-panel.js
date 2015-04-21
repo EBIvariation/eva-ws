@@ -66,6 +66,7 @@ ClinVarPositionFilterFormPanel.prototype = {
         this.panel.render(this.div);
     },
     _createPanel: function () {
+        var _this = this;
         var accessionId = Ext.create('Ext.form.field.TextArea', {
             id: this.id + "accessionId",
             name: "accessionId",
@@ -74,7 +75,16 @@ ClinVarPositionFilterFormPanel.prototype = {
             width: '100%',
             fieldLabel: 'ClinVar Accession',
             labelAlign: 'top',
-//            regex: /^[R][C][V]\d+$/
+//            regex: /^[R][C][V]\d+$/,
+            listeners: {
+                'change': function(field, newVal, oldVal){
+                    if(newVal){
+                        _this.disableFields(_this.id+"accessionId");
+                    }else{
+                        _this.enableFields();
+                    }
+                }
+            }
         });
         var rsId = Ext.create('Ext.form.field.TextArea', {
             id: this.id + "rsId",
@@ -84,7 +94,16 @@ ClinVarPositionFilterFormPanel.prototype = {
             width: '100%',
             fieldLabel: 'dbSNP Accession',
             labelAlign: 'top',
-//            regex: /^[rs]s\d+$/
+//            regex: /^[rs]s\d+$/,
+            listeners: {
+                'change': function(field, newVal, oldVal){
+                    if(newVal){
+                        _this.disableFields(_this.id+"rsId");
+                    }else{
+                        _this.enableFields();
+                    }
+                }
+            }
         });
 
         var regionList = Ext.create('Ext.form.field.TextArea', {
@@ -96,7 +115,16 @@ ClinVarPositionFilterFormPanel.prototype = {
             width: '100%',
             fieldLabel: 'Chromosomal Location',
             labelAlign: 'top',
-            value: this.testRegion
+            value: this.testRegion,
+            listeners: {
+                'change': function(field, newVal, oldVal){
+                    if(newVal){
+                        _this.disableFields(_this.id+"region");
+                    }else{
+                        _this.enableFields();
+                    }
+                }
+            }
         });
 
         var gene = Ext.create('Ext.form.field.TextArea', {
@@ -107,6 +135,15 @@ ClinVarPositionFilterFormPanel.prototype = {
             width: '100%',
             fieldLabel: 'HGNC Gene Symbol',
             labelAlign: 'top',
+            listeners: {
+                'change': function(field, newVal, oldVal){
+                    if(newVal){
+                        _this.disableFields(_this.id+"gene");
+                    }else{
+                        _this.enableFields();
+                    }
+                }
+            }
 
         });
 
@@ -118,23 +155,37 @@ ClinVarPositionFilterFormPanel.prototype = {
             cls:'color:red'
         };
 
-        return Ext.create('Ext.form.Panel', {
-            bodyPadding: "5",
-            margin: "0 0 5 0",
-            buttonAlign: 'center',
-            layout: 'vbox',
-            title: this.title,
-            border: this.border,
-            collapsible: this.collapsible,
-            titleCollapse: this.titleCollapse,
-            header: this.headerConfig,
-            allowBlank: false,
-            items: [assemblyText,accessionId,regionList, gene]
-        });
+        var formPanel =  Ext.create('Ext.form.Panel', {
+                            bodyPadding: "5",
+                            margin: "0 0 5 0",
+                            buttonAlign: 'center',
+                            layout: 'vbox',
+                            title: this.title,
+                            border: this.border,
+                            collapsible: this.collapsible,
+                            titleCollapse: this.titleCollapse,
+                            header: this.headerConfig,
+                            allowBlank: false,
+                            items: [assemblyText,accessionId,regionList, gene]
+                        });
+
+        return formPanel;
 
     },
     getPanel: function () {
         return this.panel;
+    },
+    disableFields:function(id){
+        this.panel.getForm().getFields().each(function(field) {
+           if(id != field.id){
+               field.disable(true);
+           }
+        });
+    },
+    enableFields:function(){
+        this.panel.getForm().getFields().each(function(field) {
+           field.enable(true);
+        });
     },
     getValues: function () {
         var values = this.panel.getValues();
