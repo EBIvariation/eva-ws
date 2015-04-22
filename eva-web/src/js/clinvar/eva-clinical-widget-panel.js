@@ -388,7 +388,7 @@ EvaClinicalWidgetPanel.prototype = {
             data: clinicalSignfcType,
             filterType:'significance',
             title:'Clinical Significance',
-            height:240,
+            height:320,
             collapsed: true,
             fields: [
                 {name: 'name', type: 'string'}
