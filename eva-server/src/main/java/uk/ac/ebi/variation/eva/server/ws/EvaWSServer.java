@@ -11,6 +11,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -185,9 +186,9 @@ public class EvaWSServer {
         queryResponse.setQueryOptions(queryOptions);
         
         // Guarantee that the QueryResponse object contains a coll of results
-        Collection coll;
-        if (obj instanceof Collection) {
-            coll = (Collection) obj;
+        List coll;
+        if (obj instanceof List) {
+            coll = (List) obj;
         } else {
             coll = new ArrayList();
             coll.add(obj);
