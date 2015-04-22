@@ -160,7 +160,7 @@ EvaClinicalWidgetPanel.prototype = {
         });
 
         var phenotypeFilter = new ClinVarTraitFilterFormPanel({
-            collapsed: true,
+            collapsed: false,
             defaultValue:'lynch syndrome'
         });
 
@@ -235,7 +235,7 @@ EvaClinicalWidgetPanel.prototype = {
             filterType:'type',
             title:'Variation Type',
             height:200,
-            collapsed: true,
+            collapsed: false,
             fields: [
                 {name: 'name', type: 'string'}
             ],
@@ -288,7 +288,7 @@ EvaClinicalWidgetPanel.prototype = {
             filterType:'review',
             title:'Review Status',
             height:200,
-            collapsed: true,
+            collapsed: false,
             fields: [
                 {name: 'name', type: 'string'}
             ],
@@ -389,7 +389,7 @@ EvaClinicalWidgetPanel.prototype = {
             filterType:'significance',
             title:'Clinical Significance',
             height:320,
-            collapsed: true,
+            collapsed: false,
             fields: [
                 {name: 'name', type: 'string'}
             ],
@@ -414,7 +414,7 @@ EvaClinicalWidgetPanel.prototype = {
             submitButtonText: 'Submit',
             filters: [clinvarPositionFilter,clinvarConseqTypeFilter,phenotypeFilter,variationTypeFilter,clinicalSignfcFilter,reviewStatusFilter],
             width: 300,
-            height: 1300,
+            height: 1400,
             border: false,
             handlers: {
                 'submit': function (e) {

@@ -115,7 +115,7 @@ ClinVarPositionFilterFormPanel.prototype = {
             width: '100%',
             fieldLabel: 'Chromosomal Location',
             labelAlign: 'top',
-            value: this.testRegion,
+//            value: this.testRegion,
             listeners: {
                 'change': function(field, newVal, oldVal){
                     if(newVal){
@@ -155,7 +155,7 @@ ClinVarPositionFilterFormPanel.prototype = {
             cls:'color:red'
         };
 
-        var formPanel =  Ext.create('Ext.form.Panel', {
+        this.panel =  Ext.create('Ext.form.Panel', {
                             bodyPadding: "5",
                             margin: "0 0 5 0",
                             buttonAlign: 'center',
@@ -169,7 +169,9 @@ ClinVarPositionFilterFormPanel.prototype = {
                             items: [assemblyText,accessionId,regionList, gene]
                         });
 
-        return formPanel;
+        this.panel.getForm().findField('region').setValue(_this.testRegion);
+
+        return this.panel;
 
     },
     getPanel: function () {

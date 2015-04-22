@@ -156,7 +156,7 @@ ClinvarAssertionPanel.prototype = {
             if(!_.isUndefined(citation)){
                 _.each(_.keys(citation), function(key){
                     if(this[key].id && this[key].id.source == 'PubMed'){
-                        pubArray.push('<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+this[key].id.value+'" target="_blank">'+this[key].id.value+'</a>')
+                        pubArray.push('PMID:<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+this[key].id.value+'" target="_blank">'+this[key].id.value+'</a>')
                     }
                 },citation);
             }

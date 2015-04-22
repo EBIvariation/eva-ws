@@ -149,23 +149,23 @@ ClinvarAnnotationPanel.prototype = {
         var annotColumns = {
             items:[
                 {
-                    text: "Ensembl Gene ID",
+                    text: "Ensembl<br /> Gene ID",
                     dataIndex: "ensemblGeneId",
                     flex: 1.2,
                     xtype: "templatecolumn",
                     tpl: '<tpl><a href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?g={ensemblGeneId}" target="_blank">{ensemblGeneId}</a>',
                 },
                 {
-                    text: "Ensembl Transcript ID",
+                    text: "Ensembl <br /> Gene Symbol",
+                    dataIndex: "geneName",
+                    flex: 0.9
+                },
+                {
+                    text: "Ensembl <br />Transcript ID",
                     dataIndex: "ensemblTranscriptId",
                     flex: 1.3,
                     xtype: "templatecolumn",
                     tpl: '<tpl><a href="http://www.ensembl.org/Homo_sapiens/transview?transcript={ensemblTranscriptId}" target="_blank">{ensemblTranscriptId}</a>',
-                },
-                {
-                    text: "Name",
-                    dataIndex: "geneName",
-                    flex: 0.7
                 },
                 {
                     text: "SO Terms",
