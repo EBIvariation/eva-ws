@@ -206,6 +206,8 @@ ClinvarBrowserGrid.prototype = {
         console.log("filter");
         console.log(filterParams)
 
+        console.log(filterParams)
+
         this.store = Ext.create('Ext.data.Store', {
             pageSize: this.pageSize,
             model: this.model,

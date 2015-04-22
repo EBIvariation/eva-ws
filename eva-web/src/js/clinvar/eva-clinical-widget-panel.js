@@ -491,29 +491,29 @@ EvaClinicalWidgetPanel.prototype = {
                         category: 'hsapiens/feature/clinical',
                         resource: 'all',
 //                        query: regions,
-                        params:{merge:true,include:'clinvar'}
+                        params:params
                     });
 
 
-                    _this.clinvarWidget.clinvarBrowserGrid.setLoading(true);
-//                    _this.clinvarWidget.clinvarBrowserGrid.load();
-                    EvaManager.get({
-                        host:CELLBASE_HOST,
-                        version:CELLBASE_VERSION,
-                        category: 'hsapiens/feature',
-                        resource: 'all',
-                        query:'clinical',
-                        params:params,
-                        success: function (response) {
-                            try {
-                                var data = response.response[0].result;
-                                _this.clinvarWidget.clinvarBrowserGrid.load(data);
-                                _this.clinvarWidget.clinvarBrowserGrid.setLoading(false);
-                            } catch (e) {
-                                console.log(e);
-                            }
-                        }
-                    });
+//                    _this.clinvarWidget.clinvarBrowserGrid.setLoading(true);
+////                    _this.clinvarWidget.clinvarBrowserGrid.load();
+//                    EvaManager.get({
+//                        host:CELLBASE_HOST,
+//                        version:CELLBASE_VERSION,
+//                        category: 'hsapiens/feature',
+//                        resource: 'all',
+//                        query:'clinical',
+//                        params:params,
+//                        success: function (response) {
+//                            try {
+//                                var data = response.response[0].result;
+//                                _this.clinvarWidget.clinvarBrowserGrid.load(data);
+//                                _this.clinvarWidget.clinvarBrowserGrid.setLoading(false);
+//                            } catch (e) {
+//                                console.log(e);
+//                            }
+//                        }
+//                    });
 
 
 
@@ -529,7 +529,7 @@ EvaClinicalWidgetPanel.prototype = {
 //                        });
 //                    }
 
-//                    _this.clinvarWidget.retrieveData(url, e.values)
+                    _this.clinvarWidget.retrieveData(url,e.values)
 
 //                     var geneColumn = Ext.getCmp('clinvar-grid-gene-column');
 //                     var viewColumn = Ext.getCmp('clinvar-grid-view-column');

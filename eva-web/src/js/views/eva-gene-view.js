@@ -268,28 +268,39 @@ EvaGeneView.prototype = {
         evaClinVarWidget.draw();
         evaClinVarWidget.species = _this.species;
 
-        evaClinVarWidget.clinvarBrowserGrid.setLoading(true);
+//        evaClinVarWidget.clinvarBrowserGrid.setLoading(true);
         var params = {merge:true,include:'clinvar',gene:_this.geneId};
-        EvaManager.get({
+//        EvaManager.get({
+//            host:CELLBASE_HOST,
+//            version:CELLBASE_VERSION,
+//            category: 'hsapiens/feature',
+//            resource: 'all',
+//            query:'clinical',
+//            params:params,
+//            success: function (response) {
+//                try {
+//                    var data = response.response[0].result;
+//                    console.log(data)
+//                    console.log()
+//                    evaClinVarWidget.clinvarBrowserGrid.load(data);
+//                    evaClinVarWidget.clinvarBrowserGrid.setLoading(false);
+//
+//                } catch (e) {
+//                    console.log(e);
+//                }
+//            }
+//        });
+
+        var url = EvaManager.url({
             host:CELLBASE_HOST,
             version:CELLBASE_VERSION,
-            category: 'hsapiens/feature',
+            category: 'hsapiens/feature/clinical',
             resource: 'all',
-            query:'clinical',
-            params:params,
-            success: function (response) {
-                try {
-                    var data = response.response[0].result;
-                    console.log(data)
-                    console.log()
-                    evaClinVarWidget.clinvarBrowserGrid.load(data);
-                    evaClinVarWidget.clinvarBrowserGrid.setLoading(false);
-
-                } catch (e) {
-                    console.log(e);
-                }
-            }
+//                        query: regions,
+            params:params
         });
+
+        evaClinVarWidget.retrieveData(url,params)
 
 
         return evaClinVarWidget;
