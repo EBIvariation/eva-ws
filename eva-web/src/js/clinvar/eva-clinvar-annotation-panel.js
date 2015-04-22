@@ -168,7 +168,7 @@ ClinvarAnnotationPanel.prototype = {
                     tpl: '<tpl><a href="http://www.ensembl.org/Homo_sapiens/transview?transcript={ensemblTranscriptId}" target="_blank">{ensemblTranscriptId}</a>',
                 },
                 {
-                    text: "SO Terms",
+                    text: "SO Term(s)",
                     dataIndex: "soTerms",
                     flex: 1.7,
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){

@@ -91,6 +91,7 @@ EvaClinicalWidgetPanel.prototype = {
                 type: 'vbox',
                 align: 'left'
             },
+            border:false,
             overflowY:'auto',
             items: [view],
 //            height:1200,

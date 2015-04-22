@@ -328,7 +328,7 @@ EvaClinVarWidget.prototype = {
                 {
                     text: "Trait",
                     dataIndex: 'trait',
-                    flex:0.8,
+                    flex:0.7,
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){
                         _.each(_.keys(value), function(key){
                             if(this[key].elementValue.type == 'Preferred'){
