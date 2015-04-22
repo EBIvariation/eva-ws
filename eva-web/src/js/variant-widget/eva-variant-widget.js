@@ -282,17 +282,17 @@ EvaVariantWidget.prototype = {
                     text: "Chr",
                     dataIndex: 'chromosome',
 //                    flex: 0.5,/
-                    width:50
+//                    width:50
                 },
                 {
                     text: 'Position',
                     dataIndex: 'start',
-                    flex: 0.5
+//                    flex: 0.5
                 },
                 {
                     text: "SNP ID",
                     dataIndex: 'id',
-                    flex: 0.5
+//                    flex: 0.5
                 },
                 //{
                 //text: 'End',
@@ -306,12 +306,12 @@ EvaVariantWidget.prototype = {
 ////                        console.log(record)
 //                    },
 //                    flex: 0.5
-                    width:80
+//                    width:80
                 },
                 {
                     text: 'Class',
                     dataIndex: 'type',
-                    flex: 0.3,
+//                    flex: 0.3,
                     xtype: "templatecolumn",
                     tpl: '<tpl if="type"><a href="http://www.ncbi.nlm.nih.gov/books/NBK44447/#Content.what_classes_of_genetic_variatio" target="_blank">{type}</a><tpl else>-</tpl>',
                 },
@@ -417,13 +417,13 @@ EvaVariantWidget.prototype = {
                         '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
                         '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>' +
                         '<tpl else><a href="?variant={chromosome}:{start}:{reference}:{alternate}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>',
-                    flex: 0.5
+//                    flex: 0.5
                 }
 
                 //
             ],
             defaults: {
-//                flex: 1,
+                flex: 1,
                 align:'left' ,
                 sortable : true
             }
