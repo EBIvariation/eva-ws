@@ -148,7 +148,7 @@ EvaClinicalWidgetPanel.prototype = {
         var clinvarPositionFilter = new ClinVarPositionFilterFormPanel({
 //            testRegion: '1:14000-200000',
 //            testRegion: '3:550000-1166666',
-            testRegion: '',
+            testRegion: '2:48000000-49000000',
             emptyText: ''
 
         });
@@ -160,15 +160,19 @@ EvaClinicalWidgetPanel.prototype = {
         });
 
         var phenotypeFilter = new ClinVarTraitFilterFormPanel({
-            collapsed: true
+            collapsed: true,
+            defaultValue:'lynch syndrome'
         });
 
         clinvarSpeciesFilter.on('species:change', function (e) {
            clinvarSelectedSpecies = e.species;
         });
 
+        var clinVarConsequenceTypes = consequenceTypes;
+        clinVarConsequenceTypes[0].children[0].children[4].checked = true;
+
         var clinvarConseqTypeFilter = new EvaConsequenceTypeFilterFormPanel({
-            consequenceTypes: consequenceTypes,
+            consequenceTypes: clinVarConsequenceTypes,
             filterType:'clinVar',
             collapsed: false,
             fields: [
@@ -190,7 +194,7 @@ EvaClinicalWidgetPanel.prototype = {
                 cls: "parent",
                 value:'Deletion',
                 leaf: true,
-                checked:false,
+                checked:true,
                 iconCls :'no-icon'
             },
             {
@@ -258,7 +262,7 @@ EvaClinicalWidgetPanel.prototype = {
                 name:'Expert panel',
                 cls: "parent",
                 leaf: true,
-                checked:false,
+                checked:true,
                 value:'REVIEWED_BY_EXPERT_PANEL',
                 iconCls :'no-icon'
             },
@@ -360,7 +364,7 @@ EvaClinicalWidgetPanel.prototype = {
                 cls: "parent",
                 value:'Pathogenic',
                 leaf: true,
-                checked:false,
+                checked:true,
                 iconCls :'no-icon'
             },
             {

@@ -26,6 +26,7 @@ function ClinVarTraitFilterFormPanel(args) {
     this.target;
     this.autoRender = true;
     this.title = "Trait";
+    this.defaultValue;
     this.border = false;
     this.collapsible = true;
     this.titleCollapse = false;
@@ -63,6 +64,7 @@ ClinVarTraitFilterFormPanel.prototype = {
         this.panel.render(this.div);
     },
     _createPanel: function () {
+        var _this = this;
         var phenotype = Ext.create('Ext.form.field.TextArea', {
             id: this.id + "phenotype",
             name: "phenotype",
@@ -74,20 +76,25 @@ ClinVarTraitFilterFormPanel.prototype = {
         });
 
 
-        return Ext.create('Ext.form.Panel', {
-            bodyPadding: "5",
-            margin: "0 0 5 0",
-            buttonAlign: 'center',
-            layout: 'vbox',
-            title: this.title,
-            border: this.border,
-            collapsible: this.collapsible,
-            titleCollapse: this.titleCollapse,
-            header: this.headerConfig,
-            allowBlank: false,
-            collapsed:this.collapsed,
-            items: [phenotype]
-        });
+
+
+        var formPanel =  Ext.create('Ext.form.Panel', {
+                            bodyPadding: "5",
+                            margin: "0 0 5 0",
+                            buttonAlign: 'center',
+                            layout: 'vbox',
+                            title: this.title,
+                            border: this.border,
+                            collapsible: this.collapsible,
+                            titleCollapse: this.titleCollapse,
+                            header: this.headerConfig,
+                            allowBlank: false,
+                            collapsed:this.collapsed,
+                            items: [phenotype]
+                        });
+        formPanel.getForm().findField('phenotype').setValue(_this.defaultValue);
+
+        return formPanel;
 
     },
     getPanel: function () {

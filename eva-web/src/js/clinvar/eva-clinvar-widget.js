@@ -262,8 +262,8 @@ EvaClinVarWidget.prototype = {
                     flex:0.4
                 },
                 {
-                    text: "Gene",
-                    dataIndex: 'gene',
+                    text: "HGNC Symbol",
+                    dataIndex: 'hgnc_gene',
 //                    id:'clinvar-grid-gene-column',
                     flex:0.4,
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){
@@ -292,7 +292,7 @@ EvaClinVarWidget.prototype = {
                 },
                 {
                     text: "Most Severe <br />Consequence Type",
-                    dataIndex: 'so_terms',
+                    dataIndex: 'most_severe_so_term',
                     flex:0.6,
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){
 
@@ -432,7 +432,7 @@ EvaClinVarWidget.prototype = {
             ],
             defaults: {
                 flex:1,
-                textAlign: 'center',
+                textAlign: 'left',
                 align:'left' ,
                 sortable : false
             }
@@ -441,8 +441,8 @@ EvaClinVarWidget.prototype = {
         var attributes = [
             {name: 'chromosome', mapping: 'chromosome', type: 'string' },
             {name: 'position', mapping: 'start', type: 'string' },
-            {name: 'gene', mapping: 'clinvarSet.referenceClinVarAssertion', type: 'auto' },
-            {name: 'so_terms', mapping: 'annot.consequenceTypes', type: 'auto' },
+            {name: 'hgnc_gene', mapping: 'clinvarSet.referenceClinVarAssertion', type: 'auto' },
+            {name: 'most_severe_so_term', mapping: 'annot.consequenceTypes', type: 'auto' },
             {name: 'trait', mapping: 'clinvarSet.referenceClinVarAssertion.traitSet.trait[0].name', type: 'auto' },
             {name: 'clincalSignificance', mapping: 'clinvarSet.referenceClinVarAssertion.clinicalSignificance.description', type: 'string' },
             {name: 'clincalVarAcc', mapping: 'clinvarSet.referenceClinVarAssertion.clinVarAccession.acc', type: 'string' },
@@ -909,7 +909,7 @@ EvaClinVarWidget.prototype = {
                         }
                     },triatValue);
 
-                }else if( key == "gene"){
+                }else if( key == "hgnc_gene"){
                     if(value.measureSet.measure[0].measureRelationship){
                         var gene = value.measureSet.measure[0].measureRelationship[0].symbol[0].elementValue.value;
                         value = gene
@@ -917,7 +917,7 @@ EvaClinVarWidget.prototype = {
                         value = '';
                     }
 
-                }else if( key == "so_terms"){
+                }else if( key == "most_severe_so_term"){
                     if(!_.isUndefined(value)){
                         var tempArray = [];
                         _.each(_.keys(value), function(key){
@@ -988,7 +988,7 @@ EvaClinVarWidget.prototype = {
             var blob=new Blob([csvContent],{type:mimeType});
             var url=URL.createObjectURL(blob);
             link.href=url;
-            link.setAttribute('download', 'clinvarVariants.csv');
+            link.setAttribute('download', 'EVA_ClinVar_Variants.csv');
             link.innerHTML = "Export to CSV";
             document.body.appendChild(link);
             link.click();
