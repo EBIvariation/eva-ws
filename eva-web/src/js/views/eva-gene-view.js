@@ -153,6 +153,7 @@ EvaGeneView.prototype = {
             _summaryTable +='<tr><td class="header">HGNC Symbol</td><td>'+hgnc_name+'</td></tr>' +
                 '<tr><td class="header">Gene Biotype</td><td>'+data.biotype+'</td></tr>' +
                 '<tr><td class="header">Location</td><td>'+data.chromosome+':'+data.start+'-'+data.end+'</td></tr>' +
+                '<tr><td class="header">Assembly</td><td>GRCh37</td></tr>' +
                 '<tr><td class="header">Description</td><td>'+data.description+'</td></tr>' +
                 '<tr><td class="header">Source</td><td>'+source+'</td></tr>' +
                 '</table>'
