@@ -21,12 +21,27 @@
  */
 
 if(window.location.protocol == 'https:'){
-    METADATA_HOST = "https://wwwdev.ebi.ac.uk/eva/webservices/rest";
-//      METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
+    if(document.location.host == 'wwwint.ebi.ac.uk'){
+        METADATA_HOST = "https://wwwdev.ebi.ac.uk/eva/webservices/rest";
+    }else if(document.location.host == 'wwwdev.ebi.ac.uk'){
+        METADATA_HOST = "https://wwwdev.ebi.ac.uk/eva/webservices/rest";
+    }else if(document.location.host == 'www.ebi.ac.uk'){
+        METADATA_HOST = "https://www.ebi.ac.uk/eva/webservices/rest";
+    }else{
+//     METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
+        METADATA_HOST = "https://wwwdev.ebi.ac.uk/eva/webservices/rest";
+    }
 }else{
-    //METADATA_HOST = "http://172.22.70.137:8080/eva/webservices/rest";
-//    METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
-    METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+   if(document.location.host == 'wwwint.ebi.ac.uk'){
+       METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+   }else if(document.location.host == 'wwwdev.ebi.ac.uk'){
+       METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+   }else if(document.location.host == 'www.ebi.ac.uk'){
+       METADATA_HOST = "http://www.ebi.ac.uk/eva/webservices/rest";
+   }else{
+//     METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
+       METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+   }
 }
 
 METADATA_VERSION = 'v1';
