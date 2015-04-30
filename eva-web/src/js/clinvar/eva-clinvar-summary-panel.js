@@ -137,6 +137,9 @@ ClinvarSummaryPanel.prototype = {
     },
     _createSummaryPanel: function (data) {
         var annotData = data.annot;
+        var reference = data.reference;
+        var alternate = data.alternate;
+        console.log('++++=====++++')
         data = data.clinvarSet.referenceClinVarAssertion;
         var lastEvaluated = new Date( data.clinVarAccession.dateUpdated ).toUTCString();
         var origin = data.observedIn[0].sample.origin;
@@ -250,7 +253,13 @@ ClinvarSummaryPanel.prototype = {
 //                            '<td class="header">Clinical Significance<br/> (Last evaluated)</td><td>{clinicalSignificance.description}<br/>('+lastEvaluated+')</td>',
 //                        '</tr>',
                         '<tr>',
-                            '<td class="header">Review status</td><td>{clinicalSignificance.reviewStatus}</td>',
+                            '<td class="header">Reference</td><td>'+reference+'</td>',
+                        '</tr>',
+                        '<tr>',
+                             '<td class="header">Alternate</td><td>'+alternate+'</td>',
+                        '</tr>',
+                        '<tr>',
+                             '<td class="header">Review status</td><td>{clinicalSignificance.reviewStatus}</td>',
                         '</tr>',
                         '<tr>',
                             '<td class="header">Last Evaluated</td><td>'+lastEvaluated+'</td>',
