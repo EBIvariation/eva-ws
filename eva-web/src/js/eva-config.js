@@ -19,13 +19,11 @@
  * You should have received a copy of the GNU General Public License
  * along with EVA. If not, see <http://www.gnu.org/licenses/>.
  */
-//METADATA_HOST = "http://172.22.70.137:8080/eva/webservices/rest";
-////METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
-//METADATA_VERSION = 'v1';
-
-//CELLBASE_HOST = 'http://172.22.70.137:8080/cellbase/webservices/rest';
-//CELLBASE_HOST = 'http://172.22.68.41:8080/cellbase/webservices/rest';
-CELLBASE_HOST = 'http://wwwdev.ebi.ac.uk/cellbase/webservices/rest';
+if(window.location.protocol == 'https:'){
+    CELLBASE_HOST = 'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest';
+}else{
+    CELLBASE_HOST = 'http://wwwdev.ebi.ac.uk/cellbase/webservices/rest';
+}
 CELLBASE_VERSION = 'v3';
 
 clinVarSpeciesList = [
