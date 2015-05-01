@@ -292,7 +292,17 @@ EvaVariantWidget.prototype = {
                 {
                     text: "SNP ID",
                     dataIndex: 'id',
-//                    flex: 0.5
+//                    flex: 0.5,
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                        var snpID = '-';
+                        _.each(_.keys(value), function(key){
+                           if(this[key].src == 'dbSNP'){
+                               snpID = '<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs='+this[key].id+'" target="_blank">'+this[key].id+'</a>'
+                           }
+                        },value);
+
+                        return snpID;
+                    }
                 },
                 //{
                 //text: 'End',
@@ -438,7 +448,7 @@ EvaVariantWidget.prototype = {
             {name: "ref", type: "string"},
             {name: "alt", type: "string"},
             {name: 'hgvs_name', type: 'string'},
-            {name: 'id', mapping: 'annotation.xrefs[0].id', type: 'string' },
+            {name: 'id', mapping: 'annotation.xrefs', type: 'auto' },
             {name: 'consequenceTypes', mapping: 'annotation.consequenceTypes', type:'auto' },
             {name: 'conservedRegionScores', mapping: 'annotation.conservedRegionScores', type:'auto'},
             {name: 'phylop',  mapping: 'annotation.conservedRegionScores', type:'auto'},
