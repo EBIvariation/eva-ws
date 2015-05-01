@@ -223,7 +223,8 @@ EvaVariantWidgetPanel.prototype = {
 
         });
 
-
+        //<!-------To be removed------>
+        consequenceTypes[0].children[0].children[4].checked = false;
 
         var conseqTypeFilter = new EvaConsequenceTypeFilterFormPanel({
             consequenceTypes: consequenceTypes,
