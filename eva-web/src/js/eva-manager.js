@@ -19,9 +19,31 @@
  * You should have received a copy of the GNU General Public License
  * along with EVA. If not, see <http://www.gnu.org/licenses/>.
  */
-//METADATA_HOST = "http://172.22.70.137:8080/eva/webservices/rest";
-METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
-//METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+
+if(window.location.protocol == 'https:'){
+    if(document.location.host == 'wwwint.ebi.ac.uk'){
+        METADATA_HOST = "https://wwwdev.ebi.ac.uk/eva/webservices/rest";
+    }else if(document.location.host == 'wwwdev.ebi.ac.uk'){
+        METADATA_HOST = "https://wwwdev.ebi.ac.uk/eva/webservices/rest";
+    }else if(document.location.host == 'www.ebi.ac.uk' || document.location.host == 'ves-oy-db.ebi.ac.uk' || document.location.host == 'ves-pg-db.ebi.ac.uk'){
+        METADATA_HOST = "https://www.ebi.ac.uk/eva/webservices/rest";
+    }else{
+//     METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
+        METADATA_HOST = "https://wwwdev.ebi.ac.uk/eva/webservices/rest";
+    }
+}else{
+   if(document.location.host == 'wwwint.ebi.ac.uk'){
+       METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+   }else if(document.location.host == 'wwwdev.ebi.ac.uk'){
+       METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+   }else if(document.location.host == 'www.ebi.ac.uk' || document.location.host == 'ves-oy-db.ebi.ac.uk' || document.location.host == 'ves-pg-db.ebi.ac.uk'){
+       METADATA_HOST = "http://www.ebi.ac.uk/eva/webservices/rest";
+   }else{
+//     METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
+       METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+   }
+}
+
 METADATA_VERSION = 'v1';
 var EvaManager = {
     host: METADATA_HOST,

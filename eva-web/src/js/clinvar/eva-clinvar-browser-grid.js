@@ -135,7 +135,9 @@ ClinvarBrowserGrid.prototype = {
                 viewConfig: {
                     emptyText: 'No records to display',
                     enableTextSelection: true,
-                    listeners:this.viewConfigListeners
+                    listeners:this.viewConfigListeners,
+                    loadMask:true
+
                 },
                 tbar: this.paging
             }
@@ -143,7 +145,7 @@ ClinvarBrowserGrid.prototype = {
 
         grid.getSelectionModel().on('selectionchange', function (sm, selectedRecord) {
             if (selectedRecord.length) {
-                var clinVarAssertion = selectedRecord[0].data.clinVarAssertion;
+                var clinVarAssertion = selectedRecord[0].data;
                 _this.trigger("clinvar:change", {sender: _this, args: clinVarAssertion});
             }
         });
@@ -154,6 +156,7 @@ ClinvarBrowserGrid.prototype = {
     load: function (data) {
         var _this = this;
         this.store.destroy();
+//        _this.setLoading(true);
 
         if (typeof this.dataParser !== 'undefined') {
             this.dataParser(data)
@@ -161,6 +164,7 @@ ClinvarBrowserGrid.prototype = {
             this._parserFunction(data);
 
         }
+
 
         this.store = Ext.create('Ext.data.Store', {
             pageSize: this.pageSize,
@@ -173,11 +177,21 @@ ClinvarBrowserGrid.prototype = {
 
             },
             listeners: {
-                beforeload: function (store, operation, eOpts) {
-                    _this.trigger("clinvar:clear", {sender: _this});
-                },
                 load: function (store, records, successful, operation, eOpts) {
+
+                    if (typeof this.dataParser !== 'undefined') {
+                        _this.dataParser(records);
+                    } else if(!_.isNull(records)){
+                        _this._parserFunction(records);
+                        _this.grid.getSelectionModel().select(0, true);
+                    }
+
                     _this.setLoading(false);
+                },
+                beforeload: function (store, operation, eOpts) {
+                    _this.setLoading(true);
+                    _this.trigger("clinvar:clear", {sender: _this});
+                    _this.trigger("clinvar:change", {sender: _this});
                 }
             }
         });
@@ -190,6 +204,8 @@ ClinvarBrowserGrid.prototype = {
         this.store.destroy();
 
         console.log("filter");
+        console.log(filterParams)
+
         console.log(filterParams)
 
         this.store = Ext.create('Ext.data.Store', {
@@ -234,6 +250,7 @@ ClinvarBrowserGrid.prototype = {
                 },
                 beforeload: function (store, operation, eOpts) {
                     _this.trigger("clinvar:clear", {sender: _this});
+                    _this.trigger("clinvar:change", {sender: _this});
                 }
             }
 

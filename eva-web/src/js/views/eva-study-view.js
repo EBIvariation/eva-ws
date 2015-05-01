@@ -136,11 +136,13 @@ EvaStudyView.prototype = {
                         taxonomyId.push(['<a href="'+taxLink+'" target="_blank">'+data.summaryData[0].taxonomyId[i]+'</a>']);
                     }
                 }
-
+                var projectURL;
+                var ena_link = 'ENA:<a href="http://www.ebi.ac.uk/ena/data/view/'+data.summaryData[0].id+'" target="_blank">'+data.summaryData[0].id+'</a>';
                 if(_.isUndefined(_this._getProjectUrl(data.summaryData[0].id))){
-                    var projectURL = '-'
+                     projectURL = ena_link;
                 }else{
-                    var projectURL = '<a href="'+_this._getProjectUrl(data.summaryData[0].id)+'" target="_blank">'+_this._getProjectUrl(data.summaryData[0].id)+'</a>'
+                     projectURL = '<a href="'+_this._getProjectUrl(data.summaryData[0].id)+'" target="_blank">'+_this._getProjectUrl(data.summaryData[0].id)+'</a><br /><br />'+ena_link;
+                    console.log()
                 }
 
 

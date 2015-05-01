@@ -120,9 +120,9 @@ EvaConservationScoreFilterFormPanel.prototype = {
                 delete values[key]
             }else{
                 if(key == 'phastCons'){
-                    value = encodeURI('\<'+ values[key]);
+                    value = '<'+ values[key];
                 }else{
-                    value = encodeURI('\>'+ values[key]);
+                    value = '>'+ values[key];
                 }
                 valuesArray.push(key+':'+value);
             }

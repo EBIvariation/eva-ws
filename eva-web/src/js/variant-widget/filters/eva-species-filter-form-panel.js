@@ -31,6 +31,8 @@ function SpeciesFilterFormPanel(args) {
     this.collapsible = true;
     this.titleCollapse = false;
     this.headerConfig;
+    this.speciesList = speciesList;
+    this.defaultValue = 'hsapiens_grch37';
     
 
     //set instantiation args, must be last
@@ -97,9 +99,12 @@ SpeciesFilterFormPanel.prototype = {
                 }
             ]
         });
+
+        console.log(_this.speciesList)
+
         var speciesStore = Ext.create('Ext.data.Store', {
             model: 'SpeciesListModel',
-            data : speciesList
+            data : _this.speciesList
         });
 
         var speciesFormField  =  Ext.create('Ext.form.ComboBox', {
@@ -115,7 +120,7 @@ SpeciesFilterFormPanel.prototype = {
             listeners: {
                 afterrender: function (field) {
 //                    field.setValue('hsapiens_grch37');
-                    field.setValue('hsapiens');
+                    field.setValue(_this.defaultValue);
                 },
                 change: function (field, newValue, oldValue) {
                     _this.trigger('species:change', {species: newValue, sender: _this});

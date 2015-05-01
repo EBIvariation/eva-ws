@@ -18,22 +18,19 @@
  * You should have received a copy of the GNU General Public License
  * along with JSorolla. If not, see <http://www.gnu.org/licenses/>.
  */
-function EvaProteinSubstitutionScoreFilterFormPanel(args) {
+function ClinVarTraitFilterFormPanel(args) {
     _.extend(this, Backbone.Events);
 
     //set default args
-    this.id = Utils.genId("ProteinSubstitutionScoreFilterFormPanel");
+    this.id = Utils.genId("ClinVarTraitFilterFormPanel");
     this.target;
     this.autoRender = true;
-    this.title = "Protein Substitution Score";
+    this.title = "Trait";
+    this.defaultValue;
     this.border = false;
     this.collapsible = true;
     this.titleCollapse = false;
     this.headerConfig;
-    this.testRegion = "";
-    this.collapsed = false;
-    this.emptyText = '1:1-1000000,2:1-1000000';
-
     //set instantiation args, must be last
     _.extend(this, args);
 
@@ -45,7 +42,7 @@ function EvaProteinSubstitutionScoreFilterFormPanel(args) {
     }
 }
 
-EvaProteinSubstitutionScoreFilterFormPanel.prototype = {
+ClinVarTraitFilterFormPanel.prototype = {
     render: function () {
         var _this = this;
         console.log("Initializing " + this.id);
@@ -67,48 +64,37 @@ EvaProteinSubstitutionScoreFilterFormPanel.prototype = {
         this.panel.render(this.div);
     },
     _createPanel: function () {
-
-
-        var items = {
-            xtype:'fieldset',
-            title: '',
-            collapsible: false,
-//            height:150,
-            width :280,
-            margin:'5 0 0 0',
-            defaultType: 'textfield',
-            items :[
-                {
-                    fieldLabel: 'Polyphen2 \>',
-                    name: 'polyphen2',
-                    width  : 240,
-                    margin:'5 0 0 0'
-                },
-                {
-                    fieldLabel: 'Sift \< ',
-                    name: 'sift',
-                    width  : 240,
-                    margin:'5 0 5 0'
-                }
-
-            ]
-        }
-
-        return Ext.create('Ext.form.Panel', {
-            id:this.id,
-            bodyPadding: "5",
-            margin: "0 0 5 0",
-            buttonAlign: 'center',
-            layout: 'vbox',
-            title: this.title,
-            border: this.border,
-            collapsible: this.collapsible,
-            titleCollapse: this.titleCollapse,
-            header: this.headerConfig,
-            allowBlank: false,
-            collapsed: this.collapsed,
-            items: [items]
+        var _this = this;
+        var phenotype = Ext.create('Ext.form.field.TextArea', {
+            id: this.id + "phenotype",
+            name: "phenotype",
+            margin: '0 0 0 5',
+            //allowBlank: true,
+            width: '100%',
+            fieldLabel: 'Trait Name',
+            labelAlign: 'top'
         });
+
+
+
+
+        var formPanel =  Ext.create('Ext.form.Panel', {
+                            bodyPadding: "5",
+                            margin: "0 0 5 0",
+                            buttonAlign: 'center',
+                            layout: 'vbox',
+                            title: this.title,
+                            border: this.border,
+                            collapsible: this.collapsible,
+                            titleCollapse: this.titleCollapse,
+                            header: this.headerConfig,
+                            allowBlank: false,
+                            collapsed:this.collapsed,
+                            items: [phenotype]
+                        });
+        formPanel.getForm().findField('phenotype').setValue(_this.defaultValue);
+
+        return formPanel;
 
     },
     getPanel: function () {
@@ -116,20 +102,12 @@ EvaProteinSubstitutionScoreFilterFormPanel.prototype = {
     },
     getValues: function () {
         var values = this.panel.getValues();
-        var valuesArray = {};
         for (key in values) {
             if (values[key] == '') {
                 delete values[key]
-            }else{
-                if(key == 'sift'){
-                   value = '<'+ values[key];
-                }else{
-                    value = '>'+ values[key];
-                }
-                valuesArray[key] = value;
             }
         }
-        return valuesArray;
+        return values;
     },
     clear: function () {
         this.panel.reset();
