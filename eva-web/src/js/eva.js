@@ -243,8 +243,8 @@ Eva.prototype = {
     },
     _createVariantWidgetPanel: function(target){
 //      var position = '21:21989000-21989560';
-      var position = '1:78383460-78389470';
-      var species = 'hsapiens_grch37';
+      var position = '22:21889550-21989560';
+      var species = 'hsapiens';
       if(!_.isEmpty($.urlParam('position'))){
           position = $.urlParam('position')
       }

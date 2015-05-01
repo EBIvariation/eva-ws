@@ -33,14 +33,15 @@ if(window.location.protocol == 'https:'){
     }
 }else{
    if(document.location.host == 'wwwint.ebi.ac.uk'){
-       METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+//       METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+       METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
    }else if(document.location.host == 'wwwdev.ebi.ac.uk'){
        METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
    }else if(document.location.host == 'www.ebi.ac.uk' || document.location.host == 'ves-oy-db.ebi.ac.uk' || document.location.host == 'ves-pg-db.ebi.ac.uk'){
        METADATA_HOST = "http://www.ebi.ac.uk/eva/webservices/rest";
    }else{
-//     METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
-       METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
+     METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
+//       METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
    }
 }
 
