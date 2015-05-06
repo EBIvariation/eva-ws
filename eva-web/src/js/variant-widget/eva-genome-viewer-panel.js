@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2014 Francisco Salavert (SGL-CIPF)
  * Copyright (c) 2014 Alejandro Alemán (SGL-CIPF)
@@ -38,16 +37,27 @@ function EvaGenomeViewerPanel(args) {
 EvaGenomeViewerPanel.prototype = {
     render: function () {
         var _this = this;
-        if(!this.rendered) {
+        if (!this.rendered) {
             this.div = document.createElement('div');
             this.div.setAttribute('id', this.id);
-            this.panel = this._createPanel();
+
+            this.formDiv = document.createElement('div');
+            this.formDiv.setAttribute('class', 'form');
+
+            this.genomeViewerDiv = document.createElement('div');
+            this.genomeViewerDiv.setAttribute('class', 'genome-viewer');
+            this.genomeViewerDiv.style.border = "1px solid #d3d3d3";
+            this.genomeViewerDiv.style.marginTop = "10px";
+
+            this.div.appendChild(this.formDiv);
+            this.div.appendChild(this.genomeViewerDiv);
+
             this.rendered = true;
         }
 
     },
     draw: function () {
-        if(!this.rendered) {
+        if (!this.rendered) {
             this.render();
         }
         this.targetDiv = (this.target instanceof HTMLElement ) ? this.target : document.querySelector('#' + this.target);
@@ -57,72 +67,33 @@ EvaGenomeViewerPanel.prototype = {
         }
         this.targetDiv.appendChild(this.div);
 
-        this.panel.render(this.div);
-        this.genomeViewerPanelDiv = document.querySelector('#genome-viewer');
-
-
-        this.genomeViewerDiv = document.createElement('div');
-        $(this.genomeViewerDiv).addClass('genome-viewer-div');
-        this.genomeViewerPanelDiv.appendChild(this.genomeViewerDiv);
-
-        this.genomeViewerTitleDiv = document.createElement('div');
-        $(this.genomeViewerTitleDiv).addClass('genome-viewer-title-div eva-header-1');
-        this.genomeViewerDiv.appendChild(this.genomeViewerTitleDiv);
-        this.genomeViewerTitleDiv.innerHTML = 'Genome browser';
-
-        this.genomeViewerDiv = document.createElement('div');
-        $(this.genomeViewerDiv).addClass('genome-viewer-div');
-        this.genomeViewerPanelDiv.appendChild(this.genomeViewerDiv);
+        this.formPanel = this._createFormPanelGenomeFilter(this.formDiv);
+        this.formPanel.draw();
 
         this.genomeViewer = this._createGenomeViewer(this.genomeViewerDiv);
-        this.formPanelGenomeFilterDiv = document.createElement('div');
-        $(this.formPanelGenomeFilterDiv).addClass('form-panel-genome-filter-div');
-        this.genomeViewerPanelDiv.appendChild(this.formPanelGenomeFilterDiv);
-        this.formPanelGenomeFilter = this._createFormPanelGenomeFilter(this.formPanelGenomeFilterDiv);
-        this.genomeViewerPanelDiv.appendChild(this.formPanelGenomeFilterDiv);
-//        this.panel = this._createPanel();
-
         this.genomeViewer.draw();
-        this.formPanelGenomeFilter.draw();
     },
     show: function () {
-        this.panel.show()
+        this.div.style.display = '';
     },
     hide: function () {
-        this.panel.hide();
+        this.div.style.display = 'none';
     },
     toggle: function () {
-        if (this.panel.isVisible()) {
-            this.panel.hide();
+        if (this.div.style.display == '') {
+            this.hide();
         } else {
-            this.panel.show();
+            this.show();
         }
-    },
-    _createPanel: function () {
-        var tpl = new Ext.XTemplate(['<div  id="genome-viewer" class="genome-browser-option-div"></div>']);
-        var view = Ext.create('Ext.view.View', {
-            tpl: tpl
-        });
-        this.panel = Ext.create('Ext.panel.Panel', {
-            layout: {
-                type: 'vbox',
-                align: 'center'
-            },
-            border:true,
-            overflowX:'auto',
-            height:1200,
-            items: [view],
-            cls: 'variant-widget-panel'
-        });
-
-
-        return  this.panel;
     },
     _createFormPanelGenomeFilter: function (target) {
         var _this = this;
         var positionFilter = new PositionFilterFormPanel();
 
-        var speciesFilter = new SpeciesFilterFormPanel({});
+        var speciesFilter = new SpeciesFilterFormPanel({
+            title:false,
+            collapsible:false
+        });
 
         this.studiesStore = Ext.create('Ext.data.Store', {
             pageSize: 50,
@@ -137,10 +108,12 @@ EvaGenomeViewerPanel.prototype = {
         });
 
         var studyFilter = new StudyFilterFormPanel({
+            title:false,
+            collapsible:false,
             studiesStore: this.studiesStore,
             height: 500,
-            studyFilterTpl:'<tpl><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div></tpl>'
-
+            border:false,
+            studyFilterTpl: '<tpl><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div></tpl>'
         });
 
         speciesFilter.on('species:change', function (e) {
@@ -149,7 +122,7 @@ EvaGenomeViewerPanel.prototype = {
             EvaManager.get({
                 category: 'meta/studies',
                 resource: 'list',
-                params:{species:e.species},
+                params: {species: e.species},
                 success: function (response) {
                     try {
                         projects = response.response[0].result;
@@ -164,7 +137,7 @@ EvaGenomeViewerPanel.prototype = {
         this.on('studies:change', function (e) {
 //            studyFilter.setStudies(e.studies);
         });
-        _this._loadListStudies(studyFilter);
+        this._loadListStudies(studyFilter);
         var conseqType = new ConsequenceTypeFilterFormPanel({
             consequenceTypes: consequenceTypes,
             collapsed: false,
@@ -183,7 +156,7 @@ EvaGenomeViewerPanel.prototype = {
         var trackNameField = Ext.create('Ext.form.field.Text', {
             xtype: 'textfield',
             emptyText: 'Track name',
-            flex: 2
+            flex: 5
         });
         var formPanel = new FormPanel({
             title: 'Add tracks',
@@ -195,10 +168,10 @@ EvaGenomeViewerPanel.prototype = {
             collapsible: true,
             titleCollapse: false,
             target: target,
-            filters: [speciesFilter,studyFilter],
+            filters: [speciesFilter, studyFilter],
 //            width: 300,
 //            height:600,
-            mode: 'accordion',
+            mode: 'vbox',
             barItems: [
                 trackNameField
             ],
@@ -213,7 +186,7 @@ EvaGenomeViewerPanel.prototype = {
             }
         });
 
-        formPanel.panel.collapse();
+        //formPanel.panel.collapse();
 
         return formPanel;
     },
@@ -269,7 +242,7 @@ EvaGenomeViewerPanel.prototype = {
                 histogramColor: "#399697",
                 handlers: {
                     'feature:mouseover': function (e) {
-                    // e.feature
+                        // e.feature
                         console.log(e);
                     }
                 }
@@ -290,23 +263,19 @@ EvaGenomeViewerPanel.prototype = {
     _createGenomeViewer: function (target) {
         var _this = this;
 
-        if(this.position){
+        if (this.position) {
             var position = this._getRegion(this.position);
             var region = new Region(position);
-        }else{
+        } else {
             var region = new Region({
                 chromosome: "13",
                 start: 32889611,
                 end: 32889611
             });
-
-
         }
 
-
-
         var genomeViewer = new GenomeViewer({
-            cellBaseHost:'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
+            //cellBaseHost: 'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
             sidePanel: false,
             target: target,
             border: false,
@@ -427,19 +396,19 @@ EvaGenomeViewerPanel.prototype = {
         genomeViewer.addTrack([sequence, gene, snp]);
         return genomeViewer;
     },
-    _loadListStudies: function (filter,species) {
+    _loadListStudies: function (filter, species) {
         var _this = this;
         var studies = [];
         var resource = '';
-        if(_.isNull(species) ){
+        if (species == null) {
             resource = 'all'
-        }else{
+        } else {
             resource = 'list'
         }
         EvaManager.get({
             category: 'meta/studies',
             resource: resource,
-            params:{species:species},
+            params: {species: species},
             success: function (response) {
                 try {
                     studies = response.response[0].result;
@@ -448,21 +417,21 @@ EvaGenomeViewerPanel.prototype = {
                 }
                 filter.studiesStore.loadRawData(studies);
                 _this.trigger('studies:change', {studies: studies, sender: _this});
+            },
+            error: function () {
+                debugger
             }
         });
     },
     _getRegion: function (value) {
         var _this = this;
         var temp = value.split(":");
-        var region = {chromosome:temp[0]};
-        var temp_position =  temp[1].split("-");
-        _.extend(region, {start: temp_position[0],end:temp_position[1]});
+        var region = {chromosome: temp[0]};
+        var temp_position = temp[1].split("-");
+        _.extend(region, {start: temp_position[0], end: temp_position[1]});
 
         return region;
     }
 
 
-
 };
-
-

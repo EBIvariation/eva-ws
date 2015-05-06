@@ -180,9 +180,9 @@ EvaStudyFilterFormPanel.prototype = {
                 hideHeaders: false,
                 enableColumnHide:false,
                 plugins: 'bufferedrenderer',
-                features: [
-                    {ftype: 'summary'}
-                ],
+                //features: [
+                //    {ftype: 'summary'}
+                //],
 //                height: this.height - 70,
 //                minHeight: 250,
 //                maxHeight: this.height,
