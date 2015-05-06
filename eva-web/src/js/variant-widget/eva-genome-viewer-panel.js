@@ -47,7 +47,7 @@ EvaGenomeViewerPanel.prototype = {
             this.genomeViewerDiv = document.createElement('div');
             this.genomeViewerDiv.setAttribute('class', 'genome-viewer');
             this.genomeViewerDiv.style.border = "1px solid #d3d3d3";
-            this.genomeViewerDiv.style.marginTop = "10px";
+            //this.genomeViewerDiv.style.marginTop = "10px";
 
             this.div.appendChild(this.formDiv);
             this.div.appendChild(this.genomeViewerDiv);
@@ -91,8 +91,8 @@ EvaGenomeViewerPanel.prototype = {
         var positionFilter = new PositionFilterFormPanel();
 
         var speciesFilter = new SpeciesFilterFormPanel({
-            title:false,
-            collapsible:false
+            title: false,
+            collapsible: false
         });
 
         this.studiesStore = Ext.create('Ext.data.Store', {
@@ -108,29 +108,31 @@ EvaGenomeViewerPanel.prototype = {
         });
 
         var studyFilter = new StudyFilterFormPanel({
-            title:false,
-            collapsible:false,
+            title: false,
+            collapsible: false,
             studiesStore: this.studiesStore,
             height: 500,
-            border:false,
+            border: false,
             studyFilterTpl: '<tpl><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div></tpl>'
         });
 
         speciesFilter.on('species:change', function (e) {
-            _this._loadListStudies(studyFilter, e.species);
+            if (e.species) {
+                _this._loadListStudies(studyFilter, e.species);
 
-            EvaManager.get({
-                category: 'meta/studies',
-                resource: 'list',
-                params: {species: e.species},
-                success: function (response) {
-                    try {
-                        projects = response.response[0].result;
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-            });
+                //EvaManager.get({
+                //    category: 'meta/studies',
+                //    resource: 'list',
+                //    params: {species: e.species},
+                //    success: function (response) {
+                //        try {
+                //            projects = response.response[0].result;
+                //        } catch (e) {
+                //            console.log(e);
+                //        }
+                //    }
+                //});
+            }
 
         });
 
@@ -166,7 +168,7 @@ EvaGenomeViewerPanel.prototype = {
             },
             submitButtonText: 'Add',
             collapsible: true,
-            titleCollapse: false,
+            titleCollapse: true,
             target: target,
             filters: [speciesFilter, studyFilter],
 //            width: 300,
@@ -178,6 +180,9 @@ EvaGenomeViewerPanel.prototype = {
             handlers: {
                 'submit': function (e) {
                     var title = trackNameField.getValue();
+                    if (e.values.studies == null) {
+                        e.values.studies = [];
+                    }
                     if (title !== '') {
                         _this._addGenomeBrowserTrack(title, e.values);
                         trackNameField.setValue('');
@@ -193,6 +198,7 @@ EvaGenomeViewerPanel.prototype = {
     _addGenomeBrowserTrack: function (title, params) {
         var eva = new FeatureTrack({
             title: title,
+            closable:true,
             featureType: 'eva',
             minHistogramRegionSize: 10000,
             maxLabelRegionSize: 3000,
@@ -259,6 +265,7 @@ EvaGenomeViewerPanel.prototype = {
             })
         });
         this.genomeViewer.addTrack(eva);
+        this.formPanel.panel.collapse();
     },
     _createGenomeViewer: function (target) {
         var _this = this;
@@ -412,6 +419,9 @@ EvaGenomeViewerPanel.prototype = {
             success: function (response) {
                 try {
                     studies = response.response[0].result;
+                    if (studies.length > 0) {
+                        studies[0]['uiactive'] = true;
+                    }
                 } catch (e) {
                     console.log(e);
                 }
@@ -419,7 +429,7 @@ EvaGenomeViewerPanel.prototype = {
                 _this.trigger('studies:change', {studies: studies, sender: _this});
             },
             error: function () {
-                debugger
+                filter.studiesStore.loadRawData([]);
             }
         });
     },

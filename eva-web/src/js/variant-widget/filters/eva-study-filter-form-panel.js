@@ -235,7 +235,7 @@ EvaStudyFilterFormPanel.prototype = {
                 ]
             }
         );
-
+        this.grid = grid;
 
 
 
