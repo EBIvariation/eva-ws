@@ -143,6 +143,10 @@ EvaVariantStatsPanel.prototype = {
         delete attributesData['src'];
         delete attributesData['ACC'];
 
+
+        console.log(data)
+        console.log('+++=====++++')
+
         //TO BE REMOVED
         var study_title;
         var projectList = '';
@@ -194,7 +198,11 @@ EvaVariantStatsPanel.prototype = {
 
 
         attributesData =  _.invert(attributesData);
-        var vcfData = attributes['src'];
+        var vcfData = '';
+        if(attributes['src']){
+            vcfData = attributes['src'];
+        }
+
         var vcfDataId = Utils.genId("vcf-data");
 
        var vcfDataView =  Ext.create('Ext.view.View', {

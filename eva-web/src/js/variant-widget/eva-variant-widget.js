@@ -282,12 +282,13 @@ EvaVariantWidget.prototype = {
                     text: "Chr",
                     dataIndex: 'chromosome',
 //                    flex: 0.5,/
-//                    width:50
+                    width:50
                 },
                 {
                     text: 'Position',
                     dataIndex: 'start',
-//                    flex: 0.5
+//                    flex: 0.5,
+                    width:100
                 },
                 {
                     text: "SNP ID",
@@ -302,7 +303,8 @@ EvaVariantWidget.prototype = {
                         },value);
 
                         return snpID;
-                    }
+                    },
+                    width:110
                 },
                 //{
                 //text: 'End',
@@ -316,7 +318,7 @@ EvaVariantWidget.prototype = {
 ////                        console.log(record)
 //                    },
 //                    flex: 0.5
-//                    width:80
+                    width:60
                 },
                 {
                     text: 'Class',
@@ -324,6 +326,7 @@ EvaVariantWidget.prototype = {
 //                    flex: 0.3,
                     xtype: "templatecolumn",
                     tpl: '<tpl if="type"><a href="http://www.ncbi.nlm.nih.gov/books/NBK44447/#Content.what_classes_of_genetic_variatio" target="_blank">{type}</a><tpl else>-</tpl>',
+                    width:60
                 },
 //            {
 //                text: '1000G MAF',
@@ -405,7 +408,7 @@ EvaVariantWidget.prototype = {
                         {
                             text: "PhastCons",
                             dataIndex: "conservedRegionScores",
-                            width:80,
+                            width:85,
                             renderer: function(value, meta, rec, rowIndex, colIndex, store){
                                 var conservedRegionScores = rec.data.conservedRegionScores;
                                 _.each(_.keys(conservedRegionScores), function(key){
@@ -433,7 +436,7 @@ EvaVariantWidget.prototype = {
                 //
             ],
             defaults: {
-                flex: 1,
+//                flex: 1,
                 align:'left' ,
                 sortable : true
             }
