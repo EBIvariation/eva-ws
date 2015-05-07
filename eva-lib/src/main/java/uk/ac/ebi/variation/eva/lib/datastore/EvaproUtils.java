@@ -105,6 +105,8 @@ public class EvaproUtils {
                 return VariantStudy.StudyType.CASE;
             case "Tumor vs. Matched-Normal":
                 return VariantStudy.StudyType.PAIRED_TUMOR;
+            case "Aggregate":
+                return VariantStudy.StudyType.AGGREGATE;
             default:
                 throw new IllegalArgumentException("Study type " + studyType + " is not valid");
         }
