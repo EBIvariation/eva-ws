@@ -91,13 +91,17 @@ Eva.prototype = {
         $(this.variantView).addClass('eva-child');
         this.childDivMenuMap['variant'] = this.variantView;
 
+        /* geneView */
+        $(this.geneView).addClass('eva-child');
+        this.childDivMenuMap['gene'] = this.geneView;
+
         /* beacon */
         $(this.beacon).addClass('eva-child');
         this.childDivMenuMap['GA4GH'] = this.beacon;
 
         /* clinical */
         $(this.clinicalDiv).addClass('eva-child');
-        this.childDivMenuMap['Clinical'] = this.clinicalDiv;
+        this.childDivMenuMap['Clinical Browser'] = this.clinicalDiv;
 
         /* submision-start */
         $(this.submissionForm).addClass('eva-child');
@@ -152,10 +156,10 @@ Eva.prototype = {
         }
 
         //<!---- Updating URL on Tab change ---->
-        var pageArray = ['eva-study','dgva-study', 'variant'];
-        if(_.indexOf(pageArray, option) < 0 && !_.isEmpty(option)  ){
+        var pageArray = ['eva-study','dgva-study', 'variant', 'gene','Variant Browser'];
+        if(_.indexOf(pageArray, option) < 0 && !_.isEmpty(option) || option == 'Variant Browser' && !_.isEmpty(option)){
             var optionValue = option;
-            var tabArray = ['Genome Browser'];
+            var tabArray = ['Genome Browser','Variant Browser'];
             if(_.indexOf(tabArray, option) >= 0){
                 var hash = document.URL.substring(document.URL.indexOf('?')+1);
                 if  (!_.isUndefined(hash.split("&")[1])){
@@ -206,11 +210,12 @@ Eva.prototype = {
                 }
                 break;
 
-            case 'Clinical':
+            case 'Clinical Browser':
                     if(this.clinicalWidgetPanel){
                         this.clinicalWidgetPanel.show();
                     }else{
                         this.clinicalWidgetPanel = this._createClinicalWidgetPanel(this.contentDiv);
+                        this.select('Clinical Browser');
                         this.clinicalWidgetPanel.formPanelVariantFilter.trigger('submit', {values: this.clinicalWidgetPanel.formPanelVariantFilter.getValues(), sender: _this});
                     }
                 break;
@@ -237,8 +242,20 @@ Eva.prototype = {
 
     },
     _createVariantWidgetPanel: function(target){
+//      var position = '21:21989000-21989560';
+      var position = '1:78383460-78389470';
+      var species = 'hsapiens_grch37';
+      if(!_.isEmpty($.urlParam('position'))){
+          position = $.urlParam('position')
+      }
+      if(!_.isEmpty($.urlParam('species'))){
+          species = $.urlParam('species')
+      }
+
         var variantWidget= new EvaVariantWidgetPanel({
-            target: target
+            target: target,
+            position:position,
+            species:species
         });
         variantWidget.draw();
         return variantWidget;

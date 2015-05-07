@@ -87,11 +87,25 @@ ClinvarAssertionPanel.prototype = {
     load: function (data) {
         this.clear();
         var panels = [];
-        for (var key in data) {
-            var assertData = data[key];
-            var asstPanel = this._createAssertPanel(assertData);
-            panels.push(asstPanel);
+//        var clinvarList = data.clinvarList;
+//        console.log(data)
+//        console.log('------')
+//        for (var key in clinvarList) {
+//            var clinVarAssertion = clinvarList[key].clinVarAssertion;
+//            for (var key in clinVarAssertion) {
+//                var assertData =  clinVarAssertion[key];
+//                var asstPanel = this._createAssertPanel(assertData);
+//            }
+//            panels.push(asstPanel);
+//        }
+        var panels = [];
+        var clinVarAssertion = data.clinvarSet.clinVarAssertion;
+        for (var key in clinVarAssertion) {
+                var assertData =  clinVarAssertion[key];
+                var asstPanel = this._createAssertPanel(assertData);
+                panels.push(asstPanel);
         }
+
         this.assertionContainer.add(panels);
     },
     _createPanel: function () {
@@ -110,6 +124,7 @@ ClinvarAssertionPanel.prototype = {
                 align: 'stretch'
             },
             overflowY: true,
+            overflowX: true,
             padding: 10,
             items: [
                 {
@@ -125,41 +140,100 @@ ClinvarAssertionPanel.prototype = {
         return panel;
     },
     _createAssertPanel: function (data) {
-        console.log(data)
-        var lastEvaluated = new Date( data.clinicalSignificance.dateLastEvaluated ).toUTCString();
-        var origin = data.observedIn[0].sample.origin;
+//        var lastEvaluated = new Date( data.clinicalSignificance.dateLastEvaluated ).toUTCString();
+        var submittedDate = '-';
+        if(data.clinVarSubmissionID.submitterDate){
+             submittedDate = new Date( data.clinVarSubmissionID.submitterDate ).toUTCString();
+        }
+
         var citation= 'NA';
-        if(!_.isEmpty(data.citation) && data.citation[0].id.source == 'PubMed'){
-            var citation = '<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+data.citation[0].id.value+'" target="_blank">Pubmed</a>';
+//        var publications = '-';
+        var publications;
+        var pubArray = [];
+        var measure = data.measureSet.measure;
+        _.each(_.keys(measure), function(key){
+            var citation = this[key].citation;
+            if(!_.isUndefined(citation)){
+                _.each(_.keys(citation), function(key){
+                    if(this[key].id && this[key].id.source == 'PubMed'){
+                        pubArray.push('PMID:<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+this[key].id.value+'" target="_blank">'+this[key].id.value+'</a>')
+                    }
+                },citation);
+            }
+
+        },measure);
+        if(!_.isEmpty(pubArray)){
+//            publications = pubArray.join('<br/>');
+            publications = pubArray.join(',');
+        }
+
+        var origin = data.observedIn[0].sample.origin;
+        var collectionMethod = data.observedIn[0].method[0].methodType;
+        var alleOriginArray = [];
+        var methodTypeArray = [];
+        _.each(_.keys(data.observedIn), function(key){
+            alleOriginArray.push(this[key].sample.origin);
+            var method = this[key].method;
+            _.each(_.keys(method), function(key){
+                methodTypeArray.push(this[key].methodType);
+            },method);
+
+        },data.observedIn);
+
+        var alleOrigin = '-';
+        if(!_.isEmpty(alleOriginArray)){
+            alleOriginArray = _.groupBy(alleOriginArray);
+            alleOrigin = _.keys(alleOriginArray).join('<br />');
+        }
+
+        var methodType = '-';
+        if(!_.isEmpty(methodTypeArray)){
+            methodTypeArray = _.groupBy(methodTypeArray);
+            methodType =  _.keys(methodTypeArray).join('<br />');
+        }
+
+        var div = '<div class="col-md-12"><table class="table table-bordered eva-attributes-table">'+
+                    '<tr>'+
+                    '<td class="header">Submission Accession</td>'+
+                    '<td class="header">Clinical Significance</td>'+
+                    '<td class="header">Review status</td>'+
+                    '<td class="header">Date of Submission</td>'+
+        //                            '<td class="header">Origin </td>'+
+        //                            '<td class="header">Citations</td>'+
+                    '<td class="header">Submitter</td>'+
+                    '<td class="header">Method Type</td>'+
+                    '<td class="header">Allele origin</td>'+
+                    '<td class="header">Assertion Method</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                    '<td>{clinVarAccession.acc}</td>'+
+                    '<td>{clinicalSignificance.description}</td>'+
+                    '<td>{clinicalSignificance.reviewStatus}</td>'+
+                    '<td>'+submittedDate+'</td>'+
+        //                            '<td>'+origin+'</td>'+
+        //                            '<td>'+alleOrigin+'</td>'+
+                    '<td>{clinVarSubmissionID.submitter}</td>'+
+                    '<td>'+methodType+'</td>'+
+                    '<td>'+alleOrigin+'</td>'+
+                    '<td>{assertion.type}</td>'+
+                    '</tr>';
+         div +='</table></div>';
+        if(!_.isUndefined(publications)){
+            div +='<div style="margin-left:15px;"><span style="color:steelblue;"><b>Publications:</b>&nbsp;</span><span>'+publications+'</span></div>';
         }
 
         var assertPanel = Ext.create('Ext.panel.Panel', {
             title: data.clinVarAccession.acc,
             border: false,
-            layout: 'vbox',
-            overflowX: true,
+            layout: 'fit',
+//            overflowX: true,
             items: [  {
                 xtype: 'container',
                 data: data,
-                width:970,
-                tpl: new Ext.XTemplate(
-                    '<div class="col-md-12"><table class="table table-bordered ocb-attributes-table">',
-                        '<tr>',
-                            '<td class="header">Clinical Significance <br/> (Last evaluated)</td>',
-                            '<td class="header">Review status</td>',
-                            '<td class="header">Origin </td>',
-                            '<td class="header">Citations</td>',
-                            '<td class="header">Submitter</td>',
-                        '</tr>',
-                        '<tr>',
-                            '<td>{clinicalSignificance.description}<br/>('+lastEvaluated+')</td>',
-                            '<td>{clinicalSignificance.reviewStatus}</td>',
-                            '<td>'+origin+'</td>',
-                            '<td>'+citation+'</td>',
-                            '<td>{clinVarSubmissionID.submitter}</td>',
-                        '</tr>',
-                        '</table></div>'
-                ),
+                width:960,
+//                overflowX: true,
+//                overflowY: true,
+                tpl: new Ext.XTemplate(div),
                 margin: '10 5 5 10'
             }]
         });

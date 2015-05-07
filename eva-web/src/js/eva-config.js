@@ -19,9 +19,30 @@
  * You should have received a copy of the GNU General Public License
  * along with EVA. If not, see <http://www.gnu.org/licenses/>.
  */
-//METADATA_HOST = "http://172.22.70.137:8080/eva/webservices/rest";
-////METADATA_HOST = "http://wwwdev.ebi.ac.uk/eva/webservices/rest";
-//METADATA_VERSION = 'v1';
+if(window.location.protocol == 'https:'){
+    CELLBASE_HOST = 'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest';
+}else{
+    CELLBASE_HOST = 'http://wwwdev.ebi.ac.uk/cellbase/webservices/rest';
+}
+CELLBASE_VERSION = 'v3';
+
+clinVarSpeciesList = [
+                        {
+                        assemblyCode:"grch37",
+                        taxonomyCode:"hsapiens",
+                        taxonomyEvaName:"Human",
+                        assemblyName:"GRCh37"
+
+                        }
+//                        {
+//                            assemblyCode:"grch38",
+//                            taxonomyCode:"hsapiens",
+//                            taxonomyEvaName:"Human",
+//                            assemblyName:"GRCh38"
+//
+//                        }
+                    ];
+
 var TABS = [
     "Home",
     "Submit Data",
@@ -31,6 +52,41 @@ var TABS = [
     "About",
     "Contact"
 ]
+
+consequenceTypesHierarchy = ['transcript_ablation',
+                             'splice_acceptor_variant',
+                             'splice_donor_variant',
+                             'stop_gained',
+                             'frameshift_variant',
+                             'stop_lost',
+                             'initiator_codon_variant',
+                             'transcript_amplification',
+                             'inframe_insertion',
+                             'inframe_deletion',
+                             'missense_variant',
+                             'splice_region_variant',
+                             'incomplete_terminal_codon_variant',
+                             'stop_retained_variant',
+                             'synonymous_variant',
+                             'coding_sequence_variant',
+                             'mature_miRNA_variant',
+                             '5_prime_UTR_variant',
+                             '3_prime_UTR_variant',
+                             'non_coding_transcript_exon_variant',
+                             'intron_variant',
+                             'NMD_transcript_variant',
+                             'non_coding_transcript_variant',
+                             'upstream_gene_variant',
+                             'downstream_gene_variant',
+                             'TFBS_ablation',
+                             'TFBS_amplification',
+                             'TF_binding_site_variant',
+                             'regulatory_region_ablation',
+                             'regulatory_region_amplification',
+                             'regulatory_region_variant',
+                             'feature_elongation',
+                             'feature_truncation',
+                             'intergenic_variant']
 
 consequenceTypes = [
     {
@@ -76,8 +132,8 @@ consequenceTypes = [
                 children: [
                     {acc: 'SO:0001623', name: '5_prime_UTR_variant', qtip: 'A UTR variant of the 5\' UTR',leaf: true,checked: false,  iconCls :'no-icon'},
                     {acc: 'SO:0001624', name: '3_prime_UTR_variant', qtip: 'A UTR variant of the 3\' UTR',leaf: true, checked: false,  iconCls :'no-icon'},
-                    {acc: 'SO:0001792', name: 'non_coding_exon_variant', qtip: 'A sequence variant that changes non-coding exon sequence',leaf: true,checked: false,  iconCls :'no-icon' },
-                    {acc: 'SO:0001619', name: 'nc_transcript_variant', qtip: 'A transcript variant of a non coding RNA',leaf: true,checked: false,  iconCls :'no-icon' },
+                    {acc: 'SO:0001792', name: 'non_coding_transcript_exon_variant', qtip: 'A sequence variant that changes non-coding exon sequence',leaf: true,checked: false,  iconCls :'no-icon' },
+//                    {acc: 'SO:0001619', name: 'nc_transcript_variant', qtip: 'A transcript variant of a non coding RNA',leaf: true,checked: false,  iconCls :'no-icon' },
                     {acc: 'SO:0001627', name: 'intron_variant', qtip: 'A transcript variant occurring within an intron',leaf: true,checked: false,  iconCls :'no-icon' }
 
                 ]

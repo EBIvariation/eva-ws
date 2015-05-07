@@ -52,7 +52,8 @@ function EvaVariantWidget(args) {
         genomeViewer: true,
         genotype: true,
         stats: true,
-        rawData: true
+        rawData: true,
+        populationStats:true
     };
     this.tools = [];
     this.dataParser;
@@ -183,6 +184,16 @@ EvaVariantWidget.prototype = {
                 contentEl: this.variantrawDataPanelDiv
             });
         }
+        if (this.defaultToolConfig.populationStats) {
+            this.variantPopulationStatsPanelDiv = document.createElement('div');
+            this.variantPopulationStatsPanelDiv.setAttribute('class', 'ocb-variant-rawdata-panel');
+            this.variantPopulationStatsPanel = this._createVariantPopulationStatsPanel(this.variantPopulationStatsPanelDiv);
+            tabPanelItems.push({
+                title: 'Population Stats',
+//                border: 0,
+                contentEl: this.variantPopulationStatsPanelDiv
+            });
+        }
 
         if (this.defaultToolConfig.genomeViewer) {
             this.genomeViewerDiv = document.createElement('div');
@@ -251,6 +262,9 @@ EvaVariantWidget.prototype = {
         if (this.defaultToolConfig.rawData) {
             this.variantrawDataPanel.draw();
         }
+        if (this.defaultToolConfig.populationStats) {
+            this.variantPopulationStatsPanel.draw();
+        }
 
         for (var i = 0; i < this.tools.length; i++) {
             var tool = this.tools[i];
@@ -267,17 +281,18 @@ EvaVariantWidget.prototype = {
                 {
                     text: "Chr",
                     dataIndex: 'chromosome',
-                    flex: 0.5
+//                    flex: 0.5,/
+//                    width:50
                 },
                 {
                     text: 'Position',
                     dataIndex: 'start',
-                    flex: 0.5
+//                    flex: 0.5
                 },
                 {
                     text: "SNP ID",
                     dataIndex: 'id',
-                    flex: 0.5
+//                    flex: 0.5
                 },
                 //{
                 //text: 'End',
@@ -290,12 +305,13 @@ EvaVariantWidget.prototype = {
 //                    renderer: function(value, metaData, record, row, col, store, gridView){
 ////                        console.log(record)
 //                    },
-                    flex: 0.5
+//                    flex: 0.5
+//                    width:80
                 },
                 {
                     text: 'Class',
                     dataIndex: 'type',
-                    flex: 0.5,
+//                    flex: 0.3,
                     xtype: "templatecolumn",
                     tpl: '<tpl if="type"><a href="http://www.ncbi.nlm.nih.gov/books/NBK44447/#Content.what_classes_of_genetic_variatio" target="_blank">{type}</a><tpl else>-</tpl>',
                 },
@@ -316,33 +332,82 @@ EvaVariantWidget.prototype = {
 //                text: 'HGVS Names',
 //                dataIndex: 'hgvs_name'
 //            },
-                {
-                    text: 'Gene',
-                    dataIndex: 'gene'
-                },
-                {
-                    text: 'Consequence Type',
-                    dataIndex: 'consequenceTypes',
-                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
-                        var tempArray = [];
-                        var consequenceTypes = rec.data.consequenceTypes;
-                        if(consequenceTypes){
-                            for (i = 0; i < consequenceTypes.length; i++) {
-                                tempArray.push(consequenceTypes[i].soTerms[0].soName)
-                            }
-                            meta.tdAttr = 'data-qtip="'+tempArray.join('\n')+'"';
-                            return value ? Ext.String.format(
-                                '<tpl>'+tempArray.join()+'</tpl>',
-                                value
-                            ) : '';
-                        }else{
-                            return '';
-                        }
-
-//                        return tempArray.join();
-                    },
-                    flex: 1
-                },
+//                {
+//                    text: 'Gene',
+//                    dataIndex: 'gene'
+//                },
+//                {
+//                    text: 'Consequence Type',
+//                    dataIndex: 'consequenceTypes',
+//                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+//                        var tempArray = [];
+//                        var consequenceTypes = rec.data.consequenceTypes;
+//                        if(!_.isUndefined(value)){
+//                            var tempArray = [];
+//                            _.each(_.keys(consequenceTypes), function(key){
+//                                var so_terms = this[key].soTerms;
+//                                _.each(_.keys(so_terms), function(key){
+//                                    tempArray.push(this[key].soName)
+//                                },so_terms);
+//                            },consequenceTypes);
+//
+//
+//                            var groupedArr = _.groupBy(tempArray);
+//                            var so_array = [];
+//                            _.each(_.keys(groupedArr), function(key){
+//                                var index =  _.indexOf(consequenceTypesHierarchy, key);
+////                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+////                                        so_array.push(key+' ('+this[key].length+')')
+//                                so_array[index] = key+' ('+this[key].length+')';
+//                            },groupedArr);
+//                            so_array =  _.compact(so_array);
+//                            meta.tdAttr = 'data-qtip="'+so_array.join('\n')+'"';
+//                            return value ? Ext.String.format(
+//                                '<tpl>'+so_array.join()+'</tpl>',
+//                                value
+//                            ) : '';
+//                        }else{
+//                            return '';
+//                        }
+//
+////                        return tempArray.join();
+//                    },
+//                    flex: 1
+//                },
+//                {
+//                    text: "Conserved Regions",
+//                    columns: [
+//                        {
+//                            text: "phyloP",
+//                            dataIndex: "conservedRegionScores",
+//                            width:70,
+//                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+//                                var conservedRegionScores = rec.data.conservedRegionScores;
+//                                _.each(_.keys(conservedRegionScores), function(key){
+//                                   if(this[key].source == 'phylop'){
+//                                       value = this[key].score.toFixed(3);
+//                                   }
+//                                },conservedRegionScores);
+//                                return value;
+//                            }
+//
+//                        },
+//                        {
+//                            text: "PhastCons",
+//                            dataIndex: "conservedRegionScores",
+//                            width:80,
+//                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+//                                var conservedRegionScores = rec.data.conservedRegionScores;
+//                                _.each(_.keys(conservedRegionScores), function(key){
+//                                    if(this[key].source == 'phastCons'){
+//                                        value = this[key].score.toFixed(3);
+//                                    }
+//                                },conservedRegionScores);
+//                                return value;
+//                            }
+//                        }
+//                    ]
+//                },
                 {
                     text: 'View',
                     //dataIndex: 'id',
@@ -352,14 +417,14 @@ EvaVariantWidget.prototype = {
                         '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
                         '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>' +
                         '<tpl else><a href="?variant={chromosome}:{start}:{reference}:{alternate}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>',
-                    flex: 1
+//                    flex: 0.5
                 }
 
                 //
             ],
             defaults: {
-//                flex: 1,
-                align:'center' ,
+                flex: 1,
+                align:'left' ,
                 sortable : true
             }
         } ;
@@ -373,11 +438,15 @@ EvaVariantWidget.prototype = {
             {name: "ref", type: "string"},
             {name: "alt", type: "string"},
             {name: 'hgvs_name', type: 'string'},
-            {name: 'gene', mapping: 'annotation.xrefs[0].id', type: 'string' },
-            {name: 'consequenceTypes', mapping: 'annotation.consequenceTypes', type:'auto' },
+//            {name: 'id', mapping: 'annotation.xrefs[0].id', type: 'string' },
+//            {name: 'consequenceTypes', mapping: 'annotation.consequenceTypes', type:'auto' },
+//            {name: 'conservedRegionScores', mapping: 'annotation.conservedRegionScores', type:'auto'},
+//            {name: 'phylop',  mapping: 'annotation.conservedRegionScores', type:'auto'},
+//            {name: 'phastCons', mapping: 'annotation.conservedRegionScores', type:'auto'}
         ];
 
-      var listeners =  {
+
+        var listeners =  {
             expandbody : function( expander, record, body, rowIndex ) {
                 var content = '';
                 var consequenceTypes = record.data.consequenceTypes;
@@ -389,9 +458,9 @@ EvaVariantWidget.prototype = {
         };
 
         var plugins =  [{
-                        ptype: 'rowexpander',
-                        rowBodyTpl : new Ext.XTemplate()
-                     }];
+            ptype: 'rowexpander',
+            rowBodyTpl : new Ext.XTemplate()
+        }];
 
         var variantBrowserGrid = new EvaVariantBrowserGrid({
             title: this.browserGridConfig.title,
@@ -409,7 +478,7 @@ EvaVariantWidget.prototype = {
             columns:columns,
             samples: this.samples,
             headerConfig: this.headerConfig,
-            plugins:plugins,
+//            plugins:plugins,
             handlers: {
                 "variant:change": function (e) {
                     _this.lastVariant = e.args;
@@ -465,11 +534,18 @@ EvaVariantWidget.prototype = {
                         element: 'el', //bind to the underlying el property on the panel
                         fn: function(){
                             var proxy = variantBrowserGrid.grid.store.proxy;
+                            var category = 'segments';
+                            var query = proxy.extraParams.region;
+                            if(proxy.extraParams.gene){
+                                category = 'genes';
+                                query =  proxy.extraParams.gene;
+                            }
                             var url = EvaManager.url({
-                                category: 'segments',
+                                category: category,
                                 resource: 'variants',
-                                query: proxy.extraParams.region,//
-                                params:{merge:true,exclude:'files'}
+                                query: query,
+//                                params:{merge:true,exclude:'files'}
+                                params:{merge:true,exclude:'sourceEntries'}
                             });
                             proxy.url = url;
                             var exportStore = Ext.create('Ext.data.Store', {
@@ -551,7 +627,7 @@ EvaVariantWidget.prototype = {
 //                    _this.grid.setLoading(false);
                 }
             },
-            height:800,
+            height:820,
             statsTpl : new Ext.XTemplate(
                 '<table class="ocb-attributes-table">' +
                     '<tr>' +
@@ -561,7 +637,7 @@ EvaVariantWidget.prototype = {
                     '<td class="header">Missing Alleles</td>' +
                     '<td class="header">Missing Genotypes</td>' +
                     '</tr>',
-                    '<tr>' +
+                '<tr>' +
                     '<td><tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl><tpl if="mafAllele">({mafAllele}) <tpl else></tpl></td>' +
 //                    '<td><tpl if="mgf == -1 || mgf == 0">NA <tpl else>{mgf:number( "0.000" )} </tpl><tpl if="mgfGenotype">({mgfGenotype}) <tpl else></tpl></td>' +
                     '<td><tpl if="mendelianErrors == -1">NA <tpl else>{mendelianErrors}</tpl></td>' +
@@ -590,7 +666,8 @@ EvaVariantWidget.prototype = {
                         category: 'segments',
                         resource: 'variants',
                         query:region,
-                        params:proxy.extraParams,
+//                        params:proxy.extraParams,
+                        params:{species:proxy.extraParams.species},
                         async: false,
                         success: function (response) {
                             try {
@@ -602,7 +679,8 @@ EvaVariantWidget.prototype = {
                         }
                     });
                     if (variant.sourceEntries) {
-                        variantStatsPanel.load(variant.sourceEntries,proxy.extraParams);
+//                        variantStatsPanel.load(variant.sourceEntries,proxy.extraParams);
+                        variantStatsPanel.load(variant.sourceEntries,{species:proxy.extraParams.species});
                     }
                 }
             }
@@ -654,6 +732,75 @@ EvaVariantWidget.prototype = {
             }
         });
         return variantRawDataPanel;
+    },
+    _createVariantPopulationStatsPanel: function (target) {
+        var _this = this;
+        var variantPopulationStatsPanel = new EvaVariantPopulationStatsPanel({
+            target: target,
+            headerConfig: this.defaultToolConfig.headerConfig,
+            handlers: {
+                "load:finish": function (e) {
+//                    _this.grid.setLoading(false);
+                }
+            },
+            height:820,
+            statsTpl : new Ext.XTemplate(
+                '<table class="ocb-attributes-table">' +
+                    '<tr>' +
+                    '<td class="header">Minor Allele Frequency</td>' +
+//                    '<td class="header">Minor Genotype Frequency</td>' +
+                    '<td class="header">Mendelian Errors</td>' +
+                    '<td class="header">Missing Alleles</td>' +
+                    '<td class="header">Missing Genotypes</td>' +
+                    '</tr>',
+                '<tr>' +
+                    '<td><tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl><tpl if="mafAllele">({mafAllele}) <tpl else></tpl></td>' +
+//                    '<td><tpl if="mgf == -1 || mgf == 0">NA <tpl else>{mgf:number( "0.000" )} </tpl><tpl if="mgfGenotype">({mgfGenotype}) <tpl else></tpl></td>' +
+                    '<td><tpl if="mendelianErrors == -1">NA <tpl else>{mendelianErrors}</tpl></td>' +
+                    '<td><tpl if="missingAlleles == -1">NA <tpl else>{missingAlleles}</tpl></td>' +
+                    '<td><tpl if="missingGenotypes == -1">NA <tpl else>{missingGenotypes}</tpl></td>' +
+                    '</tr>',
+                '</table>'
+            )
+        });
+
+        this.variantBrowserGrid.on("variant:clear", function (e) {
+            variantPopulationStatsPanel.clear(true);
+        });
+
+        this.on("variant:change", function (e) {
+            if(_.isUndefined(e.variant)){
+                variantPopulationStatsPanel.clear(true);
+            }else{
+//                if (target === _this.selectedToolDiv) {
+                if (target.id === _this.selectedToolDiv.id) {
+                    var variant = e.variant;
+                    var region = variant.chromosome+':'+variant.start+'-'+variant.end;
+                    var proxy =  _.clone(this.variantBrowserGrid.store.proxy);
+//                proxy.extraParams.region = region;
+                    EvaManager.get({
+                        category: 'segments',
+                        resource: 'variants',
+                        query:region,
+                        params:proxy.extraParams,
+                        async: false,
+                        success: function (response) {
+                            try {
+                                _.extend(variant, response.response[0].result[0])
+                            } catch (e) {
+                                console.log(e);
+                            }
+
+                        }
+                    });
+                    if (variant.sourceEntries) {
+                        variantPopulationStatsPanel.load(variant.sourceEntries,proxy.extraParams);
+                    }
+                }
+            }
+
+        });
+        return variantPopulationStatsPanel;
     },
     _createVariantGenotypeGrid: function (target) {
         var _this = this;
@@ -970,7 +1117,7 @@ EvaVariantWidget.prototype = {
 
         /* Get the column headers from the store dataIndex */
 
-        var removeKeys = ['hgvs','sourceEntries','ref','alt','hgvs_name','iid','annotation'];
+        var removeKeys = ['hgvs','sourceEntries','ref','alt','hgvs_name','iid','annotation','ids','conservedRegionScores','length'];
 
         Ext.Object.each(records[0].data, function(key) {
             if(_.indexOf(removeKeys, key) == -1){
@@ -990,32 +1137,63 @@ EvaVariantWidget.prototype = {
             csvContent += snewLine;
             Ext.Object.each(records[i].data, function(key, value) {
                 if(key == 'consequenceTypes'){
-                    var consqTypeArr = [];
-                    Ext.Object.each(records[i].data[key], function(k, v) {
-                        consqTypeArr.push(v.soTerms[0].soName)
-                    });
-                    value = consqTypeArr.join(" ");
+                    var tempArray = [];
+                    _.each(_.keys(value), function(key){
+                        var so_terms = this[key].soTerms;
+                        _.each(_.keys(so_terms), function(key){
+                            tempArray.push(this[key].soName)
+                        },so_terms);
+                    },value);
+
+
+                    var groupedArr = _.groupBy(tempArray);
+                    var so_array = [];
+                    _.each(_.keys(groupedArr), function(key){
+                        var index =  _.indexOf(consequenceTypesHierarchy, key);
+//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+//                                        so_array.push(key+' ('+this[key].length+')')
+                        so_array[index] = key+' ('+this[key].length+')';
+                    },groupedArr);
+                    so_array =  _.compact(so_array);
+                    value = so_array.join(" ");
+                }else if(key == 'phylop'){
+                   var phylop =  _.findWhere(records[i].data[key], {source: key});
+                   if(phylop){
+                       value = phylop.score.toFixed(3);
+                   }else{
+                       value = '';
+                   }
+
+
+                }else if(key == 'phastCons'){
+                    var phastCons =  _.findWhere(records[i].data[key], {source: key});
+                    if(phastCons){
+                        value = phastCons.score.toFixed(3);
+                    }else{
+                        value = '';
+                    }
                 }
+
                 if(_.indexOf(removeKeys, key) == -1){
                     printableValue = ((noCsvSupport) && value == '') ? '&nbsp;'  : value;
                     printableValue = String(printableValue).replace(/,/g , "");
                     printableValue = String(printableValue).replace(/(\r\n|\n|\r)/gm,"");
                     csvContent += sdelimiter +  printableValue + edelimiter;
                 }
+
             });
 
-            console.log(csvContent)
+
             var speciesName;
             var species;
             if(!_.isEmpty(speciesList)){
                 speciesName = _.findWhere(speciesList, {taxonomyCode:params.species.split("_")[0]}).taxonomyEvaName;
-                species = speciesName.substr(0,1).toUpperCase()+speciesName.substr(1)+'/'+_.findWhere(speciesList, {taxonomyCode:params.species.split('_')[0]}).assemblyName;
+                species = speciesName.substr(0,1).toUpperCase()+speciesName.substr(1)+'/'+_.findWhere(speciesList, {assemblyCode:params.species.split('_')[1]}).assemblyName;
 
             } else {
                 species = params.species;
             }
 
-//            var species = _.findWhere(speciesList, {value:params.species}).name;
             speciesValue = ((noCsvSupport) && species == '') ? '&nbsp;' : species;
             speciesValue = String(species).replace(/,/g , "");
             speciesValue = String(speciesValue).replace(/(\r\n|\n|\r)/gm,"");

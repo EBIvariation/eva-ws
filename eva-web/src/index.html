@@ -95,7 +95,7 @@
                         <li><a>Submit Data</a></li>
                         <li><a>Study Browser</a></li>
                         <li><a>Variant Browser</a></li>
-                        <li><a>Clinical</a></li>
+                        <li><a>Clinical Browser</a></li>
                         <li><a>GA4GH</a></li>
                         <!--<li><a>Genome Browser</a></li>-->
                         <li><a>API</a></li>
@@ -181,6 +181,21 @@
                     <!--<p><img src="img/Upload.png" alt="" width="48" height="48"> Upload your data files to your private submission upload account or directly to the <a href="mailto:eva-helpdesk@ebi.ac.uk?subject=Sequence submissionto EVA&amp;body=**We will provide you with a submission package metadata templates guides for completing templates**" target="_top">eva-helpdesk@ebi.ac.uk</a>.</p>-->
                     <p>Upload your data files to your private submission upload account or directly to the <a href="mailto:eva-helpdesk@ebi.ac.uk?subject=Sequence submissionto EVA&amp;body=**We will provide you with a submission package metadata templates guides for completing templates**" target="_top">eva-helpdesk@ebi.ac.uk</a>.</p>
                 </div>
+                <h2>Clinically Relevant Genetic Variants</h2>
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>
+                            EVA welcomes submission of clinically relevant variant data from clinical testing labs, locus-specific databases, expert panels and professional societies.
+                            EVA works in collaboration with the <a href="http://www.ncbi.nlm.nih.gov/clinvar" target="_blank">ClinVar resource at NCBI</a> to provide the most comprehensive dataset of clinically relevant variants available worldwide - all data in NCBI ClinVar is imported into the EVA database.
+                            For clinical data submitted directly to EVA, we shall create a submission to ClinVar on the user's behalf, with user's permission, thus exchanging data between EVA and ClinVar.
+                            Therefore, submitters should submit clinically relevant data once either to NCBI ClinVar or to EVA, but should not submit to both.
+
+                        </p>
+                        <p>To submit data to EVA please download this  <a href="files/SubmissionTemplate.xlsx" target="_blank">template</a>, fill in and send by email to <a href="mailto:eva-helpdesk@ebi.ac.uk" target="_top">eva-helpdesk@ebi.ac.uk</a>.
+                            <!--A completed template for a fictional study can be found <a href="files/EVA_Submission_template.EVA.V1.0.1_live_mockup_plus_Clinical_Variants.xlsx" target="_blank">here</a>.</p>-->
+                        <!--<p>If you would like to discuss any aspect of EVA, or if anything is unclear, please contact us directly at <a href="mailto:eva-helpdesk@ebi.ac.uk" target="_top">eva-helpdesk@ebi.ac.uk</a>. </p>-->
+                    </div>
+                </div>
             </div>
 
             <div id="about-us" class="hide-div">
@@ -191,6 +206,14 @@
                     <p>The main submission format is a VCF file. VCF files should provide either genotypes from individual samples or aggregate summary information, such as allele frequencies, and be accompanyed by descriptive metadata. Examples of such include: study description, sample origins, experimental details, methodology for variant and/or genotype calls, etc. We strongly encourage the submission of as much metadata possible as this information is extremely useful for downstream analysis.</p>
                     <p>In addition to archiving VCF data, each submission is also standardized to permit variant accessioning, global quering, re-mapping across genome builds and calculation of aggregate summary information based on the individual level genotypes.</p>
                     <p style="font-style:italic"><sup>[1]</sup><a href="http://www.ncbi.nlm.nih.gov/pubmed/23193291#" target="_blank">Nucleic Acids Res</a>. 2013 Jan;41(Database issue):D936-41. doi: 10.1093/nar/gks1213. Epub 2012 Nov 27.</p>
+                </div>
+
+                <h2>EVA Clinical Browser</h2>
+                <div>
+                    <p>Clinically relevant variation data submitted to EVA is brokered to <a href="http://www.ncbi.nlm.nih.gov/clinvar/" target="_blank">ClinVar at NCBI</a>. The complete ClinVar dataset is queryable via our <a href="?Clinical Browser">Clinical Browser</a> and we permit users to download the results in CSV format.
+                        We annotate all clinically relevant variants using the <a href="http://grch37.ensembl.org/Homo_sapiens/Tools/VEP" target="_blank"> Variant Effect Predictor (VEP)</a> of Ensembl (v78) against the <a href="http://www.gencodegenes.org/gencode_tags.html#" target="_blank">GENCODE Basic</a> geneset and employ the same <a href="http://www.ensembl.org/info/genome/variation/predicted_data.html" target="_blank">hierarchy</a> as Ensembl to determine the most severe consequence associated with each variant.</p>
+                    <p>We welcome all comments and feedback on our Clinical Browser, please email us at  <a href="mailto:eva-helpdesk@ebi.ac.uk?subject=&amp; target="_top">eva-helpdesk@ebi.ac.uk</a> </p>
+                    <p>To submit clinically relevant data to EVA please see our <a href="?Submit Data">Submit Data</a> page.</p>
                 </div>
                 <h2>Collaborations and project links</h2>
                 <div><img src="img/EVA_Related_Projects.png"><br/><br/><br/></div>
@@ -230,21 +253,10 @@
                 </div>
                 <h3>EVA Clincal Submissions</h3>
                 <p>EVA Clinical submissions are described via an Excel spreadsheet and/or tab-delimited text files. Our submissions templates are fully compliant with the data required for ClinVar allowing us to broker the submission of all EVA Clincal data to our collaborating NCBI resource.</p>
-                <p>Please download our EVA Clinical submission template via this <a href="files/EVA_Submission_template.EVA.V1.0.1_live_plus_Clinical_Variants.xlsx" target="_blank">link</a>.</p>
-                <p>A completed EVA Clinical template for a fictional submission can be downloaded <a href="files/EVA_Submission_template.EVA.V1.0.1_live_mockup_plus_Clinical_Variants.xlsx" target="_blank">here</a>.</p>
+                <p>Please download our EVA Clinical submission template via this <a href="files/SubmissionTemplate.xlsx" target="_blank">link</a>.</p>
+                <!--<p>A completed EVA Clinical template for a fictional submission can be downloaded <a href="files/EVA_Submission_template.EVA.V1.0.1_live_mockup_plus_Clinical_Variants.xlsx" target="_blank">here</a>.</p>-->
             </div>
-            <div id="clinical" class="hide-div">
-                <h2>Clinically Relevant Genetic Variants</h2>
-                <div class="row">
-                    <div class="col-md-12">
-                        <p>EVA welcome submission of clinically relevant variant data from clinical testing labs, locus-specific databases, expert panels and professional societies.
-                            EVA works in collaboration with the <a href="http://www.ncbi.nlm.nih.gov/clinvar" target="_blank">ClinVar resource at NCBI</a> to provide the most comprehensive dataset of clinically relevant variants available world-wide.
-                            Data submitted to EVA is brokered to ClinVar therefore it is unnecessary to submit to both resources.</p>
-                        <p>To submit data to EVA please download this  <a href="files/EVA_Submission_template.EVA.V1.0.1_live_plus_Clinical_Variants.xlsx" target="_blank">template</a>, fill in and send by email to <a href="mailto:eva-helpdesk@ebi.ac.uk" target="_top">eva-helpdesk@ebi.ac.uk</a>. A completed template for a fictional study can be found <a href="files/EVA_Submission_template.EVA.V1.0.1_live_mockup_plus_Clinical_Variants.xlsx" target="_blank">here</a>.</p>
-                        <p>If you would like to discuss any aspect of EVA, or if anything is unclear, please contact us directly at <a href="mailto:eva-helpdesk@ebi.ac.uk" target="_top">eva-helpdesk@ebi.ac.uk</a>. </p>
-                    </div>
-                </div>
-            </div>
+
             <div id="vcf-format" class="hide-div">
                 <h2>EVA VCF Format</h2>
                 <p> EVA only accepts VCF files that conform to <a href="http://www.1000genomes.org/wiki/Analysis/Variant%20Call%20Format/vcf-variant-call-format-version-41" target="_blank">VCF version 4.1 and above.</a></p>
@@ -417,28 +429,30 @@
                     <div>
                         <h3>Some example of queries include:</h3>
                         <p>* To fetch all the variants in a segment region:
-                        <br/> <a href="http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/segments/11:128446-128446/variants?species=hsapiens_grch37" target="_blank">http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/segments/11:128446-128446/variants?species=hsapiens_grch37</a></p>
+                        <br/> <a href="http://www.ebi.ac.uk/eva/webservices/rest/v1/segments/11:128446-128446/variants?species=hsapiens_grch37" target="_blank">http://www.ebi.ac.uk/eva/webservices/rest/v1/segments/11:128446-128446/variants?species=hsapiens_grch37</a></p>
 
                         <p><br/> * To fetch all the info of a variant:
-                        <br/> <a href="http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/variants/rs666/info?species=hsapiens_grch37" target="_blank">http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/variants/rs666/info?species=hsapiens_grch37</a></p>
+                        <br/> <a href="http://www.ebi.ac.uk/eva/webservices/rest/v1/variants/rs666/info?species=hsapiens_grch37" target="_blank">http://www.ebi.ac.uk/eva/webservices/rest/v1/variants/rs666/info?species=hsapiens_grch37</a></p>
 
                         <p><br/> * To fetch all the Short Genetics Variations studies:
-                        <br/> <a href="http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/all" target="_blank">http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/all</a></p>
+                        <br/> <a href="http://www.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/all" target="_blank">http://www.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/all</a></p>
 
                         <p><br/> * To fetch all the Structural Variations studies:
-                        <br/> <a href="http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/all?structural=true" target="_blank">http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/all?structural=true</a></p>
+                        <br/> <a href="http://www.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/all?structural=true" target="_blank">http://www.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/all?structural=true</a></p>
 
                         <p><br/> * To fetch all  info of a study:
-                        <br/> <a href="http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/PRJEB4019/summary" target="_blank">http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/PRJEB4019/summary</a></p>
+                        <br/> <a href="http://www.ebi.ac.uk/eva/webservices/rest/v1/studies/PRJEB4019/summary" target="_blank">http://www.ebi.ac.uk/eva/webservices/rest/v1/studies/PRJEB4019/summary</a></p>
 
                         <p><br/> * To fetch all file information of a study:
-                        <br/> <a href="http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/PRJEB4019/files?species=hsapiens_grch37" target="_blank">http://wwwdev.ebi.ac.uk/eva/webservices/rest/v1/studies/PRJEB4019/files?species=hsapiens_grch37</a></p>
+                        <br/> <a href="http://www.ebi.ac.uk/eva/webservices/rest/v1/studies/PRJEB4019/files?species=hsapiens_grch37" target="_blank">http://www.ebi.ac.uk/eva/webservices/rest/v1/studies/PRJEB4019/files?species=hsapiens_grch37</a></p>
                     </div>
                 </div>
             </div>
             <div id="studyView" class="hide-div"></div>
             <div id="variantView" class="hide-div"></div>
+            <div id="geneView" class="hide-div"></div>
             <div id="submissionForm" class="hide-div"></div>
+            <div id="clinical" class="hide-div"></div>
         </div>
         <footer>
 
@@ -521,8 +535,11 @@
     <!--<script type="text/javascript" src="js/variant-widget/eva-variant-rawdata-panel.js"></script>-->
     <script type="text/javascript" src="js/variant-widget/eva-variant-stats-panel.js"></script>
     <script type="text/javascript" src="js/variant-widget/eva-variant-genotype-grid.js"></script>
+    <script type="text/javascript" src="js/variant-widget/eva-variant-population-stats-panel.js"></script>
+    <script type="text/javascript" src="js/variant-widget/eva-variant-transcript-grid.js"></script>
     <script type="text/javascript" src="js/views/eva-study-view.js"></script>
     <script type="text/javascript" src="js/views/eva-variant-view.js"></script>
+    <script type="text/javascript" src="js/views/eva-gene-view.js"></script>
     <script type="text/javascript" src="js/statistics/eva-statistics.js"></script>
     <script type="text/javascript" src="js/statistics/dgva-statistics.js"></script>
     <script type="text/javascript" src="js/beacon-form/eva-beacon-form.js"></script>
@@ -538,12 +555,18 @@
     <script type="text/javascript" src="js/clinvar/eva-clinical-widget-panel.js"></script>
     <script type="text/javascript" src="js/clinvar/eva-clinvar-widget.js"></script>
     <script type="text/javascript" src="js/clinvar/eva-clinvar-browser-grid.js"></script>
-    <script type="text/javascript" src="js/clinvar/eva-clinvar-position-filter-form-panel.js"></script>
+    <script type="text/javascript" src="js/clinvar/filters/eva-clinvar-position-filter-form-panel.js"></script>
+    <script type="text/javascript" src="js/clinvar/filters/eva-clinvar-filter-form-panel.js"></script>
+    <script type="text/javascript" src="js/clinvar/filters/eva-clinvar-trait-filter-form-panel.js"></script>
+    <script type="text/javascript" src="js/clinvar/eva-clinvar-summary-panel.js"></script>
     <script type="text/javascript" src="js/clinvar/eva-clinvar-assertion-panel.js"></script>
+    <script type="text/javascript" src="js/clinvar/eva-clinvar-links-panel.js"></script>
+    <script type="text/javascript" src="js/clinvar/eva-clinvar-annotation-panel.js"></script>
     <script type="text/javascript" src="js/eva.js"></script>
     <!-- /build -->
 
     <script defer="defer" src="js/ebi-web-guidelines/modernizr.custom.49274.js"></script>
+    <script defer="defer" src="js/ebi-web-guidelines/google-analytics.js"></script>
     <script defer="defer" src="js/ebi-web-guidelines/cookiebanner.js"></script>
     <script defer="defer" src="js/ebi-web-guidelines/foot.js"></script>
     <!-- end scripts-->
@@ -562,6 +585,7 @@
               var clinicalDiv = document.querySelector('#clinical');
               var studyViewDiv = document.querySelector('#studyView');
               var variantViewDiv = document.querySelector('#variantView');
+              var geneViewDiv = document.querySelector('#geneView');
               var beaconDiv =  document.querySelector('#beacon');
               var apiDiv =  document.querySelector('#api');
               var submissionFormDiv =  document.querySelector('#submissionForm');
@@ -593,6 +617,15 @@
                 });
             }
 
+            if(tabId == 'gene'){
+                var varianttSpecies = $.urlParam('species');
+                var evaGeneView = new EvaGeneView({
+                    target:'geneView',
+                    geneId:tab.value,
+                    species:varianttSpecies
+                });
+            }
+
             if(tabId == 'submission-start'){
                 var evaSubmission= new EvaSubmissionForm({
                     target:'submissionForm'
@@ -614,6 +647,7 @@
                 vcfDiv:vcfDiv,
                 studyView:studyViewDiv,
                 variantView:variantViewDiv,
+                geneView:geneViewDiv,
                 beacon:beaconDiv,
                 clinicalDiv:clinicalDiv,
                 apiDiv:apiDiv,

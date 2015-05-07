@@ -224,6 +224,15 @@ div#local-masthead{
     cursor: pointer;
 }
 
+.eva .x-tool-img{
+    background-image: url("../img/tool-sprites-dark.png");
+}
+
+.eva .api-span{
+    color:#426783;
+    font-style: italic;
+}
+
 
 .eva-header-1 {
     /*color: #BF8230;*/
@@ -248,6 +257,25 @@ div#local-masthead{
     margin-bottom: 0px;
     border: none;
 }
+
+.eva-panel .x-panel-header {
+    color: #156765;
+    border-color:#99bbe8;
+    background-color: #adc9c9;
+}
+.eva-panel .x-title-text{
+    font-size:120%;
+    color: #156765;
+}
+
+.eva-panel  .x-tool-img {
+    background-image: url("../img/tool-sprites.png");
+}
+.eva-panel  .x-panel-header-default .x-tool-img {
+    background-color: transparent;
+}
+
+
 
 .ocb-attributes-table {
     cellspacing: 0;
@@ -510,14 +538,7 @@ h4{
     border-color:#5f9796;
 }
 
-.eva .x-tool-img{
-    background-image: url("../img/tool-sprites-dark.png");
-}
 
-.eva .api-span{
-    color:#426783;
-    font-style: italic;
-}
 .vcf-header pre {
     height: auto;
     width:950px;
@@ -532,6 +553,68 @@ h4{
     padding:0;
 
 }​
+
+ .eva-attributes-table {
+     cellspacing: 0;
+     border-collapse: collapse;
+     border: 1px solid #d3d3d3;
+ }
+
+.eva-attributes-table tr {
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+}
+
+.eva-attributes-table td {
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+    padding: 5px;
+    text-align: center;
+}
+
+.eva-attributes-table td.header {
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+    padding: 5px;
+    background-color: whiteSmoke;
+    color: steelblue;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.eva-stats-table {
+    cellspacing: 0;
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+}
+
+.eva-stats-table tr {
+    border-collapse: collapse;
+    /*border: 1px solid #d3d3d3;*/
+}
+
+.eva-stats-table td {
+    border-collapse: collapse;
+    border: 1px solid #d3d3d3;
+    padding: 5px;
+    text-align: left;
+}
+
+.eva-stats-table td.header {
+    border-collapse: collapse;
+    /*border: 1px solid #d3d3d3;*/
+    padding: 5px;
+    background-color: whiteSmoke;
+    color: steelblue;
+    font-weight: bold;
+    text-align: left;
+}
+
+
+
+
+
 
 
 

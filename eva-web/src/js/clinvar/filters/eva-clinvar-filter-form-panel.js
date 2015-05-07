@@ -18,11 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with JSorolla. If not, see <http://www.gnu.org/licenses/>.
  */
-function EvaConsequenceTypeFilterFormPanel(args) {
+function EvaClinVarFilterFormPanel(args) {
     _.extend(this, Backbone.Events);
 
     //set default args
-    this.id = Utils.genId("ConsequenceTypeFilterFormPanel");
+    this.id = Utils.genId("CLinVarilterFormPanel");
     this.target;
     this.height = 400;
     this.title = "Consequence Type";
@@ -32,7 +32,6 @@ function EvaConsequenceTypeFilterFormPanel(args) {
     this.titleCollapse = false;
     this.collapsed = false;
     this.headerConfig;
-    this.filterType = 'eva';
     this.consequenceTypes = [];
     this.fields = [
         {name: 'name', type: 'string'},
@@ -70,7 +69,7 @@ function EvaConsequenceTypeFilterFormPanel(args) {
 
 }
 
-EvaConsequenceTypeFilterFormPanel.prototype = {
+EvaClinVarFilterFormPanel.prototype = {
     render: function () {
         var _this = this;
         console.log("Initializing " + this.id);
@@ -100,19 +99,17 @@ EvaConsequenceTypeFilterFormPanel.prototype = {
     getValues: function () {
         var _this = this;
         var node = this.panel.getRootNode();
-        var consequence_types = [];
+        var values = [];
         node.cascadeBy(function (n) {
             if (n.get('checked') && n.isLeaf()) {
-                if(_this.filterType == 'eva'){
-                    consequence_types.push(n.get('acc'));
-                }else{
-                    consequence_types.push(n.get('name'));
-                }
+                values.push(n.get('value'));
             }
         });
-
-        if (consequence_types.length > 0) {
-            return {'annot-ct': consequence_types};
+        var obj = {};
+        var filtertype = _this.filterType;
+        if (values.length > 0) {
+            obj[filtertype] = values;
+            return obj;
         } else {
             return {};
         }
@@ -124,89 +121,11 @@ EvaConsequenceTypeFilterFormPanel.prototype = {
             fields: this.fields
         });
 
-        Ext.define('TreeFilter', {
-            extend: 'Ext.AbstractPlugin',
-            alias: 'plugin.treefilter',
-            collapseOnClear: true,
-            allowParentFolders: false,
-            init: function (tree) {
-                var me = this;
-                me.tree = tree;
-
-                tree.filter = Ext.Function.bind(me.filter, me);
-                tree.clearFilter = Ext.Function.bind(me.clearFilter, me);
-            },
-            filter: function (value, property, re) {
-                var me = this
-                    , tree = me.tree
-                    , matches = []
-                    , root = tree.getRootNode()
-                    , property = property || 'name'
-                    , re = re || new RegExp(value, "ig")
-                    , visibleNodes = []
-                    , viewNode;
-
-                if (Ext.isEmpty(value)) {
-                    me.clearFilter();
-                    return;
-                }
-
-                tree.expandAll();
-
-
-                root.cascadeBy(function (node) {
-                    if (node.get(property).match(re)) {
-                        matches.push(node)
-                    }
-                });
-
-                if (me.allowParentFolders === false) {
-                    Ext.each(matches, function (match) {
-                        if (!match.isLeaf()) { Ext.Array.remove(matches, match); }
-                    });
-                }
-
-                Ext.each(matches, function (item, i, arr) {
-                    root.cascadeBy(function (node) {
-                        if (node.contains(item) == true) {
-                            visibleNodes.push(node)
-                        }
-                    });
-                    if (me.allowParentFolders === true &&  !item.isLeaf()) {
-                        item.cascadeBy(function (node) {
-                            visibleNodes.push(node)
-                        });
-                    }
-                    visibleNodes.push(item)
-                });
-
-                root.cascadeBy(function (node) {
-                    viewNode = Ext.fly(tree.getView().getNode(node));
-                    if (viewNode) {
-                        viewNode.setVisibilityMode(Ext.Element.DISPLAY);
-                        viewNode.setVisible(Ext.Array.contains(visibleNodes, node));
-                    }
-                });
-            },
-            clearFilter: function () {
-                var me = this
-                    , tree = this.tree
-                    , root = tree.getRootNode();
-//                if (me.collapseOnClear) { tree.collapseAll(); }
-                root.cascadeBy(function (node) {
-                    viewNode = Ext.fly(tree.getView().getNode(node));
-                    if (viewNode) {
-                        viewNode.show();
-                    }
-                });
-            }
-        });
-
         var store = Ext.create('Ext.data.TreeStore', {
             model: 'Tree Model',
             proxy: {
                 type: 'memory',
-                data: this.consequenceTypes,
+                data: this.data,
                 reader: {
                     type: 'json'
                 }

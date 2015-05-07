@@ -50,13 +50,17 @@ function EvaClinVarWidget(args) {
         },
         genomeViewer: true,
         genotype: true,
+        assertion:true,
+        summary:true,
+        links:true,
+        annot:true
     };
     this.tools = [];
     this.dataParser;
     this.responseParser;
 
     this.responseRoot = "response[0].result";
-    this.responseTotal = "response[0].numResults";
+    this.responseTotal = "response[0].numTotalResults";
     this.startParam = "skip";
 
     this.browserGridConfig = {
@@ -115,9 +119,10 @@ EvaClinVarWidget.prototype = {
             title: this.toolPanelConfig.title,
             border: this.toolPanelConfig.border,
             margin: '10 0 0 0',
-            height:600,
+            height:850,
             plain: true,
             animCollapse: false,
+            overflowY:true,
             header: this.toolPanelConfig.headerConfig,
             collapseDirection: Ext.Component.DIRECTION_BOTTOM,
             titleCollapse: true,
@@ -130,7 +135,7 @@ EvaClinVarWidget.prototype = {
                 tabchange: function (tabPanel, newTab, oldTab, eOpts) {
                     _this.selectedToolDiv = newTab.contentEl;
                     if (_this.lastVariant) {
-//                        _this.trigger('variant:change', {variant: _this.lastVariant, sender: _this});
+                        _this.trigger('clinvar:change', {variant: _this.lastVariant, sender: _this});
                     }
                 }
             }
@@ -138,16 +143,50 @@ EvaClinVarWidget.prototype = {
 
         var tabPanelItems = [];
 
+        if (this.defaultToolConfig.summary) {
+            this.clinvarSummaryPanelDiv = document.createElement('div');
+            this.clinvarSummaryPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
+            this.clinvarSummaryPanel = this._createSummaryPanel(this.clinvarSummaryPanelDiv);
+            tabPanelItems.push({
+                title: 'Summary',
+//                border: 0,
+                contentEl: this.clinvarSummaryPanelDiv
+            });
+        }
+
         if (this.defaultToolConfig.assertion) {
             this.clinvarAssertionPanelDiv = document.createElement('div');
             this.clinvarAssertionPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
             this.clinvarAssertionPanel = this._createAssertionPanel(this.clinvarAssertionPanelDiv);
             tabPanelItems.push({
-                title: 'Assertion',
+                title: 'Clinical Assertion',
 //                border: 0,
                 contentEl: this.clinvarAssertionPanelDiv
             });
         }
+
+        if (this.defaultToolConfig.annot) {
+            this.clinvarAnnotPanelDiv = document.createElement('div');
+            this.clinvarAnnotPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
+            this.clinvarAnnotPanel = this._createAnnotPanel(this.clinvarAnnotPanelDiv);
+            tabPanelItems.push({
+                title: 'Annotation',
+//                border: 0,
+                contentEl: this.clinvarAnnotPanelDiv
+            });
+        }
+
+        if (this.defaultToolConfig.links) {
+            this.clinvarLinksPanelDiv = document.createElement('div');
+            this.clinvarLinksPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
+            this.clinvarLinksPanel = this._createLinksPanel(this.clinvarLinksPanelDiv);
+            tabPanelItems.push({
+                title: 'External Links',
+//                border: 0,
+                contentEl: this.clinvarLinksPanelDiv
+            });
+        }
+
         for (var i = 0; i < this.tools.length; i++) {
             var tool = this.tools[i];
             var toolDiv = document.createElement('div');
@@ -182,9 +221,23 @@ EvaClinVarWidget.prototype = {
             this.toolTabPanel.setActiveTab(i);
         }
 
+        if (this.defaultToolConfig.summary) {
+            this.clinvarSummaryPanel.draw();
+        }
+
         if (this.defaultToolConfig.assertion) {
             this.clinvarAssertionPanel.draw();
         }
+
+        if (this.defaultToolConfig.annot) {
+            this.clinvarAnnotPanel.draw();
+        }
+
+        if (this.defaultToolConfig.links) {
+            this.clinvarLinksPanel.draw();
+        }
+
+
 
         for (var i = 0; i < this.tools.length; i++) {
             var tool = this.tools[i];
@@ -199,81 +252,204 @@ EvaClinVarWidget.prototype = {
         var columns ={
             items:[
                 {
-                    text: "Accession",
-//                    dataIndex: 'accession',
-                    xtype: "templatecolumn",
-                    tpl: '<tpl>{referenceClinVarAssertionAcc}</tpl>',
-                    flex: 1
+                    text: 'Chr',
+                    dataIndex: 'chromosome',
+                    flex:0.2
                 },
                 {
-                    text: 'Description',
-                    dataIndex: 'description',
-                    flex: 0.8
+                    text: "Position",
+                    dataIndex: 'position',
+                    flex:0.4
+                },
+                {
+                    text: "HGNC Symbol",
+                    dataIndex: 'hgnc_gene',
+//                    id:'clinvar-grid-gene-column',
+                    flex:0.4,
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+//                        var valueArray = [];
+//                        var clinvarList = rec.data.clinvarList
+//
+//                        _.each(_.keys(clinvarList), function(key){
+//                            if(this[key].referenceClinVarAssertion.measureSet.measure[0].measureRelationship){
+//                                var gene = this[key].referenceClinVarAssertion.measureSet.measure[0].measureRelationship[0].symbol[0].elementValue.value;
+//                                var geneLink = '<a href="?gene='+gene+'&species=hsapiens" target="_blank">'+gene+'</a>';
+//                            }
+//                            valueArray.push(geneLink);
+//                        },clinvarList);
+//                        return valueArray.join("<br>");
+                              if(value.measureSet.measure[0].measureRelationship){
+                                  var gene = value.measureSet.measure[0].measureRelationship[0].symbol[0].elementValue.value;
+                                  value = '<a href="?gene='+gene+'&species=hsapiens_grch37" target="_blank">'+gene+'</a>'
+                              }else{
+                                  value = '';
+                              }
+//
+//
+                        return value;
+
+                    }
+                },
+                {
+                    text: "Most Severe <br />Consequence Type",
+                    dataIndex: 'most_severe_so_term',
+                    flex:0.6,
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+
+                        if(!_.isUndefined(value)){
+                            var tempArray = [];
+                            _.each(_.keys(value), function(key){
+                                var so_terms = this[key].soTerms;
+                                _.each(_.keys(so_terms), function(key){
+                                    tempArray.push(this[key].soName)
+                                },so_terms);
+                            },value);
+
+                            var groupedArr = _.groupBy(tempArray);
+                            var so_array = [];
+                            _.each(_.keys(groupedArr), function(key){
+                                var index =  _.indexOf(consequenceTypesHierarchy, key);
+//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+//                                        so_array.push(key+' ('+this[key].length+')')
+                                so_array[index] = key;
+                            },groupedArr);
+                            so_array =  _.compact(so_array);
+                            meta.tdAttr = 'data-qtip="'+_.first(so_array)+'"';
+                            return value ? Ext.String.format(
+                                '<tpl>'+_.first(so_array)+'</tpl>',
+                                value
+                            ) : '';
+                        }else{
+                            return '';
+                        }
+
+                    }
                 },
                 {
                     text: "Trait",
                     dataIndex: 'trait',
-                    flex: 2
-                },
-                {
-                    text: 'Platform',
-                    dataIndex: 'platform',
-                    flex: 0.7
-                },
-                {
-                    text: 'Technology',
-                    dataIndex: 'technology',
-                    flex: 0.7
-                },
-                {
-                    text: "Gene",
-//                    dataIndex: 'accession',
-                    id:'clinvar-grid-gene-column',
-                    xtype: "templatecolumn",
-                    tpl: '<tpl></tpl>',
-                    flex: 0.5
-                },
-                {
-                    text: "Xrefs",
-                    flex: 1,
-                    textAlign: 'center',
-                    columns: [
-                        {
-                            text: "ID",
-                            dataIndex: "xref_id"
+                    flex:0.7,
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                        _.each(_.keys(value), function(key){
+                            if(this[key].elementValue.type == 'Preferred'){
+                               meta.tdAttr = 'data-qtip="'+this[key].elementValue.value+'"';
+                               value = this[key].elementValue.value;
+                            }
 
-                        },
-                        {
-                            text: "Database",
-                            dataIndex: "xref_db"
-                        }
-                    ]
+                        },value);
+                     return value ;
+                    }
                 },
                 {
-                    text: "View",
-                    id:'clinvar-grid-view-column',
+                    text: "Clinical <br /> Significance",
+                    dataIndex: 'clincalSignificance',
+                    flex:0.5,
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                        meta.tdAttr = 'data-qtip="'+value+'"';
+                        return value;
+                    }
+                },
+                {
+                    text: "ClinVar Accession",
+                    dataIndex: "clincalVarAcc",
+                    flex:0.41,
                     xtype: "templatecolumn",
-                    tpl: '<tpl></tpl>',
-                    flex: 1.2
-                }
+                    tpl: '<tpl><a href="https://www.ncbi.nlm.nih.gov/clinvar/{clincalVarAcc}" target="_blank">{clincalVarAcc}</a></tpl>'
+//                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+//                        var valueArray = [];
+//                        var clinvarList = rec.data.clinvarList
+//                        _.each(_.keys(clinvarList), function(key){
+//                            valueArray.push('<a href="https://www.ncbi.nlm.nih.gov/clinvar/'+this[key].referenceClinVarAssertion.clinVarAccession.acc+'" target="_blank">'+this[key].referenceClinVarAssertion.clinVarAccession.acc+'</a>');
+//                        },clinvarList);
+//                        return valueArray.join("<br>");
+//                    }
+
+                },
+//                {
+//                    text: "Accessions",
+//                    columns: [
+//                        {
+//                            text: "ClinVar",
+//                            dataIndex: "clincalVarAcc",
+//                            width:120,
+//                            xtype: "templatecolumn",
+//                            tpl: '<tpl><a href="https://www.ncbi.nlm.nih.gov/clinvar/{clincalVarAcc}" target="_blank">{clincalVarAcc}</a></tpl>'
+////                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+////                                var valueArray = [];
+////                                var clinvarList = rec.data.clinvarList
+////                                _.each(_.keys(clinvarList), function(key){
+////                                    valueArray.push('<a href="https://www.ncbi.nlm.nih.gov/clinvar/'+this[key].referenceClinVarAssertion.clinVarAccession.acc+'" target="_blank">'+this[key].referenceClinVarAssertion.clinVarAccession.acc+'</a>');
+////                                },clinvarList);
+////                                return valueArray.join("<br>");
+////                            }
+//
+//                        },
+//                        {
+//                            text: "dbSNP",
+//                            dataIndex: "dbSNPAcc",
+//                            width:110,
+//                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+////                                var valueArray = [];
+////                                var clinvarList = rec.data.clinvarList;
+////                                _.each(_.keys(clinvarList), function(key){
+////                                   if(this[key].referenceClinVarAssertion.measureSet.measure[0].xref){
+////                                       if(this[key].referenceClinVarAssertion.measureSet.measure[0].xref[0].type == 'rs'){
+////                                           var other_id = this[key].referenceClinVarAssertion.measureSet.measure[0].xref[0].type+this[key].referenceClinVarAssertion.measureSet.measure[0].xref[0].id;
+////                                           if(other_id){
+////                                               valueArray.push('<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs='+other_id+'" target="_blank">'+other_id+'</a>');
+////                                           }
+////
+////
+////                                       }
+////
+////
+////                                   }
+////                                },clinvarList);
+////                                if(!_.isEmpty(valueArray) ){
+////                                    return valueArray.join("<br>");
+////                                }else{
+////                                    return '-';
+////                                }
+//                                if(!_.isUndefined(value)){
+//                                   if(value.type == 'rs'){
+//                                       var other_id = value.id;
+//                                       return '<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs='+other_id+'" target="_blank">rs'+other_id+'</a>';
+//                                   }else{
+//                                       return '';
+//                                   }
+//
+//                                }else{
+//                                    return '';
+//                                }
+//
+//
+//                            }
+//                        }
+//
+//                    ]
+//                }
 
             ],
             defaults: {
-                textAlign: 'center',
+                flex:1,
+                textAlign: 'left',
                 align:'left' ,
                 sortable : false
             }
         } ;
 
         var attributes = [
-            {name: 'referenceClinVarAssertionAcc', mapping: 'referenceClinVarAssertion.clinVarAccession.acc', type: 'string' },
-            {name: 'clinVarAssertionAcc', mapping: 'clinVarAssertion[0].clinVarAccession.acc', type: 'string' },
-            {name: 'description', mapping: 'referenceClinVarAssertion.clinicalSignificance.description', type: 'string' },
-            {name: 'trait', mapping: 'clinVarAssertion[0].observedIn[0].traitSet.trait[0].name[0].elementValue.value', type: 'auto' },
-            {name: 'platform', mapping: 'clinVarAssertion[0].observedIn[0].method[0].typePlatform', type: 'string' },
-            {name: 'technology', mapping: 'clinVarAssertion[0].observedIn[0].method[0].description', type: 'string' },
-            {name: 'xref_id', mapping: 'clinVarAssertion[0].observedIn[0].xref[0].id', type: 'string' },
-            {name: 'xref_db', mapping: 'clinVarAssertion[0].observedIn[0].xref[0].db', type: 'string' }
+            {name: 'chromosome', mapping: 'chromosome', type: 'string' },
+            {name: 'position', mapping: 'start', type: 'string' },
+            {name: 'hgnc_gene', mapping: 'clinvarSet.referenceClinVarAssertion', type: 'auto' },
+            {name: 'most_severe_so_term', mapping: 'annot.consequenceTypes', type: 'auto' },
+            {name: 'trait', mapping: 'clinvarSet.referenceClinVarAssertion.traitSet.trait[0].name', type: 'auto' },
+            {name: 'clincalSignificance', mapping: 'clinvarSet.referenceClinVarAssertion.clinicalSignificance.description', type: 'string' },
+            {name: 'clincalVarAcc', mapping: 'clinvarSet.referenceClinVarAssertion.clinVarAccession.acc', type: 'string' },
+//            {name: 'dbSNPAcc', mapping: 'clinvarSet.referenceClinVarAssertion.measureSet.measure[0].xref[0]', type: 'auto' },
+//            {name: 'clinvarList', mapping: 'clinvarList', type: 'auto' }
+            {name: 'annot', mapping: 'annot', type: 'auto' }
+
         ];
 
 
@@ -289,9 +465,70 @@ EvaClinVarWidget.prototype = {
             startParam: this.startParam,
             attributes: attributes,
             columns:columns,
+            height:500,
             samples: this.samples,
-            headerConfig: this.headerConfig
+            headerConfig: this.headerConfig,
+            handlers: {
+                "clinvar:change": function (e) {
+                    _this.lastVariant = e.args;
+                    _this.trigger('clinvar:change', {variant: _this.lastVariant, sender: _this});
+                },
+                "clinvar:clear": function (e) {
+                    //_this.lastVariant = e.args;
+                    _this.trigger('variant:clear', {sender: _this});
+                }
+            }
         });
+
+        clinvarBrowserGrid.grid.addDocked({
+            xtype   : 'toolbar',
+            dock    : 'bottom',
+            border:false,
+            items: [{
+                xtype   :   'button',
+                text    :   'Export as CSV',
+                style: {
+                    borderStyle: 'solid'
+                },
+                listeners: {
+                    click: {
+                        element: 'el', //bind to the underlying el property on the panel
+                        fn: function(){
+                            var proxy = clinvarBrowserGrid.grid.store.proxy;
+                            var url = EvaManager.url({
+                                host:CELLBASE_HOST,
+                                version:CELLBASE_VERSION,
+                                category: 'hsapiens/feature',
+                                resource: 'all',
+                                query:'clinical',
+                                params:_this.formValues
+                            });
+                            var exportStore = Ext.create('Ext.data.Store', {
+                                pageSize:clinvarBrowserGrid.grid.store.getTotalCount(),
+                                autoLoad:true,
+                                model: attributes,
+                                remoteSort: true,
+                                proxy: proxy,
+                                extraParams:_this.formValues,
+                                listeners: {
+                                    load: function (store, records, successful, operation, eOpts) {
+//                                        var exportData = _this._exportToExcel(records,store.proxy.extraParams);
+                                        if(_.isUndefined(_this.formValues)){
+                                            _this.formValues = {species:_this.species};
+                                        }
+                                        var exportData = _this._exportToExcel(records,_this.formValues);
+                                        clinvarBrowserGrid.grid.setLoading(false);
+
+                                    }
+                                }
+
+                            });
+                        }
+                    }
+                }
+            }]
+        });
+
         return clinvarBrowserGrid;
     },
     _createAssertionPanel: function (target) {
@@ -311,13 +548,107 @@ EvaClinVarWidget.prototype = {
             assertionPanel.clear(true);
         });
 
-        this.clinvarBrowserGrid.on("clinvar:change", function (e) {
-            if (target === _this.selectedToolDiv) {
-                assertionPanel.load(e.args);
+        this.on("clinvar:change", function (e) {
+            if(_.isUndefined(e.variant)){
+                assertionPanel.clear(true);
+            }else{
+                if (target.id === _this.selectedToolDiv.id) {
+                    assertionPanel.load(e.variant);
+                }
             }
         });
 
         return assertionPanel;
+    },
+    _createSummaryPanel: function (target) {
+        var _this = this;
+        var summaryPanel = new ClinvarSummaryPanel({
+            target: target,
+            headerConfig: this.defaultToolConfig.headerConfig,
+            handlers: {
+                "load:finish": function (e) {
+//                    _this.grid.setLoading(false);
+                }
+            }
+
+        });
+
+        this.clinvarBrowserGrid.on("clinvar:clear", function (e) {
+            summaryPanel.clear(true);
+        });
+
+        this.on("clinvar:change", function (e) {
+//            if (target === _this.selectedToolDiv) {
+                if(_.isUndefined(e.variant)){
+                    summaryPanel.clear(true);
+                }else{
+                    if (target.id === _this.selectedToolDiv.id) {
+                        summaryPanel.load(e.variant);
+                    }
+                }
+        });
+
+        return summaryPanel;
+    },
+    _createAnnotPanel: function (target) {
+        var _this = this;
+        var annotPanel = new ClinvarAnnotationPanel({
+            target: target,
+            headerConfig: this.defaultToolConfig.headerConfig,
+            handlers: {
+                "load:finish": function (e) {
+//                    _this.grid.setLoading(false);
+                }
+            }
+
+        });
+
+        this.clinvarBrowserGrid.on("clinvar:clear", function (e) {
+            annotPanel.clear(true);
+        });
+
+        this.on("clinvar:change", function (e) {
+//            if (target === _this.selectedToolDiv) {
+            if(_.isUndefined(e.variant)){
+                annotPanel.clear(true);
+            }else{
+                if (target.id === _this.selectedToolDiv.id) {
+                    annotPanel.load(e.variant);
+                }
+            }
+        });
+
+        return annotPanel;
+    },
+    _createLinksPanel: function (target) {
+        var _this = this;
+        var linksPanel = new ClinvarLinksPanel({
+            target: target,
+            headerConfig: this.defaultToolConfig.headerConfig,
+            handlers: {
+                "load:finish": function (e) {
+//                    _this.grid.setLoading(false);
+                }
+            }
+
+        });
+
+        this.clinvarBrowserGrid.on("clinvar:clear", function (e) {
+            linksPanel.clear(true);
+        });
+
+        this.on("clinvar:change", function (e) {
+//            if (target === _this.selectedToolDiv) {
+            if(_.isUndefined(e.variant)){
+                linksPanel.clear(true);
+            }else{
+                if (target.id === _this.selectedToolDiv.id) {
+                    linksPanel.load(e.variant);
+                }
+            }
+        });
+
+        return linksPanel;
     },
 
     _createGenomeViewer: function (target) {
@@ -477,5 +808,203 @@ EvaClinVarWidget.prototype = {
     },
     setLoading: function (loading) {
         this.variantBrowserGrid.setLoading(loading);
+    },
+    _exportToExcel: function(records,params){
+        var csvContent      = '',
+        /*
+         Does this browser support the download attribute
+         in HTML 5, if so create a comma seperated value
+         file from the selected records / if not create
+         an old school HTML table that comes up in a
+         popup window allowing the users to copy and paste
+         the rows.
+         */
+            noCsvSupport     = ( 'download' in document.createElement('a') ) ? false : true,
+            sdelimiter      = noCsvSupport ? "<td>"   : "",
+            edelimiter      = noCsvSupport ? "</td>"  : ",",
+            snewLine        = noCsvSupport ? "<tr>"   : "",
+            enewLine        = noCsvSupport ? "</tr>"  : "\r\n",
+            printableValue  = '',
+            speciesValue  = '';
+
+        csvContent += snewLine;
+
+        /* Get the column headers from the store dataIndex */
+
+        var removeKeys = ['start','end','reference','alternate','clinvarList','clinvarSet','iid','variantString','_id','annot'];
+
+        Ext.Object.each(records[0].data, function(key) {
+            if(_.indexOf(removeKeys, key) == -1){
+                csvContent += sdelimiter +  key + edelimiter;
+            }
+        });
+        csvContent += sdelimiter +  'Organism / Assembly' + edelimiter;
+
+        csvContent += enewLine;
+
+        console.log(csvContent)
+
+
+        /*
+         Loop through the selected records array and change the JSON
+         object to teh appropriate format.
+         */
+
+        for (var i = 0; i < records.length; i++){
+            /* Put the record object in somma seperated format */
+            csvContent += snewLine;
+            Ext.Object.each(records[i].data, function(key, value) {
+                var clinvarList = records[i].data.clinvarList;
+//                if(key == 'clincalVarAcc'){
+//                    var clincalVarAccArray = [];
+//                    _.each(_.keys(clinvarList), function(key){
+//                        clincalVarAccArray.push(this[key].referenceClinVarAssertion.clinVarAccession.acc);
+//                    },clinvarList);
+//                    value = clincalVarAccArray.join("\n");
+//                }else if(key == 'otherAcc'){
+//                    var otherAccArray = [];
+//                    _.each(_.keys(clinvarList), function(key){
+//                        if(this[key].referenceClinVarAssertion.measureSet.measure[0].xref){
+//                            if(this[key].referenceClinVarAssertion.measureSet.measure[0].xref[0].type){
+//                                var other_id = this[key].referenceClinVarAssertion.measureSet.measure[0].xref[0].type+this[key].referenceClinVarAssertion.measureSet.measure[0].xref[0].id;
+//                            }
+//                            otherAccArray.push(other_id);
+//                        }
+//                    },clinvarList);
+//                    value = otherAccArray.join("\n");
+//                }else if(key == 'gene'){
+//                    var valueArray = [];
+//                    _.each(_.keys(clinvarList), function(key){
+//                        if(!_.isUndefined(this[key].referenceClinVarAssertion.measureSet.measure[0].measureRelationship)){
+//                            value = this[key].referenceClinVarAssertion.measureSet.measure[0].measureRelationship[0].symbol[0].elementValue.value;
+//                        }else{
+//                            value = '-';
+//                        }
+//
+//                    },clinvarList);
+//
+//                }else if(key == 'clincalSignificance'){
+//                    var clincalSignificanceArray = [];
+//                    _.each(_.keys(clinvarList), function(key){
+//                        clincalSignificanceArray.push(this[key].referenceClinVarAssertion.clinicalSignificance.description);
+//                    },clinvarList);
+//                    value = clincalSignificanceArray.join("\n");
+//                }
+                if(key == 'dbSNPAcc'){
+                    if(!_.isUndefined(value)){
+                        if(value.type == 'rs'){
+                            value =  'rs'+value.id;
+                        }else{
+                            value =  '';
+                        }
+                    }else{
+                        value =  '';
+                    }
+                }else if(key == 'trait'){
+                    var triatValue = value;
+                    value = '';
+                    _.each(_.keys(triatValue), function(key){
+                        if(this[key].elementValue.type == 'Preferred'){
+                            value = this[key].elementValue.value;
+                        }
+                    },triatValue);
+
+                }else if( key == "hgnc_gene"){
+                    if(value.measureSet.measure[0].measureRelationship){
+                        var gene = value.measureSet.measure[0].measureRelationship[0].symbol[0].elementValue.value;
+                        value = gene
+                    }else{
+                        value = '';
+                    }
+
+                }else if( key == "most_severe_so_term"){
+                    if(!_.isUndefined(value)){
+                        var tempArray = [];
+                        _.each(_.keys(value), function(key){
+                            var so_terms = this[key].soTerms;
+                            _.each(_.keys(so_terms), function(key){
+                                tempArray.push(this[key].soName)
+                            },so_terms);
+                        },value);
+
+                        var groupedArr = _.groupBy(tempArray);
+                        var so_array = [];
+                        _.each(_.keys(groupedArr), function(key){
+                            var index =  _.indexOf(consequenceTypesHierarchy, key);
+//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+//                                        so_array.push(key+' ('+this[key].length+')')
+//                            so_array[index] = key+' ('+this[key].length+')';
+                            so_array[index] = key;
+                        },groupedArr);
+                        so_array =  _.compact(so_array);
+                        value = _.first(so_array);
+
+                    }
+                }
+                if(_.indexOf(removeKeys, key) == -1){
+                    printableValue = ((noCsvSupport) && value == '') ? '&nbsp;'  : value;
+                    printableValue = String(printableValue).replace(/,/g , "");
+                    printableValue = String(printableValue).replace(/(\r\n|\n|\r)/gm,"");
+                    csvContent += sdelimiter +  printableValue + edelimiter;
+                }
+
+            });
+
+
+
+            var speciesName;
+            var species;
+
+            if(!_.isEmpty(clinVarSpeciesList)){
+                speciesName = _.findWhere(clinVarSpeciesList, {taxonomyCode:params.species.split("_")[0]}).taxonomyEvaName;
+                species = speciesName.substr(0,1).toUpperCase()+speciesName.substr(1)+'/'+_.findWhere(clinVarSpeciesList, {assemblyCode:params.species.split('_')[1]}).assemblyName;
+
+            } else {
+                species = params.species;
+            }
+
+            speciesValue = ((noCsvSupport) && species == '') ? '&nbsp;' : species;
+            speciesValue = String(species).replace(/,/g , "");
+            speciesValue = String(speciesValue).replace(/(\r\n|\n|\r)/gm,"");
+            csvContent += sdelimiter + speciesValue + edelimiter;
+            csvContent += enewLine;
+        }
+
+
+
+        if('download' in document.createElement('a')){
+            /*
+             This is the code that produces the CSV file and downloads it
+             to the users computer
+             */
+//            var link = document.createElement("a");
+//            link.setAttribute("href", 'data:application/csv;charset=utf-8,' + encodeURIComponent(csvContent));
+//            link.setAttribute("download", "variants.csv");
+//            link.setAttribute("target", "_blank");
+//            link.click();
+
+            var link=document.createElement('a');
+            var mimeType='application/xls';
+            var blob=new Blob([csvContent],{type:mimeType});
+            var url=URL.createObjectURL(blob);
+            link.href=url;
+            link.setAttribute('download', 'EVA_ClinVar_Variants.csv');
+            link.innerHTML = "Export to CSV";
+            document.body.appendChild(link);
+            link.click();
+
+        } else {
+            /*
+             The values below get printed into a blank window for
+             the luddites.
+             */
+            alert('Please allow pop up in settings if its not exporting');
+            window.open().document.write('<table>' + csvContent + '</table>');
+            return true;
+
+
+        }
+
+        return true;
     }
 };
