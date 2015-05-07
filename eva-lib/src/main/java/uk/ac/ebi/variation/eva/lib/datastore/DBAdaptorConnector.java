@@ -2,7 +2,10 @@ package uk.ac.ebi.variation.eva.lib.datastore;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import org.opencb.datastore.core.config.DataStoreServerAddress;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
@@ -49,11 +52,28 @@ public class DBAdaptorConnector {
             throw new IllegalArgumentException("Please specify a species");
         }
         
-        return new MongoCredentials(properties.getProperty("eva.mongo.host"),
-                Integer.parseInt(properties.getProperty("eva.mongo.port")),
+        String[] hosts = properties.getProperty("eva.mongo.host").split(",");
+        List<DataStoreServerAddress> servers = new ArrayList();
+        
+        // Get the list of hosts (optionally including the port number)
+        for (String host : hosts) {
+            String[] params = host.split(":");
+            if (params.length > 1) {
+                servers.add(new DataStoreServerAddress(params[0], Integer.parseInt(params[1])));
+            } else {
+                servers.add(new DataStoreServerAddress(params[0], 27017));
+            }
+        }
+        
+        MongoCredentials credentials = new MongoCredentials(servers,
                 "eva_" + species,
                 properties.getProperty("eva.mongo.user"),
                 properties.getProperty("eva.mongo.passwd"));
+        
+        // Set authentication database, if specified in the configuration
+        credentials.setAuthenticationDatabase(properties.getProperty("eva.mongo.auth.db", null));
+        
+        return credentials;
     }
     
 }
