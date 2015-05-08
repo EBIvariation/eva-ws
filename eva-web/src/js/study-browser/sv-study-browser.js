@@ -393,7 +393,7 @@ SvStudyBrowser.prototype = {
                         {}
                     )
                 }],
-                height: 620,
+//                height: 620,
                 features: [
                     {ftype: 'summary'}
                 ],

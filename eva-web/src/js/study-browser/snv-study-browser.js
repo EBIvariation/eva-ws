@@ -363,7 +363,7 @@ SnvStudyBrowser.prototype = {
                         '<p style="padding: 2px 2px 5px 15px"><b>Description:</b> {description}</p>'
                     )
                 }],
-                height: 420,
+//                height: 420,
                 features: [
                     {ftype: 'summary'}
                 ],

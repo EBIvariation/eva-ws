@@ -94,7 +94,18 @@ EvaStudyBrowserPanel.prototype = {
                         items:[svStudyBrowser.getPanel()]
 
                     }
-                ]
+                ],
+                listeners: {
+                    render: function() {
+                        this.items.each(function(i){
+                            i.tab.on('click', function(){
+                                if(i.title == 'Structural Variations '){
+                                    svStudyBrowser.load();
+                                }
+                            });
+                        });
+                    }
+                }
             });
 
         this.toolTabPanel.setActiveTab(0);
