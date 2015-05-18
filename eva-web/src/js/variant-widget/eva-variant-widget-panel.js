@@ -283,57 +283,57 @@ EvaVariantWidgetPanel.prototype = {
                     }
 
                     if (typeof e.values.gene !== 'undefined') {
-//                        CellBaseManager.get({
-//                            species: cellBaseSpecies,
-//                            category: 'feature',
-//                            subCategory: 'gene',
-//                            query: e.values.gene.toUpperCase(),
-//                            resource: "info",
-//                            async: false,
-//                            params: {
-//                                include: 'chromosome,start,end'
-//                            },
-//                            success: function (data) {
-//                                for (var i = 0; i < data.response.length; i++) {
-//                                    var queryResult = data.response[i];
-//                                    if(!_.isEmpty(queryResult.result[0])){
-//                                        var region = new Region(queryResult.result[0]);
-//                                        regions.push(region.toString());
-//                                    }
-//                                }
-//                            }
-//                        });
-//                        delete  e.values.gene;
-                        e.values.gene = e.values.gene;
+                        CellBaseManager.get({
+                            species: cellBaseSpecies,
+                            category: 'feature',
+                            subCategory: 'gene',
+                            query: e.values.gene.toUpperCase(),
+                            resource: "info",
+                            async: false,
+                            params: {
+                                include: 'chromosome,start,end'
+                            },
+                            success: function (data) {
+                                for (var i = 0; i < data.response.length; i++) {
+                                    var queryResult = data.response[i];
+                                    if(!_.isEmpty(queryResult.result[0])){
+                                        var region = new Region(queryResult.result[0]);
+                                        regions.push(region.toString());
+                                    }
+                                }
+                            }
+                        });
+                        delete  e.values.gene;
+//                        e.values.gene = e.values.gene;
                     }
 
                     if (typeof e.values.snp !== 'undefined') {
-//                        CellBaseManager.get({
-//                            species: cellBaseSpecies,
-//                            category: 'feature',
-//                            subCategory: 'snp',
-//                            query: e.values.snp,
-//                            resource: "info",
-//                            async: false,
-//                            params: {
-//                                include: 'chromosome,start,end'
-//                            },
-//                            success: function (data) {
-//                                for (var i = 0; i < data.response.length; i++) {
-//                                    var queryResult = data.response[i];
-//                                    var region = new Region(queryResult.result[0]);
-//                                    var fields2 = (""+region).split(/[:-]/);
-//                                    if(parseInt(fields2[1]) > parseInt(fields2[2])) {
-//                                        var swap = fields2[1];
-//                                        region.start = fields2[2];
-//                                        region.end = swap;
-//                                    }
-//                                    regions.push(region.toString());
-//                                }
-//                            }
-//                        });
-                        e.values.id = e.values.snp;
-//                        delete  e.values.snp;
+                        CellBaseManager.get({
+                            species: cellBaseSpecies,
+                            category: 'feature',
+                            subCategory: 'snp',
+                            query: e.values.snp,
+                            resource: "info",
+                            async: false,
+                            params: {
+                                include: 'chromosome,start,end'
+                            },
+                            success: function (data) {
+                                for (var i = 0; i < data.response.length; i++) {
+                                    var queryResult = data.response[i];
+                                    var region = new Region(queryResult.result[0]);
+                                    var fields2 = (""+region).split(/[:-]/);
+                                    if(parseInt(fields2[1]) > parseInt(fields2[2])) {
+                                        var swap = fields2[1];
+                                        region.start = fields2[2];
+                                        region.end = swap;
+                                    }
+                                    regions.push(region.toString());
+                                }
+                            }
+                        });
+                        delete  e.values.snp;
+//                        e.values.id = e.values.snp;
                     }
 
 
@@ -352,10 +352,11 @@ EvaVariantWidgetPanel.prototype = {
 
                     var category = 'segments';
                     var query = regions;
-                    if(e.values.gene){
-                        category = 'genes';
-                        query =  e.values.gene;
-                    }
+                    //<!--------Query by GENE ----->
+//                    if(e.values.gene){
+//                        category = 'genes';
+//                        query =  e.values.gene;
+//                    }
 
                     var url = EvaManager.url({
                         category: category,
@@ -389,6 +390,9 @@ EvaVariantWidgetPanel.prototype = {
                     }else{
                         _this.variantWidget.retrieveData('', '')
                     }
+
+
+                    _this.variantWidget.values = e.values;
 
                     var speciesArray = ['hsapiens','hsapiens_grch37','mmusculus_grcm38'];
                     if(e.values.species && speciesArray.indexOf( e.values.species ) > -1){

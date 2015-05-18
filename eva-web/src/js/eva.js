@@ -244,7 +244,7 @@ Eva.prototype = {
     _createVariantWidgetPanel: function(target){
 //      var position = '21:21989000-21989560';
       var position = '22:21889550-21989560';
-      var species = 'hsapiens';
+      var species = 'hsapiens_grch37';
       if(!_.isEmpty($.urlParam('position'))){
           position = $.urlParam('position')
       }

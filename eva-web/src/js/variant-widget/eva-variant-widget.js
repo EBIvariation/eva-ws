@@ -294,16 +294,18 @@ EvaVariantWidget.prototype = {
                     text: "SNP ID",
                     dataIndex: 'id',
 //                    flex: 0.5,
-                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
-                        var snpID = '-';
-                        _.each(_.keys(value), function(key){
-                           if(this[key].src == 'dbSNP'){
-                               snpID = '<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs='+this[key].id+'" target="_blank">'+this[key].id+'</a>'
-                           }
-                        },value);
-
-                        return snpID;
-                    },
+//                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+//                         var snpID = '-';
+//                         if(!_.isUndefined(value)){
+//                             _.each(_.keys(value), function(key){
+//                                 if(this[key].src == 'dbSNP'){
+//                                     snpID = '<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs='+this[key].id+'" target="_blank">'+this[key].id+'</a>'
+//                                 }
+//                             },value);
+//
+//                             return snpID;
+//                         }
+//                    },
                     width:110
                 },
                 //{
@@ -387,50 +389,50 @@ EvaVariantWidget.prototype = {
                     },
                     flex: 1
                 },
-                {
-                    text: "Conserved Regions",
-                    columns: [
-                        {
-                            text: "phyloP",
-                            dataIndex: "conservedRegionScores",
-                            width:70,
-                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
-                                var conservedRegionScores = rec.data.conservedRegionScores;
-                                _.each(_.keys(conservedRegionScores), function(key){
-                                   if(this[key].source == 'phylop'){
-                                       value = this[key].score.toFixed(3);
-                                   }
-                                },conservedRegionScores);
-                                return value;
-                            }
-
-                        },
-                        {
-                            text: "PhastCons",
-                            dataIndex: "conservedRegionScores",
-                            width:85,
-                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
-                                var conservedRegionScores = rec.data.conservedRegionScores;
-                                _.each(_.keys(conservedRegionScores), function(key){
-                                    if(this[key].source == 'phastCons'){
-                                        value = this[key].score.toFixed(3);
-                                    }
-                                },conservedRegionScores);
-                                return value;
-                            }
-                        }
-                    ]
-                },
+//                {
+//                    text: "Conserved Regions",
+//                    columns: [
+//                        {
+//                            text: "phyloP",
+//                            dataIndex: "conservedRegionScores",
+//                            width:70,
+//                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+//                                var conservedRegionScores = rec.data.conservedRegionScores;
+//                                _.each(_.keys(conservedRegionScores), function(key){
+//                                   if(this[key].source == 'phylop'){
+//                                       value = this[key].score.toFixed(3);
+//                                   }
+//                                },conservedRegionScores);
+//                                return value;
+//                            }
+//
+//                        },
+//                        {
+//                            text: "PhastCons",
+//                            dataIndex: "conservedRegionScores",
+//                            width:85,
+//                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+//                                var conservedRegionScores = rec.data.conservedRegionScores;
+//                                _.each(_.keys(conservedRegionScores), function(key){
+//                                    if(this[key].source == 'phastCons'){
+//                                        value = this[key].score.toFixed(3);
+//                                    }
+//                                },conservedRegionScores);
+//                                return value;
+//                            }
+//                        }
+//                    ]
+//                },
                 {
                     text: 'View',
-                    //dataIndex: 'id',
+                    dataIndex: 'id',
                     id:'variant-grid-view-column',
                     xtype: 'templatecolumn',
                     tpl: '<tpl if="id"><a href="?variant={chromosome}:{start}:{reference}:{alternate}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;' +
                         '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
                         '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>' +
                         '<tpl else><a href="?variant={chromosome}:{start}:{reference}:{alternate}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>',
-//                    flex: 0.5
+                    flex: 0.3
                 }
 
                 //
@@ -451,7 +453,7 @@ EvaVariantWidget.prototype = {
             {name: "ref", type: "string"},
             {name: "alt", type: "string"},
             {name: 'hgvs_name', type: 'string'},
-            {name: 'id', mapping: 'annotation.xrefs', type: 'auto' },
+//            {name: 'id', mapping: 'annotation.xrefs', type: 'auto' },
             {name: 'consequenceTypes', mapping: 'annotation.consequenceTypes', type:'auto' },
             {name: 'conservedRegionScores', mapping: 'annotation.conservedRegionScores', type:'auto'},
             {name: 'phylop',  mapping: 'annotation.conservedRegionScores', type:'auto'},
@@ -1127,15 +1129,20 @@ EvaVariantWidget.prototype = {
 
         csvContent += snewLine;
 
+
+
         /* Get the column headers from the store dataIndex */
 
-        var removeKeys = ['hgvs','sourceEntries','ref','alt','hgvs_name','iid','annotation','ids','conservedRegionScores','length'];
+//        var removeKeys = ['hgvs','sourceEntries','ref','alt','hgvs_name','iid','annotation','ids','conservedRegionScores','length'];
+        var removeKeys = ['hgvs','sourceEntries','ref','alt','hgvs_name','iid','annotation','ids','conservedRegionScores','length','consequenceTypes','phylop','phastCons'];
 
         Ext.Object.each(records[0].data, function(key) {
+            console.log(key)
             if(_.indexOf(removeKeys, key) == -1){
                 csvContent += sdelimiter +  key + edelimiter;
             }
         });
+
         csvContent += sdelimiter +  'Organism / Assembly' + edelimiter;
 
         csvContent += enewLine;
@@ -1148,43 +1155,43 @@ EvaVariantWidget.prototype = {
             /* Put the record object in somma seperated format */
             csvContent += snewLine;
             Ext.Object.each(records[i].data, function(key, value) {
-                if(key == 'consequenceTypes'){
-                    var tempArray = [];
-                    _.each(_.keys(value), function(key){
-                        var so_terms = this[key].soTerms;
-                        _.each(_.keys(so_terms), function(key){
-                            tempArray.push(this[key].soName)
-                        },so_terms);
-                    },value);
-
-
-                    var groupedArr = _.groupBy(tempArray);
-                    var so_array = [];
-                    _.each(_.keys(groupedArr), function(key){
-                        var index =  _.indexOf(consequenceTypesHierarchy, key);
-//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
-//                                        so_array.push(key+' ('+this[key].length+')')
-                        so_array[index] = key+' ('+this[key].length+')';
-                    },groupedArr);
-                    so_array =  _.compact(so_array);
-                    value = so_array.join(" ");
-                }else if(key == 'phylop'){
-                   var phylop =  _.findWhere(records[i].data[key], {source: key});
-                   if(phylop){
-                       value = phylop.score.toFixed(3);
-                   }else{
-                       value = '';
-                   }
-
-
-                }else if(key == 'phastCons'){
-                    var phastCons =  _.findWhere(records[i].data[key], {source: key});
-                    if(phastCons){
-                        value = phastCons.score.toFixed(3);
-                    }else{
-                        value = '';
-                    }
-                }
+//                if(key == 'consequenceTypes'){
+//                    var tempArray = [];
+//                    _.each(_.keys(value), function(key){
+//                        var so_terms = this[key].soTerms;
+//                        _.each(_.keys(so_terms), function(key){
+//                            tempArray.push(this[key].soName)
+//                        },so_terms);
+//                    },value);
+//
+//
+//                    var groupedArr = _.groupBy(tempArray);
+//                    var so_array = [];
+//                    _.each(_.keys(groupedArr), function(key){
+//                        var index =  _.indexOf(consequenceTypesHierarchy, key);
+////                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+////                                        so_array.push(key+' ('+this[key].length+')')
+//                        so_array[index] = key+' ('+this[key].length+')';
+//                    },groupedArr);
+//                    so_array =  _.compact(so_array);
+//                    value = so_array.join(" ");
+//                }else if(key == 'phylop'){
+//                   var phylop =  _.findWhere(records[i].data[key], {source: key});
+//                   if(phylop){
+//                       value = phylop.score.toFixed(3);
+//                   }else{
+//                       value = '';
+//                   }
+//
+//
+//                }else if(key == 'phastCons'){
+//                    var phastCons =  _.findWhere(records[i].data[key], {source: key});
+//                    if(phastCons){
+//                        value = phastCons.score.toFixed(3);
+//                    }else{
+//                        value = '';
+//                    }
+//                }
 
                 if(_.indexOf(removeKeys, key) == -1){
                     printableValue = ((noCsvSupport) && value == '') ? '&nbsp;'  : value;
