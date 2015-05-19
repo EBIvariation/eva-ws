@@ -183,7 +183,7 @@ EvaVariantWidgetPanel.prototype = {
         var studyFilter = new EvaStudyFilterFormPanel({
             border:false,
             collapsed: false,
-            height: 550,
+            height: 790,
             studiesStore: this.studiesStore,
             studyFilterTpl:'<tpl if="studyId"><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div><tpl else><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a></div></tpl>'
         });
@@ -265,7 +265,7 @@ EvaVariantWidgetPanel.prototype = {
             filters: [speciesFilter,positionFilter, conseqTypeFilter,proteinSubScoreFilter,conservationScoreFilter,studyFilter],
 //            filters: [speciesFilter,positionFilter,studyFilter],
             width: 300,
-            height: 1343,
+            height: 1443,
             border: false,
             handlers: {
                 'submit': function (e) {
