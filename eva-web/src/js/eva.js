@@ -106,6 +106,10 @@ Eva.prototype = {
         /* submision-start */
         $(this.submissionForm).addClass('eva-child');
         this.childDivMenuMap['submission-start'] = this.submissionForm;
+
+        /* iobioView */
+        $(this.iobioView).addClass('eva-child');
+        this.childDivMenuMap['eva-iobio'] = this.iobioView;
     },
     draw: function () {
         this.targetDiv = (this.target instanceof HTMLElement ) ? this.target : document.querySelector('#' + this.target);
@@ -156,7 +160,7 @@ Eva.prototype = {
         }
 
         //<!---- Updating URL on Tab change ---->
-        var pageArray = ['eva-study','dgva-study', 'variant', 'gene','Variant Browser'];
+        var pageArray = ['eva-study','dgva-study', 'variant', 'gene','Variant Browser','eva-iobio'];
         if(_.indexOf(pageArray, option) < 0 && !_.isEmpty(option) || option == 'Variant Browser' && !_.isEmpty(option)){
             var optionValue = option;
             var tabArray = ['Genome Browser','Variant Browser'];

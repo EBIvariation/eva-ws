@@ -200,10 +200,14 @@ EvaStudyView.prototype = {
                         '<th>Pass Count</th>'+
                         '<th>Transitions/Transversions Ratio</th>'+
                         '<th>Mean Quality</th>'+
+                        '<th>View</th>'+
                         '</tr></thead><tbody>'
                     for (i = 0; i < data.filesData.length; i++) {
+                        var iobioLink = '';
                         if(ftpLink.length > 0 && ftpLink[i].result[0] != 'ftp:/null'){
                             var downloadLink = '<a href="'+ftpLink[i].result[0]+'" target="_blank">'+data.filesData[i].fileName+'</a>';
+                            var iobio_url = 'http://ega-beacon.windows.ebi.ac.uk:8080/?vcf=http://s3.amazonaws.com/vcf.files/ExAC.r0.2.sites.vep.vcf.gz';
+                            iobioLink = '<a href="?eva-iobio&url='+iobio_url+'" target="_blank">Iobio</a>'
                         }else{
                             var downloadLink = data.filesData[i].fileName;
                         }
@@ -245,6 +249,7 @@ EvaStudyView.prototype = {
                             '<td>'+passCount+'</td>' +
                             '<td>'+transitionsCount+'</td>' +
                             '<td>'+meanQuality+'</td>' +
+                            '<td>'+iobioLink+'</td>' +
                             '</tr>'
                     }
                     _filesTable += '</tbody></table>'

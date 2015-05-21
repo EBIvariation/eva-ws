@@ -453,6 +453,7 @@
             <div id="geneView" class="hide-div"></div>
             <div id="submissionForm" class="hide-div"></div>
             <div id="clinical" class="hide-div"></div>
+            <div id="evaIobioView" class="hide-div"></div>
         </div>
         <footer>
 
@@ -540,6 +541,7 @@
     <script type="text/javascript" src="js/views/eva-study-view.js"></script>
     <script type="text/javascript" src="js/views/eva-variant-view.js"></script>
     <script type="text/javascript" src="js/views/eva-gene-view.js"></script>
+    <script type="text/javascript" src="js/views/eva-iobio-view.js"></script>
     <script type="text/javascript" src="js/statistics/eva-statistics.js"></script>
     <script type="text/javascript" src="js/statistics/dgva-statistics.js"></script>
     <script type="text/javascript" src="js/beacon-form/eva-beacon-form.js"></script>
@@ -589,6 +591,7 @@
               var beaconDiv =  document.querySelector('#beacon');
               var apiDiv =  document.querySelector('#api');
               var submissionFormDiv =  document.querySelector('#submissionForm');
+              var iobioViewDiv = document.querySelector('#evaIobioView');
 
             var tab = getUrlParameters("");
             var tabId =  decodeURI(tab.id);
@@ -631,6 +634,12 @@
                     target:'submissionForm'
                 });
             }
+            if(tabId == 'eva-iobio'){
+                var evaIobioView = new EvaIobioView({
+                    target:'evaIobioView',
+                    url: $.urlParam('url')
+                });
+            }
 
             Ext.getBody().removeCls('x-body');
             var ulLocalNav = document.querySelector('.eva-primary-menu');
@@ -651,7 +660,8 @@
                 beacon:beaconDiv,
                 clinicalDiv:clinicalDiv,
                 apiDiv:apiDiv,
-                submissionForm:submissionFormDiv
+                submissionForm:submissionFormDiv,
+                iobioView:iobioViewDiv
             });
             eva.draw();
 

@@ -40,6 +40,7 @@ if(window.location.protocol == 'https:'){
        METADATA_HOST = "http://www.ebi.ac.uk/eva/webservices/rest";
    }else{
      METADATA_HOST = "http://ves-oy-de:8080/eva-beta/webservices/rest";
+     METADATA_HOST = "http://ves-oy-de:8080/eva/webservices/rest";
    }
 }
 
