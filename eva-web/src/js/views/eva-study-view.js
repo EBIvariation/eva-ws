@@ -170,6 +170,7 @@ EvaStudyView.prototype = {
                         var fileName = files[i].fileName;
                         var regex =/_accessioned.vcf/g;
                         if(fileName.match(regex)){
+                            _.extend(data.filesData[i], {ftpId:fileName.replace(regex, ".vcf.gz")});
                             fileNameArr.push(fileName.replace(regex, ".vcf.gz"));
                         }else{
                             fileNameArr.push(fileName)
@@ -186,6 +187,7 @@ EvaStudyView.prototype = {
                         success: function (response) {
                             try {
                                 ftpLink = response.response;
+
                             } catch (e) {
                                 console.log(e);
                             }
@@ -203,9 +205,10 @@ EvaStudyView.prototype = {
                         '<th>View</th>'+
                         '</tr></thead><tbody>'
                     for (i = 0; i < data.filesData.length; i++) {
+                        var ftpLocation = _.findWhere(ftpLink, {id:data.filesData[i].ftpId}).result[0];
                         var iobioLink = '';
-                        if(ftpLink.length > 0 && ftpLink[i].result[0] != 'ftp:/null'){
-                            var downloadLink = '<a href="'+ftpLink[i].result[0]+'" target="_blank">'+data.filesData[i].fileName+'</a>';
+                        if(ftpLink.length > 0 && ftpLocation != 'ftp:/null'){
+                            var downloadLink = '<a href="'+ftpLocation+'" target="_blank">'+data.filesData[i].fileName+'</a>';
                             var iobio_url = 'http://ega-beacon.windows.ebi.ac.uk:8080/?vcf=http://s3.amazonaws.com/vcf.files/ExAC.r0.2.sites.vep.vcf.gz';
                             iobioLink = '<a href="?eva-iobio&url='+iobio_url+'" target="_blank">Iobio</a>'
                         }else{
