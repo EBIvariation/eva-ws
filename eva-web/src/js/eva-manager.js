@@ -39,7 +39,7 @@ if(window.location.protocol == 'https:'){
    }else if(document.location.host == 'www.ebi.ac.uk' || document.location.host == 'ves-oy-db.ebi.ac.uk' || document.location.host == 'ves-pg-db.ebi.ac.uk'){
        METADATA_HOST = "http://www.ebi.ac.uk/eva/webservices/rest";
    }else{
-     METADATA_HOST = "http://ves-oy-de:8080/eva-beta/webservices/rest";
+//     METADATA_HOST = "http://ves-oy-de:8080/eva-beta/webservices/rest";
      METADATA_HOST = "http://ves-oy-de:8080/eva/webservices/rest";
    }
 }
