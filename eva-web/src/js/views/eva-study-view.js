@@ -53,11 +53,10 @@ EvaStudyView.prototype = {
             success: function (response) {
                 try {
                     summary = response.response[0].result;
-                    console.log(summary)
                 } catch (e) {
                     console.log(e);
                 }
-                _this._parseData();
+//                _this._parseData();
             }
         });
 
@@ -142,7 +141,7 @@ EvaStudyView.prototype = {
                      projectURL = ena_link;
                 }else{
                      projectURL = '<a href="'+_this._getProjectUrl(data.summaryData[0].id)+'" target="_blank">'+_this._getProjectUrl(data.summaryData[0].id)+'</a><br /><br />'+ena_link;
-                    console.log()
+
                 }
 
 
@@ -163,6 +162,8 @@ EvaStudyView.prototype = {
                     '<tr><td><b>Download</b></td><td><a href="ftp://ftp.ebi.ac.uk/pub/databases/eva/'+data.summaryData[0].id+'" target="_blank">FTP</a></td></tr>' +
                     '</table>'
 
+
+
                 if(data.filesData.length > 0){
                     var fileNameArr = [];
 
@@ -178,7 +179,6 @@ EvaStudyView.prototype = {
                     }
                     var fileNameList = fileNameArr.join(',');
                     var ftpLink = {};
-                    console.log(fileNameList)
                     EvaManager.get({
                         category: 'files',
                         resource: 'url',
@@ -205,7 +205,10 @@ EvaStudyView.prototype = {
                         '<th>View</th>'+
                         '</tr></thead><tbody>'
                     for (i = 0; i < data.filesData.length; i++) {
-                        var ftpLocation = _.findWhere(ftpLink, {id:data.filesData[i].ftpId}).result[0];
+                        var ftpLocation = '#';
+                        if(!_.isUndefined(_.findWhere(ftpLink, {id:data.filesData[i].ftpId}))){
+                            ftpLocation = _.findWhere(ftpLink, {id:data.filesData[i].ftpId}).result[0];
+                        }
                         var iobioLink = '';
                         if(ftpLink.length > 0 && ftpLocation != 'ftp:/null'){
                             var downloadLink = '<a href="'+ftpLocation+'" target="_blank">'+data.filesData[i].fileName+'</a>';
@@ -221,7 +224,7 @@ EvaStudyView.prototype = {
                         var passCount;
                         var transitionsCount;
                         var meanQuality;
-                        if(!_.isNull(data.filesData[i].stats)){
+                        if(!_.isUndefined(data.filesData[i].stats) && !_.isNull(data.filesData[i].stats)){
                             if(data.filesData[i].stats.samplesCount){
                                 samples_count = data.filesData[i].stats.samplesCount;
                             }else{
