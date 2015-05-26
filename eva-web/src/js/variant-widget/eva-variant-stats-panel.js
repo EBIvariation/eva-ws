@@ -144,9 +144,6 @@ EvaVariantStatsPanel.prototype = {
         delete attributesData['ACC'];
 
 
-        console.log(data)
-        console.log('+++=====++++')
-
         //TO BE REMOVED
         var study_title;
         var projectList = '';

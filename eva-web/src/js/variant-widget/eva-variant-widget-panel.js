@@ -207,7 +207,16 @@ EvaVariantWidgetPanel.prototype = {
 
         speciesFilter.on('species:change', function (e) {
             _this._loadListStudies(studyFilter, e.species);
+            var plantSpecies = ['slycopersicum_sl240'];
 
+            if(e.species =='hsapiens_grch37' || e.species =='hsapiens_grch38'){
+                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('dbSNP ID')
+            }else if(_.indexOf(plantSpecies, e.species) > -1){
+                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('Transplant ID')
+            }else{
+                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('Sumbitted ID')
+            }
+            
             EvaManager.get({
                 category: 'meta/studies',
                 resource: 'list',
