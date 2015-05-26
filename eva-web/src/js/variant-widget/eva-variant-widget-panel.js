@@ -214,9 +214,9 @@ EvaVariantWidgetPanel.prototype = {
             }else if(_.indexOf(plantSpecies, e.species) > -1){
                 _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('Transplant ID')
             }else{
-                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('Sumbitted ID')
+                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('Submitted ID')
             }
-            
+
             EvaManager.get({
                 category: 'meta/studies',
                 resource: 'list',
