@@ -480,6 +480,7 @@ SnvStudyBrowser.prototype = {
                         }
                         statsData[key] = arr;
                         if (typeof stores[key] !== 'undefined') {
+                            statsData[key] = _.sortBy(statsData[key], 'display');
                             stores[key].loadRawData(statsData[key]);
                         }
 

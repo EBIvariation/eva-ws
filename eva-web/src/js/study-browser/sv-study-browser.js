@@ -501,6 +501,7 @@ SvStudyBrowser.prototype = {
                                 obj['leaf'] = true;
                                 obj['checked'] = false;
                                 obj['iconCls'] = "no-icon";
+                                obj['folderSort'] = "true";
                                 obj['count'] = stat[key2];
                             }
 //                                obj['display'] = key2;
@@ -510,6 +511,7 @@ SvStudyBrowser.prototype = {
                         }
                         statsData[key] = arr;
                         if (typeof stores[key] !== 'undefined') {
+                            statsData[key] = _.sortBy(statsData[key], 'display');
                             stores[key].loadRawData(statsData[key]);
                         }
 
