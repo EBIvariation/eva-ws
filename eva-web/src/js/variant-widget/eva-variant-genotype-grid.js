@@ -245,7 +245,7 @@ EvaVariantGenotypeGrid.prototype = {
 
                  },
                  height: 350,
-                 width: 300,
+//                 width: 300,
                  renderTo: divID,
                  viewConfig: {
                      stripeRows: true
