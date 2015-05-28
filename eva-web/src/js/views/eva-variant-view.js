@@ -170,7 +170,6 @@ EvaVariantView.prototype = {
             summaryElDiv.innerHTML = summaryContent;
             summaryEl.appendChild(summaryElDiv);
 
-
             var consqTypeContent =  _this._renderConsequenceTypeData(_this.variant);
             var consqTypeEl = document.querySelector("#consequence-types-grid");
             var consqTypeElDiv =  document.createElement("div");
@@ -190,6 +189,8 @@ EvaVariantView.prototype = {
 //            //       effectsElDiv.innerHTML = '<h4>Effects</h4>';
 //                     effectsEl.appendChild(effectsElDiv);
 //                     _this.createVariantEffectGrid(effectsElDiv);
+
+
 
             var studyEl = document.querySelector("#studies-grid");
             var studyElDiv = document.createElement("div");
@@ -245,6 +246,9 @@ EvaVariantView.prototype = {
     },
     _renderConsequenceTypeData: function (data) {
         var annotation = data[0].annotation.consequenceTypes;
+        if(!annotation){
+          return '';
+        }
 //        var soTermsArray = [];
 
 
@@ -266,6 +270,9 @@ EvaVariantView.prototype = {
     },
     _renderConservedRegionData: function (data) {
         var conservedRegionScores = data[0].annotation.conservedRegionScores;
+        if(!conservedRegionScores){
+            return '';
+        }
 //        var soTermsArray = [];
         var _conservedRegionTable  = '<div class="row"><div class="col-md-8"><table class="table ocb-stats-table">'
         _conservedRegionTable += '<tr><th>Source</th><th>Score</th></tr>'

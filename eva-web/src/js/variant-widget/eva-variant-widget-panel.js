@@ -418,7 +418,6 @@ EvaVariantWidgetPanel.prototype = {
                         var updateTpl = Ext.create('Ext.XTemplate', '<tpl><a href="?variant={chromosome}:{start}:{reference}:{alternate}&species='+ e.values.species+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>');
                     }
 
-
                     Ext.getCmp('variant-grid-view-column').tpl = updateTpl;
                 }
             }
