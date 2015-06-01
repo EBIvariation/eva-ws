@@ -210,7 +210,9 @@ EvaVariantGenotypeGrid.prototype = {
                      genotype: s.GT
                  });
              }
-             var divID = 'genotype-grid-'+record.data.studyId;
+
+             var divID =  Utils.genId("genotype-grid-")+record.data.studyId;
+             console.log(divID)
              body.innerHTML = '<div id="'+divID+'"></div>';
 
 
