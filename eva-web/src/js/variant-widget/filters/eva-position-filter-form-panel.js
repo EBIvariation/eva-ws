@@ -66,6 +66,7 @@ EvaPositionFilterFormPanel.prototype = {
         this.panel.render(this.div);
     },
     _createPanel: function () {
+        var _this = this;
         var snp = Ext.create('Ext.form.field.TextArea', {
             id: this.id + "snp",
             name: "snp",
@@ -74,7 +75,16 @@ EvaPositionFilterFormPanel.prototype = {
             width: '100%',
             fieldLabel: 'dbSNP accession',
             labelAlign: 'top',
-            regex: /^[rs]s\d+$/
+            regex: /^[rs]s\d+$/,
+            listeners: {
+                'change': function(field, newVal, oldVal){
+                    if(newVal){
+                        _this.disableFields(_this.id+"snp");
+                    }else{
+                        _this.enableFields();
+                    }
+                }
+            }
         });
 
         var regionList = Ext.create('Ext.form.field.TextArea', {
@@ -86,7 +96,16 @@ EvaPositionFilterFormPanel.prototype = {
             width: '100%',
             fieldLabel: 'Chromosomal Location',
             labelAlign: 'top',
-            value: this.testRegion
+//            value: this.testRegion,
+            listeners: {
+                'change': function(field, newVal, oldVal){
+                    if(newVal){
+                        _this.disableFields(_this.id+"region");
+                    }else{
+                        _this.enableFields();
+                    }
+                }
+            }
         });
 
         var gene = Ext.create('Ext.form.field.TextArea', {
@@ -96,11 +115,20 @@ EvaPositionFilterFormPanel.prototype = {
             //allowBlank: true,
             width: '100%',
             fieldLabel: 'Ensembl Gene / Transcript',
-            labelAlign: 'top'
+            labelAlign: 'top',
+            listeners: {
+                'change': function(field, newVal, oldVal){
+                    if(newVal){
+                        _this.disableFields(_this.id+"gene");
+                    }else{
+                        _this.enableFields();
+                    }
+                }
+            }
         });
 
-        return Ext.create('Ext.form.Panel', {
-            id:this.id,
+        this.panel = Ext.create('Ext.form.Panel', {
+//            id:this.id,
             bodyPadding: "5",
             margin: "0 0 5 0",
             buttonAlign: 'center',
@@ -114,6 +142,10 @@ EvaPositionFilterFormPanel.prototype = {
             items: [snp, regionList, gene]
         });
 
+        this.panel.getForm().findField('region').setValue(_this.testRegion);
+
+        return this.panel;
+
     },
     getPanel: function () {
         return this.panel;
@@ -126,6 +158,18 @@ EvaPositionFilterFormPanel.prototype = {
             }
         }
         return values;
+    },
+    disableFields:function(id){
+        this.panel.getForm().getFields().each(function(field) {
+            if(id != field.id){
+                field.disable(true);
+            }
+        });
+    },
+    enableFields:function(){
+        this.panel.getForm().getFields().each(function(field) {
+            field.enable(true);
+        });
     },
     clear: function () {
         this.panel.reset();

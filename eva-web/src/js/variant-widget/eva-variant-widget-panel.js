@@ -430,10 +430,10 @@ EvaVariantWidgetPanel.prototype = {
             var speciesArray = ['hsapiens','hsapiens_grch37','mmusculus_grcm38'];
             if(speciesArray.indexOf( formValues.species ) > -1){
                 _.extend(params, {disable:false});
-               this._disableFields(params);
+//               this._disableFields(params);
             }else{
                 _.extend(params, {disable:true});
-                this._disableFields(params);
+//                this._disableFields(params);
             }
             _this.variantWidget.trigger('species:change', {values: formValues, sender: _this});
             _this.formPanelVariantFilter.trigger('submit', {values: formValues, sender: _this});
