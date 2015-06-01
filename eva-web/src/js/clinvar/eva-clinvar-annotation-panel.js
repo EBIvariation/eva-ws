@@ -98,6 +98,7 @@ ClinvarAnnotationPanel.prototype = {
 //        this.summaryContainer.add(panels);
 
           var annotData = data.annot;
+          console.log(annotData)
           var panel = this._createAnnotPanel(annotData);
           this.annotContainer.removeAll();
           this.annotContainer.add(panel);
@@ -136,6 +137,8 @@ ClinvarAnnotationPanel.prototype = {
         return this.panel;
     },
     _createAnnotPanel: function (data) {
+
+        console.log(data)
 
         var _this = this;
 
@@ -272,7 +275,8 @@ ClinvarAnnotationPanel.prototype = {
             margin: 20,
             viewConfig: {
                 emptyText: 'No records to display',
-                enableTextSelection: true
+                enableTextSelection: true,
+                deferEmptyText:false
             },
             columns: annotColumns,
             tbar: paging

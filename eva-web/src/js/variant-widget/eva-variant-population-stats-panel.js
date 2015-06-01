@@ -230,7 +230,7 @@ EvaVariantPopulationStatsPanel.prototype = {
             }
         };
 
-
+        console.log(populationData)
 
         var store = Ext.create("Ext.data.Store", {
             //storeId: "GenotypeStore",
@@ -266,7 +266,8 @@ EvaVariantPopulationStatsPanel.prototype = {
             margin: 20,
             viewConfig: {
                 emptyText: 'No records to display',
-                enableTextSelection: true
+                enableTextSelection: true,
+                deferEmptyText:false
             },
             columns: populationStatsColumns,
             plugins:plugins

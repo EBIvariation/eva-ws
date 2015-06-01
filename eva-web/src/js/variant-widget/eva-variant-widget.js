@@ -53,7 +53,8 @@ function EvaVariantWidget(args) {
         genotype: true,
         stats: true,
         rawData: true,
-        populationStats:true
+        populationStats:true,
+        annot:true
     };
     this.tools = [];
     this.dataParser;
@@ -195,6 +196,17 @@ EvaVariantWidget.prototype = {
             });
         }
 
+        if (this.defaultToolConfig.annot) {
+            this.annotPanelDiv = document.createElement('div');
+            this.annotPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
+            this.annotPanel = this._createAnnotPanel(this.annotPanelDiv);
+            tabPanelItems.push({
+                title: 'Annotation',
+//                border: 0,
+                contentEl: this.annotPanelDiv
+            });
+        }
+
         if (this.defaultToolConfig.genomeViewer) {
             this.genomeViewerDiv = document.createElement('div');
             this.genomeViewerDiv.setAttribute('class', 'ocb-gv');
@@ -253,6 +265,10 @@ EvaVariantWidget.prototype = {
 
         if (this.defaultToolConfig.genomeViewer) {
             this.genomeViewer.draw();
+        }
+
+        if (this.defaultToolConfig.annot) {
+            this.annotPanel.draw();
         }
 
         if (this.defaultToolConfig.stats) {
@@ -748,6 +764,39 @@ EvaVariantWidget.prototype = {
         });
         return variantRawDataPanel;
     },
+
+    _createAnnotPanel: function (target) {
+        var _this = this;
+        var annotPanel = new ClinvarAnnotationPanel({
+            target: target,
+            headerConfig: this.defaultToolConfig.headerConfig,
+            handlers: {
+                "load:finish": function (e) {
+//                    _this.grid.setLoading(false);
+                }
+            }
+
+        });
+
+        this.variantBrowserGrid.on("variant:clear", function (e) {
+            annotPanel.clear(true);
+        });
+
+        this.on("variant:change", function (e) {
+//            if (target === _this.selectedToolDiv) {
+            if(_.isUndefined(e.variant)){
+                annotPanel.clear(true);
+            }else{
+                if (target.id === _this.selectedToolDiv.id) {
+                    _.extend(e.variant, {annot: e.variant.annotation});
+                    console.log(e.variant)
+                    annotPanel.load(e.variant);
+                }
+            }
+        });
+
+        return annotPanel;
+    },
     _createVariantPopulationStatsPanel: function (target) {
         var _this = this;
         var variantPopulationStatsPanel = new EvaVariantPopulationStatsPanel({
@@ -808,7 +857,7 @@ EvaVariantWidget.prototype = {
 
                         }
                     });
-                    if (variant.sourceEntries) {
+                    if (!_.isEmpty(variant.sourceEntries)) {
                         variantPopulationStatsPanel.load(variant.sourceEntries,proxy.extraParams);
                     }
                 }

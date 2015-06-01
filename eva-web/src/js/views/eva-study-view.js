@@ -206,8 +206,9 @@ EvaStudyView.prototype = {
                         '</tr></thead><tbody>'
                     for (i = 0; i < data.filesData.length; i++) {
                         var ftpLocation = '#';
-                        if(!_.isUndefined(_.findWhere(ftpLink, {id:data.filesData[i].ftpId}))){
-                            ftpLocation = _.findWhere(ftpLink, {id:data.filesData[i].ftpId}).result[0];
+//                        if(!_.isUndefined(_.findWhere(ftpLink, {id:data.filesData[i].ftpId}))){
+                        if(!_.isUndefined(_.findWhere(ftpLink, {id:data.filesData[i].fileName}))){
+                            ftpLocation = _.findWhere(ftpLink, {id:data.filesData[i].fileName}).result[0];
                         }
                         var iobioLink = '';
                         if(ftpLink.length > 0 && ftpLocation != 'ftp:/null'){
