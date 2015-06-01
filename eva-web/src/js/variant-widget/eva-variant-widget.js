@@ -1037,11 +1037,11 @@ EvaVariantWidget.prototype = {
         genomeViewer.addOverviewTrack(geneOverview);
         genomeViewer.addTrack([sequence, gene, snp]);
         this.on("species:change", function (e) {
-//            if (target === _this.selectedToolDiv) {
+            if (target === _this.selectedToolDiv) {
                 console.log(e.values.species)
                 _.extend(e, {species: e.values.species.split('_')[0]});
                 genomeViewer._speciesChangeHandler(e);
-//            }
+            }
         });
         this.on("variant:change", function (e) {
             if (target.id === _this.selectedToolDiv.id) {
