@@ -29,7 +29,7 @@ if(window.location.protocol == 'https:'){
         METADATA_HOST = "https://www.ebi.ac.uk/eva/webservices/rest";
     }else{
 //     METADATA_HOST = "http://172.22.70.137:8080/eva2/webservices/rest";
-        METADATA_HOST = "https://wwwdev.ebi.ac.uk/eva/webservices/rest";
+        METADATA_HOST = "https://www.ebi.ac.uk/eva/webservices/rest";
     }
 }else{
    if(document.location.host == 'wwwint.ebi.ac.uk'){
