@@ -80,11 +80,11 @@ EvaStatistics.prototype = {
             var height = 250;
             var width = 200;
             if(data.id == 'eva-statistics-chart-type'){
-                height = 270;
-                width = 210;
+                height = 285;
+                width = 220;
             }else if(data.id == 'eva-statistics-chart-species'){
                 data.chartData = data.chartData.slice(0, 5);
-                height = 280;
+                height = 285;
                 width = 230;
             }
             var id = '#'+data.id;
@@ -124,7 +124,7 @@ EvaStatistics.prototype = {
 
                     },
                     title: {
-                        text: 'Studies <br> <span style="font-size:12px;">by '+title+'</span>',
+                        text: 'Top 5 Studies <br> <span style="font-size:12px;">by '+title+'</span>',
                         style: {
 //                                    display: 'none'
                         },
@@ -153,7 +153,7 @@ EvaStatistics.prototype = {
                     },
                     series: [{
                         type: 'pie',
-                        name: 'Studies by '+title,
+                        name: 'Top 5 Studies by '+title,
                         data: dataArray
                     }],
                     credits: {

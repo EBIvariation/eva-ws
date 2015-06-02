@@ -81,13 +81,15 @@ EvaConservationScoreFilterFormPanel.prototype = {
                     fieldLabel: 'PhastCons \<',
                     name: 'phastCons',
                     width  : 240,
-                    margin:'5 0 0 0'
+                    margin:'5 0 0 0',
+                    emptyText:'0.02'
                 },
                 {
                     fieldLabel: 'phyloP \>',
                     name: 'phylop',
                     width  : 240,
-                    margin:'5 0 5 0'
+                    margin:'5 0 5 0',
+                    emptyText:'0.4'
                 }
 
             ]

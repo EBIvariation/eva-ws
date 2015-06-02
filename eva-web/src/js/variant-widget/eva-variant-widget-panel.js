@@ -211,10 +211,13 @@ EvaVariantWidgetPanel.prototype = {
 
             if(e.species =='hsapiens_grch37' || e.species =='hsapiens_grch38'){
                 _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('dbSNP ID')
+                _this.formPanelVariantFilter.filters[1].panel.getForm().findField("snp").setFieldLabel('dbSNP accession')
             }else if(_.indexOf(plantSpecies, e.species) > -1){
                 _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('Transplant ID')
+                _this.formPanelVariantFilter.filters[1].panel.getForm().findField("snp").setFieldLabel('Transplant ID')
             }else{
                 _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('Submitted ID')
+                _this.formPanelVariantFilter.filters[1].panel.getForm().findField("snp").setFieldLabel('Submitted ID')
             }
 
             EvaManager.get({
@@ -365,6 +368,12 @@ EvaVariantWidgetPanel.prototype = {
                     if(e.values.gene){
                         category = 'genes';
                         query =  e.values.gene;
+                    }
+
+                    //<!--------Query by ID ----->
+                    if(e.values.gene){
+                        category = 'id';
+                        query =  e.values.id;
                     }
 
                     var url = EvaManager.url({

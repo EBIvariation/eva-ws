@@ -278,9 +278,26 @@ EvaVariantGenotypeGrid.prototype = {
          });
      }
 
+    var panel = Ext.create('Ext.container.Container', {
+        layout: {
+            type: 'vbox',
+            align: 'fit'
+        },
+        overflowY: true,
+        padding: 10,
+        items: [
+            {
+                xtype: 'box',
+                cls: 'ocb-header-4',
+                html: '<h4>Genotypes </h4>',
+                margin: '5 0 10 10'
+            },
+            grid
+         ]
 
+    });
 
-        return grid;
+    return  panel;
 
 
     },

@@ -148,7 +148,7 @@ EvaVariantWidget.prototype = {
             this.variantStatsPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
             this.variantStatsPanel = this._createVariantStatsPanel(this.variantStatsPanelDiv);
             tabPanelItems.push({
-                title: 'File and Stats',
+                title: 'File and Statistics',
 //                border: 0,
                 contentEl: this.variantStatsPanelDiv
             });
@@ -190,7 +190,7 @@ EvaVariantWidget.prototype = {
             this.variantPopulationStatsPanelDiv.setAttribute('class', 'ocb-variant-rawdata-panel');
             this.variantPopulationStatsPanel = this._createVariantPopulationStatsPanel(this.variantPopulationStatsPanelDiv);
             tabPanelItems.push({
-                title: 'Population Stats',
+                title: 'Population Statistics',
 //                border: 0,
                 contentEl: this.variantPopulationStatsPanelDiv
             });
@@ -322,7 +322,7 @@ EvaVariantWidget.prototype = {
 //                             return snpID;
 //                         }
 //                    },
-                    width:110
+                    width:130
                 },
                 //{
                 //text: 'End',
@@ -389,12 +389,14 @@ EvaVariantWidget.prototype = {
                                 var index =  _.indexOf(consequenceTypesHierarchy, key);
 //                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
 //                                        so_array.push(key+' ('+this[key].length+')')
-                                so_array[index] = key+' ('+this[key].length+')';
+//                                so_array[index] = key+' ('+this[key].length+')';
+                                so_array[index] = key;
                             },groupedArr);
                             so_array =  _.compact(so_array);
                             meta.tdAttr = 'data-qtip="'+so_array.join('\n')+'"';
                             return value ? Ext.String.format(
-                                '<tpl>'+so_array.join()+'</tpl>',
+//                                '<tpl>'+so_array.join()+'</tpl>',
+                                '<tpl>'+_.first(so_array)+'</tpl>',
                                 value
                             ) : '';
                         }else{
@@ -403,15 +405,17 @@ EvaVariantWidget.prototype = {
 
 //                        return tempArray.join();
                     },
-                    flex: 1
+//                    flex: 1
+                    width:230,
                 },
+
 //                {
 //                    text: "Conserved Regions",
 //                    columns: [
 //                        {
 //                            text: "phyloP",
 //                            dataIndex: "conservedRegionScores",
-//                            width:70,
+//                            width:130,
 //                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
 //                                var conservedRegionScores = rec.data.conservedRegionScores;
 //                                _.each(_.keys(conservedRegionScores), function(key){
@@ -426,7 +430,7 @@ EvaVariantWidget.prototype = {
 //                        {
 //                            text: "PhastCons",
 //                            dataIndex: "conservedRegionScores",
-//                            width:85,
+//                            width:130,
 //                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
 //                                var conservedRegionScores = rec.data.conservedRegionScores;
 //                                _.each(_.keys(conservedRegionScores), function(key){
@@ -440,6 +444,112 @@ EvaVariantWidget.prototype = {
 //                    ]
 //                },
                 {
+                    text: "Protein Subsititution Score",
+                    columns: [
+                        {
+                            text: "Polyphen2",
+                            dataIndex: "consequenceTypes",
+                            width:130,
+                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                                var tempArray = [];
+                                var consequenceTypes = rec.data.consequenceTypes;
+                                if(!_.isUndefined(value)){
+                                    var tempArray = [];
+                                    _.each(_.keys(consequenceTypes), function(key){
+                                        var so_terms = this[key].soTerms;
+                                        _.each(_.keys(so_terms), function(key){
+                                            tempArray.push(this[key].soName)
+                                        },so_terms);
+                                    },consequenceTypes);
+
+
+                                    var groupedArr = _.groupBy(tempArray);
+                                    var so_array = [];
+                                    _.each(_.keys(groupedArr), function(key){
+                                        var index =  _.indexOf(consequenceTypesHierarchy, key);
+//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+//                                        so_array.push(key+' ('+this[key].length+')')
+//                                so_array[index] = key+' ('+this[key].length+')';
+                                        so_array[index] = key;
+                                    },groupedArr);
+                                    so_array =  _.compact(so_array);
+                                    meta.tdAttr = 'data-qtip="'+so_array.join('\n')+'"';
+                                    var score = '-';
+                                    for (i = 0; i < consequenceTypes.length; i++) {
+                                        for (j = 0; j < consequenceTypes[i].soTerms.length; j++) {
+                                            if(consequenceTypes[i].soTerms[j].soName == _.first(so_array)){
+                                                _.each(_.keys(consequenceTypes[i].proteinSubstitutionScores), function(key){
+                                                      if(this[key].source == 'Polyphen'){
+                                                           score = this[key].score;
+                                                      }
+                                                },consequenceTypes[i].proteinSubstitutionScores);
+                                            }
+
+                                        }
+                                    }
+
+                                    return score;
+
+
+                                }else{
+                                    return '';
+                                }
+                            },
+
+                        },
+                        {
+                            text: "Sift",
+                            dataIndex: "consequenceTypes",
+                            width:130,
+                            renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                                var tempArray = [];
+                                var consequenceTypes = rec.data.consequenceTypes;
+                                if(!_.isUndefined(value)){
+                                    var tempArray = [];
+                                    _.each(_.keys(consequenceTypes), function(key){
+                                        var so_terms = this[key].soTerms;
+                                        _.each(_.keys(so_terms), function(key){
+                                            tempArray.push(this[key].soName)
+                                        },so_terms);
+                                    },consequenceTypes);
+
+
+                                    var groupedArr = _.groupBy(tempArray);
+                                    var so_array = [];
+                                    _.each(_.keys(groupedArr), function(key){
+                                        var index =  _.indexOf(consequenceTypesHierarchy, key);
+//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+//                                        so_array.push(key+' ('+this[key].length+')')
+//                                so_array[index] = key+' ('+this[key].length+')';
+                                        so_array[index] = key;
+                                    },groupedArr);
+                                    so_array =  _.compact(so_array);
+                                    meta.tdAttr = 'data-qtip="'+so_array.join('\n')+'"';
+                                    var score = '-';
+                                    for (i = 0; i < consequenceTypes.length; i++) {
+                                        for (j = 0; j < consequenceTypes[i].soTerms.length; j++) {
+                                            if(consequenceTypes[i].soTerms[j].soName == _.first(so_array)){
+                                                _.each(_.keys(consequenceTypes[i].proteinSubstitutionScores), function(key){
+                                                    if(this[key].source == 'Sift'){
+                                                        score = this[key].score;
+                                                    }
+                                                },consequenceTypes[i].proteinSubstitutionScores);
+                                            }
+
+                                        }
+                                    }
+
+                                    return score;
+
+
+                                }else{
+                                    return '';
+                                }
+                            },
+                        }
+                    ]
+                },
+                {
                     text: 'View',
                     dataIndex: 'id',
                     id:'variant-grid-view-column',
@@ -448,7 +558,7 @@ EvaVariantWidget.prototype = {
                         '<a href="http://www.ensembl.org/Homo_sapiens/Variation/Explore?vdb=variation;v={id}" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
                         '&nbsp;<a href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs={id}" target="_blank"><span>dbSNP</span></a>' +
                         '<tpl else><a href="?variant={chromosome}:{start}:{reference}:{alternate}" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>',
-                    flex: 0.3
+                    flex: 0.3,
                 }
 
                 //

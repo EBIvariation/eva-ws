@@ -124,7 +124,7 @@ EvaVariantPopulationStatsPanel.prototype = {
                 {
                     xtype: 'box',
                     cls: 'ocb-header-4',
-                    html: '<h4>Population Stats</h4>',
+                    html: '<h4>Population Statistics</h4>',
                     margin: '5 0 10 10'
                 },
                 this.studiesContainer
@@ -186,14 +186,16 @@ EvaVariantPopulationStatsPanel.prototype = {
                     text: "Minor Allele Frequency",
                     dataIndex: "maf",
                     xtype: "templatecolumn",
-                    tpl: '<tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl>',
+//                    tpl: '<tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl>',
+                    tpl: '<tpl if="maf == -1">NA <tpl else>{maf:number( "0.000" )} </tpl>',
                     flex: 0.75
                 },
                 {
                     text: "MAF Allele",
                     dataIndex: "mafAllele",
                     xtype: "templatecolumn",
-                    tpl: '<tpl if="mafAllele">{mafAllele} <tpl else>NA</tpl>',
+//                    tpl: '<tpl if="mafAllele">{mafAllele} <tpl else>NA</tpl>',
+                    tpl: '<tpl if="mafAllele">{mafAllele} <tpl else>-</tpl>',
                     flex: 0.5
                 },
                 {
@@ -346,7 +348,7 @@ EvaVariantPopulationStatsPanel.prototype = {
                     plotBorderWidth: null,
                     plotShadow: false,
                     height: height,
-                    width: width,
+//                    width: width,
                     marginLeft:50,
                     marginTop:50
 
@@ -368,7 +370,7 @@ EvaVariantPopulationStatsPanel.prototype = {
                     style: {
 //                                    display: 'none'
                     },
-                    align: 'left'
+                    align: 'center'
                 },
                 tooltip: {
                     pointFormat: '<b>{point.y}</b>'

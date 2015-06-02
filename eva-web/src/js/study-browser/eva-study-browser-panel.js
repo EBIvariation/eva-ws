@@ -84,12 +84,12 @@ EvaStudyBrowserPanel.prototype = {
                 plain: true,
                 items: [
                     {
-                        title: snvStudyBrowser.getPanel().title.replace('Browser','<50bp'),
+                        title: snvStudyBrowser.getPanel().title.replace('Browser','(<50bp)'),
                         cls:'studybrowser ',
                         items:[snvStudyBrowser.getPanel()]
                     },
                     {
-                        title:svStudyBrowser.getPanel().title.replace('Browser','>50bp'),
+                        title:svStudyBrowser.getPanel().title.replace('Browser','(>50bp)'),
                         cls:'studybrowser',
                         items:[svStudyBrowser.getPanel()]
 

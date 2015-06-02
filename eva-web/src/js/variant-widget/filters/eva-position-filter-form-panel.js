@@ -114,7 +114,8 @@ EvaPositionFilterFormPanel.prototype = {
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'Ensembl Gene / Transcript',
+//            fieldLabel: 'Ensembl Gene / Transcript',
+            fieldLabel: 'HGNC Gene Symbol',
             labelAlign: 'top',
             listeners: {
                 'change': function(field, newVal, oldVal){
@@ -160,16 +161,16 @@ EvaPositionFilterFormPanel.prototype = {
         return values;
     },
     disableFields:function(id){
-        this.panel.getForm().getFields().each(function(field) {
-            if(id != field.id){
-                field.disable(true);
-            }
-        });
+//        this.panel.getForm().getFields().each(function(field) {
+//            if(id != field.id){
+//                field.disable(true);
+//            }
+//        });
     },
     enableFields:function(){
-        this.panel.getForm().getFields().each(function(field) {
-            field.enable(true);
-        });
+//        this.panel.getForm().getFields().each(function(field) {
+//            field.enable(true);
+//        });
     },
     clear: function () {
         this.panel.reset();
