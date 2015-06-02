@@ -56,7 +56,7 @@ EvaStudyView.prototype = {
                 } catch (e) {
                     console.log(e);
                 }
-//                _this._parseData();
+                _this._parseData();
             }
         });
 
