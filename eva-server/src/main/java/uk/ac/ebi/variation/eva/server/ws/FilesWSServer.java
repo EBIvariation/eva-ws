@@ -12,8 +12,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Properties;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
@@ -30,13 +29,15 @@ import uk.ac.ebi.variation.eva.server.exception.VersionException;
 @Api(value = "Files", description = "Files RESTful Web Services API")
 public class FilesWSServer extends EvaWSServer {
 
-    private VariantSourceDBAdaptor variantSourceEvaproDbAdaptor;
+    private final VariantSourceDBAdaptor variantSourceEvaproDbAdaptor;
 
 
     public FilesWSServer(@DefaultValue("") @PathParam("version") String version,
-                         @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws NamingException {
+                         @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws NamingException, IOException {
         super(version, uriInfo, hsr);
-        variantSourceEvaproDbAdaptor = new VariantSourceEvaproDBAdaptor();
+        Properties properties = new Properties(); 
+        properties.load(DBAdaptorConnector.class.getResourceAsStream("/mongo.properties"));
+        variantSourceEvaproDbAdaptor = new VariantSourceEvaproDBAdaptor(properties.getProperty("eva.version"));
     }
 
     @GET
