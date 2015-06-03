@@ -1,5 +1,7 @@
 package uk.ac.ebi.variation.eva.lib.storage.metadata;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +16,7 @@ import javax.sql.DataSource;
 import org.opencb.biodata.models.variant.VariantStudy;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.storage.variant.StudyDBAdaptor;
+import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.EvaproUtils;
 
 /**
@@ -40,16 +42,16 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
         }
         if (hasSpecies) {
             query.append("(");
-            query.append(EvaproUtils.getInClause("common_name", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
             query.append(" or ");
-            query.append(EvaproUtils.getInClause("scientific_name", options.getListAs("species", String.class)));
+            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
             query.append(")");
         }
         if (hasType) {
             if (hasSpecies) {
                 query.append(" and ");
             }
-            query.append(EvaproUtils.getInClause("study_type", options.getListAs("type", String.class)));
+            query.append(EvaproUtils.getInClause("study_type", options.getAsStringList("species")));
         }
         
         Connection conn = null;
@@ -71,10 +73,14 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
                 }
                 
                 // Build the variant study object
+                URI uri = null;
+                try {
+                    uri = new URI(rs.getString("study_url"));
+                } catch(URISyntaxException | SQLException | NullPointerException ex) { }
                 VariantStudy study = new VariantStudy(rs.getString("display_name"), rs.getString("study_accession"), null, 
                         rs.getString("study_description"), taxIds, rs.getString("common_name"), rs.getString("scientific_name"), 
                         null, null, null, null, EvaproUtils.stringToStudyType(rs.getString("study_type")), rs.getString("analysis_type"), 
-                        null, "GRCh38", rs.getString("platform_name"), rs.getInt("variant_count"), -1);
+                        null, "GRCh38", rs.getString("platform_name"), uri, rs.getInt("variant_count"), -1);
                 result.add(study);
             }
             long end = System.currentTimeMillis();
@@ -131,10 +137,14 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
                 }
                 
                 // Build the variant study object
+                URI uri = null;
+                try {
+                    uri = new URI(rs.getString("study_url"));
+                } catch(URISyntaxException | SQLException | NullPointerException ex) { }
                 VariantStudy study = new VariantStudy(rs.getString("display_name"), rs.getString("study_accession"), null, 
                         rs.getString("study_description"), taxIds, rs.getString("common_name"), rs.getString("scientific_name"), 
                         null, null, null, null, EvaproUtils.stringToStudyType(rs.getString("study_type")), rs.getString("analysis_type"), 
-                        null, "GRCh38", rs.getString("platform_name"), rs.getInt("variant_count"), -1);
+                        null, "GRCh38", rs.getString("platform_name"), uri, rs.getInt("variant_count"), -1);
                 result.add(study);
             }
             long end = System.currentTimeMillis();

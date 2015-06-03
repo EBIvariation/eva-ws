@@ -1,32 +1,32 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.base.Splitter;
-import java.io.IOException;
+import com.wordnik.swagger.annotations.ApiParam;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiParam;
 import org.opencb.biodata.models.feature.Genotype;
-import org.opencb.biodata.models.variant.VariantSourceEntry;
 import org.opencb.biodata.models.variant.VariantSource;
+import org.opencb.biodata.models.variant.VariantSourceEntry;
 import org.opencb.biodata.models.variant.stats.VariantStats;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResponse;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.lib.auth.MongoCredentials;
-import org.opencb.opencga.storage.variant.json.VariantSourceEntryJsonMixin;
-import org.opencb.opencga.storage.variant.json.GenotypeJsonMixin;
-import org.opencb.opencga.storage.variant.json.VariantSourceJsonMixin;
-import org.opencb.opencga.storage.variant.json.VariantStatsJsonMixin;
+import org.opencb.opencga.storage.core.variant.io.json.GenotypeJsonMixin;
+import org.opencb.opencga.storage.core.variant.io.json.VariantSourceEntryJsonMixin;
+import org.opencb.opencga.storage.core.variant.io.json.VariantSourceJsonMixin;
+import org.opencb.opencga.storage.core.variant.io.json.VariantStatsJsonMixin;
+import org.opencb.opencga.storage.core.variant.io.json.VariantStatsJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.ebi.variation.eva.server.exception.SpeciesException;
@@ -103,6 +103,12 @@ public class EvaWSServer {
         jsonObjectMapper.addMixInAnnotations(Genotype.class, GenotypeJsonMixin.class);
         jsonObjectMapper.addMixInAnnotations(VariantStats.class, VariantStatsJsonMixin.class);
         jsonObjectMapper.addMixInAnnotations(VariantSource.class, VariantSourceJsonMixin.class);
+        jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
+        
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(VariantStats.class, new VariantStatsJsonSerializer());
+        jsonObjectMapper.registerModule(module);
+        
         jsonObjectWriter = jsonObjectMapper.writer();
 
         xmlObjectMapper = new XmlMapper();
@@ -149,12 +155,12 @@ public class EvaWSServer {
         if (version == null || !version.equals("v1")) {
             throw new VersionException("Version not valid: '" + version + "'");
         }
-        if (species == null /*|| !isValidSpecies(species)*/) {
+        if (species == null || species.isEmpty()/*|| !isValidSpecies(species)*/) {
             throw new SpeciesException("Species not valid: '" + species + "'");
         }
 
         MultivaluedMap<String, String> multivaluedMap = uriInfo.getQueryParameters();
-        queryOptions.put("species", (species != null && !species.equals("")) ? species : "Homo sapiens");
+        queryOptions.put("species", species);
 
         queryOptions.put("metadata", (multivaluedMap.get("metadata") != null) ? multivaluedMap.get("metadata").get(0).equals("true") : true);
         queryOptions.put("exclude", (exclude != null && !exclude.equals("")) ? Splitter.on(",").splitToList(exclude) : null);
@@ -180,9 +186,9 @@ public class EvaWSServer {
         queryResponse.setQueryOptions(queryOptions);
         
         // Guarantee that the QueryResponse object contains a coll of results
-        Collection coll;
-        if (obj instanceof Collection) {
-            coll = (Collection) obj;
+        List coll;
+        if (obj instanceof List) {
+            coll = (List) obj;
         } else {
             coll = new ArrayList();
             coll.add(obj);

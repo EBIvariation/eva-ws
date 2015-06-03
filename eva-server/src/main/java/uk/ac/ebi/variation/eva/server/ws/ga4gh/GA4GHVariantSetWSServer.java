@@ -1,5 +1,6 @@
 package uk.ac.ebi.variation.eva.server.ws.ga4gh;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +25,7 @@ import org.opencb.biodata.models.variant.VariantSource;
 import org.opencb.biodata.models.variant.ga4gh.GAVariantSetFactory;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.variant.VariantSourceDBAdaptor;
+import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
 
@@ -55,9 +56,9 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
                                    @DefaultValue("10") @QueryParam("pageSize") int limit,
                                    @DefaultValue("false") @QueryParam("histogram") boolean histogram,
                                    @DefaultValue("-1") @QueryParam("histogram_interval") int interval)
-            throws UnknownHostException, IllegalOpenCGACredentialsException {
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         
-        VariantSourceDBAdaptor dbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor("hsapiens");
+        VariantSourceDBAdaptor dbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor("hsapiens_grch37");
         
         int idxCurrentPage = 0;
         if (pageToken != null && !pageToken.isEmpty() && StringUtils.isNumeric(pageToken)) {
@@ -88,7 +89,7 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
     @Path("/search")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getVariantSets(GASearchVariantSetsRequest request) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException {
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         return getVariantSets(StringUtils.join(request.getDatasetIds(), ','), 
                 request.getPageToken(), request.getPageSize(), false, -1);
     }

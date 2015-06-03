@@ -1,5 +1,6 @@
 package uk.ac.ebi.variation.eva.server.ws.ga4gh;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +26,7 @@ import org.opencb.biodata.models.variant.Variant;
 import org.opencb.biodata.models.variant.ga4gh.GAVariantFactory;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.variant.VariantDBAdaptor;
+import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
 
@@ -62,9 +63,9 @@ public class GA4GHVariantWSServer extends EvaWSServer {
                                         @DefaultValue("10") @QueryParam("pageSize") int limit,
                                         @DefaultValue("false") @QueryParam("histogram") boolean histogram,
                                         @DefaultValue("-1") @QueryParam("histogram_interval") int interval) 
-            throws IllegalOpenCGACredentialsException, UnknownHostException {
+            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         
-        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens");
+        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
         
         if (files != null && !files.isEmpty()) {
             queryOptions.put("files", Arrays.asList(files.split(",")));
@@ -85,7 +86,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
             if (interval > 0) {
                 queryOptions.put("interval", interval);
             }
-            return createOkResponse(variantMongoDbAdaptor.getVariantsHistogramByRegion(region, queryOptions));
+            return createOkResponse(variantMongoDbAdaptor.getVariantFrequencyByRegion(region, queryOptions));
         } else if (regionSize <= 1000000) {
             QueryResult<Variant> qr = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
             // Convert Variant objects to GAVariant
@@ -107,7 +108,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
     @Path("/search")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getVariantsByRegion(GASearchVariantRequest request) 
-            throws IllegalOpenCGACredentialsException, UnknownHostException {
+            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         request.validate();
         return getVariantsByRegion(request.getReferenceName(), (int) request.getStart(), (int) request.getEnd(), 
                    StringUtils.join(request.getVariantSetIds(), ","), request.getPageToken(), request.getPageSize(), 

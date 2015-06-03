@@ -1,18 +1,25 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import org.opencb.opencga.storage.variant.VariantSourceDBAdaptor;
-import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.variation.eva.lib.storage.metadata.VariantSourceEvaproDBAdaptor;
-
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.Arrays;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.Arrays;
+
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
+import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
+import uk.ac.ebi.variation.eva.lib.storage.metadata.VariantSourceEvaproDBAdaptor;
+import uk.ac.ebi.variation.eva.server.exception.SpeciesException;
+import uk.ac.ebi.variation.eva.server.exception.VersionException;
 
 /**
  *
@@ -35,17 +42,16 @@ public class FilesWSServer extends EvaWSServer {
     @GET
     @Path("/all")
     @ApiOperation(httpMethod = "GET", value = "Gets the files of a species")
-    public Response getFiles(@QueryParam("species") String species) {
+    public Response getFiles(@QueryParam("species") String species) 
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         try {
             checkParams();
-//            if (species != null && !species.isEmpty()) {
-//                queryOptions.put("species", species);
-//            }
-            VariantSourceDBAdaptor variantSourceMongoDbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor(species);
-            return createOkResponse(variantSourceMongoDbAdaptor.getAllSources(queryOptions));
-        } catch (Exception e) {
-            return createErrorResponse(e.toString());
+        } catch (VersionException | SpeciesException ex) {
+            return createErrorResponse(ex.toString());
         }
+        
+        VariantSourceDBAdaptor variantSourceMongoDbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor(species);
+        return createOkResponse(variantSourceMongoDbAdaptor.getAllSources(queryOptions));
     }
 
     @GET
@@ -54,10 +60,11 @@ public class FilesWSServer extends EvaWSServer {
     public Response getFileUrl(@PathParam("files") String filenames) {
         try {
             checkParams();
-            return createOkResponse(variantSourceEvaproDbAdaptor.getSourceDownloadUrlByName(Arrays.asList(filenames.split(","))));
-        } catch (Exception e) {
-            return createErrorResponse(e.toString());
+        } catch (VersionException | SpeciesException ex) {
+            return createErrorResponse(ex.toString());
         }
+        
+        return createOkResponse(variantSourceEvaproDbAdaptor.getSourceDownloadUrlByName(Arrays.asList(filenames.split(","))));
     }
 
 }

@@ -192,7 +192,7 @@ EvaStudyFilterFormPanel.prototype = {
                 features: [
                     {ftype: 'summary'}
                 ],
-               cls:'studyList',
+                cls:'studyList',
 //                height: this.height - 70,
 //                minHeight: 250,
 //                maxHeight: this.height,

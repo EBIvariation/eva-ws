@@ -2,9 +2,13 @@ package uk.ac.ebi.variation.eva.server.ws;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
@@ -19,8 +23,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.variant.ArchiveDBAdaptor;
-import org.opencb.opencga.storage.variant.StudyDBAdaptor;
+import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
+import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
@@ -65,6 +69,18 @@ public class ArchiveWSServer extends EvaWSServer {
     public Response countSpecies() {
         return createOkResponse(archiveEvaproDbAdaptor.countSpecies());
     }
+    @GET
+    @Path("/species/list")
+    public Response getSpecies(@DefaultValue("false") @QueryParam("loaded") boolean loaded) {
+        try {
+            Properties properties = new Properties();
+            properties.load(DBAdaptorConnector.class.getResourceAsStream("/mongo.properties"));
+            
+            return createOkResponse(archiveEvaproDbAdaptor.getSpecies(properties.getProperty("eva.version"), loaded));
+        } catch (IOException ex) {
+            return createErrorResponse(ex.toString());
+        }
+    }
     
     @GET
     @Path("/studies/count")
@@ -75,7 +91,7 @@ public class ArchiveWSServer extends EvaWSServer {
     @GET
     @Path("/studies/list")
     public Response getStudies(@QueryParam("species") String species) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException {
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
         return createOkResponse(studyMongoDbAdaptor.listStudies());
     }

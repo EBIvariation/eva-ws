@@ -1,5 +1,6 @@
 package uk.ac.ebi.variation.eva.server.ws.ga4gh;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +17,7 @@ import javax.ws.rs.core.UriInfo;
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.variant.VariantDBAdaptor;
+import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
 
@@ -42,7 +43,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
                            @QueryParam("start") Integer start,
                            @QueryParam("allele") String allele,
                            @QueryParam("datasetIds") String studies) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException {
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         
         if (chromosome == null || chromosome.isEmpty() ||
                 start == null || start < 0 || allele == null) {
@@ -50,7 +51,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
                     "Please provide chromosome, positive position and alternate allele"));
         }
         
-        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens");
+        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
         
         Region region = new Region(chromosome, start, start + allele.length());
         if (allele.equalsIgnoreCase("INDEL")) {
