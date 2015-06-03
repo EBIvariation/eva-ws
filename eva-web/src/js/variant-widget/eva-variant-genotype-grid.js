@@ -205,6 +205,9 @@ EvaVariantGenotypeGrid.prototype = {
              var finalData = [];
              for (var key in samples) {
                  var s = samples[key];
+                 if(s.GT = '-1/-1'){
+                     s.GT = './.';
+                 }
                  finalData.push({
                      sample: key,
                      genotype: s.GT

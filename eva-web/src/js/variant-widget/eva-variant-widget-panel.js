@@ -265,8 +265,9 @@ EvaVariantWidgetPanel.prototype = {
 
 
 
-        var formPanel = new FormPanel({
+        var formPanel = new EvaFormPanel({
             title: 'Filter',
+            type: 'variantBrowser',
             headerConfig: {
                 baseCls: 'eva-header-1'
             },

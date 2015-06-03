@@ -405,7 +405,7 @@ EvaClinicalWidgetPanel.prototype = {
         });
 
 
-        var formPanel = new FormPanel({
+        var formPanel = new EvaFormPanel({
             title: 'Filter',
             headerConfig: {
                 baseCls: 'eva-header-1'
