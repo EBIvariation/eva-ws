@@ -119,6 +119,7 @@ EvaGenomeViewerPanel.prototype = {
         speciesFilter.on('species:change', function (e) {
             if (e.species) {
                 _this._loadListStudies(studyFilter, e.species);
+                console.log(e.species)
 
                 //EvaManager.get({
                 //    category: 'meta/studies',
@@ -196,6 +197,7 @@ EvaGenomeViewerPanel.prototype = {
         return formPanel;
     },
     _addGenomeBrowserTrack: function (title, params) {
+        params.exclude = 'sourceEntries';
         var eva = new FeatureTrack({
             title: title,
             closable:true,
@@ -282,13 +284,13 @@ EvaGenomeViewerPanel.prototype = {
         }
 
         var genomeViewer = new GenomeViewer({
-            //cellBaseHost: 'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
             sidePanel: false,
             target: target,
             border: false,
             resizable: true,
             width: 1320,
             region: region,
+            availableSpecies: AVAILABLE_SPECIES,
             // trackListTitle: '',
             drawNavigationBar: true,
             drawKaryotypePanel: false,

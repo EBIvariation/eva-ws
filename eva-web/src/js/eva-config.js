@@ -304,3 +304,34 @@ EvaManager.get({
     }
 });
 
+
+
+var AVAILABLE_SPECIES = {
+    "text": "Species",
+    "items": [
+        {
+            "text": "Vertebrates",
+            "items": [
+                {"text": "Homo sapiens", "assembly": "GRCh37.p10"},
+                {"text": "Chlorocebus sabaeus", "assembly": "Chlorocebus_sabeus 1.1"},
+                {"text": "Oryzias latipes", "assembly": "ASM31367v1"},
+                {"text": "Bos taurus", "assembly": "Bos_taurus_UMD_3.1"},
+                {"text": "Ovis aries", "assembly": "Oar_v3.1"},
+                {"text": "Mus musculus", "assembly": "GRCm38.p3"},
+                {"text": "Capra hircus", "assembly": "CHIR_1.0"},
+            ]
+        },
+        {
+            "text": "Metazoa",
+            "items": [
+                {"text": "Anopheles gambiae", "assembly": "AgamP3"}
+            ]
+        },
+        {
+            "text": "Plants",
+            "items": [
+                {"text": "Solanum lycopersicum", "assembly": "SL2.40"},
+            ]
+        }
+    ]
+};
