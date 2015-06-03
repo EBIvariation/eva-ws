@@ -133,7 +133,7 @@ ClinVarPositionFilterFormPanel.prototype = {
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'HGNC Gene Symbol',
+            fieldLabel: 'Ensembl Gene Symbol',
             labelAlign: 'top',
             listeners: {
                 'change': function(field, newVal, oldVal){
