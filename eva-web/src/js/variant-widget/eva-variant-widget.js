@@ -1038,6 +1038,8 @@ EvaVariantWidget.prototype = {
                         genomeViewer.setRegion(region, _this.taxonomy);
                     }
                 }
+            }else{
+                genomeViewer.setSpeciesByTaxonomy(_this.taxonomy);
             }
         });
 
