@@ -231,13 +231,13 @@ EvaVariantGenotypeGrid.prototype = {
                      items:[{
                          text     : 'Sample',
                          flex     : 1,
-                         sortable : false,
+//                         sortable : false,
                          dataIndex: 'sample'
                         },
                          {
                              text     : 'Genotype',
                              flex     : 1,
-                             sortable : false,
+//                             sortable : false,
                              dataIndex: 'genotype'
                          }],
                          defaults: {
@@ -250,7 +250,7 @@ EvaVariantGenotypeGrid.prototype = {
 //                 width: 300,
                  renderTo: divID,
                  viewConfig: {
-                     stripeRows: true
+                     stripeRows: true,
                  }
              });
 
