@@ -368,7 +368,7 @@ EvaVariantWidget.prototype = {
 //                    dataIndex: 'gene'
 //                },
                 {
-                    text: 'Consequence <br /> Type',
+                    text: 'Most Severe <br /> Consequence Type',
                     dataIndex: 'consequenceTypes',
                     renderer: function(value, meta, rec, rowIndex, colIndex, store){
                         var tempArray = [];
@@ -444,7 +444,7 @@ EvaVariantWidget.prototype = {
 //                    ]
 //                },
                 {
-                    text: "Protein Subsititution Score",
+                    text: "Protein Subsititution Scores",
                     columns: [
                         {
                             text: "Polyphen2",

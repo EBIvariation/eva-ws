@@ -172,7 +172,16 @@ EvaStudyFilterFormPanel.prototype = {
             }
         });
 
-        var grid = Ext.create('Ext.grid.Panel', {
+        var selModel = Ext.create('Ext.selection.CheckboxModel', {
+            checkOnly: true,
+            listeners: {
+                selectionchange: function(model, records) {
+
+                }
+            }
+        });
+
+        this.grid = Ext.create('Ext.grid.Panel', {
                 store: this.studiesStore,
                 autoScroll:true,
                 border: this.border,
@@ -183,39 +192,43 @@ EvaStudyFilterFormPanel.prototype = {
                 features: [
                     {ftype: 'summary'}
                 ],
+               cls:'studyList',
 //                height: this.height - 70,
 //                minHeight: 250,
 //                maxHeight: this.height,
                 height: this.height,
                 viewConfig: {
+                    stripeRows: false,
                     emptyText: 'No studies found',
                     enableTextSelection: true,
                     markDirty: false,
                     listeners: {
                         itemclick: function (este, record) {
-                            var studies = grid.getSelectionModel().getSelection();
-                            _this.trigger('studies:change', {sender: _this});
+                            var studies = _this.grid.getSelectionModel().getSelection();
+//                            alert('ed')
+//                            _this.trigger('studies:change', {sender: _this});
                         },
                         itemcontextmenu: function (este, record, item, index, e) {
 
                         }
                     }
                 },
-                selModel: {
-                    listeners: {
-                        'selectionchange': function (selModel, selectedRecord) {
-
-                        }
-                    }
-                },
+//                selModel: {
+//                    listeners: {
+//                        'selectionchange': function (selModel, selectedRecord) {
+//
+//                        }
+//                    }
+//                },
+                selModel: selModel,
                 columns: [
-                    {
-//                        text: 'Active',
-                        xtype: 'checkcolumn',
-                        dataIndex: 'uiactive',
-                        width: 50,
-                        sortable : false
-                    },
+//                    {
+////                        text: 'Active',
+//                        xtype: 'checkcolumn',
+//                        dataIndex: 'uiactive',
+//                        width: 50,
+//                        sortable : false
+//                    },
                     {
                         text: "Name",
                         dataIndex: 'studyName',
@@ -253,9 +266,10 @@ EvaStudyFilterFormPanel.prototype = {
             },
             items: [
                 studySearchField,
-                grid
+                this.grid,
             ]
         });
+
 
         return form;
     },
@@ -263,15 +277,20 @@ EvaStudyFilterFormPanel.prototype = {
         return this.panel;
     },
     getValues: function () {
+        var _this = this;
         var values = [];
-        var records = this.studiesStore.query().items;
-        for (var i = 0; i < records.length; i++) {
-            var record = records[i];
-            var active = record.get('uiactive');
-            if (active) {
-                values.push(record.get('studyId'))
-            }
+//        var records = this.studiesStore.query().items;
+        var selection = _this.grid.getSelectionModel().getSelection();
+        for (var i = 0; i < selection.length; i++) {
+            values.push(selection[i].data.studyId)
         }
+//        for (var i = 0; i < records.length; i++) {
+//            var record = records[i];
+//            var active = record.get('uiactive');
+//            if (active) {
+//                values.push(record.get('studyId'))
+//            }
+//        }
         var res = {};
         if (values.length > 0) {
             res['studies'] = values;

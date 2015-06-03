@@ -481,12 +481,15 @@ EvaVariantWidgetPanel.prototype = {
                     console.log(e);
                 }
                 filter.studiesStore.loadRawData(studies);
+                console.log( _this.formPanelVariantFilter)
                 //set all records checked default
-                filter.studiesStore.each(function(rec){
-                    if(!_.isNull(species) ){
-                        rec.set('uiactive', true)
-                    }
-                })
+                _this.formPanelVariantFilter.filters[5].grid.getSelectionModel().selectAll()
+                //set all records checked default
+//                filter.studiesStore.each(function(rec){
+//                    if(!_.isNull(species) ){
+//                        rec.set('uiactive', true)
+//                    }
+//                });
                 _this.trigger('studies:change', {studies: studies, sender: _this});
             }
         });
