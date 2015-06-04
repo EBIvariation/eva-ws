@@ -352,44 +352,45 @@ EvaVariantWidget.prototype = {
 //                    text: 'Gene',
 //                    dataIndex: 'gene'
 //                },
-//                {
-//                    text: 'Consequence Type',
-//                    dataIndex: 'consequenceTypes',
-//                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
-//                        var tempArray = [];
-//                        var consequenceTypes = rec.data.consequenceTypes;
-//                        if(!_.isUndefined(value)){
-//                            var tempArray = [];
-//                            _.each(_.keys(consequenceTypes), function(key){
-//                                var so_terms = this[key].soTerms;
-//                                _.each(_.keys(so_terms), function(key){
-//                                    tempArray.push(this[key].soName)
-//                                },so_terms);
-//                            },consequenceTypes);
-//
-//
-//                            var groupedArr = _.groupBy(tempArray);
-//                            var so_array = [];
-//                            _.each(_.keys(groupedArr), function(key){
-//                                var index =  _.indexOf(consequenceTypesHierarchy, key);
-////                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
-////                                        so_array.push(key+' ('+this[key].length+')')
-//                                so_array[index] = key+' ('+this[key].length+')';
-//                            },groupedArr);
-//                            so_array =  _.compact(so_array);
-//                            meta.tdAttr = 'data-qtip="'+so_array.join('\n')+'"';
-//                            return value ? Ext.String.format(
-//                                '<tpl>'+so_array.join()+'</tpl>',
-//                                value
-//                            ) : '';
-//                        }else{
-//                            return '';
-//                        }
-//
-////                        return tempArray.join();
-//                    },
+                {
+                    text: 'Most Severe <br /> Consequence Type',
+                    dataIndex: 'consequenceTypes',
+                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                        var tempArray = [];
+                        var consequenceTypes = rec.data.consequenceTypes;
+                        if(!_.isUndefined(value)){
+                            var tempArray = [];
+                            _.each(_.keys(consequenceTypes), function(key){
+                                var so_terms = this[key].soTerms;
+                                _.each(_.keys(so_terms), function(key){
+                                    tempArray.push(this[key].soName)
+                                },so_terms);
+                            },consequenceTypes);
+
+
+                            var groupedArr = _.groupBy(tempArray);
+                            var so_array = [];
+                            _.each(_.keys(groupedArr), function(key){
+                                var index =  _.indexOf(consequenceTypesHierarchy, key);
+//                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
+//                                        so_array.push(key+' ('+this[key].length+')')
+                                so_array[index] = key+' ('+this[key].length+')';
+                            },groupedArr);
+                            so_array =  _.compact(so_array);
+                            meta.tdAttr = 'data-qtip="'+so_array.join('\n')+'"';
+                            return value ? Ext.String.format(
+                                '<tpl>'+so_array.join()+'</tpl>',
+                                value
+                            ) : '';
+                        }else{
+                            return '';
+                        }
+
+//                        return tempArray.join();
+                    },
 //                    flex: 1
-//                },
+                    width:200
+                },
 //                {
 //                    text: "Conserved Regions",
 //                    columns: [
