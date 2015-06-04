@@ -277,7 +277,7 @@ EvaClinVarWidget.prototype = {
                     flex:0.4
                 },
                 {
-                    text: "HGNC Symbol",
+                    text: "Ensembl <br/> Gene Symbol",
                     dataIndex: 'hgnc_gene',
 //                    id:'clinvar-grid-gene-column',
                     flex:0.4,
