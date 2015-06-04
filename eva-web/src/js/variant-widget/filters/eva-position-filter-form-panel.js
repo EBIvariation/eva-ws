@@ -114,7 +114,7 @@ EvaPositionFilterFormPanel.prototype = {
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'Ensembl Gene / Transcript',
+            fieldLabel: 'Ensembl Gene Symbol',
             labelAlign: 'top',
             listeners: {
                 'change': function(field, newVal, oldVal){
