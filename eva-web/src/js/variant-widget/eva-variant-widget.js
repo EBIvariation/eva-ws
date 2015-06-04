@@ -1075,9 +1075,9 @@ EvaVariantWidget.prototype = {
         genomeViewer.addOverviewTrack(geneOverview);
         genomeViewer.addTrack([sequence, gene, snp]);
         this.on("species:change", function (e) {
-            if (target === _this.selectedToolDiv) {
-                _this.taxonomy = e.values.species.split('_')[0];
-            }
+            _this.taxonomy = e.values.species.split('_')[0];
+            //if (target === _this.selectedToolDiv) {
+            //}
         });
         this.on("variant:change", function (e) {
             if (e.variant) {
@@ -1089,7 +1089,7 @@ EvaVariantWidget.prototype = {
                         genomeViewer.setRegion(region, _this.taxonomy);
                     }
                 }
-            }else{
+            } else {
                 genomeViewer.setSpeciesByTaxonomy(_this.taxonomy);
             }
         });
