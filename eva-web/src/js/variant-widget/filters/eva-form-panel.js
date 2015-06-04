@@ -117,7 +117,7 @@ EvaFormPanel.prototype = {
                     _this.clear();
                     Utils.msg('Clear', 'Successful');
                     if(_this.type == 'variantBrowser'){
-                        Ext.Msg.alert('','Please select a Organism/Assembly and enter a valid Chromosomal Location');
+                        Ext.Msg.alert('','Please select a Organism/Assembly and enter a valid Positional Filter');
                     }
                 }
             },

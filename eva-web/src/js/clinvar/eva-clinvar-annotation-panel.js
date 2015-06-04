@@ -142,145 +142,154 @@ ClinvarAnnotationPanel.prototype = {
 
         var _this = this;
 
-        var annotData ='';
+        var annotData = '';
         if(!_.isUndefined(data)){
             annotData = data.consequenceTypes;
         }
 
+        console.log(annotData)
+        if(annotData){
+            var annotColumns = {
+                items:[
+                    {
+                        text: "Ensembl<br /> Gene ID",
+                        dataIndex: "ensemblGeneId",
+                        flex: 1.2,
+                        xtype: "templatecolumn",
+                        tpl: '<tpl><a href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?g={ensemblGeneId}" target="_blank">{ensemblGeneId}</a>',
+                    },
+                    {
+                        text: "Ensembl <br /> Gene Symbol",
+                        dataIndex: "geneName",
+                        flex: 0.9
+                    },
+                    {
+                        text: "Ensembl <br />Transcript ID",
+                        dataIndex: "ensemblTranscriptId",
+                        flex: 1.3,
+                        xtype: "templatecolumn",
+                        tpl: '<tpl><a href="http://www.ensembl.org/Homo_sapiens/transview?transcript={ensemblTranscriptId}" target="_blank">{ensemblTranscriptId}</a>',
+                    },
+                    {
+                        text: "SO Term(s)",
+                        dataIndex: "soTerms",
+                        flex: 1.7,
+                        renderer: function(value, meta, rec, rowIndex, colIndex, store){
 
+                            if(!_.isUndefined(value)){
 
-        var annotColumns = {
-            items:[
-                {
-                    text: "Ensembl<br /> Gene ID",
-                    dataIndex: "ensemblGeneId",
-                    flex: 1.2,
-                    xtype: "templatecolumn",
-                    tpl: '<tpl><a href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?g={ensemblGeneId}" target="_blank">{ensemblGeneId}</a>',
-                },
-                {
-                    text: "Ensembl <br /> Gene Symbol",
-                    dataIndex: "geneName",
-                    flex: 0.9
-                },
-                {
-                    text: "Ensembl <br />Transcript ID",
-                    dataIndex: "ensemblTranscriptId",
-                    flex: 1.3,
-                    xtype: "templatecolumn",
-                    tpl: '<tpl><a href="http://www.ensembl.org/Homo_sapiens/transview?transcript={ensemblTranscriptId}" target="_blank">{ensemblTranscriptId}</a>',
-                },
-                {
-                    text: "SO Term(s)",
-                    dataIndex: "soTerms",
-                    flex: 1.7,
-                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
+                                var tempArray = [];
+                                _.each(_.keys(value), function(key){
+                                    tempArray.push(this[key].soName);
+                                },value);
 
-                        if(!_.isUndefined(value)){
-
-                            var tempArray = [];
-                            _.each(_.keys(value), function(key){
-                                tempArray.push(this[key].soName);
-                            },value);
-
-                            var groupedArr = _.groupBy(tempArray);
-                            var so_array = [];
-                            _.each(_.keys(groupedArr), function(key){
-                                var index =  _.indexOf(consequenceTypesHierarchy, key);
+                                var groupedArr = _.groupBy(tempArray);
+                                var so_array = [];
+                                _.each(_.keys(groupedArr), function(key){
+                                    var index =  _.indexOf(consequenceTypesHierarchy, key);
 //                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
 //                                        so_array.push(key+' ('+this[key].length+')')
-                                so_array[index] = key;
-                            },groupedArr);
-                            so_array =  _.compact(so_array);
-                            value =
-                                meta.tdAttr = 'data-qtip="'+ so_array.join('\n')+'"';
-                            return value ? Ext.String.format(
-                                '<tpl>'+so_array.join('<br />')+'</tpl>',
-                                value
-                            ) : '';
-                        }else{
-                            return '';
+                                    so_array[index] = key;
+                                },groupedArr);
+                                so_array =  _.compact(so_array);
+//                              console.log(so_array)
+                                    meta.tdAttr = 'data-qtip="'+ so_array.join(',')+'"';
+                                return value ? Ext.String.format(
+                                    '<tpl>'+so_array.join(',')+'</tpl>',
+                                    value
+                                ) : '';
+                            }else{
+                                return '';
+                            }
+
                         }
-
+                    },
+                    {
+                        text: "Biotype",
+                        dataIndex: "biotype",
+                        flex: 1.3
+                    },
+                    {
+                        text: "Codon",
+                        dataIndex: "codon",
+                        flex: 0.6
+                    },
+                    {
+                        text: "cDna <br />Position",
+                        dataIndex: "cDnaPosition",
+                        flex: 0.6
+                    },
+                    {
+                        text: "AA <br />Change",
+                        dataIndex: "aaChange",
+                        flex: 0.6
                     }
-                },
-                {
-                    text: "Biotype",
-                    dataIndex: "biotype",
-                    flex: 1.3
-                },
-                {
-                    text: "Codon",
-                    dataIndex: "codon",
-                    flex: 0.6
-                },
-                {
-                    text: "cDna <br />Position",
-                    dataIndex: "cDnaPosition",
-                    flex: 0.6
-                },
-                {
-                    text: "AA <br />Change",
-                    dataIndex: "aaChange",
-                    flex: 0.6
+
+                ],
+                defaults: {
+                    align:'left' ,
+                    sortable : true
                 }
-
-            ],
-            defaults: {
-                align:'left' ,
-                sortable : true
-            }
-        };
+            };
 
 
 
-        var store = Ext.create("Ext.data.Store", {
-            //storeId: "GenotypeStore",
-            pageSize: 20,
-            fields: [
-                {name: 'ensemblGeneId', type: 'string'},
-                {name: "geneName", type: "string"},
-                {name: "soTerms", type: "auto"}
-            ],
-            data: annotData,
-            proxy: {
-                type: 'memory',
-                enablePaging: true
-            },
-            sorters:
-            {
-                property: 'id',
-                direction: 'ASC'
-            }
-        });
+            var store = Ext.create("Ext.data.Store", {
+                //storeId: "GenotypeStore",
+                pageSize: 20,
+                fields: [
+                    {name: 'ensemblGeneId', type: 'string'},
+                    {name: "geneName", type: "string"},
+                    {name: "soTerms", type: "auto"}
+                ],
+                data: annotData,
+                proxy: {
+                    type: 'memory',
+                    enablePaging: true
+                },
+                sorters:
+                {
+                    property: 'id',
+                    direction: 'ASC'
+                }
+            });
 
-        var paging = Ext.create('Ext.PagingToolbar', {
-            store: store,
-            id: _this.id + "_pagingToolbar",
-            pageSize: 20,
-            displayInfo: true,
-            displayMsg: 'Transcripts {0} - {1} of {2}',
-            emptyMsg: "No records to display"
-        });
+            var paging = Ext.create('Ext.PagingToolbar', {
+                store: store,
+                id: _this.id + "_annotatPagingToolbar",
+                pageSize: 20,
+                displayInfo: true,
+                displayMsg: 'Transcripts {0} - {1} of {2}',
+                emptyMsg: "No records to display"
+            });
 
 
-        var grid = Ext.create('Ext.grid.Panel', {
-            store: store,
-            loadMask: true,
-            width: 970,
+            var grid = Ext.create('Ext.grid.Panel', {
+                store: store,
+                loadMask: true,
+                width: 960,
 //            height: 370,
-            maxHeight:550,
-            autoHeight: true,
-            cls:'genotype-grid',
-            margin: 20,
-            viewConfig: {
-                emptyText: 'No records to display',
-                enableTextSelection: true,
-                deferEmptyText:false
-            },
-            columns: annotColumns,
-            tbar: paging
-        });
+//                maxHeight:550,
+                autoHeight: true,
+                cls:'genotype-grid',
+                margin: 20,
+                viewConfig: {
+                    emptyText: 'No records to display',
+                    enableTextSelection: true,
+                    deferEmptyText:false
+                },
+                columns: annotColumns,
+                tbar: paging
+            });
+        }else{
+            var grid = Ext.create('Ext.view.View', {
+                tpl: new Ext.XTemplate(['<div>No Annotation data available</div>'])
+            });
+        }
+
+
+
+
 
         var annotPanel = Ext.create('Ext.panel.Panel', {
 //            header:{
@@ -296,7 +305,7 @@ ClinvarAnnotationPanel.prototype = {
             items: [grid]
         });
 
-//        paging.doRefresh();
+        paging.doRefresh();
 
 
         return annotPanel;
