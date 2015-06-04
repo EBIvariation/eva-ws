@@ -274,7 +274,7 @@ EvaVariantWidgetPanel.prototype = {
             target: target,
             submitButtonText: 'Submit',
             submitButtonId: 'vb-submit-button',
-            filters: [speciesFilter,positionFilter, conseqTypeFilter,proteinSubScoreFilter,conservationScoreFilter,studyFilter],
+            filters: [speciesFilter,positionFilter, conseqTypeFilter,proteinSubScoreFilter,studyFilter],
 //            filters: [speciesFilter,positionFilter,studyFilter],
             width: 300,
             height: 1443,
@@ -483,7 +483,7 @@ EvaVariantWidgetPanel.prototype = {
                 filter.studiesStore.loadRawData(studies);
                 console.log( _this.formPanelVariantFilter)
                 //set all records checked default
-                _this.formPanelVariantFilter.filters[5].grid.getSelectionModel().selectAll()
+                _this.formPanelVariantFilter.filters[4].grid.getSelectionModel().selectAll()
                 //set all records checked default
 //                filter.studiesStore.each(function(rec){
 //                    if(!_.isNull(species) ){

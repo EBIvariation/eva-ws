@@ -177,11 +177,11 @@ EvaVariantView.prototype = {
             consqTypeElDiv.innerHTML = consqTypeContent;
             consqTypeEl.appendChild(consqTypeElDiv);
 
-            var conservedRegionContent =  _this._renderConservedRegionData(_this.variant);
-            var consRegionEl = document.querySelector("#conserved-region-grid");
-            var consRegionElDiv =  document.createElement("div");
-            consRegionElDiv.innerHTML = conservedRegionContent;
-            consRegionEl.appendChild(consRegionElDiv);
+//            var conservedRegionContent =  _this._renderConservedRegionData(_this.variant);
+//            var consRegionEl = document.querySelector("#conserved-region-grid");
+//            var consRegionElDiv =  document.createElement("div");
+//            consRegionElDiv.innerHTML = conservedRegionContent;
+//            consRegionEl.appendChild(consRegionElDiv);
 
 //                     var effectsEl = document.getElementById("effects-grid");
 //                     var effectsElDiv = document.createElement("div");
@@ -372,7 +372,7 @@ EvaVariantView.prototype = {
                                 '<ul id="variantViewTabs" class="nav nav-stacked affix eva-tabs">'+
                                     '<li class="active"><a href="#summary">Summary</a></li>'+
                                     '<li><a href="#consequenceTypes">Consequence Types</a></li>'+
-                                    '<li><a href="#conservedRegion">Conserved Region</a></li>'+
+//                                    '<li><a href="#conservedRegion">Conserved Region</a></li>'+
                                     '<li><a href="#populationStats">Population Stats</a></li>'+
                                     '<li><a href="#studies">Studies</a></li>'+
                                '</ul>'+
@@ -390,12 +390,12 @@ EvaVariantView.prototype = {
                                         '<div id="consequence-types-grid"></div>'+
                                     '</div>'+
                                 '</div>'+
-                                '<div  id="conservedRegion" class="row">'+
-                                    '<div class="col-md-12" style="margin-left:10px;">'+
-                                        '<h4 class="variant-view-h4"> Conserved Region</h4>'+
-                                        '<div id="conserved-region-grid"></div>'+
-                                    '</div>'+
-                                '</div>'+
+//                                '<div  id="conservedRegion" class="row">'+
+//                                    '<div class="col-md-12" style="margin-left:10px;">'+
+//                                        '<h4 class="variant-view-h4"> Conserved Region</h4>'+
+//                                        '<div id="conserved-region-grid"></div>'+
+//                                    '</div>'+
+//                                '</div>'+
                                 '<div  id="populationStats" class="row">'+
                                     '<div class="col-md-12">'+
                                         '<div id="population-stats-grid"></div>'+
