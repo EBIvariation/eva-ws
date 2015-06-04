@@ -159,7 +159,7 @@ ClinvarAnnotationPanel.prototype = {
                     tpl: '<tpl><a href="http://www.ensembl.org/Homo_sapiens/Gene/Summary?g={ensemblGeneId}" target="_blank">{ensemblGeneId}</a>',
                 },
                 {
-                    text: "HGNC <br /> Gene Symbol",
+                    text: "Ensembl <br /> Gene Symbol",
                     dataIndex: "geneName",
                     flex: 0.9
                 },
