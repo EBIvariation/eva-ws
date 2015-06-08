@@ -444,7 +444,7 @@ EvaVariantWidget.prototype = {
 //                    ]
 //                },
                 {
-                    text: "Protein Subsititution Scores",
+                    text: "Protein substitution scores",
                     columns: [
                         {
                             text: "Polyphen2",
@@ -1084,6 +1084,10 @@ EvaVariantWidget.prototype = {
             drawChromosomePanel: true,
             drawRegionOverviewPanel: true,
             overviewZoomMultiplier: 50,
+            karyotypePanelConfig: {
+                collapsed: true,
+                collapsible: true
+            },
             navigationBarConfig: {
                 componentsConfig: {
                     restoreDefaultRegionButton: false,

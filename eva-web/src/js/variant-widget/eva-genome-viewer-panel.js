@@ -65,7 +65,9 @@ EvaGenomeViewerPanel.prototype = {
             console.log('EVAGenomeViewerPanel target not found');
             return;
         }
+        this.formDiv.innerHTML = '<div class="jumbotron" style="height:120px;"><h2 style="margin-top:-30px;">Beta Version</h2><p style="font-size:12px;">This is a beta version and we seek feedback from our users. Please contact <a href="mailto:eva-helpdesk@ebi.ac.uk" target="_top">eva-helpdesk@ebi.ac.uk</a> with all suggestions, bug reports and feature requests.</p></div>';
         this.targetDiv.appendChild(this.div);
+
 
         this.formPanel = this._createFormPanelGenomeFilter(this.formDiv);
         this.formPanel.draw();
@@ -161,11 +163,12 @@ EvaGenomeViewerPanel.prototype = {
             emptyText: 'Track name',
             flex: 5
         });
-        var formPanel = new FormPanel({
-            title: 'Add tracks',
+        var formPanel = new EvaFormPanel({
+            title: '<span style="cursor:pointer">&nbsp;Add tracks </span>',
             border: false,
             headerConfig: {
-                baseCls: 'eva-header-1'
+                baseCls: 'eva-header-1',
+                titlePosition:1
             },
             submitButtonText: 'Add',
             collapsible: true,
