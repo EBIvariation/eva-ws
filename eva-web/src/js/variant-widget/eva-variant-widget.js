@@ -1937,10 +1937,12 @@ EvaVariantWidget.prototype = {
                         var index = _.indexOf(consequenceTypesHierarchy, key);
 //                                        so_array.splice(index, 0, key+' ('+this[key].length+')');
 //                                        so_array.push(key+' ('+this[key].length+')')
-                        so_array[index] = key + ' (' + this[key].length + ')';
+//                        so_array[index] = key + ' (' + this[key].length + ')';
+                        so_array[index] = key;
                     }, groupedArr);
                     so_array = _.compact(so_array);
                     value = so_array.join(" ");
+                    value = _.first(so_array);
                 } else if (key == 'phylop') {
                     var phylop = _.findWhere(records[i].data[key], {source: key});
                     if (phylop) {
