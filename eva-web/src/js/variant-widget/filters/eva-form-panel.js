@@ -119,6 +119,7 @@ EvaFormPanel.prototype = {
                     if(_this.type == 'variantBrowser'){
                         Ext.Msg.alert('','Please select a Organism/Assembly and enter a valid Positional Filter');
                     }
+                    _this.trigger('submit', {values: _this.getValues(), sender: _this});
                 }
             },
             {
