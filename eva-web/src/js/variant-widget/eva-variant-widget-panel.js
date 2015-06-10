@@ -209,16 +209,16 @@ EvaVariantWidgetPanel.prototype = {
             _this._loadListStudies(studyFilter, e.species);
             var plantSpecies = ['slycopersicum_sl240','zmays_b73refgenv3'];
 
-            if(e.species =='hsapiens_grch37' || e.species =='hsapiens_grch38'){
-                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('dbSNP ID')
-                _this.formPanelVariantFilter.filters[1].panel.getForm().findField("snp").setFieldLabel('dbSNP accession')
-            }else if(_.indexOf(plantSpecies, e.species) > -1){
-                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('TransPlant ID')
-                _this.formPanelVariantFilter.filters[1].panel.getForm().findField("snp").setFieldLabel('TransPlant ID')
-            }else{
-                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('Submitted ID')
-                _this.formPanelVariantFilter.filters[1].panel.getForm().findField("snp").setFieldLabel('Submitted ID')
-            }
+//            if(e.species =='hsapiens_grch37' || e.species =='hsapiens_grch38'){
+//                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('dbSNP ID')
+//                _this.formPanelVariantFilter.filters[1].panel.getForm().findField("snp").setFieldLabel('dbSNP accession')
+//            }else if(_.indexOf(plantSpecies, e.species) > -1){
+//                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('TransPlant ID')
+//                _this.formPanelVariantFilter.filters[1].panel.getForm().findField("snp").setFieldLabel('TransPlant ID')
+//            }else{
+//                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('Submitted ID')
+//                _this.formPanelVariantFilter.filters[1].panel.getForm().findField("snp").setFieldLabel('Submitted ID')
+//            }
 
             EvaManager.get({
                 category: 'meta/studies',

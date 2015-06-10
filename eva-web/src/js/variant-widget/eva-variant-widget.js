@@ -307,7 +307,7 @@ EvaVariantWidget.prototype = {
                     width:100
                 },
                 {
-                    text: "SNP ID",
+                    text: "ID",
                     dataIndex: 'id',
 //                    flex: 0.5,
 //                    renderer: function(value, meta, rec, rowIndex, colIndex, store){

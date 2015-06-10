@@ -73,7 +73,7 @@ EvaPositionFilterFormPanel.prototype = {
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'dbSNP accession',
+            fieldLabel: 'ID',
             labelAlign: 'top',
             regex: /^[rs]s\d+$/,
             listeners: {
