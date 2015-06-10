@@ -22,7 +22,7 @@
 if(window.location.protocol == 'https:'){
     CELLBASE_HOST = 'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest';
 }else{
-    CELLBASE_HOST = 'http://wwwdev.ebi.ac.uk/cellbase/webservices/rest';
+    CELLBASE_HOST = 'http://172.22.68.41:8080/cellbase/webservices/rest';
 }
 CELLBASE_VERSION = 'v3';
 
