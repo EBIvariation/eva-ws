@@ -350,7 +350,7 @@ EvaGeneView.prototype = {
 
 
         var genomeViewer = new GenomeViewer({
-            cellBaseHost:'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
+//            cellBaseHost:'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
             sidePanel: false,
             target: 'gene-view-gv',
             border: false,
