@@ -11,6 +11,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opencb.datastore.core.QueryResponse;
@@ -60,6 +61,17 @@ public class GeneWSServer extends EvaWSServer {
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         
+        for (String acceptedValue : VariantDBAdaptor.QueryParams.acceptedValues) {
+            if (uriInfo.getQueryParameters().containsKey(acceptedValue)) {
+                List<String> values = uriInfo.getQueryParameters().get(acceptedValue);
+                String csv = values.get(0);
+                for (int i = 1; i < values.size(); i++) {
+                    csv += "," + values.get(i);
+                }
+                queryOptions.add(acceptedValue, csv);
+            }
+        }
+
         if (reference != null) {
             queryOptions.put("reference", reference);
         }
