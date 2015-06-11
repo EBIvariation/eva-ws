@@ -15,7 +15,7 @@
     </modules>
 
     <properties>
-        <opencga.version>0.5.2-SNAPSHOT</opencga.version>
+        <opencga.version>0.5.2</opencga.version>
         <compileSource>1.7</compileSource>
     </properties>
 
