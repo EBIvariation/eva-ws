@@ -322,7 +322,8 @@ EvaVariantWidget.prototype = {
 //                             return snpID;
 //                         }
 //                    },
-                    width:130
+                    width:130,
+                    tooltip:'dbSNP ID(Human), TransPlant ID(Plant) and Submitted ID(others)'
                 },
                 //{
                 //text: 'End',
