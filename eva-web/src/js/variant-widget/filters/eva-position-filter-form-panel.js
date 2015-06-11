@@ -71,6 +71,7 @@ EvaPositionFilterFormPanel.prototype = {
             id: this.id + "snp",
             name: "snp",
             margin: '0 0 0 5',
+            inputAttrTpl: " data-qtip='dbSNP ID(Human), TransPlant ID(Plant) and Submitted ID(others)' ",
             //allowBlank: true,
             width: '100%',
             fieldLabel: 'ID',
@@ -86,6 +87,8 @@ EvaPositionFilterFormPanel.prototype = {
                 }
             }
         });
+
+
 
         var regionList = Ext.create('Ext.form.field.TextArea', {
             id: this.id + "region",
