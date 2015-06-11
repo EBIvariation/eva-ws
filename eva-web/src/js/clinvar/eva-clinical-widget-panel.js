@@ -482,7 +482,7 @@ EvaClinicalWidgetPanel.prototype = {
                     }
 
 
-                    var params = _.extend(e.values,{merge:true,include:'clinvar',species:'hsapiens_grch37'});
+                    var params = _.extend(e.values,{merge:true,source:'clinvar',species:'hsapiens_grch37'});
 
                     _this.clinvarWidget.formValues = e.values;
 

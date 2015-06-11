@@ -270,7 +270,7 @@ EvaGeneView.prototype = {
         evaClinVarWidget.species = _this.species;
 
 //        evaClinVarWidget.clinvarBrowserGrid.setLoading(true);
-        var params = {merge:true,include:'clinvar',gene:_this.geneId};
+        var params = {merge:true,source:'clinvar',gene:_this.geneId};
 //        EvaManager.get({
 //            host:CELLBASE_HOST,
 //            version:CELLBASE_VERSION,
@@ -350,7 +350,7 @@ EvaGeneView.prototype = {
 
 
         var genomeViewer = new GenomeViewer({
-            cellBaseHost:'https://www.ebi.ac.uk/cellbase/webservices/rest',
+//            cellBaseHost:'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
             sidePanel: false,
             target: 'gene-view-gv',
             border: false,
