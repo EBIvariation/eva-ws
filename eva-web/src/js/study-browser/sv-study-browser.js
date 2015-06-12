@@ -372,8 +372,10 @@ SvStudyBrowser.prototype = {
             pageSize: _this.pageSize,
             displayInfo: true,
             displayMsg: 'Studies {0} - {1} of {2}',
-            emptyMsg: "No Studies to display"
+            emptyMsg: "No Studies to display",
+            afterPageText:'' ,
         });
+
 
         this.grid = Ext.create('Ext.grid.Panel', {
                 tbar: this.paging,
@@ -521,7 +523,7 @@ SvStudyBrowser.prototype = {
                 }
             }
         });
-        this.load();
+//        this.load();
         return  this.formPanel;
     },
     _getValues:function(panel){
