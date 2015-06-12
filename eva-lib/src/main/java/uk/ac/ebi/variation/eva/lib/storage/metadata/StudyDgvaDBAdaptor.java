@@ -80,7 +80,7 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
                 VariantStudy study = new VariantStudy(rs.getString("display_name"), rs.getString("study_accession"), null, 
                         rs.getString("study_description"), taxIds, rs.getString("common_name"), rs.getString("scientific_name"), 
                         null, null, null, null, EvaproUtils.stringToStudyType(rs.getString("study_type")), rs.getString("analysis_type"), 
-                        null, "GRCh38", rs.getString("platform_name"), uri, rs.getInt("variant_count"), -1);
+                        null, rs.getString("assembly_name"), rs.getString("platform_name"), uri, rs.getInt("variant_count"), -1);
                 result.add(study);
             }
             long end = System.currentTimeMillis();
@@ -144,7 +144,7 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
                 VariantStudy study = new VariantStudy(rs.getString("display_name"), rs.getString("study_accession"), null, 
                         rs.getString("study_description"), taxIds, rs.getString("common_name"), rs.getString("scientific_name"), 
                         null, null, null, null, EvaproUtils.stringToStudyType(rs.getString("study_type")), rs.getString("analysis_type"), 
-                        null, "GRCh38", rs.getString("platform_name"), uri, rs.getInt("variant_count"), -1);
+                        null, rs.getString("assembly_name"), rs.getString("platform_name"), uri, rs.getInt("variant_count"), -1);
                 result.add(study);
             }
             long end = System.currentTimeMillis();
