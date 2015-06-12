@@ -202,7 +202,7 @@ EvaStudyView.prototype = {
                         '<th>Pass Count</th>'+
                         '<th>Transitions/Transversions Ratio</th>'+
                         '<th>Mean Quality</th>'+
-                        '<th>View</th>'+
+//                        '<th>View</th>'+
                         '</tr></thead><tbody>'
                     for (i = 0; i < data.filesData.length; i++) {
                         var ftpLocation = '#';
@@ -256,7 +256,7 @@ EvaStudyView.prototype = {
                             '<td>'+passCount+'</td>' +
                             '<td>'+transitionsCount+'</td>' +
                             '<td>'+meanQuality+'</td>' +
-                            '<td>'+iobioLink+'</td>' +
+//                            '<td>'+iobioLink+'</td>' +
                             '</tr>'
                     }
                     _filesTable += '</tbody></table>'
