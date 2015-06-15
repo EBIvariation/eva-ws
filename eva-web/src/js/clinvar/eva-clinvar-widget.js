@@ -676,7 +676,7 @@ EvaClinVarWidget.prototype = {
         });
 
         var genomeViewer = new GenomeViewer({
-            cellBaseHost:'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
+            cellBaseHost:CELLBASE_HOST,
             sidePanel: false,
             target: target,
             border: false,

@@ -88,13 +88,25 @@ EvaVariantPopulationStatsPanel.prototype = {
         this.studiesContainer.removeAll(true);
     },
     load: function (data,params) {
+        var _this = this;
         this.clear();
 
         var panels = [];
 
+        var availableStudies = ['301','8616'];
+
         for (var key in data) {
+            console.log(data)
             var study = data[key];
-            var studyPanel = this._createPopulationGridPanel(study,params);
+            if(params.species == 'hsapiens_grch37'){
+                if(_.indexOf(availableStudies, study.studyId) > -1){
+                    var studyPanel = this._createPopulationGridPanel(study,params);
+                }
+            }else{
+                var studyPanel = this._createPopulationGridPanel(study,params);
+            }
+
+
             panels.push(studyPanel);
 
         }
@@ -123,6 +135,7 @@ EvaVariantPopulationStatsPanel.prototype = {
             items: [
                 {
                     xtype: 'box',
+                    id:'populationStats',
                     cls: 'ocb-header-4',
                     html: '<h4>Population Statistics</h4>',
                     margin: '5 0 10 10'
@@ -135,6 +148,7 @@ EvaVariantPopulationStatsPanel.prototype = {
     },
     _createPopulationGridPanel: function (data,params) {
         var _this = this;
+
         var populationData = [];
         _.each(_.keys(data.cohortStats), function(key){
             console.log(this[key])
@@ -143,7 +157,13 @@ EvaVariantPopulationStatsPanel.prototype = {
 
         },data.cohortStats);
 
-        console.log(populationData)
+        if(params.species == 'hsapiens_grch37'){
+            Ext.getCmp('populationStats').update('<h4>Population Statistics</h4><h5 style="color:#436883">Population frequencies from 1000 Genomes</h5>')
+        }else{
+            Ext.getCmp('populationStats').update('<h4>Population Statistics</h4>')
+        }
+
+
 
 
         //TO BE REMOVED
