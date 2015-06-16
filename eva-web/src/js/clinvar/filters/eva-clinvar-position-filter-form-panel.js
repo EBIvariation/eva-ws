@@ -71,7 +71,7 @@ ClinVarPositionFilterFormPanel.prototype = {
         var filters = Ext.create('Ext.data.Store', {
             fields: ['value', 'name'],
             data : [
-                {"value":"accessionId", "name":"Clinvar  Accession"},
+                {"value":"accessionId", "name":"ClinVar  Accession"},
                 {"value":"region", "name":"Chromosomal Location"},
                 {"value":"gene", "name":"Ensembl Gene Symbol/Accession"}
             ]
