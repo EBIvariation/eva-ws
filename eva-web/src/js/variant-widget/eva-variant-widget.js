@@ -307,7 +307,7 @@ EvaVariantWidget.prototype = {
                     width:100
                 },
                 {
-                    text: "ID",
+                    header: 'ID<img class="header-icon" style="vertical-align:middle;margin-bottom:4px;" src="img/icon-info.png"/>',
                     dataIndex: 'id',
 //                    flex: 0.5,
 //                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
@@ -323,7 +323,8 @@ EvaVariantWidget.prototype = {
 //                         }
 //                    },
                     width:130,
-                    tooltip:'dbSNP ID(Human), TransPlant ID(Plant) and Submitted ID(others)'
+                    iconCls : 'icon-info',
+                    tooltip:'dbSNP ID(Human), TransPlant ID(Plant) and Submitted ID(others)',
                 },
                 //{
                 //text: 'End',
@@ -567,7 +568,8 @@ EvaVariantWidget.prototype = {
             defaults: {
 //                flex: 1,
                 align:'left' ,
-                sortable : false
+                sortable : false,
+                menuDisabled:true
             }
         } ;
 

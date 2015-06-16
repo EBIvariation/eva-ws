@@ -620,6 +620,12 @@ h4{
     display: inherit;
 }
 
+.header-icon{
+  width:14px;
+  height:14px;
+    float: right;
+}
+
 
 
 

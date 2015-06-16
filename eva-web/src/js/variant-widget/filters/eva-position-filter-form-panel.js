@@ -74,7 +74,7 @@ EvaPositionFilterFormPanel.prototype = {
             inputAttrTpl: " data-qtip='dbSNP ID(Human), TransPlant ID(Plant) and Submitted ID(others)' ",
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'ID',
+            fieldLabel: 'ID<img class="header-icon" style="vertical-align:middle;margin-bottom:4px;" src="img/icon-info.png"  title="dbSNP ID(Human), TransPlant ID(Plant) and Submitted ID(others)"/>',
             labelAlign: 'top',
             regex: /^[rs]s\d+$/,
             listeners: {

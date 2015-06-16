@@ -449,7 +449,8 @@ EvaClinVarWidget.prototype = {
                 flex:1,
                 textAlign: 'left',
                 align:'left' ,
-                sortable : false
+                sortable : false,
+                menuDisabled:true
             }
         } ;
 
