@@ -158,7 +158,7 @@ EvaVariantPopulationStatsPanel.prototype = {
         },data.cohortStats);
 
         if(params.species == 'hsapiens_grch37'){
-            Ext.getCmp('populationStats').update('<h4>Population Statistics</h4><h5 style="color:#436883">Population frequencies from 1000 Genomes</h5>')
+            Ext.getCmp('populationStats').update('<h4>Population Statistics</h4><h5 style="color:#436883;margin-left:-15px;font-size:14px;">Population frequencies from 1000 Genomes</h5>')
         }else{
             Ext.getCmp('populationStats').update('<h4>Population Statistics</h4>')
         }
