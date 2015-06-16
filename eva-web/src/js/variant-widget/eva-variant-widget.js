@@ -307,7 +307,7 @@ EvaVariantWidget.prototype = {
                     width:100
                 },
                 {
-                    header: 'ID<img class="header-icon" style="vertical-align:middle;margin-bottom:4px;" src="img/icon-info.png"/>',
+                    header: '<img class="header-icon" style="margin-bottom:0px;" src="img/icon-info.png"/>ID',
                     dataIndex: 'id',
 //                    flex: 0.5,
 //                    renderer: function(value, meta, rec, rowIndex, colIndex, store){
