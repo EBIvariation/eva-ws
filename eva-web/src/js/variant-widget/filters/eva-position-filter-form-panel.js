@@ -80,7 +80,7 @@ EvaPositionFilterFormPanel.prototype = {
 // Create the combo box, attached to the states data store
        var select =  Ext.create('Ext.form.ComboBox', {
                      id: this.id + "selectFilter",
-                     fieldLabel: 'Search By',
+                     fieldLabel: 'Filter By',
                      name:'selectFilter',
                      store: states,
                      queryMode: 'local',
