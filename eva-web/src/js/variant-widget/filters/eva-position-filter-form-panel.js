@@ -67,6 +67,39 @@ EvaPositionFilterFormPanel.prototype = {
     },
     _createPanel: function () {
         var _this = this;
+
+        var states = Ext.create('Ext.data.Store', {
+            fields: ['value', 'name'],
+            data : [
+                {"value":"snp", "name":"ID"},
+                {"value":"region", "name":"Location"},
+                {"value":"gene", "name":"Gene"}
+            ]
+        });
+
+// Create the combo box, attached to the states data store
+       var select =  Ext.create('Ext.form.ComboBox', {
+                     id: this.id + "selectFilter",
+                     fieldLabel: 'Search By',
+                     name:'selectFilter',
+                     store: states,
+                     queryMode: 'local',
+                     displayField: 'name',
+                     valueField: 'value',
+                     width: '100%',
+                     labelAlign: 'top',
+                     margin: '0 0 0 5',
+                     listeners: {
+                       afterrender: function (field) {
+        //                    field.setValue('hsapiens_grch37');
+                           field.setValue('region');
+                       },
+                       change: function (field, newValue, oldValue) {
+                           _this.hideFields(_this.id+newValue);
+                       }
+
+                     }
+        });
         var snp = Ext.create('Ext.form.field.TextArea', {
             id: this.id + "snp",
             name: "snp",
@@ -74,16 +107,16 @@ EvaPositionFilterFormPanel.prototype = {
             inputAttrTpl: " data-qtip='dbSNP ID(Human), TransPlant ID(Plant) and Submitted ID(others)' ",
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'ID<img class="header-icon" style="vertical-align:middle;margin-bottom:4px;" src="img/icon-info.png"  title="dbSNP ID(Human), TransPlant ID(Plant) and Submitted ID(others)"/>',
+            fieldLabel: '<br />ID<img class="header-icon" style="vertical-align:middle;margin-bottom:4px;" src="img/icon-info.png"  title="dbSNP ID(Human), TransPlant ID(Plant) and Submitted ID(others)"/>',
             labelAlign: 'top',
             regex: /^[rs]s\d+$/,
             listeners: {
                 'change': function(field, newVal, oldVal){
-                    if(newVal){
-                        _this.disableFields(_this.id+"snp");
-                    }else{
-                        _this.enableFields();
-                    }
+//                    if(newVal){
+//                        _this.disableFields(_this.id+"snp");
+//                    }else{
+//                        _this.enableFields();
+//                    }
                 }
             }
         });
@@ -97,16 +130,16 @@ EvaPositionFilterFormPanel.prototype = {
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'Chromosomal Location',
+            fieldLabel: '<br />Chromosomal Location',
             labelAlign: 'top',
 //            value: this.testRegion,
             listeners: {
                 'change': function(field, newVal, oldVal){
-                    if(newVal){
-                        _this.disableFields(_this.id+"region");
-                    }else{
-                        _this.enableFields();
-                    }
+//                    if(newVal){
+//                        _this.disableFields(_this.id+"region");
+//                    }else{
+//                        _this.enableFields();
+//                    }
                 }
             }
         });
@@ -117,15 +150,15 @@ EvaPositionFilterFormPanel.prototype = {
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'Ensembl Gene Symbol',
+            fieldLabel: '<br />Ensembl Gene Symbol',
             labelAlign: 'top',
             listeners: {
                 'change': function(field, newVal, oldVal){
-                    if(newVal){
-                        _this.disableFields(_this.id+"gene");
-                    }else{
-                        _this.enableFields();
-                    }
+//                    if(newVal){
+//                        _this.disableFields(_this.id+"gene");
+//                    }else{
+//                        _this.enableFields();
+//                    }
                 }
             }
         });
@@ -142,7 +175,7 @@ EvaPositionFilterFormPanel.prototype = {
             titleCollapse: this.titleCollapse,
             header: this.headerConfig,
             allowBlank: false,
-            items: [snp, regionList, gene]
+            items: [select,snp, regionList, gene]
         });
 
         this.panel.getForm().findField('region').setValue(_this.testRegion);
@@ -164,14 +197,24 @@ EvaPositionFilterFormPanel.prototype = {
     },
     disableFields:function(id){
         this.panel.getForm().getFields().each(function(field) {
-            if(id != field.id){
+            if(id != field.id ){
                 field.disable(true);
             }
         });
     },
     enableFields:function(){
         this.panel.getForm().getFields().each(function(field) {
+            console.log(field)
             field.enable(true);
+        });
+    },
+    hideFields:function(id){
+        this.panel.getForm().getFields().each(function(field) {
+            if(id != field.id && field.name != 'selectFilter' ){
+                field.hide(true);
+            }else{
+                field.show(true);
+            }
         });
     },
     clear: function () {
