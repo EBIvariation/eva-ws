@@ -68,21 +68,20 @@ EvaPositionFilterFormPanel.prototype = {
     _createPanel: function () {
         var _this = this;
 
-        var states = Ext.create('Ext.data.Store', {
+        var filters = Ext.create('Ext.data.Store', {
             fields: ['value', 'name'],
             data : [
-                {"value":"snp", "name":"ID"},
-                {"value":"region", "name":"Location"},
-                {"value":"gene", "name":"Gene"}
+                {"value":"snp", "name":"Variant ID"},
+                {"value":"region", "name":"Chromosomal Location"},
+                {"value":"gene", "name":"Ensembl Gene Symbol/Accession"}
             ]
         });
 
-// Create the combo box, attached to the states data store
-       var select =  Ext.create('Ext.form.ComboBox', {
+       var selectFilter =  Ext.create('Ext.form.ComboBox', {
                      id: this.id + "selectFilter",
                      fieldLabel: 'Filter By',
                      name:'selectFilter',
-                     store: states,
+                     store: filters,
                      queryMode: 'local',
                      displayField: 'name',
                      valueField: 'value',
@@ -91,7 +90,6 @@ EvaPositionFilterFormPanel.prototype = {
                      margin: '0 0 0 5',
                      listeners: {
                        afterrender: function (field) {
-        //                    field.setValue('hsapiens_grch37');
                            field.setValue('region');
                        },
                        change: function (field, newValue, oldValue) {
@@ -107,9 +105,12 @@ EvaPositionFilterFormPanel.prototype = {
             inputAttrTpl: " data-qtip='dbSNP ID(Human), TransPlant ID(Plant) and Submitted ID(others)' ",
             //allowBlank: true,
             width: '100%',
-            fieldLabel: '<br />ID<img class="header-icon" style="vertical-align:middle;margin-bottom:4px;" src="img/icon-info.png"  title="dbSNP ID(Human), TransPlant ID(Plant) and Submitted ID(others)"/>',
+//            fieldLabel: '<br />ID<img class="header-icon" style="vertical-align:middle;margin-bottom:4px;" src="img/icon-info.png"  title="dbSNP ID(Human), TransPlant ID(Plant) and Submitted ID(others)"/>',
+            fieldLabel: '<br /><img class="header-icon" style="vertical-align:middle;margin-bottom:4px;" src="img/icon-info.png"  title="dbSNP ID(Human), TransPlant ID(Plant) and Submitted ID(others)"/>',
             labelAlign: 'top',
             regex: /^[rs]s\d+$/,
+            labelSeparator : '',
+            emptyText: 'ex: rs666',
             listeners: {
                 'change': function(field, newVal, oldVal){
 //                    if(newVal){
@@ -126,13 +127,15 @@ EvaPositionFilterFormPanel.prototype = {
         var regionList = Ext.create('Ext.form.field.TextArea', {
             id: this.id + "region",
             name: "region",
-            emptyText:  this.emptyText,
+            emptyText: 'ex: 22:21889550-21989560',
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: '<br />Chromosomal Location',
+//            fieldLabel: '<br />Chromosomal Location',
+            fieldLabel: '<br />',
             labelAlign: 'top',
 //            value: this.testRegion,
+            labelSeparator : '',
             listeners: {
                 'change': function(field, newVal, oldVal){
 //                    if(newVal){
@@ -150,8 +153,11 @@ EvaPositionFilterFormPanel.prototype = {
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: '<br />Ensembl Gene Symbol',
+//            fieldLabel: '<br />Ensembl Gene Symbol',
+            fieldLabel: '<br />',
             labelAlign: 'top',
+            labelSeparator : '',
+            emptyText: 'ex: BRCA2',
             listeners: {
                 'change': function(field, newVal, oldVal){
 //                    if(newVal){
@@ -175,7 +181,7 @@ EvaPositionFilterFormPanel.prototype = {
             titleCollapse: this.titleCollapse,
             header: this.headerConfig,
             allowBlank: false,
-            items: [select,snp, regionList, gene]
+            items: [selectFilter,snp, regionList, gene]
         });
 
         this.panel.getForm().findField('region').setValue(_this.testRegion);
@@ -193,6 +199,7 @@ EvaPositionFilterFormPanel.prototype = {
                 delete values[key]
             }
         }
+        values = _.omit(values, 'selectFilter');
         return values;
     },
     disableFields:function(id){
