@@ -45,19 +45,24 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
 
     @Override
     public QueryResult countStudiesPerSpecies(QueryOptions options) {
+        StringBuilder query = new StringBuilder("select organism_common_name as common_name, count(*) as COUNT from dgva_organism_mv ");
+        if (options.containsKey("species")) {
+            query.append("where ");
+            query.append(EvaproUtils.getInClause("organism_common_name", options.getAsStringList("species")));
+            query.append(" or ");
+            query.append(EvaproUtils.getInClause("organism_common_name", options.getAsStringList("species")));
+        }
+        query.append(" group by organism_common_name order by COUNT desc");
+        
         Connection conn = null;
         PreparedStatement pstmt = null;
         QueryResult qr = null;
         try {
             conn = ds.getConnection();
-            
-            // Get all species entries from the database
-            String query = "SELECT * from dgva_organism_mv ORDER BY count DESC";
-            pstmt = conn.prepareStatement(query);
+            pstmt = conn.prepareStatement(query.toString());
             long start = System.currentTimeMillis();
             ResultSet rs = pstmt.executeQuery();
             
-            pstmt = conn.prepareStatement(query);
             List<Map.Entry<String, Integer>> result = new ArrayList<>();
             while (rs.next()) {
                 String species = rs.getString(1) != null ? rs.getString(1) : "Others";
