@@ -109,35 +109,4 @@ public class GeneWSServer extends EvaWSServer {
         return createOkResponse(variantMongoDbAdaptor.getAllVariantsByGene(geneId, queryOptions));
     }
     
-    @GET
-    @Path("/ranking")
-    @ApiOperation(httpMethod = "GET", value = "Retrieves gene ranking", response = QueryResponse.class)
-    public Response genesRankingByVariantsNumber(@PathParam("gene") String geneId,
-                                                 @QueryParam("species") String species,
-                                                 @DefaultValue("10") @QueryParam("limit") int limit,
-                                                 @DefaultValue("desc") @QueryParam("sort") String sort,
-                                                 @DefaultValue("") @QueryParam("type") String variantType)
-            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
-        try {
-            checkParams();
-        } catch (VersionException | SpeciesException ex) {
-            return createErrorResponse(ex.toString());
-        }
-        
-        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
-        
-        if (!variantType.isEmpty()) {
-            queryOptions.put("type", variantType);
-        }
-        
-        if (sort.equalsIgnoreCase("desc")) {
-            return createOkResponse(variantMongoDbAdaptor.getMostAffectedGenes(limit, queryOptions));
-        } else if (sort.equalsIgnoreCase("asc")) {
-            return createOkResponse(variantMongoDbAdaptor.getLeastAffectedGenes(limit, queryOptions));
-        } else {
-            return createOkResponse("Sorting criteria must be 'desc' or 'asc'");
-        }
-    }
-    
-    
 }
