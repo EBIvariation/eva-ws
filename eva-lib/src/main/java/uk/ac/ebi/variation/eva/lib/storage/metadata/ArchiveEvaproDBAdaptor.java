@@ -188,7 +188,7 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
     public QueryResult getSpecies(String version, boolean loaded) {
         StringBuilder query = new StringBuilder(
                 "select distinct(assembly.*), taxonomy.* " + 
-                "from assembly join browsable_file on assembly.assembly_accession=browsable_file.loaded_assembly " +
+                "from assembly join browsable_file on assembly.assembly_set_id=browsable_file.assembly_set_id " +
                 "join taxonomy on assembly.taxonomy_id=taxonomy.taxonomy_id " +
                 "where browsable_file.eva_release = '");
         query.append(version);
