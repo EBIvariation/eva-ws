@@ -207,7 +207,19 @@ EvaVariantWidgetPanel.prototype = {
 
         speciesFilter.on('species:change', function (e) {
             _this._loadListStudies(studyFilter, e.species);
-            var plantSpecies = ['slycopersicum_sl240','zmays_b73refgenv3'];
+            var plantSpecies = ['slycopersicum_sl240','zmays_b73refgenv3','zmays_agpv3'];
+
+            //hidding tabs for species
+            if(e.species =='zmays_agpv3' ||  e.species == 'olatipes_hdrr'){
+                _this.variantWidget.toolTabPanel.getComponent(2).tab.hide()
+                _this.variantWidget.toolTabPanel.getComponent(4).tab.show()
+            }else if(e.species =='chircus_10'){
+                _this.variantWidget.toolTabPanel.getComponent(4).tab.hide()
+                _this.variantWidget.toolTabPanel.getComponent(2).tab.show()
+            }else{
+                _this.variantWidget.toolTabPanel.getComponent(2).tab.show()
+                _this.variantWidget.toolTabPanel.getComponent(4).tab.show()
+            }
 
 //            if(e.species =='hsapiens_grch37' || e.species =='hsapiens_grch38'){
 //                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('dbSNP ID')
