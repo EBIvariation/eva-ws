@@ -148,7 +148,7 @@ EvaVariantWidget.prototype = {
             this.variantStatsPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
             this.variantStatsPanel = this._createVariantStatsPanel(this.variantStatsPanelDiv);
             tabPanelItems.push({
-                title: 'File and Stats',
+                title: 'File and Statistics',
 //                border: 0,
                 contentEl: this.variantStatsPanelDiv
             });
@@ -190,7 +190,7 @@ EvaVariantWidget.prototype = {
             this.variantPopulationStatsPanelDiv.setAttribute('class', 'ocb-variant-rawdata-panel');
             this.variantPopulationStatsPanel = this._createVariantPopulationStatsPanel(this.variantPopulationStatsPanelDiv);
             tabPanelItems.push({
-                title: 'Population Stats',
+                title: 'Population Statistics',
 //                border: 0,
                 contentEl: this.variantPopulationStatsPanelDiv
             });
