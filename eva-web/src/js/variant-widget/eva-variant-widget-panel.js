@@ -210,10 +210,10 @@ EvaVariantWidgetPanel.prototype = {
             var plantSpecies = ['slycopersicum_sl240','zmays_b73refgenv3','zmays_agpv3'];
 
             //hidding tabs for species
-            if(e.species =='zmays_agpv3' ||  e.species == 'olatipes_hdrr'){
+            if(e.species =='zmays_agpv3'){
                 _this.variantWidget.toolTabPanel.getComponent(2).tab.hide()
                 _this.variantWidget.toolTabPanel.getComponent(4).tab.show()
-            }else if(e.species =='chircus_10'){
+            }else if(e.species =='chircus_10' ||  e.species == 'olatipes_hdrr'){
                 _this.variantWidget.toolTabPanel.getComponent(4).tab.hide()
                 _this.variantWidget.toolTabPanel.getComponent(2).tab.show()
             }else{

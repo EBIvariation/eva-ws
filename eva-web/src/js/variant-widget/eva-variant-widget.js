@@ -1208,7 +1208,7 @@ EvaVariantWidget.prototype = {
         genomeViewer.addTrack([sequence, gene, snp]);
         this.on("species:change", function (e) {
             //disbaling for goat
-            if(e.values.species =='chircus_10'){
+            if(e.values.species =='chircus_10' || e.values.species =='olatipes_hdrr'){
                 return;
             }
             _this.taxonomy = e.values.species.split('_')[0];
