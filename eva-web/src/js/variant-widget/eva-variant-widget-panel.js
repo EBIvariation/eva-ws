@@ -221,6 +221,8 @@ EvaVariantWidgetPanel.prototype = {
                 _this.variantWidget.toolTabPanel.getComponent(4).tab.show()
             }
 
+            _this.variantWidget.toolTabPanel.setActiveTab(0);
+
 //            if(e.species =='hsapiens_grch37' || e.species =='hsapiens_grch38'){
 //                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('dbSNP ID')
 //                _this.formPanelVariantFilter.filters[1].panel.getForm().findField("snp").setFieldLabel('dbSNP accession')
