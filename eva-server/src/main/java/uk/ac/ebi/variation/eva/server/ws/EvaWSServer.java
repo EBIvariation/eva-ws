@@ -8,10 +8,8 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.base.Splitter;
 import com.wordnik.swagger.annotations.ApiParam;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -91,6 +89,7 @@ public class EvaWSServer {
     protected static ObjectMapper jsonObjectMapper;
     protected static ObjectWriter jsonObjectWriter;
     protected static XmlMapper xmlObjectMapper;
+    protected static Map<String, String> dict;
 
     protected static Logger logger;
     
@@ -112,6 +111,36 @@ public class EvaWSServer {
         jsonObjectWriter = jsonObjectMapper.writer();
 
         xmlObjectMapper = new XmlMapper();
+
+        dict = new HashMap<>();
+        dict.put("PRJEB4019", "8616");
+        dict.put("PRJEB5439","2");
+        dict.put("PRJEB8661","130");
+        dict.put("PRJEB5829","156");
+        dict.put("PRJEB6041","5385");
+        dict.put("PRJEB6042","5404");
+        dict.put("PRJEB7895","5423");
+        dict.put("PRJEB6930","301");
+        dict.put("PRJEB7218","5442");
+        dict.put("PRJEB8705","5459");
+        dict.put("PRJEB7217","5480");
+        dict.put("PRJEB8652","5509");
+        dict.put("PRJEB8650","5643");
+        dict.put("PRJEB7923","5778");
+        dict.put("PRJEB7894","6558");
+        dict.put("PRJEB6911","8413");
+        dict.put("PRJEB5473","8476");
+        dict.put("PRJEB4395","8531");
+        dict.put("PRJEB8639","11645");
+        dict.put("PRJEB6025","12002");
+        dict.put("PRJEB6495","12204");
+        dict.put("PRJEB5978","12235");
+        dict.put("PRJEB6057","12270");
+        dict.put("PRJEB6119","12474");
+        dict.put("PRJEB7061","12504");
+        dict.put("PRJEB7723","12569");
+        dict.put("PRJEB9507","33687");
+        dict.put("PRJEB629","34064");
 
         logger.info("EvaWSServer: Initialising attributes inside static block");
     }

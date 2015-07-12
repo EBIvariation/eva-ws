@@ -7,7 +7,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -63,6 +65,20 @@ public class RegionWSServer extends EvaWSServer {
                 }
                 queryOptions.add(acceptedValue, csv);
             }
+        }
+
+        // Javi
+        if (queryOptions.containsKey("studies")) {
+            List<String> stud = Arrays.asList(queryOptions.getString("studies").split(","));
+            StringBuilder sb = new StringBuilder();
+            for (String s : stud) {
+                sb.append(s);
+                sb.append(",");
+                if(dict.containsKey(s)) {
+                    sb.append(dict.get(s));
+                }
+            }
+            queryOptions.put("studies", sb.toString().endsWith(",")?sb.toString().substring(0,sb.length()-1):sb.toString());
         }
 
         if (reference != null && !reference.isEmpty()) {
