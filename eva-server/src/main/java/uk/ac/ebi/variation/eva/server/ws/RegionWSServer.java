@@ -69,16 +69,19 @@ public class RegionWSServer extends EvaWSServer {
 
         // Javi
         if (queryOptions.containsKey("studies")) {
-            List<String> stud = Arrays.asList(queryOptions.getString("studies").split(","));
             StringBuilder sb = new StringBuilder();
-            for (String s : stud) {
-                sb.append(s);
-                sb.append(",");
+            for (String s : queryOptions.getString("studies").split(",")) {
+                sb.append(s).append(",");
                 if(dict.containsKey(s)) {
-                    sb.append(dict.get(s));
+                    sb.append(dict.get(s)).append(",");
                 }
             }
-            queryOptions.put("studies", sb.toString().endsWith(",")?sb.toString().substring(0,sb.length()-1):sb.toString());
+            
+            String studies = sb.toString();
+            if (studies.endsWith(",")) {
+                studies = studies.substring(0, sb.length()-1);
+            }
+            queryOptions.put("studies", studies);
         }
 
         if (reference != null && !reference.isEmpty()) {
