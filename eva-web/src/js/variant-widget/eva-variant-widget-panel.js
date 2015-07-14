@@ -210,16 +210,18 @@ EvaVariantWidgetPanel.prototype = {
             var plantSpecies = ['slycopersicum_sl240','zmays_b73refgenv3','zmays_agpv3'];
 
             //hidding tabs for species
-            if(e.species =='zmays_agpv3' ||  e.species == 'olatipes_hdrr'){
+            if(e.species =='zmays_agpv3'){
                 _this.variantWidget.toolTabPanel.getComponent(2).tab.hide()
                 _this.variantWidget.toolTabPanel.getComponent(4).tab.show()
-            }else if(e.species =='chircus_10'){
+            }else if(e.species =='chircus_10' ||  e.species == 'olatipes_hdrr'){
                 _this.variantWidget.toolTabPanel.getComponent(4).tab.hide()
                 _this.variantWidget.toolTabPanel.getComponent(2).tab.show()
             }else{
                 _this.variantWidget.toolTabPanel.getComponent(2).tab.show()
                 _this.variantWidget.toolTabPanel.getComponent(4).tab.show()
             }
+
+            _this.variantWidget.toolTabPanel.setActiveTab(0);
 
 //            if(e.species =='hsapiens_grch37' || e.species =='hsapiens_grch38'){
 //                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('dbSNP ID')

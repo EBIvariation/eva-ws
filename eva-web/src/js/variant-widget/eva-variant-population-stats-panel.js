@@ -93,7 +93,8 @@ EvaVariantPopulationStatsPanel.prototype = {
 
         var panels = [];
 
-        var availableStudies = ['301','8616'];
+//        var availableStudies = ['301','8616'];
+        var availableStudies = ['301','8616', 'PRJEB6930','PRJEB4019'];
 
         for (var key in data) {
             console.log(data)

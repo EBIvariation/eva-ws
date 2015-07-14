@@ -371,6 +371,8 @@ var AVAILABLE_SPECIES = {
             "text": "Plants",
             "items": [
                 {"text": "Solanum lycopersicum", "assembly": "SL2.40"},
+                {"text": "Zea Mays", "assembly": "AGPv3"},
+                {"text": "Shorgum bicolor", "assembly": "Sorbi1"},
             ]
         }
     ]
