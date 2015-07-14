@@ -5,7 +5,7 @@
     <parent>
         <artifactId>eva</artifactId>
         <groupId>uk.ac.ebi.variation.eva</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
         <relativePath>..</relativePath>
     </parent>
 
