@@ -127,10 +127,10 @@ EvaVariantWidgetPanel.prototype = {
                 headerConfig: {
                     baseCls: 'eva-header-2'
                 },
-                genomeViewer: false,
+                genomeViewer: true,
                 effect:false,
                 rawData:false,
-                populationStats:false
+                populationStats:true
             },
             responseParser: function (response) {
                 var res = [];
@@ -183,7 +183,7 @@ EvaVariantWidgetPanel.prototype = {
         var studyFilter = new EvaStudyFilterFormPanel({
             border:false,
             collapsed: false,
-            height: 550,
+            height: 790,
             studiesStore: this.studiesStore,
             studyFilterTpl:'<tpl if="studyId"><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a> (<a href="http://www.ebi.ac.uk/ena/data/view/{studyId}" target="_blank">{studyId}</a>) </div><tpl else><div class="ocb-study-filter"><a href="?eva-study={studyId}" target="_blank">{studyName}</a></div></tpl>'
         });
@@ -207,6 +207,32 @@ EvaVariantWidgetPanel.prototype = {
 
         speciesFilter.on('species:change', function (e) {
             _this._loadListStudies(studyFilter, e.species);
+            var plantSpecies = ['slycopersicum_sl240','zmays_b73refgenv3','zmays_agpv3'];
+
+            //hidding tabs for species
+            if(e.species =='zmays_agpv3'){
+                _this.variantWidget.toolTabPanel.getComponent(2).tab.hide()
+                _this.variantWidget.toolTabPanel.getComponent(4).tab.show()
+            }else if(e.species =='chircus_10' ||  e.species == 'olatipes_hdrr'){
+                _this.variantWidget.toolTabPanel.getComponent(4).tab.hide()
+                _this.variantWidget.toolTabPanel.getComponent(2).tab.show()
+            }else{
+                _this.variantWidget.toolTabPanel.getComponent(2).tab.show()
+                _this.variantWidget.toolTabPanel.getComponent(4).tab.show()
+            }
+
+            _this.variantWidget.toolTabPanel.setActiveTab(0);
+
+//            if(e.species =='hsapiens_grch37' || e.species =='hsapiens_grch38'){
+//                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('dbSNP ID')
+//                _this.formPanelVariantFilter.filters[1].panel.getForm().findField("snp").setFieldLabel('dbSNP accession')
+//            }else if(_.indexOf(plantSpecies, e.species) > -1){
+//                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('TransPlant ID')
+//                _this.formPanelVariantFilter.filters[1].panel.getForm().findField("snp").setFieldLabel('TransPlant ID')
+//            }else{
+//                _this.variantWidget.variantBrowserGrid.grid.getView().getHeaderAtIndex(2).setText('Submitted ID')
+//                _this.formPanelVariantFilter.filters[1].panel.getForm().findField("snp").setFieldLabel('Submitted ID')
+//            }
 
             EvaManager.get({
                 category: 'meta/studies',
@@ -220,10 +246,10 @@ EvaVariantWidgetPanel.prototype = {
                     }
                 }
             });
-
         });
 
-
+        //<!-------To be removed------>
+        consequenceTypes[0].children[0].children[4].checked = false;
 
         var conseqTypeFilter = new EvaConsequenceTypeFilterFormPanel({
             consequenceTypes: consequenceTypes,
@@ -252,8 +278,9 @@ EvaVariantWidgetPanel.prototype = {
 
 
 
-        var formPanel = new FormPanel({
+        var formPanel = new EvaFormPanel({
             title: 'Filter',
+            type: 'variantBrowser',
             headerConfig: {
                 baseCls: 'eva-header-1'
             },
@@ -261,10 +288,10 @@ EvaVariantWidgetPanel.prototype = {
             target: target,
             submitButtonText: 'Submit',
             submitButtonId: 'vb-submit-button',
-//            filters: [speciesFilter,positionFilter, conseqTypeFilter,proteinSubScoreFilter,conservationScoreFilter,studyFilter],
-            filters: [speciesFilter,positionFilter,studyFilter],
+            filters: [speciesFilter,positionFilter, conseqTypeFilter,proteinSubScoreFilter,studyFilter],
+//            filters: [speciesFilter,positionFilter,studyFilter],
             width: 300,
-            height: 1343,
+            height: 1443,
             border: false,
             handlers: {
                 'submit': function (e) {
@@ -282,57 +309,57 @@ EvaVariantWidgetPanel.prototype = {
                     }
 
                     if (typeof e.values.gene !== 'undefined') {
-                        CellBaseManager.get({
-                            species: cellBaseSpecies,
-                            category: 'feature',
-                            subCategory: 'gene',
-                            query: e.values.gene.toUpperCase(),
-                            resource: "info",
-                            async: false,
-                            params: {
-                                include: 'chromosome,start,end'
-                            },
-                            success: function (data) {
-                                for (var i = 0; i < data.response.length; i++) {
-                                    var queryResult = data.response[i];
-                                    if(!_.isEmpty(queryResult.result[0])){
-                                        var region = new Region(queryResult.result[0]);
-                                        regions.push(region.toString());
-                                    }
-                                }
-                            }
-                        });
-                        delete  e.values.gene;
-//                        e.values.gene = e.values.gene;
+//                        CellBaseManager.get({
+//                            species: cellBaseSpecies,
+//                            category: 'feature',
+//                            subCategory: 'gene',
+//                            query: e.values.gene.toUpperCase(),
+//                            resource: "info",
+//                            async: false,
+//                            params: {
+//                                include: 'chromosome,start,end'
+//                            },
+//                            success: function (data) {
+//                                for (var i = 0; i < data.response.length; i++) {
+//                                    var queryResult = data.response[i];
+//                                    if(!_.isEmpty(queryResult.result[0])){
+//                                        var region = new Region(queryResult.result[0]);
+//                                        regions.push(region.toString());
+//                                    }
+//                                }
+//                            }
+//                        });
+//                        delete  e.values.gene;
+                        e.values.gene = e.values.gene;
                     }
 
                     if (typeof e.values.snp !== 'undefined') {
-                        CellBaseManager.get({
-                            species: cellBaseSpecies,
-                            category: 'feature',
-                            subCategory: 'snp',
-                            query: e.values.snp,
-                            resource: "info",
-                            async: false,
-                            params: {
-                                include: 'chromosome,start,end'
-                            },
-                            success: function (data) {
-                                for (var i = 0; i < data.response.length; i++) {
-                                    var queryResult = data.response[i];
-                                    var region = new Region(queryResult.result[0]);
-                                    var fields2 = (""+region).split(/[:-]/);
-                                    if(parseInt(fields2[1]) > parseInt(fields2[2])) {
-                                        var swap = fields2[1];
-                                        region.start = fields2[2];
-                                        region.end = swap;
-                                    }
-                                    regions.push(region.toString());
-                                }
-                            }
-                        });
-//                        e.values.id = e.values.snp;
-                        delete  e.values.snp;
+//                        CellBaseManager.get({
+//                            species: cellBaseSpecies,
+//                            category: 'feature',
+//                            subCategory: 'snp',
+//                            query: e.values.snp,
+//                            resource: "info",
+//                            async: false,
+//                            params: {
+//                                include: 'chromosome,start,end'
+//                            },
+//                            success: function (data) {
+//                                for (var i = 0; i < data.response.length; i++) {
+//                                    var queryResult = data.response[i];
+//                                    var region = new Region(queryResult.result[0]);
+//                                    var fields2 = (""+region).split(/[:-]/);
+//                                    if(parseInt(fields2[1]) > parseInt(fields2[2])) {
+//                                        var swap = fields2[1];
+//                                        region.start = fields2[2];
+//                                        region.end = swap;
+//                                    }
+//                                    regions.push(region.toString());
+//                                }
+//                            }
+//                        });
+//                        delete  e.values.snp;
+                        e.values.id = e.values.snp;
                     }
 
 
@@ -350,15 +377,24 @@ EvaVariantWidgetPanel.prototype = {
 
 
                     var category = 'segments';
+                    var resource =  'variants';
                     var query = regions;
+                    //<!--------Query by GENE ----->
                     if(e.values.gene){
                         category = 'genes';
                         query =  e.values.gene;
                     }
 
+//                    //<!--------Query by ID ----->
+                    if(e.values.id){
+                        resource = 'info';
+                        category = 'variants';
+                        query =  e.values.id;
+                    }
+
                     var url = EvaManager.url({
                         category: category,
-                        resource: 'variants',
+                        resource: resource,
                         query: query,
 //                        params:{merge:true}
 //                        params:{merge:true,exclude:'files'}
@@ -389,6 +425,9 @@ EvaVariantWidgetPanel.prototype = {
                         _this.variantWidget.retrieveData('', '')
                     }
 
+
+                    _this.variantWidget.values = e.values;
+
                     var speciesArray = ['hsapiens','hsapiens_grch37','mmusculus_grcm38'];
                     if(e.values.species && speciesArray.indexOf( e.values.species ) > -1){
                         var ensemblSepciesName = _.findWhere(speciesList, {taxonomyCode:e.values.species.split('_')[0]}).taxonomyScientificName;
@@ -397,13 +436,12 @@ EvaVariantWidgetPanel.prototype = {
                         var ncbiURL = 'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?rs={id}';
 
                         var updateTpl = Ext.create('Ext.XTemplate', '<tpl if="id"><a href="?variant={chromosome}:{start}:{reference}:{alternate}&species='+ e.values.species+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;' +
-                            '<a href="'+ensemblURL+'" target="_blank"><img alt="eva-grid-img-active" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
+                            '<a href="'+ensemblURL+'" target="_blank"><img alt="" src="http://static.ensembl.org/i/search/ensembl.gif"></a>' +
                             '&nbsp;<a href="'+ncbiURL+'" target="_blank"><span>dbSNP</span></a>' +
                             '<tpl else><a href="?variant={chromosome}:{start}:{reference}:{alternate}&species='+ e.values.species+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>');
                     }else{
                         var updateTpl = Ext.create('Ext.XTemplate', '<tpl><a href="?variant={chromosome}:{start}:{reference}:{alternate}&species='+ e.values.species+'" target="_blank"><img class="eva-grid-img-active" src="img/eva_logo.png"/></a>&nbsp;<img alt="" class="eva-grid-img-inactive " src="http://static.ensembl.org/i/search/ensembl.gif">&nbsp;<span  style="opacity:0.2" class="eva-grid-img-inactive ">dbSNP</span></tpl>');
                     }
-
 
                     Ext.getCmp('variant-grid-view-column').tpl = updateTpl;
                 }
@@ -417,10 +455,10 @@ EvaVariantWidgetPanel.prototype = {
             var speciesArray = ['hsapiens','hsapiens_grch37','mmusculus_grcm38'];
             if(speciesArray.indexOf( formValues.species ) > -1){
                 _.extend(params, {disable:false});
-               this._disableFields(params);
+//               this._disableFields(params);
             }else{
                 _.extend(params, {disable:true});
-                this._disableFields(params);
+//                this._disableFields(params);
             }
             _this.variantWidget.trigger('species:change', {values: formValues, sender: _this});
             _this.formPanelVariantFilter.trigger('submit', {values: formValues, sender: _this});
@@ -459,12 +497,15 @@ EvaVariantWidgetPanel.prototype = {
                     console.log(e);
                 }
                 filter.studiesStore.loadRawData(studies);
+                console.log( _this.formPanelVariantFilter)
                 //set all records checked default
-                filter.studiesStore.each(function(rec){
-                    if(!_.isNull(species) ){
-                        rec.set('uiactive', true)
-                    }
-                })
+                _this.formPanelVariantFilter.filters[4].grid.getSelectionModel().selectAll()
+                //set all records checked default
+//                filter.studiesStore.each(function(rec){
+//                    if(!_.isNull(species) ){
+//                        rec.set('uiactive', true)
+//                    }
+//                });
                 _this.trigger('studies:change', {studies: studies, sender: _this});
             }
         });

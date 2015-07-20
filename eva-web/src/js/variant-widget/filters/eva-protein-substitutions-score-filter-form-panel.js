@@ -82,13 +82,15 @@ EvaProteinSubstitutionScoreFilterFormPanel.prototype = {
                     fieldLabel: 'Polyphen2 \>',
                     name: 'polyphen2',
                     width  : 240,
-                    margin:'5 0 0 0'
+                    margin:'5 0 0 0',
+                    emptyText:'ex: 0.5'
                 },
                 {
                     fieldLabel: 'Sift \< ',
                     name: 'sift',
                     width  : 240,
-                    margin:'5 0 5 0'
+                    margin:'5 0 5 0',
+                    emptyText:'ex: 0.1'
                 }
 
             ]

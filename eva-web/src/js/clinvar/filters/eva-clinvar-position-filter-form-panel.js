@@ -67,22 +67,57 @@ ClinVarPositionFilterFormPanel.prototype = {
     },
     _createPanel: function () {
         var _this = this;
+
+        var filters = Ext.create('Ext.data.Store', {
+            fields: ['value', 'name'],
+            data : [
+                {"value":"accessionId", "name":"ClinVar  Accession"},
+                {"value":"region", "name":"Chromosomal Location"},
+                {"value":"gene", "name":"Ensembl Gene Symbol/Accession"}
+            ]
+        });
+
+        var selectFilter =  Ext.create('Ext.form.ComboBox', {
+            id: this.id + "selectFilter",
+            fieldLabel: 'Filter By',
+            name:'clinvarSelectFilter',
+            store: filters,
+            queryMode: 'local',
+            displayField: 'name',
+            valueField: 'value',
+            width: '100%',
+            labelAlign: 'top',
+            margin: '0 0 0 5',
+            listeners: {
+                afterrender: function (field) {
+                    field.setValue('region');
+                },
+                change: function (field, newValue, oldValue) {
+                    _this.hideFields(_this.id+newValue);
+                }
+
+            }
+        });
+
         var accessionId = Ext.create('Ext.form.field.TextArea', {
             id: this.id + "accessionId",
             name: "accessionId",
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'ClinVar Accession',
+//            fieldLabel: 'ClinVar Accession',
+            fieldLabel: '<br />',
             labelAlign: 'top',
 //            regex: /^[R][C][V]\d+$/,
+            labelSeparator : '',
+            emptyText: 'ex: RCV000030271',
             listeners: {
                 'change': function(field, newVal, oldVal){
-                    if(newVal){
-                        _this.disableFields(_this.id+"accessionId");
-                    }else{
-                        _this.enableFields();
-                    }
+//                    if(newVal){
+//                        _this.disableFields(_this.id+"accessionId");
+//                    }else{
+//                        _this.enableFields();
+//                    }
                 }
             }
         });
@@ -92,16 +127,19 @@ ClinVarPositionFilterFormPanel.prototype = {
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'dbSNP Accession',
+//            fieldLabel: 'dbSNP Accession',
+            fieldLabel: '<br />',
             labelAlign: 'top',
 //            regex: /^[rs]s\d+$/,
+            labelSeparator : '',
+            emptyText: 'ex: RCV000030271',
             listeners: {
                 'change': function(field, newVal, oldVal){
-                    if(newVal){
-                        _this.disableFields(_this.id+"rsId");
-                    }else{
-                        _this.enableFields();
-                    }
+//                    if(newVal){
+//                        _this.disableFields(_this.id+"rsId");
+//                    }else{
+//                        _this.enableFields();
+//                    }
                 }
             }
         });
@@ -113,16 +151,19 @@ ClinVarPositionFilterFormPanel.prototype = {
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'Chromosomal Location',
+//            fieldLabel: 'Chromosomal Location',
+            fieldLabel: '<br />',
             labelAlign: 'top',
 //            value: this.testRegion,
+            labelSeparator : '',
+            emptyText: 'ex: 2:48000000-49000000',
             listeners: {
                 'change': function(field, newVal, oldVal){
-                    if(newVal){
-                        _this.disableFields(_this.id+"region");
-                    }else{
-                        _this.enableFields();
-                    }
+//                    if(newVal){
+//                        _this.disableFields(_this.id+"region");
+//                    }else{
+//                        _this.enableFields();
+//                    }
                 }
             }
         });
@@ -133,15 +174,18 @@ ClinVarPositionFilterFormPanel.prototype = {
             margin: '0 0 0 5',
             //allowBlank: true,
             width: '100%',
-            fieldLabel: 'HGNC Gene Symbol',
+//            fieldLabel: 'Ensembl Gene Symbol',
+            fieldLabel: '<br />',
             labelAlign: 'top',
+            labelSeparator : '',
+            emptyText: 'ex: BRCA2',
             listeners: {
                 'change': function(field, newVal, oldVal){
-                    if(newVal){
-                        _this.disableFields(_this.id+"gene");
-                    }else{
-                        _this.enableFields();
-                    }
+//                    if(newVal){
+//                        _this.disableFields(_this.id+"gene");
+//                    }else{
+//                        _this.enableFields();
+//                    }
                 }
             }
 
@@ -166,7 +210,7 @@ ClinVarPositionFilterFormPanel.prototype = {
                             titleCollapse: this.titleCollapse,
                             header: this.headerConfig,
                             allowBlank: false,
-                            items: [assemblyText,accessionId,regionList, gene]
+                            items: [assemblyText,selectFilter,accessionId,regionList, gene]
                         });
 
         this.panel.getForm().findField('region').setValue(_this.testRegion);
@@ -189,6 +233,17 @@ ClinVarPositionFilterFormPanel.prototype = {
            field.enable(true);
         });
     },
+    hideFields:function(id){
+        this.panel.getForm().getFields().each(function(field) {
+            if(id != field.id && field.name != 'clinvarSelectFilter' ){
+                field.disable(true);
+                field.hide(true);
+            }else{
+                field.enable(true);
+                field.show(true);
+            }
+        });
+    },
     getValues: function () {
         var values = this.panel.getValues();
         for (key in values) {
@@ -201,6 +256,7 @@ ClinVarPositionFilterFormPanel.prototype = {
                 values[key] = values[key].replace(/\s/g, "");
             }
         }
+        values = _.omit(values, 'clinvarSelectFilter');
         return values;
     },
     clear: function () {

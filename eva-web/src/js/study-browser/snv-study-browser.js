@@ -363,7 +363,7 @@ SnvStudyBrowser.prototype = {
                         '<p style="padding: 2px 2px 5px 15px"><b>Description:</b> {description}</p>'
                     )
                 }],
-                height: 420,
+                height: 810,
                 features: [
                     {ftype: 'summary'}
                 ],
@@ -480,6 +480,7 @@ SnvStudyBrowser.prototype = {
                         }
                         statsData[key] = arr;
                         if (typeof stores[key] !== 'undefined') {
+                            statsData[key] = _.sortBy(statsData[key], 'display');
                             stores[key].loadRawData(statsData[key]);
                         }
 

@@ -53,7 +53,6 @@ EvaStudyView.prototype = {
             success: function (response) {
                 try {
                     summary = response.response[0].result;
-                    console.log(summary)
                 } catch (e) {
                     console.log(e);
                 }
@@ -142,7 +141,7 @@ EvaStudyView.prototype = {
                      projectURL = ena_link;
                 }else{
                      projectURL = '<a href="'+_this._getProjectUrl(data.summaryData[0].id)+'" target="_blank">'+_this._getProjectUrl(data.summaryData[0].id)+'</a><br /><br />'+ena_link;
-                    console.log()
+
                 }
 
 
@@ -163,6 +162,8 @@ EvaStudyView.prototype = {
                     '<tr><td><b>Download</b></td><td><a href="ftp://ftp.ebi.ac.uk/pub/databases/eva/'+data.summaryData[0].id+'" target="_blank">FTP</a></td></tr>' +
                     '</table>'
 
+
+
                 if(data.filesData.length > 0){
                     var fileNameArr = [];
 
@@ -178,7 +179,6 @@ EvaStudyView.prototype = {
                     }
                     var fileNameList = fileNameArr.join(',');
                     var ftpLink = {};
-                    console.log(fileNameList)
                     EvaManager.get({
                         category: 'files',
                         resource: 'url',
@@ -187,6 +187,7 @@ EvaStudyView.prototype = {
                         success: function (response) {
                             try {
                                 ftpLink = response.response;
+
                             } catch (e) {
                                 console.log(e);
                             }
@@ -201,11 +202,19 @@ EvaStudyView.prototype = {
                         '<th>Pass Count</th>'+
                         '<th>Transitions/Transversions Ratio</th>'+
                         '<th>Mean Quality</th>'+
+//                        '<th>View</th>'+
                         '</tr></thead><tbody>'
                     for (i = 0; i < data.filesData.length; i++) {
-                        var ftpLocation = _.findWhere(ftpLink, {id:data.filesData[i].ftpId}).result[0];
+                        var ftpLocation = '#';
+//                        if(!_.isUndefined(_.findWhere(ftpLink, {id:data.filesData[i].ftpId}))){
+                        if(!_.isUndefined(_.findWhere(ftpLink, {id:data.filesData[i].fileName}))){
+                            ftpLocation = _.findWhere(ftpLink, {id:data.filesData[i].fileName}).result[0];
+                        }
+                        var iobioLink = '';
                         if(ftpLink.length > 0 && ftpLocation != 'ftp:/null'){
                             var downloadLink = '<a href="'+ftpLocation+'" target="_blank">'+data.filesData[i].fileName+'</a>';
+                            var iobio_url = 'http://ega-beacon.windows.ebi.ac.uk:8080/?vcf=http://s3.amazonaws.com/vcf.files/ExAC.r0.2.sites.vep.vcf.gz';
+                            iobioLink = '<a href="?eva-iobio&url='+iobio_url+'" target="_blank">Iobio</a>'
                         }else{
                             var downloadLink = data.filesData[i].fileName;
                         }
@@ -216,7 +225,7 @@ EvaStudyView.prototype = {
                         var passCount;
                         var transitionsCount;
                         var meanQuality;
-                        if(!_.isNull(data.filesData[i].stats)){
+                        if(!_.isUndefined(data.filesData[i].stats) && !_.isNull(data.filesData[i].stats)){
                             if(data.filesData[i].stats.samplesCount){
                                 samples_count = data.filesData[i].stats.samplesCount;
                             }else{
@@ -247,6 +256,7 @@ EvaStudyView.prototype = {
                             '<td>'+passCount+'</td>' +
                             '<td>'+transitionsCount+'</td>' +
                             '<td>'+meanQuality+'</td>' +
+//                            '<td>'+iobioLink+'</td>' +
                             '</tr>'
                     }
                     _filesTable += '</tbody></table>'

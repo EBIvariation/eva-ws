@@ -104,7 +104,11 @@ SpeciesFilterFormPanel.prototype = {
 
         var speciesStore = Ext.create('Ext.data.Store', {
             model: 'SpeciesListModel',
-            data : _this.speciesList
+            data : _this.speciesList,
+            sorters: [{
+                property: 'taxonomyEvaName',
+                direction: 'ASC'
+            }]
         });
 
         var speciesFormField  =  Ext.create('Ext.form.ComboBox', {

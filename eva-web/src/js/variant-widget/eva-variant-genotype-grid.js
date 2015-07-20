@@ -205,12 +205,18 @@ EvaVariantGenotypeGrid.prototype = {
              var finalData = [];
              for (var key in samples) {
                  var s = samples[key];
+
+                 if(s.GT.match(/-1\/-1/)){
+                     s.GT = './.';
+                 }
                  finalData.push({
                      sample: key,
                      genotype: s.GT
                  });
              }
-             var divID = 'genotype-grid-'+record.data.studyId;
+
+             var divID =  Utils.genId("genotype-grid-")+record.data.studyId;
+             console.log(divID)
              body.innerHTML = '<div id="'+divID+'"></div>';
 
 
@@ -229,13 +235,13 @@ EvaVariantGenotypeGrid.prototype = {
                      items:[{
                          text     : 'Sample',
                          flex     : 1,
-                         sortable : false,
+//                         sortable : false,
                          dataIndex: 'sample'
                         },
                          {
                              text     : 'Genotype',
                              flex     : 1,
-                             sortable : false,
+//                             sortable : false,
                              dataIndex: 'genotype'
                          }],
                          defaults: {
@@ -245,10 +251,10 @@ EvaVariantGenotypeGrid.prototype = {
 
                  },
                  height: 350,
-                 width: 300,
+//                 width: 300,
                  renderTo: divID,
                  viewConfig: {
-                     stripeRows: true
+                     stripeRows: true,
                  }
              });
 
@@ -276,9 +282,26 @@ EvaVariantGenotypeGrid.prototype = {
          });
      }
 
+    var panel = Ext.create('Ext.container.Container', {
+        layout: {
+            type: 'vbox',
+            align: 'fit'
+        },
+        overflowY: true,
+        padding: 10,
+        items: [
+            {
+                xtype: 'box',
+                cls: 'ocb-header-4',
+                html: '<h4>Genotypes </h4>',
+                margin: '5 0 10 10'
+            },
+            grid
+         ]
 
+    });
 
-        return grid;
+    return  panel;
 
 
     },

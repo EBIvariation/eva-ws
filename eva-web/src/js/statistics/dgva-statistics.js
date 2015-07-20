@@ -123,7 +123,7 @@ DgvaStatistics.prototype = {
 
                     },
                     title: {
-                        text: 'Studies <br> <span style="font-size:12px;">by '+title+'</span>',
+                        text: 'Top 5 Studies <br> <span style="font-size:12px;">by '+title+'</span>',
                         style: {
 //                                    display: 'none'
                         },
@@ -152,7 +152,7 @@ DgvaStatistics.prototype = {
                     },
                     series: [{
                         type: 'pie',
-                        name: 'Studies by '+title,
+                        name: 'Top 5 Studies by '+title,
                         data: dataArray
                     }],
                     credits: {
