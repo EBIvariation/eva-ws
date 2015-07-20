@@ -218,8 +218,10 @@ EvaPositionFilterFormPanel.prototype = {
     hideFields:function(id){
         this.panel.getForm().getFields().each(function(field) {
             if(id != field.id && field.name != 'selectFilter' ){
+                field.disable(true);
                 field.hide(true);
             }else{
+                field.enable(true);
                 field.show(true);
             }
         });
