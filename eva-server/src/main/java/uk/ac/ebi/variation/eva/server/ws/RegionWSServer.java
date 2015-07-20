@@ -79,6 +79,7 @@ public class RegionWSServer extends EvaWSServer {
         }
 
         queryOptions.put("merge", merge);
+        queryOptions.put("sort", true);
 
         // Parse the provided regions. The total size of all regions together
         // can't excede 1 million positions

@@ -27,10 +27,15 @@ import uk.ac.ebi.variation.eva.lib.datastore.EvaproUtils;
 public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
 
     private DataSource ds;
+    private String evaVersion;
 
-    public VariantSourceEvaproDBAdaptor() throws NamingException {
+    public VariantSourceEvaproDBAdaptor(String evaVersion) throws NamingException {
+        if (evaVersion == null) {
+            throw new IllegalArgumentException("Please provide the EVA version number");
+        }
         InitialContext cxt = new InitialContext();
         ds = (DataSource) cxt.lookup( "java:/comp/env/jdbc/evapro" );
+        this.evaVersion = evaVersion;
     }
     
     @Override
@@ -103,8 +108,11 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
         QueryResult qr = null;
         try {
             conn = ds.getConnection();
-            pstmt = conn.prepareStatement("select distinct(ftp_file) from file where filename = ?");
-            pstmt.setString(1, filename);
+            pstmt = conn.prepareStatement(
+                    "select distinct f.ftp_file from from browsable_file bf left join file f on bf.file_id = f.file_id " 
+                    + "where bf.eva_release = ? and filename = ?");
+            pstmt.setString(1, evaVersion);
+            pstmt.setString(2, filename);
             System.out.println(pstmt);
             long start = System.currentTimeMillis();
             rs = pstmt.executeQuery();
@@ -160,11 +168,14 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         List<QueryResult> results = new ArrayList<>();
-        String query = "select distinct filename, ftp_file from file where " + EvaproUtils.getInClause("filename", filenames);
+        String query = 
+                "select distinct bf.filename, f.ftp_file from browsable_file bf left join file f on bf.file_id = f.file_id " 
+                + "where bf.eva_release = ? and " + EvaproUtils.getInClause("bf.filename", filenames);
         
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, evaVersion);
             System.out.println(pstmt);
             long start = System.currentTimeMillis();
             rs = pstmt.executeQuery();

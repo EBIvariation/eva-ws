@@ -58,6 +58,10 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
                                    @DefaultValue("-1") @QueryParam("histogram_interval") int interval)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         
+        if (studies == null || studies.isEmpty()) {
+            return createErrorResponse("The 'datasetIds' argument must not be empty");
+        }
+        
         VariantSourceDBAdaptor dbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor("hsapiens_grch37");
         
         int idxCurrentPage = 0;

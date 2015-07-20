@@ -7,7 +7,7 @@
     <groupId>uk.ac.ebi.variation.eva</groupId>
     <artifactId>eva</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <modules>
         <module>eva-lib</module>
@@ -15,7 +15,7 @@
     </modules>
 
     <properties>
-        <opencga.version>0.5.1</opencga.version>
+        <opencga.version>0.5.2</opencga.version>
         <compileSource>1.7</compileSource>
     </properties>
 

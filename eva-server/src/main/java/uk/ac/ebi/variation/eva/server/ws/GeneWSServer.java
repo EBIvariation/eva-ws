@@ -11,6 +11,7 @@ import javax.ws.rs.core.UriInfo;
 
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opencb.datastore.core.QueryResponse;
@@ -60,6 +61,17 @@ public class GeneWSServer extends EvaWSServer {
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         
+        for (String acceptedValue : VariantDBAdaptor.QueryParams.acceptedValues) {
+            if (uriInfo.getQueryParameters().containsKey(acceptedValue)) {
+                List<String> values = uriInfo.getQueryParameters().get(acceptedValue);
+                String csv = values.get(0);
+                for (int i = 1; i < values.size(); i++) {
+                    csv += "," + values.get(i);
+                }
+                queryOptions.add(acceptedValue, csv);
+            }
+        }
+
         if (reference != null) {
             queryOptions.put("reference", reference);
         }
@@ -96,36 +108,5 @@ public class GeneWSServer extends EvaWSServer {
 
         return createOkResponse(variantMongoDbAdaptor.getAllVariantsByGene(geneId, queryOptions));
     }
-    
-    @GET
-    @Path("/ranking")
-    @ApiOperation(httpMethod = "GET", value = "Retrieves gene ranking", response = QueryResponse.class)
-    public Response genesRankingByVariantsNumber(@PathParam("gene") String geneId,
-                                                 @QueryParam("species") String species,
-                                                 @DefaultValue("10") @QueryParam("limit") int limit,
-                                                 @DefaultValue("desc") @QueryParam("sort") String sort,
-                                                 @DefaultValue("") @QueryParam("type") String variantType)
-            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
-        try {
-            checkParams();
-        } catch (VersionException | SpeciesException ex) {
-            return createErrorResponse(ex.toString());
-        }
-        
-        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
-        
-        if (!variantType.isEmpty()) {
-            queryOptions.put("type", variantType);
-        }
-        
-        if (sort.equalsIgnoreCase("desc")) {
-            return createOkResponse(variantMongoDbAdaptor.getMostAffectedGenes(limit, queryOptions));
-        } else if (sort.equalsIgnoreCase("asc")) {
-            return createOkResponse(variantMongoDbAdaptor.getLeastAffectedGenes(limit, queryOptions));
-        } else {
-            return createOkResponse("Sorting criteria must be 'desc' or 'asc'");
-        }
-    }
-    
     
 }
