@@ -412,6 +412,10 @@ EvaVariantWidgetPanel.prototype = {
                         if(end-start > 1000000){
                             Ext.Msg.alert('Limit Exceeds','Please enter the region no more than 1000000 range');
                             limitExceeds = true;
+                        }else if(end-start < 0){
+                            Ext.Msg.alert('Incorrect Range','Please enter the correct range. start region should be larger than end region');
+                        }else if(isNaN(start) ||  isNaN(end)){
+                            Ext.Msg.alert('Incorrect Value','Please enter a numeric value');
                         }
                     });
 

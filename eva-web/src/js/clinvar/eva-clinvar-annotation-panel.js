@@ -305,7 +305,9 @@ ClinvarAnnotationPanel.prototype = {
             items: [grid]
         });
 
-        paging.doRefresh();
+        if(annotData){
+            paging.doRefresh();
+        }
 
 
         return annotPanel;
