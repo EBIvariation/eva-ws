@@ -283,7 +283,7 @@ ClinvarAnnotationPanel.prototype = {
             });
         }else{
             var grid = Ext.create('Ext.view.View', {
-                tpl: new Ext.XTemplate(['<div>No Annotation data available</div>'])
+                tpl: new Ext.XTemplate(['<div style="margin-left:5px;">No Annotation data available</div>'])
             });
         }
 
