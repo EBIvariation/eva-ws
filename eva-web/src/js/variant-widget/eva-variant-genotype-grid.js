@@ -115,7 +115,7 @@ EvaVariantGenotypeGrid.prototype = {
         this.panel = Ext.create('Ext.container.Container', {
             layout: {
                 type: 'vbox',
-                align: 'fit'
+                align: 'stretch'
             },
             overflowY: true,
             padding: 10,
@@ -135,7 +135,7 @@ EvaVariantGenotypeGrid.prototype = {
 
      if(_.isEmpty(data)){
          var grid = Ext.create('Ext.view.View', {
-             tpl: new Ext.XTemplate(['<div>No Genotypes data available</div>'])
+             tpl: new Ext.XTemplate(['<div style="margin-left:5px;">No Genotypes data available</div>'])
          });
      }else{
          var genotypeColumns = {
