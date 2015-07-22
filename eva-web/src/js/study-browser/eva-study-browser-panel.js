@@ -99,7 +99,7 @@ EvaStudyBrowserPanel.prototype = {
                     render: function() {
                         this.items.each(function(i){
                             i.tab.on('click', function(){
-                                if(i.title == 'Structural Variations '){
+                                if(i.title == 'Structural Variants '){
                                     svStudyBrowser.load();
                                 }
                             });
