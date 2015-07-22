@@ -455,7 +455,7 @@ EvaVariantWidget.prototype = {
                     columns: [
                         {
 //                            text: "Polyphen2",
-                            header: '<img class="header-icon" style="margin-bottom:0px;" src="img/icon-info.png"/>Polyphen2',
+                            header: '<img class="header-icon" style="margin-bottom:0px;" src="img/icon-info.png"/>PolyPhen2',
                             dataIndex: "consequenceTypes",
                             width:130,
                             menuDisabled:true,

@@ -79,7 +79,7 @@ EvaProteinSubstitutionScoreFilterFormPanel.prototype = {
             defaultType: 'textfield',
             items :[
                 {
-                    fieldLabel: 'Polyphen2 \>',
+                    fieldLabel: 'PolyPhen2 \>',
                     name: 'polyphen2',
                     width  : 240,
                     margin:'5 0 0 0',
