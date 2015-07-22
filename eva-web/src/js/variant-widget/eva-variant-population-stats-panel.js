@@ -115,7 +115,8 @@ EvaVariantPopulationStatsPanel.prototype = {
             this.studiesContainer.add(panels);
         }else{
             var grid = Ext.create('Ext.view.View', {
-                tpl: new Ext.XTemplate(['<div>No Population data available</div>'])
+//                tpl: new Ext.XTemplate(['<div>No Population data available</div>'])
+                tpl: new Ext.XTemplate(['<div>No Genotypes data available</div>'])
             });
             var studyPanel = Ext.create('Ext.panel.Panel', {
 //                header:{
