@@ -199,13 +199,13 @@ EvaVariantView.prototype = {
             studyEl.appendChild(studyElDiv);
             _this.createVariantStatsPanel(studyElDiv);
 
-            var popStatsEl = document.querySelector("#population-stats-grid");
-            var popStatsElDiv = document.createElement("div");
-            popStatsElDiv.setAttribute('class', 'eva variant-widget-panel ocb-variant-stats-panel');
-            //       studyElDiv.innerHTML = '<h4>Population Stats</h4>';
-            popStatsEl.appendChild(popStatsElDiv);
-            var varinatData = {sourceEntries:_this.variant[0].sourceEntries, species:_this.species};
-            _this._createPopulationStatsPanel(popStatsElDiv,varinatData);
+//            var popStatsEl = document.querySelector("#population-stats-grid");
+//            var popStatsElDiv = document.createElement("div");
+//            popStatsElDiv.setAttribute('class', 'eva variant-widget-panel ocb-variant-stats-panel');
+//            //       studyElDiv.innerHTML = '<h4>Population Stats</h4>';
+//            popStatsEl.appendChild(popStatsElDiv);
+//            var varinatData = {sourceEntries:_this.variant[0].sourceEntries, species:_this.species};
+//            _this._createPopulationStatsPanel(popStatsElDiv,varinatData);
 
     },
     _renderSummaryData: function (data) {
@@ -305,11 +305,11 @@ EvaVariantView.prototype = {
 
         });
 
-        variantPopulationStatsPanel.load(data.sourceEntries,data.species);
+        variantPopulationStatsPanel.load(data.sourceEntries,{species:data.species});
         variantPopulationStatsPanel.draw();
 
 
-//        return variantTranscriptGrid;
+        return variantPopulationStatsPanel;
     },
     _loadExampleData: function (data) {
             var data = {"chromosome": "1", "start": 10001, "end": 10001, "referenceAllele": "T", "genes": [], "effects": {"G": [
@@ -373,7 +373,7 @@ EvaVariantView.prototype = {
                                     '<li class="active"><a href="#summary">Summary</a></li>'+
                                     '<li><a href="#consequenceTypes">Consequence Types</a></li>'+
 //                                    '<li><a href="#conservedRegion">Conserved Region</a></li>'+
-                                    '<li><a href="#populationStats">Population Stats</a></li>'+
+//                                    '<li><a href="#populationStats">Population Stats</a></li>'+
                                     '<li><a href="#studies">Studies</a></li>'+
                                '</ul>'+
                             '</div>'+
