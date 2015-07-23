@@ -48,12 +48,7 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
     @Override
     public QueryResult countStudiesPerSpecies(QueryOptions options) {
         StringBuilder query = new StringBuilder("select common_name, count(*) as COUNT from study_browser ");
-        if (options.containsKey("species")) {
-            query.append("where ");
-            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
-            query.append(" or ");
-            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
-        }
+        appendSpeciesAndTypeFilters(query, options);
         query.append(" group by common_name order by COUNT desc");
 
         Connection conn = null;
@@ -94,12 +89,7 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
     @Override
     public QueryResult countStudiesPerType(QueryOptions options) {
         StringBuilder query = new StringBuilder("select experiment_type, count(*) as COUNT from study_browser ");
-        if (options.containsKey("species")) {
-            query.append("where ");
-            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
-            query.append(" or ");
-            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
-        }
+        appendSpeciesAndTypeFilters(query, options);
         query.append(" group by experiment_type order by COUNT desc");
 
         Connection conn = null;
@@ -233,5 +223,28 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
         return qr;
     }
 
+    private void appendSpeciesAndTypeFilters(StringBuilder query, QueryOptions options) {
+        if (options.containsKey("species") || options.containsKey("type")) {
+            query.append("where ");
+        }
+        
+        if (options.containsKey("species")) {
+            query.append("(");
+            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
+            query.append(" or ");
+            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
+            query.append(")");
+        }
+        
+        if (options.containsKey("species") && options.containsKey("type")) {
+            query.append("and ");
+        }
+        
+        if (options.containsKey("type")) {
+            query.append(EvaproUtils.getInClause("experiment_type", options.getAsStringList("type")));
+            query.append(" or ");
+            query.append(EvaproUtils.getInClause("experiment_type", options.getAsStringList("type")));
+        }
+    }
     
 }

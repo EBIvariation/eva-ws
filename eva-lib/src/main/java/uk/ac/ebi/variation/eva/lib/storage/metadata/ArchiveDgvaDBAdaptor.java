@@ -45,14 +45,9 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
 
     @Override
     public QueryResult countStudiesPerSpecies(QueryOptions options) {
-        StringBuilder query = new StringBuilder("select organism_common_name as common_name, count(*) as COUNT from dgva_organism_mv ");
-        if (options.containsKey("species")) {
-            query.append("where ");
-            query.append(EvaproUtils.getInClause("organism_common_name", options.getAsStringList("species")));
-            query.append(" or ");
-            query.append(EvaproUtils.getInClause("organism_common_name", options.getAsStringList("species")));
-        }
-        query.append(" group by organism_common_name order by COUNT desc");
+        StringBuilder query = new StringBuilder("select common_name, count(*) as COUNT from dgva_study_browser ");
+        appendSpeciesAndTypeFilters(query, options);
+        query.append(" group by common_name order by COUNT desc");
         
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -93,12 +88,7 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
     @Override
     public QueryResult countStudiesPerType(QueryOptions options) {
         StringBuilder query = new StringBuilder("select study_type, count(*) as COUNT from dgva_study_browser ");
-        if (options.containsKey("species")) {
-            query.append("where ");
-            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
-            query.append(" or ");
-            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
-        }
+        appendSpeciesAndTypeFilters(query, options);
         query.append(" group by study_type order by COUNT desc");
 
         Connection conn = null;
@@ -151,4 +141,26 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    private void appendSpeciesAndTypeFilters(StringBuilder query, QueryOptions options) {
+        if (options.containsKey("species") || options.containsKey("type")) {
+            query.append("where ");
+        }
+        
+        if (options.containsKey("species")) {
+            query.append("(");
+            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
+            query.append(" or ");
+            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
+            query.append(") ");
+        }
+        
+        if (options.containsKey("species") && options.containsKey("type")) {
+            query.append("and ");
+        }
+        
+        if (options.containsKey("type")) {
+            query.append(EvaproUtils.getInClause("study_type", options.getAsStringList("type")));
+        }
+    }
+    
 }
