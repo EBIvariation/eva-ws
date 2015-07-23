@@ -35,9 +35,7 @@ public class FilesWSServer extends EvaWSServer {
     public FilesWSServer(@DefaultValue("") @PathParam("version") String version,
                          @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws NamingException, IOException {
         super(version, uriInfo, hsr);
-        Properties properties = new Properties(); 
-        properties.load(DBAdaptorConnector.class.getResourceAsStream("/mongo.properties"));
-        variantSourceEvaproDbAdaptor = new VariantSourceEvaproDBAdaptor(properties.getProperty("eva.version"));
+        variantSourceEvaproDbAdaptor = new VariantSourceEvaproDBAdaptor();
     }
 
     @GET

@@ -1,5 +1,6 @@
 package uk.ac.ebi.variation.eva.lib.storage.metadata;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Connection;
@@ -8,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.InitialContext;
@@ -17,6 +19,7 @@ import org.opencb.biodata.models.variant.VariantStudy;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.lib.datastore.EvaproUtils;
 
 /**
@@ -27,37 +30,18 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
 
     private DataSource ds;
 
-    public StudyEvaproDBAdaptor() throws NamingException {
+    public StudyEvaproDBAdaptor() throws NamingException, IOException {
         InitialContext cxt = new InitialContext();
-        ds = (DataSource) cxt.lookup("java:/comp/env/jdbc/evapro");
+        Properties properties = new Properties(); 
+        properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
+        String dsName = properties.getProperty("eva.evapro.datasource", "evapro");
+        ds = (DataSource) cxt.lookup("java:/comp/env/jdbc/" + dsName);
     }
 
     @Override
     public QueryResult getAllStudies(QueryOptions options) {
         StringBuilder query = new StringBuilder("select * from study_browser ");
-        boolean hasSpecies = options.containsKey("species") && !options.getList("species").isEmpty();
-        boolean hasType = options.containsKey("type") && !options.getList("type").isEmpty();
-        if (hasSpecies || hasType) {
-            query.append("where ");
-        }
-        if (hasSpecies) {
-            query.append("(");
-            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
-            query.append(" or ");
-            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
-            query.append(")");
-        }
-        if (hasType) {
-            if (hasSpecies) {
-                query.append(" and ");
-            }
-            query.append("(");
-            query.append(EvaproUtils.getInClause("experiment_type", options.getAsStringList("type")));
-            for (String t : options.getAsStringList("type")) {
-                query.append(" or experiment_type like '%").append(t).append("%'");
-            }
-            query.append(")");
-        }
+        appendSpeciesAndTypeFilters(query, options);
         
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -185,4 +169,31 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    private void appendSpeciesAndTypeFilters(StringBuilder query, QueryOptions options) {
+        if (options.containsKey("species") || options.containsKey("type")) {
+            query.append("where ");
+        }
+        
+        if (options.containsKey("species")) {
+            query.append("(");
+            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
+            query.append(" or ");
+            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
+            query.append(")");
+        }
+        
+        if (options.containsKey("species") && options.containsKey("type")) {
+            query.append("and ");
+        }
+        
+        if (options.containsKey("type")) {
+            query.append("(");
+            query.append(EvaproUtils.getInClause("experiment_type", options.getAsStringList("type")));
+            for (String t : options.getAsStringList("type")) {
+                query.append(" or experiment_type like '%").append(t).append("%'");
+            }
+            query.append(")");
+        }
+    }
+    
 }
