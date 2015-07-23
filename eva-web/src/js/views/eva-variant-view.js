@@ -204,7 +204,7 @@ EvaVariantView.prototype = {
             popStatsElDiv.setAttribute('class', 'eva variant-widget-panel ocb-variant-stats-panel');
             consqTypeEl.appendChild(popStatsElDiv);//
             var varinatData = {sourceEntries:_this.variant[0].sourceEntries, species:_this.species};
-            _this._createPopulationStatsPanel(popStatsElDiv,varinatData);
+            _this._createPopulationStatsPanel(studyElDiv,varinatData);
 
     },
     _renderSummaryData: function (data) {
@@ -372,8 +372,8 @@ EvaVariantView.prototype = {
                                     '<li class="active"><a href="#summary">Summary</a></li>'+
                                     '<li><a href="#consequenceTypes">Consequence Types</a></li>'+
 //                                    '<li><a href="#conservedRegion">Conserved Region</a></li>'+
-                                    '<li><a href="#populationStats">Population Stats</a></li>'+
                                     '<li><a href="#studies">Studies</a></li>'+
+                                    '<li><a href="#populationStats">Population Stats</a></li>'+
                                '</ul>'+
                             '</div>'+
                             '<div id="scroll-able" class="col-sm-10 col-md-10 col-lg-10">'+
@@ -395,16 +395,17 @@ EvaVariantView.prototype = {
 //                                        '<div id="conserved-region-grid"></div>'+
 //                                    '</div>'+
 //                                '</div>'+
+                                '<div  id="studies" class="row">'+
+                                    '<div class="col-md-12">'+
+                                    '   <div id="studies-grid"></div>'+
+                                    '</div>'+
+                                '</div>'+
                                 '<div  id="populationStats" class="row">'+
                                     '<div class="col-md-12">'+
                                         '<div id="population-stats-grid"></div>'+
                                     '</div>'+
                                 '</div>'+
-                                '<div  id="studies" class="row">'+
-                                    '<div class="col-md-12">'+
-                                        '<div id="studies-grid"></div>'+
-                                    '</div>'+
-                                '</div>'+
+
                             '</div>'+
                         '</div>'+
                     '</div>'
