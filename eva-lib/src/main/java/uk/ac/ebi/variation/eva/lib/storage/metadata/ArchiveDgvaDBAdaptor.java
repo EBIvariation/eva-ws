@@ -159,7 +159,12 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
         }
         
         if (options.containsKey("type")) {
+            query.append("(");
             query.append(EvaproUtils.getInClause("study_type", options.getAsStringList("type")));
+            for (String t : options.getAsStringList("type")) {
+                query.append(" or study_type like '%").append(t).append("%'");
+            }
+            query.append(")");
         }
     }
     

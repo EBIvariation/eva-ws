@@ -241,9 +241,12 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
         }
         
         if (options.containsKey("type")) {
+            query.append("(");
             query.append(EvaproUtils.getInClause("experiment_type", options.getAsStringList("type")));
-            query.append(" or ");
-            query.append(EvaproUtils.getInClause("experiment_type", options.getAsStringList("type")));
+            for (String t : options.getAsStringList("type")) {
+                query.append(" or experiment_type like '%").append(t).append("%'");
+            }
+            query.append(")");
         }
     }
     

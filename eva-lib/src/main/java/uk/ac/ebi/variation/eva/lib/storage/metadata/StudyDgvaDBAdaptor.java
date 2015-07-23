@@ -35,24 +35,7 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
     @Override
     public QueryResult getAllStudies(QueryOptions options) {
         StringBuilder query = new StringBuilder("select * from dgva_study_browser ");
-        boolean hasSpecies = options.containsKey("species") && !options.getList("species").isEmpty();
-        boolean hasType = options.containsKey("type") && !options.getList("type").isEmpty();
-        if (hasSpecies || hasType) {
-            query.append("where ");
-        }
-        if (hasSpecies) {
-            query.append("(");
-            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
-            query.append(" or ");
-            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
-            query.append(")");
-        }
-        if (hasType) {
-            if (hasSpecies) {
-                query.append(" and ");
-            }
-            query.append(EvaproUtils.getInClause("study_type", options.getAsStringList("species")));
-        }
+        appendSpeciesAndTypeFilters(query, options);
         
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -172,4 +155,31 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    private void appendSpeciesAndTypeFilters(StringBuilder query, QueryOptions options) {
+        if (options.containsKey("species") || options.containsKey("type")) {
+            query.append("where ");
+        }
+        
+        if (options.containsKey("species")) {
+            query.append("(");
+            query.append(EvaproUtils.getInClause("common_name", options.getAsStringList("species")));
+            query.append(" or ");
+            query.append(EvaproUtils.getInClause("scientific_name", options.getAsStringList("species")));
+            query.append(") ");
+        }
+        
+        if (options.containsKey("species") && options.containsKey("type")) {
+            query.append("and ");
+        }
+        
+        if (options.containsKey("type")) {
+            query.append("(");
+            query.append(EvaproUtils.getInClause("study_type", options.getAsStringList("type")));
+            for (String t : options.getAsStringList("type")) {
+                query.append(" or study_type like '%").append(t).append("%'");
+            }
+            query.append(")");
+        }
+    }
+    
 }
