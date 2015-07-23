@@ -88,13 +88,26 @@ EvaVariantPopulationStatsPanel.prototype = {
         this.studiesContainer.removeAll(true);
     },
     load: function (data,params) {
+        var _this = this;
         this.clear();
 
         var panels = [];
 
+//        var availableStudies = ['301','8616'];
+        var availableStudies = ['301','8616', 'PRJEB6930','PRJEB4019'];
+
         for (var key in data) {
+            console.log(data)
             var study = data[key];
-            var studyPanel = this._createPopulationGridPanel(study,params);
+            if(params.species == 'hsapiens_grch37'){
+                if(_.indexOf(availableStudies, study.studyId) > -1){
+                    var studyPanel = this._createPopulationGridPanel(study,params);
+                }
+            }else{
+                var studyPanel = this._createPopulationGridPanel(study,params);
+            }
+
+
             panels.push(studyPanel);
 
         }
@@ -123,8 +136,9 @@ EvaVariantPopulationStatsPanel.prototype = {
             items: [
                 {
                     xtype: 'box',
+                    id:'populationStats',
                     cls: 'ocb-header-4',
-                    html: '<h4>Population Stats</h4>',
+                    html: '<h4>Population Statistics</h4>',
                     margin: '5 0 10 10'
                 },
                 this.studiesContainer
@@ -135,6 +149,7 @@ EvaVariantPopulationStatsPanel.prototype = {
     },
     _createPopulationGridPanel: function (data,params) {
         var _this = this;
+
         var populationData = [];
         _.each(_.keys(data.cohortStats), function(key){
             console.log(this[key])
@@ -143,7 +158,13 @@ EvaVariantPopulationStatsPanel.prototype = {
 
         },data.cohortStats);
 
-        console.log(populationData)
+        if(params.species == 'hsapiens_grch37'){
+            Ext.getCmp('populationStats').update('<h4>Population Statistics</h4><h5 style="color:#436883;margin-left:-15px;font-size:14px;">Population frequencies from 1000 Genomes</h5>')
+        }else{
+            Ext.getCmp('populationStats').update('<h4>Population Statistics</h4>')
+        }
+
+
 
 
         //TO BE REMOVED
@@ -186,14 +207,16 @@ EvaVariantPopulationStatsPanel.prototype = {
                     text: "Minor Allele Frequency",
                     dataIndex: "maf",
                     xtype: "templatecolumn",
-                    tpl: '<tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl>',
+//                    tpl: '<tpl if="maf == -1 || maf == 0">NA <tpl else>{maf:number( "0.000" )} </tpl>',
+                    tpl: '<tpl if="maf == -1">NA <tpl else>{maf:number( "0.000" )} </tpl>',
                     flex: 0.75
                 },
                 {
                     text: "MAF Allele",
                     dataIndex: "mafAllele",
                     xtype: "templatecolumn",
-                    tpl: '<tpl if="mafAllele">{mafAllele} <tpl else>NA</tpl>',
+//                    tpl: '<tpl if="mafAllele">{mafAllele} <tpl else>NA</tpl>',
+                    tpl: '<tpl if="mafAllele">{mafAllele} <tpl else>-</tpl>',
                     flex: 0.5
                 },
                 {
@@ -230,7 +253,7 @@ EvaVariantPopulationStatsPanel.prototype = {
             }
         };
 
-
+        console.log(populationData)
 
         var store = Ext.create("Ext.data.Store", {
             //storeId: "GenotypeStore",
@@ -266,7 +289,8 @@ EvaVariantPopulationStatsPanel.prototype = {
             margin: 20,
             viewConfig: {
                 emptyText: 'No records to display',
-                enableTextSelection: true
+                enableTextSelection: true,
+                deferEmptyText:false
             },
             columns: populationStatsColumns,
             plugins:plugins
@@ -345,7 +369,7 @@ EvaVariantPopulationStatsPanel.prototype = {
                     plotBorderWidth: null,
                     plotShadow: false,
                     height: height,
-                    width: width,
+//                    width: width,
                     marginLeft:50,
                     marginTop:50
 
@@ -367,7 +391,7 @@ EvaVariantPopulationStatsPanel.prototype = {
                     style: {
 //                                    display: 'none'
                     },
-                    align: 'left'
+                    align: 'center'
                 },
                 tooltip: {
                     pointFormat: '<b>{point.y}</b>'

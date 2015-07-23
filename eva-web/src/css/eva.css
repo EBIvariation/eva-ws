@@ -611,6 +611,23 @@ h4{
     text-align: left;
 }
 
+.studyList .x-grid-item-selected .x-grid-cell {
+    background-color: #FFFFFF !important;
+    color :#000000 !important;
+}
+
+.x-form-text {
+    display: inherit;
+}
+
+.header-icon{
+  width:14px;
+  height:14px;
+    float: right;
+}
+
+
+
 
 
 

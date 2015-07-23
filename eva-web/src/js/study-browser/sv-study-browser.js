@@ -372,8 +372,10 @@ SvStudyBrowser.prototype = {
             pageSize: _this.pageSize,
             displayInfo: true,
             displayMsg: 'Studies {0} - {1} of {2}',
-            emptyMsg: "No Studies to display"
+            emptyMsg: "No Studies to display",
+            afterPageText:'' ,
         });
+
 
         this.grid = Ext.create('Ext.grid.Panel', {
                 tbar: this.paging,
@@ -389,11 +391,11 @@ SvStudyBrowser.prototype = {
                     rowBodyTpl : new Ext.XTemplate(
                         '<p style="padding: 2px 2px 2px 15px"><b>Platform:</b> {platform}</p>',
 //                                    '<p style="padding: 2px 2px 2px 15px"><b>Centre:</b> {center}</p>',
-                        '<p style="padding: 2px 2px 5px 15px"><b>Description:</b> {description}</p>',
-                        {}
+                        '<p style="padding: 2px 2px 5px 15px"><b>Description:</b> {description}</p>'
+
                     )
                 }],
-                height: 620,
+                height: 650,
                 features: [
                     {ftype: 'summary'}
                 ],
@@ -501,6 +503,7 @@ SvStudyBrowser.prototype = {
                                 obj['leaf'] = true;
                                 obj['checked'] = false;
                                 obj['iconCls'] = "no-icon";
+                                obj['folderSort'] = "true";
                                 obj['count'] = stat[key2];
                             }
 //                                obj['display'] = key2;
@@ -510,6 +513,7 @@ SvStudyBrowser.prototype = {
                         }
                         statsData[key] = arr;
                         if (typeof stores[key] !== 'undefined') {
+                            statsData[key] = _.sortBy(statsData[key], 'display');
                             stores[key].loadRawData(statsData[key]);
                         }
 
@@ -519,7 +523,7 @@ SvStudyBrowser.prototype = {
                 }
             }
         });
-        this.load();
+//        this.load();
         return  this.formPanel;
     },
     _getValues:function(panel){

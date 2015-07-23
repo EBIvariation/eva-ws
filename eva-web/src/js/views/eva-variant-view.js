@@ -170,14 +170,13 @@ EvaVariantView.prototype = {
             summaryElDiv.innerHTML = summaryContent;
             summaryEl.appendChild(summaryElDiv);
 
+            var consqTypeContent =  _this._renderConsequenceTypeData(_this.variant);
+            var consqTypeEl = document.querySelector("#consequence-types-grid");
+            var consqTypeElDiv =  document.createElement("div");
+//            //       summaryElDiv.innerHTML = '<h4>Summary</h4>';
+            consqTypeElDiv.innerHTML = consqTypeContent;
+            consqTypeEl.appendChild(consqTypeElDiv);
 
-//            var consqTypeContent =  _this._renderConsequenceTypeData(_this.variant);
-//            var consqTypeEl = document.querySelector("#consequence-types-grid");
-//            var consqTypeElDiv =  document.createElement("div");
-////            //       summaryElDiv.innerHTML = '<h4>Summary</h4>';
-//            consqTypeElDiv.innerHTML = consqTypeContent;
-//            consqTypeEl.appendChild(consqTypeElDiv);
-//
 //            var conservedRegionContent =  _this._renderConservedRegionData(_this.variant);
 //            var consRegionEl = document.querySelector("#conserved-region-grid");
 //            var consRegionElDiv =  document.createElement("div");
@@ -191,6 +190,8 @@ EvaVariantView.prototype = {
 //                     effectsEl.appendChild(effectsElDiv);
 //                     _this.createVariantEffectGrid(effectsElDiv);
 
+
+
             var studyEl = document.querySelector("#studies-grid");
             var studyElDiv = document.createElement("div");
             studyElDiv.setAttribute('class', 'ocb-variant-stats-panel');
@@ -198,13 +199,13 @@ EvaVariantView.prototype = {
             studyEl.appendChild(studyElDiv);
             _this.createVariantStatsPanel(studyElDiv);
 
-//            var popStatsEl = document.querySelector("#population-stats-grid");
-//            var popStatsElDiv = document.createElement("div");
-//            popStatsElDiv.setAttribute('class', 'eva variant-widget-panel ocb-variant-stats-panel');
-//            //       studyElDiv.innerHTML = '<h4>Population Stats</h4>';
-//            popStatsEl.appendChild(popStatsElDiv);
-//            var varinatData = {sourceEntries:_this.variant[0].sourceEntries, species:_this.species};
-//            _this._createPopulationStatsPanel(popStatsElDiv,varinatData);
+            var popStatsEl = document.querySelector("#population-stats-grid");
+            var popStatsElDiv = document.createElement("div");
+            popStatsElDiv.setAttribute('class', 'eva variant-widget-panel ocb-variant-stats-panel');
+            //       studyElDiv.innerHTML = '<h4>Population Stats</h4>';
+            popStatsEl.appendChild(popStatsElDiv);
+            var varinatData = {sourceEntries:_this.variant[0].sourceEntries, species:_this.species};
+            _this._createPopulationStatsPanel(popStatsElDiv,varinatData);
 
     },
     _renderSummaryData: function (data) {
@@ -245,6 +246,9 @@ EvaVariantView.prototype = {
     },
     _renderConsequenceTypeData: function (data) {
         var annotation = data[0].annotation.consequenceTypes;
+        if(!annotation){
+          return '';
+        }
 //        var soTermsArray = [];
 
 
@@ -266,6 +270,9 @@ EvaVariantView.prototype = {
     },
     _renderConservedRegionData: function (data) {
         var conservedRegionScores = data[0].annotation.conservedRegionScores;
+        if(!conservedRegionScores){
+            return '';
+        }
 //        var soTermsArray = [];
         var _conservedRegionTable  = '<div class="row"><div class="col-md-8"><table class="table ocb-stats-table">'
         _conservedRegionTable += '<tr><th>Source</th><th>Score</th></tr>'
@@ -364,9 +371,9 @@ EvaVariantView.prototype = {
                             '<div class="col-sm-1 col-md-1 col-lg-1" id="variantViewScrollspy">'+
                                 '<ul id="variantViewTabs" class="nav nav-stacked affix eva-tabs">'+
                                     '<li class="active"><a href="#summary">Summary</a></li>'+
-//                                    '<li><a href="#consequenceTypes">Consequence Types</a></li>'+
+                                    '<li><a href="#consequenceTypes">Consequence Types</a></li>'+
 //                                    '<li><a href="#conservedRegion">Conserved Region</a></li>'+
-//                                    '<li><a href="#populationStats">Population Stats</a></li>'+
+                                    '<li><a href="#populationStats">Population Stats</a></li>'+
                                     '<li><a href="#studies">Studies</a></li>'+
                                '</ul>'+
                             '</div>'+
@@ -377,23 +384,23 @@ EvaVariantView.prototype = {
                                         '<div id="summary-grid"></div>'+
                                     '</div>'+
                                 '</div>'+
-//                                '<div  id="consequenceTypes" class="row">'+
-//                                    '<div class="col-md-12" style="margin-left:10px;">'+
-//                                         '<h4 class="variant-view-h4"> Consequence Type</h4>'+
-//                                        '<div id="consequence-types-grid"></div>'+
-//                                    '</div>'+
-//                                '</div>'+
+                                '<div  id="consequenceTypes" class="row">'+
+                                    '<div class="col-md-12" style="margin-left:10px;">'+
+                                         '<h4 class="variant-view-h4"> Consequence Type</h4>'+
+                                        '<div id="consequence-types-grid"></div>'+
+                                    '</div>'+
+                                '</div>'+
 //                                '<div  id="conservedRegion" class="row">'+
 //                                    '<div class="col-md-12" style="margin-left:10px;">'+
 //                                        '<h4 class="variant-view-h4"> Conserved Region</h4>'+
 //                                        '<div id="conserved-region-grid"></div>'+
 //                                    '</div>'+
 //                                '</div>'+
-//                                '<div  id="populationStats" class="row">'+
-//                                    '<div class="col-md-12">'+
-//                                        '<div id="population-stats-grid"></div>'+
-//                                    '</div>'+
-//                                '</div>'+
+                                '<div  id="populationStats" class="row">'+
+                                    '<div class="col-md-12">'+
+                                        '<div id="population-stats-grid"></div>'+
+                                    '</div>'+
+                                '</div>'+
                                 '<div  id="studies" class="row">'+
                                     '<div class="col-md-12">'+
                                         '<div id="studies-grid"></div>'+

@@ -350,7 +350,7 @@ EvaGeneView.prototype = {
 
 
         var genomeViewer = new GenomeViewer({
-//            cellBaseHost:'https://wwwdev.ebi.ac.uk/cellbase/webservices/rest',
+            cellBaseHost:CELLBASE_HOST,
             sidePanel: false,
             target: 'gene-view-gv',
             border: false,
@@ -488,12 +488,12 @@ EvaGeneView.prototype = {
     _varinatViewlayout:function(data){
         var layout;
         if(!_.isUndefined(data)){
-         layout = '<div id="gene-view">'+
-                        '<div class="row">'+
+            layout = '<div id="gene-view">'+
+                '<div class="row">'+
 //                            '<div  class="col-sm-2  col-md-2 col-lg-2"></div>'+
-                            '<div  class="col-sm-12 col-md-12 col-lg-12"> <h2 id="geneInfo"></h2></div>'+
-                        '</div>'+
-                        '<div class="row">'+
+                '<div  class="col-sm-12 col-md-12 col-lg-12"> <h2 id="geneInfo"></h2></div>'+
+                '</div>'+
+                '<div class="row">'+
 //                            '<div class="col-sm-1  col-md-1 col-lg-1" id="geneViewScrollspy">'+
 //                                '<ul id="geneViewTabs" class="nav nav-stacked affix eva-tabs">'+
 //                                    '<li class="active"><a href="#summary">Summary</a></li>'+
@@ -504,46 +504,44 @@ EvaGeneView.prototype = {
 //                               '</ul>'+
 //                            '</div>'+
 //                            '<div id="scroll-able" class="col-sm-12 col-md-12 col-lg-12">'+
-                            '<div  class="col-sm-12 col-md-12 col-lg-12">'+
-                                '<div id="summary" class="row">'+
-                                    '<div class="col-md-12" style="margin-left:20px;">'+
-                                        '<h4 class="gene-view-h4"> Summary</h4>'+
-                                        '<div id="summary-grid"></div>'+
-                                    '</div>'+
-                                '</div>'+
-                                '<div  id="transcripts" class="row">'+
-                                    '<div class="col-md-12" style="margin-left:10px;">'+
+                '<div  class="col-sm-12 col-md-12 col-lg-12">'+
+                '<div id="summary" class="row">'+
+                '<div class="col-md-12" style="margin-left:20px;">'+
+                '<h4 class="gene-view-h4"> Summary</h4>'+
+                '<div id="summary-grid"></div>'+
+                '</div>'+
+                '</div>'+
+                '<div  id="transcripts" class="row">'+
+                '<div class="col-md-12" style="margin-left:10px;">'+
 //                                        '<h4 class="gene-view-h4"> Transcripts </h4>'+
-                                        '<div id="transcripts-grid"></div>'+
-                                    '</div>'+
-                                '</div>'+
-                                '<br /><div  id="clinvarVariants" class="row">'+
-                                    '<div class="col-md-12" style="margin-left:10px;">'+
+                '<div id="transcripts-grid"></div>'+
+                '</div>'+
+                '</div>'+
+                '<br /><div  id="clinvarVariants" class="row">'+
+                '<div class="col-md-12" style="margin-left:10px;">'+
 //                                        '<h4 class="gene-view-h4"> Variants </h4>'+
-                                        '<div id="clinvar-variants-grid"></div>'+
-                                    '</div>'+
-                                '</div>'+
-                                '<br /><div  id="genomeViewer" class="row">'+
-                                    '<div class="col-md-12" style="margin-left:10px;">'+
+                '<div id="clinvar-variants-grid"></div>'+
+                '</div>'+
+                '</div>'+
+                '<br /><div  id="genomeViewer" class="row">'+
+                '<div class="col-md-12" style="margin-left:10px;">'+
 //                                        '<h4 class="gene-view-h4"> Genome Viewer </h4>'+
-                                        '<div id="genome-viewer-grid"></div>'+
-                                    '</div>'+
-                                '</div>'+
-                            '</div>'+
-                        '</div>'+
-                    '</div>'
-       }else{
+                '<div id="genome-viewer-grid"></div>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '</div>'
+        }else{
             layout = '<div id="gene-view">'+
-                        '<div class="row">'+
-                            '<div  class="col-sm-12 col-md-12 col-lg-12"> <h2 id="geneInfo"></h2></div>'+
-                            '<div  class="col-sm-12 col-md-12 col-lg-12"><h5>Sorry No Data Avalibale</h5></div>'+
-                        '</div>'+
-                    '</div>'
+                '<div class="row">'+
+                '<div  class="col-sm-12 col-md-12 col-lg-12"> <h2 id="geneInfo"></h2></div>'+
+                '<div  class="col-sm-12 col-md-12 col-lg-12"><h5>Sorry No Data Avalibale</h5></div>'+
+                '</div>'+
+                '</div>'
 
-       }
-       return layout;
+        }
+        return layout;
     }
 
 }
-
-

@@ -187,6 +187,18 @@ EvaClinVarWidget.prototype = {
             });
         }
 
+        if (this.defaultToolConfig.genomeViewer) {
+            this.genomeViewerDiv = document.createElement('div');
+            this.genomeViewerDiv.setAttribute('class', 'ocb-gv');
+            $(this.genomeViewerDiv).css({border: '1px solid lightgray'});
+            this.genomeViewer = this._createGenomeViewer(this.genomeViewerDiv);
+            tabPanelItems.push({
+                title: 'Genomic Context',
+                border: 0,
+                contentEl: this.genomeViewerDiv
+            });
+        }
+
         for (var i = 0; i < this.tools.length; i++) {
             var tool = this.tools[i];
             var toolDiv = document.createElement('div');
@@ -237,6 +249,9 @@ EvaClinVarWidget.prototype = {
             this.clinvarLinksPanel.draw();
         }
 
+        if (this.defaultToolConfig.genomeViewer) {
+            this.genomeViewer.draw();
+        }
 
 
         for (var i = 0; i < this.tools.length; i++) {
@@ -262,7 +277,7 @@ EvaClinVarWidget.prototype = {
                     flex:0.4
                 },
                 {
-                    text: "HGNC Symbol",
+                    text: "Ensembl <br/> Gene Symbol",
                     dataIndex: 'hgnc_gene',
 //                    id:'clinvar-grid-gene-column',
                     flex:0.4,
@@ -434,7 +449,8 @@ EvaClinVarWidget.prototype = {
                 flex:1,
                 textAlign: 'left',
                 align:'left' ,
-                sortable : false
+                sortable : false,
+                menuDisabled:true
             }
         } ;
 
@@ -654,7 +670,6 @@ EvaClinVarWidget.prototype = {
     _createGenomeViewer: function (target) {
         var _this = this;
 
-
         var region = new Region({
             chromosome: "13",
             start: 32889611,
@@ -662,6 +677,7 @@ EvaClinVarWidget.prototype = {
         });
 
         var genomeViewer = new GenomeViewer({
+            cellBaseHost:CELLBASE_HOST,
             sidePanel: false,
             target: target,
             border: false,
@@ -670,8 +686,8 @@ EvaClinVarWidget.prototype = {
             region: region,
             trackListTitle: '',
             drawNavigationBar: true,
-            drawKaryotypePanel: false,
-            drawChromosomePanel: false,
+            drawKaryotypePanel: true,
+            drawChromosomePanel: true,
             drawRegionOverviewPanel: true,
             overviewZoomMultiplier: 50,
             navigationBarConfig: {
@@ -680,9 +696,9 @@ EvaClinVarWidget.prototype = {
                     regionHistoryButton: false,
                     speciesButton: false,
                     chromosomesButton: false,
-                    karyotypeButton: false,
-                    chromosomeButton: false,
-                    regionButton: false,
+                    karyotypeButtonLabel: false,
+                    chromosomeButtonLabel: false,
+                    //regionButton: false,
 //                    zoomControl: false,
                     windowSizeControl: false,
 //                    positionControl: false,
@@ -789,10 +805,14 @@ EvaClinVarWidget.prototype = {
 
         genomeViewer.addOverviewTrack(geneOverview);
         genomeViewer.addTrack([sequence, gene, snp]);
-
-
-        this.on("clinvar:change", function (e) {
+        this.on("species:change", function (e) {
             if (target === _this.selectedToolDiv) {
+                _.extend(e, {species: e.values.species.split('_')[0]});
+                genomeViewer._speciesChangeHandler(e);
+            }
+        });
+        this.on("clinvar:change", function (e) {
+            if (target.id === _this.selectedToolDiv.id) {
                 var variant = e.variant;
                 var region = new Region(variant);
                 if (!_.isUndefined(genomeViewer)) {

@@ -84,17 +84,28 @@ EvaStudyBrowserPanel.prototype = {
                 plain: true,
                 items: [
                     {
-                        title: snvStudyBrowser.getPanel().title.replace('Browser',''),
+                        title: snvStudyBrowser.getPanel().title.replace('Browser','(<50bp)'),
                         cls:'studybrowser ',
                         items:[snvStudyBrowser.getPanel()]
                     },
                     {
-                        title:svStudyBrowser.getPanel().title.replace('Browser',''),
+                        title:svStudyBrowser.getPanel().title.replace('Browser','(>50bp)'),
                         cls:'studybrowser',
                         items:[svStudyBrowser.getPanel()]
 
                     }
-                ]
+                ],
+                listeners: {
+                    render: function() {
+                        this.items.each(function(i){
+                            i.tab.on('click', function(){
+                                if(i.title == 'Structural Variations '){
+                                    svStudyBrowser.load();
+                                }
+                            });
+                        });
+                    }
+                }
             });
 
         this.toolTabPanel.setActiveTab(0);

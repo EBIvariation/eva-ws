@@ -139,7 +139,6 @@ ClinvarSummaryPanel.prototype = {
         var annotData = data.annot;
         var reference = data.reference;
         var alternate = data.alternate;
-        console.log('++++=====++++')
         data = data.clinvarSet.referenceClinVarAssertion;
         var lastEvaluated = new Date( data.clinVarAccession.dateUpdated ).toUTCString();
         var origin = data.observedIn[0].sample.origin;
@@ -197,7 +196,10 @@ ClinvarSummaryPanel.prototype = {
 
            var groupedArr = _.groupBy(tempArray,'name');
            var so_array = [];
+//           var so_chart_array = [];
+//           var so_chart_colors_array = [];
            _.each(_.keys(groupedArr), function(key){
+//               so_chart_colors_array.push(_.findWhere(consequenceTypesColors, {id:key}).color);
                var index =  _.indexOf(consequenceTypesHierarchy, key);
                var  transcript_array = [];
                _.each(_.keys(this[key]), function(key){
@@ -207,6 +209,7 @@ ClinvarSummaryPanel.prototype = {
                },this[key]);
                var transcripts = transcript_array.join('\n');
                so_array[index] = ''+key+' (<span title="'+transcripts+'">'+this[key].length+'</span>)';
+//               so_chart_array.push([key,this[key].length]);
            },groupedArr);
 
            so_array =  _.compact(so_array);
