@@ -1,5 +1,6 @@
 package uk.ac.ebi.variation.eva.lib.storage.metadata;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Connection;
@@ -8,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.InitialContext;
@@ -17,6 +19,7 @@ import org.opencb.biodata.models.variant.VariantStudy;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.lib.datastore.EvaproUtils;
 
 /**
@@ -27,9 +30,12 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
 
     private DataSource ds;
 
-    public StudyEvaproDBAdaptor() throws NamingException {
+    public StudyEvaproDBAdaptor() throws NamingException, IOException {
         InitialContext cxt = new InitialContext();
-        ds = (DataSource) cxt.lookup("java:/comp/env/jdbc/evapro");
+        Properties properties = new Properties(); 
+        properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
+        String dsName = properties.getProperty("eva.evapro.datasource", "evapro");
+        ds = (DataSource) cxt.lookup("java:/comp/env/jdbc/" + dsName);
     }
 
     @Override

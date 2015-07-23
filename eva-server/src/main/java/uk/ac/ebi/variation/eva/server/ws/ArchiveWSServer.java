@@ -50,7 +50,7 @@ public class ArchiveWSServer extends EvaWSServer {
     }
 
     public ArchiveWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
-            throws NamingException {
+            throws NamingException, IOException {
         super(version, uriInfo, hsr);
         archiveDgvaDbAdaptor = new ArchiveDgvaDBAdaptor();
         archiveEvaproDbAdaptor = new ArchiveEvaproDBAdaptor();
@@ -74,7 +74,7 @@ public class ArchiveWSServer extends EvaWSServer {
     public Response getSpecies(@DefaultValue("false") @QueryParam("loaded") boolean loaded) {
         try {
             Properties properties = new Properties();
-            properties.load(DBAdaptorConnector.class.getResourceAsStream("/mongo.properties"));
+            properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
             
             return createOkResponse(archiveEvaproDbAdaptor.getSpecies(properties.getProperty("eva.version"), loaded));
         } catch (IOException ex) {

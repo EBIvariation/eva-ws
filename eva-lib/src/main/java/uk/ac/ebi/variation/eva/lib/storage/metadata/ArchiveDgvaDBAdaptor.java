@@ -1,5 +1,6 @@
 package uk.ac.ebi.variation.eva.lib.storage.metadata;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,6 +9,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.InitialContext;
@@ -16,6 +18,7 @@ import javax.sql.DataSource;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.lib.datastore.EvaproUtils;
 
 /**
@@ -26,9 +29,12 @@ public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
 
     private DataSource ds;
 
-    public ArchiveDgvaDBAdaptor() throws NamingException {
+    public ArchiveDgvaDBAdaptor() throws NamingException, IOException {
         InitialContext cxt = new InitialContext();
-        ds = (DataSource) cxt.lookup("java:/comp/env/jdbc/evapro");
+        Properties properties = new Properties(); 
+        properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
+        String dsName = properties.getProperty("eva.evapro.datasource", "evapro");
+        ds = (DataSource) cxt.lookup("java:/comp/env/jdbc/" + dsName);
     }
 
     @Override

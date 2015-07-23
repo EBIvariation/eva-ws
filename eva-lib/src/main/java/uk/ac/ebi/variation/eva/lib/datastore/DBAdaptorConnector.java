@@ -24,7 +24,7 @@ public class DBAdaptorConnector {
     public static VariantDBAdaptor getVariantDBAdaptor(String species) 
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         Properties properties = new Properties(); 
-        properties.load(DBAdaptorConnector.class.getResourceAsStream("/mongo.properties"));
+        properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
         return new VariantMongoDBAdaptor(getCredentials(species, properties),
                 properties.getProperty("eva.mongo.collections.variants"), 
                 properties.getProperty("eva.mongo.collections.files"));
@@ -33,7 +33,7 @@ public class DBAdaptorConnector {
     public static StudyDBAdaptor getStudyDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         Properties properties = new Properties(); 
-        properties.load(DBAdaptorConnector.class.getResourceAsStream("/mongo.properties"));
+        properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
         return new StudyMongoDBAdaptor(getCredentials(species, properties),
                 properties.getProperty("eva.mongo.collections.files"));
     }
@@ -41,7 +41,7 @@ public class DBAdaptorConnector {
     public static VariantSourceDBAdaptor getVariantSourceDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         Properties properties = new Properties(); 
-        properties.load(DBAdaptorConnector.class.getResourceAsStream("/mongo.properties"));
+        properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
         return new VariantSourceMongoDBAdaptor(getCredentials(species, properties),
                 properties.getProperty("eva.mongo.collections.files"));
     }
