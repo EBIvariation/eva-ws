@@ -118,7 +118,7 @@ EvaVariantGenotypeGrid.prototype = {
                 align: 'stretch'
             },
             overflowY: true,
-            padding: 10,
+            padding: 0,
             items: [
                 {
                     xtype: 'box',
