@@ -143,6 +143,17 @@ EvaVariantWidget.prototype = {
 
         var tabPanelItems = [];
 
+        if (this.defaultToolConfig.annot) {
+            this.annotPanelDiv = document.createElement('div');
+            this.annotPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
+            this.annotPanel = this._createAnnotPanel(this.annotPanelDiv);
+            tabPanelItems.push({
+                title: 'Annotation',
+//                border: 0,
+                contentEl: this.annotPanelDiv
+            });
+        }
+
         if (this.defaultToolConfig.stats) {
             this.variantStatsPanelDiv = document.createElement('div');
             this.variantStatsPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
@@ -154,15 +165,15 @@ EvaVariantWidget.prototype = {
             });
         }
 
-        if (this.defaultToolConfig.effect) {
-            this.variantEffectGridDiv = document.createElement('div');
-            this.variantEffectGridDiv.setAttribute('class', 'ocb-variant-effect-grid');
-            this.variantEffectGrid = this._createVariantEffectGrid(this.variantEffectGridDiv);
-            tabPanelItems.push({
-                title: 'Effect and Annotation',
-                contentEl: this.variantEffectGridDiv
-            });
-        }
+//        if (this.defaultToolConfig.effect) {
+//            this.variantEffectGridDiv = document.createElement('div');
+//            this.variantEffectGridDiv.setAttribute('class', 'ocb-variant-effect-grid');
+//            this.variantEffectGrid = this._createVariantEffectGrid(this.variantEffectGridDiv);
+//            tabPanelItems.push({
+//                title: 'Effect and Annotation',
+//                contentEl: this.variantEffectGridDiv
+//            });
+//        }
 
         if (this.defaultToolConfig.genotype) {
             this.variantGenotypeGridDiv = document.createElement('div');
@@ -172,38 +183,6 @@ EvaVariantWidget.prototype = {
                 title: 'Genotypes',
 //                border: 0,
                 contentEl: this.variantGenotypeGridDiv
-            });
-        }
-
-        if (this.defaultToolConfig.rawData) {
-            this.variantrawDataPanelDiv = document.createElement('div');
-            this.variantrawDataPanelDiv.setAttribute('class', 'ocb-variant-rawdata-panel');
-            this.variantrawDataPanel = this._createVariantRawDataPanel(this.variantrawDataPanelDiv);
-            tabPanelItems.push({
-                title: 'Raw Data',
-//                border: 0,
-                contentEl: this.variantrawDataPanelDiv
-            });
-        }
-        if (this.defaultToolConfig.populationStats) {
-            this.variantPopulationStatsPanelDiv = document.createElement('div');
-            this.variantPopulationStatsPanelDiv.setAttribute('class', 'ocb-variant-rawdata-panel');
-            this.variantPopulationStatsPanel = this._createVariantPopulationStatsPanel(this.variantPopulationStatsPanelDiv);
-            tabPanelItems.push({
-                title: 'Population Statistics',
-//                border: 0,
-                contentEl: this.variantPopulationStatsPanelDiv
-            });
-        }
-
-        if (this.defaultToolConfig.annot) {
-            this.annotPanelDiv = document.createElement('div');
-            this.annotPanelDiv.setAttribute('class', 'ocb-variant-stats-panel');
-            this.annotPanel = this._createAnnotPanel(this.annotPanelDiv);
-            tabPanelItems.push({
-                title: 'Annotation',
-//                border: 0,
-                contentEl: this.annotPanelDiv
             });
         }
 
@@ -218,6 +197,32 @@ EvaVariantWidget.prototype = {
                 contentEl: this.genomeViewerDiv
             });
         }
+
+
+//        if (this.defaultToolConfig.rawData) {
+//            this.variantrawDataPanelDiv = document.createElement('div');
+//            this.variantrawDataPanelDiv.setAttribute('class', 'ocb-variant-rawdata-panel');
+//            this.variantrawDataPanel = this._createVariantRawDataPanel(this.variantrawDataPanelDiv);
+//            tabPanelItems.push({
+//                title: 'Raw Data',
+////                border: 0,
+//                contentEl: this.variantrawDataPanelDiv
+//            });
+//        }
+
+        if (this.defaultToolConfig.populationStats) {
+            this.variantPopulationStatsPanelDiv = document.createElement('div');
+            this.variantPopulationStatsPanelDiv.setAttribute('class', 'ocb-variant-rawdata-panel');
+            this.variantPopulationStatsPanel = this._createVariantPopulationStatsPanel(this.variantPopulationStatsPanelDiv);
+            tabPanelItems.push({
+                title: 'Population Statistics',
+//                border: 0,
+                contentEl: this.variantPopulationStatsPanelDiv
+            });
+        }
+
+
+
 
         for (var i = 0; i < this.tools.length; i++) {
             var tool = this.tools[i];
@@ -449,9 +454,12 @@ EvaVariantWidget.prototype = {
                     text: "Protein substitution scores",
                     columns: [
                         {
-                            text: "Polyphen2",
+//                            text: "Polyphen2",
+                            header: '<img class="header-icon" style="margin-bottom:0px;" src="img/icon-info.png"/>PolyPhen2',
                             dataIndex: "consequenceTypes",
                             width:130,
+                            menuDisabled:true,
+                            tooltip:'Polymophism Phenotyping v2 (PolyPhen2) scores are provided from Ensembl VEP annotation and are not available for all variants from all species.',
                             renderer: function(value, meta, rec, rowIndex, colIndex, store){
                                 var tempArray = [];
                                 var consequenceTypes = rec.data.consequenceTypes;
@@ -500,9 +508,12 @@ EvaVariantWidget.prototype = {
 
                         },
                         {
-                            text: "Sift",
+//                            text: "Sift",
+                            header: '<img class="header-icon" style="margin-bottom:0px;" src="img/icon-info.png"/>Sift',
                             dataIndex: "consequenceTypes",
                             width:130,
+                            menuDisabled:true,
+                            tooltip:'Sorting Intolerant From Tolerant (SIFT) scores are provided from Ensembl VEP annotation and are not available for all variants from all species.',
                             renderer: function(value, meta, rec, rowIndex, colIndex, store){
                                 var tempArray = [];
                                 var consequenceTypes = rec.data.consequenceTypes;
@@ -811,7 +822,7 @@ EvaVariantWidget.prototype = {
                         resource: 'variants',
                         query: region,
 //                        params:proxy.extraParams,
-                        params: {species: proxy.extraParams.species},
+                        params: {species: proxy.extraParams.species,studies:proxy.extraParams.studies},
                         async: false,
                         success: function (response) {
                             try {
@@ -961,7 +972,8 @@ EvaVariantWidget.prototype = {
                         category: 'segments',
                         resource: 'variants',
                         query: region,
-                        params: proxy.extraParams,
+//                        params: proxy.extraParams,
+                        params: {species: proxy.extraParams.species,studies:proxy.extraParams.studies},
                         async: false,
                         success: function (response) {
                             try {
@@ -1029,7 +1041,10 @@ EvaVariantWidget.prototype = {
                 if (target.id === _this.selectedToolDiv.id) {
                     var variant = e.variant;
                     var query = e.variant.chromosome + ':' + e.variant.start + '-' + e.variant.end;
-                    var params = _.omit(this.variantBrowserGrid.store.proxy.extraParams, 'region', 'studies');
+                    var params = _.omit(this.variantBrowserGrid.store.proxy.extraParams, 'region');
+
+                    console.log(params)
+                    console.log('+++++=====++++')
 
                     EvaManager.get({
                         category: 'segments',
@@ -1038,7 +1053,6 @@ EvaVariantWidget.prototype = {
                         params: params,
                         success: function (response) {
                             try {
-
                                 var variantSourceEntries = response.response[0].result[0].sourceEntries;
 
                             } catch (e) {

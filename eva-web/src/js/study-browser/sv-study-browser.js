@@ -467,7 +467,7 @@ SvStudyBrowser.prototype = {
         });
 
         this.formPanel = Ext.create('Ext.form.Panel', {
-            title: 'Structural Variations Browser',
+            title: 'Structural Variants Browser',
             border: this.border,
             header: this.headerConfig,
             layout: {

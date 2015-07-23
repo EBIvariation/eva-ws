@@ -209,16 +209,23 @@ EvaVariantWidgetPanel.prototype = {
             _this._loadListStudies(studyFilter, e.species);
             var plantSpecies = ['slycopersicum_sl240','zmays_b73refgenv3','zmays_agpv3'];
 
+            //setting default positional value
+            if(e.species == 'agambiae_agamp4'){
+                _this.formPanelVariantFilter.panel.getForm().findField('region').setValue('X:10000000-11000000')
+            }else{
+                _this.formPanelVariantFilter.panel.getForm().findField('region').setValue(_this.position)
+            }
+
             //hidding tabs for species
             if(e.species =='zmays_agpv3'){
-                _this.variantWidget.toolTabPanel.getComponent(2).tab.hide()
-                _this.variantWidget.toolTabPanel.getComponent(4).tab.show()
-            }else if(e.species =='chircus_10' ||  e.species == 'olatipes_hdrr'){
                 _this.variantWidget.toolTabPanel.getComponent(4).tab.hide()
-                _this.variantWidget.toolTabPanel.getComponent(2).tab.show()
-            }else{
-                _this.variantWidget.toolTabPanel.getComponent(2).tab.show()
+                _this.variantWidget.toolTabPanel.getComponent(3).tab.show()
+            }else if(e.species =='chircus_10' ||  e.species == 'olatipes_hdrr'){
+                _this.variantWidget.toolTabPanel.getComponent(3).tab.hide()
                 _this.variantWidget.toolTabPanel.getComponent(4).tab.show()
+            }else{
+                _this.variantWidget.toolTabPanel.getComponent(4).tab.show()
+                _this.variantWidget.toolTabPanel.getComponent(3).tab.show()
             }
 
             _this.variantWidget.toolTabPanel.setActiveTab(0);
