@@ -368,12 +368,12 @@ SvStudyBrowser.prototype = {
 
         this.paging = Ext.create('Ext.PagingToolbar', {
             store: _this.studiesStore,
-            id: _this.id + "_pagingToolbar",
+            id: "_pagingToolbar",
             pageSize: _this.pageSize,
             displayInfo: true,
             displayMsg: 'Studies {0} - {1} of {2}',
             emptyMsg: "No Studies to display",
-            afterPageText:'' ,
+//            afterPageText:'' ,
         });
 
 
