@@ -232,7 +232,7 @@ EvaClinicalWidgetPanel.prototype = {
             }];
 
         var variationTypeFilter = new EvaClinVarFilterFormPanel({
-            data: variationType,
+            data: _.sortBy(variationType, 'name'),
             filterType:'type',
             title:'Variation Type',
             height:200,
@@ -285,7 +285,7 @@ EvaClinicalWidgetPanel.prototype = {
             }];
 
         var reviewStatusFilter = new EvaClinVarFilterFormPanel({
-            data: reviewStatusType,
+            data: _.sortBy(reviewStatusType, 'name'),
             filterType:'review',
             title:'Review Status',
             height:200,
@@ -386,7 +386,7 @@ EvaClinicalWidgetPanel.prototype = {
             }];
 
         var  clinicalSignfcFilter = new EvaClinVarFilterFormPanel({
-            data: clinicalSignfcType,
+            data:_.sortBy(clinicalSignfcType, 'name'),
             filterType:'significance',
             title:'Clinical Significance',
             height:320,
