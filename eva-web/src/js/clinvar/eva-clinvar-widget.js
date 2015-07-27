@@ -330,8 +330,10 @@ EvaClinVarWidget.prototype = {
                             },groupedArr);
                             so_array =  _.compact(so_array);
                             meta.tdAttr = 'data-qtip="'+_.first(so_array)+'"';
+                            var color = _.findWhere(consequenceTypesColors, {id: _.first(so_array)}).color;
                             return value ? Ext.String.format(
-                                '<tpl>'+_.first(so_array)+'</tpl>',
+//                                '<tpl>'+_.first(so_array)+'</tpl>',
+                                '<tpl>'+_.first(so_array)+'&nbsp;<svg width="20" height="10"><rect x="0" y="3" width="15" height="10" fill="'+color+'"></svg></tpl>',
                                 value
                             ) : '';
                         }else{
