@@ -208,8 +208,10 @@ ClinvarSummaryPanel.prototype = {
                    }
                },this[key]);
                var transcripts = transcript_array.join('\n');
-               var color = _.findWhere(consequenceTypesColors, {id:key}).color;
-               so_array[index] = ''+key+'&nbsp;<svg width="20" height="10"><rect x="0" y="2" width="15" height="10" fill="'+color+'"></svg>(<span title="'+transcripts+'">'+this[key].length+'</span>)';
+               var so_term_detail = _.findWhere(consequenceTypesColors, {id:key});
+               var color = so_term_detail.color;
+               var impact = so_term_detail.impact;
+               so_array[index] = ''+key+'&nbsp;<svg width="20" height="10"><rect x="0" y="2" width="15" height="10" fill="'+color+'"><title>'+impact+'</title></rect></svg>(<span title="'+transcripts+'">'+this[key].length+'</span>)';
                console.log(color)
                console.log('+++++=====+++++')
 //               so_chart_array.push([key,this[key].length]);

@@ -401,11 +401,13 @@ EvaVariantWidget.prototype = {
                             },groupedArr);
                             so_array =  _.compact(so_array);
                             meta.tdAttr = 'data-qtip="'+so_array.join('\n')+'"';
-                            var color = _.findWhere(consequenceTypesColors, {id: _.first(so_array)}).color;
+                            var so_term_detail = _.findWhere(consequenceTypesColors, {id: _.first(so_array)});
+                            var color = so_term_detail.color;
+                            var impact = so_term_detail.impact;
                             return value ? Ext.String.format(
 //                                '<tpl>'+so_array.join()+'</tpl>',
 //                                '<tpl>'+_.first(so_array)+'</tpl>',
-                                '<tpl>'+_.first(so_array)+'&nbsp;<svg width="20" height="10"><rect x="0" y="3" width="15" height="10" fill="'+color+'"></svg></tpl>',
+                                '<tpl>'+_.first(so_array)+'&nbsp;<svg width="20" height="10"><rect x="0" y="3" width="15" height="10" fill="'+color+'"><title>'+impact+'</title></rect></svg></tpl>',
                                 value
                             ) : '';
                         }else{
