@@ -208,7 +208,10 @@ ClinvarSummaryPanel.prototype = {
                    }
                },this[key]);
                var transcripts = transcript_array.join('\n');
-               so_array[index] = ''+key+' (<span title="'+transcripts+'">'+this[key].length+'</span>)';
+               var color = _.findWhere(consequenceTypesColors, {id:key}).color;
+               so_array[index] = ''+key+'&nbsp;<svg width="20" height="10"><rect x="0" y="2" width="15" height="10" fill="'+color+'"></svg>(<span title="'+transcripts+'">'+this[key].length+'</span>)';
+               console.log(color)
+               console.log('+++++=====+++++')
 //               so_chart_array.push([key,this[key].length]);
            },groupedArr);
 
