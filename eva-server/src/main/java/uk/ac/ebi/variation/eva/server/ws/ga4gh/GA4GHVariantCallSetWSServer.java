@@ -1,5 +1,6 @@
 package uk.ac.ebi.variation.eva.server.ws.ga4gh;
 
+import io.swagger.annotations.Api;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -26,16 +27,13 @@ import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/{version}/ga4gh/callsets")
+@Path("/v1/ga4gh/callsets")
 @Produces(MediaType.APPLICATION_JSON)
+@Api(tags = { "ga4gh", "samples" })
 public class GA4GHVariantCallSetWSServer extends EvaWSServer {
     
-    public GA4GHVariantCallSetWSServer() {
-        super();
-    }
-
-    public GA4GHVariantCallSetWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
-        super(version, uriInfo, hsr);
+    public GA4GHVariantCallSetWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
+        super(uriInfo, hsr);
     }
 
     

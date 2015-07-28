@@ -7,11 +7,9 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.base.Splitter;
-import com.wordnik.swagger.annotations.ApiParam;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import io.swagger.annotations.ApiParam;
+
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -35,14 +33,10 @@ import uk.ac.ebi.variation.eva.server.exception.VersionException;
 /**
  * Created by imedina on 01/04/14.
  */
-@Path("/{version}")
 @Produces("application/json")
 public class EvaWSServer {
 
-    @DefaultValue("")
-    @PathParam("version")
-    @ApiParam(name = "version", value = "EVA REST WS version", defaultValue = "v1")
-    protected String version;
+    protected final String version = "v1";
 
     @DefaultValue("Homo sapiens")
     @QueryParam("species")
@@ -121,8 +115,7 @@ public class EvaWSServer {
         logger.info("EvaWSServer: in 'constructor'");
     }
 
-    public EvaWSServer(@PathParam("version") String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
-        this.version = version;
+    public EvaWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
         this.uriInfo = uriInfo;
         this.httpServletRequest = hsr;
 
@@ -132,7 +125,6 @@ public class EvaWSServer {
     }
 
     protected void init(String version, UriInfo uriInfo) {
-
         startTime = System.currentTimeMillis();
         queryResponse = new QueryResponse();
 
@@ -172,11 +164,11 @@ public class EvaWSServer {
         outputFormat = (outputFormat != null && !outputFormat.equals("")) ? outputFormat : "json";
     }
 
-    @GET
-    @Path("/test")
-    public Response help() {
-        return createOkResponse("No help available yet");
-    }
+//    @GET
+//    @Path("/test")
+//    public Response help() {
+//        return createOkResponse("No help available yet");
+//    }
 
 
     protected Response createOkResponse(Object obj) {

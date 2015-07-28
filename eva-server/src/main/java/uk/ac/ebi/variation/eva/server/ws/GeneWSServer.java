@@ -9,12 +9,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
@@ -25,20 +21,19 @@ import uk.ac.ebi.variation.eva.server.exception.VersionException;
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/{version}/genes")
+@Path("/v1/genes")
 @Produces("application/json")
-@Api(value = "Gene", description = "Gene RESTful Web Services API")
+@Api(tags = { "genes" })
 public class GeneWSServer extends EvaWSServer {
 
 
-    public GeneWSServer(@DefaultValue("") @PathParam("version")String version,
-                        @Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
-        super(version, uriInfo, hsr);
+    public GeneWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
+        super(uriInfo, hsr);
     }
 
     @GET
     @Path("/{gene}/variants")
-    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants of a gene", response = QueryResponse.class)
+//    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants of a gene", response = QueryResponse.class)
     public Response getVariantsByGene(@PathParam("gene") String geneId,
                                       @QueryParam("ref") String reference,
                                       @QueryParam("alt") String alternate, 

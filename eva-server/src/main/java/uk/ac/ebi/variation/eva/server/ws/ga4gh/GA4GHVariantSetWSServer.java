@@ -1,5 +1,6 @@
 package uk.ac.ebi.variation.eva.server.ws.ga4gh;
 
+import io.swagger.annotations.Api;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -10,7 +11,6 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -33,16 +33,13 @@ import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/{version}/ga4gh/variantsets")
+@Path("/v1/ga4gh/variantsets")
 @Produces(MediaType.APPLICATION_JSON)
+@Api(tags = { "ga4gh", "files" })
 public class GA4GHVariantSetWSServer extends EvaWSServer {
     
-    public GA4GHVariantSetWSServer() {
-        super();
-    }
-
-    public GA4GHVariantSetWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
-        super(version, uriInfo, hsr);
+    public GA4GHVariantSetWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
+        super(uriInfo, hsr);
     }
 
     @GET

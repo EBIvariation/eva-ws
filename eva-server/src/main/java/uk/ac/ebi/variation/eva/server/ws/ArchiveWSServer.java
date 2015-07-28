@@ -2,19 +2,17 @@ package uk.ac.ebi.variation.eva.server.ws;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.swagger.annotations.Api;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -35,8 +33,9 @@ import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/{version}/meta")
+@Path("/v1/meta")
 @Produces(MediaType.APPLICATION_JSON)
+@Api(tags = { "archive" })
 public class ArchiveWSServer extends EvaWSServer {
     
     private ArchiveDBAdaptor archiveDgvaDbAdaptor;
@@ -49,9 +48,9 @@ public class ArchiveWSServer extends EvaWSServer {
         super();
     }
 
-    public ArchiveWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
+    public ArchiveWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
             throws NamingException, IOException {
-        super(version, uriInfo, hsr);
+        super(uriInfo, hsr);
         archiveDgvaDbAdaptor = new ArchiveDgvaDBAdaptor();
         archiveEvaproDbAdaptor = new ArchiveEvaproDBAdaptor();
         studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();

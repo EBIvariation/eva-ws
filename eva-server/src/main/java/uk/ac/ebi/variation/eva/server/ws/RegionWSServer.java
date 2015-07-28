@@ -9,10 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
 import org.opencb.biodata.models.feature.Region;
-import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
@@ -22,20 +20,20 @@ import uk.ac.ebi.variation.eva.server.exception.VersionException;
 /**
  * Created by imedina on 01/04/14.
  */
-@Path("/{version}/segments")
+@Path("/v1/segments")
 @Produces("application/json")
-@Api(value = "Region", description = "Region RESTful Web Services API")
+@Api(tags = { "segments" })
 public class RegionWSServer extends EvaWSServer {
 
 
-    public RegionWSServer(@DefaultValue("") @PathParam("version")String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr)
+    public RegionWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr)
             throws IOException {
-        super(version, uriInfo, hsr);
+        super(uriInfo, hsr);
     }
 
     @GET
     @Path("/{region}/variants")
-    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants from region", response = QueryResponse.class)
+//    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants from region", response = QueryResponse.class)
     public Response getVariantsByRegion(@PathParam("region") String regionId,
                                         @QueryParam("ref") String reference,
                                         @QueryParam("alt") String alternate,

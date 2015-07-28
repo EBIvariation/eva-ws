@@ -10,9 +10,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import java.util.Properties;
+import io.swagger.annotations.Api;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
@@ -24,23 +22,22 @@ import uk.ac.ebi.variation.eva.server.exception.VersionException;
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/{version}/files")
+@Path("/v1/files")
 @Produces("application/json")
-@Api(value = "Files", description = "Files RESTful Web Services API")
+@Api(tags = { "files" })
 public class FilesWSServer extends EvaWSServer {
 
     private final VariantSourceDBAdaptor variantSourceEvaproDbAdaptor;
 
 
-    public FilesWSServer(@DefaultValue("") @PathParam("version") String version,
-                         @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws NamingException, IOException {
-        super(version, uriInfo, hsr);
+    public FilesWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws NamingException, IOException {
+        super(uriInfo, hsr);
         variantSourceEvaproDbAdaptor = new VariantSourceEvaproDBAdaptor();
     }
 
     @GET
     @Path("/all")
-    @ApiOperation(httpMethod = "GET", value = "Gets the files of a species")
+//    @ApiOperation(httpMethod = "GET", value = "Gets the files of a species")
     public Response getFiles(@QueryParam("species") String species) 
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         try {
@@ -55,7 +52,7 @@ public class FilesWSServer extends EvaWSServer {
 
     @GET
     @Path("/{files}/url")
-    @ApiOperation(httpMethod = "GET", value = "Gets the URL of a file")
+//    @ApiOperation(httpMethod = "GET", value = "Gets the URL of a file")
     public Response getFileUrl(@PathParam("files") String filenames) {
         try {
             checkParams();
