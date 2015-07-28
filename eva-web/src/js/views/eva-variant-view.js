@@ -199,13 +199,12 @@ EvaVariantView.prototype = {
             studyEl.appendChild(studyElDiv);
             _this.createVariantStatsPanel(studyElDiv);
 
-            var popStatsEl = document.querySelector("#population-stats-grid");
-            var popStatsElDiv = document.createElement("div");
+//            var popStatsEl = document.querySelector("#population-stats-grid");
+            var popStatsElDiv =  document.createElement("div");
             popStatsElDiv.setAttribute('class', 'eva variant-widget-panel ocb-variant-stats-panel');
-            //       studyElDiv.innerHTML = '<h4>Population Stats</h4>';
-            popStatsEl.appendChild(popStatsElDiv);
+            consqTypeEl.appendChild(popStatsElDiv);//
             var varinatData = {sourceEntries:_this.variant[0].sourceEntries, species:_this.species};
-            _this._createPopulationStatsPanel(popStatsElDiv,varinatData);
+            _this._createPopulationStatsPanel(studyElDiv,varinatData);
 
     },
     _renderSummaryData: function (data) {
@@ -305,11 +304,11 @@ EvaVariantView.prototype = {
 
         });
 
-        variantPopulationStatsPanel.load(data.sourceEntries,data.species);
+        variantPopulationStatsPanel.load(data.sourceEntries,{species:data.species});
         variantPopulationStatsPanel.draw();
 
 
-//        return variantTranscriptGrid;
+        return variantPopulationStatsPanel;
     },
     _loadExampleData: function (data) {
             var data = {"chromosome": "1", "start": 10001, "end": 10001, "referenceAllele": "T", "genes": [], "effects": {"G": [
@@ -373,8 +372,8 @@ EvaVariantView.prototype = {
                                     '<li class="active"><a href="#summary">Summary</a></li>'+
                                     '<li><a href="#consequenceTypes">Consequence Types</a></li>'+
 //                                    '<li><a href="#conservedRegion">Conserved Region</a></li>'+
-                                    '<li><a href="#populationStats">Population Stats</a></li>'+
                                     '<li><a href="#studies">Studies</a></li>'+
+                                    '<li><a href="#populationStats">Population Stats</a></li>'+
                                '</ul>'+
                             '</div>'+
                             '<div id="scroll-able" class="col-sm-10 col-md-10 col-lg-10">'+
@@ -396,16 +395,17 @@ EvaVariantView.prototype = {
 //                                        '<div id="conserved-region-grid"></div>'+
 //                                    '</div>'+
 //                                '</div>'+
+                                '<div  id="studies" class="row">'+
+                                    '<div class="col-md-12">'+
+                                    '   <div id="studies-grid"></div>'+
+                                    '</div>'+
+                                '</div>'+
                                 '<div  id="populationStats" class="row">'+
                                     '<div class="col-md-12">'+
                                         '<div id="population-stats-grid"></div>'+
                                     '</div>'+
                                 '</div>'+
-                                '<div  id="studies" class="row">'+
-                                    '<div class="col-md-12">'+
-                                        '<div id="studies-grid"></div>'+
-                                    '</div>'+
-                                '</div>'+
+
                             '</div>'+
                         '</div>'+
                     '</div>'

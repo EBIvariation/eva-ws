@@ -435,7 +435,7 @@ SnvStudyBrowser.prototype = {
         });
 
         this.formPanel = Ext.create('Ext.form.Panel', {
-            title: 'Short Genetic Variations Browser',
+            title: 'Short Genetic Variants Browser',
             border: this.border,
             header: this.headerConfig,
             layout: {

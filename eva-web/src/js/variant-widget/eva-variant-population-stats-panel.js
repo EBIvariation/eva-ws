@@ -96,23 +96,49 @@ EvaVariantPopulationStatsPanel.prototype = {
 //        var availableStudies = ['301','8616'];
         var availableStudies = ['301','8616', 'PRJEB6930','PRJEB4019'];
 
-        for (var key in data) {
-            console.log(data)
-            var study = data[key];
-            if(params.species == 'hsapiens_grch37'){
-                if(_.indexOf(availableStudies, study.studyId) > -1){
+        if(params.species == 'hsapiens_grch37'){
+            for (var key in data) {
+                console.log(data)
+                var study = data[key];
+                if(params.species == 'hsapiens_grch37'){
+                    if(_.indexOf(availableStudies, study.studyId) > -1){
+                        var studyPanel = this._createPopulationGridPanel(study,params);
+                    }else{
+                        Ext.getCmp('populationStats').update('<h4>Population Statistics</h4><h5 style="color:#436883;margin-left:-15px;font-size:14px;">Currently for 1000 Genomes Project data only</h5>')
+                    }
+                }else{
                     var studyPanel = this._createPopulationGridPanel(study,params);
                 }
-            }else{
-                var studyPanel = this._createPopulationGridPanel(study,params);
+
+
+                panels.push(studyPanel);
+
             }
-
-
-            panels.push(studyPanel);
-
+            this.studiesContainer.add(panels);
+        }else{
+            var grid = Ext.create('Ext.view.View', {
+                tpl: new Ext.XTemplate(['<div>No Population data available</div>'])
+            });
+            var studyPanel = Ext.create('Ext.panel.Panel', {
+//                header:{
+//                    titlePosition:1
+//                },
+                id:'test',
+                title: '',
+                border: false,
+                layout: {
+                    type: 'vbox',
+                    align: 'fit'
+                },
+                overflowX:true,
+                items: [grid]
+            });
+            Ext.getCmp('populationStats').update('<h4>Population Statistics</h4>')
+            this.studiesContainer.add(studyPanel);
+            Ext.getCmp('test').getHeader().hide();
         }
 
-        this.studiesContainer.add(panels);
+
     },
     _createPanel: function () {
         this.studiesContainer = Ext.create('Ext.container.Container', {
@@ -125,7 +151,7 @@ EvaVariantPopulationStatsPanel.prototype = {
 
         });
 
-        var panel = Ext.create('Ext.container.Container', {
+        this.panel = Ext.create('Ext.container.Container', {
             layout: {
                 type: 'vbox',
                 align: 'stretch'
@@ -145,7 +171,7 @@ EvaVariantPopulationStatsPanel.prototype = {
             ],
             height: this.height
         });
-        return panel;
+        return this.panel;
     },
     _createPopulationGridPanel: function (data,params) {
         var _this = this;

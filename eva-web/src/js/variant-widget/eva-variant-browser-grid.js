@@ -116,7 +116,8 @@ EvaVariantBrowserGrid.prototype = {
             pageSize: _this.pageSize,
             displayInfo: true,
             displayMsg: 'Variants {0} - {1} of {2}',
-            emptyMsg: "No variants to display"
+            emptyMsg: "No variants to display",
+            inputItemWidth:40
         });
 
         var grid = Ext.create('Ext.grid.Panel', {
