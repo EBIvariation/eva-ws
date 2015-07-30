@@ -188,7 +188,7 @@ EvaVariantGenotypeGrid.prototype = {
              width: 800,
 //            height: 300,
              cls:'genotype-grid',
-             margin: 20,
+             margin: 5,
              viewConfig: {
                  emptyText: 'No records to display',
                  enableTextSelection: true

@@ -272,7 +272,7 @@ ClinvarAnnotationPanel.prototype = {
 //                maxHeight:550,
                 autoHeight: true,
                 cls:'genotype-grid',
-                margin: 20,
+                margin: 5,
                 viewConfig: {
                     emptyText: 'No records to display',
                     enableTextSelection: true,

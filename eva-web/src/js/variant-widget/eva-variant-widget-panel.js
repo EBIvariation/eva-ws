@@ -177,7 +177,11 @@ EvaVariantWidgetPanel.prototype = {
                 {name: 'studyName', type: 'string'},
                 {name: 'studyId', type: 'string'}
             ],
-            autoLoad: false
+            autoLoad: false,
+            sorters: [{
+                property: 'studyName',
+                direction: 'ASC'
+            }]
         });
 
         var studyFilter = new EvaStudyFilterFormPanel({
