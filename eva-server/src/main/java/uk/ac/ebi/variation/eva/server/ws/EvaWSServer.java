@@ -1,3 +1,22 @@
+/*
+ * European Variation Archive (EVA) - Open-access database of all types of genetic
+ * variation data from all species
+ *
+ * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.ac.ebi.variation.eva.server.ws;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -7,7 +26,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.base.Splitter;
-import com.wordnik.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiParam;
 
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
@@ -33,14 +52,10 @@ import uk.ac.ebi.variation.eva.server.exception.VersionException;
 /**
  * Created by imedina on 01/04/14.
  */
-@Path("/{version}")
 @Produces("application/json")
 public class EvaWSServer {
 
-    @DefaultValue("")
-    @PathParam("version")
-    @ApiParam(name = "version", value = "EVA REST WS version", defaultValue = "v1")
-    protected String version;
+    protected final String version = "v1";
 
     @DefaultValue("Homo sapiens")
     @QueryParam("species")
@@ -150,8 +165,7 @@ public class EvaWSServer {
         logger.info("EvaWSServer: in 'constructor'");
     }
 
-    public EvaWSServer(@PathParam("version") String version, @Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
-        this.version = version;
+    public EvaWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
         this.uriInfo = uriInfo;
         this.httpServletRequest = hsr;
 
@@ -161,7 +175,6 @@ public class EvaWSServer {
     }
 
     protected void init(String version, UriInfo uriInfo) {
-
         startTime = System.currentTimeMillis();
         queryResponse = new QueryResponse();
 
@@ -201,11 +214,11 @@ public class EvaWSServer {
         outputFormat = (outputFormat != null && !outputFormat.equals("")) ? outputFormat : "json";
     }
 
-    @GET
-    @Path("/test")
-    public Response help() {
-        return createOkResponse("No help available yet");
-    }
+//    @GET
+//    @Path("/test")
+//    public Response help() {
+//        return createOkResponse("No help available yet");
+//    }
 
 
     protected Response createOkResponse(Object obj) {

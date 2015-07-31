@@ -1,7 +1,25 @@
+/*
+ * European Variation Archive (EVA) - Open-access database of all types of genetic
+ * variation data from all species
+ *
+ * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.ac.ebi.variation.eva.server.ws;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -11,7 +29,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.opencb.biodata.models.feature.Region;
-import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
@@ -23,21 +40,20 @@ import uk.ac.ebi.variation.eva.server.exception.VersionException;
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/{version}/variants")
+@Path("/v1/variants")
 @Produces("application/json")
-@Api(value = "Variant", description = "Variant RESTful Web Services API")
+@Api(tags = { "variants" })
 public class VariantWSServer extends EvaWSServer {
 
 
-    public VariantWSServer(@DefaultValue("") @PathParam("version")String version,
-                           @Context UriInfo uriInfo, @Context HttpServletRequest hsr)
+    public VariantWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr)
             throws IOException {
-        super(version, uriInfo, hsr);
+        super(uriInfo, hsr);
     }
 
     @GET
     @Path("/{variantId}/info")
-    @ApiOperation(httpMethod = "GET", value = "Retrieves the info from a list of variants", response = QueryResponse.class)
+//    @ApiOperation(httpMethod = "GET", value = "Retrieves the information about a variant", response = QueryResponse.class)
     public Response getVariantById(@PathParam("variantId") String variantId,
                                    @QueryParam("studies") String studies,
                                    @QueryParam("species") String species) 
@@ -74,7 +90,7 @@ public class VariantWSServer extends EvaWSServer {
 
     @GET
     @Path("/{variantId}/exists")
-    @ApiOperation(httpMethod = "GET", value = "Find if a list of variants exist", response = QueryResponse.class)
+//    @ApiOperation(httpMethod = "GET", value = "Checks if a variants exist", response = QueryResponse.class)
     public Response checkVariantExists(@PathParam("variantId") String variantId,
                                        @QueryParam("studies") String studies,
                                        @QueryParam("species") String species) 

@@ -1,8 +1,24 @@
+/*
+ * European Variation Archive (EVA) - Open-access database of all types of genetic
+ * variation data from all species
+ *
+ * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.ac.ebi.variation.eva.server.ws;
 
-import com.mongodb.BasicDBObject;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import javax.naming.NamingException;
@@ -11,7 +27,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.opencb.datastore.core.QueryResponse;
+import com.mongodb.BasicDBObject;
+import io.swagger.annotations.Api;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
@@ -27,25 +44,24 @@ import uk.ac.ebi.variation.eva.server.exception.VersionException;
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/{version}/studies")
+@Path("/v1/studies")
 @Produces("application/json")
-@Api(value = "Study", description = "Study RESTful Web Services API")
+@Api(tags = { "studies" })
 public class StudyWSServer extends EvaWSServer {
 
     private StudyDBAdaptor studyDgvaDbAdaptor;
     private StudyDBAdaptor studyEvaproDbAdaptor;
 
 
-    public StudyWSServer(@DefaultValue("") @PathParam("version") String version,
-                         @Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException, NamingException {
-        super(version, uriInfo, hsr);
+    public StudyWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException, NamingException {
+        super(uriInfo, hsr);
         studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
         studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
     }
 
     @GET
     @Path("/{study}/files")
-    @ApiOperation(httpMethod = "GET", value = "Retrieves all the files from a study", response = QueryResponse.class)
+//    @ApiOperation(httpMethod = "GET", value = "Retrieves all the files from a study", response = QueryResponse.class)
     public Response getFilesByStudy(@PathParam("study") String study,
                                     @QueryParam("species") String species) 
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
@@ -75,7 +91,7 @@ public class StudyWSServer extends EvaWSServer {
 
     @GET
     @Path("/{study}/view")
-    @ApiOperation(httpMethod = "GET", value = "The info of a study", response = QueryResponse.class)
+//    @ApiOperation(httpMethod = "GET", value = "The info of a study", response = QueryResponse.class)
     public Response getStudy(@PathParam("study") String study,
                              @QueryParam("species") String species) 
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {

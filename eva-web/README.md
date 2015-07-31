@@ -1,4 +1,0 @@
-EVA
-========
-
-EBI EVA project...

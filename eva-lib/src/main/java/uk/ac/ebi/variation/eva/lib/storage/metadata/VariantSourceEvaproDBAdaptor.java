@@ -1,5 +1,25 @@
+/*
+ * European Variation Archive (EVA) - Open-access database of all types of genetic
+ * variation data from all species
+ *
+ * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.ac.ebi.variation.eva.lib.storage.metadata;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
@@ -9,6 +29,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.InitialContext;
@@ -18,6 +39,7 @@ import org.opencb.biodata.models.variant.stats.VariantSourceStats;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.lib.datastore.EvaproUtils;
 
 /**
@@ -29,13 +51,13 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
     private DataSource ds;
     private String evaVersion;
 
-    public VariantSourceEvaproDBAdaptor(String evaVersion) throws NamingException {
-        if (evaVersion == null) {
-            throw new IllegalArgumentException("Please provide the EVA version number");
-        }
+    public VariantSourceEvaproDBAdaptor() throws NamingException, IOException {
         InitialContext cxt = new InitialContext();
-        ds = (DataSource) cxt.lookup( "java:/comp/env/jdbc/evapro" );
-        this.evaVersion = evaVersion;
+        Properties properties = new Properties(); 
+        properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
+        String dsName = properties.getProperty("eva.evapro.datasource", "evapro");
+        this.ds = (DataSource) cxt.lookup("java:/comp/env/jdbc/" + dsName);
+        this.evaVersion = properties.getProperty("eva.version");
     }
     
     @Override
