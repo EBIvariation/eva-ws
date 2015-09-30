@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
-import org.opencb.biodata.models.variant.VariantStudy;
 import org.opencb.datastore.core.QueryResult;
+import uk.ac.ebi.variation.eva.lib.models.VariantStudy;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
 
 /**

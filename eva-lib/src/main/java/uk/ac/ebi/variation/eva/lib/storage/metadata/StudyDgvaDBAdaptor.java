@@ -34,12 +34,12 @@ import java.util.logging.Logger;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import org.opencb.biodata.models.variant.VariantStudy;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.lib.datastore.EvaproUtils;
+import uk.ac.ebi.variation.eva.lib.models.VariantStudy;
 
 /**
  *
@@ -82,13 +82,17 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
                 
                 // Build the variant study object
                 URI uri = null;
+                String[] publications = null;
                 try {
                     uri = new URI(rs.getString("study_url"));
+                    String pubmedIds = rs.getString("pubmed_id");
+                    publications = (pubmedIds == null) ? null : pubmedIds.split(", ");
                 } catch(URISyntaxException | SQLException | NullPointerException ex) { }
                 VariantStudy study = new VariantStudy(rs.getString("display_name"), rs.getString("study_accession"), null, 
                         rs.getString("study_description"), taxIds, rs.getString("common_name"), rs.getString("scientific_name"), 
                         null, null, null, null, EvaproUtils.stringToStudyType(rs.getString("study_type")), rs.getString("analysis_type"), 
-                        null, rs.getString("assembly_name"), rs.getString("platform_name"), uri, rs.getInt("variant_count"), -1);
+                        null, rs.getString("assembly_name"), rs.getString("platform_name"), uri, publications,
+                        rs.getInt("variant_count"), -1);
                 result.add(study);
             }
             long end = System.currentTimeMillis();
@@ -146,13 +150,17 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
                 
                 // Build the variant study object
                 URI uri = null;
+                String[] publications = null;
                 try {
                     uri = new URI(rs.getString("study_url"));
+                    String pubmedIds = rs.getString("pubmed_id");
+                    publications = (pubmedIds == null) ? null : pubmedIds.split(", ");
                 } catch(URISyntaxException | SQLException | NullPointerException ex) { }
                 VariantStudy study = new VariantStudy(rs.getString("display_name"), rs.getString("study_accession"), null, 
                         rs.getString("study_description"), taxIds, rs.getString("common_name"), rs.getString("scientific_name"), 
                         null, null, null, null, EvaproUtils.stringToStudyType(rs.getString("study_type")), rs.getString("analysis_type"), 
-                        null, rs.getString("assembly_name"), rs.getString("platform_name"), uri, rs.getInt("variant_count"), -1);
+                        null, rs.getString("assembly_name"), rs.getString("platform_name"), uri, publications,
+                        rs.getInt("variant_count"), -1);
                 result.add(study);
             }
             long end = System.currentTimeMillis();
