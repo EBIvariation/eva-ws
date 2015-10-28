@@ -107,14 +107,6 @@ public class ArchiveWSServer extends EvaWSServer {
     }
     
     @GET
-    @Path("/studies/list")
-    public Response getStudies(@QueryParam("species") String species) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
-        return createOkResponse(studyMongoDbAdaptor.listStudies());
-    }
-    
-    @GET
     @Path("/studies/all")
     public Response getStudies(@QueryParam("species") String species,
                                @QueryParam("type") String types,
@@ -131,6 +123,14 @@ public class ArchiveWSServer extends EvaWSServer {
         } else {
             return createOkResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
         }
+    }
+    
+    @GET
+    @Path("/studies/list")
+    public Response getBrowsableStudies(@QueryParam("species") String species) 
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+        StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
+        return createOkResponse(studyMongoDbAdaptor.listStudies());
     }
     
     @GET

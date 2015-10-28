@@ -14,6 +14,15 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>uk.ac.ebi.variation.eva</groupId>
             <artifactId>eva-lib</artifactId>
         </dependency>
@@ -34,6 +43,7 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
+        
     </dependencies>
     
     <build>
