@@ -133,7 +133,6 @@ public class ArchiveWSServer extends EvaWSServer {
             StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
             return createOkResponse(studyMongoDbAdaptor.listStudies());
         } catch (IllegalArgumentException ex) {
-            System.out.println("Creating user error response");
             return createUserErrorResponse(ex);
         }
     }
