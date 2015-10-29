@@ -114,7 +114,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
             // Create the custom response for the GA4GH API
             return createJsonResponse(new GASearchVariantsResponse(gaVariants, nextPageToken));
         } else {
-            return createErrorResponse("The total size of all regions provided can't exceed 1 million positions. "
+            return createJsonUserErrorResponse("The total size of all regions provided can't exceed 1 million positions. "
                     + "If you want to browse a larger number of positions, please provide the parameter 'histogram=true'");
         }
         

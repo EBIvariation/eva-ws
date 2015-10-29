@@ -70,7 +70,7 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         
         if (files == null || files.isEmpty()) {
-            return createErrorResponse("The 'variantSetIds' argument must not be empty");
+            return createJsonUserErrorResponse("The 'variantSetIds' argument must not be empty");
         }
         
         VariantSourceDBAdaptor dbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor("hsapiens_grch37");
@@ -86,7 +86,7 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
         QueryResult<List<String>> qr;
         if (filesList.isEmpty()) {
             // TODO This should accept a global search for all call sets (samples) in the DB
-            return createErrorResponse("Please provide at least one variant set to search for");
+            return createJsonUserErrorResponse("Please provide at least one variant set to search for");
         } else {
             qr = dbAdaptor.getSamplesBySources(filesList, queryOptions);
         }
