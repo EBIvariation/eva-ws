@@ -24,6 +24,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static com.jayway.restassured.RestAssured.*;
 import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
 import java.util.List;
 import java.util.Map;
 
@@ -32,34 +33,39 @@ public class ArchiveWSServerTest {
     
     @Test
     public void testCountFiles() throws URISyntaxException {
-        String response = get(new URI("/eva/webservices/rest/v1/meta/files/count")).asString();
-        List queryResponse = JsonPath.from(response).getList("response");
+        Response response = get(new URI("/eva/webservices/rest/v1/meta/files/count"));
+        response.then().statusCode(200);
+        
+        List queryResponse = JsonPath.from(response.asString()).getList("response");
         assertEquals(1, queryResponse.size());
         
-        List<Integer> result = JsonPath.from(response).getJsonObject("response[0].result");
+        List<Integer> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         assertEquals(1, result.size());
         assertTrue(result.get(0) >= 0);
     }
     
     @Test
     public void testCountSpecies() throws URISyntaxException {
-        String response = get(new URI("/eva/webservices/rest/v1/meta/species/count")).asString();
-        List queryResponse = JsonPath.from(response).getList("response");
+        Response response = get(new URI("/eva/webservices/rest/v1/meta/species/count"));
+        response.then().statusCode(200);
+        
+        List queryResponse = JsonPath.from(response.asString()).getList("response");
         assertEquals(1, queryResponse.size());
         
-        List<Integer> result = JsonPath.from(response).getJsonObject("response[0].result");
+        List<Integer> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         assertEquals(1, result.size());
         assertTrue(result.get(0) >= 0);
     }
 
     @Test
     public void testGetSpecies() throws URISyntaxException {
-        String response = get(new URI("/eva/webservices/rest/v1/meta/species/list")).asString();
-        System.out.println(response);
-        List queryResponse = JsonPath.from(response).getList("response");
+        Response response = get(new URI("/eva/webservices/rest/v1/meta/species/list"));
+        response.then().statusCode(200);
+        
+        List queryResponse = JsonPath.from(response.asString()).getList("response");
         assertEquals(1, queryResponse.size());
         
-        List<Map> result = JsonPath.from(response).getJsonObject("response[0].result");
+        List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         assertTrue(result.size() >= 1);
         
         for (Map m : result) {
@@ -78,7 +84,7 @@ public class ArchiveWSServerTest {
             
             assertTrue(missingField, m.containsKey("taxonomyId"));
             assertTrue(missingField, m.containsKey("taxonomyCode"));
-            assertTrue(missingField, m.containsKey("taxonomyCommonName"));
+//            assertTrue(missingField, m.containsKey("taxonomyCommonName")); // This is not really mandatory
             assertTrue(missingField, m.containsKey("taxonomyEvaName"));
             assertTrue(missingField, m.containsKey("taxonomyScientificName"));
         }
@@ -86,11 +92,13 @@ public class ArchiveWSServerTest {
     
     @Test
     public void testGetLoadedSpecies() throws URISyntaxException {
-        String response = get(new URI("/eva/webservices/rest/v1/meta/species/list")).asString();
-        List queryResponse = JsonPath.from(response).getList("response");
+        Response response = get(new URI("/eva/webservices/rest/v1/meta/species/list"));
+        response.then().statusCode(200);
+        
+        List queryResponse = JsonPath.from(response.asString()).getList("response");
         assertEquals(1, queryResponse.size());
         
-        List<Map> result = JsonPath.from(response).getJsonObject("response[0].result");
+        List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         assertTrue(result.size() >= 1);
         
         for (Map m : result) {
@@ -109,7 +117,7 @@ public class ArchiveWSServerTest {
             
             assertTrue(missingField, m.containsKey("taxonomyId"));
             assertTrue(missingField, m.containsKey("taxonomyCode"));
-            assertTrue(missingField, m.containsKey("taxonomyCommonName"));
+//            assertTrue(missingField, m.containsKey("taxonomyCommonName")); // This is not really mandatory
             assertTrue(missingField, m.containsKey("taxonomyEvaName"));
             assertTrue(missingField, m.containsKey("taxonomyScientificName"));
         }
@@ -130,17 +138,33 @@ public class ArchiveWSServerTest {
     
     @Test
     public void testCountStudies() throws URISyntaxException {
-        String response = get(new URI("/eva/webservices/rest/v1/meta/studies/count")).asString();
-        List queryResponse = JsonPath.from(response).getList("response");
+        Response response = get(new URI("/eva/webservices/rest/v1/meta/studies/count"));
+        response.then().statusCode(200);
+        
+        List queryResponse = JsonPath.from(response.asString()).getList("response");
         assertEquals(1, queryResponse.size());
         
-        List<Integer> result = JsonPath.from(response).getJsonObject("response[0].result");
+        List<Integer> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         assertEquals(1, result.size());
         assertTrue(result.get(0) >= 0);
     }
 
     @Test
-    public void testGetBrowsableStudiesBySpecies() throws Exception {
+    public void testGetBrowsableStudiesNoSpecies() throws URISyntaxException {
+        Response response = get(new URI("/eva/webservices/rest/v1/meta/studies/list"));
+        response.then().statusCode(400);
+    }
+
+    @Test
+    public void testGetBrowsableStudiesBySpecies() throws URISyntaxException {
+        Response response = given().param("species", "hsapiens_grch37").get(new URI("/eva/webservices/rest/v1/meta/studies/list"));
+        response.then().statusCode(200);
+        
+        List queryResponse = JsonPath.from(response.asString()).getList("response");
+        assertEquals(1, queryResponse.size());
+        
+        List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
+        assertTrue(result.size() >= 1);
     }
 
     @Test

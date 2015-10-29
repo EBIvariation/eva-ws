@@ -96,7 +96,7 @@ public class ArchiveWSServer extends EvaWSServer {
             
             return createOkResponse(archiveEvaproDbAdaptor.getSpecies(properties.getProperty("eva.version"), loaded));
         } catch (IOException ex) {
-            return createErrorResponse(ex.toString());
+            return createErrorResponse(ex);
         }
     }
     
@@ -129,8 +129,13 @@ public class ArchiveWSServer extends EvaWSServer {
     @Path("/studies/list")
     public Response getBrowsableStudies(@QueryParam("species") String species) 
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
-        return createOkResponse(studyMongoDbAdaptor.listStudies());
+        try {
+            StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
+            return createOkResponse(studyMongoDbAdaptor.listStudies());
+        } catch (IllegalArgumentException ex) {
+            System.out.println("Creating user error response");
+            return createUserErrorResponse(ex);
+        }
     }
     
     @GET
