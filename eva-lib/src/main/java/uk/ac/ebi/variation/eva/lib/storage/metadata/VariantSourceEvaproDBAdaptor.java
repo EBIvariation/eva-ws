@@ -207,7 +207,7 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
             
             while (rs.next()) {
                 results.add(new QueryResult(rs.getString(1), ((Long) (System.currentTimeMillis() - start)).intValue(), 
-                        1, 1, null, null, Arrays.asList(new URL("ftp:/" + rs.getString(2)))));
+                        1, 1, null, null, Arrays.asList(new URL("ftp:/" + rs.getString(1)))));
             }
             
         } catch (SQLException | MalformedURLException ex) {
