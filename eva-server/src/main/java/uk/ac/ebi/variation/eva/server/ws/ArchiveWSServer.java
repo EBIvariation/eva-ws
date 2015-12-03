@@ -89,12 +89,12 @@ public class ArchiveWSServer extends EvaWSServer {
     }
     @GET
     @Path("/species/list")
-    public Response getSpecies(@DefaultValue("false") @QueryParam("loaded") boolean loaded) {
+    public Response getSpecies() {
         try {
             Properties properties = new Properties();
             properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
             
-            return createOkResponse(archiveEvaproDbAdaptor.getSpecies(properties.getProperty("eva.version"), loaded));
+            return createOkResponse(archiveEvaproDbAdaptor.getSpecies(properties.getProperty("eva.version"), true));
         } catch (IOException ex) {
             return createErrorResponse(ex);
         }
