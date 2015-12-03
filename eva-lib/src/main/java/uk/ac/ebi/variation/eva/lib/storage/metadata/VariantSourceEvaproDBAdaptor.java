@@ -131,10 +131,12 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(
-                    "select distinct f.ftp_file from from browsable_file bf left join file f on bf.file_id = f.file_id " 
-                    + "where bf.eva_release = ? and filename = ?");
-            pstmt.setString(1, evaVersion);
-            pstmt.setString(2, filename);
+                    "select distinct f.ftp_file " +
+                    "from browsable_file bf " + 
+                    "left join file f on bf.file_id = f.file_id " +
+                    "where bf.filename = ?"
+            );
+            pstmt.setString(1, filename);
             System.out.println(pstmt);
             long start = System.currentTimeMillis();
             rs = pstmt.executeQuery();
@@ -191,23 +193,21 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
         ResultSet rs = null;
         List<QueryResult> results = new ArrayList<>();
         String query = 
-                "select distinct bf.filename, f.ftp_file from browsable_file bf left join file f on bf.file_id = f.file_id " 
-                + "where bf.eva_release = ? and " + EvaproUtils.getInClause("bf.filename", filenames);
+                "select distinct f.ftp_file " +
+                "from browsable_file bf " +
+                "left join file f on bf.file_id = f.file_id " +
+                "where " + EvaproUtils.getInClause("bf.filename", filenames);
         
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, evaVersion);
             System.out.println(pstmt);
             long start = System.currentTimeMillis();
             rs = pstmt.executeQuery();
             
-//            List<Map.Entry<String,URL>> urls = new ArrayList();
             while (rs.next()) {
-//                Map.Entry<String, URL> entry = new AbstractMap.SimpleEntry(rs.getString(1), new URL("ftp:/" + rs.getString(2)));
                 results.add(new QueryResult(rs.getString(1), ((Long) (System.currentTimeMillis() - start)).intValue(), 
                         1, 1, null, null, Arrays.asList(new URL("ftp:/" + rs.getString(2)))));
-//                urls.add(entry);
             }
             
         } catch (SQLException | MalformedURLException ex) {
