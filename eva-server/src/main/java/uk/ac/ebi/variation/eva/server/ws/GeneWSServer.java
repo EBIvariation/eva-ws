@@ -77,7 +77,7 @@ public class GeneWSServer extends EvaWSServer {
         
         for (String acceptedValue : VariantDBAdaptor.QueryParams.acceptedValues) {
             if (uriInfo.getQueryParameters().containsKey(acceptedValue)) {
-                List<String> values = uriInfo.getQueryParameters().get(acceptedValue);
+                List<String> values = uriInfo.getQueryParameters(true).get(acceptedValue);
                 String csv = values.get(0);
                 for (int i = 1; i < values.size(); i++) {
                     csv += "," + values.get(i);
