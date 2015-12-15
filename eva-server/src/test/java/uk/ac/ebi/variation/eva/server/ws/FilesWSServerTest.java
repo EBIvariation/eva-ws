@@ -49,7 +49,8 @@ public class FilesWSServerTest {
         
         List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         assertTrue(result.size() >= 1);
-        
+
+        JsonPath jsonResponse = JsonPath.from(response.asString());
         for (int i = 0; i < result.size() ; i++) {
             Map m = result.get(i);
             String missingField = String.format("%s required field missing", m.get("name"));
@@ -64,7 +65,7 @@ public class FilesWSServerTest {
             assertTrue(missingField, m.containsKey("samplesPosition"));
             
             if (m.containsKey("stats")) {
-                Map<String, ?> stats = JsonPath.from(response.asString()).getJsonObject("response[0].result[" + i + "].stats");
+                Map<String, ?> stats = jsonResponse.getJsonObject("response[0].result[" + i + "].stats");
                 assertTrue(missingField, stats.containsKey("variantsCount"));
                 assertTrue(missingField, stats.containsKey("samplesCount"));
                 assertTrue(missingField, stats.containsKey("snpsCount"));
