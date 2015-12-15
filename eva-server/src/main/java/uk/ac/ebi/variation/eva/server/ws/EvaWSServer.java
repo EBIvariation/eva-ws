@@ -24,7 +24,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.base.Splitter;
 import io.swagger.annotations.ApiParam;
 
@@ -52,7 +51,7 @@ import uk.ac.ebi.variation.eva.server.exception.VersionException;
 /**
  * Created by imedina on 01/04/14.
  */
-@Produces("application/json")
+@Produces(MediaType.APPLICATION_JSON)
 public class EvaWSServer {
 
     protected final String version = "v1";
@@ -96,16 +95,11 @@ public class EvaWSServer {
     @ApiParam(name = "count", value = "The total number of results is returned [false]")
     protected String count;
 
-    @DefaultValue("json")
-    @QueryParam("of")
-    @ApiParam(name = "Output format", value = "Output format, Protobuf is not yet implemented", defaultValue = "json", allowableValues = "json,pb (Not implemented yet)")
-    protected String outputFormat;
-
     protected static ObjectMapper jsonObjectMapper;
     protected static ObjectWriter jsonObjectWriter;
-    protected static XmlMapper xmlObjectMapper;
     protected static Map<String, String> dict;
     protected static Map<Integer, String> erzDict;
+
 
     protected static Logger logger;
     
@@ -126,8 +120,6 @@ public class EvaWSServer {
         jsonObjectMapper.registerModule(module);
         
         jsonObjectWriter = jsonObjectMapper.writer();
-
-        xmlObjectMapper = new XmlMapper();
 
         dict = new HashMap<>();
         dict.put("PRJEB4019", "8616");
@@ -367,28 +359,12 @@ public class EvaWSServer {
         this.uriInfo = uriInfo;
         this.httpServletRequest = hsr;
 
-        init(version, uriInfo);
+        this.startTime = System.currentTimeMillis();
+        this.queryResponse = new QueryResponse();
+        this.queryOptions = new QueryOptions();
 
         logger.info("EvaWSServer: in 'constructor'");
     }
-
-    protected void init(String version, UriInfo uriInfo) {
-        startTime = System.currentTimeMillis();
-        queryResponse = new QueryResponse();
-
-        // TODO A properties files may be needed to load valid versions and species
-        // load properties file
-        // ResourceBundle databaseConfig =
-        // ResourceBundle.getBundle("org.bioinfo.infrared.ws.application");
-        // config = new Config(databaseConfig);
-
-        // mediaType = MediaType.valueOf("text/plain");
-        queryOptions = new QueryOptions();
-        // logger = new Logger();
-        // logger.setLevel(Logger.DEBUG_LEVEL);
-        logger.info("GenericrestWSServer: in 'init' method");
-    }
-
 
     protected void checkParams() throws VersionException, SpeciesException {
         // TODO A Version and Species checker must be implemented
@@ -408,16 +384,7 @@ public class EvaWSServer {
         queryOptions.put("limit", (limit > 0) ? limit : -1);
         queryOptions.put("skip", (skip > 0) ? skip : -1);
         queryOptions.put("count", (count != null && !count.equals("")) ? Boolean.parseBoolean(count) : false);
-
-        outputFormat = (outputFormat != null && !outputFormat.equals("")) ? outputFormat : "json";
     }
-
-//    @GET
-//    @Path("/test")
-//    public Response help() {
-//        return createOkResponse("No help available yet");
-//    }
-
 
     protected Response createOkResponse(Object obj) {
         endTime = System.currentTimeMillis() - startTime;
@@ -435,65 +402,49 @@ public class EvaWSServer {
         }
         queryResponse.setResponse(coll);
 
-        switch (outputFormat.toLowerCase()) {
-            case "json":
-                return createJsonResponse(queryResponse);
-            case "xml":
-                return createXmlResponse(queryResponse);
-            default:
-                return buildResponse(Response.ok());
+        try {
+            return Response.ok(jsonObjectWriter.writeValueAsString(queryResponse), MediaType.APPLICATION_JSON_TYPE).build();
+        } catch (JsonProcessingException ex) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex).build();
         }
     }
 
-    protected Response createOkResponse(Collection obj, MediaType mediaType) {
-        return buildResponse(Response.ok(obj, mediaType));
-    }
-
-    protected Response createOkResponse(Collection obj, MediaType mediaType, String fileName) {
-        return buildResponse(Response.ok(obj, mediaType).header("content-disposition", "attachment; filename =" + fileName));
-    }
-
-    protected Response createErrorResponse(String obj) {
+    protected Response createUserErrorResponse(Object obj) {
         endTime = System.currentTimeMillis() - startTime;
         queryResponse.setTime(new Long(endTime - startTime).intValue());
         queryResponse.setApiVersion(version);
         queryResponse.setQueryOptions(queryOptions);
-        queryResponse.setError(obj);
+        queryResponse.setError(obj.toString());
         
-        switch (outputFormat.toLowerCase()) {
-            case "json":
-                return createJsonResponse(queryResponse);
-            case "xml":
-                return createXmlResponse(queryResponse);
-            default:
-                return buildResponse(Response.ok());
-        }
+        return Response.status(Response.Status.BAD_REQUEST).entity(queryResponse).build();
     }
-
     
+    protected Response createErrorResponse(Object obj) {
+        endTime = System.currentTimeMillis() - startTime;
+        queryResponse.setTime(new Long(endTime - startTime).intValue());
+        queryResponse.setApiVersion(version);
+        queryResponse.setQueryOptions(queryOptions);
+        queryResponse.setError(obj.toString());
+        
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(queryResponse).build();
+    }
+
     protected Response createJsonResponse(Object object) {
-        try {
-//            Response r = buildResponse(Response.ok(jsonObjectWriter.writeValueAsString(object), MediaType.APPLICATION_JSON_TYPE));
-            Response r = Response.ok(jsonObjectWriter.writeValueAsString(object), MediaType.APPLICATION_JSON_TYPE).build();
-//            System.out.println(r.getEntity());
-            return r;
-        } catch (JsonProcessingException e) {
-            return createErrorResponse("Error parsing QueryResponse object:\n" + Arrays.toString(e.getStackTrace()));
-        }
+        return Response.ok(object).build();
     }
-
-    protected Response createXmlResponse(Object object) {
-        try {
-            return buildResponse(Response.ok(xmlObjectMapper.writeValueAsString(object), MediaType.APPLICATION_XML_TYPE));
-        } catch (JsonProcessingException e) {
-            return createErrorResponse("Error parsing QueryResponse object:\n" + Arrays.toString(e.getStackTrace()));
-        }
+    
+    protected Response createJsonUserErrorResponse(Object object) {
+        return Response.status(Response.Status.BAD_REQUEST).entity(object).build();
     }
-
-    private Response buildResponse(Response.ResponseBuilder responseBuilder) {
-        return responseBuilder.header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Headers", "x-requested-with, content-type, accept")
-                .header("Access-Control-Allow-Methods", "POST, GET, OPTIONS").build();
+    
+    protected Response createJsonErrorResponse(Object object) {
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(object).build();
     }
+    
+//    private Response buildResponse(Response.ResponseBuilder responseBuilder) {
+//        return responseBuilder.header("Access-Control-Allow-Origin", "*")
+//                .header("Access-Control-Allow-Headers", "x-requested-with, content-type, accept")
+//                .header("Access-Control-Allow-Methods", "POST, GET, OPTIONS").build();
+//    }
     
 }

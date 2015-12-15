@@ -14,6 +14,15 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>uk.ac.ebi.variation.eva</groupId>
             <artifactId>eva-lib</artifactId>
         </dependency>
@@ -38,6 +47,21 @@
     
     <build>
         <finalName>eva</finalName>
+        
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>9.3.5.v20151012</version>
+                <configuration>
+                    <war>${project.basedir}/target/eva.war</war>
+                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <webApp>
+                      <contextPath>/eva</contextPath>
+                    </webApp>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
     
 </project>

@@ -119,6 +119,8 @@ public class GeneWSServer extends EvaWSServer {
                 queryOptions.put("opMissingGenotypes", missingGenotypesOperator);
             }
         }
+        
+        queryOptions.put("sort", true);
 
         return createOkResponse(variantMongoDbAdaptor.getAllVariantsByGene(geneId, queryOptions));
     }

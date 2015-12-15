@@ -201,23 +201,17 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
 
     @Override
     public QueryResult getSpecies(String version, boolean loaded) {
-        StringBuilder query = new StringBuilder(
-                "select distinct(assembly.*), taxonomy.* " + 
-                "from assembly join browsable_file on assembly.assembly_set_id=browsable_file.assembly_set_id " +
+        String query = "select distinct(assembly.*), taxonomy.* " +
+                "from assembly join browsable_file bf on assembly.assembly_set_id=bf.assembly_set_id " +
                 "join taxonomy on assembly.taxonomy_id=taxonomy.taxonomy_id " +
-                "where browsable_file.eva_release = '");
-        query.append(version);
-        query.append("' ");
-        if (loaded) {
-            query.append("and loaded=true");
-        }
+                "where bf.loaded = true and bf.deleted = false";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
         QueryResult qr = null;
         try {
             conn = ds.getConnection();
-            pstmt = conn.prepareStatement(query.toString());
+            pstmt = conn.prepareStatement(query);
             long start = System.currentTimeMillis();
             ResultSet rs = pstmt.executeQuery();
             List<Assembly> result = new ArrayList<>();

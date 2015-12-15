@@ -75,7 +75,7 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         
         if (studies == null || studies.isEmpty()) {
-            return createErrorResponse("The 'datasetIds' argument must not be empty");
+            return createJsonUserErrorResponse("The 'datasetIds' argument must not be empty");
         }
         
         VariantSourceDBAdaptor dbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor("hsapiens_grch37");

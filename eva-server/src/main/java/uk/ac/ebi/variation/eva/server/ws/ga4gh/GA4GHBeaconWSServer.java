@@ -62,7 +62,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
         
         if (chromosome == null || chromosome.isEmpty() ||
                 start == null || start < 0 || allele == null) {
-            return createJsonResponse(new GA4GHBeaconResponse(chromosome, start, allele, studies, 
+            return createJsonUserErrorResponse(new GA4GHBeaconResponse(chromosome, start, allele, studies, 
                     "Please provide chromosome, positive position and alternate allele"));
         }
         
