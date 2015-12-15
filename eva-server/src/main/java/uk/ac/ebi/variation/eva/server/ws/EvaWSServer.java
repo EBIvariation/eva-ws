@@ -151,6 +151,7 @@ public class EvaWSServer {
         dict.put("PRJEB9507","33687");
         dict.put("PRJEB629","34064");
 
+        erzDict = new HashMap<>();
         erzDict.put(52, "ERZ017134");
         erzDict.put(8603, "ERZX00038");
         erzDict.put(34886, "ERZX00061");
