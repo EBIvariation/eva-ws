@@ -34,12 +34,12 @@ import java.util.logging.Logger;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import org.opencb.biodata.models.variant.VariantStudy;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.lib.datastore.EvaproUtils;
+import uk.ac.ebi.variation.eva.lib.models.VariantStudy;
 
 /**
  *
@@ -89,10 +89,9 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
                 VariantStudy study = new VariantStudy(rs.getString("project_title"), rs.getString("project_accession"), null, 
                         rs.getString("description"), taxIds, rs.getString("common_name"), rs.getString("scientific_name"), 
                         rs.getString("source_type"), rs.getString("center"), rs.getString("material"), rs.getString("scope"), 
-                        VariantStudy.StudyType.fromString(rs.getString("study_type")), 
-                        rs.getString("experiment_type"), rs.getString("experiment_type_abbreviation"), 
-                        rs.getString("assembly_name"), rs.getString("platform"), uri,
-                        rs.getInt("variant_count"), rs.getInt("samples"));
+                        VariantStudy.StudyType.fromString(rs.getString("study_type")), rs.getString("experiment_type"), 
+                        rs.getString("experiment_type_abbreviation"), rs.getString("assembly_name"), rs.getString("platform"), 
+                        uri, rs.getString("publications").split(", "), rs.getInt("variant_count"), rs.getInt("samples"));
                 result.add(study);
             }
             long end = System.currentTimeMillis();
@@ -157,10 +156,9 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
                 VariantStudy study = new VariantStudy(rs.getString("project_title"), rs.getString("project_accession"), null, 
                         rs.getString("description"), taxIds, rs.getString("common_name"), rs.getString("scientific_name"), 
                         rs.getString("source_type"), rs.getString("center"), rs.getString("material"), rs.getString("scope"), 
-                        VariantStudy.StudyType.fromString(rs.getString("study_type")), 
-                        rs.getString("experiment_type"), rs.getString("experiment_type_abbreviation"), 
-                        rs.getString("assembly_name"), rs.getString("platform"), uri,
-                        rs.getInt("variant_count"), rs.getInt("samples"));
+                        VariantStudy.StudyType.fromString(rs.getString("study_type")), rs.getString("experiment_type"), 
+                        rs.getString("experiment_type_abbreviation"), rs.getString("assembly_name"), rs.getString("platform"), 
+                        uri, rs.getString("publications").split(", "), rs.getInt("variant_count"), rs.getInt("samples"));
                 result.add(study);
             }
             long end = System.currentTimeMillis();

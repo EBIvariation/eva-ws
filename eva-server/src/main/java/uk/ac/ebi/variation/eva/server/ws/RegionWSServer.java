@@ -26,9 +26,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 
 import io.swagger.annotations.Api;
 import org.opencb.biodata.models.feature.Region;
@@ -141,10 +139,10 @@ public class RegionWSServer extends EvaWSServer {
                 if (!queryOptions.containsKey("id") && !queryOptions.containsKey("gene")) {
                     return createErrorResponse("Some positional filer is needed, like region, gene or id.");
                 } else {
-                    return createOkResponse(variantMongoDbAdaptor.getAllVariants(queryOptions));
+                    return createOkResponse(translateFileIds(variantMongoDbAdaptor.getAllVariants(queryOptions)));
                 }
             } else {
-                return createOkResponse(variantMongoDbAdaptor.getAllVariantsByRegionList(regions, queryOptions));
+                return createOkResponse(translateFileIds(variantMongoDbAdaptor.getAllVariantsByRegionList(regions, queryOptions)));
             }
         } else {
             return createErrorResponse("The total size of all regions provided can't exceed 1 million positions. "

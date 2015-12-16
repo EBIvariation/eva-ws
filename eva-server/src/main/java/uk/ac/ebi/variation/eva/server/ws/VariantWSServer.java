@@ -71,7 +71,7 @@ public class VariantWSServer extends EvaWSServer {
         }
         
         if (!variantId.contains(":")) { // Query by accession id
-            return createOkResponse(variantMongoDbAdaptor.getVariantById(variantId, queryOptions));
+            return createOkResponse(translateFileIds(variantMongoDbAdaptor.getVariantById(variantId, queryOptions)));
         } else { // Query by chr:pos:ref:alt
             String parts[] = variantId.split(":", -1);
             if (parts.length < 3) {
@@ -84,7 +84,7 @@ public class VariantWSServer extends EvaWSServer {
                 queryOptions.put("alternate", parts[3]);
             }
 
-            return createOkResponse(variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions));
+            return createOkResponse(translateFileIds(variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions)));
         }
     }
 
@@ -124,7 +124,7 @@ public class VariantWSServer extends EvaWSServer {
             QueryResult queryResult = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
             queryResult.setResult(Arrays.asList(queryResult.getNumResults() > 0));
             queryResult.setResultType(Boolean.class.getCanonicalName());
-            return createOkResponse(queryResult);
+            return createOkResponse(translateFileIds(queryResult));
         }
     }
 

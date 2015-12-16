@@ -89,14 +89,14 @@ public class ArchiveWSServer extends EvaWSServer {
     }
     @GET
     @Path("/species/list")
-    public Response getSpecies(@DefaultValue("false") @QueryParam("loaded") boolean loaded) {
+    public Response getSpecies() {
         try {
             Properties properties = new Properties();
             properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
             
-            return createOkResponse(archiveEvaproDbAdaptor.getSpecies(properties.getProperty("eva.version"), loaded));
+            return createOkResponse(archiveEvaproDbAdaptor.getSpecies(properties.getProperty("eva.version"), true));
         } catch (IOException ex) {
-            return createErrorResponse(ex.toString());
+            return createErrorResponse(ex);
         }
     }
     
@@ -104,14 +104,6 @@ public class ArchiveWSServer extends EvaWSServer {
     @Path("/studies/count")
     public Response countStudies() {
         return createOkResponse(archiveEvaproDbAdaptor.countStudies());
-    }
-    
-    @GET
-    @Path("/studies/list")
-    public Response getStudies(@QueryParam("species") String species) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
-        return createOkResponse(studyMongoDbAdaptor.listStudies());
     }
     
     @GET
@@ -130,6 +122,18 @@ public class ArchiveWSServer extends EvaWSServer {
             return createOkResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
         } else {
             return createOkResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
+        }
+    }
+    
+    @GET
+    @Path("/studies/list")
+    public Response getBrowsableStudies(@QueryParam("species") String species) 
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+        try {
+            StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
+            return createOkResponse(studyMongoDbAdaptor.listStudies());
+        } catch (IllegalArgumentException ex) {
+            return createUserErrorResponse(ex);
         }
     }
     
