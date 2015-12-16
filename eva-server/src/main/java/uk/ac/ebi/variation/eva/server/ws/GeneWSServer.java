@@ -122,7 +122,7 @@ public class GeneWSServer extends EvaWSServer {
         
         queryOptions.put("sort", true);
 
-        return createOkResponse(variantMongoDbAdaptor.getAllVariantsByGene(geneId, queryOptions));
+        return createOkResponse(translateFileIds(variantMongoDbAdaptor.getAllVariantsByGene(geneId, queryOptions)));
     }
     
 }
