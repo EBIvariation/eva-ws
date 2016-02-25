@@ -104,7 +104,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
             }
             return createOkResponse(variantMongoDbAdaptor.getVariantFrequencyByRegion(region, queryOptions));
         } else if (regionSize <= 1000000) {
-            QueryResult<Variant> qr = translateFileIds(variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions));
+            QueryResult<Variant> qr = translateVariantFileIds(variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions));
             // Convert Variant objects to GAVariant
             List<GAVariant> gaVariants = GAVariantFactory.create(qr.getResult());
             // Calculate the next page token

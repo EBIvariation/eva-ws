@@ -153,6 +153,7 @@ public class EvaWSServer {
         dict.put("PRJEB7723","12569");
         dict.put("PRJEB9507","33687");
         dict.put("PRJEB629","34064");
+        dict.put("PRJX00001","34711");
 
         studyDict = new HashMap<>();
         studyDict.put("5509", "PRJEB8652");
@@ -459,15 +460,15 @@ public class EvaWSServer {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(object).build();
     }
 
-    protected List<QueryResult<Variant>> translateFileIds(List<QueryResult<Variant>> variantQueryResults) {
+    protected List<QueryResult<Variant>> translateVariantFileIds(List<QueryResult<Variant>> variantQueryResults) {
         for (QueryResult<Variant> variantQueryResult : variantQueryResults) {
-            translateFileIds(variantQueryResult);
+            translateVariantFileIds(variantQueryResult);
         }
 
         return variantQueryResults;
     }
 
-    protected QueryResult<Variant> translateFileIds(QueryResult<Variant> variantQueryResult) {
+    protected QueryResult<Variant> translateVariantFileIds(QueryResult<Variant> variantQueryResult) {
         boolean translateFileIds = true,
                 translateStudyIds = true;
         if (translateFileIds || translateStudyIds) {
@@ -500,6 +501,47 @@ public class EvaWSServer {
         }
     }
 
+    protected List<QueryResult<VariantSource>> translateVariantSourceFileIds(List<QueryResult<VariantSource>> queryResults) {
+        for (QueryResult<VariantSource> queryResult : queryResults) {
+            translateVariantSourceFileIds(queryResult);
+        }
+
+        return queryResults;
+    }
+
+    protected QueryResult<VariantSource> translateVariantSourceFileIds(QueryResult<VariantSource> variantQueryResult) {
+        boolean translateFileIds = true,
+                translateStudyIds = true;
+        if (translateFileIds || translateStudyIds) {
+            for (VariantSource variantSource : variantQueryResult.getResult()) {
+                translateSourceFileId(translateFileIds, variantSource);
+                translateSourceStudyId(translateStudyIds, variantSource);
+            }
+        }
+
+        return variantQueryResult;
+    }
+
+    private void translateSourceStudyId(boolean translateStudyIds, VariantSource variantSource) {
+        if (translateStudyIds) {
+            String translatedStudyId = studyDict.get(variantSource.getStudyId());
+            if (translatedStudyId != null) {
+                variantSource.setStudyId(translatedStudyId);
+            }
+        }
+    }
+
+    private void translateSourceFileId(boolean translateFileIds, VariantSource variantSource) {
+        if (translateFileIds) {
+            String translatedFileId = erzIdsDict.get(variantSource.getFileId());
+            if (translatedFileId != null) {
+                variantSource.setFileId(translatedFileId);
+            }
+        }
+    }
+
+    
+    
 //    private Response buildResponse(Response.ResponseBuilder responseBuilder) {
 //        return responseBuilder.header("Access-Control-Allow-Origin", "*")
 //                .header("Access-Control-Allow-Headers", "x-requested-with, content-type, accept")

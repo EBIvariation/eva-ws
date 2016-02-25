@@ -139,10 +139,10 @@ public class RegionWSServer extends EvaWSServer {
                 if (!queryOptions.containsKey("id") && !queryOptions.containsKey("gene")) {
                     return createErrorResponse("Some positional filer is needed, like region, gene or id.");
                 } else {
-                    return createOkResponse(translateFileIds(variantMongoDbAdaptor.getAllVariants(queryOptions)));
+                    return createOkResponse(translateVariantFileIds(variantMongoDbAdaptor.getAllVariants(queryOptions)));
                 }
             } else {
-                return createOkResponse(translateFileIds(variantMongoDbAdaptor.getAllVariantsByRegionList(regions, queryOptions)));
+                return createOkResponse(translateVariantFileIds(variantMongoDbAdaptor.getAllVariantsByRegionList(regions, queryOptions)));
             }
         } else {
             return createErrorResponse("The total size of all regions provided can't exceed 1 million positions. "
