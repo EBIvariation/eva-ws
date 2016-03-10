@@ -147,7 +147,7 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
                 qr = new QueryResult(rs.getString(1), ((Long) (end - start)).intValue(), 1, 1, null, null, Arrays.asList(url));
             } else {
                 long end = System.currentTimeMillis();
-                qr = new QueryResult(rs.getString(1), ((Long) (end - start)).intValue(), 0, 0, null, null, new ArrayList<>());
+                qr = new QueryResult(null, ((Long) (end - start)).intValue(), 0, 0, null, null, new ArrayList<>());
             }
         } catch (SQLException | MalformedURLException ex) {
             Logger.getLogger(VariantSourceEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
