@@ -131,7 +131,7 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(
-                    "select distinct f.ftp_file " +
+                    "select distinct bf.filename, f.ftp_file " +
                     "from browsable_file bf " + 
                     "left join file f on bf.file_id = f.file_id " +
                     "where bf.filename = ?"
@@ -142,9 +142,9 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
             rs = pstmt.executeQuery();
             
             if (rs.next()) {
-                URL url = new URL("ftp:/" + rs.getString(1));
+                URL url = new URL("ftp:/" + rs.getString(2));
                 long end = System.currentTimeMillis();
-                qr = new QueryResult(null, ((Long) (end - start)).intValue(), 1, 1, null, null, Arrays.asList(url));
+                qr = new QueryResult(rs.getString(1), ((Long) (end - start)).intValue(), 1, 1, null, null, Arrays.asList(url));
             } else {
                 long end = System.currentTimeMillis();
                 qr = new QueryResult(null, ((Long) (end - start)).intValue(), 0, 0, null, null, new ArrayList<>());
@@ -193,7 +193,7 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
         ResultSet rs = null;
         List<QueryResult> results = new ArrayList<>();
         String query = 
-                "select distinct f.ftp_file " +
+                "select distinct bf.filename, f.ftp_file " +
                 "from browsable_file bf " +
                 "left join file f on bf.file_id = f.file_id " +
                 "where " + EvaproUtils.getInClause("bf.filename", filenames);
@@ -207,7 +207,7 @@ public class VariantSourceEvaproDBAdaptor implements VariantSourceDBAdaptor {
             
             while (rs.next()) {
                 results.add(new QueryResult(rs.getString(1), ((Long) (System.currentTimeMillis() - start)).intValue(), 
-                        1, 1, null, null, Arrays.asList(new URL("ftp:/" + rs.getString(1)))));
+                        1, 1, null, null, Arrays.asList(new URL("ftp:/" + rs.getString(2)))));
             }
             
         } catch (SQLException | MalformedURLException ex) {
