@@ -81,7 +81,7 @@ public class VariantWSServer extends EvaWSServer {
             Region region = new Region(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[1]));
             queryOptions.put("reference", parts[2]);
             if (parts.length > 3) {
-                queryOptions.put("alternate", parts[3]);
+                queryOptions.put("alternate", String.join(":", Arrays.copyOfRange(parts, 3, parts.length)));
             }
 
             return createOkResponse(variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions));
