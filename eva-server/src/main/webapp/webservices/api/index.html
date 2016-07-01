@@ -33,7 +33,7 @@
       if (url && url.length > 1) {
         url = decodeURIComponent(url[1]);
       } else {
-        url = "http://www.ebi.ac.uk/eva/webservices/rest/swagger.json";
+        url = window.location.protocol + "//" + window.location.host + "/eva/webservices/rest/swagger.json";
       }
 
       // Pre load translate...
