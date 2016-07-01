@@ -40,7 +40,7 @@
         </init-param>
         <init-param>
           <param-name>swagger.api.basepath</param-name>
-          <param-value>http://localhost:8080/webservices/rest</param-value>
+          <param-value>${eva.context.root}/webservices/rest</param-value>
         </init-param>
         <load-on-startup>2</load-on-startup>
     </servlet>
@@ -51,9 +51,10 @@
     </welcome-file-list>
     
     <resource-ref>
-        <description>JDBC Data Source</description>
-        <res-ref-name>jdbc/dstest</res-ref-name>
+        <description>EVAPRO Data Source</description>
+        <res-ref-name>${eva.evapro.datasource}</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
     </resource-ref>
 </web-app>
+
