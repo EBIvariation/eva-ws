@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2016 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,29 +19,33 @@
 
 package uk.ac.ebi.variation.eva.server.ws;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.swagger.annotations.Api;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+import org.opencb.datastore.core.QueryOptions;
+import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import io.swagger.annotations.Api;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
@@ -52,8 +56,8 @@ import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/v1/meta")
-@Produces(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping(value = "/v1/meta", produces = "application/json")
 @Api(tags = { "archive" })
 public class ArchiveWSServer extends EvaWSServer {
     
@@ -63,8 +67,11 @@ public class ArchiveWSServer extends EvaWSServer {
     private StudyDBAdaptor studyDgvaDbAdaptor;
     private StudyDBAdaptor studyEvaproDbAdaptor;
     
-    public ArchiveWSServer() {
-        super();
+    public ArchiveWSServer() throws NamingException, IOException {
+        archiveDgvaDbAdaptor = new ArchiveDgvaDBAdaptor();
+        archiveEvaproDbAdaptor = new ArchiveEvaproDBAdaptor();
+        studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
+        studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
     }
 
     public ArchiveWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
@@ -76,41 +83,33 @@ public class ArchiveWSServer extends EvaWSServer {
         studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
     }
 
-    @GET
-    @Path("/files/count")
-    public Response countFiles() {
-        return createOkResponse(archiveEvaproDbAdaptor.countFiles());
+    @RequestMapping(value = "/files/count", method = RequestMethod.GET)
+    public QueryResponse countFiles() {
+        return setQueryResponse(archiveEvaproDbAdaptor.countFiles());
     }
-    
-    @GET
-    @Path("/species/count")
-    public Response countSpecies() {
-        return createOkResponse(archiveEvaproDbAdaptor.countSpecies());
+
+    @RequestMapping(value = "/species/count", method = RequestMethod.GET)
+    public QueryResponse countSpecies() {
+        return setQueryResponse(archiveEvaproDbAdaptor.countSpecies());
     }
-    @GET
-    @Path("/species/list")
-    public Response getSpecies() {
-        try {
-            Properties properties = new Properties();
-            properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
-            
-            return createOkResponse(archiveEvaproDbAdaptor.getSpecies(properties.getProperty("eva.version"), true));
-        } catch (IOException ex) {
-            return createErrorResponse(ex);
-        }
+
+    @RequestMapping(value = "/species/list", method = RequestMethod.GET)
+    public QueryResponse getSpecies() throws IOException {
+        Properties properties = new Properties();
+        properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
+        return setQueryResponse(archiveEvaproDbAdaptor.getSpecies(properties.getProperty("eva.version"), true));
     }
-    
-    @GET
-    @Path("/studies/count")
-    public Response countStudies() {
-        return createOkResponse(archiveEvaproDbAdaptor.countStudies());
+
+    @RequestMapping(value = "/studies/count", method = RequestMethod.GET)
+    public QueryResponse countStudies() {
+        return setQueryResponse(archiveEvaproDbAdaptor.countStudies());
     }
-    
-    @GET
-    @Path("/studies/all")
-    public Response getStudies(@QueryParam("species") String species,
-                               @QueryParam("type") String types,
-                               @DefaultValue("false") @QueryParam("structural") boolean structural) {
+
+    @RequestMapping(value = "/studies/all", method = RequestMethod.GET)
+    public QueryResponse getStudies(@RequestParam(name = "species", required = false) String species,
+                                    @RequestParam(name = "type", required = false) String types,
+                                    @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
+        queryOptions = new QueryOptions();
         if (species != null && !species.isEmpty()) {
             queryOptions.put("species", Arrays.asList(species.split(",")));
         }
@@ -119,34 +118,29 @@ public class ArchiveWSServer extends EvaWSServer {
         }
         
         if (structural) {
-            return createOkResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
+            return setQueryResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
         } else {
-            return createOkResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
+            return setQueryResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
         }
     }
-    
-    @GET
-    @Path("/studies/list")
-    public Response getBrowsableStudies(@QueryParam("species") String species) 
+
+    @RequestMapping(value = "/studies/list", method = RequestMethod.GET)
+    public QueryResponse getBrowsableStudies(@RequestParam("species") String species) 
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        try {
-            StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
-            return createOkResponse(studyMongoDbAdaptor.listStudies());
-        } catch (IllegalArgumentException ex) {
-            return createUserErrorResponse(ex);
-        }
+        StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
+        return setQueryResponse(studyMongoDbAdaptor.listStudies());
     }
-    
-    @GET
-    @Path("/studies/stats")
-    public Response getStudiesStats(@QueryParam("species") String species,
-                                    @QueryParam("type") String types,
-                                    @DefaultValue("false") @QueryParam("structural") boolean structural) {
+
+    @RequestMapping(value = "/studies/stats", method = RequestMethod.GET)
+    public QueryResponse getStudiesStats(@RequestParam(name = "species", required = false) List<String> species,
+                                         @RequestParam(name = "type", required = false) List<String> types,
+                                         @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
+        queryOptions = new QueryOptions();
         if (species != null && !species.isEmpty()) {
-            queryOptions.put("species", Arrays.asList(species.split(",")));
+            queryOptions.put("species", species);
         }
         if (types != null && !types.isEmpty()) {
-            queryOptions.put("type", Arrays.asList(types.split(",")));
+            queryOptions.put("type", types);
         }
         
         QueryResult<Map.Entry<String, Integer>> resultSpecies, resultTypes;
@@ -181,6 +175,6 @@ public class ArchiveWSServer extends EvaWSServer {
         }
         root.put("type", typesNode);
         
-        return createOkResponse(combinedQueryResult);
+        return setQueryResponse(combinedQueryResult);
     }
 }

@@ -70,7 +70,6 @@ public class EvaWSServer {
     protected HttpServletRequest httpServletRequest;
 
     protected QueryOptions queryOptions;
-    protected QueryResponse queryResponse;
     protected long startTime;
     protected long endTime;
 
@@ -129,18 +128,14 @@ public class EvaWSServer {
         this.httpServletRequest = hsr;
 
         this.startTime = System.currentTimeMillis();
-        this.queryResponse = new QueryResponse();
         this.queryOptions = new QueryOptions();
 
         logger.info("EvaWSServer: in 'constructor'");
     }
 
     protected void checkParams() {
-    	this.queryOptions = new QueryOptions();
-    	this.queryResponse = new QueryResponse();
-    	
+        this.queryOptions = new QueryOptions();
         Map<String, String[]> multivaluedMap = httpServletRequest.getParameterMap();
-
         queryOptions.put("metadata", (multivaluedMap.get("metadata") != null) ? multivaluedMap.get("metadata")[0].equals("true") : true);
         queryOptions.put("exclude", (exclude != null && !exclude.equals("")) ? Splitter.on(",").splitToList(exclude) : null);
         queryOptions.put("include", (include != null && !include.equals("")) ? Splitter.on(",").splitToList(include) : null);
@@ -150,6 +145,7 @@ public class EvaWSServer {
     }
 
     protected QueryResponse setQueryResponse(Object obj) {
+        QueryResponse queryResponse = new QueryResponse();
     	endTime = System.currentTimeMillis() - startTime;
     	// TODO Restore span time calculation
 //        queryResponse.setTime(new Long(endTime - startTime).intValue());
@@ -170,7 +166,7 @@ public class EvaWSServer {
     }
     
     protected Response createOkResponse(Object obj) {
-    	queryResponse = setQueryResponse(obj);
+        QueryResponse queryResponse = setQueryResponse(obj);
 
         try {
             return Response.ok(jsonObjectWriter.writeValueAsString(queryResponse), MediaType.APPLICATION_JSON_TYPE).build();
@@ -180,6 +176,7 @@ public class EvaWSServer {
     }
 
     protected Response createUserErrorResponse(Object obj) {
+        QueryResponse queryResponse = setQueryResponse(obj);
         endTime = System.currentTimeMillis() - startTime;
         queryResponse.setTime(new Long(endTime - startTime).intValue());
         queryResponse.setApiVersion(version);
@@ -190,6 +187,7 @@ public class EvaWSServer {
     }
     
     protected Response createErrorResponse(Object obj) {
+        QueryResponse queryResponse = setQueryResponse(obj);
         endTime = System.currentTimeMillis() - startTime;
         queryResponse.setTime(new Long(endTime - startTime).intValue());
         queryResponse.setApiVersion(version);
