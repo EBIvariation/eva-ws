@@ -19,18 +19,18 @@
 
 package uk.ac.ebi.variation.eva.server.ws;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.google.common.base.Splitter;
-import io.swagger.annotations.ApiParam;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.opencb.biodata.models.feature.Genotype;
 import org.opencb.biodata.models.variant.VariantSource;
@@ -45,8 +45,16 @@ import org.opencb.opencga.storage.core.variant.io.json.VariantStatsJsonMixin;
 import org.opencb.opencga.storage.core.variant.io.json.VariantStatsJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.ebi.variation.eva.server.exception.SpeciesException;
-import uk.ac.ebi.variation.eva.server.exception.VersionException;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.common.base.Splitter;
+
+import io.swagger.annotations.ApiParam;
 
 /**
  * Created by imedina on 01/04/14.
@@ -56,13 +64,9 @@ public class EvaWSServer {
 
     protected final String version = "v1";
 
-    @DefaultValue("Homo sapiens")
-    @QueryParam("species")
-    @ApiParam(name = "species", value = "Excluded fields will not be returned. Comma separated JSON paths must be provided",
-            defaultValue = "hsapiens", allowableValues = "hsapiens,mmusculus")
-    protected String species;
-
     protected UriInfo uriInfo;
+    
+    @Autowired
     protected HttpServletRequest httpServletRequest;
 
     protected QueryOptions queryOptions;
@@ -104,12 +108,12 @@ public class EvaWSServer {
     static {
         logger = LoggerFactory.getLogger(EvaWSServer.class);
 
-        jsonObjectMapper = new ObjectMapper();
-        jsonObjectMapper.addMixInAnnotations(VariantSourceEntry.class, VariantSourceEntryJsonMixin.class);
-        jsonObjectMapper.addMixInAnnotations(Genotype.class, GenotypeJsonMixin.class);
-        jsonObjectMapper.addMixInAnnotations(VariantStats.class, VariantStatsJsonMixin.class);
-        jsonObjectMapper.addMixInAnnotations(VariantSource.class, VariantSourceJsonMixin.class);
-        jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
+        jsonObjectMapper = new ObjectMapper()
+        		.addMixIn(VariantSourceEntry.class, VariantSourceEntryJsonMixin.class)
+        		.addMixIn(Genotype.class, GenotypeJsonMixin.class)
+        		.addMixIn(VariantStats.class, VariantStatsJsonMixin.class)
+        		.addMixIn(VariantSource.class, VariantSourceJsonMixin.class)
+        		.setSerializationInclusion(Include.NON_NULL);
         
         SimpleModule module = new SimpleModule();
         module.addSerializer(VariantStats.class, new VariantStatsJsonSerializer());
@@ -118,10 +122,7 @@ public class EvaWSServer {
         jsonObjectWriter = jsonObjectMapper.writer();
     }
 
-    @Deprecated
-    public EvaWSServer() {
-        logger.info("EvaWSServer: in 'constructor'");
-    }
+    public EvaWSServer() { }
 
     public EvaWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
         this.uriInfo = uriInfo;
@@ -134,19 +135,13 @@ public class EvaWSServer {
         logger.info("EvaWSServer: in 'constructor'");
     }
 
-    protected void checkParams() throws VersionException, SpeciesException {
-        // TODO A Version and Species checker must be implemented
-        if (version == null || !version.equals("v1")) {
-            throw new VersionException("Version not valid: '" + version + "'");
-        }
-        if (species == null || species.isEmpty()/*|| !isValidSpecies(species)*/) {
-            throw new SpeciesException("Species not valid: '" + species + "'");
-        }
+    protected void checkParams() {
+    	this.queryOptions = new QueryOptions();
+    	this.queryResponse = new QueryResponse();
+    	
+        Map<String, String[]> multivaluedMap = httpServletRequest.getParameterMap();
 
-        MultivaluedMap<String, String> multivaluedMap = uriInfo.getQueryParameters();
-        queryOptions.put("species", species);
-
-        queryOptions.put("metadata", (multivaluedMap.get("metadata") != null) ? multivaluedMap.get("metadata").get(0).equals("true") : true);
+        queryOptions.put("metadata", (multivaluedMap.get("metadata") != null) ? multivaluedMap.get("metadata")[0].equals("true") : true);
         queryOptions.put("exclude", (exclude != null && !exclude.equals("")) ? Splitter.on(",").splitToList(exclude) : null);
         queryOptions.put("include", (include != null && !include.equals("")) ? Splitter.on(",").splitToList(include) : null);
         queryOptions.put("limit", (limit > 0) ? limit : -1);
@@ -154,9 +149,10 @@ public class EvaWSServer {
         queryOptions.put("count", (count != null && !count.equals("")) ? Boolean.parseBoolean(count) : false);
     }
 
-    protected Response createOkResponse(Object obj) {
-        endTime = System.currentTimeMillis() - startTime;
-        queryResponse.setTime(new Long(endTime - startTime).intValue());
+    protected QueryResponse setQueryResponse(Object obj) {
+    	endTime = System.currentTimeMillis() - startTime;
+    	// TODO Restore span time calculation
+//        queryResponse.setTime(new Long(endTime - startTime).intValue());
         queryResponse.setApiVersion(version);
         queryResponse.setQueryOptions(queryOptions);
         
@@ -169,6 +165,12 @@ public class EvaWSServer {
             coll.add(obj);
         }
         queryResponse.setResponse(coll);
+        
+        return queryResponse;
+    }
+    
+    protected Response createOkResponse(Object obj) {
+    	queryResponse = setQueryResponse(obj);
 
         try {
             return Response.ok(jsonObjectWriter.writeValueAsString(queryResponse), MediaType.APPLICATION_JSON_TYPE).build();

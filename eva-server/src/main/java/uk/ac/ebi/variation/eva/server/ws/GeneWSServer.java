@@ -61,11 +61,7 @@ public class GeneWSServer extends EvaWSServer {
                                       @DefaultValue("") @QueryParam("miss_gts") String missingGenotypes,
                                       @DefaultValue("") @QueryParam("type") String variantType)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
-        try {
-            checkParams();
-        } catch (VersionException | SpeciesException ex) {
-            return createErrorResponse(ex.toString());
-        }
+        checkParams();
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         

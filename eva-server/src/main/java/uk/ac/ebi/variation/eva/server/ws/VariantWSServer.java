@@ -58,11 +58,7 @@ public class VariantWSServer extends EvaWSServer {
                                    @QueryParam("studies") String studies,
                                    @QueryParam("species") String species) 
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
-        try {
-            checkParams();
-        } catch (VersionException | SpeciesException ex) {
-            return createErrorResponse(ex.toString());
-        }
+        checkParams();
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         
@@ -95,11 +91,7 @@ public class VariantWSServer extends EvaWSServer {
                                        @QueryParam("studies") String studies,
                                        @QueryParam("species") String species) 
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
-        try {
-            checkParams();
-        } catch (VersionException | SpeciesException ex) {
-            return createErrorResponse(ex.toString());
-        }
+        checkParams();
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         
