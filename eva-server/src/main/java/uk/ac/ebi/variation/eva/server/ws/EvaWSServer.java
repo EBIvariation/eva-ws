@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2016 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,6 @@ import io.swagger.annotations.ApiParam;
 /**
  * Created by imedina on 01/04/14.
  */
-@Produces(MediaType.APPLICATION_JSON)
 public class EvaWSServer {
 
     protected final String version = "v1";
@@ -72,31 +71,6 @@ public class EvaWSServer {
     protected QueryOptions queryOptions;
     protected long startTime;
     protected long endTime;
-
-    @DefaultValue("")
-    @QueryParam("exclude")
-    @ApiParam(name = "excluded fields", value = "Excluded fields will not be returned. Comma separated JSON paths must be provided")
-    protected String exclude;
-
-    @DefaultValue("")
-    @QueryParam("include")
-    @ApiParam(name = "included fields", value = "Included fields are the only to be returned. Comma separated JSON path must be provided")
-    protected String include;
-
-    @DefaultValue("-1")
-    @QueryParam("limit")
-    @ApiParam(name = "limit", value = "Max number of results to be returned. No limit applied when -1 [-1]")
-    protected int limit;
-
-    @DefaultValue("-1")
-    @QueryParam("skip")
-    @ApiParam(name = "skip", value = "Number of results to be skipped. No skip applied when -1 [-1]")
-    protected int skip;
-
-    @DefaultValue("false")
-    @QueryParam("count")
-    @ApiParam(name = "count", value = "The total number of results is returned [false]")
-    protected String count;
 
     protected static ObjectMapper jsonObjectMapper;
     protected static ObjectWriter jsonObjectWriter;
@@ -136,12 +110,22 @@ public class EvaWSServer {
     protected void checkParams() {
         this.queryOptions = new QueryOptions();
         Map<String, String[]> multivaluedMap = httpServletRequest.getParameterMap();
-        queryOptions.put("metadata", (multivaluedMap.get("metadata") != null) ? multivaluedMap.get("metadata")[0].equals("true") : true);
-        queryOptions.put("exclude", (exclude != null && !exclude.equals("")) ? Splitter.on(",").splitToList(exclude) : null);
-        queryOptions.put("include", (include != null && !include.equals("")) ? Splitter.on(",").splitToList(include) : null);
+        
+        boolean metadata = (multivaluedMap.get("metadata") != null) ? multivaluedMap.get("metadata")[0].equals("true") : true ;
+        int limit = (multivaluedMap.get("limit") != null) ? Integer.parseInt(multivaluedMap.get("limit")[0]) : -1;
+        int skip = (multivaluedMap.get("skip") != null) ? Integer.parseInt(multivaluedMap.get("skip")[0]) : -1;
+        boolean count = (multivaluedMap.get("count") != null) ? multivaluedMap.get("count")[0].equals("true") : false ;
+
+        String[] exclude = multivaluedMap.get("exclude");
+        String[] include = multivaluedMap.get("include");
+        
+        queryOptions.put("metadata", metadata);
+        queryOptions.put("exclude", exclude);
+        queryOptions.put("include", include);
         queryOptions.put("limit", (limit > 0) ? limit : -1);
         queryOptions.put("skip", (skip > 0) ? skip : -1);
-        queryOptions.put("count", (count != null && !count.equals("")) ? Boolean.parseBoolean(count) : false);
+        queryOptions.put("count", count);
+        System.out.println(queryOptions.toJson());
     }
 
     protected QueryResponse setQueryResponse(Object obj) {
