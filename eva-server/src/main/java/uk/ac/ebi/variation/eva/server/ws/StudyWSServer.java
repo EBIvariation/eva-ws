@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2016 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,37 +21,48 @@ package uk.ac.ebi.variation.eva.server.ws;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import com.mongodb.BasicDBObject;
-import io.swagger.annotations.Api;
+
+import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
 import org.opencb.opencga.storage.mongodb.variant.DBObjectToVariantSourceConverter;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.mongodb.BasicDBObject;
+
+import io.swagger.annotations.Api;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
-import uk.ac.ebi.variation.eva.server.exception.SpeciesException;
-import uk.ac.ebi.variation.eva.server.exception.VersionException;
 
 /**
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/v1/studies")
-@Produces("application/json")
+@RestController
+@RequestMapping(value = "/v1/studies", produces = "application/json")
 @Api(tags = { "studies" })
 public class StudyWSServer extends EvaWSServer {
 
     private StudyDBAdaptor studyDgvaDbAdaptor;
     private StudyDBAdaptor studyEvaproDbAdaptor;
 
+    public StudyWSServer() throws NamingException, IOException {
+        studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
+        studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
+    }
 
     public StudyWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException, NamingException {
         super(uriInfo, hsr);
@@ -59,11 +70,11 @@ public class StudyWSServer extends EvaWSServer {
         studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
     }
 
-    @GET
-    @Path("/{study}/files")
+    @RequestMapping(value = "/{study}/files", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves all the files from a study", response = QueryResponse.class)
-    public Response getFilesByStudy(@PathParam("study") String study,
-                                    @QueryParam("species") String species) 
+    public QueryResponse getFilesByStudy(@PathVariable("study") String study,
+                                         @RequestParam("species") String species,
+                                         HttpServletResponse response)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         checkParams();
             
@@ -74,7 +85,8 @@ public class StudyWSServer extends EvaWSServer {
         if (idQueryResult.getNumResults() == 0) {
             QueryResult queryResult = new QueryResult();
             queryResult.setErrorMsg("Study identifier not found");
-            return createOkResponse(queryResult);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(queryResult);
         }
 
         BasicDBObject id = (BasicDBObject) idQueryResult.getResult().get(0);
@@ -82,14 +94,14 @@ public class StudyWSServer extends EvaWSServer {
                 id.getString(DBObjectToVariantSourceConverter.STUDYID_FIELD), queryOptions);
         finalResult.setDbTime(finalResult.getDbTime() + idQueryResult.getDbTime());
 
-        return createOkResponse(finalResult);
+        return setQueryResponse(finalResult);
     }
 
-    @GET
-    @Path("/{study}/view")
+    @RequestMapping(value = "/{study}/view", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "The info of a study", response = QueryResponse.class)
-    public Response getStudy(@PathParam("study") String study,
-                             @QueryParam("species") String species) 
+    public QueryResponse getStudy(@PathVariable("study") String study,
+                                  @RequestParam(name = "species") String species,
+                                  HttpServletResponse response)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         checkParams();
         
@@ -99,7 +111,8 @@ public class StudyWSServer extends EvaWSServer {
         if (idQueryResult.getNumResults() == 0) {
             QueryResult queryResult = new QueryResult();
             queryResult.setErrorMsg("Study identifier not found");
-            return createOkResponse(queryResult);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(queryResult);
         }
 
         BasicDBObject id = (BasicDBObject) idQueryResult.getResult().get(0);
@@ -107,17 +120,16 @@ public class StudyWSServer extends EvaWSServer {
             id.getString(DBObjectToVariantSourceConverter.STUDYID_FIELD), queryOptions);
         finalResult.setDbTime(finalResult.getDbTime() + idQueryResult.getDbTime());
 
-        return createOkResponse(finalResult);
+        return setQueryResponse(finalResult);
     }
 
-    @GET
-    @Path("/{study}/summary")
-    public Response getStudySummary(@PathParam("study") String study,
-                                    @DefaultValue("false") @QueryParam("structural") boolean structural) {
+    @RequestMapping(value = "/{study}/summary", method = RequestMethod.GET)
+    public QueryResponse getStudySummary(@PathVariable("study") String study,
+                                         @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
         if (structural) {
-            return createOkResponse(studyDgvaDbAdaptor.getStudyById(study, queryOptions));
+            return setQueryResponse(studyDgvaDbAdaptor.getStudyById(study, queryOptions));
         } else {
-            return createOkResponse(studyEvaproDbAdaptor.getStudyById(study, queryOptions));
+            return setQueryResponse(studyEvaproDbAdaptor.getStudyById(study, queryOptions));
         }
     }
 }
