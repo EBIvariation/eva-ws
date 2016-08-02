@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2016 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,59 +19,73 @@
 
 package uk.ac.ebi.variation.eva.server.ws;
 
-import io.swagger.annotations.Api;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
 import org.opencb.biodata.models.feature.Region;
+import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.variation.eva.server.exception.SpeciesException;
-import uk.ac.ebi.variation.eva.server.exception.VersionException;
 
 /**
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/v1/variants")
-@Produces("application/json")
+@RestController
+@RequestMapping(value = "/v1/variants", produces = "application/json")
 @Api(tags = { "variants" })
 public class VariantWSServer extends EvaWSServer {
 
-
+    public VariantWSServer() { }
+    
     public VariantWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr)
             throws IOException {
         super(uriInfo, hsr);
     }
 
-    @GET
-    @Path("/{variantId}/info")
+    @RequestMapping(value = "/{variantId}/info", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves the information about a variant", response = QueryResponse.class)
-    public Response getVariantById(@PathParam("variantId") String variantId,
-                                   @QueryParam("studies") String studies,
-                                   @QueryParam("species") String species) 
+    public QueryResponse getVariantById(@PathVariable("variantId") String variantId,
+                                        @RequestParam(name = "studies", required = false) List<String> studies,
+                                        @RequestParam("species") String species,
+                                        HttpServletResponse response) 
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         checkParams();
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         
         if (studies != null && !studies.isEmpty()) {
-            queryOptions.put("studies", Arrays.asList(studies.split(",")));
+            queryOptions.put("studies", studies);
         }
         
         if (!variantId.contains(":")) { // Query by accession id
-            return createOkResponse(variantMongoDbAdaptor.getVariantById(variantId, queryOptions));
+            return setQueryResponse(variantMongoDbAdaptor.getVariantById(variantId, queryOptions));
         } else { // Query by chr:pos:ref:alt
             String parts[] = variantId.split(":", -1);
             if (parts.length < 3) {
-                return createErrorResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return setQueryResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
             }
 
             Region region = new Region(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[1]));
@@ -80,31 +94,33 @@ public class VariantWSServer extends EvaWSServer {
                 queryOptions.put("alternate", String.join(":", Arrays.copyOfRange(parts, 3, parts.length)));
             }
 
-            return createOkResponse(variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions));
+            return setQueryResponse(variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions));
         }
     }
 
-    @GET
-    @Path("/{variantId}/exists")
+    @RequestMapping(value = "/{variantId}/exists", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Checks if a variants exist", response = QueryResponse.class)
-    public Response checkVariantExists(@PathParam("variantId") String variantId,
-                                       @QueryParam("studies") String studies,
-                                       @QueryParam("species") String species) 
+    public QueryResponse checkVariantExists(@PathVariable("variantId") String variantId,
+                                            @RequestParam(name = "studies", required = false) List<String> studies,
+                                            @RequestParam("species") String species,
+                                            HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         checkParams();
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         
         if (studies != null && !studies.isEmpty()) {
-            queryOptions.put("studies", Arrays.asList(studies.split(",")));
+            queryOptions.put("studies", studies);
         }
         
         if (!variantId.contains(":")) { // Query by accession id
-            return createErrorResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
         } else { // Query by chr:pos:ref:alt
             String parts[] = variantId.split(":", -1);
             if (parts.length < 3) {
-                return createErrorResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return setQueryResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
             }
 
             Region region = new Region(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[1]));
@@ -116,7 +132,7 @@ public class VariantWSServer extends EvaWSServer {
             QueryResult queryResult = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
             queryResult.setResult(Arrays.asList(queryResult.getNumResults() > 0));
             queryResult.setResultType(Boolean.class.getCanonicalName());
-            return createOkResponse(queryResult);
+            return setQueryResponse(queryResult);
         }
     }
 

@@ -24,7 +24,6 @@
     <properties>
         <opencga.version>0.5.2</opencga.version>
         <compileSource>1.8</compileSource>
-        <tomcat.version>7.0.52</tomcat.version> <!-- Spring Boot defaults to Tomcat 8 -->
     </properties>
 
     <dependencyManagement>
