@@ -81,8 +81,9 @@ public class RegionWSServer extends EvaWSServer {
 
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
 
+
         if (studies != null && !studies.isEmpty()) {
-            queryOptions.put("studies", studies);
+            queryOptions.put(VariantDBAdaptor.STUDIES, studies);
         }
         
         if (consequenceType != null && !consequenceType.isEmpty()) {
@@ -100,17 +101,17 @@ public class RegionWSServer extends EvaWSServer {
         }
         
         if (!reference.isEmpty()) {
-            queryOptions.put("reference", reference);
+            queryOptions.put(VariantDBAdaptor.REFERENCE, reference);
         }
         if (!alternate.isEmpty()) {
-            queryOptions.put("alternate", alternate);
+            queryOptions.put(VariantDBAdaptor.ALTERNATE, alternate);
         }
         
         if (!missingAlleles.isEmpty()) {
-            queryOptions.put("missingAlleles", missingAlleles);
+            queryOptions.put(VariantDBAdaptor.MISSING_ALLELES, missingAlleles);
         }
         if (!missingGenotypes.isEmpty()) {
-            queryOptions.put("missingGenotypes", missingGenotypes);
+            queryOptions.put(VariantDBAdaptor.MISSING_GENOTYPES, missingGenotypes);
         }
 
         queryOptions.put("merge", merge);

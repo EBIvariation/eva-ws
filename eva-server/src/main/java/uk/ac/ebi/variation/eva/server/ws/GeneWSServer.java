@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2016 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,74 +21,92 @@ package uk.ac.ebi.variation.eva.server.ws;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.Arrays;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import io.swagger.annotations.Api;
-import java.util.List;
+import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.variation.eva.server.exception.SpeciesException;
-import uk.ac.ebi.variation.eva.server.exception.VersionException;
 
 /**
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/v1/genes")
-@Produces("application/json")
+@RestController
+@RequestMapping(value = "/v1/genes", produces = "application/json")
 @Api(tags = { "genes" })
 public class GeneWSServer extends EvaWSServer {
 
+    public GeneWSServer() { }
 
     public GeneWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
         super(uriInfo, hsr);
     }
 
-    @GET
-    @Path("/{gene}/variants")
+    @RequestMapping(value = "/{geneId}/variants", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants of a gene", response = QueryResponse.class)
-    public Response getVariantsByGene(@PathParam("gene") String geneId,
-                                      @QueryParam("ref") String reference,
-                                      @QueryParam("alt") String alternate,
-                                      @QueryParam("species") String species,
-                                      @DefaultValue("") @QueryParam("miss_alleles") String missingAlleles,
-                                      @DefaultValue("") @QueryParam("miss_gts") String missingGenotypes,
-                                      @DefaultValue("") @QueryParam("type") String variantType)
+    public QueryResponse getVariantsByGene(@PathVariable("geneId") String geneId,
+                                           @RequestParam(name = "species") String species,
+                                           @RequestParam(name = "studies", required = false) String studies,
+                                           @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
+                                           @RequestParam(name = "maf", defaultValue = "") String maf,
+                                           @RequestParam(name = "polyphen", defaultValue = "") String polyphenScore,
+                                           @RequestParam(name = "sift", defaultValue = "") String siftScore,
+                                           @RequestParam(name = "ref", defaultValue = "") String reference,
+                                           @RequestParam(name = "alt", defaultValue = "") String alternate,
+                                           @RequestParam(name = "miss_alleles", defaultValue = "") String missingAlleles,
+                                           @RequestParam(name = "miss_gts", defaultValue = "") String missingGenotypes)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         checkParams();
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         
-        for (String acceptedValue : VariantDBAdaptor.QueryParams.acceptedValues) {
-            if (uriInfo.getQueryParameters().containsKey(acceptedValue)) {
-                List<String> values = uriInfo.getQueryParameters(true).get(acceptedValue);
-                String csv = values.get(0);
-                for (int i = 1; i < values.size(); i++) {
-                    csv += "," + values.get(i);
-                }
-                queryOptions.add(acceptedValue, csv);
-            }
+        if (studies != null && !studies.isEmpty()) {
+            queryOptions.put(VariantDBAdaptor.STUDIES, studies);
         }
-
-        if (reference != null) {
-            queryOptions.put("reference", reference);
+        
+        if (consequenceType != null && !consequenceType.isEmpty()) {
+            queryOptions.put(VariantDBAdaptor.ANNOT_CONSEQUENCE_TYPE, consequenceType);
         }
-        if (alternate != null) {
-            queryOptions.put("alternate", alternate);
+        
+        if (!maf.isEmpty()) {
+            queryOptions.put(VariantDBAdaptor.MAF, maf);
         }
-        if (!variantType.isEmpty()) {
-            queryOptions.put("type", variantType);
+        if (!polyphenScore.isEmpty()) {
+            queryOptions.put(VariantDBAdaptor.POLYPHEN, polyphenScore);
+        }
+        if (!siftScore.isEmpty()) {
+            queryOptions.put(VariantDBAdaptor.SIFT, siftScore);
+        }
+        
+        if (!reference.isEmpty()) {
+            queryOptions.put(VariantDBAdaptor.REFERENCE, reference);
+        }
+        if (!alternate.isEmpty()) {
+            queryOptions.put(VariantDBAdaptor.ALTERNATE, alternate);
+        }
+        
+        if (!missingAlleles.isEmpty()) {
+            queryOptions.put(VariantDBAdaptor.MISSING_ALLELES, missingAlleles);
+        }
+        if (!missingGenotypes.isEmpty()) {
+            queryOptions.put(VariantDBAdaptor.MISSING_GENOTYPES, missingGenotypes);
         }
         
         queryOptions.put("sort", true);
 
-        return createOkResponse(variantMongoDbAdaptor.getAllVariantsByGene(geneId, queryOptions));
+        return setQueryResponse(variantMongoDbAdaptor.getAllVariantsByGene(geneId, queryOptions));
     }
     
 }
