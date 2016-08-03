@@ -20,6 +20,7 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -120,8 +121,8 @@ public class EvaWSServer {
         String[] include = multivaluedMap.get("include");
         
         queryOptions.put("metadata", metadata);
-        queryOptions.put("exclude", exclude);
-        queryOptions.put("include", include);
+        queryOptions.put("exclude", (exclude != null && exclude.length > 0) ? Splitter.on(",").splitToList(exclude[0]) : null);
+        queryOptions.put("include", (include != null && include.length > 0) ? Splitter.on(",").splitToList(include[0]) : null);
         queryOptions.put("limit", (limit > 0) ? limit : -1);
         queryOptions.put("skip", (skip > 0) ? skip : -1);
         queryOptions.put("count", count);
