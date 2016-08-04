@@ -12,10 +12,6 @@
             <param-name>contextClass</param-name>
             <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
         </init-param>
-        <init-param>
-            <param-name>contextConfigLocation</param-name>
-            <param-value>sample.traditional.config</param-value>
-        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
@@ -24,20 +20,6 @@
         <url-pattern>/webservices/rest/*</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>Jersey2Config</servlet-name>
-        <servlet-class>io.swagger.jersey.config.JerseyJaxrsConfig</servlet-class>
-        <init-param>
-          <param-name>api.version</param-name>
-          <param-value>1.0.0</param-value>
-        </init-param>
-        <init-param>
-          <param-name>swagger.api.basepath</param-name>
-          <param-value>${eva.context.root}/webservices/rest</param-value>
-        </init-param>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-    
     <!-- General configuration -->
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
