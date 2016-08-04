@@ -20,11 +20,6 @@
         <url-pattern>/webservices/rest/*</url-pattern>
     </servlet-mapping>
 
-    <!-- General configuration -->
-    <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-    </welcome-file-list>
-    
     <resource-ref>
         <description>EVAPRO Data Source</description>
         <res-ref-name>jdbc/${eva.evapro.datasource}</res-ref-name>
