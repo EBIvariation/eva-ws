@@ -60,7 +60,7 @@ public class GeneWSServer extends EvaWSServer {
                                            @RequestParam(name = "miss_alleles", defaultValue = "") String missingAlleles,
                                            @RequestParam(name = "miss_gts", defaultValue = "") String missingGenotypes)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
-        checkParams();
+        initializeQueryOptions();
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
         

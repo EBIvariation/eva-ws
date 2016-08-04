@@ -73,7 +73,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "pageToken", required = false) String pageToken,
                                         @RequestParam(name = "pageSize", defaultValue = "10") int limit)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
-        queryOptions = new QueryOptions();
+        initializeQueryOptions();
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
         

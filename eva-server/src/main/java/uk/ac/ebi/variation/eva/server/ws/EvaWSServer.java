@@ -88,7 +88,7 @@ public class EvaWSServer {
 
     public EvaWSServer() { }
 
-    protected void checkParams() {
+    protected void initializeQueryOptions() {
         this.queryOptions = new QueryOptions();
         Map<String, String[]> multivaluedMap = httpServletRequest.getParameterMap();
         

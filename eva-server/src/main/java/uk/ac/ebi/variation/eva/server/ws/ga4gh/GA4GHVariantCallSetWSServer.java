@@ -68,7 +68,7 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
                                                 @RequestParam(name = "histogram", defaultValue = "false") boolean histogram,
                                                 @RequestParam(name = "histogram_interval", defaultValue = "-1") int interval)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        queryOptions = new QueryOptions();
+        initializeQueryOptions();
         
         if (files.isEmpty()) {
             throw new IllegalArgumentException("The 'variantSetIds' argument must not be empty");

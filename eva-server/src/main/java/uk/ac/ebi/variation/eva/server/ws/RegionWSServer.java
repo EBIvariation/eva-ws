@@ -70,7 +70,7 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "merge", defaultValue = "false") boolean merge,
                                              HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, IOException {
-        checkParams();
+        initializeQueryOptions();
 
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
 

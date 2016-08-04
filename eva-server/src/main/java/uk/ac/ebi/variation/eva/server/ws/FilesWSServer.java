@@ -58,7 +58,7 @@ public class FilesWSServer extends EvaWSServer {
 //    @ApiOperation(httpMethod = "GET", value = "Gets the files of a species")
     public QueryResponse getFiles(@RequestParam("species") String species) 
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        checkParams();
+        initializeQueryOptions();
         
         VariantSourceDBAdaptor variantSourceMongoDbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor(species);
         return setQueryResponse(variantSourceMongoDbAdaptor.getAllSources(queryOptions));
@@ -67,7 +67,7 @@ public class FilesWSServer extends EvaWSServer {
     @RequestMapping(value = "/{files}/url", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Gets the URL of a file")
     public QueryResponse getFileUrl(@PathVariable("files") String filenames) {
-        checkParams();
+        initializeQueryOptions();
         return setQueryResponse(variantSourceEvaproDbAdaptor.getSourceDownloadUrlByName(Arrays.asList(filenames.split(","))));
     }
 

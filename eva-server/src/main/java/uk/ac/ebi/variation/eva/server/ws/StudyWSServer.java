@@ -67,7 +67,7 @@ public class StudyWSServer extends EvaWSServer {
                                          @RequestParam("species") String species,
                                          HttpServletResponse response)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        checkParams();
+        initializeQueryOptions();
             
         StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
         VariantSourceDBAdaptor variantSourceDbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor(species);
@@ -94,7 +94,7 @@ public class StudyWSServer extends EvaWSServer {
                                   @RequestParam(name = "species") String species,
                                   HttpServletResponse response)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        checkParams();
+        initializeQueryOptions();
         
         StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
         

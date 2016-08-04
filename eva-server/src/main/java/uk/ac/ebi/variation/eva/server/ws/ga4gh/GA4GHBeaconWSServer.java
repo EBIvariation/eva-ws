@@ -57,7 +57,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
                                       @RequestParam("datasetIds") String studies,
                                       HttpServletResponse response) 
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        queryOptions = new QueryOptions();
+        initializeQueryOptions();
         
         if (start < 0) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

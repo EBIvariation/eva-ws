@@ -97,7 +97,7 @@ public class ArchiveWSServer extends EvaWSServer {
     public QueryResponse getStudies(@RequestParam(name = "species", required = false) String species,
                                     @RequestParam(name = "type", required = false) String types,
                                     @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
-        queryOptions = new QueryOptions();
+        initializeQueryOptions();
         if (species != null && !species.isEmpty()) {
             queryOptions.put("species", Arrays.asList(species.split(",")));
         }
@@ -123,7 +123,7 @@ public class ArchiveWSServer extends EvaWSServer {
     public QueryResponse getStudiesStats(@RequestParam(name = "species", required = false) List<String> species,
                                          @RequestParam(name = "type", required = false) List<String> types,
                                          @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
-        queryOptions = new QueryOptions();
+        initializeQueryOptions();
         if (species != null && !species.isEmpty()) {
             queryOptions.put("species", species);
         }
