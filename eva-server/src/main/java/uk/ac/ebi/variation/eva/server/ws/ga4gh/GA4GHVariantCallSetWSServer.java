@@ -24,10 +24,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.opencb.biodata.ga4gh.GACallSet;
@@ -60,10 +57,6 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
     
     public GA4GHVariantCallSetWSServer() { }
     
-    public GA4GHVariantCallSetWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
-        super(uriInfo, hsr);
-    }
-
     /**
      * 
      * @see http://ga4gh.org/documentation/api/v0.5/ga4gh_api.html#/schema/org.ga4gh.GASearchCallSetsRequest

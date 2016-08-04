@@ -23,10 +23,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.datastore.core.QueryOptions;
@@ -53,10 +50,6 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
 
     public GA4GHBeaconWSServer() { }
     
-    public GA4GHBeaconWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
-        super(uriInfo, hsr);
-    }
-
     @RequestMapping(value = "/beacon", method = RequestMethod.GET)
     public GA4GHBeaconResponse beacon(@RequestParam("referenceName") String chromosome,
                                       @RequestParam("start") int start,

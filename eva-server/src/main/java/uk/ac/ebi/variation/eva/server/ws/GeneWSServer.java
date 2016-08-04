@@ -23,10 +23,6 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
-
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
@@ -49,10 +45,6 @@ import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 public class GeneWSServer extends EvaWSServer {
 
     public GeneWSServer() { }
-
-    public GeneWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
-        super(uriInfo, hsr);
-    }
 
     @RequestMapping(value = "/{geneId}/variants", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants of a gene", response = QueryResponse.class)

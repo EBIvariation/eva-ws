@@ -27,9 +27,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResponse;
@@ -68,15 +65,6 @@ public class ArchiveWSServer extends EvaWSServer {
     private StudyDBAdaptor studyEvaproDbAdaptor;
     
     public ArchiveWSServer() throws NamingException, IOException {
-        archiveDgvaDbAdaptor = new ArchiveDgvaDBAdaptor();
-        archiveEvaproDbAdaptor = new ArchiveEvaproDBAdaptor();
-        studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
-        studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
-    }
-
-    public ArchiveWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) 
-            throws NamingException, IOException {
-        super(uriInfo, hsr);
         archiveDgvaDbAdaptor = new ArchiveDgvaDBAdaptor();
         archiveEvaproDbAdaptor = new ArchiveEvaproDBAdaptor();
         studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();

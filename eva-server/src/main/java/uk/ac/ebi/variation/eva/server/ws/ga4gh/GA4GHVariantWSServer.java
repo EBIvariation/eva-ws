@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2016 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.opencb.biodata.ga4gh.GASearchVariantRequest;
@@ -61,10 +58,6 @@ public class GA4GHVariantWSServer extends EvaWSServer {
     
     public GA4GHVariantWSServer() { }
     
-    public GA4GHVariantWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
-        super(uriInfo, hsr);
-    }
-
     /**
      * "start" and "end" are 0-based, whereas all the position stored are 1-based
      * 

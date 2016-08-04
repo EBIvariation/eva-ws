@@ -24,9 +24,6 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
@@ -55,11 +52,6 @@ public class FilesWSServer extends EvaWSServer {
     public FilesWSServer() throws NamingException, IOException {
         variantSourceEvaproDbAdaptor = new VariantSourceEvaproDBAdaptor();
         this.startTime = System.currentTimeMillis();
-    }
-
-    public FilesWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws NamingException, IOException {
-        super(uriInfo, hsr);
-        variantSourceEvaproDbAdaptor = new VariantSourceEvaproDBAdaptor();
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)

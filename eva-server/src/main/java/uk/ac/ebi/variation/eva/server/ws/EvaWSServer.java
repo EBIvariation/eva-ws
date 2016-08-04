@@ -20,18 +20,12 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.opencb.biodata.models.feature.Genotype;
 import org.opencb.biodata.models.variant.VariantSource;
@@ -55,8 +49,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.base.Splitter;
 
-import io.swagger.annotations.ApiParam;
-
 /**
  * Created by imedina on 01/04/14.
  */
@@ -64,8 +56,6 @@ public class EvaWSServer {
 
     protected final String version = "v1";
 
-    protected UriInfo uriInfo;
-    
     @Autowired
     protected HttpServletRequest httpServletRequest;
 
@@ -97,16 +87,6 @@ public class EvaWSServer {
     }
 
     public EvaWSServer() { }
-
-    public EvaWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
-        this.uriInfo = uriInfo;
-        this.httpServletRequest = hsr;
-
-        this.startTime = System.currentTimeMillis();
-        this.queryOptions = new QueryOptions();
-
-        logger.info("EvaWSServer: in 'constructor'");
-    }
 
     protected void checkParams() {
         this.queryOptions = new QueryOptions();
@@ -160,40 +140,6 @@ public class EvaWSServer {
         }
     }
 
-    protected Response createUserErrorResponse(Object obj) {
-        QueryResponse queryResponse = setQueryResponse(obj);
-        endTime = System.currentTimeMillis() - startTime;
-        queryResponse.setTime(new Long(endTime - startTime).intValue());
-        queryResponse.setApiVersion(version);
-        queryResponse.setQueryOptions(queryOptions);
-        queryResponse.setError(obj.toString());
-        
-        return Response.status(Response.Status.BAD_REQUEST).entity(queryResponse).build();
-    }
-    
-    protected Response createErrorResponse(Object obj) {
-        QueryResponse queryResponse = setQueryResponse(obj);
-        endTime = System.currentTimeMillis() - startTime;
-        queryResponse.setTime(new Long(endTime - startTime).intValue());
-        queryResponse.setApiVersion(version);
-        queryResponse.setQueryOptions(queryOptions);
-        queryResponse.setError(obj.toString());
-        
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(queryResponse).build();
-    }
-
-    protected Response createJsonResponse(Object object) {
-        return Response.ok(object).build();
-    }
-    
-    protected Response createJsonUserErrorResponse(Object object) {
-        return Response.status(Response.Status.BAD_REQUEST).entity(object).build();
-    }
-    
-    protected Response createJsonErrorResponse(Object object) {
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(object).build();
-    }
-    
 //    private Response buildResponse(Response.ResponseBuilder responseBuilder) {
 //        return responseBuilder.header("Access-Control-Allow-Origin", "*")
 //                .header("Access-Control-Allow-Headers", "x-requested-with, content-type, accept")

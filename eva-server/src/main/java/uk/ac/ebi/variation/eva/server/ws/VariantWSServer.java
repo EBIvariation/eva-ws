@@ -59,11 +59,6 @@ public class VariantWSServer extends EvaWSServer {
 
     public VariantWSServer() { }
     
-    public VariantWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr)
-            throws IOException {
-        super(uriInfo, hsr);
-    }
-
     @RequestMapping(value = "/{variantId}/info", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves the information about a variant", response = QueryResponse.class)
     public QueryResponse getVariantById(@PathVariable("variantId") String variantId,

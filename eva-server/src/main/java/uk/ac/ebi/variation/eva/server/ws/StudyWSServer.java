@@ -23,10 +23,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
@@ -60,12 +57,6 @@ public class StudyWSServer extends EvaWSServer {
     private StudyDBAdaptor studyEvaproDbAdaptor;
 
     public StudyWSServer() throws NamingException, IOException {
-        studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
-        studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
-    }
-
-    public StudyWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException, NamingException {
-        super(uriInfo, hsr);
         studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
         studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
     }

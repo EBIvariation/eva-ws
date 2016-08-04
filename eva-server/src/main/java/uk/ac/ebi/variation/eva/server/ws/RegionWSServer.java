@@ -23,11 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.datastore.core.QueryResponse;
@@ -52,10 +49,6 @@ import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 public class RegionWSServer extends EvaWSServer {
 
     public RegionWSServer() {
-    }
-
-    public RegionWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws IOException {
-        super(uriInfo, hsr);
     }
 
     @RequestMapping(value = "/{regionId}/variants", method = RequestMethod.GET)
