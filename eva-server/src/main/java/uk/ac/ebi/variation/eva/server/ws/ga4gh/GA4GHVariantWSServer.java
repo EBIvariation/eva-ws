@@ -19,23 +19,15 @@
 
 package uk.ac.ebi.variation.eva.server.ws.ga4gh;
 
-import io.swagger.annotations.Api;
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
 import org.apache.commons.lang.StringUtils;
 import org.opencb.biodata.ga4gh.GASearchVariantRequest;
 import org.opencb.biodata.ga4gh.GASearchVariantsResponse;
@@ -43,9 +35,18 @@ import org.opencb.biodata.ga4gh.GAVariant;
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.biodata.models.variant.Variant;
 import org.opencb.biodata.models.variant.ga4gh.GAVariantFactory;
+import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
 
@@ -53,38 +54,38 @@ import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/v1/ga4gh/variants")
-@Produces(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping(value = "/v1/ga4gh/variants", produces = "application/json")
 @Api(tags = { "ga4gh", "variants" })
 public class GA4GHVariantWSServer extends EvaWSServer {
+    
+    public GA4GHVariantWSServer() { }
     
     public GA4GHVariantWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
         super(uriInfo, hsr);
     }
 
-    @GET
-    @Path("/search")
     /**
      * "start" and "end" are 0-based, whereas all the position stored are 1-based
      * 
      * @see http://ga4gh.org/documentation/api/v0.5/ga4gh_api.html#/schema/org.ga4gh.GASearchVariantsRequest
      */
-    public Response getVariantsByRegion(@QueryParam("referenceName") String chromosome,
-                                        @QueryParam("start") int start,
-                                        @QueryParam("end") int end,
-//                                        @QueryParam("variantName") String id,
-                                        @QueryParam("variantSetIds") String files,
-//                                        @QueryParam("callSetIds") String samples,
-                                        @QueryParam("pageToken") String pageToken,
-                                        @DefaultValue("10") @QueryParam("pageSize") int limit,
-                                        @DefaultValue("false") @QueryParam("histogram") boolean histogram,
-                                        @DefaultValue("-1") @QueryParam("histogram_interval") int interval) 
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public GASearchVariantsResponse getVariantsByRegion(@RequestParam("referenceName") String chromosome,
+                                        @RequestParam("start") int start,
+                                        @RequestParam("end") int end,
+//                                        @RequestParam("variantName") String id,
+                                        @RequestParam(name = "variantSetIds", required = false) List<String> files,
+//                                        @RequestParam(name = "callSetIds", required = false) String samples,
+                                        @RequestParam(name = "pageToken", required = false) String pageToken,
+                                        @RequestParam(name = "pageSize", defaultValue = "10") int limit)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
+        queryOptions = new QueryOptions();
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
         
         if (files != null && !files.isEmpty()) {
-            queryOptions.put("files", Arrays.asList(files.split(",")));
+            queryOptions.put("files", files);
         }
         
         int idxCurrentPage = 0;
@@ -94,41 +95,36 @@ public class GA4GHVariantWSServer extends EvaWSServer {
         }
         queryOptions.put("limit", limit);
         
-        // Create the provided region, whose size can't excede 1 million positions
+        // Create the provided region, whose size can't exceed 1 million positions
         Region region = new Region(chromosome, start, end);
         int regionSize = region.getEnd()-region.getStart();
         
-        if (histogram) {
-            if (interval > 0) {
-                queryOptions.put("interval", interval);
-            }
-            return createOkResponse(variantMongoDbAdaptor.getVariantFrequencyByRegion(region, queryOptions));
-        } else if (regionSize <= 1000000) {
-            QueryResult<Variant> qr = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
-            // Convert Variant objects to GAVariant
-            List<GAVariant> gaVariants = GAVariantFactory.create(qr.getResult());
-            // Calculate the next page token
-            int idxLastElement = idxCurrentPage * limit + limit;
-            String nextPageToken = (idxLastElement < qr.getNumTotalResults()) ? String.valueOf(idxCurrentPage + 1) : null;
-            
-            // Create the custom response for the GA4GH API
-            return createJsonResponse(new GASearchVariantsResponse(gaVariants, nextPageToken));
-        } else {
-            return createJsonUserErrorResponse("The total size of all regions provided can't exceed 1 million positions. "
-                    + "If you want to browse a larger number of positions, please provide the parameter 'histogram=true'");
+        if (regionSize > 1000000) {
+            throw new IllegalArgumentException("The size of the region is larger than 1 million nucleotides");
         }
+
+        QueryResult<Variant> qr = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
+        // Convert Variant objects to GAVariant
+        List<GAVariant> gaVariants = GAVariantFactory.create(qr.getResult());
+        // Calculate the next page token
+        int idxLastElement = idxCurrentPage * limit + limit;
+        String nextPageToken = (idxLastElement < qr.getNumTotalResults()) ? String.valueOf(idxCurrentPage + 1) : null;
         
+        // Create the custom response for the GA4GH API
+        return new GASearchVariantsResponse(gaVariants, nextPageToken);
     }
-    
-    @POST
-    @Path("/search")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response getVariantsByRegion(GASearchVariantRequest request) 
+
+    @RequestMapping(value = "/search", method = RequestMethod.POST, consumes = "application/json")
+    public GASearchVariantsResponse getVariantsByRegion(GASearchVariantRequest request)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         request.validate();
         return getVariantsByRegion(request.getReferenceName(), (int) request.getStart(), (int) request.getEnd(), 
-                   StringUtils.join(request.getVariantSetIds(), ","), request.getPageToken(), request.getPageSize(), 
-                   false, -1);
+                                   request.getVariantSetIds(), request.getPageToken(), request.getPageSize());
     }
-    
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public void handleException(IllegalArgumentException e, HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.PAYLOAD_TOO_LARGE.value(), e.getMessage());
+    }
+
 }
