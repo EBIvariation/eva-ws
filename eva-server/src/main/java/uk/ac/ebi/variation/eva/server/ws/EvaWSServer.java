@@ -41,6 +41,8 @@ import org.opencb.opencga.storage.core.variant.io.json.VariantStatsJsonSerialize
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -63,29 +65,24 @@ public class EvaWSServer {
     protected long startTime;
     protected long endTime;
 
-    protected static ObjectMapper jsonObjectMapper;
-    protected static ObjectWriter jsonObjectWriter;
-
-    protected static Logger logger;
+    protected static Logger logger = LoggerFactory.getLogger(EvaWSServer.class);
     
-
-    static {
-        logger = LoggerFactory.getLogger(EvaWSServer.class);
-
-        jsonObjectMapper = new ObjectMapper()
-        		.addMixIn(VariantSourceEntry.class, VariantSourceEntryJsonMixin.class)
-        		.addMixIn(Genotype.class, GenotypeJsonMixin.class)
-        		.addMixIn(VariantStats.class, VariantStatsJsonMixin.class)
-        		.addMixIn(VariantSource.class, VariantSourceJsonMixin.class)
-        		.setSerializationInclusion(Include.NON_NULL);
+    @Bean
+    public Jackson2ObjectMapperBuilder jacksonBuilder() {
+        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
+                       .mixIn(VariantSourceEntry.class, VariantSourceEntryJsonMixin.class)
+                       .mixIn(Genotype.class, GenotypeJsonMixin.class)
+                       .mixIn(VariantStats.class, VariantStatsJsonMixin.class)
+                       .mixIn(VariantSource.class, VariantSourceJsonMixin.class)
+                       .serializationInclusion(Include.NON_NULL);
         
         SimpleModule module = new SimpleModule();
         module.addSerializer(VariantStats.class, new VariantStatsJsonSerializer());
-        jsonObjectMapper.registerModule(module);
+        builder.modules(module);
         
-        jsonObjectWriter = jsonObjectMapper.writer();
+        return builder;
     }
-
+    
     public EvaWSServer() { }
 
     protected void initializeQueryOptions() {
@@ -128,16 +125,6 @@ public class EvaWSServer {
         queryResponse.setResponse(coll);
         
         return queryResponse;
-    }
-    
-    protected Response createOkResponse(Object obj) {
-        QueryResponse queryResponse = setQueryResponse(obj);
-
-        try {
-            return Response.ok(jsonObjectWriter.writeValueAsString(queryResponse), MediaType.APPLICATION_JSON_TYPE).build();
-        } catch (JsonProcessingException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex).build();
-        }
     }
 
 //    private Response buildResponse(Response.ResponseBuilder responseBuilder) {

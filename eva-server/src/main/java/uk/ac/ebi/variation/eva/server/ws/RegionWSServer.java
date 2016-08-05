@@ -151,7 +151,7 @@ public class RegionWSServer extends EvaWSServer {
     }
 
     @RequestMapping(value = "/{regionId}/variants", method = RequestMethod.OPTIONS)
-    public Response getVariantsByRegion() {
-        return createOkResponse("");
+    public QueryResponse getVariantsByRegion() {
+        return setQueryResponse("");
     }
 }
