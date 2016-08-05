@@ -31,7 +31,7 @@ public class Application extends SpringBootServletInitializer {
     public Docket apiConfiguration() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
-                .pathMapping("/webservices/rest")
+                .pathMapping("/")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("uk.ac.ebi.variation.eva.server"))
                 .build();
@@ -46,4 +46,5 @@ public class Application extends SpringBootServletInitializer {
                 .version("1.0")
                 .build();
     }
+
 }

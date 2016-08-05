@@ -20,6 +20,15 @@
         <url-pattern>/webservices/rest/*</url-pattern>
     </servlet-mapping>
 
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>uk.ac.ebi.variation.eva.server.CORSResponseFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <resource-ref>
         <description>EVAPRO Data Source</description>
         <res-ref-name>jdbc/${eva.evapro.datasource}</res-ref-name>
