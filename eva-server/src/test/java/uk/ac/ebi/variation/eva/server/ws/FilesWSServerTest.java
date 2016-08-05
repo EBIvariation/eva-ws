@@ -41,7 +41,7 @@ public class FilesWSServerTest {
     
     @Test
     public void testGetFiles() throws URISyntaxException {
-        Response response = given().param("species", "hsapiens_grch37").get(new URI("/v1/files/all"));
+        Response response = given().param("species", "mmusculus_grcm38").get(new URI("/v1/files/all"));
         response.then().statusCode(200);
         
         List queryResponse = JsonPath.from(response.asString()).getList("response");
