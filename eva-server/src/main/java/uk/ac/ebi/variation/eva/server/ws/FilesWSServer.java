@@ -20,7 +20,6 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import javax.naming.NamingException;
@@ -57,7 +56,7 @@ public class FilesWSServer extends EvaWSServer {
     @RequestMapping(value = "/all", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Gets the files of a species")
     public QueryResponse getFiles(@RequestParam("species") String species) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+            throws IllegalOpenCGACredentialsException, IOException {
         initializeQueryOptions();
         
         VariantSourceDBAdaptor variantSourceMongoDbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor(species);

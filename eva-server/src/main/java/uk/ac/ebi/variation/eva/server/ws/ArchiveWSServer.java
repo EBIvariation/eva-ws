@@ -20,7 +20,6 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,6 @@ import java.util.Properties;
 
 import javax.naming.NamingException;
 
-import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
@@ -64,11 +62,16 @@ public class ArchiveWSServer extends EvaWSServer {
     private StudyDBAdaptor studyDgvaDbAdaptor;
     private StudyDBAdaptor studyEvaproDbAdaptor;
     
+    private Properties properties;
+    
     public ArchiveWSServer() throws NamingException, IOException {
         archiveDgvaDbAdaptor = new ArchiveDgvaDBAdaptor();
         archiveEvaproDbAdaptor = new ArchiveEvaproDBAdaptor();
         studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
         studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
+        
+        properties = new Properties();
+        properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
     }
 
     @RequestMapping(value = "/files/count", method = RequestMethod.GET)
@@ -82,9 +85,7 @@ public class ArchiveWSServer extends EvaWSServer {
     }
 
     @RequestMapping(value = "/species/list", method = RequestMethod.GET)
-    public QueryResponse getSpecies() throws IOException {
-        Properties properties = new Properties();
-        properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
+    public QueryResponse getSpecies() {
         return setQueryResponse(archiveEvaproDbAdaptor.getSpecies(properties.getProperty("eva.version"), true));
     }
 
@@ -114,7 +115,7 @@ public class ArchiveWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/studies/list", method = RequestMethod.GET)
     public QueryResponse getBrowsableStudies(@RequestParam("species") String species) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+            throws IllegalOpenCGACredentialsException, IOException {
         StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
         return setQueryResponse(studyMongoDbAdaptor.listStudies());
     }
