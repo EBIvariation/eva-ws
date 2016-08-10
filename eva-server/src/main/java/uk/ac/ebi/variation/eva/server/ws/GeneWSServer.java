@@ -100,5 +100,22 @@ public class GeneWSServer extends EvaWSServer {
 
         return setQueryResponse(variantMongoDbAdaptor.getAllVariantsByGene(geneId, queryOptions));
     }
-    
+
+    @RequestMapping(value = "/{geneId}/variants", method = RequestMethod.POST)
+    public QueryResponse getVariantsByGenePOST(@PathVariable("geneId") String geneId,
+                                               @RequestParam(name = "species") String species,
+                                               @RequestParam(name = "studies", required = false) String studies,
+                                               @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
+                                               @RequestParam(name = "maf", defaultValue = "") String maf,
+                                               @RequestParam(name = "polyphen", defaultValue = "") String polyphenScore,
+                                               @RequestParam(name = "sift", defaultValue = "") String siftScore,
+                                               @RequestParam(name = "ref", defaultValue = "") String reference,
+                                               @RequestParam(name = "alt", defaultValue = "") String alternate,
+                                               @RequestParam(name = "miss_alleles", defaultValue = "") String missingAlleles,
+                                               @RequestParam(name = "miss_gts", defaultValue = "") String missingGenotypes)
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+        return getVariantsByGene(geneId, species, studies, consequenceType, maf, polyphenScore, siftScore,
+                                 reference, alternate, missingAlleles, missingGenotypes);
+    }
+
 }
