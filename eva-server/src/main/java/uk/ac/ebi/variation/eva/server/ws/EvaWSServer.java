@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2016 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,13 @@
 
 package uk.ac.ebi.variation.eva.server.ws;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.google.common.base.Splitter;
-import io.swagger.annotations.ApiParam;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.opencb.biodata.models.feature.Genotype;
 import org.opencb.biodata.models.variant.VariantSource;
@@ -45,118 +40,77 @@ import org.opencb.opencga.storage.core.variant.io.json.VariantStatsJsonMixin;
 import org.opencb.opencga.storage.core.variant.io.json.VariantStatsJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.ebi.variation.eva.server.exception.SpeciesException;
-import uk.ac.ebi.variation.eva.server.exception.VersionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.common.base.Splitter;
 
 /**
  * Created by imedina on 01/04/14.
  */
-@Produces(MediaType.APPLICATION_JSON)
 public class EvaWSServer {
 
     protected final String version = "v1";
 
-    @DefaultValue("Homo sapiens")
-    @QueryParam("species")
-    @ApiParam(name = "species", value = "Excluded fields will not be returned. Comma separated JSON paths must be provided",
-            defaultValue = "hsapiens", allowableValues = "hsapiens,mmusculus")
-    protected String species;
-
-    protected UriInfo uriInfo;
+    @Autowired
     protected HttpServletRequest httpServletRequest;
 
     protected QueryOptions queryOptions;
-    protected QueryResponse queryResponse;
     protected long startTime;
     protected long endTime;
 
-    @DefaultValue("")
-    @QueryParam("exclude")
-    @ApiParam(name = "excluded fields", value = "Excluded fields will not be returned. Comma separated JSON paths must be provided")
-    protected String exclude;
-
-    @DefaultValue("")
-    @QueryParam("include")
-    @ApiParam(name = "included fields", value = "Included fields are the only to be returned. Comma separated JSON path must be provided")
-    protected String include;
-
-    @DefaultValue("-1")
-    @QueryParam("limit")
-    @ApiParam(name = "limit", value = "Max number of results to be returned. No limit applied when -1 [-1]")
-    protected int limit;
-
-    @DefaultValue("-1")
-    @QueryParam("skip")
-    @ApiParam(name = "skip", value = "Number of results to be skipped. No skip applied when -1 [-1]")
-    protected int skip;
-
-    @DefaultValue("false")
-    @QueryParam("count")
-    @ApiParam(name = "count", value = "The total number of results is returned [false]")
-    protected String count;
-
-    protected static ObjectMapper jsonObjectMapper;
-    protected static ObjectWriter jsonObjectWriter;
-
-    protected static Logger logger;
+    protected static Logger logger = LoggerFactory.getLogger(EvaWSServer.class);
     
-
-    static {
-        logger = LoggerFactory.getLogger(EvaWSServer.class);
-
-        jsonObjectMapper = new ObjectMapper();
-        jsonObjectMapper.addMixInAnnotations(VariantSourceEntry.class, VariantSourceEntryJsonMixin.class);
-        jsonObjectMapper.addMixInAnnotations(Genotype.class, GenotypeJsonMixin.class);
-        jsonObjectMapper.addMixInAnnotations(VariantStats.class, VariantStatsJsonMixin.class);
-        jsonObjectMapper.addMixInAnnotations(VariantSource.class, VariantSourceJsonMixin.class);
-        jsonObjectMapper.setSerializationInclusion(Include.NON_NULL);
+    @Bean
+    public Jackson2ObjectMapperBuilder jacksonBuilder() {
+        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
+                       .mixIn(VariantSourceEntry.class, VariantSourceEntryJsonMixin.class)
+                       .mixIn(Genotype.class, GenotypeJsonMixin.class)
+                       .mixIn(VariantStats.class, VariantStatsJsonMixin.class)
+                       .mixIn(VariantSource.class, VariantSourceJsonMixin.class)
+                       .serializationInclusion(Include.NON_NULL);
         
         SimpleModule module = new SimpleModule();
         module.addSerializer(VariantStats.class, new VariantStatsJsonSerializer());
-        jsonObjectMapper.registerModule(module);
+        builder.modules(module);
         
-        jsonObjectWriter = jsonObjectMapper.writer();
+        return builder;
     }
+    
+    public EvaWSServer() { }
 
-    @Deprecated
-    public EvaWSServer() {
-        logger.info("EvaWSServer: in 'constructor'");
-    }
-
-    public EvaWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
-        this.uriInfo = uriInfo;
-        this.httpServletRequest = hsr;
-
-        this.startTime = System.currentTimeMillis();
-        this.queryResponse = new QueryResponse();
+    protected void initializeQueryOptions() {
         this.queryOptions = new QueryOptions();
+        Map<String, String[]> multivaluedMap = httpServletRequest.getParameterMap();
+        
+        boolean metadata = (multivaluedMap.get("metadata") != null) ? multivaluedMap.get("metadata")[0].equals("true") : true ;
+        int limit = (multivaluedMap.get("limit") != null) ? Integer.parseInt(multivaluedMap.get("limit")[0]) : -1;
+        int skip = (multivaluedMap.get("skip") != null) ? Integer.parseInt(multivaluedMap.get("skip")[0]) : -1;
+        boolean count = (multivaluedMap.get("count") != null) ? multivaluedMap.get("count")[0].equals("true") : false ;
 
-        logger.info("EvaWSServer: in 'constructor'");
-    }
-
-    protected void checkParams() throws VersionException, SpeciesException {
-        // TODO A Version and Species checker must be implemented
-        if (version == null || !version.equals("v1")) {
-            throw new VersionException("Version not valid: '" + version + "'");
-        }
-        if (species == null || species.isEmpty()/*|| !isValidSpecies(species)*/) {
-            throw new SpeciesException("Species not valid: '" + species + "'");
-        }
-
-        MultivaluedMap<String, String> multivaluedMap = uriInfo.getQueryParameters();
-        queryOptions.put("species", species);
-
-        queryOptions.put("metadata", (multivaluedMap.get("metadata") != null) ? multivaluedMap.get("metadata").get(0).equals("true") : true);
-        queryOptions.put("exclude", (exclude != null && !exclude.equals("")) ? Splitter.on(",").splitToList(exclude) : null);
-        queryOptions.put("include", (include != null && !include.equals("")) ? Splitter.on(",").splitToList(include) : null);
+        String[] exclude = multivaluedMap.get("exclude");
+        String[] include = multivaluedMap.get("include");
+        
+        queryOptions.put("metadata", metadata);
+        queryOptions.put("exclude", (exclude != null && exclude.length > 0) ? Splitter.on(",").splitToList(exclude[0]) : null);
+        queryOptions.put("include", (include != null && include.length > 0) ? Splitter.on(",").splitToList(include[0]) : null);
         queryOptions.put("limit", (limit > 0) ? limit : -1);
         queryOptions.put("skip", (skip > 0) ? skip : -1);
-        queryOptions.put("count", (count != null && !count.equals("")) ? Boolean.parseBoolean(count) : false);
+        queryOptions.put("count", count);
+        System.out.println(queryOptions.toJson());
     }
 
-    protected Response createOkResponse(Object obj) {
-        endTime = System.currentTimeMillis() - startTime;
-        queryResponse.setTime(new Long(endTime - startTime).intValue());
+    protected QueryResponse setQueryResponse(Object obj) {
+        QueryResponse queryResponse = new QueryResponse();
+    	endTime = System.currentTimeMillis() - startTime;
+    	// TODO Restore span time calculation
+//        queryResponse.setTime(new Long(endTime - startTime).intValue());
         queryResponse.setApiVersion(version);
         queryResponse.setQueryOptions(queryOptions);
         
@@ -169,46 +123,10 @@ public class EvaWSServer {
             coll.add(obj);
         }
         queryResponse.setResponse(coll);
-
-        try {
-            return Response.ok(jsonObjectWriter.writeValueAsString(queryResponse), MediaType.APPLICATION_JSON_TYPE).build();
-        } catch (JsonProcessingException ex) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex).build();
-        }
-    }
-
-    protected Response createUserErrorResponse(Object obj) {
-        endTime = System.currentTimeMillis() - startTime;
-        queryResponse.setTime(new Long(endTime - startTime).intValue());
-        queryResponse.setApiVersion(version);
-        queryResponse.setQueryOptions(queryOptions);
-        queryResponse.setError(obj.toString());
         
-        return Response.status(Response.Status.BAD_REQUEST).entity(queryResponse).build();
-    }
-    
-    protected Response createErrorResponse(Object obj) {
-        endTime = System.currentTimeMillis() - startTime;
-        queryResponse.setTime(new Long(endTime - startTime).intValue());
-        queryResponse.setApiVersion(version);
-        queryResponse.setQueryOptions(queryOptions);
-        queryResponse.setError(obj.toString());
-        
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(queryResponse).build();
+        return queryResponse;
     }
 
-    protected Response createJsonResponse(Object object) {
-        return Response.ok(object).build();
-    }
-    
-    protected Response createJsonUserErrorResponse(Object object) {
-        return Response.status(Response.Status.BAD_REQUEST).entity(object).build();
-    }
-    
-    protected Response createJsonErrorResponse(Object object) {
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(object).build();
-    }
-    
 //    private Response buildResponse(Response.ResponseBuilder responseBuilder) {
 //        return responseBuilder.header("Access-Control-Allow-Origin", "*")
 //                .header("Access-Control-Allow-Headers", "x-requested-with, content-type, accept")

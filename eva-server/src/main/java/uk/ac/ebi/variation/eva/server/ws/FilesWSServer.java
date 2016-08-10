@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2016 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,66 +20,54 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.Arrays;
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
-import io.swagger.annotations.Api;
+import javax.naming.NamingException;
+
+import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.lib.storage.metadata.VariantSourceEvaproDBAdaptor;
-import uk.ac.ebi.variation.eva.server.exception.SpeciesException;
-import uk.ac.ebi.variation.eva.server.exception.VersionException;
 
 /**
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/v1/files")
-@Produces("application/json")
+@RestController
+@RequestMapping(value = "/v1/files", produces = "application/json")
 @Api(tags = { "files" })
 public class FilesWSServer extends EvaWSServer {
 
     private final VariantSourceDBAdaptor variantSourceEvaproDbAdaptor;
 
-
-    public FilesWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) throws NamingException, IOException {
-        super(uriInfo, hsr);
+    public FilesWSServer() throws NamingException, IOException {
         variantSourceEvaproDbAdaptor = new VariantSourceEvaproDBAdaptor();
+        this.startTime = System.currentTimeMillis();
     }
 
-    @GET
-    @Path("/all")
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Gets the files of a species")
-    public Response getFiles(@QueryParam("species") String species) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        try {
-            checkParams();
-        } catch (VersionException | SpeciesException ex) {
-            return createErrorResponse(ex.toString());
-        }
+    public QueryResponse getFiles(@RequestParam("species") String species) 
+            throws IllegalOpenCGACredentialsException, IOException {
+        initializeQueryOptions();
         
         VariantSourceDBAdaptor variantSourceMongoDbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor(species);
-        return createOkResponse(variantSourceMongoDbAdaptor.getAllSources(queryOptions));
+        return setQueryResponse(variantSourceMongoDbAdaptor.getAllSources(queryOptions));
     }
 
-    @GET
-    @Path("/{files}/url")
+    @RequestMapping(value = "/{files}/url", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Gets the URL of a file")
-    public Response getFileUrl(@PathParam("files") String filenames) {
-        try {
-            checkParams();
-        } catch (VersionException | SpeciesException ex) {
-            return createErrorResponse(ex.toString());
-        }
-        
-        return createOkResponse(variantSourceEvaproDbAdaptor.getSourceDownloadUrlByName(Arrays.asList(filenames.split(","))));
+    public QueryResponse getFileUrl(@PathVariable("files") String filenames) {
+        initializeQueryOptions();
+        return setQueryResponse(variantSourceEvaproDbAdaptor.getSourceDownloadUrlByName(Arrays.asList(filenames.split(","))));
     }
 
 }

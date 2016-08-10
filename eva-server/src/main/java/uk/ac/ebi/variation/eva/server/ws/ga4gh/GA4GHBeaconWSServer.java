@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2016 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,23 +19,23 @@
 
 package uk.ac.ebi.variation.eva.server.ws.ga4gh;
 
-import io.swagger.annotations.Api;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.opencb.biodata.models.feature.Region;
+import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
 
@@ -43,27 +43,26 @@ import uk.ac.ebi.variation.eva.server.ws.EvaWSServer;
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-@Path("/v1/ga4gh")
-@Produces(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping(value = "/v1/ga4gh", produces = "application/json")
 @Api(tags = { "ga4gh" })
 public class GA4GHBeaconWSServer extends EvaWSServer {
 
-    public GA4GHBeaconWSServer(@Context UriInfo uriInfo, @Context HttpServletRequest hsr) {
-        super(uriInfo, hsr);
-    }
-
-    @GET
-    @Path("/beacon")
-    public Response beacon(@QueryParam("referenceName") String chromosome,
-                           @QueryParam("start") Integer start,
-                           @QueryParam("allele") String allele,
-                           @QueryParam("datasetIds") String studies) 
+    public GA4GHBeaconWSServer() { }
+    
+    @RequestMapping(value = "/beacon", method = RequestMethod.GET)
+    public GA4GHBeaconResponse beacon(@RequestParam("referenceName") String chromosome,
+                                      @RequestParam("start") int start,
+                                      @RequestParam("allele") String allele,
+                                      @RequestParam("datasetIds") String studies,
+                                      HttpServletResponse response) 
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+        initializeQueryOptions();
         
-        if (chromosome == null || chromosome.isEmpty() ||
-                start == null || start < 0 || allele == null) {
-            return createJsonUserErrorResponse(new GA4GHBeaconResponse(chromosome, start, allele, studies, 
-                    "Please provide chromosome, positive position and alternate allele"));
+        if (start < 0) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return new GA4GHBeaconResponse(chromosome, start, allele, studies, 
+                    "Please provide a positive number as start position");
         }
         
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
@@ -82,7 +81,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
         QueryResult queryResult = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
 //        queryResult.setResult(Arrays.asList(queryResult.getNumResults() > 0));
 //        queryResult.setResultType(Boolean.class.getCanonicalName());
-        return createJsonResponse(new GA4GHBeaconResponse(chromosome, start, allele, studies, queryResult.getNumResults() > 0));
+        return new GA4GHBeaconResponse(chromosome, start, allele, studies, queryResult.getNumResults() > 0);
     }
     
     class GA4GHBeaconResponse {
