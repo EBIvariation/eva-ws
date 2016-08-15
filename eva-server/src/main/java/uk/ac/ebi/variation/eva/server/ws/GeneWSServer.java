@@ -19,6 +19,7 @@
 
 package uk.ac.ebi.variation.eva.server.ws;
 
+import com.mongodb.BasicDBObject;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -46,9 +47,9 @@ public class GeneWSServer extends EvaWSServer {
 
     public GeneWSServer() { }
 
-    @RequestMapping(value = "/{geneId}/variants", method = RequestMethod.GET)
+    @RequestMapping(value = "/{geneIds}/variants", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants of a gene", response = QueryResponse.class)
-    public QueryResponse getVariantsByGene(@PathVariable("geneId") String geneId,
+    public QueryResponse getVariantsByGene(@PathVariable("geneIds") List<String> geneIds,
                                            @RequestParam(name = "species") String species,
                                            @RequestParam(name = "studies", required = false) String studies,
                                            @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
@@ -96,13 +97,14 @@ public class GeneWSServer extends EvaWSServer {
             queryOptions.put(VariantDBAdaptor.MISSING_GENOTYPES, missingGenotypes);
         }
         
-        queryOptions.put("sort", true);
-
-        return setQueryResponse(variantMongoDbAdaptor.getAllVariantsByGene(geneId, queryOptions));
+        queryOptions.put(VariantDBAdaptor.SORT, new BasicDBObject("chr", 1).append("start", 1));
+        queryOptions.put(VariantDBAdaptor.GENE, String.join(",", geneIds));
+        
+        return setQueryResponse(variantMongoDbAdaptor.getAllVariants(queryOptions));
     }
 
-    @RequestMapping(value = "/{geneId}/variants", method = RequestMethod.POST)
-    public QueryResponse getVariantsByGenePOST(@PathVariable("geneId") String geneId,
+    @RequestMapping(value = "/{geneIds}/variants", method = RequestMethod.POST)
+    public QueryResponse getVariantsByGenePOST(@PathVariable("geneIds") List<String> geneIds,
                                                @RequestParam(name = "species") String species,
                                                @RequestParam(name = "studies", required = false) String studies,
                                                @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
@@ -114,7 +116,7 @@ public class GeneWSServer extends EvaWSServer {
                                                @RequestParam(name = "miss_alleles", defaultValue = "") String missingAlleles,
                                                @RequestParam(name = "miss_gts", defaultValue = "") String missingGenotypes)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return getVariantsByGene(geneId, species, studies, consequenceType, maf, polyphenScore, siftScore,
+        return getVariantsByGene(geneIds, species, studies, consequenceType, maf, polyphenScore, siftScore,
                                  reference, alternate, missingAlleles, missingGenotypes);
     }
 
