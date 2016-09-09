@@ -19,12 +19,13 @@
 
 package uk.ac.ebi.variation.eva.server;
 
+import com.mongodb.MongoClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
-
+import org.springframework.data.mongodb.MongoDbFactory;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -32,6 +33,11 @@ import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
+import uk.ac.ebi.variation.eva.lib.datastore.MultiMongoDbFactory;
+
+import java.io.IOException;
+import java.util.Properties;
 
 @SpringBootApplication
 @EnableSwagger2
@@ -44,6 +50,14 @@ public class Application extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
+    }
+
+    @Bean
+    public MongoDbFactory mongoDbFactory() throws IOException {
+        Properties properties = new Properties();
+        properties.load(Application.class.getResourceAsStream("/eva.properties"));
+        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
+        return new MultiMongoDbFactory(mongoClient, "test");
     }
 
     @Bean
