@@ -18,6 +18,7 @@ package uk.ac.ebi.variation.eva.server.ws;
 
 import io.swagger.annotations.Api;
 import org.opencb.datastore.core.QueryResponse;
+import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,9 +66,11 @@ public class FeatureWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List<FeatureCoordinates> feature = featureRepository.findByIdOrName(featureIdOrName, featureIdOrName);
+        List<FeatureCoordinates> features = featureRepository.findByIdOrName(featureIdOrName, featureIdOrName);
 
-        return setQueryResponse(feature);
+        QueryResult<FeatureCoordinates> queryResult = new QueryResult<>();
+        queryResult.addAllResults(features);
+        return setQueryResponse(queryResult);
     }
 
 }
