@@ -16,6 +16,7 @@
 package uk.ac.ebi.variation.eva.server.ws;
 
 
+import embl.ebi.variation.commons.models.data.FeatureCoordinates;
 import io.swagger.annotations.Api;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.variation.eva.lib.datastore.FeatureRepository;
 import uk.ac.ebi.variation.eva.lib.datastore.MultiMongoDbFactory;
-import uk.ac.ebi.variation.eva.lib.models.FeatureCoordinates;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

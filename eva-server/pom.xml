@@ -60,6 +60,10 @@
             <groupId>org.opencb.opencga</groupId>
             <artifactId>opencga-storage-mongodb</artifactId>
         </dependency>
+        <dependency>
+            <groupId>embl.ebi.variation</groupId>
+            <artifactId>variation-commons</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>asm</groupId>

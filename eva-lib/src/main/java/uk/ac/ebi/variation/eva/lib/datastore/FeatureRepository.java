@@ -16,7 +16,7 @@
 package uk.ac.ebi.variation.eva.lib.datastore;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import uk.ac.ebi.variation.eva.lib.models.FeatureCoordinates;
+import embl.ebi.variation.commons.models.data.FeatureCoordinates;
 
 import java.util.List;
 
