@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
 /**
- * Created by jmmut on 2016-09-09.
+ * Simplified version of https://github.com/Loki-Afro/multi-tenant-spring-mongodb/blob/master/src/main/java/com/github/zarathustra/mongo/MultiTenantMongoDbFactory.java
  *
  * This is another implementation to MongoDbFactory, similar to SimpleMongoDbFactory, but allows to use several DBs.
  *

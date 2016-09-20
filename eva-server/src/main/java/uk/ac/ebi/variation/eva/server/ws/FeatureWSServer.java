@@ -35,8 +35,6 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by jmmut on 2016-09-08.
- *
  * @author Jose Miguel Mut Lopez &lt;jmmut@ebi.ac.uk&gt;
  */
 

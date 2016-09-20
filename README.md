@@ -10,11 +10,11 @@ Build
 
 In order to build EVA, you need to install the Java Development Kit 7 and Maven.
 
-Our dependencies are OpenCGA and Variation-Commons 
+The project dependencies are OpenCGA and Variation-Commons 
 
-You can get OpenCGA 0.5.2 from https://github.com/opencb/opencga. Please follow the download/compilation instructions there.
+You can get OpenCGA 0.5.2 from https://github.com/opencb/opencga, branch `hotfix/0.5`. Please follow the download/compilation instructions there.
 
-You can get Variation-Commons from https://github.com/EBIvariation/variation-commons. This project can be installed with just `mvn clean install -DskipTests`.
+You can get Variation-Commons from https://github.com/EBIvariation/variation-commons. This project can be installed with just `mvn clean install`.
 
 After it has been compiled, if you just want to build the WAR, run `mvn package -DskipTests` and you should obtain a file to deploy in Tomcat or other Java container.
 

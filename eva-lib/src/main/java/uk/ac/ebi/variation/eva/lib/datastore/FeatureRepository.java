@@ -21,7 +21,10 @@ import embl.ebi.variation.commons.models.data.FeatureCoordinates;
 import java.util.List;
 
 /**
- * Created by jmmut on 2016-09-09.
+ * This interface documents how features can be queried.
+ *
+ * This interface is used by Spring to create the query methods for features.
+ * Spring creates the implementation automatically by looking at the method name.
  *
  * @author Jose Miguel Mut Lopez &lt;jmmut@ebi.ac.uk&gt;
  */

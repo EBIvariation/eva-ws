@@ -70,35 +70,55 @@ public class DBAdaptorConnector {
                 properties.getProperty("eva.mongo.collections.files"));
     }
 
+    /**
+     * Get a MongoClient using the configuration (credentials) in a given Properties.
+     *
+     * @param properties can have the next values:
+     *                   - eva.mongo.auth.db authentication database
+     *                   - eva.mongo.host comma-separated strings of colon-separated host and port strings: host_1:port_1,host_2:port_2
+     *                   - eva.mongo.user
+     *                   - eva.mongo.passwd
+     * @return MongoClient with given credentials
+     * @throws UnknownHostException
+     */
     public static MongoClient getMongoClient(Properties properties) throws UnknownHostException {
 
-        String authenticationDb = properties.getProperty("eva.mongo.auth.db", null);
-        if (authenticationDb == null || authenticationDb.isEmpty()) {
-            return new MongoClient();
-        } else {
-            String[] hosts = properties.getProperty("eva.mongo.host").split(",");
-            List<ServerAddress> servers = new ArrayList<>();
+        String[] hosts = properties.getProperty("eva.mongo.host").split(",");
+        List<ServerAddress> servers = new ArrayList<>();
 
-            // Get the list of hosts (optionally including the port number)
-            for (String host : hosts) {
-                String[] params = host.split(":");
-                if (params.length > 1) {
-                    servers.add(new ServerAddress(params[0], Integer.parseInt(params[1])));
-                } else {
-                    servers.add(new ServerAddress(params[0], 27017));
-                }
+        // Get the list of hosts (optionally including the port number)
+        for (String host : hosts) {
+            String[] params = host.split(":");
+            if (params.length > 1) {
+                servers.add(new ServerAddress(params[0], Integer.parseInt(params[1])));
+            } else {
+                servers.add(new ServerAddress(params[0], 27017));
             }
+        }
 
-            MongoCredential mongoCredential = MongoCredential.createCredential(
+        List<MongoCredential> mongoCredentialList = null;
+        String authenticationDb = properties.getProperty("eva.mongo.auth.db", null);
+        if (authenticationDb != null && !authenticationDb.isEmpty()) {
+            mongoCredentialList = Collections.singletonList(MongoCredential.createCredential(
                     properties.getProperty("eva.mongo.user"),
                     authenticationDb,
-                    properties.getProperty("eva.mongo.passwd").toCharArray());
-
-            return new MongoClient(servers, Collections.singletonList(mongoCredential));
+                    properties.getProperty("eva.mongo.passwd").toCharArray()));
         }
+
+        return new MongoClient(servers, mongoCredentialList);
     }
 
-
+    /**
+     * Extract org.opencb.opencga.storage.mongodb.utils.MongoCredentials from a given Properties to a given species.
+     *
+     * @param properties can have the next values:
+     *                   - eva.mongo.auth.db authentication database
+     *                   - eva.mongo.host comma-separated strings of colon-separated host and port strings: host_1:port_1,host_2:port_2
+     *                   - eva.mongo.user
+     *                   - eva.mongo.passwd
+     * @return org.opencb.opencga.storage.mongodb.utils.MongoCredentials
+     * @throws UnknownHostException
+     */
     private static MongoCredentials getCredentials(String species, Properties properties)
             throws IllegalOpenCGACredentialsException, IOException {
         if (species == null || species.isEmpty()) {
