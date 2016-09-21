@@ -19,9 +19,7 @@
 
 package uk.ac.ebi.variation.eva.lib.datastore;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
+import com.mongodb.*;
 import org.opencb.datastore.core.config.DataStoreServerAddress;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
@@ -78,6 +76,7 @@ public class DBAdaptorConnector {
      *                   - eva.mongo.host comma-separated strings of colon-separated host and port strings: host_1:port_1,host_2:port_2
      *                   - eva.mongo.user
      *                   - eva.mongo.passwd
+     *                   - eva.mongo.read-preference string, one of: [primary, primaryPreferred, secondary, secondaryPreferred, nearest]
      * @return MongoClient with given credentials
      * @throws UnknownHostException
      */
@@ -105,7 +104,12 @@ public class DBAdaptorConnector {
                     properties.getProperty("eva.mongo.passwd").toCharArray()));
         }
 
-        return new MongoClient(servers, mongoCredentialList);
+        MongoClientOptions options = MongoClientOptions.builder()
+                .readPreference(ReadPreference.valueOf(
+                        properties.getProperty("eva.mongo.read-preference", "secondaryPreferred")))
+                .build();
+
+        return new MongoClient(servers, mongoCredentialList, options);
     }
 
     /**
