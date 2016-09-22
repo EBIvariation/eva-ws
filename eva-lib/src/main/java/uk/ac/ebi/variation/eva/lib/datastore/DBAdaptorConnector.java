@@ -22,6 +22,7 @@ package uk.ac.ebi.variation.eva.lib.datastore;
 import com.mongodb.*;
 import org.opencb.datastore.core.config.DataStoreServerAddress;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
+import org.opencb.opencga.lib.common.*;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
@@ -76,7 +77,8 @@ public class DBAdaptorConnector {
      *                   - eva.mongo.host comma-separated strings of colon-separated host and port strings: host_1:port_1,host_2:port_2
      *                   - eva.mongo.user
      *                   - eva.mongo.passwd
-     *                   - eva.mongo.read-preference string, one of: [primary, primaryPreferred, secondary, secondaryPreferred, nearest]
+     *                   - eva.mongo.read-preference string, "secondaryPreferred" if unspecified. one of:
+     *                          [primary, primaryPreferred, secondary, secondaryPreferred, nearest]
      * @return MongoClient with given credentials
      * @throws UnknownHostException
      */
@@ -104,9 +106,12 @@ public class DBAdaptorConnector {
                     properties.getProperty("eva.mongo.passwd").toCharArray()));
         }
 
+
+        String readPreference = properties.getProperty("eva.mongo.read-preference");
+        readPreference = readPreference == null || readPreference.isEmpty()? "secondaryPreferred" : readPreference;
+
         MongoClientOptions options = MongoClientOptions.builder()
-                .readPreference(ReadPreference.valueOf(
-                        properties.getProperty("eva.mongo.read-preference", "secondaryPreferred")))
+                .readPreference(ReadPreference.valueOf(readPreference))
                 .build();
 
         return new MongoClient(servers, mongoCredentialList, options);
