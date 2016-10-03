@@ -41,7 +41,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/v1/features", produces = "application/json")
 @Api(tags = { "features" })
-@EnableMongoRepositories("uk.ac.ebi.variation.eva.lib.datastore")
+@EnableMongoRepositories("uk.ac.ebi.eva.lib.datastore")
 public class FeatureWSServer extends EvaWSServer {
 
     @Autowired

@@ -52,7 +52,7 @@ public class Application extends SpringBootServletInitializer {
                 .apiInfo(apiInfo())
                 .pathMapping("/")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("uk.ac.ebi.variation.eva.server"))
+                .apis(RequestHandlerSelectors.basePackage("uk.ac.ebi.eva.server"))
                 .build();
     }
 

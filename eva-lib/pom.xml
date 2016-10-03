@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>uk.ac.ebi.variation.eva</groupId>
+        <groupId>uk.ac.ebi.eva</groupId>
         <artifactId>eva</artifactId>
         <version>1.2</version>
     </parent>
@@ -17,7 +17,7 @@
             <artifactId>opencga-storage-mongodb</artifactId>
         </dependency>
         <dependency>
-            <groupId>embl.ebi.variation</groupId>
+            <groupId>uk.ac.ebi.eva</groupId>
             <artifactId>variation-commons</artifactId>
         </dependency>
         <dependency>
