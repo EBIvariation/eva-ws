@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>uk.ac.ebi.variation.eva</groupId>
+    <groupId>uk.ac.ebi.eva</groupId>
     <artifactId>eva</artifactId>
     <packaging>pom</packaging>
     <version>1.2</version>
@@ -44,14 +44,14 @@
             
             <!-- Intra-module dependencies -->
             <dependency>
-                <groupId>uk.ac.ebi.variation.eva</groupId>
+                <groupId>uk.ac.ebi.eva</groupId>
                 <artifactId>eva-lib</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- General dependencies -->
             <dependency>
-                <groupId>embl.ebi.variation</groupId>
+                <groupId>uk.ac.ebi.eva</groupId>
                 <artifactId>variation-commons</artifactId>
                 <version>0.1</version>
                 <exclusions>
