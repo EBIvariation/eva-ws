@@ -45,7 +45,7 @@ import uk.ac.ebi.eva.lib.datastore.EvaproUtils;
  *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
-public class ArchiveDgvaDBAdaptor  implements ArchiveDBAdaptor {
+public class ArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
 
     private DataSource ds;
 
