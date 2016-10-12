@@ -1,4 +1,4 @@
-package uk.ac.ebi.variation.eva.lib.spring.data.metadata;
+package uk.ac.ebi.eva.lib.spring.data.metadata;
 
 import org.opencb.biodata.models.variant.stats.VariantSourceStats;
 import org.opencb.datastore.core.QueryOptions;
@@ -6,8 +6,8 @@ import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.ac.ebi.variation.eva.lib.spring.data.ResultClasses.FileFtpReference;
-import uk.ac.ebi.variation.eva.lib.spring.data.repository.FileRepository;
+import uk.ac.ebi.eva.lib.spring.data.ResultClasses.FileFtpReference;
+import uk.ac.ebi.eva.lib.spring.data.repository.FileRepository;
 
 import java.net.MalformedURLException;
 import java.net.URL;

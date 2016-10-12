@@ -1,4 +1,4 @@
-package uk.ac.ebi.variation.eva.lib.spring.data.metadata;
+package uk.ac.ebi.eva.lib.spring.data.metadata;
 
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
@@ -6,12 +6,12 @@ import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import uk.ac.ebi.variation.eva.lib.spring.data.repository.DGvaStudyBrowserRepository;
+import uk.ac.ebi.eva.lib.spring.data.repository.DGvaStudyBrowserRepository;
 
 import javax.persistence.Tuple;
 import java.util.*;
 
-import static uk.ac.ebi.variation.eva.lib.spring.data.utils.DgvaDBUtils.getSpeciesAndTypeFilters;
+import static uk.ac.ebi.eva.lib.spring.data.utils.DgvaDBUtils.getSpeciesAndTypeFilters;
 
 /**
  * Created by jorizci on 28/09/16.

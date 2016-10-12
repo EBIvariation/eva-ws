@@ -1,4 +1,4 @@
-package uk.ac.ebi.variation.eva.lib.spring.data.extension;
+package uk.ac.ebi.eva.lib.spring.data.extension;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;

@@ -1,4 +1,4 @@
-package uk.ac.ebi.variation.eva.lib.spring.data.metadata;
+package uk.ac.ebi.eva.lib.spring.data.metadata;
 
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
@@ -7,19 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Component;
-import uk.ac.ebi.variation.eva.lib.models.Assembly;
-import uk.ac.ebi.variation.eva.lib.spring.data.repository.FileRepository;
-import uk.ac.ebi.variation.eva.lib.spring.data.repository.ProjectRepository;
-import uk.ac.ebi.variation.eva.lib.spring.data.repository.StudyBrowserRepository;
-import uk.ac.ebi.variation.eva.lib.spring.data.repository.TaxonomyRepository;
-import uk.ac.ebi.variation.eva.lib.spring.data.utils.QueryOptionsConstants;
+import uk.ac.ebi.eva.lib.models.Assembly;
+import uk.ac.ebi.eva.lib.spring.data.extension.GenericSpecifications;
+import uk.ac.ebi.eva.lib.spring.data.repository.FileRepository;
+import uk.ac.ebi.eva.lib.spring.data.repository.ProjectRepository;
+import uk.ac.ebi.eva.lib.spring.data.repository.StudyBrowserRepository;
+import uk.ac.ebi.eva.lib.spring.data.repository.TaxonomyRepository;
+import uk.ac.ebi.eva.lib.spring.data.utils.QueryOptionsConstants;
 
 import javax.persistence.Tuple;
 import java.util.*;
 
 import static org.springframework.data.jpa.domain.Specifications.where;
-import static uk.ac.ebi.variation.eva.lib.spring.data.extension.GenericSpecifications.in;
-import static uk.ac.ebi.variation.eva.lib.spring.data.extension.GenericSpecifications.like;
 
 /**
  * Created by jorizci on 03/10/16.
@@ -109,15 +108,15 @@ public class SpringArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
         Specifications speciesSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.SPECIES)) {
             String[] species = queryOptions.getAsStringList(QueryOptionsConstants.SPECIES).toArray(new String[]{});
-            speciesSpecifications = where(in(StudyBrowserRepository.COMMON_NAME, species)).or(in(StudyBrowserRepository.SCIENTIFIC_NAME, species));
+            speciesSpecifications = where(GenericSpecifications.in(StudyBrowserRepository.COMMON_NAME, species)).or(GenericSpecifications.in(StudyBrowserRepository.SCIENTIFIC_NAME, species));
         }
 
         Specifications typeSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.TYPE)) {
             String[] types = queryOptions.getAsStringList(QueryOptionsConstants.TYPE).toArray(new String[]{});
-            typeSpecifications = where(in(StudyBrowserRepository.EXPERIMENT_TYPE, types));
+            typeSpecifications = where(GenericSpecifications.in(StudyBrowserRepository.EXPERIMENT_TYPE, types));
             for (String type : types) {
-                typeSpecifications = typeSpecifications.or(like(StudyBrowserRepository.EXPERIMENT_TYPE, "%" + type + "%"));
+                typeSpecifications = typeSpecifications.or(GenericSpecifications.like(StudyBrowserRepository.EXPERIMENT_TYPE, "%" + type + "%"));
             }
         }
 

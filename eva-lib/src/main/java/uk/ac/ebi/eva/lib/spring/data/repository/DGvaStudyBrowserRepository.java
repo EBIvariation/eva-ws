@@ -1,10 +1,10 @@
-package uk.ac.ebi.variation.eva.lib.spring.data.repository;
+package uk.ac.ebi.eva.lib.spring.data.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.variation.eva.lib.spring.data.entity.DgvaStudyBrowser;
-import uk.ac.ebi.variation.eva.lib.spring.data.extension.ExtendedJpaRepositoryFunctions;
+import uk.ac.ebi.eva.lib.spring.data.extension.ExtendedJpaRepositoryFunctions;
+import uk.ac.ebi.eva.lib.spring.data.entity.DgvaStudyBrowser;
 
 /**
  * Created by jorizci on 28/09/16.

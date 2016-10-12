@@ -27,22 +27,21 @@ import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import io.swagger.annotations.Api;
 import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.storage.metadata.ArchiveDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.storage.metadata.StudyDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.spring.data.metadata.SpringArchiveDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.spring.data.metadata.SpringArchiveEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.spring.data.metadata.SpringStudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.spring.data.metadata.SpringStudyEvaproDBAdaptor;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
@@ -64,7 +63,7 @@ public class ArchiveWSServer extends EvaWSServer {
 
     private Properties properties;
 
-    public ArchiveWSServer() throws NamingException, IOException {
+    public ArchiveWSServer() throws IOException {
         properties = new Properties();
         properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
     }

@@ -1,6 +1,6 @@
-package uk.ac.ebi.variation.eva.lib.spring.data.entity;
+package uk.ac.ebi.eva.lib.spring.data.entity;
 
-import uk.ac.ebi.variation.eva.lib.spring.data.ResultClasses.FileFtpReference;
+import uk.ac.ebi.eva.lib.spring.data.ResultClasses.FileFtpReference;
 
 import javax.persistence.*;
 

@@ -1,4 +1,4 @@
-package uk.ac.ebi.variation.eva.lib.spring.data.utils;
+package uk.ac.ebi.eva.lib.spring.data.utils;
 
 /**
  * Created by jorizci on 03/10/16.

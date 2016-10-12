@@ -1,6 +1,7 @@
-package uk.ac.ebi.variation.eva.lib.spring.data.entity;
+package uk.ac.ebi.eva.lib.spring.data.entity;
 
-import uk.ac.ebi.variation.eva.lib.models.Assembly;
+
+import uk.ac.ebi.eva.lib.models.Assembly;
 
 import javax.persistence.*;
 

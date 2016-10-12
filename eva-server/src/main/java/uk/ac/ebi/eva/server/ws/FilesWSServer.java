@@ -23,15 +23,13 @@ import io.swagger.annotations.Api;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.storage.metadata.VariantSourceEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.spring.data.metadata.SpringVariantSourceEvaProDBAdaptor;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
@@ -44,7 +42,7 @@ public class FilesWSServer extends EvaWSServer {
     @Autowired
     private SpringVariantSourceEvaProDBAdaptor variantSourceEvaproDbAdaptor;
 
-    public FilesWSServer() throws NamingException, IOException {
+    public FilesWSServer() {
         this.startTime = System.currentTimeMillis();
     }
 

@@ -1,4 +1,4 @@
-package uk.ac.ebi.variation.eva.lib.spring.data.entity;
+package uk.ac.ebi.eva.lib.spring.data.entity;
 
 import javax.persistence.*;
 import java.sql.Date;

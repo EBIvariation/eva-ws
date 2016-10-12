@@ -21,7 +21,6 @@ package uk.ac.ebi.eva.lib.datastore;
 
 
 import uk.ac.ebi.eva.lib.models.VariantStudy;
-import uk.ac.ebi.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
 
 /**
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>

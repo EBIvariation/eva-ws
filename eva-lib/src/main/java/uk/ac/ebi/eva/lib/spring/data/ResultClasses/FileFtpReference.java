@@ -1,4 +1,4 @@
-package uk.ac.ebi.variation.eva.lib.spring.data.ResultClasses;
+package uk.ac.ebi.eva.lib.spring.data.ResultClasses;
 
 /**
  * Created by jorizci on 04/10/16.

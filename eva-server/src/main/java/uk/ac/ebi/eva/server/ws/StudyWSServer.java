@@ -27,18 +27,15 @@ import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
 import org.opencb.opencga.storage.mongodb.variant.DBObjectToVariantSourceConverter;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.mongodb.BasicDBObject;
-
-import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.storage.metadata.StudyDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.spring.data.metadata.SpringStudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.spring.data.metadata.SpringStudyEvaproDBAdaptor;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.UnknownHostException;
 
 /**
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
