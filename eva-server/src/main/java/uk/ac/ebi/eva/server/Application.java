@@ -29,7 +29,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.jndi.JndiTemplate;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -39,9 +38,8 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.datastore.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.spring.data.extension.ExtendedJpaRepositoryFunctionsImpl;
 
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -49,7 +47,7 @@ import java.util.Properties;
 @EnableSwagger2
 @EntityScan(basePackages = {"uk.ac.ebi.eva.lib.spring.data.entity"})
 @EnableJpaRepositories(basePackages = {"uk.ac.ebi.eva.lib.spring.data.repository"}, repositoryBaseClass = ExtendedJpaRepositoryFunctionsImpl.class)
-@ComponentScan(basePackages = {"uk.ac.ebi.eva.lib.spring.data","uk.ac.ebi.eva.server"})
+@ComponentScan(basePackages = {"uk.ac.ebi.eva.lib.spring.data", "uk.ac.ebi.eva.server"})
 public class Application extends SpringBootServletInitializer {
 
     @Override
