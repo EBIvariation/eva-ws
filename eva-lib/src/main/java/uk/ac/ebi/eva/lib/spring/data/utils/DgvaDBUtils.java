@@ -21,14 +21,14 @@ public class DgvaDBUtils {
 
         Specifications speciesSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.SPECIES)) {
-            String[] species = queryOptions.getAsStringList(QueryOptionsConstants.SPECIES).toArray(new String[]{});
+            Object[] species = queryOptions.getAsStringList(QueryOptionsConstants.SPECIES).toArray(new String[]{});
             speciesSpecifications = where(in(DGvaStudyBrowserRepository.COMMON_NAME, species)).or(in(DGvaStudyBrowserRepository.SCIENTIFIC_NAME, species));
         }
 
         Specifications typeSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.TYPE)) {
             String[] types = queryOptions.getAsStringList(QueryOptionsConstants.TYPE).toArray(new String[]{});
-            typeSpecifications = where(in(DGvaStudyBrowserRepository.STUDY_TYPE, types));
+            typeSpecifications = where(in(DGvaStudyBrowserRepository.STUDY_TYPE, (Object[])types));
             for (String type : types) {
                 typeSpecifications = typeSpecifications.or(like(DGvaStudyBrowserRepository.STUDY_TYPE, "%" + type + "%"));
             }
