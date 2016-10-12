@@ -62,7 +62,7 @@ public class ArchiveWSServer extends EvaWSServer {
     private SpringStudyEvaproDBAdaptor studyEvaproDbAdaptor;
 
     private Properties properties;
-
+    
     public ArchiveWSServer() throws IOException {
         properties = new Properties();
         properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));

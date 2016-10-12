@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.jndi.JndiTemplate;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -38,8 +39,9 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.datastore.MultiMongoDbFactory;
-import uk.ac.ebi.eva.lib.spring.data.extension.ExtendedJpaRepositoryFunctionsImpl;
 
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -62,6 +64,7 @@ public class Application extends SpringBootServletInitializer {
     /**
      * This factory will allow to use the FeatureRepository with several databases, as we are providing a
      * MultiMongoDbFactory as the implementation of MongoFactory to inject into the FeatureRepository.
+     *
      * @return MongoDbFactory
      * @throws IOException
      */
