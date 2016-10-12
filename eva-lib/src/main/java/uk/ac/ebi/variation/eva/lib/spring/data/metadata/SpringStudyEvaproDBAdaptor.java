@@ -5,6 +5,7 @@ import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.variation.eva.lib.models.VariantStudy;
 import uk.ac.ebi.variation.eva.lib.spring.data.entity.StudyBrowser;
 import uk.ac.ebi.variation.eva.lib.spring.data.repository.StudyBrowserRepository;
@@ -18,6 +19,7 @@ import static uk.ac.ebi.variation.eva.lib.spring.data.utils.EvaproDbUtils.getSpe
 /**
  * Created by jorizci on 04/10/16.
  */
+@Component
 public class SpringStudyEvaproDBAdaptor implements StudyDBAdaptor {
 
     @Autowired
@@ -30,7 +32,9 @@ public class SpringStudyEvaproDBAdaptor implements StudyDBAdaptor {
         List<StudyBrowser> dgvaStudies = studyBrowserRepository.findAll(filterSpecification);
         List<VariantStudy> variantstudies = new ArrayList<>();
         for (StudyBrowser dgvaStudy : dgvaStudies) {
-            variantstudies.add(dgvaStudy.generateVariantStudy());
+            if(dgvaStudy!=null) {
+                variantstudies.add(dgvaStudy.generateVariantStudy());
+            }
         }
         long end = System.currentTimeMillis();
         return new QueryResult(null, ((Long) (end - start)).intValue(), variantstudies.size(), variantstudies.size(), null, null, variantstudies);

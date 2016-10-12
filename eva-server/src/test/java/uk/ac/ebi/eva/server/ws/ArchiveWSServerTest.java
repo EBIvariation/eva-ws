@@ -133,7 +133,11 @@ public class ArchiveWSServerTest {
 
     @Test
     public void testEqualOrLessLoadedSpeciesThanTotal() throws URISyntaxException {
-        String allResponse = get(new URI("/v1/meta/species/list")).asString();
+        Response response = get(new URI("/v1/meta/species/list"));
+        response.then().statusCode(200);
+
+        String allResponse = response.asString();
+
         List<Map> allResult = JsonPath.from(allResponse).getJsonObject("response[0].result");
         assertTrue(allResult.size() >= 1);
         

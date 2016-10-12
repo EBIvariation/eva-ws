@@ -251,11 +251,14 @@ public class StudyBrowser {
         } catch (URISyntaxException | NullPointerException ex) {
             //Ignore, default values null
         }
+
+        int variantCount = (getVariant_count() == null) ? 0 : getVariant_count().intValue();
+
         return new VariantStudy(getProject_title(), getProject_accession(), null,
                 getDescription(), taxIds, getCommon_name(), getScientific_name(),
                 getSource_type(), getCenter(), getMaterial(), getScope(),
                 VariantStudy.StudyType.fromString(getStudy_type()), getExperiment_type(),
                 getExperiment_type_abbreviation(), getAssembly_name(), getPlatform(),
-                uri, getPublications().split(", "), getVariant_count().intValue(), getSamples());
+                uri, getPublications().split(", "), variantCount, getSamples());
     }
 }

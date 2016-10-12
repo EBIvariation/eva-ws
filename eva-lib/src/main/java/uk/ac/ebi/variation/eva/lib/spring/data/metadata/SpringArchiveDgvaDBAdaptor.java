@@ -5,6 +5,7 @@ import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.variation.eva.lib.spring.data.repository.DGvaStudyBrowserRepository;
 
 import javax.persistence.Tuple;
@@ -15,6 +16,7 @@ import static uk.ac.ebi.variation.eva.lib.spring.data.utils.DgvaDBUtils.getSpeci
 /**
  * Created by jorizci on 28/09/16.
  */
+@Component
 public class SpringArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
 
     @Autowired

@@ -5,9 +5,9 @@ import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.variation.eva.lib.spring.data.ResultClasses.FileFtpReference;
 import uk.ac.ebi.variation.eva.lib.spring.data.repository.FileRepository;
-import uk.ac.ebi.variation.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 /**
  * Created by jorizci on 04/10/16.
  */
+@Component
 public class SpringVariantSourceEvaProDBAdaptor implements VariantSourceDBAdaptor {
 
     @Autowired
@@ -61,17 +62,17 @@ public class SpringVariantSourceEvaProDBAdaptor implements VariantSourceDBAdapto
     @Override
     public QueryResult getSourceDownloadUrlByName(String filename) {
         long start = System.currentTimeMillis();
-        FileFtpReference fileFtpReference = fileRepository.getFileFtpReferenceByName(filename);
+        FileFtpReference fileFtpReference = fileRepository.getFileFtpReferenceByFilename(filename);
 
-        try{
+        try {
             long end = System.currentTimeMillis();
             URL url = new URL("ftp:/" + fileFtpReference.getFile_ftp());
             return new QueryResult(fileFtpReference.getFilename(), ((Long) (end - start)).intValue(), 1, 1, null, null, Arrays.asList(url));
-        }catch(NullPointerException e){
+        } catch (NullPointerException e) {
             long end = System.currentTimeMillis();
             return new QueryResult(null, ((Long) (end - start)).intValue(), 0, 0, null, null, new ArrayList<>());
         } catch (MalformedURLException ex) {
-            Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SpringVariantSourceEvaProDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             QueryResult qr = new QueryResult();
             qr.setErrorMsg(ex.getMessage());
             return qr;
@@ -84,12 +85,12 @@ public class SpringVariantSourceEvaProDBAdaptor implements VariantSourceDBAdapto
         List<QueryResult> results = new ArrayList<>();
         List<FileFtpReference> fileFtpReferences = fileRepository.getFileFtpReferenceByNames(filenames);
 
-        for(FileFtpReference fileFtpReference: fileFtpReferences){
+        for (FileFtpReference fileFtpReference : fileFtpReferences) {
             try {
                 results.add(new QueryResult(fileFtpReference.getFilename(), ((Long) (System.currentTimeMillis() - start)).intValue(),
                         1, 1, null, null, Arrays.asList(new URL("ftp:/" + fileFtpReference.getFile_ftp()))));
             } catch (MalformedURLException ex) {
-                Logger.getLogger(ArchiveEvaproDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SpringVariantSourceEvaProDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
                 QueryResult qr = new QueryResult();
                 qr.setErrorMsg(ex.getMessage());
                 results.add(qr);

@@ -19,21 +19,7 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
+import io.swagger.annotations.Api;
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
@@ -48,32 +34,35 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.List;
+
 /**
- *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
 @RestController
 @RequestMapping(value = "/v1/variants", produces = "application/json")
-@Api(tags = { "variants" })
+@Api(tags = {"variants"})
 public class VariantWSServer extends EvaWSServer {
 
-    public VariantWSServer() { }
-    
     @RequestMapping(value = "/{variantId}/info", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves the information about a variant", response = QueryResponse.class)
     public QueryResponse getVariantById(@PathVariable("variantId") String variantId,
                                         @RequestParam(name = "studies", required = false) List<String> studies,
                                         @RequestParam("species") String species,
-                                        HttpServletResponse response) 
+                                        HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         initializeQueryOptions();
-        
+
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
-        
+
         if (studies != null && !studies.isEmpty()) {
             queryOptions.put("studies", studies);
         }
-        
+
         if (!variantId.contains(":")) { // Query by accession id
             return setQueryResponse(variantMongoDbAdaptor.getVariantById(variantId, queryOptions));
         } else { // Query by chr:pos:ref:alt
@@ -101,13 +90,13 @@ public class VariantWSServer extends EvaWSServer {
                                             HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         initializeQueryOptions();
-        
+
         VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
-        
+
         if (studies != null && !studies.isEmpty()) {
             queryOptions.put("studies", studies);
         }
-        
+
         if (!variantId.contains(":")) { // Query by accession id
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");

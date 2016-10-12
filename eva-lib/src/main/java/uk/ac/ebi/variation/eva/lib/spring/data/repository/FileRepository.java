@@ -15,9 +15,9 @@ public interface FileRepository extends JpaRepository<File, Long> {
 
     Long countByFileTypeIn(List<String> strings);
 
-    @Query(nativeQuery = true)
-    FileFtpReference getFileFtpReferenceByName(@Param("filename") String filename);
+    //named query
+    FileFtpReference getFileFtpReferenceByFilename(@Param("filename") String filename);
 
-    @Query(nativeQuery = true)
+    //named query
     List<FileFtpReference> getFileFtpReferenceByNames(@Param("filenames") List<String> filenames);
 }

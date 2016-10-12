@@ -19,12 +19,8 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletResponse;
-
+import com.mongodb.BasicDBObject;
+import io.swagger.annotations.Api;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
@@ -45,21 +41,17 @@ import uk.ac.ebi.eva.lib.storage.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
 
 /**
- *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
 @RestController
 @RequestMapping(value = "/v1/studies", produces = "application/json")
-@Api(tags = { "studies" })
+@Api(tags = {"studies"})
 public class StudyWSServer extends EvaWSServer {
 
-    private StudyDBAdaptor studyDgvaDbAdaptor;
-    private StudyDBAdaptor studyEvaproDbAdaptor;
-
-    public StudyWSServer() throws NamingException, IOException {
-        studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
-        studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
-    }
+    @Autowired
+    private SpringStudyDgvaDBAdaptor studyDgvaDbAdaptor;
+    @Autowired
+    private SpringStudyEvaproDBAdaptor studyEvaproDbAdaptor;
 
     @RequestMapping(value = "/{study}/files", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves all the files from a study", response = QueryResponse.class)
@@ -68,10 +60,10 @@ public class StudyWSServer extends EvaWSServer {
                                          HttpServletResponse response)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         initializeQueryOptions();
-            
+
         StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
         VariantSourceDBAdaptor variantSourceDbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor(species);
-        
+
         QueryResult idQueryResult = studyMongoDbAdaptor.findStudyNameOrStudyId(study, queryOptions);
         if (idQueryResult.getNumResults() == 0) {
             QueryResult queryResult = new QueryResult();
@@ -95,9 +87,9 @@ public class StudyWSServer extends EvaWSServer {
                                   HttpServletResponse response)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         initializeQueryOptions();
-        
+
         StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
-        
+
         QueryResult idQueryResult = studyMongoDbAdaptor.findStudyNameOrStudyId(study, queryOptions);
         if (idQueryResult.getNumResults() == 0) {
             QueryResult queryResult = new QueryResult();
@@ -108,7 +100,7 @@ public class StudyWSServer extends EvaWSServer {
 
         BasicDBObject id = (BasicDBObject) idQueryResult.getResult().get(0);
         QueryResult finalResult = studyMongoDbAdaptor.getStudyById(
-            id.getString(DBObjectToVariantSourceConverter.STUDYID_FIELD), queryOptions);
+                id.getString(DBObjectToVariantSourceConverter.STUDYID_FIELD), queryOptions);
         finalResult.setDbTime(finalResult.getDbTime() + idQueryResult.getDbTime());
 
         return setQueryResponse(finalResult);

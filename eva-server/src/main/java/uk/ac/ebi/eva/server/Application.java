@@ -23,7 +23,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.mongodb.MongoDbFactory;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -31,9 +33,17 @@ import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.datastore.MultiMongoDbFactory;
+
+import java.io.IOException;
+import java.util.Properties;
 
 @SpringBootApplication
 @EnableSwagger2
+@EntityScan(basePackages = {"uk.ac.ebi.eva.lib.spring.data.entity"})
+@EnableJpaRepositories(basePackages = {"uk.ac.ebi.eva.lib.spring.data.repository"}, repositoryBaseClass = ExtendedJpaRepositoryFunctionsImpl.class)
+@ComponentScan(basePackages = {"uk.ac.ebi.eva.lib.spring.data","uk.ac.ebi.variation.eva.server"})
 public class Application extends SpringBootServletInitializer {
 
     @Override
@@ -45,6 +55,35 @@ public class Application extends SpringBootServletInitializer {
         SpringApplication.run(Application.class, args);
     }
 
+    /**
+     * This factory will allow to use the FeatureRepository with several databases, as we are providing a
+     * MultiMongoDbFactory as the implementation of MongoFactory to inject into the FeatureRepository.
+     * @return MongoDbFactory
+     * @throws IOException
+     */
+    @Bean
+    public MongoDbFactory mongoDbFactory() throws IOException {
+        Properties properties = new Properties();
+        properties.load(Application.class.getResourceAsStream("/eva.properties"));
+        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
+        return new MultiMongoDbFactory(mongoClient, "test");
+    }
+
+//    /**
+//     * Create a Datasource bean with the connection to a jndi datasource.
+//     *
+//     * @return
+//     * @throws IOException
+//     * @throws NamingException
+//     */
+//    @Bean(name = "dataSource")
+//    public DataSource evaProDataSource() throws IOException, NamingException {
+//        Properties properties = new Properties();
+//        properties.load(Application.class.getResourceAsStream("/eva.properties"));
+//        String dsName = properties.getProperty("eva.evapro.datasource", "evapro");
+//        JndiTemplate jndiTemplate = new JndiTemplate();
+//        return (DataSource) jndiTemplate.lookup("java:/comp/env/jdbc/" + dsName);
+//    }
 
     @Bean
     public Docket apiConfiguration() {
