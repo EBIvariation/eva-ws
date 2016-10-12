@@ -19,46 +19,41 @@
 
 package uk.ac.ebi.variation.eva.server.ws;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import javax.naming.NamingException;
-
+import io.swagger.annotations.Api;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
+import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.variation.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.variation.eva.lib.storage.metadata.VariantSourceEvaproDBAdaptor;
+import uk.ac.ebi.variation.eva.lib.spring.data.metadata.SpringVariantSourceEvaProDBAdaptor;
+
+import javax.naming.NamingException;
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
- *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
 @RestController
 @RequestMapping(value = "/v1/files", produces = "application/json")
-@Api(tags = { "files" })
+@Api(tags = {"files"})
 public class FilesWSServer extends EvaWSServer {
 
-    private final VariantSourceDBAdaptor variantSourceEvaproDbAdaptor;
+    @Autowired
+    private SpringVariantSourceEvaProDBAdaptor variantSourceEvaproDbAdaptor;
 
     public FilesWSServer() throws NamingException, IOException {
-        variantSourceEvaproDbAdaptor = new VariantSourceEvaproDBAdaptor();
         this.startTime = System.currentTimeMillis();
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Gets the files of a species")
-    public QueryResponse getFiles(@RequestParam("species") String species) 
+    public QueryResponse getFiles(@RequestParam("species") String species)
             throws IllegalOpenCGACredentialsException, IOException {
         initializeQueryOptions();
-        
+
         VariantSourceDBAdaptor variantSourceMongoDbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor(species);
         return setQueryResponse(variantSourceMongoDbAdaptor.getAllSources(queryOptions));
     }

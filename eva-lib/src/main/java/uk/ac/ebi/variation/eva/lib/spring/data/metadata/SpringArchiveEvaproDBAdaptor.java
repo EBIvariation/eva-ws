@@ -6,8 +6,12 @@ import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.variation.eva.lib.models.Assembly;
-import uk.ac.ebi.variation.eva.lib.spring.data.repository.*;
+import uk.ac.ebi.variation.eva.lib.spring.data.repository.FileRepository;
+import uk.ac.ebi.variation.eva.lib.spring.data.repository.ProjectRepository;
+import uk.ac.ebi.variation.eva.lib.spring.data.repository.StudyBrowserRepository;
+import uk.ac.ebi.variation.eva.lib.spring.data.repository.TaxonomyRepository;
 import uk.ac.ebi.variation.eva.lib.spring.data.utils.QueryOptionsConstants;
 
 import javax.persistence.Tuple;
@@ -20,6 +24,7 @@ import static uk.ac.ebi.variation.eva.lib.spring.data.extension.GenericSpecifica
 /**
  * Created by jorizci on 03/10/16.
  */
+@Component
 public class SpringArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
 
     @Autowired

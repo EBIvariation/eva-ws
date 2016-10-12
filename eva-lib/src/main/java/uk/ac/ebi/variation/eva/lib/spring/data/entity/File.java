@@ -22,7 +22,7 @@ import javax.persistence.*;
 })
 @NamedNativeQueries({
     @NamedNativeQuery(
-            name = "getFileFtpReferenceByName",
+            name = "File.getFileFtpReferenceByFilename",
             query = "select distinct bf.filename, f.ftp_file " +
                     "from browsable_file bf " +
                     "left join file f on bf.file_id = f.file_id " +
@@ -30,7 +30,7 @@ import javax.persistence.*;
             resultSetMapping = "fileFtpReference"
     ),
     @NamedNativeQuery(
-            name = "getFileFtpReferenceByNames",
+            name = "File.getFileFtpReferenceByNames",
             query = "select distinct bf.filename, f.ftp_file " +
                     "from browsable_file bf "+
                     "left join file f on bf.file_id = f.file_id "+

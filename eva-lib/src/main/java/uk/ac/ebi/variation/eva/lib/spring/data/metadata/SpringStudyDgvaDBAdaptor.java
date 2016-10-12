@@ -5,6 +5,7 @@ import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.variation.eva.lib.datastore.EvaproUtils;
 import uk.ac.ebi.variation.eva.lib.models.VariantStudy;
 import uk.ac.ebi.variation.eva.lib.spring.data.entity.DgvaStudyBrowser;
@@ -20,6 +21,7 @@ import static uk.ac.ebi.variation.eva.lib.spring.data.utils.DgvaDBUtils.getSpeci
 /**
  * Created by jorizci on 03/10/16.
  */
+@Component
 public class SpringStudyDgvaDBAdaptor implements StudyDBAdaptor {
 
     @Autowired
