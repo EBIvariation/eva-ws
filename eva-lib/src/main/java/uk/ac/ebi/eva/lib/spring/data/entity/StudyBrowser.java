@@ -3,6 +3,7 @@ package uk.ac.ebi.eva.lib.spring.data.entity;
 
 import uk.ac.ebi.eva.lib.models.VariantStudy;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -17,25 +18,34 @@ import java.net.URISyntaxException;
 public class StudyBrowser {
 
     @Id
-    private String project_accession;
+    @Column(name = "project_accession")
+    private String projectAccession;
 
-    private long study_id;
+    @Column(name = "studyId")
+    private long studyId;
 
-    private String project_title;
+    @Column(name = "projectTitle")
+    private String projectTitle;
 
     private String description;
 
-    private String tax_id;
+    @Column(name = "tax_id")
+    private String taxId;
 
-    private String common_name;
+    @Column(name = "common_name")
+    private String commonName;
 
-    private String scientific_name;
+    @Column(name = "scientific_name")
+    private String scientificName;
 
-    private String source_type;
+    @Column(name = "source_type")
+    private String sourceType;
 
-    private String study_type;
+    @Column(name = "study_type")
+    private String studyType;
 
-    private Long variant_count;
+    @Column(name = "variant_count")
+    private Long variantCount;
 
     private Integer samples;
 
@@ -47,42 +57,47 @@ public class StudyBrowser {
 
     private String publications;
 
-    private String associated_projects;
+    @Column(name = "associated_projects")
+    private String associatedProjects;
 
-    private String experiment_type;
+    @Column(name = "experiment_type")
+    private String experimentType;
 
-    private String experiment_type_abbreviation;
+    @Column(name = "experiment_type_abbreviation")
+    private String experimentTypeAbbreviation;
 
-    private String assembly_accession;
+    @Column(name = "assembly_accession")
+    private String assemblyAccession;
 
-    private String assembly_name;
+    @Column(name = "assembly_name")
+    private String assemblyName;
 
     private String platform;
 
     private String resource;
 
-    public String getProject_accession() {
-        return project_accession;
+    public String getProjectAccession() {
+        return projectAccession;
     }
 
-    public void setProject_accession(String project_accession) {
-        this.project_accession = project_accession;
+    public void setProjectAccession(String projectAccession) {
+        this.projectAccession = projectAccession;
     }
 
-    public long getStudy_id() {
-        return study_id;
+    public long getStudyId() {
+        return studyId;
     }
 
-    public void setStudy_id(long study_id) {
-        this.study_id = study_id;
+    public void setStudyId(long studyId) {
+        this.studyId = studyId;
     }
 
-    public String getProject_title() {
-        return project_title;
+    public String getProjectTitle() {
+        return projectTitle;
     }
 
-    public void setProject_title(String project_title) {
-        this.project_title = project_title;
+    public void setProjectTitle(String projectTitle) {
+        this.projectTitle = projectTitle;
     }
 
     public String getDescription() {
@@ -93,52 +108,52 @@ public class StudyBrowser {
         this.description = description;
     }
 
-    public String getTax_id() {
-        return tax_id;
+    public String getTaxId() {
+        return taxId;
     }
 
-    public void setTax_id(String tax_id) {
-        this.tax_id = tax_id;
+    public void setTaxId(String taxId) {
+        this.taxId = taxId;
     }
 
-    public String getCommon_name() {
-        return common_name;
+    public String getCommonName() {
+        return commonName;
     }
 
-    public void setCommon_name(String common_name) {
-        this.common_name = common_name;
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
     }
 
-    public String getScientific_name() {
-        return scientific_name;
+    public String getScientificName() {
+        return scientificName;
     }
 
-    public void setScientific_name(String scientific_name) {
-        this.scientific_name = scientific_name;
+    public void setScientificName(String scientificName) {
+        this.scientificName = scientificName;
     }
 
-    public String getSource_type() {
-        return source_type;
+    public String getSourceType() {
+        return sourceType;
     }
 
-    public void setSource_type(String source_type) {
-        this.source_type = source_type;
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
     }
 
-    public String getStudy_type() {
-        return study_type;
+    public String getStudyType() {
+        return studyType;
     }
 
-    public void setStudy_type(String study_type) {
-        this.study_type = study_type;
+    public void setStudyType(String studyType) {
+        this.studyType = studyType;
     }
 
-    public Long getVariant_count() {
-        return variant_count;
+    public Long getVariantCount() {
+        return variantCount;
     }
 
-    public void setVariant_count(Long variant_count) {
-        this.variant_count = variant_count;
+    public void setVariantCount(Long variantCount) {
+        this.variantCount = variantCount;
     }
 
     public Integer getSamples() {
@@ -181,44 +196,44 @@ public class StudyBrowser {
         this.publications = publications;
     }
 
-    public String getAssociated_projects() {
-        return associated_projects;
+    public String getAssociatedProjects() {
+        return associatedProjects;
     }
 
-    public void setAssociated_projects(String associated_projects) {
-        this.associated_projects = associated_projects;
+    public void setAssociatedProjects(String associatedProjects) {
+        this.associatedProjects = associatedProjects;
     }
 
-    public String getExperiment_type() {
-        return experiment_type;
+    public String getExperimentType() {
+        return experimentType;
     }
 
-    public void setExperiment_type(String experiment_type) {
-        this.experiment_type = experiment_type;
+    public void setExperimentType(String experimentType) {
+        this.experimentType = experimentType;
     }
 
-    public String getExperiment_type_abbreviation() {
-        return experiment_type_abbreviation;
+    public String getExperimentTypeAbbreviation() {
+        return experimentTypeAbbreviation;
     }
 
-    public void setExperiment_type_abbreviation(String experiment_type_abbreviation) {
-        this.experiment_type_abbreviation = experiment_type_abbreviation;
+    public void setExperimentTypeAbbreviation(String experimentTypeAbbreviation) {
+        this.experimentTypeAbbreviation = experimentTypeAbbreviation;
     }
 
-    public String getAssembly_accession() {
-        return assembly_accession;
+    public String getAssemblyAccession() {
+        return assemblyAccession;
     }
 
-    public void setAssembly_accession(String assembly_accession) {
-        this.assembly_accession = assembly_accession;
+    public void setAssemblyAccession(String assemblyAccession) {
+        this.assemblyAccession = assemblyAccession;
     }
 
-    public String getAssembly_name() {
-        return assembly_name;
+    public String getAssemblyName() {
+        return assemblyName;
     }
 
-    public void setAssembly_name(String assembly_name) {
-        this.assembly_name = assembly_name;
+    public void setAssemblyName(String assemblyName) {
+        this.assemblyName = assemblyName;
     }
 
     public String getPlatform() {
@@ -239,7 +254,7 @@ public class StudyBrowser {
 
     public VariantStudy generateVariantStudy() {
         // Convert the list of tax ids to integer values
-        String[] taxIdStrings = getTax_id().split(", ");
+        String[] taxIdStrings = getTaxId().split(", ");
         int[] taxIds = new int[taxIdStrings.length];
         for (int i = 0; i < taxIdStrings.length; i++) {
             taxIds[i] = Integer.parseInt(taxIdStrings[i]);
@@ -253,13 +268,13 @@ public class StudyBrowser {
             //Ignore, default values null
         }
 
-        int variantCount = (getVariant_count() == null) ? 0 : getVariant_count().intValue();
+        int variantCount = (getVariantCount() == null) ? 0 : getVariantCount().intValue();
 
-        return new VariantStudy(getProject_title(), getProject_accession(), null,
-                getDescription(), taxIds, getCommon_name(), getScientific_name(),
-                getSource_type(), getCenter(), getMaterial(), getScope(),
-                VariantStudy.StudyType.fromString(getStudy_type()), getExperiment_type(),
-                getExperiment_type_abbreviation(), getAssembly_name(), getPlatform(),
+        return new VariantStudy(getProjectTitle(), getProjectAccession(), null,
+                getDescription(), taxIds, getCommonName(), getScientificName(),
+                getSourceType(), getCenter(), getMaterial(), getScope(),
+                VariantStudy.StudyType.fromString(getStudyType()), getExperimentType(),
+                getExperimentTypeAbbreviation(), getAssemblyName(), getPlatform(),
                 uri, getPublications().split(", "), variantCount, getSamples());
     }
 }

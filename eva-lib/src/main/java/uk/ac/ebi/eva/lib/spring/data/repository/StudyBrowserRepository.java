@@ -10,7 +10,7 @@ import uk.ac.ebi.eva.lib.spring.data.extension.ExtendedJpaRepositoryFunctions;
  */
 public interface StudyBrowserRepository extends JpaRepository<StudyBrowser, String>, ExtendedJpaRepositoryFunctions<StudyBrowser, String>, JpaSpecificationExecutor<StudyBrowser>{
 
-    public static final String COMMON_NAME = "common_name";
-    public static final String SCIENTIFIC_NAME = "scientific_name";
-    public static final String EXPERIMENT_TYPE = "experiment_type";
+    public static final String COMMON_NAME = "commonName";
+    public static final String SCIENTIFIC_NAME = "scientificName";
+    public static final String EXPERIMENT_TYPE = "experimentType";
 }
