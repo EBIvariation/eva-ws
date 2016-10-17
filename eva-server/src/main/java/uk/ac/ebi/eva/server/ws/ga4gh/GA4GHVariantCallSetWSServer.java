@@ -31,7 +31,6 @@ import org.opencb.biodata.ga4gh.GACallSet;
 import org.opencb.biodata.ga4gh.GASearchCallSetsRequest;
 import org.opencb.biodata.ga4gh.GASearchCallSetsResponse;
 import org.opencb.biodata.models.variant.ga4gh.GACallSetFactory;
-import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
@@ -43,7 +42,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
 /**

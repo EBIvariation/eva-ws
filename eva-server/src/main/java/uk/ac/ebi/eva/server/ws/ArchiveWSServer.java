@@ -31,11 +31,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.spring.data.metadata.ArchiveDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.spring.data.metadata.ArchiveEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.spring.data.metadata.StudyDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.spring.data.metadata.StudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
 
 import java.io.IOException;
 import java.util.Arrays;

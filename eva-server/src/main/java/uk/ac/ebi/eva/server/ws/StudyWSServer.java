@@ -29,9 +29,9 @@ import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
 import org.opencb.opencga.storage.mongodb.variant.DBObjectToVariantSourceConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.spring.data.metadata.StudyDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.spring.data.metadata.StudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

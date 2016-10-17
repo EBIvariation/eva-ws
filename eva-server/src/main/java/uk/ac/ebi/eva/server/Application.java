@@ -36,18 +36,18 @@ import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
-import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.datastore.MultiMongoDbFactory;
-import uk.ac.ebi.eva.lib.spring.data.extension.ExtendedJpaRepositoryFunctionsImpl;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.extension.ExtendedJpaRepositoryFunctionsImpl;
 
 import java.io.IOException;
 import java.util.Properties;
 
 @SpringBootApplication
 @EnableSwagger2
-@EntityScan(basePackages = {"uk.ac.ebi.eva.lib.spring.data.entity"})
-@EnableJpaRepositories(basePackages = {"uk.ac.ebi.eva.lib.spring.data.repository"}, repositoryBaseClass = ExtendedJpaRepositoryFunctionsImpl.class)
-@ComponentScan(basePackages = {"uk.ac.ebi.eva.lib.spring.data", "uk.ac.ebi.eva.server"})
+@EntityScan(basePackages = {"uk.ac.ebi.eva.lib.entity"})
+@EnableJpaRepositories(basePackages = {"uk.ac.ebi.eva.lib.repository"}, repositoryBaseClass = ExtendedJpaRepositoryFunctionsImpl.class)
+@ComponentScan(basePackages = {"uk.ac.ebi.eva.lib", "uk.ac.ebi.eva.server"})
 public class Application extends SpringBootServletInitializer {
 
     @Override

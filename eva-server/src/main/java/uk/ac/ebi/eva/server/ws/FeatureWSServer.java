@@ -26,9 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.eva.commons.models.data.FeatureCoordinates;
-import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.datastore.FeatureRepository;
-import uk.ac.ebi.eva.lib.datastore.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.repository.FeatureRepository;
+import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
