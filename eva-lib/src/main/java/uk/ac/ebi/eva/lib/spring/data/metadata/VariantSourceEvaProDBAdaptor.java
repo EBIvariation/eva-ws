@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * Created by jorizci on 04/10/16.
  */
 @Component
-public class SpringVariantSourceEvaProDBAdaptor implements VariantSourceDBAdaptor {
+public class VariantSourceEvaProDBAdaptor implements VariantSourceDBAdaptor {
 
     @Autowired
     private FileRepository fileRepository;
@@ -72,7 +72,7 @@ public class SpringVariantSourceEvaProDBAdaptor implements VariantSourceDBAdapto
             long end = System.currentTimeMillis();
             return new QueryResult(null, ((Long) (end - start)).intValue(), 0, 0, null, null, new ArrayList<>());
         } catch (MalformedURLException ex) {
-            Logger.getLogger(SpringVariantSourceEvaProDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(VariantSourceEvaProDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
             QueryResult qr = new QueryResult();
             qr.setErrorMsg(ex.getMessage());
             return qr;
@@ -90,7 +90,7 @@ public class SpringVariantSourceEvaProDBAdaptor implements VariantSourceDBAdapto
                 results.add(new QueryResult(fileFtpReference.getFilename(), ((Long) (System.currentTimeMillis() - start)).intValue(),
                         1, 1, null, null, Arrays.asList(new URL("ftp:/" + fileFtpReference.getFile_ftp()))));
             } catch (MalformedURLException ex) {
-                Logger.getLogger(SpringVariantSourceEvaProDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(VariantSourceEvaProDBAdaptor.class.getName()).log(Level.SEVERE, null, ex);
                 QueryResult qr = new QueryResult();
                 qr.setErrorMsg(ex.getMessage());
                 results.add(qr);

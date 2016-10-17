@@ -32,10 +32,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.spring.data.metadata.SpringArchiveDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.spring.data.metadata.SpringArchiveEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.spring.data.metadata.SpringStudyDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.spring.data.metadata.SpringStudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.spring.data.metadata.ArchiveDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.spring.data.metadata.ArchiveEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.spring.data.metadata.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.spring.data.metadata.StudyEvaproDBAdaptor;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -52,14 +52,14 @@ import java.util.Properties;
 public class ArchiveWSServer extends EvaWSServer {
 
     @Autowired
-    private SpringArchiveDgvaDBAdaptor archiveDgvaDbAdaptor;
+    private ArchiveDgvaDBAdaptor archiveDgvaDbAdaptor;
     @Autowired
-    private SpringArchiveEvaproDBAdaptor archiveEvaproDbAdaptor;
+    private ArchiveEvaproDBAdaptor archiveEvaproDbAdaptor;
 
     @Autowired
-    private SpringStudyDgvaDBAdaptor studyDgvaDbAdaptor;
+    private StudyDgvaDBAdaptor studyDgvaDbAdaptor;
     @Autowired
-    private SpringStudyEvaproDBAdaptor studyEvaproDbAdaptor;
+    private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
 
     private Properties properties;
     

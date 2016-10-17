@@ -26,7 +26,7 @@ import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.spring.data.metadata.SpringVariantSourceEvaProDBAdaptor;
+import uk.ac.ebi.eva.lib.spring.data.metadata.VariantSourceEvaProDBAdaptor;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ import java.util.Arrays;
 public class FilesWSServer extends EvaWSServer {
 
     @Autowired
-    private SpringVariantSourceEvaProDBAdaptor variantSourceEvaproDbAdaptor;
+    private VariantSourceEvaProDBAdaptor variantSourceEvaproDbAdaptor;
 
     public FilesWSServer() {
         this.startTime = System.currentTimeMillis();

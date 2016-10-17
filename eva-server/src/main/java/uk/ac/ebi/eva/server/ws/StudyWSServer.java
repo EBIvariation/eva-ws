@@ -30,8 +30,8 @@ import org.opencb.opencga.storage.mongodb.variant.DBObjectToVariantSourceConvert
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.spring.data.metadata.SpringStudyDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.spring.data.metadata.SpringStudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.spring.data.metadata.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.spring.data.metadata.StudyEvaproDBAdaptor;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -46,9 +46,9 @@ import java.net.UnknownHostException;
 public class StudyWSServer extends EvaWSServer {
 
     @Autowired
-    private SpringStudyDgvaDBAdaptor studyDgvaDbAdaptor;
+    private StudyDgvaDBAdaptor studyDgvaDbAdaptor;
     @Autowired
-    private SpringStudyEvaproDBAdaptor studyEvaproDbAdaptor;
+    private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
 
     @RequestMapping(value = "/{study}/files", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves all the files from a study", response = QueryResponse.class)

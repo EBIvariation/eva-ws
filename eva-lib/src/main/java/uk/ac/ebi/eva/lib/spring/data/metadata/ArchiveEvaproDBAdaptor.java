@@ -11,7 +11,7 @@ import uk.ac.ebi.eva.lib.models.Assembly;
 import uk.ac.ebi.eva.lib.spring.data.extension.GenericSpecifications;
 import uk.ac.ebi.eva.lib.spring.data.repository.FileRepository;
 import uk.ac.ebi.eva.lib.spring.data.repository.ProjectRepository;
-import uk.ac.ebi.eva.lib.spring.data.repository.StudyBrowserRepository;
+import uk.ac.ebi.eva.lib.spring.data.repository.EvaStudyBrowserRepository;
 import uk.ac.ebi.eva.lib.spring.data.repository.TaxonomyRepository;
 import uk.ac.ebi.eva.lib.spring.data.utils.QueryOptionsConstants;
 
@@ -24,13 +24,13 @@ import static org.springframework.data.jpa.domain.Specifications.where;
  * Created by jorizci on 03/10/16.
  */
 @Component
-public class SpringArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
+public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
 
     @Autowired
     private ProjectRepository projectRepository;
 
     @Autowired
-    private StudyBrowserRepository studyBrowserRepository;
+    private EvaStudyBrowserRepository evaStudyBrowserRepository;
 
     @Autowired
     private FileRepository fileRepository;
@@ -50,7 +50,7 @@ public class SpringArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
     public QueryResult countStudiesPerSpecies(QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
         Specification filterSpecification = getSpeciesAndTypeFilters(queryOptions);
-        List<Tuple> countGroupBy = studyBrowserRepository.groupCount(StudyBrowserRepository.COMMON_NAME, filterSpecification, false);
+        List<Tuple> countGroupBy = evaStudyBrowserRepository.groupCount(EvaStudyBrowserRepository.COMMON_NAME, filterSpecification, false);
         List<Map.Entry<String, Long>> result = new ArrayList<>();
         for (Tuple tuple : countGroupBy) {
             String species = tuple.get(0) != null ? (String) tuple.get(0) : "Others";
@@ -65,7 +65,7 @@ public class SpringArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
     public QueryResult countStudiesPerType(QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
         Specification filterSpecification = getSpeciesAndTypeFilters(queryOptions);
-        List<Tuple> countGroupBy = studyBrowserRepository.groupCount(StudyBrowserRepository.EXPERIMENT_TYPE, filterSpecification, false);
+        List<Tuple> countGroupBy = evaStudyBrowserRepository.groupCount(EvaStudyBrowserRepository.EXPERIMENT_TYPE, filterSpecification, false);
         List<Map.Entry<String, Long>> result = new ArrayList<>();
         for (Tuple tuple : countGroupBy) {
             String species = tuple.get(0) != null ? (String) tuple.get(0) : "Others";
@@ -108,15 +108,15 @@ public class SpringArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
         Specifications speciesSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.SPECIES)) {
             String[] species = queryOptions.getAsStringList(QueryOptionsConstants.SPECIES).toArray(new String[]{});
-            speciesSpecifications = where(GenericSpecifications.in(StudyBrowserRepository.COMMON_NAME, species)).or(GenericSpecifications.in(StudyBrowserRepository.SCIENTIFIC_NAME, species));
+            speciesSpecifications = where(GenericSpecifications.in(EvaStudyBrowserRepository.COMMON_NAME, species)).or(GenericSpecifications.in(EvaStudyBrowserRepository.SCIENTIFIC_NAME, species));
         }
 
         Specifications typeSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.TYPE)) {
             String[] types = queryOptions.getAsStringList(QueryOptionsConstants.TYPE).toArray(new String[]{});
-            typeSpecifications = where(GenericSpecifications.in(StudyBrowserRepository.EXPERIMENT_TYPE, types));
+            typeSpecifications = where(GenericSpecifications.in(EvaStudyBrowserRepository.EXPERIMENT_TYPE, types));
             for (String type : types) {
-                typeSpecifications = typeSpecifications.or(GenericSpecifications.like(StudyBrowserRepository.EXPERIMENT_TYPE, "%" + type + "%"));
+                typeSpecifications = typeSpecifications.or(GenericSpecifications.like(EvaStudyBrowserRepository.EXPERIMENT_TYPE, "%" + type + "%"));
             }
         }
 

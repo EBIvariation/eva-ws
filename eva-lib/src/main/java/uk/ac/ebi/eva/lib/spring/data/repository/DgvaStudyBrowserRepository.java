@@ -10,7 +10,7 @@ import uk.ac.ebi.eva.lib.spring.data.entity.DgvaStudyBrowser;
  * Created by jorizci on 28/09/16.
  */
 @Transactional
-public interface DGvaStudyBrowserRepository extends JpaRepository<DgvaStudyBrowser, String>, ExtendedJpaRepositoryFunctions<DgvaStudyBrowser, String>, JpaSpecificationExecutor<DgvaStudyBrowser> {
+public interface DgvaStudyBrowserRepository extends JpaRepository<DgvaStudyBrowser, String>, ExtendedJpaRepositoryFunctions<DgvaStudyBrowser, String>, JpaSpecificationExecutor<DgvaStudyBrowser> {
 
     public final static String COMMON_NAME = "common_name";
     public final static String STUDY_TYPE = "study_type";

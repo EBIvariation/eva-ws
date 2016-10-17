@@ -6,7 +6,7 @@ import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import uk.ac.ebi.eva.lib.spring.data.repository.DGvaStudyBrowserRepository;
+import uk.ac.ebi.eva.lib.spring.data.repository.DgvaStudyBrowserRepository;
 
 import javax.persistence.Tuple;
 import java.util.*;
@@ -17,10 +17,10 @@ import static uk.ac.ebi.eva.lib.spring.data.utils.DgvaDBUtils.getSpeciesAndTypeF
  * Created by jorizci on 28/09/16.
  */
 @Component
-public class SpringArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
+public class ArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
 
     @Autowired
-    private DGvaStudyBrowserRepository dgvaStudyBrowserRepository;
+    private DgvaStudyBrowserRepository dgvaStudyBrowserRepository;
 
     @Override
     public QueryResult countStudies() {
@@ -34,7 +34,7 @@ public class SpringArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
     public QueryResult countStudiesPerSpecies(QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
         Specification filterSpecification = getSpeciesAndTypeFilters(queryOptions);
-        List<Tuple> countGroupBy = dgvaStudyBrowserRepository.groupCount(DGvaStudyBrowserRepository.COMMON_NAME, filterSpecification, false);
+        List<Tuple> countGroupBy = dgvaStudyBrowserRepository.groupCount(DgvaStudyBrowserRepository.COMMON_NAME, filterSpecification, false);
         List<Map.Entry<String, Long>> result = new ArrayList<>();
         for (Tuple tuple : countGroupBy) {
             String species = tuple.get(0) != null ? (String) tuple.get(0) : "Others";
@@ -49,7 +49,7 @@ public class SpringArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
     public QueryResult countStudiesPerType(QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
         Specification filterSpecification = getSpeciesAndTypeFilters(queryOptions);
-        List<Tuple> countGroupBy = dgvaStudyBrowserRepository.groupCount(DGvaStudyBrowserRepository.STUDY_TYPE, filterSpecification, false);
+        List<Tuple> countGroupBy = dgvaStudyBrowserRepository.groupCount(DgvaStudyBrowserRepository.STUDY_TYPE, filterSpecification, false);
         List<Map.Entry<String, Long>> result = new ArrayList<>();
         for (Tuple tuple : countGroupBy) {
             String species = tuple.get(0) != null ? (String) tuple.get(0) : "Others";

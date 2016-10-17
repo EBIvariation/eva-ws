@@ -8,7 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
 import uk.ac.ebi.eva.lib.spring.data.entity.DgvaStudyBrowser;
-import uk.ac.ebi.eva.lib.spring.data.repository.DGvaStudyBrowserRepository;
+import uk.ac.ebi.eva.lib.spring.data.repository.DgvaStudyBrowserRepository;
 import uk.ac.ebi.eva.lib.spring.data.utils.DgvaDBUtils;
 
 import java.util.ArrayList;
@@ -18,16 +18,16 @@ import java.util.List;
  * Created by jorizci on 03/10/16.
  */
 @Component
-public class SpringStudyDgvaDBAdaptor implements StudyDBAdaptor {
+public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
 
     @Autowired
-    private DGvaStudyBrowserRepository dGvaStudyBrowserRepository;
+    private DgvaStudyBrowserRepository dgvaStudyBrowserRepository;
 
     @Override
     public QueryResult getAllStudies(QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
         Specification filterSpecification = DgvaDBUtils.getSpeciesAndTypeFilters(queryOptions);
-        List<DgvaStudyBrowser> dgvaStudies = dGvaStudyBrowserRepository.findAll(filterSpecification);
+        List<DgvaStudyBrowser> dgvaStudies = dgvaStudyBrowserRepository.findAll(filterSpecification);
         List<VariantStudy> variantstudies = new ArrayList<>();
         for (DgvaStudyBrowser dgvaStudy : dgvaStudies) {
             variantstudies.add(dgvaStudy.generateVariantStudy());
@@ -51,7 +51,7 @@ public class SpringStudyDgvaDBAdaptor implements StudyDBAdaptor {
     public QueryResult getStudyById(String studyId, QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
         Specification filterSpecification = DgvaDBUtils.getSpeciesAndTypeFilters(queryOptions);
-        DgvaStudyBrowser dgvaStudy = dGvaStudyBrowserRepository.getOne(studyId);
+        DgvaStudyBrowser dgvaStudy = dgvaStudyBrowserRepository.getOne(studyId);
         List<VariantStudy> variantStudy = new ArrayList<>();
         if (dgvaStudy != null) {
             variantStudy.add(dgvaStudy.generateVariantStudy());

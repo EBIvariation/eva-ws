@@ -43,7 +43,7 @@ public class File {
 
     @Id
     @Column(name = "file_id")
-    private Long file_id;
+    private Long fileId;
 
     @Column(length = 45, name="ena_submission_file_id")
     private String enaSubmissionFileId;
@@ -78,99 +78,4 @@ public class File {
     @Column(length = 15, name = "eva_submission_file_id")
     private String evaSubmissionFileId;
 
-    public long getFile_id() {
-        return file_id;
-    }
-
-    public void setFile_id(long file_id) {
-        this.file_id = file_id;
-    }
-
-    public String getEnaSubmissionFileId() {
-        return enaSubmissionFileId;
-    }
-
-    public void setEnaSubmissionFileId(String enaSubmissionFileId) {
-        this.enaSubmissionFileId = enaSubmissionFileId;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
-    public String getFileMd5() {
-        return fileMd5;
-    }
-
-    public void setFileMd5(String fileMd5) {
-        this.fileMd5 = fileMd5;
-    }
-
-    public String getFileLocation() {
-        return fileLocation;
-    }
-
-    public void setFileLocation(String fileLocation) {
-        this.fileLocation = fileLocation;
-    }
-
-    public String getFileType() {
-        return fileType;
-    }
-
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
-    }
-
-    public String getFileClass() {
-        return fileClass;
-    }
-
-    public void setFileClass(String fileClass) {
-        this.fileClass = fileClass;
-    }
-
-    public int getFileVersion() {
-        return fileVersion;
-    }
-
-    public void setFileVersion(int fileVersion) {
-        this.fileVersion = fileVersion;
-    }
-
-    public boolean isCurrent() {
-        return isCurrent;
-    }
-
-    public void setCurrent(boolean current) {
-        isCurrent = current;
-    }
-
-    public String getFtpFile() {
-        return ftpFile;
-    }
-
-    public void setFtpFile(String ftpFile) {
-        this.ftpFile = ftpFile;
-    }
-
-    public boolean isMongoLoadStatus() {
-        return mongoLoadStatus;
-    }
-
-    public void setMongoLoadStatus(boolean mongoLoadStatus) {
-        this.mongoLoadStatus = mongoLoadStatus;
-    }
-
-    public String getEvaSubmissionFileId() {
-        return evaSubmissionFileId;
-    }
-
-    public void setEvaSubmissionFileId(String evaSubmissionFileId) {
-        this.evaSubmissionFileId = evaSubmissionFileId;
-    }
 }

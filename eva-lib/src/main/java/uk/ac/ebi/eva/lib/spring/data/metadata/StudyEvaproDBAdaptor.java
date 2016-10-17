@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
-import uk.ac.ebi.eva.lib.spring.data.entity.StudyBrowser;
-import uk.ac.ebi.eva.lib.spring.data.repository.StudyBrowserRepository;
+import uk.ac.ebi.eva.lib.spring.data.entity.EvaStudyBrowser;
+import uk.ac.ebi.eva.lib.spring.data.repository.EvaStudyBrowserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,18 +20,18 @@ import static uk.ac.ebi.eva.lib.spring.data.utils.EvaproDbUtils.getSpeciesAndTyp
  * Created by jorizci on 04/10/16.
  */
 @Component
-public class SpringStudyEvaproDBAdaptor implements StudyDBAdaptor {
+public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
 
     @Autowired
-    private StudyBrowserRepository studyBrowserRepository;
+    private EvaStudyBrowserRepository evaStudyBrowserRepository;
 
     @Override
     public QueryResult getAllStudies(QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
         Specification filterSpecification = getSpeciesAndTypeFilters(queryOptions);
-        List<StudyBrowser> dgvaStudies = studyBrowserRepository.findAll(filterSpecification);
+        List<EvaStudyBrowser> dgvaStudies = evaStudyBrowserRepository.findAll(filterSpecification);
         List<VariantStudy> variantstudies = new ArrayList<>();
-        for (StudyBrowser dgvaStudy : dgvaStudies) {
+        for (EvaStudyBrowser dgvaStudy : dgvaStudies) {
             if (dgvaStudy != null) {
                 variantstudies.add(dgvaStudy.generateVariantStudy());
             }
@@ -53,7 +53,7 @@ public class SpringStudyEvaproDBAdaptor implements StudyDBAdaptor {
     @Override
     public QueryResult getStudyById(String s, QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
-        StudyBrowser study = studyBrowserRepository.findOne(s);
+        EvaStudyBrowser study = evaStudyBrowserRepository.findOne(s);
         List<VariantStudy> variantStudy = new ArrayList<>();
         if (study != null) {
             variantStudy.add(study.generateVariantStudy());

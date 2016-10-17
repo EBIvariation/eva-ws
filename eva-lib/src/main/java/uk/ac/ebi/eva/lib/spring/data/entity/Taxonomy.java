@@ -58,43 +58,4 @@ public class Taxonomy {
     @Column(length = 25, name = "eva_name")
     private String evaName;
 
-    public long getTaxonomyId() {
-        return taxonomyId;
-    }
-
-    public void setTaxonomyId(long taxonomyId) {
-        this.taxonomyId = taxonomyId;
-    }
-
-    public String getCommonName() {
-        return commonName;
-    }
-
-    public void setCommonName(String commonName) {
-        this.commonName = commonName;
-    }
-
-    public String getScientificName() {
-        return scientificName;
-    }
-
-    public void setScientificName(String scientificName) {
-        this.scientificName = scientificName;
-    }
-
-    public String getTaxonomyCode() {
-        return taxonomyCode;
-    }
-
-    public void setTaxonomyCode(String taxonomyCode) {
-        this.taxonomyCode = taxonomyCode;
-    }
-
-    public String getEvaName() {
-        return evaName;
-    }
-
-    public void setEvaName(String evaName) {
-        this.evaName = evaName;
-    }
 }
