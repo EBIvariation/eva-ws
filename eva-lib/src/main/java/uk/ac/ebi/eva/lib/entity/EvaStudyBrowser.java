@@ -19,18 +19,18 @@ import java.util.Arrays;
 public class EvaStudyBrowser {
 
     @Id
-    @Column(name = "projectAccession")
+    @Column(name = "project_accession")
     private String projectAccession;
 
-    @Column(name = "studyId")
+    @Column(name = "study_id")
     private long studyId;
 
-    @Column(name = "projectTitle")
+    @Column(name = "project_title")
     private String projectTitle;
 
     private String description;
 
-    @Column(name = "tax_iId")
+    @Column(name = "tax_id")
     private String taxId;
 
     @Column(name = "common_name")
