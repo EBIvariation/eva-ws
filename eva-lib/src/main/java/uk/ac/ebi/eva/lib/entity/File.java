@@ -34,7 +34,7 @@ import javax.persistence.*;
             query = "select distinct bf.filename, f.ftp_file " +
                     "from browsable_file bf "+
                     "left join file f on bf.file_id = f.file_id "+
-                    "where bf.dilename in :filenames;",
+                    "where bf.filename in :filenames;",
             resultSetMapping = "fileFtpReference"
     )
 })

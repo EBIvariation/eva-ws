@@ -4,10 +4,7 @@ package uk.ac.ebi.eva.lib.entity;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
 import uk.ac.ebi.eva.lib.utils.EvaproDbUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -61,7 +58,7 @@ public class DgvaStudyBrowser {
     @Column(name = "study_description")
     private String studyDescription;
 
-    @Column(name = "analysis_type")
+    @Column(length = 100, name = "analysis_type")
     private String analysisType;
 
     @Column(name = "detection_method")

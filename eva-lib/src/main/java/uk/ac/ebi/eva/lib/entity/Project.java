@@ -22,6 +22,7 @@ public class Project {
     private String alias;
 
     @Lob
+    @Basic(fetch = FetchType.EAGER)
     private String title;
 
     @Column(length = 16000)

@@ -3,10 +3,7 @@ package uk.ac.ebi.eva.lib.entity;
 
 import uk.ac.ebi.eva.lib.models.VariantStudy;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -19,7 +16,7 @@ import java.util.Arrays;
 public class EvaStudyBrowser {
 
     @Id
-    @Column(name = "project_accession")
+    @Column(length = 45, name = "project_accession")
     private String projectAccession;
 
     @Column(name = "study_id")
@@ -27,6 +24,7 @@ public class EvaStudyBrowser {
 
     @Column(name = "project_title")
     private String projectTitle;
+
 
     private String description;
 
