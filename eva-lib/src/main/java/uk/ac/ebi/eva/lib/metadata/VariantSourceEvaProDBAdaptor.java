@@ -6,7 +6,7 @@ import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.ac.ebi.eva.lib.result.FileFtpReference;
+import uk.ac.ebi.eva.lib.models.FileFtpReference;
 import uk.ac.ebi.eva.lib.repository.FileRepository;
 
 import java.net.MalformedURLException;

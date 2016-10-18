@@ -1,6 +1,6 @@
 package uk.ac.ebi.eva.lib.entity;
 
-import uk.ac.ebi.eva.lib.result.FileFtpReference;
+import uk.ac.ebi.eva.lib.models.FileFtpReference;
 
 import javax.persistence.*;
 

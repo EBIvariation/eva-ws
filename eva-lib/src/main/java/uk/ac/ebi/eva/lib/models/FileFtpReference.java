@@ -1,4 +1,4 @@
-package uk.ac.ebi.eva.lib.result;
+package uk.ac.ebi.eva.lib.models;
 
 /**
  * Created by jorizci on 04/10/16.

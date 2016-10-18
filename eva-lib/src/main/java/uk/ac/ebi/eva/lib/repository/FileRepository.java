@@ -2,7 +2,7 @@ package uk.ac.ebi.eva.lib.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
-import uk.ac.ebi.eva.lib.result.FileFtpReference;
+import uk.ac.ebi.eva.lib.models.FileFtpReference;
 import uk.ac.ebi.eva.lib.entity.File;
 
 import java.util.List;
