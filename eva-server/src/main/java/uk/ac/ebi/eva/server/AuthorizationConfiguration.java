@@ -12,7 +12,7 @@ public class AuthorizationConfiguration extends ResourceServerConfigurerAdapter{
     public void configure(HttpSecurity http) throws Exception {
         http.anonymous() // Enable anonymous / configure any related anonymous role
                 .and()
-                .authorizeRequests().antMatchers("/heartbeat").permitAll() //Authorize /hearbeat for everybody
+                .authorizeRequests().antMatchers("/webservices/rest/swagger-ui.html**", "/webservices/rest/swagger-resources/**","/webservices/rest/webjars/springfox-swagger-ui/**", "/webservices/rest/webservices/api").permitAll() //Authorize /hearbeat for everybody
                 .antMatchers("/**").authenticated() // The rest need to be authenticated
         ;
     }
