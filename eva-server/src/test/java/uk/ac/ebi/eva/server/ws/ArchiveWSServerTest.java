@@ -18,48 +18,51 @@
  */
 package uk.ac.ebi.eva.server.ws;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import static com.jayway.restassured.RestAssured.*;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
-import org.junit.BeforeClass;
+
+import static com.jayway.restassured.RestAssured.get;
+import static com.jayway.restassured.RestAssured.given;
+import static org.junit.Assert.*;
 
 
 public class ArchiveWSServerTest {
-    
+
     @BeforeClass
     public static void startJetty() throws Exception {
         RestAssured.port = 8080;
         RestAssured.baseURI = "http://localhost:8080/eva/webservices/rest";
     }
-    
+
     @Test
     public void testCountFiles() throws URISyntaxException {
         Response response = get(new URI("/v1/meta/files/count"));
         response.then().statusCode(200);
-        
+
         List queryResponse = JsonPath.from(response.asString()).getList("response");
         assertEquals(1, queryResponse.size());
-        
+
         List<Integer> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         assertEquals(1, result.size());
         assertTrue(result.get(0) >= 0);
     }
-    
+
     @Test
     public void testCountSpecies() throws URISyntaxException {
         Response response = get(new URI("/v1/meta/species/count"));
         response.then().statusCode(200);
-        
+
         List queryResponse = JsonPath.from(response.asString()).getList("response");
         assertEquals(1, queryResponse.size());
-        
+
         List<Integer> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         assertEquals(1, result.size());
         assertTrue(result.get(0) >= 0);
@@ -69,16 +72,16 @@ public class ArchiveWSServerTest {
     public void testGetSpecies() throws URISyntaxException {
         Response response = get(new URI("/v1/meta/species/list"));
         response.then().statusCode(200);
-        
+
         List queryResponse = JsonPath.from(response.asString()).getList("response");
         assertEquals(1, queryResponse.size());
-        
+
         List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         assertTrue(result.size() >= 1);
-        
+
         for (Map m : result) {
             String missingField = String.format("%s required field missing", m.get("assemblyName"));
-            
+
             if (m.containsKey("assemblyChain")) { // Accessioned assembly
                 assertTrue(missingField, m.containsKey("assemblyAccession"));
                 assertTrue(missingField, m.containsKey("assemblyChain"));
@@ -89,7 +92,7 @@ public class ArchiveWSServerTest {
                 assertTrue(missingField, m.containsKey("assemblyCode"));
                 assertTrue(missingField, m.containsKey("assemblyName"));
             }
-            
+
             assertTrue(missingField, m.containsKey("taxonomyId"));
             assertTrue(missingField, m.containsKey("taxonomyCode"));
 //            assertTrue(missingField, m.containsKey("taxonomyCommonName")); // This is not really mandatory
@@ -97,21 +100,21 @@ public class ArchiveWSServerTest {
             assertTrue(missingField, m.containsKey("taxonomyScientificName"));
         }
     }
-    
+
     @Test
     public void testGetLoadedSpecies() throws URISyntaxException {
         Response response = get(new URI("/v1/meta/species/list"));
         response.then().statusCode(200);
-        
+
         List queryResponse = JsonPath.from(response.asString()).getList("response");
         assertEquals(1, queryResponse.size());
-        
+
         List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         assertTrue(result.size() >= 1);
-        
+
         for (Map m : result) {
             String missingField = String.format("%s required field missing", m.get("assemblyName"));
-            
+
             if (m.containsKey("assemblyChain")) { // Accessioned assembly
                 assertTrue(missingField, m.containsKey("assemblyAccession"));
                 assertTrue(missingField, m.containsKey("assemblyChain"));
@@ -122,7 +125,7 @@ public class ArchiveWSServerTest {
                 assertTrue(missingField, m.containsKey("assemblyCode"));
                 assertTrue(missingField, m.containsKey("assemblyName"));
             }
-            
+
             assertTrue(missingField, m.containsKey("taxonomyId"));
             assertTrue(missingField, m.containsKey("taxonomyCode"));
 //            assertTrue(missingField, m.containsKey("taxonomyCommonName")); // This is not really mandatory
@@ -140,22 +143,22 @@ public class ArchiveWSServerTest {
 
         List<Map> allResult = JsonPath.from(allResponse).getJsonObject("response[0].result");
         assertTrue(allResult.size() >= 1);
-        
+
         String loadedResponse = given().params("loaded", true).get(new URI("/v1/meta/species/list")).asString();
         List<Map> loadedResult = JsonPath.from(loadedResponse).getJsonObject("response[0].result");
         assertTrue(loadedResult.size() >= 1);
-        
+
         assertTrue(loadedResult.size() <= allResult.size());
     }
-    
+
     @Test
     public void testCountStudies() throws URISyntaxException {
         Response response = get(new URI("/v1/meta/studies/count"));
         response.then().statusCode(200);
-        
+
         List queryResponse = JsonPath.from(response.asString()).getList("response");
         assertEquals(1, queryResponse.size());
-        
+
         List<Integer> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         assertEquals(1, result.size());
         assertTrue(result.get(0) >= 0);
@@ -171,10 +174,10 @@ public class ArchiveWSServerTest {
     public void testGetBrowsableStudiesBySpecies() throws URISyntaxException {
         Response response = given().param("species", "hsapiens_grch37").get(new URI("/v1/meta/studies/list"));
         response.then().statusCode(200);
-        
+
         List queryResponse = JsonPath.from(response.asString()).getList("response");
         assertEquals(1, queryResponse.size());
-        
+
         List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         assertTrue(result.size() >= 1);
     }
@@ -183,24 +186,24 @@ public class ArchiveWSServerTest {
     public void testGetStudies() throws URISyntaxException {
         Response response = get(new URI("/v1/meta/studies/all"));
         response.then().statusCode(200);
-        
+
         List queryResponse = JsonPath.from(response.asString()).getList("response");
         assertEquals(1, queryResponse.size());
-        
+
         List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         assertTrue(result.size() >= 1);
-        
+
         for (Map m : result) {
             String missingField = String.format("%s required field missing", m.get("name"));
-            
+
             assertTrue(missingField, m.containsKey("name"));
             assertTrue(missingField, m.containsKey("id"));
             assertTrue(missingField, m.containsKey("description"));
-            
+
             assertTrue(missingField, m.containsKey("taxonomyId"));
             List<Integer> taxonomyIds = JsonPath.from(response.asString()).getJsonObject("response[0].result.taxonomyId");
             assertFalse(taxonomyIds.isEmpty());
-            
+
             assertTrue(missingField, m.containsKey("speciesCommonName"));
             assertTrue(missingField, m.containsKey("speciesScientificName"));
             assertTrue(missingField, m.containsKey("sourceType"));
@@ -219,30 +222,36 @@ public class ArchiveWSServerTest {
     }
 
     @Test
+    public void testGetStrudiesStructuralBasic() throws URISyntaxException {
+        Response response = get(new URI("v1/meta/studies/all?browserType=sv&structural=true"));
+        response.then().statusCode(200);
+    }
+
+    @Test
     public void testGetStudiesStats() throws URISyntaxException {
         Response response = get(new URI("/v1/meta/studies/stats"));
         response.then().statusCode(200);
-        
+
         List queryResponse = JsonPath.from(response.asString()).getList("response");
         assertEquals(1, queryResponse.size());
-        
+
         Map<String, Integer> species = JsonPath.from(response.asString()).getJsonObject("response[0].result[0].species");
         assertTrue(species.size() >= 1);
-        
+
         // instanceof are necessary to make it really evaluate the types
         for (Map.Entry<String, Integer> m : species.entrySet()) {
             assertTrue(m.getKey() instanceof String);
             assertTrue(m.getValue() instanceof Integer);
         }
-        
+
         Map<String, Integer> types = JsonPath.from(response.asString()).getJsonObject("response[0].result[0].type");
         assertTrue(types.size() >= 1);
-        
+
         // instanceof is necessary to make it really evaluate the types
         for (Map.Entry<String, Integer> m : types.entrySet()) {
             assertTrue(m.getKey() instanceof String);
             assertTrue(m.getValue() instanceof Integer);
         }
     }
-    
+
 }

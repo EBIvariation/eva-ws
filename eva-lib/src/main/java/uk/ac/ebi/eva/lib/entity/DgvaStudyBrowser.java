@@ -75,7 +75,7 @@ public class DgvaStudyBrowser {
 
     public VariantStudy generateVariantStudy() {
         // Convert the list of tax ids to integer values
-        int[] taxIds = Arrays.stream(taxId.split(",")).mapToInt(Integer::parseInt).toArray();
+        int[] taxIds = Arrays.stream(taxId.split(", ")).map(String::trim).mapToInt(Integer::parseInt).toArray();
 
         // Build the variant study object
         URI uri = null;
