@@ -19,57 +19,51 @@
 
 package uk.ac.ebi.eva.server.ws;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.swagger.annotations.Api;
+import org.opencb.datastore.core.QueryResponse;
+import org.opencb.datastore.core.QueryResult;
+import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
+import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.naming.NamingException;
-
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
-import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import io.swagger.annotations.Api;
-import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.storage.metadata.ArchiveDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.storage.metadata.ArchiveEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.storage.metadata.StudyDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.storage.metadata.StudyEvaproDBAdaptor;
-
 /**
- *
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
 @RestController
 @RequestMapping(value = "/v1/meta", produces = "application/json")
-@Api(tags = { "archive" })
+@Api(tags = {"archive"})
 public class ArchiveWSServer extends EvaWSServer {
-    
-    private ArchiveDBAdaptor archiveDgvaDbAdaptor;
-    private ArchiveDBAdaptor archiveEvaproDbAdaptor;
-    
-    private StudyDBAdaptor studyDgvaDbAdaptor;
-    private StudyDBAdaptor studyEvaproDbAdaptor;
-    
+
+    @Autowired
+    private ArchiveDgvaDBAdaptor archiveDgvaDbAdaptor;
+    @Autowired
+    private ArchiveEvaproDBAdaptor archiveEvaproDbAdaptor;
+
+    @Autowired
+    private StudyDgvaDBAdaptor studyDgvaDbAdaptor;
+    @Autowired
+    private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
+
     private Properties properties;
     
-    public ArchiveWSServer() throws NamingException, IOException {
-        archiveDgvaDbAdaptor = new ArchiveDgvaDBAdaptor();
-        archiveEvaproDbAdaptor = new ArchiveEvaproDBAdaptor();
-        studyDgvaDbAdaptor = new StudyDgvaDBAdaptor();
-        studyEvaproDbAdaptor = new StudyEvaproDBAdaptor();
-        
+    public ArchiveWSServer() throws IOException {
         properties = new Properties();
         properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
     }
@@ -105,7 +99,7 @@ public class ArchiveWSServer extends EvaWSServer {
         if (types != null && !types.isEmpty()) {
             queryOptions.put("type", Arrays.asList(types.split(",")));
         }
-        
+
         if (structural) {
             return setQueryResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
         } else {
@@ -114,7 +108,7 @@ public class ArchiveWSServer extends EvaWSServer {
     }
 
     @RequestMapping(value = "/studies/list", method = RequestMethod.GET)
-    public QueryResponse getBrowsableStudies(@RequestParam("species") String species) 
+    public QueryResponse getBrowsableStudies(@RequestParam("species") String species)
             throws IllegalOpenCGACredentialsException, IOException {
         StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
         return setQueryResponse(studyMongoDbAdaptor.listStudies());
@@ -131,9 +125,9 @@ public class ArchiveWSServer extends EvaWSServer {
         if (types != null && !types.isEmpty()) {
             queryOptions.put("type", types);
         }
-        
-        QueryResult<Map.Entry<String, Integer>> resultSpecies, resultTypes;
-        
+
+        QueryResult<Map.Entry<String, Long>> resultSpecies, resultTypes;
+
         if (structural) {
             resultSpecies = archiveDgvaDbAdaptor.countStudiesPerSpecies(queryOptions);
             resultTypes = archiveDgvaDbAdaptor.countStudiesPerType(queryOptions);
@@ -141,29 +135,29 @@ public class ArchiveWSServer extends EvaWSServer {
             resultSpecies = archiveEvaproDbAdaptor.countStudiesPerSpecies(queryOptions);
             resultTypes = archiveEvaproDbAdaptor.countStudiesPerType(queryOptions);
         }
-        
+
         QueryResult combinedQueryResult = new QueryResult();
         combinedQueryResult.setDbTime(resultSpecies.getDbTime() + resultTypes.getDbTime());
-        
+
         JsonNodeFactory factory = new JsonNodeFactory(true);
         ObjectNode root = factory.objectNode();
         combinedQueryResult.addResult(root);
         combinedQueryResult.setNumTotalResults(combinedQueryResult.getNumResults());
-        
+
         // Species
         ObjectNode speciesNode = factory.objectNode();
-        for (Map.Entry<String, Integer> speciesCount : resultSpecies.getResult()) {
+        for (Map.Entry<String, Long> speciesCount : resultSpecies.getResult()) {
             speciesNode.put(speciesCount.getKey(), speciesCount.getValue());
         }
         root.put("species", speciesNode);
-        
+
         // Types
         ObjectNode typesNode = factory.objectNode();
-        for (Map.Entry<String, Integer> typesCount : resultTypes.getResult()) {
+        for (Map.Entry<String, Long> typesCount : resultTypes.getResult()) {
             typesNode.put(typesCount.getKey(), typesCount.getValue());
         }
         root.put("type", typesNode);
-        
+
         return setQueryResponse(combinedQueryResult);
     }
 }

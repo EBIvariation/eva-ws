@@ -17,12 +17,11 @@
  * limitations under the License.
  */
 
-package uk.ac.ebi.eva.lib.datastore;
+package uk.ac.ebi.eva.lib.utils;
 
 import com.mongodb.*;
 import org.opencb.datastore.core.config.DataStoreServerAddress;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.lib.common.*;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;

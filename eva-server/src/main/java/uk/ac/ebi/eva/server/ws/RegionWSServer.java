@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Response;
 
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.datastore.core.QueryResponse;
@@ -38,7 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 
 /**
  * Created by imedina on 01/04/14.

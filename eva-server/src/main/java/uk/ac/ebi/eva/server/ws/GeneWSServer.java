@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import uk.ac.ebi.eva.lib.datastore.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 
 /**
  *
