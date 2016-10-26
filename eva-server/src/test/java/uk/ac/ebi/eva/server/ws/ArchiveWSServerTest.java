@@ -222,14 +222,69 @@ public class ArchiveWSServerTest {
     }
 
     @Test
-    public void testGetStrudiesStructuralBasic() throws URISyntaxException {
-        Response response = get(new URI("v1/meta/studies/all?browserType=sv&structural=true"));
+    public void testGetStudiesStructural() throws URISyntaxException {
+        Response response = get(new URI("/v1/meta/studies/all?browserType=sv&structural=true"));
         response.then().statusCode(200);
+
+        List queryResponse = JsonPath.from(response.asString()).getList("response");
+        assertEquals(1, queryResponse.size());
+
+        List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
+        assertTrue(result.size() >= 1);
+
+        for (Map m : result) {
+            String missingField = String.format("%s required field missing", m.get("name"));
+
+            assertTrue(missingField, m.containsKey("name"));
+            assertTrue(missingField, m.containsKey("id"));
+            assertTrue(missingField, m.containsKey("description"));
+
+            assertTrue(missingField, m.containsKey("taxonomyId"));
+            List<Integer> taxonomyIds = JsonPath.from(response.asString()).getJsonObject("response[0].result.taxonomyId");
+            assertFalse(taxonomyIds.isEmpty());
+
+            assertTrue(missingField, m.containsKey("speciesCommonName"));
+            assertTrue(missingField, m.containsKey("speciesScientificName"));
+            assertTrue(missingField, m.containsKey("type"));
+            assertTrue(missingField, m.containsKey("typeName"));
+            assertTrue(missingField, m.containsKey("experimentType"));
+            assertTrue(missingField, m.containsKey("assembly"));
+            assertTrue(missingField, m.containsKey("publications"));
+            assertTrue(missingField, m.containsKey("numVariants"));
+            assertTrue(missingField, m.containsKey("numSamples"));
+        }
     }
 
     @Test
     public void testGetStudiesStats() throws URISyntaxException {
         Response response = get(new URI("/v1/meta/studies/stats"));
+        response.then().statusCode(200);
+
+        List queryResponse = JsonPath.from(response.asString()).getList("response");
+        assertEquals(1, queryResponse.size());
+
+        Map<String, Integer> species = JsonPath.from(response.asString()).getJsonObject("response[0].result[0].species");
+        assertTrue(species.size() >= 1);
+
+        // instanceof are necessary to make it really evaluate the types
+        for (Map.Entry<String, Integer> m : species.entrySet()) {
+            assertTrue(m.getKey() instanceof String);
+            assertTrue(m.getValue() instanceof Integer);
+        }
+
+        Map<String, Integer> types = JsonPath.from(response.asString()).getJsonObject("response[0].result[0].type");
+        assertTrue(types.size() >= 1);
+
+        // instanceof is necessary to make it really evaluate the types
+        for (Map.Entry<String, Integer> m : types.entrySet()) {
+            assertTrue(m.getKey() instanceof String);
+            assertTrue(m.getValue() instanceof Integer);
+        }
+    }
+
+    @Test
+    public void testGetStudiesStatsStructural() throws URISyntaxException {
+        Response response = get(new URI("/v1/meta/studies/stats?structural=true"));
         response.then().statusCode(200);
 
         List queryResponse = JsonPath.from(response.asString()).getList("response");
