@@ -1,14 +1,15 @@
 package uk.ac.ebi.eva.server.security.authorization;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import uk.ac.ebi.eva.server.Profiles;
 
 
-@ConditionalOnProperty(prefix = "eva.server.security", name = "enabled", havingValue = "true")
 @Configuration
+@Profile(Profiles.OAUTH_SECURITY)
 @EnableResourceServer
 public class Oauth2Configuration extends ResourceServerConfigurerAdapter {
 
