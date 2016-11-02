@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package uk.ac.ebi.eva.server;
+package uk.ac.ebi.eva.server.security;
 
 import java.io.IOException;
 
