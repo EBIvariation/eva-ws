@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -53,5 +54,58 @@ public class VariantWSServerTest {
         assertTrue(missingField, m.containsKey("alternate"));
 
     }
+
+    @Test
+    public void testGetVariantByRegion() throws URISyntaxException {
+        String testRegion = "20:71822:C:G";
+
+        Response response = given().param("species", "mmusculus_grcm38").get(new URI("/v1/variants/" + testRegion + "/info"));
+        response.then().statusCode(200);
+
+        List queryResponse = JsonPath.from(response.asString()).getList("response");
+        assertEquals(1, queryResponse.size());
+
+        List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
+        assertTrue(result.size() == 1);
+
+        Map m = result.get(0);
+
+        String missingField = String.format("%s required field missing", m.get("id"));
+
+        assertTrue(missingField, m.containsKey("id"));
+        assertTrue(missingField, m.containsKey("type"));
+        assertTrue(missingField, m.containsKey("chromosome"));
+        assertTrue(missingField, m.containsKey("start"));
+        assertTrue(missingField, m.containsKey("end"));
+        assertTrue(missingField, m.containsKey("length"));
+        assertTrue(missingField, m.containsKey("reference"));
+        assertTrue(missingField, m.containsKey("alternate"));
+
+    }
+
+    private Boolean checkExists(String testRegion) throws URISyntaxException {
+        Response response = given().param("species", "mmusculus_grcm38").get(new URI("/v1/variants/" + testRegion + "/exists"));
+        response.then().statusCode(200);
+
+        List queryResponse = JsonPath.from(response.asString()).getList("response");
+        assertEquals(1, queryResponse.size());
+
+        List<Boolean> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
+        assertTrue(result.size() == 1);
+
+        return result.get(0);
+    }
+
+    @Test
+    public void testCheckVariantExistsDoesExist() throws URISyntaxException {
+        assertTrue(checkExists("20:71822:C:G"));
+    }
+
+    @Test
+    public void testCheckVariantExistsDoesntExist() throws URISyntaxException {
+        assertFalse(checkExists("20:71821:C:G"));
+    }
+
+
 
 }
