@@ -63,17 +63,8 @@ public class VariantWSServerTest {
 
     ///
 
-//    @Test
-//    public void testGetVariantByIdDoesntExist() throws URISyntaxException {
-//        String testId = "notarealid";
-//        Response response = given().param("species", "mmusculus_grcm38").get(new URI("/v1/variants/" + testId + "/info"));
-//        response.then().statusCode(200);
-//    }
-
-    @Test
-    public void testGetVariantByRegionDoesntExist() throws URISyntaxException {
-        String testRegion = "20:71821:C:G";
-        Response response = given().param("species", "mmusculus_grcm38").get(new URI("/v1/variants/" + testRegion + "/info"));
+    private void testGetVariantByIdRegionDoesntExistHelper(String testString) throws URISyntaxException {
+        Response response = given().param("species", "mmusculus_grcm38").get(new URI("/v1/variants/" + testString + "/info"));
         response.then().statusCode(200);
 
         List queryResponse = JsonPath.from(response.asString()).getList("response");
@@ -81,6 +72,16 @@ public class VariantWSServerTest {
 
         List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         assertTrue(result.size() == 0);
+    }
+
+    @Test
+    public void testGetVariantByIdDoesntExist() throws URISyntaxException {
+        testGetVariantByIdRegionDoesntExistHelper("notARealId");
+    }
+
+    @Test
+    public void testGetVariantByRegionDoesntExist() throws URISyntaxException {
+        testGetVariantByIdRegionDoesntExistHelper("20:71821:C:G");
     }
 
     ///
