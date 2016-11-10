@@ -73,7 +73,7 @@ public class VariantWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        Variant variant = variantRepository.findById(variantId);
+        Variant variant = variantRepository.findByIds(variantId);
 
         return setQueryResponse(variant);
 

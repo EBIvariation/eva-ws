@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface VariantRepository extends MongoRepository<Variant, String> {
 
-    Variant findById(String id);
+    Variant findByIds(String id);
 
     boolean exists(String id);
 
