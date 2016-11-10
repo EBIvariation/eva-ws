@@ -34,8 +34,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.ac.ebi.eva.lib.repository.VariantRepository;
-import uk.ac.ebi.eva.lib.repository.VariantRepositoryImpl;
+import uk.ac.ebi.eva.server.repository.VariantRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
@@ -51,11 +50,11 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/v1/variants", produces = "application/json")
 @Api(tags = {"variants"})
-@EnableMongoRepositories("uk.ac.ebi.eva.lib.repository")
+@EnableMongoRepositories("uk.ac.ebi.eva.server.repository")
 public class VariantWSServer extends EvaWSServer {
 
     @Autowired
-    private VariantRepositoryImpl variantRepository;
+    private VariantRepository variantRepository;
 
     @RequestMapping(value = "/{variantId}/info", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves the information about a variant", response = QueryResponse.class)

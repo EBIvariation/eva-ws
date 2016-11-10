@@ -1,4 +1,4 @@
-package uk.ac.ebi.eva.lib.repository;
+package uk.ac.ebi.eva.server.repository;
 
 import org.opencb.biodata.models.variant.Variant;
 import org.springframework.data.mongodb.repository.MongoRepository;
