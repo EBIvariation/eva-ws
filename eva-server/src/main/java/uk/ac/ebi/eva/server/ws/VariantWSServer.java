@@ -26,6 +26,8 @@ import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,6 +58,8 @@ public class VariantWSServer extends EvaWSServer {
     @Autowired
     private VariantRepository variantRepository;
 
+    protected static Logger logger = LoggerFactory.getLogger(VariantWSServer.class);
+
     @RequestMapping(value = "/{variantId}/info", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves the information about a variant", response = QueryResponse.class)
     public QueryResponse getVariantById(@PathVariable("variantId") String variantId,
@@ -71,7 +75,14 @@ public class VariantWSServer extends EvaWSServer {
             queryOptions.put("studies", studies);
         }
 
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+        logger.warn("variantId:" + variantId);
+        logger.warn("species:" + species);
+
+        String dbName = DBAdaptorConnector.getDBName(species);
+
+        logger.warn("dbName:" + dbName);
+
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(dbName);
 
         Variant variant = variantRepository.findByIds(variantId);
 

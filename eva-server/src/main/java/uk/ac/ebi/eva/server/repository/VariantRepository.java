@@ -3,8 +3,6 @@ package uk.ac.ebi.eva.server.repository;
 import org.opencb.biodata.models.variant.Variant;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
-
 /**
  * @author Tom Smith
  */
