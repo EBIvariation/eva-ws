@@ -75,48 +75,40 @@ public class VariantWSServer extends EvaWSServer {
             queryOptions.put("studies", studies);
         }
 
-        logger.warn("variantId:" + variantId);
-        logger.warn("species:" + species);
+        if (!variantId.contains(":")) { // Query by accession id
+            QueryResult<Variant> queryResult = new QueryResult<>();
+            String dbName = DBAdaptorConnector.getDBName(species);
+            MultiMongoDbFactory.setDatabaseNameForCurrentThread(dbName);
 
-        String dbName = DBAdaptorConnector.getDBName(species);
+            List<Variant> variants = variantRepository.findByIds(variantId);
+            queryResult.setResult(variants);
 
-        logger.warn("dbName:" + dbName);
+            return setQueryResponse(queryResult);
+        } else { // Query by chr:pos:ref:alt
 
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(dbName);
+            VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
 
-        Variant variant = variantRepository.findByIds(variantId);
+            logger.warn("variantId: " + variantId);
 
-        return setQueryResponse(variant);
+            String parts[] = variantId.split(":", -1);
+            logger.warn("parts_0: " + parts[0]);
+            logger.warn("parts_1: " + parts[1]);
+            logger.warn("parts_2: " + parts[2]);
+            if (parts.length < 3) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return setQueryResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
+            }
 
+            Region region = new Region(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[1]));
+            logger.warn("region: " + region);
+            queryOptions.put("reference", parts[2]);
+            if (parts.length > 3) {
+                queryOptions.put("alternate", String.join(":", Arrays.copyOfRange(parts, 3, parts.length)));
+            }
 
-        ///////
-        ///////
+            return setQueryResponse(variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions));
 
-//        initializeQueryOptions();
-//
-//        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
-//
-//        if (studies != null && !studies.isEmpty()) {
-//            queryOptions.put("studies", studies);
-//        }
-//
-//        if (!variantId.contains(":")) { // Query by accession id
-//            return setQueryResponse(variantMongoDbAdaptor.getVariantById(variantId, queryOptions));
-//        } else { // Query by chr:pos:ref:alt
-//            String parts[] = variantId.split(":", -1);
-//            if (parts.length < 3) {
-//                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//                return setQueryResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
-//            }
-//
-//            Region region = new Region(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[1]));
-//            queryOptions.put("reference", parts[2]);
-//            if (parts.length > 3) {
-//                queryOptions.put("alternate", String.join(":", Arrays.copyOfRange(parts, 3, parts.length)));
-//            }
-//
-//            return setQueryResponse(variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions));
-//        }
+        }
     }
 
     @RequestMapping(value = "/{variantId}/exists", method = RequestMethod.GET)
