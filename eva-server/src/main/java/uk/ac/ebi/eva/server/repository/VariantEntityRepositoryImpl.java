@@ -9,9 +9,9 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
  * @author Tom Smith
  */
 public class VariantEntityRepositoryImpl {
-    MongoDbFactory mongoDbFactory;
-    MongoTemplate mongoTemplate;
-    MappingMongoConverter mappingMongoConverter;
+    private MongoDbFactory mongoDbFactory;
+    private MongoTemplate mongoTemplate;
+    private MappingMongoConverter mappingMongoConverter;
 
     @Autowired
     public VariantEntityRepositoryImpl(MongoDbFactory mongoDbFactory, MappingMongoConverter mappingMongoConverter) {
@@ -19,24 +19,5 @@ public class VariantEntityRepositoryImpl {
         this.mappingMongoConverter = mappingMongoConverter;
         mongoTemplate = new MongoTemplate(mongoDbFactory, mappingMongoConverter);
     }
-
-//    private CustomConversions customConversions() {
-//        List<Converter<?, ?>> converters = new ArrayList<Converter<?, ?>>();
-//        converters.add(new MongoDBObjectToVariantConverter());
-//        return new CustomConversions(converters);
-//    }
-//
-//    private MappingMongoConverter mongoConverter() {
-//        MongoMappingContext mappingContext = new MongoMappingContext();
-//        DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
-//        MappingMongoConverter mongoConverter = new MappingMongoConverter(dbRefResolver, mappingContext);
-//        mongoConverter.setCustomConversions(customConversions());
-//        mongoConverter.afterPropertiesSet();
-//        return mongoConverter;
-//    }
-//
-//    private MongoTemplate mongoTemplate() {
-//        return new MongoTemplate(mongoDbFactory, mongoConverter());
-//    }
 
 }
