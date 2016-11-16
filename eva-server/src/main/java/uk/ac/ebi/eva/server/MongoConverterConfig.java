@@ -18,7 +18,7 @@ import java.util.List;
  * @author Tom Smith
  */
 @Configuration
-public class MyMongoConfig extends ApplicationConfiguration {
+public class MongoConverterConfig extends ApplicationConfiguration {
 
     @Bean
     public CustomConversions customConversions() {
