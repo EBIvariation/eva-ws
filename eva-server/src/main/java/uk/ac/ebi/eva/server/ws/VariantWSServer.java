@@ -36,7 +36,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.ac.ebi.eva.server.repository.VariantRepository;
+import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
+import uk.ac.ebi.eva.server.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
@@ -56,7 +57,7 @@ import java.util.List;
 public class VariantWSServer extends EvaWSServer {
 
     @Autowired
-    private VariantRepository variantRepository;
+    private VariantEntityRepository variantEntityRepository;
 
     protected static Logger logger = LoggerFactory.getLogger(VariantWSServer.class);
 
@@ -76,11 +77,11 @@ public class VariantWSServer extends EvaWSServer {
         }
 
         if (!variantId.contains(":")) { // Query by accession id
-            QueryResult<Variant> queryResult = new QueryResult<>();
+            QueryResult<VariantEntity> queryResult = new QueryResult<>();
             String dbName = DBAdaptorConnector.getDBName(species);
             MultiMongoDbFactory.setDatabaseNameForCurrentThread(dbName);
 
-            List<Variant> variants = variantRepository.findByIds(variantId);
+            List<VariantEntity> variants = variantEntityRepository.findByIds(variantId);
             queryResult.setResult(variants);
 
             return setQueryResponse(queryResult);

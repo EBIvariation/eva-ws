@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
-import uk.ac.ebi.eva.commons.models.converters.data.MongoDBObjectToVariantConverter;
+import uk.ac.ebi.eva.commons.models.converters.data.MongoDBObjectToVariantEntityConverter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class MyMongoConfig extends ApplicationConfiguration {
     @Bean
     public CustomConversions customConversions() {
         List<Converter<?, ?>> converters = new ArrayList<Converter<?, ?>>();
-        converters.add(new MongoDBObjectToVariantConverter());
+        converters.add(new MongoDBObjectToVariantEntityConverter());
         return new CustomConversions(converters);
     }
 

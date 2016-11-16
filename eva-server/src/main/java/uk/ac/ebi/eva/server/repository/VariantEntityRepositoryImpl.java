@@ -8,13 +8,13 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 /**
  * @author Tom Smith
  */
-public class VariantRepositoryImpl{
+public class VariantEntityRepositoryImpl {
     MongoDbFactory mongoDbFactory;
     MongoTemplate mongoTemplate;
     MappingMongoConverter mappingMongoConverter;
 
     @Autowired
-    public VariantRepositoryImpl(MongoDbFactory mongoDbFactory, MappingMongoConverter mappingMongoConverter) {
+    public VariantEntityRepositoryImpl(MongoDbFactory mongoDbFactory, MappingMongoConverter mappingMongoConverter) {
         this.mongoDbFactory = mongoDbFactory;
         this.mappingMongoConverter = mappingMongoConverter;
         mongoTemplate = new MongoTemplate(mongoDbFactory, mappingMongoConverter);

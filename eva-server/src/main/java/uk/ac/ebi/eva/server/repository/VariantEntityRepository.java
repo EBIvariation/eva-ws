@@ -1,16 +1,16 @@
 package uk.ac.ebi.eva.server.repository;
 
-import org.opencb.biodata.models.variant.Variant;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
 import java.util.List;
 
 /**
  * @author Tom Smith
  */
-public interface VariantRepository extends MongoRepository<Variant, String> {
+public interface VariantEntityRepository extends MongoRepository<VariantEntity, String> {
 
-    List<Variant> findByIds(String id);
+    List<VariantEntity> findByIds(String id);
 //
 //    List<Variant> findByChromosomeAndStartAndReferenceAndAlternate(String chromosome, String start, String reference, String alternate);
 //
