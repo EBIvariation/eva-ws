@@ -9,9 +9,9 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
 
     List<VariantEntity> findByIds(String id);
 
-//    List<VariantEntity> findByChromosomeAndStartAndReferenceAndAlternate(String chromosome, String start, String reference, String alternate);
-//
-//    List<VariantEntity> findByChromosomeAndStartAndReference(String chromosome, String start, String reference);
+    List<VariantEntity> findByChromosomeAndStartAndReferenceAndAlternate(String chromosome, String start, String reference, String alternate);
+
+    List<VariantEntity> findByChromosomeAndStartAndReference(String chromosome, String start, String reference);
 //
 //    boolean exists(String id);
 
