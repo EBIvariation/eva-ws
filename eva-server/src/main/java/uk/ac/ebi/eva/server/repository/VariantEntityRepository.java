@@ -5,9 +5,6 @@ import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
 import java.util.List;
 
-/**
- * @author Tom Smith
- */
 public interface VariantEntityRepository extends MongoRepository<VariantEntity, String> {
 
     List<VariantEntity> findByIds(String id);

@@ -5,9 +5,6 @@ import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 
-/**
- * @author Tom Smith
- */
 public class VariantEntityRepositoryImpl {
     private MongoDbFactory mongoDbFactory;
     private MongoTemplate mongoTemplate;
