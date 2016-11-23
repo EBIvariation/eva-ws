@@ -4,6 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.query.Query;
+
+import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
+
+import java.util.List;
 
 public class VariantEntityRepositoryImpl {
     private MongoDbFactory mongoDbFactory;
