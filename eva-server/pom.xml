@@ -65,6 +65,24 @@
             <artifactId>variation-commons</artifactId>
             <version>0.2-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.fakemongo</groupId>
+            <artifactId>fongo</artifactId>
+            <version>1.6.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.lordofthejars</groupId>
+            <artifactId>nosqlunit-core</artifactId>
+            <version>0.10.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.lordofthejars</groupId>
+            <artifactId>nosqlunit-mongodb</artifactId>
+            <version>0.10.0</version>
+        </dependency>
+
+
 
         <dependency>
             <groupId>asm</groupId>
