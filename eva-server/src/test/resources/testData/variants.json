@@ -1,0 +1,5 @@
+{
+"variants_1_2":[
+{"start": 60343, "alt": "A", "hgvs": [{"type": "genomic", "name": "20:g.60343G>A"}], "chr": "20", "ref": "G", "files": [{"sid": "small_load", "samp": {"0|1": [897], "def": "0|0"}, "fid": "5", "fm": "GT", "attrs": {"ssID": "ss1363765667", "AF": "0.000199681", "AFR_AF": "0.0000", "AMR_AF": "0.0014", "AC": "1", "NS": "2504", "ASN_AF": "0.0000", "QUAL": "100.0", "FILTER": "PASS", "EUR_AF": "0.0000", "DP": "0", "SAN_AF": "0.0000", "AN": "5008"}}], "ids": ["rs527639301"], "end": 60343, "type": "SNV", "_id": "20_60343_G_A", "len": 1, "_at": {"chunkIds": ["20_60_1k", "20_6_10k"]}}
+]
+}
