@@ -14,7 +14,7 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
 
     List<VariantEntity> findByIds(String id);
 
-    @Query("{ 'chr' : ?0, 'start' : { $lt : ?2, $gt : $1 - " + VariantEntityRepository.MARGIN + " } , 'end' : { $gt : ?1, $lt : $2 + " + VariantEntityRepository.MARGIN + " }}")
-    List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chromosome, int start, int end, Sort sort);
+//    @Query("{ 'chr' : ?0, 'start' : { $lt : ?2, $gt : ?1 - " + VariantEntityRepository.MARGIN + " } , 'end' : { $gt : ?1, $lt : ?2 + " + VariantEntityRepository.MARGIN + " }}")
+//    List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chromosome, int start, int end, Sort sort);
 
 }
