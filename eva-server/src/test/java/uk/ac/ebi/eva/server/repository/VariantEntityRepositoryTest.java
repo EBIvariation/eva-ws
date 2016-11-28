@@ -56,6 +56,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Tests for VariantEntityRepository
+ *
+ * Uses in memory Mongo database spoof Fongo, and loading data from json using lordofthejars nosqlunit.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 @UsingDataSet(locations = {"/test-data/variants.json"})

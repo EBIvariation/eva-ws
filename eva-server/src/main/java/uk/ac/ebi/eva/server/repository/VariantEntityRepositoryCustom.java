@@ -22,6 +22,9 @@ import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
 import java.util.List;
 
+/**
+ * Interface to declare custom repository methods.
+ */
 interface VariantEntityRepositoryCustom {
 
     List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end);

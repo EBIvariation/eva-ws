@@ -31,6 +31,11 @@ import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * VariantEntityRepository(Custom) implementation.
+ *
+ * Used due to custom DBObject to VariantEntity conversion, and custom region query using a margin for efficiency.
+ */
 public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCustom {
 
     private MongoDbFactory mongoDbFactory;

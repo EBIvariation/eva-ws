@@ -26,6 +26,11 @@ import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
 import java.util.List;
 
+/**
+ * Spring MongoRepository for VariantEntity class.
+ *
+ * Methods include querying by id, and by region.
+ */
 interface VariantEntityRepository extends MongoRepository<VariantEntity, String>, VariantEntityRepositoryCustom {
 
     List<VariantEntity> findByIds(String id);
