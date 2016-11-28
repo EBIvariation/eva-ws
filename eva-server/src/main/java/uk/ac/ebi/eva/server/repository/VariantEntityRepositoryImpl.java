@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCustom {
+
     private MongoDbFactory mongoDbFactory;
     private MongoTemplate mongoTemplate;
     private MappingMongoConverter mappingMongoConverter;

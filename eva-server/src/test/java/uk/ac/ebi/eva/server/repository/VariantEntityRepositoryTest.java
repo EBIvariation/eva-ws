@@ -6,6 +6,7 @@ import com.lordofthejars.nosqlunit.core.LoadStrategyEnum;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,6 +69,15 @@ public class VariantEntityRepositoryTest {
 
     @Test
     @UsingDataSet(locations = {"/testData/variants.json"})
+    public void shouldFindByVariantIdNonExistent(){
+        String id = "notarealid";
+        final List<VariantEntity> variantEntityList = variantEntityRepository.findByIds(id);
+        assertNotNull(variantEntityList);
+        assertTrue(variantEntityList.size() == 0);
+    }
+
+    @Test
+    @UsingDataSet(locations = {"/testData/variants.json"})
     public void shouldFindByVariantRegion(){
         String chr = "20";
         int start = 60343;
@@ -79,6 +89,34 @@ public class VariantEntityRepositoryTest {
         assertEquals(start, variantEntityList.get(0).getStart());
         assertEquals(end, variantEntityList.get(0).getStart());
     }
+
+    @Test
+    @UsingDataSet(locations = {"/testData/variants.json"})
+    public void shouldFindByVariantRegionMultiple(){
+        String chr = "20";
+        int start = 60916;
+        int end = 61098;
+        final List<VariantEntity> variantEntityList = variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end);
+        assertNotNull(variantEntityList);
+        assertTrue(variantEntityList.size() > 0);
+        assertEquals(4, variantEntityList.size());
+        VariantEntity prevVariantEntity = variantEntityList.get(0);
+        for (VariantEntity currVariantEntity : variantEntityList) {
+            assertTrue(prevVariantEntity.getStart() <= currVariantEntity.getStart());
+        }
+    }
+
+    @Test
+    @UsingDataSet(locations = {"/testData/variants.json"})
+    public void shouldFindByVariantRegionNonExistent(){
+        String chr = "20";
+        int start = 61098;
+        int end = 60916;
+        final List<VariantEntity> variantEntityList = variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end);
+        assertNotNull(variantEntityList);
+        assertTrue(variantEntityList.size() == 0);
+    }
+
 
     @Configuration
     @EnableMongoRepositories
