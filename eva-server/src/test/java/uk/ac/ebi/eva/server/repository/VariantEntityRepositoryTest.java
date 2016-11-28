@@ -133,6 +133,9 @@ public class VariantEntityRepositoryTest {
     @ComponentScan(basePackageClasses = { VariantEntityRepository.class })
     static class VariantEntityRepositoryConfiguration extends AbstractMongoConfiguration {
 
+        @Autowired
+        private MongoDbFactory mongoDbFactory;
+
         @Override
         protected String getDatabaseName() {
             return "demo-test";
@@ -147,9 +150,6 @@ public class VariantEntityRepositoryTest {
         protected String getMappingBasePackage() {
             return "uk.ac.ebi.eva.server.repository";
         }
-
-        @Autowired
-        private MongoDbFactory mongoDbFactory;
 
         @Bean
         public CustomConversions customConversions() {
