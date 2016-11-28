@@ -47,11 +47,10 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     public List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end) {
-        Query query = new Query(
-                Criteria
-                        .where("chr").is(chr)
-                        .and("start").lte(end).gt(start - MARGIN)
-                        .and("end").gte(start).lt(end + MARGIN)
+        Query query = new Query(Criteria
+                                        .where("chr").is(chr)
+                                        .and("start").lte(end).gt(start - MARGIN)
+                                        .and("end").gte(start).lt(end + MARGIN)
         );
 
         ArrayList<String> sortProps = new ArrayList<String>();
