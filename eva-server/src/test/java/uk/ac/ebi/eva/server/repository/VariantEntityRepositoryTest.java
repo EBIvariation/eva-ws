@@ -71,7 +71,7 @@ public class VariantEntityRepositoryTest {
     private VariantEntityRepository variantEntityRepository;
 
     @Test
-    public void shouldFindByVariantId(){
+    public void testVariantIdIsFound(){
         String id = "rs527639301";
         final List<VariantEntity> variantEntityList = variantEntityRepository.findByIds(id);
         assertNotNull(variantEntityList);
@@ -82,7 +82,7 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
-    public void shouldFindByVariantIdNonExistent(){
+    public void testNonExistentVariantIdIsNotFound(){
         String id = "notarealid";
         final List<VariantEntity> variantEntityList = variantEntityRepository.findByIds(id);
         assertNotNull(variantEntityList);
@@ -90,7 +90,7 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
-    public void shouldFindByVariantRegion(){
+    public void testVariantRegionIsFound(){
         String chr = "20";
         int start = 60343;
         int end = 60343;
@@ -103,7 +103,7 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
-    public void shouldFindByVariantRegionMultiple(){
+    public void testVariantRegionIsFoundMultiple(){
         String chr = "20";
         int start = 60916;
         int end = 61098;
@@ -118,7 +118,7 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
-    public void shouldFindByVariantRegionNonExistent(){
+    public void testNonExistentVariantRegionIsNotFound(){
         String chr = "20";
         int start = 61098;
         int end = 60916;
