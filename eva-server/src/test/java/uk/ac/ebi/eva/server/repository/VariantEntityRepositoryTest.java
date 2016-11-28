@@ -44,6 +44,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
+@UsingDataSet(locations = {"/testData/variants.json"})
 public class VariantEntityRepositoryTest {
 
     @Autowired
@@ -56,7 +57,6 @@ public class VariantEntityRepositoryTest {
     private VariantEntityRepository variantEntityRepository;
 
     @Test
-    @UsingDataSet(locations = {"/testData/variants.json"})
     public void shouldFindByVariantId(){
         String id = "rs527639301";
         final List<VariantEntity> variantEntityList = variantEntityRepository.findByIds(id);
@@ -68,7 +68,6 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
-    @UsingDataSet(locations = {"/testData/variants.json"})
     public void shouldFindByVariantIdNonExistent(){
         String id = "notarealid";
         final List<VariantEntity> variantEntityList = variantEntityRepository.findByIds(id);
@@ -77,7 +76,6 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
-    @UsingDataSet(locations = {"/testData/variants.json"})
     public void shouldFindByVariantRegion(){
         String chr = "20";
         int start = 60343;
@@ -91,7 +89,6 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
-    @UsingDataSet(locations = {"/testData/variants.json"})
     public void shouldFindByVariantRegionMultiple(){
         String chr = "20";
         int start = 60916;
@@ -107,7 +104,6 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
-    @UsingDataSet(locations = {"/testData/variants.json"})
     public void shouldFindByVariantRegionNonExistent(){
         String chr = "20";
         int start = 61098;
