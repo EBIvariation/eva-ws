@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
@@ -63,6 +64,20 @@ public class VariantEntityRepositoryTest {
         Set<String> idSet = new HashSet<>();
         idSet.add(id);
         assertEquals(idSet, variantEntityList.get(0).getIds());
+    }
+
+    @Test
+    @UsingDataSet(locations = {"/testData/variants.json"})
+    public void shouldFindByVariantRegion(){
+        String chr = "20";
+        int start = 60343;
+        int end = 60343;
+        final List<VariantEntity> variantEntityList = variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end);
+        assertNotNull(variantEntityList);
+        assertTrue(variantEntityList.size() > 0);
+        assertEquals(chr, variantEntityList.get(0).getChromosome());
+        assertEquals(start, variantEntityList.get(0).getStart());
+        assertEquals(end, variantEntityList.get(0).getStart());
     }
 
     @Configuration

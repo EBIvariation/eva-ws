@@ -8,13 +8,9 @@ import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
 import java.util.List;
 
-public interface VariantEntityRepository extends MongoRepository<VariantEntity, String> {
-
-    int MARGIN = 1000000;
+interface VariantEntityRepository extends MongoRepository<VariantEntity, String>, VariantEntityRepositoryCustom {
 
     List<VariantEntity> findByIds(String id);
 
-//    @Query("{ 'chr' : ?0, 'start' : { $lt : ?2, $gt : ?1 - " + VariantEntityRepository.MARGIN + " } , 'end' : { $gt : ?1, $lt : ?2 + " + VariantEntityRepository.MARGIN + " }}")
-//    List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chromosome, int start, int end, Sort sort);
-
+    List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end);
 }
