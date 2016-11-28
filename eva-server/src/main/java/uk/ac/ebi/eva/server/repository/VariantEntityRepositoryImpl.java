@@ -47,7 +47,6 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     public List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end) {
-
         Query query = new Query(
                 Criteria
                         .where("chr").is(chr)
@@ -62,5 +61,4 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
         return mongoTemplate.find(query, VariantEntity.class);
     }
-
 }
