@@ -70,7 +70,7 @@ public class VariantEntityRepositoryTest {
     private ApplicationContext applicationContext;
 
     @Rule
-    public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb("demo-test");
+    public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb("test-db");
 
     @Autowired
     private VariantEntityRepository variantEntityRepository;
@@ -143,12 +143,12 @@ public class VariantEntityRepositoryTest {
 
         @Override
         protected String getDatabaseName() {
-            return "demo-test";
+            return "test-db";
         }
 
         @Bean
         public Mongo mongo() {
-            return new Fongo("something").getMongo();
+            return new Fongo("defaultInstance").getMongo();
         }
 
         @Override
