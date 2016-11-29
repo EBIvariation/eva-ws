@@ -18,22 +18,15 @@
  */
 package uk.ac.ebi.eva.server.repository;
 
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
-
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
 import java.util.List;
 
 /**
- * Spring MongoRepository for VariantEntity class.
- *
- * Methods include querying by id, and by region.
+ * Interface to declare additional repository methods with a custom implementation,
+ * instead of the one that Spring Data would provide by default.
  */
-interface VariantEntityRepository extends MongoRepository<VariantEntity, String>, VariantEntityRepositoryCustom {
-
-    List<VariantEntity> findByIds(String id);
+interface VariantEntityRepositoryCustom {
 
     List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end);
 }
