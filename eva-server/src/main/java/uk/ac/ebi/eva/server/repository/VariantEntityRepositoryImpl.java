@@ -34,6 +34,7 @@ import java.util.List;
 /**
  * Concrete implementation of the VariantEntityRepository interface (relationship inferred by Spring),
  * due to a custom DBObject to VariantEntity conversion
+ *
  * <p>It also implements the VariantEntityRepositoryCustom interface,
  * to provide an explicit implementation of the region query, using a margin for efficiency.
  */
