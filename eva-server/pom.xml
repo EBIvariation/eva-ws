@@ -81,11 +81,6 @@
             <artifactId>nosqlunit-mongodb</artifactId>
             <version>0.10.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>${mongo-java-driver.version}</version>
-        </dependency>
 
 
 
