@@ -32,9 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * VariantEntityRepository(Custom) implementation.
- *
- * Used due to custom DBObject to VariantEntity conversion, and custom region query using a margin for efficiency.
+ * Concrete implementation of the VariantEntityRepository interface (relationship inferred by Spring), due to a custom DBObject to VariantEntity conversion
+ * <p>It also implements the VariantEntityRepositoryCustom interface, to provide an explicit implementation of the region query, using a margin for efficiency.
  */
 public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCustom {
 

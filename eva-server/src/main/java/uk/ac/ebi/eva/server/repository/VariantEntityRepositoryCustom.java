@@ -23,7 +23,7 @@ import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import java.util.List;
 
 /**
- * Interface to declare custom repository methods.
+ * Interface to declare additional repository methods with a custom implementation, instead of the one that Spring Data would provide by default.
  */
 interface VariantEntityRepositoryCustom {
 
