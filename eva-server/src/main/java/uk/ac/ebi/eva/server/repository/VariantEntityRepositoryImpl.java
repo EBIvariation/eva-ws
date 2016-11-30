@@ -30,6 +30,7 @@ import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Concrete implementation of the VariantEntityRepository interface (relationship inferred by Spring),
@@ -66,5 +67,33 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.with(new Sort(Sort.Direction.ASC, sortProps));
 
         return mongoTemplate.find(query, VariantEntity.class);
+    }
+
+    private List<Integer> convertConsequenceType(List<String> consequenceType) {
+        return consequenceType.stream().map(c -> Integer.parseInt(c, 10)).collect(Collectors.toList());
+    }
+
+    public List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end,
+                                                                           List<String> consequenceType, String maf,
+                                                                           String polyphenScore, List<String> studies) {
+
+        Query query = new Query(Criteria
+                                        .where("chr").is(chr)
+                                        .and("start").lte(end).gt(start - MARGIN)
+                                        .and("end").gte(start).lt(end + MARGIN)
+        );
+
+        if (consequenceType != null && !consequenceType.isEmpty()) {
+            List<Integer> consequenceTypeConv = convertConsequenceType(consequenceType);
+            query.addCriteria(Criteria.where("annot.ct.so").in(consequenceTypeConv));
+        }
+
+        ArrayList<String> sortProps = new ArrayList<String>();
+        sortProps.add("chr");
+        sortProps.add("start");
+        query.with(new Sort(Sort.Direction.ASC, sortProps));
+
+        return mongoTemplate.find(query, VariantEntity.class);
+
     }
 }
