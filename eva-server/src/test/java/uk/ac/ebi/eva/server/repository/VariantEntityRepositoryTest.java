@@ -97,9 +97,9 @@ public class VariantEntityRepositoryTest {
 
     @Test
     public void testVariantRegionIsFound(){
-        String chr = "20";
-        int start = 60343;
-        int end = 60343;
+        String chr = "11";
+        int start = 101153;
+        int end = 101153;
         final List<VariantEntity> variantEntityList = variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end);
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);
@@ -110,13 +110,13 @@ public class VariantEntityRepositoryTest {
 
     @Test
     public void testVariantRegionIsFoundMultiple(){
-        String chr = "20";
-        int start = 60916;
-        int end = 61098;
+        String chr = "11";
+        int start = 101153;
+        int end = 101364;
         final List<VariantEntity> variantEntityList = variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end);
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);
-        assertEquals(4, variantEntityList.size());
+        assertEquals(7, variantEntityList.size());
         VariantEntity prevVariantEntity = variantEntityList.get(0);
         for (VariantEntity currVariantEntity : variantEntityList) {
             assertTrue(prevVariantEntity.getStart() <= currVariantEntity.getStart());
@@ -125,7 +125,7 @@ public class VariantEntityRepositoryTest {
 
     @Test
     public void testNonExistentVariantRegionIsNotFound(){
-        String chr = "20";
+        String chr = "11";
         int start = 61098;
         int end = 60916;
         final List<VariantEntity> variantEntityList = variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end);
