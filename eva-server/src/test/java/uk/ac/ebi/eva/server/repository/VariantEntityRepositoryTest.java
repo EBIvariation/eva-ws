@@ -63,7 +63,7 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-@UsingDataSet(locations = {"/test-data/variants.json"})
+@UsingDataSet(locations = {"/test-data/eva_hsapiens_grch37.variants_1_2.json"})
 public class VariantEntityRepositoryTest {
 
     @Autowired
@@ -77,12 +77,13 @@ public class VariantEntityRepositoryTest {
 
     @Test
     public void testVariantIdIsFound(){
-        String id = "rs527639301";
+        String id = "rs372153001";
         final List<VariantEntity> variantEntityList = variantEntityRepository.findByIds(id);
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);
         Set<String> idSet = new HashSet<>();
         idSet.add(id);
+        idSet.add("ss657638840");
         assertEquals(idSet, variantEntityList.get(0).getIds());
     }
 
