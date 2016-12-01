@@ -54,23 +54,36 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         mongoTemplate = new MongoTemplate(mongoDbFactory, mappingMongoConverter);
     }
 
-    public List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end) {
-        Query query = new Query(Criteria
-                                        .where("chr").is(chr)
-                                        .and("start").lte(end).gt(start - MARGIN)
-                                        .and("end").gte(start).lt(end + MARGIN)
-        );
-
-        ArrayList<String> sortProps = new ArrayList<String>();
-        sortProps.add("chr");
-        sortProps.add("start");
-        query.with(new Sort(Sort.Direction.ASC, sortProps));
-
-        return mongoTemplate.find(query, VariantEntity.class);
+    private void queryConsequenceType(Query query, List<String> consequenceType) {
+        List<Integer> consequenceTypeConv = consequenceType.stream().map(c -> Integer.parseInt(c.replaceAll("[^\\d.]", ""), 10)).collect(Collectors.toList());
+        query.addCriteria(Criteria.where("annot.ct.so").in(consequenceTypeConv));
     }
 
-    private List<Integer> convertConsequenceType(List<String> consequenceType) {
-        return consequenceType.stream().map(c -> Integer.parseInt(c.replaceAll("[^\\d.]", ""), 10)).collect(Collectors.toList());
+    private void queryMaf(Query query, String maf) {
+        double value = Double.parseDouble(maf.replaceAll("[^\\d.]", ""));
+        String operator = maf.replaceAll("[\\d.]","");
+
+        Criteria criteria = Criteria.where("st.maf");
+
+        switch (operator) {
+            case ("="):
+                query.addCriteria(criteria.is(value));
+                break;
+            case ("<"):
+                query.addCriteria(criteria.lt(value));
+                break;
+            case (">"):
+                query.addCriteria(criteria.gt(value));
+                break;
+            case ("<="):
+                query.addCriteria(criteria.lte(value));
+                break;
+            case (">="):
+                query.addCriteria(criteria.gte(value));
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     public List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end,
@@ -84,35 +97,11 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         );
 
         if (consequenceType != null && !consequenceType.isEmpty()) {
-            List<Integer> consequenceTypeConv = convertConsequenceType(consequenceType);
-            query.addCriteria(Criteria.where("annot.ct.so").in(consequenceTypeConv));
+            queryConsequenceType(query, consequenceType);
         }
 
         if (!maf.isEmpty()) {
-            double value = Double.parseDouble(maf.replaceAll("[^\\d.]", ""));
-            String operator = maf.replaceAll("[\\d.]","");
-
-            Criteria criteria = Criteria.where("st.maf");
-
-            switch (operator) {
-                case ("="):
-                    query.addCriteria(criteria.is(value));
-                    break;
-                case ("<"):
-                    query.addCriteria(criteria.lt(value));
-                    break;
-                case (">"):
-                    query.addCriteria(criteria.gt(value));
-                    break;
-                case ("<="):
-                    query.addCriteria(criteria.lte(value));
-                    break;
-                case (">="):
-                    query.addCriteria(criteria.gte(value));
-                    break;
-                default:
-                    throw new IllegalArgumentException();
-            }
+            queryMaf(query, maf);
         }
 
         ArrayList<String> sortProps = new ArrayList<String>();

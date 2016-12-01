@@ -35,5 +35,7 @@ interface VariantEntityRepository extends MongoRepository<VariantEntity, String>
 
     List<VariantEntity> findByIds(String id);
 
-    List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end);
+    List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end,
+                                                                    List<String> consequenceType, String maf,
+                                                                    String polyphenScore, List<String> studies);
 }
