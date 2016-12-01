@@ -145,6 +145,45 @@ public class VariantEntityRepositoryTest {
         assertEquals(26, variantEntityList.size());
     }
 
+    @Test
+    public void testRegionIsFoundWithMafGt() {
+        String chr = "11";
+        int start = 102172;
+        int end = 150000;
+        String maf = ">0.125";
+        final List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
+                                                                                    maf, "", new ArrayList<>());
+        assertNotNull(variantEntityList);
+        assertEquals(43, variantEntityList.size());
+    }
+
+    @Test
+    public void testRegionIsFoundWithMafGtE() {
+        String chr = "11";
+        int start = 102172;
+        int end = 150000;
+        String maf = ">=0.125";
+        final List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
+                                                                                    maf, "", new ArrayList<>());
+        assertNotNull(variantEntityList);
+        assertEquals(46, variantEntityList.size());
+    }
+
+    @Test
+    public void testRegionIsFoundWithMafE() {
+        String chr = "11";
+        int start = 102172;
+        int end = 150000;
+        String maf = "=0.125";
+        final List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
+                                                                                    maf, "", new ArrayList<>());
+        assertNotNull(variantEntityList);
+        assertEquals(3, variantEntityList.size());
+    }
+
 
     @Configuration
     @EnableMongoRepositories
