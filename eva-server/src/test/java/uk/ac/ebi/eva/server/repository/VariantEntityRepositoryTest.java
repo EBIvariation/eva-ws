@@ -78,7 +78,7 @@ public class VariantEntityRepositoryTest {
     @Test
     public void testVariantIdIsFound(){
         String id = "rs776523794";
-        final List<VariantEntity> variantEntityList = variantEntityRepository.findByIds(id);
+        List<VariantEntity> variantEntityList = variantEntityRepository.findByIds(id);
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);
         Set<String> idSet = new HashSet<>();
@@ -90,7 +90,7 @@ public class VariantEntityRepositoryTest {
     @Test
     public void testNonExistentVariantIdIsNotFound(){
         String id = "notarealid";
-        final List<VariantEntity> variantEntityList = variantEntityRepository.findByIds(id);
+        List<VariantEntity> variantEntityList = variantEntityRepository.findByIds(id);
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() == 0);
     }
@@ -100,7 +100,7 @@ public class VariantEntityRepositoryTest {
         String chr = "11";
         int start = 180002;
         int end = 180002;
-        final List<VariantEntity> variantEntityList =
+        List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
                                                                                     "", "", "", new ArrayList<>());
         assertNotNull(variantEntityList);
@@ -115,7 +115,7 @@ public class VariantEntityRepositoryTest {
         String chr = "11";
         int start = 185000;
         int end = 190000;
-        final List<VariantEntity> variantEntityList =
+        List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
                                                                                     "", "", "", new ArrayList<>());
         assertNotNull(variantEntityList);
@@ -132,7 +132,7 @@ public class VariantEntityRepositoryTest {
         String chr = "11";
         int start = 61098;
         int end = 60916;
-        final List<VariantEntity> variantEntityList =
+        List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
                                                                                     "", "", "", new ArrayList<>());
         assertNotNull(variantEntityList);
@@ -146,7 +146,7 @@ public class VariantEntityRepositoryTest {
         int end = 190000;
         List<String> cts = new ArrayList<>();
         cts.add("SO:0001627");
-        final List<VariantEntity> variantEntityList =
+        List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end,
                                                                                     cts, "", "", "", new ArrayList<>());
         assertNotNull(variantEntityList);
@@ -159,7 +159,7 @@ public class VariantEntityRepositoryTest {
         int start = 185000;
         int end = 190000;
         String maf = ">0.125";
-        final List<VariantEntity> variantEntityList =
+        List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
                                                                                     maf, "", "", new ArrayList<>());
         assertNotNull(variantEntityList);
@@ -172,7 +172,7 @@ public class VariantEntityRepositoryTest {
         int start = 189000;
         int end = 190000;
         String maf = ">=0.125";
-        final List<VariantEntity> variantEntityList =
+        List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
                                                                                     maf, "", "", new ArrayList<>());
         assertNotNull(variantEntityList);
@@ -185,13 +185,26 @@ public class VariantEntityRepositoryTest {
         int start = 185000;
         int end = 190000;
         String maf = "=0.5";
-        final List<VariantEntity> variantEntityList =
+        List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
                                                                                     maf, "", "", new ArrayList<>());
         assertNotNull(variantEntityList);
         assertEquals(8, variantEntityList.size());
     }
 
+    @Test
+    public void testRegionIsFoundWithPolyphenGt() {
+        String chr = "11";
+        int start = 190000;
+        int end = 194000;
+        String polyphen = ">0.5";
+        List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
+                                                                                    "", polyphen, "",
+                                                                                    new ArrayList<>());
+        assertNotNull(variantEntityList);
+        assertEquals(41, variantEntityList.size());
+    }
 
     @Configuration
     @EnableMongoRepositories
