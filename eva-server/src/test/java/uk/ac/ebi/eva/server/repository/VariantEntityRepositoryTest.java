@@ -196,14 +196,14 @@ public class VariantEntityRepositoryTest {
     public void testRegionIsFoundWithPolyphenGt() {
         String chr = "11";
         int start = 190000;
-        int end = 194000;
-        String polyphen = ">0.5";
+        int end = 193719;
+        String polyphenScore = ">0.5";
         List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
-                                                                                    "", polyphen, "",
+                                                                                    "", polyphenScore, "",
                                                                                     new ArrayList<>());
         assertNotNull(variantEntityList);
-        assertEquals(41, variantEntityList.size());
+        assertEquals(4, variantEntityList.size());
     }
 
     @Configuration
