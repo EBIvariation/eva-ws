@@ -181,6 +181,13 @@ public class VariantEntityRepositoryTest {
         testFiltersHelper("11", 190000, 193719, new ArrayList<>(), "", "", "<0.5", new ArrayList<>(), 11);
     }
 
+    @Test
+    public void testRegionIsFoundWithStudies() {
+        List<String> studies = new ArrayList<>();
+        studies.add("PRJEB6930");
+        testFiltersHelper("11", 190000, 191000, new ArrayList<>(), "", "", "", studies, 14);
+    }
+
     @Configuration
     @EnableMongoRepositories
     @ComponentScan(basePackageClasses = { VariantEntityRepository.class })
