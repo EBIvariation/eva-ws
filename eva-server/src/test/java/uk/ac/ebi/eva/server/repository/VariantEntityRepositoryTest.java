@@ -102,7 +102,7 @@ public class VariantEntityRepositoryTest {
         int end = 101153;
         final List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
-                                                                                    "", "", new ArrayList<>());
+                                                                                    "", "", "", new ArrayList<>());
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);
         assertEquals(chr, variantEntityList.get(0).getChromosome());
@@ -117,7 +117,7 @@ public class VariantEntityRepositoryTest {
         int end = 101364;
         final List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
-                                                                                    "", "", new ArrayList<>());
+                                                                                    "", "", "", new ArrayList<>());
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);
         assertEquals(7, variantEntityList.size());
@@ -134,7 +134,7 @@ public class VariantEntityRepositoryTest {
         int end = 60916;
         final List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
-                                                                                    "", "", new ArrayList<>());
+                                                                                    "", "", "", new ArrayList<>());
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() == 0);
     }
@@ -148,7 +148,7 @@ public class VariantEntityRepositoryTest {
         cts.add("SO:0001628");
         final List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end,
-                                                                                    cts, "", "", new ArrayList<>());
+                                                                                    cts, "", "", "", new ArrayList<>());
         assertNotNull(variantEntityList);
         assertEquals(26, variantEntityList.size());
     }
@@ -161,7 +161,7 @@ public class VariantEntityRepositoryTest {
         String maf = ">0.125";
         final List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
-                                                                                    maf, "", new ArrayList<>());
+                                                                                    maf, "", "", new ArrayList<>());
         assertNotNull(variantEntityList);
         assertEquals(5, variantEntityList.size());
     }
@@ -174,7 +174,7 @@ public class VariantEntityRepositoryTest {
         String maf = ">=0.125";
         final List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
-                                                                                    maf, "", new ArrayList<>());
+                                                                                    maf, "", "", new ArrayList<>());
         assertNotNull(variantEntityList);
         assertEquals(6, variantEntityList.size());
     }
@@ -187,7 +187,7 @@ public class VariantEntityRepositoryTest {
         String maf = "=0.125";
         final List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
-                                                                                    maf, "", new ArrayList<>());
+                                                                                    maf, "", "", new ArrayList<>());
         assertNotNull(variantEntityList);
         assertEquals(4, variantEntityList.size());
     }

@@ -18,9 +18,7 @@
  */
 package uk.ac.ebi.eva.server.repository;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
@@ -37,5 +35,6 @@ interface VariantEntityRepository extends MongoRepository<VariantEntity, String>
 
     List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end,
                                                                     List<String> consequenceType, String maf,
-                                                                    String polyphenScore, List<String> studies);
+                                                                    String polyphenScore, String sift,
+                                                                    List<String> studies);
 }

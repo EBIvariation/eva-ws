@@ -88,7 +88,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
     public List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end,
                                                                            List<String> consequenceType, String maf,
-                                                                           String polyphenScore, List<String> studies) {
+                                                                           String polyphenScore, String sift,
+                                                                           List<String> studies) {
 
         Query query = new Query(Criteria
                                         .where("chr").is(chr)
