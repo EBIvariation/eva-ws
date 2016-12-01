@@ -69,23 +69,25 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
         switch (operator) {
             case ("="):
-                query.addCriteria(criteria.is(value));
+                criteria = criteria.is(value);
                 break;
             case ("<"):
-                query.addCriteria(criteria.lt(value));
+                criteria = criteria.lt(value);
                 break;
             case (">"):
-                query.addCriteria(criteria.gt(value));
+                criteria = criteria.gt(value);
                 break;
             case ("<="):
-                query.addCriteria(criteria.lte(value));
+                criteria = criteria.lte(value);
                 break;
             case (">="):
-                query.addCriteria(criteria.gte(value));
+                criteria = criteria.gte(value);
                 break;
             default:
                 throw new IllegalArgumentException();
         }
+
+        query.addCriteria(criteria);
     }
 
     private void queryPolyphenScore(Query query, String polyphenScore) {
