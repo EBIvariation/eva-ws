@@ -133,6 +133,25 @@ public class VariantEntityRepositoryTest {
         assertTrue(variantEntityList.size() == 0);
     }
 
+    @Test
+    public void testRegionIsFoundWithConsequenceType() {
+        String chr = "11";
+        int start = 101153;
+        int end = 101153;
+        Set<String> idSet = new HashSet<>();
+        idSet.add("rs372153001");
+        idSet.add("ss657638840");
+        List<String> cts = new ArrayList<>();
+        cts.add("SO:0001628");
+        final List<VariantEntity> variantEntityList = variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, cts, "", "", new ArrayList<>());
+        assertNotNull(variantEntityList);
+        assertTrue(variantEntityList.size() > 0);
+        assertEquals(chr, variantEntityList.get(0).getChromosome());
+        assertEquals(start, variantEntityList.get(0).getStart());
+        assertEquals(end, variantEntityList.get(0).getStart());
+        assertEquals(idSet, variantEntityList.get(0).getIds());
+    }
+
 
     @Configuration
     @EnableMongoRepositories

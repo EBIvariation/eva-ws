@@ -70,7 +70,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     private List<Integer> convertConsequenceType(List<String> consequenceType) {
-        return consequenceType.stream().map(c -> Integer.parseInt(c, 10)).collect(Collectors.toList());
+        return consequenceType.stream().map(c -> Integer.parseInt(c.replaceAll("[^\\d.]", ""), 10)).collect(Collectors.toList());
     }
 
     public List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end,
