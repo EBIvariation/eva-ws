@@ -55,7 +55,9 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     private void queryConsequenceType(Query query, List<String> consequenceType) {
-        List<Integer> consequenceTypeConv = consequenceType.stream().map(c -> Integer.parseInt(c.replaceAll("[^\\d.]", ""), 10)).collect(Collectors.toList());
+        List<Integer> consequenceTypeConv = consequenceType.stream()
+                                                           .map(c -> Integer.parseInt(c.replaceAll("[^\\d.]", ""), 10))
+                                                           .collect(Collectors.toList());
         query.addCriteria(Criteria.where("annot.ct.so").in(consequenceTypeConv));
     }
 
