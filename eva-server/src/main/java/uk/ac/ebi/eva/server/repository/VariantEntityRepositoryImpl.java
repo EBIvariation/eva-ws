@@ -91,6 +91,11 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.addCriteria(Criteria.where("annot.ct.polyphen.sc").gt(value));
     }
 
+    private void querySift(Query query, String sift) {
+        double value = Double.parseDouble(sift.replaceAll("[^\\d.]", ""));
+        query.addCriteria(Criteria.where("annot.ct.sift.sc").lt(value));
+    }
+
     public List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end,
                                                                            List<String> consequenceType, String maf,
                                                                            String polyphenScore, String sift,
@@ -112,6 +117,10 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
         if (!polyphenScore.isEmpty()) {
             queryPolyphenScore(query, polyphenScore);
+        }
+
+        if (!sift.isEmpty()) {
+            querySift(query, sift);
         }
 
         ArrayList<String> sortProps = new ArrayList<String>();
