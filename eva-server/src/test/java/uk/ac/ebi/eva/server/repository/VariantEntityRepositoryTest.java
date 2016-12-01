@@ -139,71 +139,46 @@ public class VariantEntityRepositoryTest {
         assertTrue(variantEntityList.size() == 0);
     }
 
+    private void testFiltersHelper(String chr, int start, int end, List<String> consequenceType, String maf,
+                                   String polyphenScore, String sift, List<String> studies, int expectedResultLength) {
+        List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, consequenceType,
+                                                                                    maf, polyphenScore, sift,
+                                                                                    studies);
+        assertNotNull(variantEntityList);
+        assertEquals(expectedResultLength, variantEntityList.size());
+    }
+
     @Test
     public void testRegionIsFoundWithConsequenceType() {
-        String chr = "11";
-        int start = 188000;
-        int end = 190000;
         List<String> cts = new ArrayList<>();
         cts.add("SO:0001627");
-        List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end,
-                                                                                    cts, "", "", "", new ArrayList<>());
-        assertNotNull(variantEntityList);
-        assertEquals(94, variantEntityList.size());
+        testFiltersHelper("11", 188000, 190000, cts, "", "", "", new ArrayList<>(), 94);
     }
 
     @Test
     public void testRegionIsFoundWithMafGt() {
-        String chr = "11";
-        int start = 185000;
-        int end = 190000;
-        String maf = ">0.125";
-        List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
-                                                                                    maf, "", "", new ArrayList<>());
-        assertNotNull(variantEntityList);
-        assertEquals(37, variantEntityList.size());
+        testFiltersHelper("11", 185000, 190000, new ArrayList<>(), ">0.125", "", "", new ArrayList<>(), 37);
     }
 
     @Test
     public void testRegionIsFoundWithMafGtE() {
-        String chr = "11";
-        int start = 189000;
-        int end = 190000;
-        String maf = ">=0.125";
-        List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
-                                                                                    maf, "", "", new ArrayList<>());
-        assertNotNull(variantEntityList);
-        assertEquals(15, variantEntityList.size());
+        testFiltersHelper("11", 189000, 190000, new ArrayList<>(), ">=0.125", "", "", new ArrayList<>(), 15);
     }
 
     @Test
     public void testRegionIsFoundWithMafE() {
-        String chr = "11";
-        int start = 185000;
-        int end = 190000;
-        String maf = "=0.5";
-        List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
-                                                                                    maf, "", "", new ArrayList<>());
-        assertNotNull(variantEntityList);
-        assertEquals(8, variantEntityList.size());
+        testFiltersHelper("11", 185000, 190000, new ArrayList<>(), "=0.5", "", "", new ArrayList<>(), 8);
     }
 
     @Test
     public void testRegionIsFoundWithPolyphenGt() {
-        String chr = "11";
-        int start = 190000;
-        int end = 193719;
-        String polyphenScore = ">0.5";
-        List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
-                                                                                    "", polyphenScore, "",
-                                                                                    new ArrayList<>());
-        assertNotNull(variantEntityList);
-        assertEquals(4, variantEntityList.size());
+        testFiltersHelper("11", 190000, 193719, new ArrayList<>(), "", ">0.5", "", new ArrayList<>(), 4);
+    }
+
+    @Test
+    public void testRegionIsFoundWithSiftLt() {
+        testFiltersHelper("11", 190000, 193719, new ArrayList<>(), "", "", "<0.5", new ArrayList<>(), 11);
     }
 
     @Configuration
