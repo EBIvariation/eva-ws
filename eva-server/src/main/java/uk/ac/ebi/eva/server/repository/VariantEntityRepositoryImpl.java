@@ -88,6 +88,33 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
             query.addCriteria(Criteria.where("annot.ct.so").in(consequenceTypeConv));
         }
 
+        if (!maf.isEmpty()) {
+            double value = Double.parseDouble(maf.replaceAll("[^\\d.]", ""));
+            String operator = maf.replaceAll("[\\d.]","");
+
+            Criteria criteria = Criteria.where("st.maf");
+
+            switch (operator) {
+                case ("="):
+                    query.addCriteria(criteria.is(value));
+                    break;
+                case ("<"):
+                    query.addCriteria(criteria.lt(value));
+                    break;
+                case (">"):
+                    query.addCriteria(criteria.gt(value));
+                    break;
+                case ("<="):
+                    query.addCriteria(criteria.lte(value));
+                    break;
+                case (">="):
+                    query.addCriteria(criteria.gte(value));
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+
         ArrayList<String> sortProps = new ArrayList<String>();
         sortProps.add("chr");
         sortProps.add("start");

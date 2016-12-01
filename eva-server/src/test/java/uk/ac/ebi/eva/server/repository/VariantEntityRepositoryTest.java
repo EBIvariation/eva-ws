@@ -149,26 +149,26 @@ public class VariantEntityRepositoryTest {
     public void testRegionIsFoundWithMafGt() {
         String chr = "11";
         int start = 102172;
-        int end = 150000;
+        int end = 110000;
         String maf = ">0.125";
         final List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
                                                                                     maf, "", new ArrayList<>());
         assertNotNull(variantEntityList);
-        assertEquals(43, variantEntityList.size());
+        assertEquals(5, variantEntityList.size());
     }
 
     @Test
     public void testRegionIsFoundWithMafGtE() {
         String chr = "11";
         int start = 102172;
-        int end = 150000;
+        int end = 110000;
         String maf = ">=0.125";
         final List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
                                                                                     maf, "", new ArrayList<>());
         assertNotNull(variantEntityList);
-        assertEquals(46, variantEntityList.size());
+        assertEquals(6, variantEntityList.size());
     }
 
     @Test
@@ -181,7 +181,7 @@ public class VariantEntityRepositoryTest {
                 variantEntityRepository.findByChrAndStartWithMarginAndEndWithMargin(chr, start, end, new ArrayList<>(),
                                                                                     maf, "", new ArrayList<>());
         assertNotNull(variantEntityList);
-        assertEquals(3, variantEntityList.size());
+        assertEquals(4, variantEntityList.size());
     }
 
 
