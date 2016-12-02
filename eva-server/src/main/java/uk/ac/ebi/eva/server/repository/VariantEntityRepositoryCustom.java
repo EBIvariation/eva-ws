@@ -28,8 +28,13 @@ import java.util.List;
  */
 interface VariantEntityRepositoryCustom {
 
-    List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end,
-                                                      List<String> consequenceType, String maf,
-                                                      String polyphenScore, String sift,
+    List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end, List<String> consequenceType,
+                                                      VariantEntityRepository.RelationalOperator mafOperator,
+                                                      double mafValue,
+                                                      VariantEntityRepository.RelationalOperator polyphenScoreOperator,
+                                                      double polyphenScoreValue,
+                                                      VariantEntityRepository.RelationalOperator siftOperator,
+                                                      double siftValue,
                                                       List<String> studies);
+
 }

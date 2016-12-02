@@ -54,6 +54,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         mongoTemplate = new MongoTemplate(mongoDbFactory, mappingMongoConverter);
     }
 
+
+
     void queryConsequenceType(Query query, List<String> consequenceType) {
         List<Integer> consequenceTypeConv = consequenceType.stream()
                                                            .map(c -> Integer.parseInt(c.replaceAll("[^\\d.]", ""), 10))
@@ -142,5 +144,16 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
         return mongoTemplate.find(query, VariantEntity.class);
 
+    }
+
+    public List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end, List<String> consequenceType,
+                                                      VariantEntityRepository.RelationalOperator mafOperator,
+                                                      double mafValue,
+                                                      VariantEntityRepository.RelationalOperator polyphenScoreOperator,
+                                                      double polyphenScoreValue,
+                                                      VariantEntityRepository.RelationalOperator siftOperator,
+                                                      double siftValue,
+                                                      List<String> studies) {
+        return new ArrayList<>();
     }
 }
