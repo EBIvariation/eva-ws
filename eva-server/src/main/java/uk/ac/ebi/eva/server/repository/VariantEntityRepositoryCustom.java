@@ -28,8 +28,8 @@ import java.util.List;
  */
 interface VariantEntityRepositoryCustom {
 
-    List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end,
-                                                                    List<String> consequenceType, String maf,
-                                                                    String polyphenScore, String sift,
-                                                                    List<String> studies);
+    List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end,
+                                                      List<String> consequenceType, String maf,
+                                                      String polyphenScore, String sift,
+                                                      List<String> studies);
 }

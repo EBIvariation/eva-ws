@@ -104,10 +104,10 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.addCriteria(Criteria.where("files.sid").in(studies));
     }
 
-    public List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end,
-                                                                           List<String> consequenceType, String maf,
-                                                                           String polyphenScore, String sift,
-                                                                           List<String> studies) {
+    public List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end,
+                                                             List<String> consequenceType, String maf,
+                                                             String polyphenScore, String sift,
+                                                             List<String> studies) {
 
         Query query = new Query(Criteria
                                         .where("chr").is(chr)

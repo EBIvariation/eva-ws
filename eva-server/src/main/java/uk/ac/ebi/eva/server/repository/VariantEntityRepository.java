@@ -33,8 +33,26 @@ interface VariantEntityRepository extends MongoRepository<VariantEntity, String>
 
     List<VariantEntity> findByIds(String id);
 
-    List<VariantEntity> findByChrAndStartWithMarginAndEndWithMargin(String chr, int start, int end,
-                                                                    List<String> consequenceType, String maf,
-                                                                    String polyphenScore, String sift,
-                                                                    List<String> studies);
+    /**
+     * Method that queries for variants within a specified range, and has values within specified bounds or
+     * have specified values matching those in the filters- which include consequence type, minor allele frequency,
+     * protein substitution scores (polyphen and sift), and studies.
+     *
+     * @param chr Chromosome name
+     * @param start Start position of query, inclusive
+     * @param end End position of query, inclusive
+     * @param consequenceType List of genomic consequences, returned variants have at least one consequence type
+     *                        from in the list.
+     * @param maf Filter for minor allele frequency value
+     * @param polyphenScore Filter for polyphen score, which predicts the possible impact of an amino acid
+     *                      substitution on the structure and function of a human protein.
+     * @param sift Filter for SIFT score, which predicts whether an amino acid substitution affects protein function.
+     * @param studies List of bioproject IDs, returned variants were found in at least one of the studies in
+     *                this list.
+     * @return VariantEntities whose values are within the bounds of the filters.
+     */
+    List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end,
+                                                      List<String> consequenceType, String maf,
+                                                      String polyphenScore, String sift,
+                                                      List<String> studies);
 }
