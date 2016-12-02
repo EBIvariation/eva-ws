@@ -54,14 +54,14 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         mongoTemplate = new MongoTemplate(mongoDbFactory, mappingMongoConverter);
     }
 
-    private void queryConsequenceType(Query query, List<String> consequenceType) {
+    void queryConsequenceType(Query query, List<String> consequenceType) {
         List<Integer> consequenceTypeConv = consequenceType.stream()
                                                            .map(c -> Integer.parseInt(c.replaceAll("[^\\d.]", ""), 10))
                                                            .collect(Collectors.toList());
         query.addCriteria(Criteria.where("annot.ct.so").in(consequenceTypeConv));
     }
 
-    private void queryMaf(Query query, String maf) {
+    void queryMaf(Query query, String maf) {
         double value = Double.parseDouble(maf.replaceAll("[^\\d.]", ""));
         String operator = maf.replaceAll("[\\d.]","");
 
@@ -90,17 +90,17 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.addCriteria(criteria);
     }
 
-    private void queryPolyphenScore(Query query, String polyphenScore) {
+    void queryPolyphenScore(Query query, String polyphenScore) {
         double value = Double.parseDouble(polyphenScore.replaceAll("[^\\d.]", ""));
         query.addCriteria(Criteria.where("annot.ct.polyphen.sc").gt(value));
     }
 
-    private void querySift(Query query, String sift) {
+    void querySift(Query query, String sift) {
         double value = Double.parseDouble(sift.replaceAll("[^\\d.]", ""));
         query.addCriteria(Criteria.where("annot.ct.sift.sc").lt(value));
     }
 
-    private void queryStudies(Query query, List<String> studies) {
+    void queryStudies(Query query, List<String> studies) {
         query.addCriteria(Criteria.where("files.sid").in(studies));
     }
 
