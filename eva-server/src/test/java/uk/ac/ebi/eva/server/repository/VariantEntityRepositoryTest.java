@@ -101,8 +101,8 @@ public class VariantEntityRepositoryTest {
         int start = 180002;
         int end = 180002;
         List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByRegionAndComplexFilters(chr, start, end, new ArrayList<>(),
-                                                                      "", "", "", new ArrayList<>());
+                variantEntityRepository.findByRegionAndComplexFilters(chr, start, end, new ArrayList<>(), null, null,
+                                                                      null, null, null, null, new ArrayList<>());
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);
         assertEquals(chr, variantEntityList.get(0).getChromosome());
@@ -116,8 +116,8 @@ public class VariantEntityRepositoryTest {
         int start = 185000;
         int end = 190000;
         List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByRegionAndComplexFilters(chr, start, end, new ArrayList<>(),
-                                                                      "", "", "", new ArrayList<>());
+                variantEntityRepository.findByRegionAndComplexFilters(chr, start, end, new ArrayList<>(), null, null,
+                                                                      null, null, null, null, new ArrayList<>());
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);
         assertEquals(309, variantEntityList.size());
@@ -133,18 +133,21 @@ public class VariantEntityRepositoryTest {
         int start = 61098;
         int end = 60916;
         List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByRegionAndComplexFilters(chr, start, end, new ArrayList<>(),
-                                                                      "", "", "", new ArrayList<>());
+                variantEntityRepository.findByRegionAndComplexFilters(chr, start, end, new ArrayList<>(), null, null,
+                                                                      null, null, null, null, new ArrayList<>());
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() == 0);
     }
 
-    private void testFiltersHelper(String chr, int start, int end, List<String> consequenceType, String maf,
-                                   String polyphenScore, String sift, List<String> studies, int expectedResultLength) {
+    private void testFiltersHelper(String chr, int start, int end, List<String> consequenceType,
+                                   VariantEntityRepository.RelationalOperator mafOperator, Double mafValue,
+                                   VariantEntityRepository.RelationalOperator polyphenOperator, Double polyphenValue,
+                                   VariantEntityRepository.RelationalOperator siftOperator, Double siftValue,
+                                   List<String> studies, int expectedResultLength) {
         List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByRegionAndComplexFilters(chr, start, end, consequenceType,
-                                                                      maf, polyphenScore, sift,
-                                                                      studies);
+                variantEntityRepository.findByRegionAndComplexFilters(chr, start, end, consequenceType, mafOperator,
+                                                                      mafValue, polyphenOperator, polyphenValue,
+                                                                      siftOperator, siftValue, studies);
         assertNotNull(variantEntityList);
         assertEquals(expectedResultLength, variantEntityList.size());
     }
@@ -153,39 +156,44 @@ public class VariantEntityRepositoryTest {
     public void testRegionIsFoundWithConsequenceType() {
         List<String> cts = new ArrayList<>();
         cts.add("SO:0001627");
-        testFiltersHelper("11", 188000, 190000, cts, "", "", "", new ArrayList<>(), 94);
+        testFiltersHelper("11", 188000, 190000, cts, null, null, null, null, null, null, new ArrayList<>(), 94);
     }
 
     @Test
     public void testRegionIsFoundWithMafGt() {
-        testFiltersHelper("11", 185000, 190000, new ArrayList<>(), ">0.125", "", "", new ArrayList<>(), 37);
+        testFiltersHelper("11", 185000, 190000, new ArrayList<>(), VariantEntityRepository.RelationalOperator.GT, 0.125,
+                          null, null, null, null, new ArrayList<>(), 37);
     }
 
     @Test
     public void testRegionIsFoundWithMafGtE() {
-        testFiltersHelper("11", 189000, 190000, new ArrayList<>(), ">=0.125", "", "", new ArrayList<>(), 15);
+        testFiltersHelper("11", 189000, 190000, new ArrayList<>(), VariantEntityRepository.RelationalOperator.GTE,
+                          0.125, null, null, null, null, new ArrayList<>(), 15);
     }
 
     @Test
     public void testRegionIsFoundWithMafE() {
-        testFiltersHelper("11", 185000, 190000, new ArrayList<>(), "=0.5", "", "", new ArrayList<>(), 8);
+        testFiltersHelper("11", 185000, 190000, new ArrayList<>(), VariantEntityRepository.RelationalOperator.EQ, 0.5,
+                          null, null, null, null, new ArrayList<>(), 8);
     }
 
     @Test
     public void testRegionIsFoundWithPolyphenGt() {
-        testFiltersHelper("11", 190000, 193719, new ArrayList<>(), "", ">0.5", "", new ArrayList<>(), 4);
+        testFiltersHelper("11", 190000, 193719, new ArrayList<>(), null, null,
+                          VariantEntityRepository.RelationalOperator.GT, 0.5, null, null, new ArrayList<>(), 4);
     }
 
     @Test
     public void testRegionIsFoundWithSiftLt() {
-        testFiltersHelper("11", 190000, 193719, new ArrayList<>(), "", "", "<0.5", new ArrayList<>(), 11);
+        testFiltersHelper("11", 190000, 193719, new ArrayList<>(), null, null, null, null,
+                          VariantEntityRepository.RelationalOperator.LT, 0.5, new ArrayList<>(), 11);
     }
 
     @Test
     public void testRegionIsFoundWithStudies() {
         List<String> studies = new ArrayList<>();
         studies.add("PRJEB6930");
-        testFiltersHelper("11", 190000, 191000, new ArrayList<>(), "", "", "", studies, 14);
+        testFiltersHelper("11", 190000, 191000, new ArrayList<>(), null, null, null, null, null, null, studies, 14);
     }
 
     @Configuration

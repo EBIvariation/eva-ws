@@ -72,7 +72,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                 criteria = criteria.is(value);
                 break;
             case GT:
-                criteria = criteria.lt(value);
+                criteria = criteria.gt(value);
                 break;
             case LT:
                 criteria = criteria.lt(value);
