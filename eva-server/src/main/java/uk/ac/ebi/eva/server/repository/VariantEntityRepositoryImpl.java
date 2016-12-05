@@ -63,54 +63,59 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.addCriteria(Criteria.where("annot.ct.so").in(consequenceTypeConv));
     }
 
-    void queryMaf(Query query, String maf) {
-        double value = Double.parseDouble(maf.replaceAll("[^\\d.]", ""));
-        String operator = maf.replaceAll("[\\d.]","");
+    void relationalCriteriaHelper(Query query, String jsonPath, Double value,
+                                  VariantEntityRepository.RelationalOperator operator) {
 
-        Criteria criteria = Criteria.where("st.maf");
-
+        Criteria criteria = Criteria.where(jsonPath);
         switch (operator) {
-            case ("="):
+            case EQ:
                 criteria = criteria.is(value);
                 break;
-            case ("<"):
+            case GT:
                 criteria = criteria.lt(value);
                 break;
-            case (">"):
-                criteria = criteria.gt(value);
+            case LT:
+                criteria = criteria.lt(value);
                 break;
-            case ("<="):
-                criteria = criteria.lte(value);
-                break;
-            case (">="):
+            case GTE:
                 criteria = criteria.gte(value);
                 break;
-            default:
+            case LTE:
+                criteria = criteria.lte(value);
+                break;
+            case NONE:
                 throw new IllegalArgumentException();
         }
-
         query.addCriteria(criteria);
     }
 
-    void queryPolyphenScore(Query query, String polyphenScore) {
-        double value = Double.parseDouble(polyphenScore.replaceAll("[^\\d.]", ""));
-        query.addCriteria(Criteria.where("annot.ct.polyphen.sc").gt(value));
+    void queryMaf(Query query, Double mafValue, VariantEntityRepository.RelationalOperator mafOperator) {
+        relationalCriteriaHelper(query, "st.maf", mafValue, mafOperator);
     }
 
-    void querySift(Query query, String sift) {
-        double value = Double.parseDouble(sift.replaceAll("[^\\d.]", ""));
-        query.addCriteria(Criteria.where("annot.ct.sift.sc").lt(value));
+    void queryPolyphenScore(Query query, Double polyphenScoreValue,
+                            VariantEntityRepository.RelationalOperator polyphenScoreOperator) {
+        relationalCriteriaHelper(query, "annot.ct.polyphen.sc", polyphenScoreValue, polyphenScoreOperator);
+    }
+
+    void querySift(Query query, Double siftValue, VariantEntityRepository.RelationalOperator siftOperator) {
+        relationalCriteriaHelper(query, "annot.ct.sift.sc", siftValue, siftOperator);
     }
 
     void queryStudies(Query query, List<String> studies) {
         query.addCriteria(Criteria.where("files.sid").in(studies));
     }
 
+    @Override
     public List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end,
-                                                             List<String> consequenceType, String maf,
-                                                             String polyphenScore, String sift,
+                                                             List<String> consequenceType,
+                                                             VariantEntityRepository.RelationalOperator mafOperator,
+                                                             Double mafValue,
+                                                             VariantEntityRepository.RelationalOperator polyphenScoreOperator,
+                                                             Double polyphenScoreValue,
+                                                             VariantEntityRepository.RelationalOperator siftOperator,
+                                                             Double siftValue,
                                                              List<String> studies) {
-
         Query query = new Query(Criteria
                                         .where("chr").is(chr)
                                         .and("start").lte(end).gt(start - MARGIN)
@@ -121,16 +126,16 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
             queryConsequenceType(query, consequenceType);
         }
 
-        if (!maf.isEmpty()) {
-            queryMaf(query, maf);
+        if (mafValue != null && mafOperator != null) {
+            queryMaf(query, mafValue, mafOperator);
         }
 
-        if (!polyphenScore.isEmpty()) {
-            queryPolyphenScore(query, polyphenScore);
+        if (polyphenScoreValue != null && polyphenScoreOperator != null) {
+            queryPolyphenScore(query, polyphenScoreValue, polyphenScoreOperator);
         }
 
-        if (!sift.isEmpty()) {
-            querySift(query, sift);
+        if (siftValue != null && siftOperator != null) {
+            querySift(query, siftValue, siftOperator);
         }
 
         if (studies != null && !studies.isEmpty()) {
@@ -143,17 +148,5 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.with(new Sort(Sort.Direction.ASC, sortProps));
 
         return mongoTemplate.find(query, VariantEntity.class);
-
-    }
-
-    public List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end, List<String> consequenceType,
-                                                      VariantEntityRepository.RelationalOperator mafOperator,
-                                                      double mafValue,
-                                                      VariantEntityRepository.RelationalOperator polyphenScoreOperator,
-                                                      double polyphenScoreValue,
-                                                      VariantEntityRepository.RelationalOperator siftOperator,
-                                                      double siftValue,
-                                                      List<String> studies) {
-        return new ArrayList<>();
     }
 }

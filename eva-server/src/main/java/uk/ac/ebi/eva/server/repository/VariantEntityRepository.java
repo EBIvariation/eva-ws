@@ -31,7 +31,7 @@ import java.util.List;
  */
 interface VariantEntityRepository extends MongoRepository<VariantEntity, String>, VariantEntityRepositoryCustom {
 
-    enum RelationalOperator { EQ, GT, LT, GTE, LTE }
+    enum RelationalOperator { EQ, GT, LT, GTE, LTE, NONE }
 
     List<VariantEntity> findByIds(String id);
 
@@ -45,16 +45,23 @@ interface VariantEntityRepository extends MongoRepository<VariantEntity, String>
      * @param end End position of query, inclusive
      * @param consequenceType List of genomic consequences, returned variants have at least one consequence type
      *                        from in the list.
-     * @param maf Filter for minor allele frequency value
-     * @param polyphenScore Filter for polyphen score, which predicts the possible impact of an amino acid
+     * @param mafOperator Relational operator for querying of variants by maf value
+     * @param mafValue Filter for minor allele frequency value
+     * @param polyphenScoreOperator Relational operator for querying of variants by polyphen value
+     * @param polyphenScoreValue Filter for polyphen score, which predicts the possible impact of an amino acid
      *                      substitution on the structure and function of a human protein.
-     * @param sift Filter for SIFT score, which predicts whether an amino acid substitution affects protein function.
+     * @param siftOperator Relational operator for querying of variants by sift value
+     * @param siftValue Filter for SIFT score, which predicts whether an amino acid substitution affects protein function.
      * @param studies List of bioproject IDs, returned variants were found in at least one of the studies in
      *                this list.
      * @return VariantEntities whose values are within the bounds of the filters.
      */
-    List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end,
-                                                      List<String> consequenceType, String maf,
-                                                      String polyphenScore, String sift,
+    List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end, List<String> consequenceType,
+                                                      VariantEntityRepository.RelationalOperator mafOperator,
+                                                      Double mafValue,
+                                                      VariantEntityRepository.RelationalOperator polyphenScoreOperator,
+                                                      Double polyphenScoreValue,
+                                                      VariantEntityRepository.RelationalOperator siftOperator,
+                                                      Double siftValue,
                                                       List<String> studies);
 }

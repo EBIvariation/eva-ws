@@ -30,11 +30,11 @@ interface VariantEntityRepositoryCustom {
 
     List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end, List<String> consequenceType,
                                                       VariantEntityRepository.RelationalOperator mafOperator,
-                                                      double mafValue,
+                                                      Double mafValue,
                                                       VariantEntityRepository.RelationalOperator polyphenScoreOperator,
-                                                      double polyphenScoreValue,
+                                                      Double polyphenScoreValue,
                                                       VariantEntityRepository.RelationalOperator siftOperator,
-                                                      double siftValue,
+                                                      Double siftValue,
                                                       List<String> studies);
 
 }
