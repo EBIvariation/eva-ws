@@ -63,27 +63,42 @@ public class VariantEntityRepositoryImplTest {
 
     @Test
     public void relationalCriteriaHelper() throws Exception {
+        for (VariantEntityRepository.RelationalOperator value : VariantEntityRepository.RelationalOperator.values()) {
 
+        }
     }
 
     @Test
     public void queryMaf() throws Exception {
-
+        Double mafValue = 0.321;
+        variantEntityRepositoryImpl.queryMaf(queryA, mafValue, VariantEntityRepository.RelationalOperator.EQ);
+        queryB.addCriteria(Criteria.where("st.maf").is(mafValue));
+        assertEquals(queryA, queryB);
     }
 
     @Test
     public void queryPolyphenScore() throws Exception {
-
+        Double polyphenScoreValue = 0.582;
+        variantEntityRepositoryImpl.queryPolyphenScore(queryA, polyphenScoreValue, VariantEntityRepository.RelationalOperator.GT);
+        queryB.addCriteria(Criteria.where("annot.ct.polyphen.sc").gt(polyphenScoreValue));
+        assertEquals(queryA, queryB);
     }
 
     @Test
     public void querySift() throws Exception {
-
+        Double siftValue = 0.657;
+        variantEntityRepositoryImpl.querySift(queryA, siftValue, VariantEntityRepository.RelationalOperator.LT);
+        queryB.addCriteria(Criteria.where("annot.ct.sift.sc").lt(siftValue));
+        assertEquals(queryA, queryB);
     }
 
     @Test
     public void queryStudies() throws Exception {
-
+        List<String> studies = new ArrayList<>();
+        studies.add("PRJEB1234");
+        variantEntityRepositoryImpl.queryStudies(queryA, studies);
+        queryB.addCriteria(Criteria.where("files.sid").in(studies));
+        assertEquals(queryA, queryB);
     }
 
 }
