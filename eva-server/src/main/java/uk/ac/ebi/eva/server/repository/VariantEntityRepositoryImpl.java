@@ -25,6 +25,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
@@ -39,22 +40,17 @@ import java.util.stream.Collectors;
  * <p>It also implements the VariantEntityRepositoryCustom interface,
  * to provide an explicit implementation of the region query, using a margin for efficiency.
  */
+@Component
 public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCustom {
 
-    private MongoDbFactory mongoDbFactory;
     private MongoTemplate mongoTemplate;
-    private MappingMongoConverter mappingMongoConverter;
 
     private final int MARGIN = 1000000;
 
     @Autowired
     public VariantEntityRepositoryImpl(MongoDbFactory mongoDbFactory, MappingMongoConverter mappingMongoConverter) {
-        this.mongoDbFactory = mongoDbFactory;
-        this.mappingMongoConverter = mappingMongoConverter;
         mongoTemplate = new MongoTemplate(mongoDbFactory, mappingMongoConverter);
     }
-
-
 
     void queryConsequenceType(Query query, List<String> consequenceType) {
         List<Integer> consequenceTypeConv = consequenceType.stream()
