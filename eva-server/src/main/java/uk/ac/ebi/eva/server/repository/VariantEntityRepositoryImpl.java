@@ -19,6 +19,7 @@
 package uk.ac.ebi.eva.server.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.MongoDbFactory;
@@ -41,7 +42,6 @@ import java.util.stream.Collectors;
  * <p>It also implements the VariantEntityRepositoryCustom interface,
  * to provide an explicit implementation of the region query, using a margin for efficiency.
  */
-@Component
 public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCustom {
 
     private MongoTemplate mongoTemplate;
@@ -93,7 +93,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         sortProps.add("start");
         query.with(new Sort(Sort.Direction.ASC, sortProps));
 
-        query.with(pageable);
+        Pageable pageable1 = (pageable != null) ? pageable : new PageRequest(0, 10);
+        query.with(pageable1);
 
         return mongoTemplate.find(query, VariantEntity.class);
     }
