@@ -104,14 +104,13 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
     @Override
     public List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end,
-                                                             List<String> consequenceType,
+                                                             List<String> studies, List<String> consequenceType,
                                                              VariantEntityRepository.RelationalOperator mafOperator,
                                                              Double mafValue,
                                                              VariantEntityRepository.RelationalOperator polyphenScoreOperator,
                                                              Double polyphenScoreValue,
                                                              VariantEntityRepository.RelationalOperator siftOperator,
-                                                             Double siftValue,
-                                                             List<String> studies) {
+                                                             Double siftValue) {
         Query query = new Query(Criteria
                                         .where("chr").is(chr)
                                         .and("start").lte(end).gt(start - MARGIN)

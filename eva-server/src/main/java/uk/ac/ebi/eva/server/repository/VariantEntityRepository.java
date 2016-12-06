@@ -43,6 +43,8 @@ interface VariantEntityRepository extends MongoRepository<VariantEntity, String>
      * @param chr Chromosome name
      * @param start Start position of query, inclusive
      * @param end End position of query, inclusive
+     * @param studies List of study IDs, returned variants were found in at least one of the studies in
+     *                this list.
      * @param consequenceType List of genomic consequences, returned variants have at least one consequence type
      *                        from in the list.
      * @param mafOperator Relational operator for querying of variants by maf value
@@ -52,16 +54,14 @@ interface VariantEntityRepository extends MongoRepository<VariantEntity, String>
      *                      substitution on the structure and function of a human protein.
      * @param siftOperator Relational operator for querying of variants by sift value
      * @param siftValue Filter for SIFT score, which predicts whether an amino acid substitution affects protein function.
-     * @param studies List of bioproject IDs, returned variants were found in at least one of the studies in
-     *                this list.
      * @return VariantEntities whose values are within the bounds of the filters.
      */
-    List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end, List<String> consequenceType,
-                                                      VariantEntityRepository.RelationalOperator mafOperator,
+    List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end, List<String> studies,
+                                                      List<String> consequenceType,
+                                                      RelationalOperator mafOperator,
                                                       Double mafValue,
-                                                      VariantEntityRepository.RelationalOperator polyphenScoreOperator,
+                                                      RelationalOperator polyphenScoreOperator,
                                                       Double polyphenScoreValue,
-                                                      VariantEntityRepository.RelationalOperator siftOperator,
-                                                      Double siftValue,
-                                                      List<String> studies);
+                                                      RelationalOperator siftOperator,
+                                                      Double siftValue);
 }
