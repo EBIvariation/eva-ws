@@ -53,11 +53,24 @@ public class VariantEntityRepositoryImplTest {
     }
 
     @Test
-    public void queryConsequenceType() throws Exception {
+    public void testQueryConsequenceType() throws Exception {
         List<String> consequenceType = new ArrayList<>();
         consequenceType.add("SO:0001234");
         variantEntityRepositoryImpl.queryConsequenceType(testQuery, consequenceType);
         expectedQuery.addCriteria(Criteria.where("annot.ct.so").in(1234));
+        assertEquals(testQuery, expectedQuery);
+    }
+
+    @Test
+    public void testQueryConsequenceTypeMultiple() throws Exception {
+        List<String> consequenceType = new ArrayList<>();
+        consequenceType.add("SO:0001234");
+        consequenceType.add("SO:0001235");
+        List<Integer> expectedConsequenceType = new ArrayList<>();
+        expectedConsequenceType.add(1234);
+        expectedConsequenceType.add(1235);
+        variantEntityRepositoryImpl.queryConsequenceType(testQuery, consequenceType);
+        expectedQuery.addCriteria(Criteria.where("annot.ct.so").in(expectedConsequenceType));
         assertEquals(testQuery, expectedQuery);
     }
 
@@ -69,7 +82,7 @@ public class VariantEntityRepositoryImplTest {
     }
 
     @Test
-    public void queryMaf() throws Exception {
+    public void testQueryMaf() throws Exception {
         Double mafValue = 0.321;
         variantEntityRepositoryImpl.queryMaf(testQuery, mafValue, VariantEntityRepository.RelationalOperator.EQ);
         expectedQuery.addCriteria(Criteria.where("st.maf").is(mafValue));
@@ -77,7 +90,7 @@ public class VariantEntityRepositoryImplTest {
     }
 
     @Test
-    public void queryPolyphenScore() throws Exception {
+    public void testQueryPolyphenScore() throws Exception {
         Double polyphenScoreValue = 0.582;
         variantEntityRepositoryImpl.queryPolyphenScore(testQuery, polyphenScoreValue, VariantEntityRepository.RelationalOperator.GT);
         expectedQuery.addCriteria(Criteria.where("annot.ct.polyphen.sc").gt(polyphenScoreValue));
@@ -85,7 +98,7 @@ public class VariantEntityRepositoryImplTest {
     }
 
     @Test
-    public void querySift() throws Exception {
+    public void testQuerySift() throws Exception {
         Double siftValue = 0.657;
         variantEntityRepositoryImpl.querySift(testQuery, siftValue, VariantEntityRepository.RelationalOperator.LT);
         expectedQuery.addCriteria(Criteria.where("annot.ct.sift.sc").lt(siftValue));
@@ -93,9 +106,19 @@ public class VariantEntityRepositoryImplTest {
     }
 
     @Test
-    public void queryStudies() throws Exception {
+    public void testQueryStudies() throws Exception {
         List<String> studies = new ArrayList<>();
         studies.add("PRJEB1234");
+        variantEntityRepositoryImpl.queryStudies(testQuery, studies);
+        expectedQuery.addCriteria(Criteria.where("files.sid").in(studies));
+        assertEquals(testQuery, expectedQuery);
+    }
+
+    @Test
+    public void testQueryStudiesMultiple() throws Exception {
+        List<String> studies = new ArrayList<>();
+        studies.add("PRJEB1234");
+        studies.add("PRJEB1235");
         variantEntityRepositoryImpl.queryStudies(testQuery, studies);
         expectedQuery.addCriteria(Criteria.where("files.sid").in(studies));
         assertEquals(testQuery, expectedQuery);
