@@ -19,6 +19,7 @@
 package uk.ac.ebi.eva.server.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -60,7 +61,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                                              VariantEntityRepository.RelationalOperator polyphenScoreOperator,
                                                              Double polyphenScoreValue,
                                                              VariantEntityRepository.RelationalOperator siftOperator,
-                                                             Double siftValue) {
+                                                             Double siftValue, Pageable pageable) {
         Query query = new Query(Criteria
                                         .where("chr").is(chr)
                                         .and("start").lte(end).gt(start - MARGIN)
@@ -71,15 +72,15 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
             queryConsequenceType(query, consequenceType);
         }
 
-        if (mafOperator == VariantEntityRepository.RelationalOperator.NONE) {
+        if (mafValue != null && mafOperator == VariantEntityRepository.RelationalOperator.NONE) {
             queryMaf(query, mafValue, mafOperator);
         }
 
-        if (polyphenScoreOperator == VariantEntityRepository.RelationalOperator.NONE) {
+        if (polyphenScoreValue != null && polyphenScoreOperator == VariantEntityRepository.RelationalOperator.NONE) {
             queryPolyphenScore(query, polyphenScoreValue, polyphenScoreOperator);
         }
 
-        if (siftOperator == VariantEntityRepository.RelationalOperator.NONE) {
+        if (siftValue != null && siftOperator == VariantEntityRepository.RelationalOperator.NONE) {
             querySift(query, siftValue, siftOperator);
         }
 
@@ -92,6 +93,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         sortProps.add("start");
         query.with(new Sort(Sort.Direction.ASC, sortProps));
 
+        query.with(pageable);
+
         return mongoTemplate.find(query, VariantEntity.class);
     }
 
@@ -102,16 +105,16 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.addCriteria(Criteria.where("annot.ct.so").in(consequenceTypeConv));
     }
 
-    void queryMaf(Query query, Double mafValue, VariantEntityRepository.RelationalOperator mafOperator) {
+    void queryMaf(Query query, double mafValue, VariantEntityRepository.RelationalOperator mafOperator) {
         relationalCriteriaHelper(query, "st.maf", mafValue, mafOperator);
     }
 
-    void queryPolyphenScore(Query query, Double polyphenScoreValue,
+    void queryPolyphenScore(Query query, double polyphenScoreValue,
                             VariantEntityRepository.RelationalOperator polyphenScoreOperator) {
         relationalCriteriaHelper(query, "annot.ct.polyphen.sc", polyphenScoreValue, polyphenScoreOperator);
     }
 
-    void querySift(Query query, Double siftValue, VariantEntityRepository.RelationalOperator siftOperator) {
+    void querySift(Query query, double siftValue, VariantEntityRepository.RelationalOperator siftOperator) {
         relationalCriteriaHelper(query, "annot.ct.sift.sc", siftValue, siftOperator);
     }
 
@@ -119,7 +122,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.addCriteria(Criteria.where("files.sid").in(studies));
     }
 
-    private void relationalCriteriaHelper(Query query, String jsonPath, Double value,
+    private void relationalCriteriaHelper(Query query, String jsonPath, double value,
                                           VariantEntityRepository.RelationalOperator operator) {
 
         Criteria criteria = Criteria.where(jsonPath);

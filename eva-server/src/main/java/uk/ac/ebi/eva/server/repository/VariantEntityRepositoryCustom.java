@@ -18,6 +18,8 @@
  */
 package uk.ac.ebi.eva.server.repository;
 
+import org.springframework.data.domain.Pageable;
+
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
 import java.util.List;
@@ -35,6 +37,6 @@ interface VariantEntityRepositoryCustom {
                                                       VariantEntityRepository.RelationalOperator polyphenScoreOperator,
                                                       Double polyphenScoreValue,
                                                       VariantEntityRepository.RelationalOperator siftOperator,
-                                                      Double siftValue);
+                                                      Double siftValue, Pageable pageable);
 
 }

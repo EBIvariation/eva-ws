@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.eva.server.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
@@ -63,5 +64,5 @@ interface VariantEntityRepository extends MongoRepository<VariantEntity, String>
                                                       RelationalOperator polyphenScoreOperator,
                                                       Double polyphenScoreValue,
                                                       RelationalOperator siftOperator,
-                                                      Double siftValue);
+                                                      Double siftValue, Pageable pageable);
 }
