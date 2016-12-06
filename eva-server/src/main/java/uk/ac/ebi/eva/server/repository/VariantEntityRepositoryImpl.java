@@ -72,15 +72,15 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
             queryConsequenceType(query, consequenceType);
         }
 
-        if (mafValue != null && mafOperator == VariantEntityRepository.RelationalOperator.NONE) {
+        if (mafValue != null && mafOperator != VariantEntityRepository.RelationalOperator.NONE) {
             queryMaf(query, mafValue, mafOperator);
         }
 
-        if (polyphenScoreValue != null && polyphenScoreOperator == VariantEntityRepository.RelationalOperator.NONE) {
+        if (polyphenScoreValue != null && polyphenScoreOperator != VariantEntityRepository.RelationalOperator.NONE) {
             queryPolyphenScore(query, polyphenScoreValue, polyphenScoreOperator);
         }
 
-        if (siftValue != null && siftOperator == VariantEntityRepository.RelationalOperator.NONE) {
+        if (siftValue != null && siftOperator != VariantEntityRepository.RelationalOperator.NONE) {
             querySift(query, siftValue, siftOperator);
         }
 
