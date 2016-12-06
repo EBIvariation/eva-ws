@@ -63,7 +63,7 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-@UsingDataSet(locations = {"/test-data/eva_hsapiens_grch37.variants_1_2.json"})
+@UsingDataSet(locations = {"/test-data/variants.json"})
 public class VariantEntityRepositoryTest {
 
     @Autowired
