@@ -122,8 +122,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.addCriteria(Criteria.where("files.sid").in(studies));
     }
 
-    private void relationalCriteriaHelper(Query query, String jsonPath, double value,
-                                          VariantEntityRepository.RelationalOperator operator) {
+    void relationalCriteriaHelper(Query query, String jsonPath, double value,
+                                  VariantEntityRepository.RelationalOperator operator) {
 
         Criteria criteria = Criteria.where(jsonPath);
         switch (operator) {

@@ -75,10 +75,55 @@ public class VariantEntityRepositoryImplTest {
     }
 
     @Test
-    public void relationalCriteriaHelper() throws Exception {
-        for (VariantEntityRepository.RelationalOperator value : VariantEntityRepository.RelationalOperator.values()) {
+    public void testRelationalCriteriaHelperEq() throws Exception {
+        String jsonPath = "test.path";
+        double testValue = 0.123;
+        variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.EQ);
+        expectedQuery.addCriteria(Criteria.where(jsonPath).is(testValue));
+        assertEquals(testQuery, expectedQuery);
+    }
 
-        }
+    @Test
+    public void testRelationalCriteriaHelperGt() throws Exception {
+        String jsonPath = "test.path";
+        double testValue = 0.123;
+        variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.GT);
+        expectedQuery.addCriteria(Criteria.where(jsonPath).gt(testValue));
+        assertEquals(testQuery, expectedQuery);
+    }
+
+    @Test
+    public void testRelationalCriteriaHelperGte() throws Exception {
+        String jsonPath = "test.path";
+        double testValue = 0.123;
+        variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.GTE);
+        expectedQuery.addCriteria(Criteria.where(jsonPath).gte(testValue));
+        assertEquals(testQuery, expectedQuery);
+    }
+
+    @Test
+    public void testRelationalCriteriaHelperLte() throws Exception {
+        String jsonPath = "test.path";
+        double testValue = 0.123;
+        variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.LTE);
+        expectedQuery.addCriteria(Criteria.where(jsonPath).lte(testValue));
+        assertEquals(testQuery, expectedQuery);
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testRelationalCriteriaHelperNone() throws Exception {
+        String jsonPath = "test.path";
+        double testValue = 0.123;
+        variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.NONE);
+    }
+
+    @Test
+    public void testRelationalCriteriaHelperLt() throws Exception {
+        String jsonPath = "test.path";
+        double testValue = 0.123;
+        variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.LT);
+        expectedQuery.addCriteria(Criteria.where(jsonPath).lt(testValue));
+        assertEquals(testQuery, expectedQuery);
     }
 
     @Test
