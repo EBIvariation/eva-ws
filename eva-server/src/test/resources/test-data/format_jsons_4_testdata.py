@@ -1,5 +1,6 @@
 import json
 import os
+import io
 import sys
 
 # Script used to convert a file with one json per line,
@@ -17,7 +18,4 @@ with open(sys.argv[1], "rt") as infile:
                 del json_dict["files"][idx]["attrs"]["src"]
             outfile.write(json.dumps(json_dict) + ",\n")
 
-        outfile.seek(-2, os.SEEK_END)
-        filehandle.truncate()
-
-        outfile.write("\n]\n}")
+        outfile.write("]\n}")
