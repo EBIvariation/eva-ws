@@ -59,32 +59,6 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.addCriteria(Criteria.where("annot.ct.so").in(consequenceTypeConv));
     }
 
-    void relationalCriteriaHelper(Query query, String jsonPath, Double value,
-                                  VariantEntityRepository.RelationalOperator operator) {
-
-        Criteria criteria = Criteria.where(jsonPath);
-        switch (operator) {
-            case EQ:
-                criteria = criteria.is(value);
-                break;
-            case GT:
-                criteria = criteria.gt(value);
-                break;
-            case LT:
-                criteria = criteria.lt(value);
-                break;
-            case GTE:
-                criteria = criteria.gte(value);
-                break;
-            case LTE:
-                criteria = criteria.lte(value);
-                break;
-            case NONE:
-                throw new IllegalArgumentException();
-        }
-        query.addCriteria(criteria);
-    }
-
     void queryMaf(Query query, Double mafValue, VariantEntityRepository.RelationalOperator mafOperator) {
         relationalCriteriaHelper(query, "st.maf", mafValue, mafOperator);
     }
@@ -121,15 +95,15 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
             queryConsequenceType(query, consequenceType);
         }
 
-        if (mafValue != null && mafOperator != null) {
+        if (mafOperator == VariantEntityRepository.RelationalOperator.NONE) {
             queryMaf(query, mafValue, mafOperator);
         }
 
-        if (polyphenScoreValue != null && polyphenScoreOperator != null) {
+        if (polyphenScoreOperator == VariantEntityRepository.RelationalOperator.NONE) {
             queryPolyphenScore(query, polyphenScoreValue, polyphenScoreOperator);
         }
 
-        if (siftValue != null && siftOperator != null) {
+        if (siftOperator == VariantEntityRepository.RelationalOperator.NONE) {
             querySift(query, siftValue, siftOperator);
         }
 
@@ -143,5 +117,31 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.with(new Sort(Sort.Direction.ASC, sortProps));
 
         return mongoTemplate.find(query, VariantEntity.class);
+    }
+
+    private void relationalCriteriaHelper(Query query, String jsonPath, Double value,
+                                          VariantEntityRepository.RelationalOperator operator) {
+
+        Criteria criteria = Criteria.where(jsonPath);
+        switch (operator) {
+            case EQ:
+                criteria = criteria.is(value);
+                break;
+            case GT:
+                criteria = criteria.gt(value);
+                break;
+            case LT:
+                criteria = criteria.lt(value);
+                break;
+            case GTE:
+                criteria = criteria.gte(value);
+                break;
+            case LTE:
+                criteria = criteria.lte(value);
+                break;
+            case NONE:
+                throw new IllegalArgumentException();
+        }
+        query.addCriteria(criteria);
     }
 }
