@@ -139,19 +139,6 @@ public class VariantEntityRepositoryTest {
         assertTrue(variantEntityList.size() == 0);
     }
 
-    private void testFiltersHelper(String chr, int start, int end, List<String> consequenceType,
-                                   VariantEntityRepository.RelationalOperator mafOperator, Double mafValue,
-                                   VariantEntityRepository.RelationalOperator polyphenOperator, Double polyphenValue,
-                                   VariantEntityRepository.RelationalOperator siftOperator, Double siftValue,
-                                   List<String> studies, int expectedResultLength) {
-        List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByRegionAndComplexFilters(chr, start, end, studies, consequenceType, mafOperator,
-                                                                      mafValue, polyphenOperator, polyphenValue,
-                                                                      siftOperator, siftValue);
-        assertNotNull(variantEntityList);
-        assertEquals(expectedResultLength, variantEntityList.size());
-    }
-
     @Test
     public void testRegionIsFoundWithConsequenceType() {
         List<String> cts = new ArrayList<>();
@@ -194,6 +181,19 @@ public class VariantEntityRepositoryTest {
         List<String> studies = new ArrayList<>();
         studies.add("PRJEB6930");
         testFiltersHelper("11", 190000, 191000, new ArrayList<>(), null, null, null, null, null, null, studies, 14);
+    }
+
+    private void testFiltersHelper(String chr, int start, int end, List<String> consequenceType,
+                                   VariantEntityRepository.RelationalOperator mafOperator, Double mafValue,
+                                   VariantEntityRepository.RelationalOperator polyphenOperator, Double polyphenValue,
+                                   VariantEntityRepository.RelationalOperator siftOperator, Double siftValue,
+                                   List<String> studies, int expectedResultLength) {
+        List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByRegionAndComplexFilters(chr, start, end, studies, consequenceType, mafOperator,
+                                                                      mafValue, polyphenOperator, polyphenValue,
+                                                                      siftOperator, siftValue);
+        assertNotNull(variantEntityList);
+        assertEquals(expectedResultLength, variantEntityList.size());
     }
 
     @Configuration
