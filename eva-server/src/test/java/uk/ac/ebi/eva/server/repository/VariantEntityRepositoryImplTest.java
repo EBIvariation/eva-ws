@@ -34,18 +34,18 @@ public class VariantEntityRepositoryImplTest {
 
     private VariantEntityRepositoryImpl variantEntityRepositoryImpl;
 
-    private Query queryA;
-    private Query queryB;
+    private Query testQuery;
+    private Query expectedQuery;
 
     @Before
     public void setUp() {
         variantEntityRepositoryImpl = new VariantEntityRepositoryImpl(mongoDbFactory, mappingMongoConverter);
-        queryA = new Query(Criteria
+        testQuery = new Query(Criteria
                                    .where("chr").is("1")
                                    .and("start").lte(1).gt(1 - 1000000)
                                    .and("end").gte(1).lt(1 + 1000000)
         );
-        queryB = new Query(Criteria
+        expectedQuery = new Query(Criteria
                                    .where("chr").is("1")
                                    .and("start").lte(1).gt(1 - 1000000)
                                    .and("end").gte(1).lt(1 + 1000000)
@@ -56,9 +56,9 @@ public class VariantEntityRepositoryImplTest {
     public void queryConsequenceType() throws Exception {
         List<String> consequenceType = new ArrayList<>();
         consequenceType.add("SO:0001234");
-        variantEntityRepositoryImpl.queryConsequenceType(queryA, consequenceType);
-        queryB.addCriteria(Criteria.where("annot.ct.so").in(1234));
-        assertEquals(queryA, queryB);
+        variantEntityRepositoryImpl.queryConsequenceType(testQuery, consequenceType);
+        expectedQuery.addCriteria(Criteria.where("annot.ct.so").in(1234));
+        assertEquals(testQuery, expectedQuery);
     }
 
     @Test
@@ -71,34 +71,34 @@ public class VariantEntityRepositoryImplTest {
     @Test
     public void queryMaf() throws Exception {
         Double mafValue = 0.321;
-        variantEntityRepositoryImpl.queryMaf(queryA, mafValue, VariantEntityRepository.RelationalOperator.EQ);
-        queryB.addCriteria(Criteria.where("st.maf").is(mafValue));
-        assertEquals(queryA, queryB);
+        variantEntityRepositoryImpl.queryMaf(testQuery, mafValue, VariantEntityRepository.RelationalOperator.EQ);
+        expectedQuery.addCriteria(Criteria.where("st.maf").is(mafValue));
+        assertEquals(testQuery, expectedQuery);
     }
 
     @Test
     public void queryPolyphenScore() throws Exception {
         Double polyphenScoreValue = 0.582;
-        variantEntityRepositoryImpl.queryPolyphenScore(queryA, polyphenScoreValue, VariantEntityRepository.RelationalOperator.GT);
-        queryB.addCriteria(Criteria.where("annot.ct.polyphen.sc").gt(polyphenScoreValue));
-        assertEquals(queryA, queryB);
+        variantEntityRepositoryImpl.queryPolyphenScore(testQuery, polyphenScoreValue, VariantEntityRepository.RelationalOperator.GT);
+        expectedQuery.addCriteria(Criteria.where("annot.ct.polyphen.sc").gt(polyphenScoreValue));
+        assertEquals(testQuery, expectedQuery);
     }
 
     @Test
     public void querySift() throws Exception {
         Double siftValue = 0.657;
-        variantEntityRepositoryImpl.querySift(queryA, siftValue, VariantEntityRepository.RelationalOperator.LT);
-        queryB.addCriteria(Criteria.where("annot.ct.sift.sc").lt(siftValue));
-        assertEquals(queryA, queryB);
+        variantEntityRepositoryImpl.querySift(testQuery, siftValue, VariantEntityRepository.RelationalOperator.LT);
+        expectedQuery.addCriteria(Criteria.where("annot.ct.sift.sc").lt(siftValue));
+        assertEquals(testQuery, expectedQuery);
     }
 
     @Test
     public void queryStudies() throws Exception {
         List<String> studies = new ArrayList<>();
         studies.add("PRJEB1234");
-        variantEntityRepositoryImpl.queryStudies(queryA, studies);
-        queryB.addCriteria(Criteria.where("files.sid").in(studies));
-        assertEquals(queryA, queryB);
+        variantEntityRepositoryImpl.queryStudies(testQuery, studies);
+        expectedQuery.addCriteria(Criteria.where("files.sid").in(studies));
+        assertEquals(testQuery, expectedQuery);
     }
 
 }
