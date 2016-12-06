@@ -52,30 +52,6 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         mongoTemplate = new MongoTemplate(mongoDbFactory, mappingMongoConverter);
     }
 
-    void queryConsequenceType(Query query, List<String> consequenceType) {
-        List<Integer> consequenceTypeConv = consequenceType.stream()
-                                                           .map(c -> Integer.parseInt(c.replaceAll("[^\\d.]", ""), 10))
-                                                           .collect(Collectors.toList());
-        query.addCriteria(Criteria.where("annot.ct.so").in(consequenceTypeConv));
-    }
-
-    void queryMaf(Query query, Double mafValue, VariantEntityRepository.RelationalOperator mafOperator) {
-        relationalCriteriaHelper(query, "st.maf", mafValue, mafOperator);
-    }
-
-    void queryPolyphenScore(Query query, Double polyphenScoreValue,
-                            VariantEntityRepository.RelationalOperator polyphenScoreOperator) {
-        relationalCriteriaHelper(query, "annot.ct.polyphen.sc", polyphenScoreValue, polyphenScoreOperator);
-    }
-
-    void querySift(Query query, Double siftValue, VariantEntityRepository.RelationalOperator siftOperator) {
-        relationalCriteriaHelper(query, "annot.ct.sift.sc", siftValue, siftOperator);
-    }
-
-    void queryStudies(Query query, List<String> studies) {
-        query.addCriteria(Criteria.where("files.sid").in(studies));
-    }
-
     @Override
     public List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end,
                                                              List<String> studies, List<String> consequenceType,
@@ -117,6 +93,30 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.with(new Sort(Sort.Direction.ASC, sortProps));
 
         return mongoTemplate.find(query, VariantEntity.class);
+    }
+
+    void queryConsequenceType(Query query, List<String> consequenceType) {
+        List<Integer> consequenceTypeConv = consequenceType.stream()
+                                                           .map(c -> Integer.parseInt(c.replaceAll("[^\\d.]", ""), 10))
+                                                           .collect(Collectors.toList());
+        query.addCriteria(Criteria.where("annot.ct.so").in(consequenceTypeConv));
+    }
+
+    void queryMaf(Query query, Double mafValue, VariantEntityRepository.RelationalOperator mafOperator) {
+        relationalCriteriaHelper(query, "st.maf", mafValue, mafOperator);
+    }
+
+    void queryPolyphenScore(Query query, Double polyphenScoreValue,
+                            VariantEntityRepository.RelationalOperator polyphenScoreOperator) {
+        relationalCriteriaHelper(query, "annot.ct.polyphen.sc", polyphenScoreValue, polyphenScoreOperator);
+    }
+
+    void querySift(Query query, Double siftValue, VariantEntityRepository.RelationalOperator siftOperator) {
+        relationalCriteriaHelper(query, "annot.ct.sift.sc", siftValue, siftOperator);
+    }
+
+    void queryStudies(Query query, List<String> studies) {
+        query.addCriteria(Criteria.where("files.sid").in(studies));
     }
 
     private void relationalCriteriaHelper(Query query, String jsonPath, Double value,
