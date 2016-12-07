@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Properties;
 
 @Configuration
-public class ApplicationConfiguration {
+public class MongoConfiguration {
     /**
      * This factory will allow to use the FeatureRepository with several databases, as we are providing a
      * MultiMongoDbFactory as the implementation of MongoFactory to inject into the FeatureRepository.
@@ -46,7 +46,7 @@ public class ApplicationConfiguration {
     @Bean
     public MongoDbFactory mongoDbFactory() throws IOException {
         Properties properties = new Properties();
-        properties.load(ApplicationConfiguration.class.getResourceAsStream("/eva.properties"));
+        properties.load(MongoConfiguration.class.getResourceAsStream("/eva.properties"));
         MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
         return new MultiMongoDbFactory(mongoClient, "test");
     }
