@@ -75,7 +75,7 @@ public class VariantEntityRepositoryImplTest {
     }
 
     @Test
-    public void testRelationalCriteriaHelperEq() throws Exception {
+    public void testRelationalCriteriaHelperEquals() throws Exception {
         String jsonPath = "test.path";
         double testValue = 0.123;
         variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.EQ);
@@ -84,7 +84,7 @@ public class VariantEntityRepositoryImplTest {
     }
 
     @Test
-    public void testRelationalCriteriaHelperGt() throws Exception {
+    public void testRelationalCriteriaHelperGreaterThan() throws Exception {
         String jsonPath = "test.path";
         double testValue = 0.123;
         variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.GT);
@@ -93,7 +93,7 @@ public class VariantEntityRepositoryImplTest {
     }
 
     @Test
-    public void testRelationalCriteriaHelperGte() throws Exception {
+    public void testRelationalCriteriaHelperGreaterThanEquals() throws Exception {
         String jsonPath = "test.path";
         double testValue = 0.123;
         variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.GTE);
@@ -102,7 +102,7 @@ public class VariantEntityRepositoryImplTest {
     }
 
     @Test
-    public void testRelationalCriteriaHelperLte() throws Exception {
+    public void testRelationalCriteriaHelperLessThanEquals() throws Exception {
         String jsonPath = "test.path";
         double testValue = 0.123;
         variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.LTE);
@@ -118,7 +118,7 @@ public class VariantEntityRepositoryImplTest {
     }
 
     @Test
-    public void testRelationalCriteriaHelperLt() throws Exception {
+    public void testRelationalCriteriaHelperLessThan() throws Exception {
         String jsonPath = "test.path";
         double testValue = 0.123;
         variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.LT);
@@ -127,7 +127,7 @@ public class VariantEntityRepositoryImplTest {
     }
 
     @Test
-    public void testQueryMaf() throws Exception {
+    public void testQueryMafEquals() throws Exception {
         Double mafValue = 0.321;
         variantEntityRepositoryImpl.queryMaf(testQuery, mafValue, VariantEntityRepository.RelationalOperator.EQ);
         expectedQuery.addCriteria(Criteria.where("st.maf").is(mafValue));
@@ -135,7 +135,7 @@ public class VariantEntityRepositoryImplTest {
     }
 
     @Test
-    public void testQueryPolyphenScore() throws Exception {
+    public void testQueryPolyphenScoreGreaterThan() throws Exception {
         Double polyphenScoreValue = 0.582;
         variantEntityRepositoryImpl.queryPolyphenScore(testQuery, polyphenScoreValue, VariantEntityRepository.RelationalOperator.GT);
         expectedQuery.addCriteria(Criteria.where("annot.ct.polyphen.sc").gt(polyphenScoreValue));
@@ -143,7 +143,7 @@ public class VariantEntityRepositoryImplTest {
     }
 
     @Test
-    public void testQuerySift() throws Exception {
+    public void testQuerySiftLessThan() throws Exception {
         Double siftValue = 0.657;
         variantEntityRepositoryImpl.querySift(testQuery, siftValue, VariantEntityRepository.RelationalOperator.LT);
         expectedQuery.addCriteria(Criteria.where("annot.ct.sift.sc").lt(siftValue));

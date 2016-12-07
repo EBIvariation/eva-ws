@@ -148,31 +148,31 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
-    public void testRegionIsFoundWithMafGt() {
+    public void testRegionIsFoundWithMafGreaterThan() {
         testFiltersHelper("11", 185000, 190000, new ArrayList<>(), new ArrayList<>(), VariantEntityRepository.RelationalOperator.GT, 0.125,
                           null, null, null, null, 37);
     }
 
     @Test
-    public void testRegionIsFoundWithMafGtE() {
+    public void testRegionIsFoundWithMafGreaterThanEquals() {
         testFiltersHelper("11", 189000, 190000, new ArrayList<>(), new ArrayList<>(), VariantEntityRepository.RelationalOperator.GTE,
                           0.125, null, null, null, null, 15);
     }
 
     @Test
-    public void testRegionIsFoundWithMafE() {
+    public void testRegionIsFoundWithMafEquals() {
         testFiltersHelper("11", 185000, 190000, new ArrayList<>(), new ArrayList<>(), VariantEntityRepository.RelationalOperator.EQ, 0.5,
                           null, null, null, null, 8);
     }
 
     @Test
-    public void testRegionIsFoundWithPolyphenGt() {
+    public void testRegionIsFoundWithPolyphenGreaterThan() {
         testFiltersHelper("11", 190000, 193719, new ArrayList<>(), new ArrayList<>(), null, null,
                           VariantEntityRepository.RelationalOperator.GT, 0.5, null, null, 4);
     }
 
     @Test
-    public void testRegionIsFoundWithSiftLt() {
+    public void testRegionIsFoundWithSiftLessThan() {
         testFiltersHelper("11", 190000, 193719, new ArrayList<>(), new ArrayList<>(), null, null, null, null,
                           VariantEntityRepository.RelationalOperator.LT, 0.5, 11);
     }
