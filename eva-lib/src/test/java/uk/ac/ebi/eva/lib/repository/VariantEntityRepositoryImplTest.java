@@ -1,4 +1,4 @@
-package uk.ac.ebi.eva.server.repository;
+package uk.ac.ebi.eva.lib.repository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @EnableMongoRepositories
-@ComponentScan("uk.ac.ebi.eva.server.repository")
+@ComponentScan("uk.ac.ebi.eva.lib.repository")
 public class VariantEntityRepositoryImplTest {
 
     @Autowired

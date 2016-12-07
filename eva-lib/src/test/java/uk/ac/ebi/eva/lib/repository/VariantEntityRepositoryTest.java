@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.server.repository;
+package uk.ac.ebi.eva.lib.repository;
 
 import com.github.fakemongo.Fongo;
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
@@ -217,7 +217,7 @@ public class VariantEntityRepositoryTest {
 
         @Override
         protected String getMappingBasePackage() {
-            return "uk.ac.ebi.eva.server.repository";
+            return "uk.ac.ebi.eva.lib.repository";
         }
 
         @Bean

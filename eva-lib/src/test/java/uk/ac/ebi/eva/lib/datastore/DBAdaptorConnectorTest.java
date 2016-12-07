@@ -12,15 +12,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
-import uk.ac.ebi.eva.server.ApplicationConfiguration;
+import uk.ac.ebi.eva.lib.ApplicationConfiguration;
 
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author Jose Miguel Mut Lopez &lt;jmmut@ebi.ac.uk&gt;
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { ApplicationConfiguration.class })
 public class DBAdaptorConnectorTest {
