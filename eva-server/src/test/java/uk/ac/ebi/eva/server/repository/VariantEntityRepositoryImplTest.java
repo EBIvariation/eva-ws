@@ -58,7 +58,7 @@ public class VariantEntityRepositoryImplTest {
         consequenceType.add("SO:0001234");
         variantEntityRepositoryImpl.queryConsequenceType(testQuery, consequenceType);
         expectedQuery.addCriteria(Criteria.where("annot.ct.so").in(1234));
-        assertEquals(testQuery, expectedQuery);
+        assertEquals(expectedQuery, testQuery);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class VariantEntityRepositoryImplTest {
         expectedConsequenceType.add(1235);
         variantEntityRepositoryImpl.queryConsequenceType(testQuery, consequenceType);
         expectedQuery.addCriteria(Criteria.where("annot.ct.so").in(expectedConsequenceType));
-        assertEquals(testQuery, expectedQuery);
+        assertEquals(expectedQuery, testQuery);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class VariantEntityRepositoryImplTest {
         double testValue = 0.123;
         variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.EQ);
         expectedQuery.addCriteria(Criteria.where(jsonPath).is(testValue));
-        assertEquals(testQuery, expectedQuery);
+        assertEquals(expectedQuery, testQuery);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class VariantEntityRepositoryImplTest {
         double testValue = 0.123;
         variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.GT);
         expectedQuery.addCriteria(Criteria.where(jsonPath).gt(testValue));
-        assertEquals(testQuery, expectedQuery);
+        assertEquals(expectedQuery, testQuery);
     }
 
     @Test
@@ -98,7 +98,7 @@ public class VariantEntityRepositoryImplTest {
         double testValue = 0.123;
         variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.GTE);
         expectedQuery.addCriteria(Criteria.where(jsonPath).gte(testValue));
-        assertEquals(testQuery, expectedQuery);
+        assertEquals(expectedQuery, testQuery);
     }
 
     @Test
@@ -107,7 +107,7 @@ public class VariantEntityRepositoryImplTest {
         double testValue = 0.123;
         variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.LTE);
         expectedQuery.addCriteria(Criteria.where(jsonPath).lte(testValue));
-        assertEquals(testQuery, expectedQuery);
+        assertEquals(expectedQuery, testQuery);
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -123,7 +123,7 @@ public class VariantEntityRepositoryImplTest {
         double testValue = 0.123;
         variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, jsonPath, testValue, VariantEntityRepository.RelationalOperator.LT);
         expectedQuery.addCriteria(Criteria.where(jsonPath).lt(testValue));
-        assertEquals(testQuery, expectedQuery);
+        assertEquals(expectedQuery, testQuery);
     }
 
     @Test
@@ -131,7 +131,7 @@ public class VariantEntityRepositoryImplTest {
         Double mafValue = 0.321;
         variantEntityRepositoryImpl.queryMaf(testQuery, mafValue, VariantEntityRepository.RelationalOperator.EQ);
         expectedQuery.addCriteria(Criteria.where("st.maf").is(mafValue));
-        assertEquals(testQuery, expectedQuery);
+        assertEquals(expectedQuery, testQuery);
     }
 
     @Test
@@ -139,7 +139,7 @@ public class VariantEntityRepositoryImplTest {
         Double polyphenScoreValue = 0.582;
         variantEntityRepositoryImpl.queryPolyphenScore(testQuery, polyphenScoreValue, VariantEntityRepository.RelationalOperator.GT);
         expectedQuery.addCriteria(Criteria.where("annot.ct.polyphen.sc").gt(polyphenScoreValue));
-        assertEquals(testQuery, expectedQuery);
+        assertEquals(expectedQuery, testQuery);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class VariantEntityRepositoryImplTest {
         Double siftValue = 0.657;
         variantEntityRepositoryImpl.querySift(testQuery, siftValue, VariantEntityRepository.RelationalOperator.LT);
         expectedQuery.addCriteria(Criteria.where("annot.ct.sift.sc").lt(siftValue));
-        assertEquals(testQuery, expectedQuery);
+        assertEquals(expectedQuery, testQuery);
     }
 
     @Test
@@ -156,7 +156,7 @@ public class VariantEntityRepositoryImplTest {
         studies.add("PRJEB1234");
         variantEntityRepositoryImpl.queryStudies(testQuery, studies);
         expectedQuery.addCriteria(Criteria.where("files.sid").in(studies));
-        assertEquals(testQuery, expectedQuery);
+        assertEquals(expectedQuery, testQuery);
     }
 
     @Test
@@ -166,7 +166,7 @@ public class VariantEntityRepositoryImplTest {
         studies.add("PRJEB1235");
         variantEntityRepositoryImpl.queryStudies(testQuery, studies);
         expectedQuery.addCriteria(Criteria.where("files.sid").in(studies));
-        assertEquals(testQuery, expectedQuery);
+        assertEquals(expectedQuery, testQuery);
     }
 
 }
