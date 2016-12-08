@@ -53,6 +53,22 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     @Override
+    public List<VariantEntity> findByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
+                                                          VariantEntityRepository.RelationalOperator mafOperator,
+                                                          Double mafValue,
+                                                          VariantEntityRepository.RelationalOperator polyphenScoreOperator,
+                                                          Double polyphenScoreValue,
+                                                          VariantEntityRepository.RelationalOperator siftOperator,
+                                                          Double siftValue,
+                                                          Pageable pageable) {
+
+        Query query = new Query(Criteria.where("ids").is(id));
+
+        return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue, polyphenScoreOperator,
+                                          polyphenScoreValue, siftOperator, siftValue, pageable);
+    }
+
+    @Override
     public List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end,
                                                              List<String> studies, List<String> consequenceType,
                                                              VariantEntityRepository.RelationalOperator mafOperator,
@@ -66,6 +82,19 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                         .and("start").lte(end).gt(start - MARGIN)
                                         .and("end").gte(start).lt(end + MARGIN)
         );
+
+        return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue, polyphenScoreOperator,
+                                          polyphenScoreValue, siftOperator, siftValue, pageable);
+    }
+
+    List<VariantEntity> findByComplexFiltersHelper(Query query,
+                                                   List<String> studies, List<String> consequenceType,
+                                                   VariantEntityRepository.RelationalOperator mafOperator,
+                                                   Double mafValue,
+                                                   VariantEntityRepository.RelationalOperator polyphenScoreOperator,
+                                                   Double polyphenScoreValue,
+                                                   VariantEntityRepository.RelationalOperator siftOperator,
+                                                   Double siftValue, Pageable pageable) {
 
         if (consequenceType != null && !consequenceType.isEmpty()) {
             queryConsequenceType(query, consequenceType);
@@ -96,6 +125,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.with(pageable1);
 
         return mongoTemplate.find(query, VariantEntity.class);
+
     }
 
     void queryConsequenceType(Query query, List<String> consequenceType) {
