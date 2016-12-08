@@ -66,13 +66,13 @@ public class Application extends SpringBootServletInitializer {
      * @return MongoDbFactory
      * @throws IOException
      */
-    @Bean
-    public MongoDbFactory mongoDbFactory() throws IOException {
-        Properties properties = new Properties();
-        properties.load(Application.class.getResourceAsStream("/eva.properties"));
-        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
-        return new MultiMongoDbFactory(mongoClient, "test");
-    }
+//    @Bean
+//    public MongoDbFactory mongoDbFactory() throws IOException {
+//        Properties properties = new Properties();
+//        properties.load(Application.class.getResourceAsStream("/eva.properties"));
+//        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
+//        return new MultiMongoDbFactory(mongoClient, "test");
+//    }
 
     @Bean
     public Docket apiConfiguration() {
