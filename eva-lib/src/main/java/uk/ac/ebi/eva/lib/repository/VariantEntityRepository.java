@@ -30,7 +30,7 @@ import java.util.List;
  *
  * Methods include querying by id, and by region.
  */
-interface VariantEntityRepository extends MongoRepository<VariantEntity, String>, VariantEntityRepositoryCustom {
+public interface VariantEntityRepository extends MongoRepository<VariantEntity, String>, VariantEntityRepositoryCustom {
 
     enum RelationalOperator { EQ, GT, LT, GTE, LTE, NONE }
 
