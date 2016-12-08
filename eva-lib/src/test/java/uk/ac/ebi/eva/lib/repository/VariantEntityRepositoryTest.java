@@ -79,7 +79,9 @@ public class VariantEntityRepositoryTest {
     @Test
     public void testVariantIdIsFound(){
         String id = "rs776523794";
-        List<VariantEntity> variantEntityList = variantEntityRepository.findByIds(id);
+        List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByIdsAndComplexFilters(id, null, null, null, null, null, null, null, null,
+                                                                   null);
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);
         Set<String> idSet = new HashSet<>();
@@ -91,7 +93,9 @@ public class VariantEntityRepositoryTest {
     @Test
     public void testNonExistentVariantIdIsNotFound(){
         String id = "notarealid";
-        List<VariantEntity> variantEntityList = variantEntityRepository.findByIds(id);
+        List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByIdsAndComplexFilters(id, null, null, null, null, null, null, null, null,
+                                                                   null);
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() == 0);
     }
@@ -144,51 +148,51 @@ public class VariantEntityRepositoryTest {
     public void testRegionIsFoundWithConsequenceType() {
         List<String> cts = new ArrayList<>();
         cts.add("SO:0001627");
-        testFiltersHelper("11", 188000, 190000, new ArrayList<>(), cts, null, null, null, null, null, null, 94);
+        testFiltersHelperRegion("11", 188000, 190000, new ArrayList<>(), cts, null, null, null, null, null, null, 94);
     }
 
     @Test
     public void testRegionIsFoundWithMafGreaterThan() {
-        testFiltersHelper("11", 185000, 190000, new ArrayList<>(), new ArrayList<>(), VariantEntityRepository.RelationalOperator.GT, 0.125,
-                          null, null, null, null, 37);
+        testFiltersHelperRegion("11", 185000, 190000, new ArrayList<>(), new ArrayList<>(), VariantEntityRepository.RelationalOperator.GT, 0.125,
+                                null, null, null, null, 37);
     }
 
     @Test
     public void testRegionIsFoundWithMafGreaterThanEquals() {
-        testFiltersHelper("11", 189000, 190000, new ArrayList<>(), new ArrayList<>(), VariantEntityRepository.RelationalOperator.GTE,
-                          0.125, null, null, null, null, 15);
+        testFiltersHelperRegion("11", 189000, 190000, new ArrayList<>(), new ArrayList<>(), VariantEntityRepository.RelationalOperator.GTE,
+                                0.125, null, null, null, null, 15);
     }
 
     @Test
     public void testRegionIsFoundWithMafEquals() {
-        testFiltersHelper("11", 185000, 190000, new ArrayList<>(), new ArrayList<>(), VariantEntityRepository.RelationalOperator.EQ, 0.5,
-                          null, null, null, null, 8);
+        testFiltersHelperRegion("11", 185000, 190000, new ArrayList<>(), new ArrayList<>(), VariantEntityRepository.RelationalOperator.EQ, 0.5,
+                                null, null, null, null, 8);
     }
 
     @Test
     public void testRegionIsFoundWithPolyphenGreaterThan() {
-        testFiltersHelper("11", 190000, 193719, new ArrayList<>(), new ArrayList<>(), null, null,
-                          VariantEntityRepository.RelationalOperator.GT, 0.5, null, null, 4);
+        testFiltersHelperRegion("11", 190000, 193719, new ArrayList<>(), new ArrayList<>(), null, null,
+                                VariantEntityRepository.RelationalOperator.GT, 0.5, null, null, 4);
     }
 
     @Test
     public void testRegionIsFoundWithSiftLessThan() {
-        testFiltersHelper("11", 190000, 193719, new ArrayList<>(), new ArrayList<>(), null, null, null, null,
-                          VariantEntityRepository.RelationalOperator.LT, 0.5, 11);
+        testFiltersHelperRegion("11", 190000, 193719, new ArrayList<>(), new ArrayList<>(), null, null, null, null,
+                                VariantEntityRepository.RelationalOperator.LT, 0.5, 11);
     }
 
     @Test
     public void testRegionIsFoundWithStudies() {
         List<String> studies = new ArrayList<>();
         studies.add("PRJEB6930");
-        testFiltersHelper("11", 190000, 191000, studies, new ArrayList<>(), null, null, null, null, null, null, 14);
+        testFiltersHelperRegion("11", 190000, 191000, studies, new ArrayList<>(), null, null, null, null, null, null, 14);
     }
 
-    private void testFiltersHelper(String chr, int start, int end, List<String> studies, List<String> consequenceType,
-                                   VariantEntityRepository.RelationalOperator mafOperator, Double mafValue,
-                                   VariantEntityRepository.RelationalOperator polyphenOperator, Double polyphenValue,
-                                   VariantEntityRepository.RelationalOperator siftOperator, Double siftValue,
-                                   int expectedResultLength) {
+    private void testFiltersHelperRegion(String chr, int start, int end, List<String> studies, List<String> consequenceType,
+                                         VariantEntityRepository.RelationalOperator mafOperator, Double mafValue,
+                                         VariantEntityRepository.RelationalOperator polyphenOperator, Double polyphenValue,
+                                         VariantEntityRepository.RelationalOperator siftOperator, Double siftValue,
+                                         int expectedResultLength) {
         List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByRegionAndComplexFilters(chr, start, end, studies, consequenceType, mafOperator,
                                                                       mafValue, polyphenOperator, polyphenValue,
