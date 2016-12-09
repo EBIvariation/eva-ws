@@ -19,16 +19,14 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
+import io.swagger.annotations.Api;
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.datastore.core.QueryResponse;
+import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,16 +34,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
+import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.server.Utils;
 
-/**
- * Created by imedina on 01/04/14.
- */
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/v1/segments", produces = "application/json")
 @Api(tags = { "segments" })
 public class RegionWSServer extends EvaWSServer {
+
+    @Autowired
+    private VariantEntityRepository variantEntityRepository;
+
+    protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
 
     public RegionWSServer() {
     }
@@ -55,98 +63,71 @@ public class RegionWSServer extends EvaWSServer {
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants from region", response = QueryResponse.class)
     public QueryResponse getVariantsByRegion(@PathVariable("regionId") String regionId,
                                              @RequestParam(name = "species") String species,
-                                             @RequestParam(name = "studies", required = false) String studies,
+                                             @RequestParam(name = "studies", required = false) List<String> studies,
                                              @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
                                              @RequestParam(name = "maf", defaultValue = "") String maf,
                                              @RequestParam(name = "polyphen", defaultValue = "") String polyphenScore,
                                              @RequestParam(name = "sift", defaultValue = "") String siftScore,
-                                             @RequestParam(name = "ref", defaultValue = "") String reference,
-                                             @RequestParam(name = "alt", defaultValue = "") String alternate,
-                                             @RequestParam(name = "miss_alleles", defaultValue = "") String missingAlleles,
-                                             @RequestParam(name = "miss_gts", defaultValue = "") String missingGenotypes,
-                                             @RequestParam(name = "histogram", defaultValue = "false") boolean histogram,
-                                             @RequestParam(name = "histogram_interval", defaultValue = "-1") int interval,
-                                             @RequestParam(name = "merge", defaultValue = "false") boolean merge,
                                              HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, IOException {
         initializeQueryOptions();
 
-        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
-
-
-        if (studies != null && !studies.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.STUDIES, studies);
-        }
-        
-        if (consequenceType != null && !consequenceType.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.ANNOT_CONSEQUENCE_TYPE, consequenceType);
-        }
-        
-        if (!maf.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.MAF, maf);
-        }
-        if (!polyphenScore.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.POLYPHEN, polyphenScore);
-        }
-        if (!siftScore.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.SIFT, siftScore);
-        }
-        
-        if (!reference.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.REFERENCE, reference);
-        }
-        if (!alternate.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.ALTERNATE, alternate);
-        }
-        
-        if (!missingAlleles.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.MISSING_ALLELES, missingAlleles);
-        }
-        if (!missingGenotypes.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.MISSING_GENOTYPES, missingGenotypes);
+        if (species == null || species.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse("Please specify a species");
         }
 
-        queryOptions.put("merge", merge);
-        queryOptions.put("sort", true);
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        // Parse the provided regions. The total size of all regions together
-        // can't excede 1 million positions
-        int regionsSize = 0;
+        VariantEntityRepository.RelationalOperator mafOperator = VariantEntityRepository.RelationalOperator.NONE;
+        Double mafvalue = null;
+        if (maf != null && !maf.isEmpty()) {
+            mafOperator = Utils.getRelationalOperatorFromRelation(maf);
+            mafvalue = Utils.getValueFromRelation(maf);
+        }
+
+        VariantEntityRepository.RelationalOperator polyphenScoreOperator =
+                VariantEntityRepository.RelationalOperator.NONE;
+        Double polyphenScoreValue = null;
+        if (polyphenScore != null && !polyphenScore.isEmpty()) {
+            polyphenScoreOperator = Utils.getRelationalOperatorFromRelation(polyphenScore);
+            polyphenScoreValue = Utils.getValueFromRelation(polyphenScore);
+        }
+
+        VariantEntityRepository.RelationalOperator siftScoreOperator = VariantEntityRepository.RelationalOperator.NONE;
+        Double siftScoreValue = null;
+        if (siftScore != null && !siftScore.isEmpty()) {
+            siftScoreOperator = Utils.getRelationalOperatorFromRelation(siftScore);
+            siftScoreValue = Utils.getValueFromRelation(siftScore);
+        }
+
         List<Region> regions = new ArrayList<>();
         for (String s : regionId.split(",")) {
             Region r = Region.parseRegion(s);
             regions.add(r);
-            regionsSize += r.getEnd() - r.getStart();
         }
 
-        if (histogram) {
-            if (regions.size() != 1) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return setQueryResponse("Sorry, histogram functionality only works with a single region");
-            } else {
-                if (interval > 0) {
-                    queryOptions.put("interval", interval);
-                }
-                return setQueryResponse(
-                        variantMongoDbAdaptor.getVariantFrequencyByRegion(regions.get(0), queryOptions));
+        List<VariantEntity> variantEntities;
 
-            }
-        } else if (regionsSize <= 1000000) {
-            if (regions.isEmpty()) {
-                if (!queryOptions.containsKey("id") && !queryOptions.containsKey("gene")) {
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    return setQueryResponse("Some positional filer is needed, like region, gene or id.");
-                } else {
-                    return setQueryResponse(variantMongoDbAdaptor.getAllVariants(queryOptions));
-                }
-            } else {
-                return setQueryResponse(variantMongoDbAdaptor.getAllVariantsByRegionList(regions, queryOptions));
-            }
+        if (regions.size() > 1) {
+            variantEntities =
+                    variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,
+                                                                           mafOperator, mafvalue, polyphenScoreOperator,
+                                                                           polyphenScoreValue, siftScoreOperator,
+                                                                           siftScoreValue, null);
+        } else if (regions.size() == 1) {
+            variantEntities =
+                    variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,
+                                                                           mafOperator, mafvalue, polyphenScoreOperator,
+                                                                           polyphenScoreValue, siftScoreOperator,
+                                                                           siftScoreValue, null);
         } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("The total size of all regions provided can't exceed 1 million positions. "
-                    + "If you want to browse a larger number of positions, please provide the parameter 'histogram=true'");
+            throw new IllegalArgumentException();
         }
+
+        QueryResult<VariantEntity> queryResult = new QueryResult<>();
+        queryResult.setResult(variantEntities);
+        return setQueryResponse(queryResult);
     }
 
     @RequestMapping(value = "/{regionId}/variants", method = RequestMethod.OPTIONS)
