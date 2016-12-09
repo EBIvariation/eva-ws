@@ -205,7 +205,9 @@ public class VariantEntityRepositoryTest {
         assertTrue(variantEntityList.size() > 0);
         VariantEntity prevVariantEntity = variantEntityList.get(0);
         for (VariantEntity currVariantEntity : variantEntityList) {
-            assertTrue(prevVariantEntity.getStart() <= currVariantEntity.getStart());
+            if (prevVariantEntity.getChromosome().equals(currVariantEntity.getChromosome())) {
+                assertTrue(prevVariantEntity.getStart() <= currVariantEntity.getStart());
+            }
         }
         assertEquals(28, variantEntityList.size());
 
