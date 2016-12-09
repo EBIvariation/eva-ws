@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.eva.lib.repository;
 
+import org.opencb.biodata.models.feature.Region;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -82,6 +83,32 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                         .and("start").lte(end).gt(start - MARGIN)
                                         .and("end").gte(start).lt(end + MARGIN)
         );
+
+        return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue, polyphenScoreOperator,
+                                          polyphenScoreValue, siftOperator, siftValue, pageable);
+    }
+
+    @Override
+    public List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
+                                                              List<String> consequenceType,
+                                                              VariantEntityRepository.RelationalOperator mafOperator,
+                                                              Double mafValue,
+                                                              VariantEntityRepository.RelationalOperator polyphenScoreOperator,
+                                                              Double polyphenScoreValue,
+                                                              VariantEntityRepository.RelationalOperator siftOperator,
+                                                              Double siftValue, Pageable pageable) {
+
+        Query query = new Query();
+
+        Criteria criteria = new Criteria();
+
+
+
+        regions.forEach(region -> criteria.orOperator(Criteria
+                                                              .where("chr").is(region.getChromosome())
+                                                              .and("start").lte(region.getEnd()).gt(region.getStart() - MARGIN)
+                                                              .and("end").gte(region.getStart()).lt(region.getEnd() + MARGIN)));
+
 
         return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue, polyphenScoreOperator,
                                           polyphenScoreValue, siftOperator, siftValue, pageable);

@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.eva.lib.repository;
 
+import org.opencb.biodata.models.feature.Region;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -91,4 +92,13 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
                                                       Double polyphenScoreValue,
                                                       RelationalOperator siftOperator,
                                                       Double siftValue, Pageable pageable);
+
+    List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
+                                                       List<String> consequenceType,
+                                                       VariantEntityRepository.RelationalOperator mafOperator,
+                                                       Double mafValue,
+                                                       VariantEntityRepository.RelationalOperator polyphenScoreOperator,
+                                                       Double polyphenScoreValue,
+                                                       VariantEntityRepository.RelationalOperator siftOperator,
+                                                       Double siftValue, Pageable pageable);
 }
