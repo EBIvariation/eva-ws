@@ -107,7 +107,8 @@ public class VariantWSServer extends EvaWSServer {
         List<VariantEntity> variantEntities =
                 variantEntityRepository.findByIdsAndComplexFilters(variantId, studies, consequenceType, mafOperator,
                                                                    mafvalue, polyphenScoreOperator, polyphenScoreValue,
-                                                                   siftScoreOperator, siftScoreValue, null);
+                                                                   siftScoreOperator, siftScoreValue,
+                                                                   Utils.getPageRequest(queryOptions));
 
         QueryResult<VariantEntity> queryResult = new QueryResult<>();
         queryResult.setResult(variantEntities);
