@@ -25,6 +25,7 @@ import com.mongodb.Mongo;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opencb.biodata.models.feature.Region;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -186,6 +187,28 @@ public class VariantEntityRepositoryTest {
         List<String> studies = new ArrayList<>();
         studies.add("PRJEB6930");
         testFiltersHelperRegion("11", 190000, 191000, studies, new ArrayList<>(), null, null, null, null, null, null, 14);
+    }
+
+    @Test
+    public void testFindByRegionsAndComplexFilters() {
+
+        List<Region> regions = new ArrayList<>();
+        regions.add(new Region("11", 183000, 183300));
+        regions.add(new Region("11", 180100, 180200));
+        regions.add(new Region("11", 190000, 190200));
+
+        List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByRegionsAndComplexFilters(regions, new ArrayList<>(), new ArrayList<>(),
+                                                                       null, null, null, null, null, null,
+                                                                       new PageRequest(0, 100000000));
+        assertNotNull(variantEntityList);
+        assertTrue(variantEntityList.size() > 0);
+        VariantEntity prevVariantEntity = variantEntityList.get(0);
+        for (VariantEntity currVariantEntity : variantEntityList) {
+            assertTrue(prevVariantEntity.getStart() <= currVariantEntity.getStart());
+        }
+        assertEquals(28, variantEntityList.size());
+
     }
 
     private void testFiltersHelperRegion(String chr, int start, int end, List<String> studies, List<String> consequenceType,

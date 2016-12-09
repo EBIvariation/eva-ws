@@ -99,16 +99,14 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                                               Double siftValue, Pageable pageable) {
 
         Query query = new Query();
+        List<Criteria> orCriteriaList = new ArrayList<>();
 
-        Criteria criteria = new Criteria();
+        regions.forEach(region -> orCriteriaList.add(Criteria
+                                                             .where("chr").is(region.getChromosome())
+                                                             .and("start").lte(region.getEnd()).gt(region.getStart() - MARGIN)
+                                                             .and("end").gte(region.getStart()).lt(region.getEnd() + MARGIN)));
 
-
-
-        regions.forEach(region -> criteria.orOperator(Criteria
-                                                              .where("chr").is(region.getChromosome())
-                                                              .and("start").lte(region.getEnd()).gt(region.getStart() - MARGIN)
-                                                              .and("end").gte(region.getStart()).lt(region.getEnd() + MARGIN)));
-
+        query.addCriteria(new Criteria().orOperator(orCriteriaList.toArray(new Criteria[orCriteriaList.size()])));
 
         return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue, polyphenScoreOperator,
                                           polyphenScoreValue, siftOperator, siftValue, pageable);
