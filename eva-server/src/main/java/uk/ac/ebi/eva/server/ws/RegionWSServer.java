@@ -101,12 +101,7 @@ public class RegionWSServer extends EvaWSServer {
             siftScoreValue = Utils.getValueFromRelation(siftScore);
         }
 
-        List<Region> regions = new ArrayList<>();
-        for (String s : regionId.split(",")) {
-            Region r = Region.parseRegion(s);
-            regions.add(r);
-        }
-
+        List<Region> regions = Region.parseRegions(regionId);
         List<VariantEntity> variantEntities;
 
         if (regions.size() > 1) {
@@ -116,11 +111,13 @@ public class RegionWSServer extends EvaWSServer {
                                                                            polyphenScoreValue, siftScoreOperator,
                                                                            siftScoreValue, null);
         } else if (regions.size() == 1) {
+            Region region = regions.get(0);
             variantEntities =
-                    variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,
-                                                                           mafOperator, mafvalue, polyphenScoreOperator,
-                                                                           polyphenScoreValue, siftScoreOperator,
-                                                                           siftScoreValue, null);
+                    variantEntityRepository.findByRegionAndComplexFilters(region.getChromosome(), region.getStart(),
+                                                                          region.getEnd(), studies, consequenceType,
+                                                                          mafOperator, mafvalue, polyphenScoreOperator,
+                                                                          polyphenScoreValue, siftScoreOperator,
+                                                                          siftScoreValue, null);
         } else {
             throw new IllegalArgumentException();
         }
