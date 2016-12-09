@@ -41,11 +41,14 @@ public class RegionWSServerTest {
         RestAssured.baseURI = "http://localhost:8080/eva/webservices/rest";
     }
 
-    // 2:48000000-49000000
+    @Test
+    public void testGetVariantsByRegion() throws URISyntaxException {
+        testGetVariantsByRegionHelper("20:60000-62000", 40);
+    }
 
     @Test
-    public void testGetVariantById() throws URISyntaxException {
-        testGetVariantsByRegionHelper("20:60000-62000", 40);
+    public void testGetVariantsByRegions() throws URISyntaxException {
+        testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 17);
     }
 
     private void testGetVariantsByRegionHelper(String testString, int expectedSize) throws URISyntaxException {
@@ -67,7 +70,5 @@ public class RegionWSServerTest {
             assertTrue(missingField, m.containsKey("end"));
         }
     }
-
-
 
 }
