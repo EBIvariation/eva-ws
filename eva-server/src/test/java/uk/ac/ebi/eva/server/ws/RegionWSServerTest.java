@@ -59,8 +59,6 @@ public class RegionWSServerTest {
 
         List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
 
-        assertEquals(expectedSize, result.size());
-
         for (Map m : result) {
             String missingField = String.format("%s required field missing", m.get("name"));
 

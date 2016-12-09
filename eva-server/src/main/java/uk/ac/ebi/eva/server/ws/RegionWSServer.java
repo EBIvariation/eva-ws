@@ -65,9 +65,9 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "species") String species,
                                              @RequestParam(name = "studies", required = false) List<String> studies,
                                              @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
-                                             @RequestParam(name = "maf", defaultValue = "") String maf,
-                                             @RequestParam(name = "polyphen", defaultValue = "") String polyphenScore,
-                                             @RequestParam(name = "sift", defaultValue = "") String siftScore,
+                                             @RequestParam(name = "maf", defaultValue = "", required = false) String maf,
+                                             @RequestParam(name = "polyphen", defaultValue = "", required = false) String polyphenScore,
+                                             @RequestParam(name = "sift", defaultValue = "", required = false) String siftScore,
                                              HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, IOException {
         initializeQueryOptions();
