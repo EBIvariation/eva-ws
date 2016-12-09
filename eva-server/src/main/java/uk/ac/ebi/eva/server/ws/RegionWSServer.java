@@ -109,7 +109,7 @@ public class RegionWSServer extends EvaWSServer {
                     variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,
                                                                            mafOperator, mafvalue, polyphenScoreOperator,
                                                                            polyphenScoreValue, siftScoreOperator,
-                                                                           siftScoreValue, null);
+                                                                           siftScoreValue, Utils.getPageRequest(queryOptions));
         } else if (regions.size() == 1) {
             Region region = regions.get(0);
             variantEntities =
@@ -117,7 +117,7 @@ public class RegionWSServer extends EvaWSServer {
                                                                           region.getEnd(), studies, consequenceType,
                                                                           mafOperator, mafvalue, polyphenScoreOperator,
                                                                           polyphenScoreValue, siftScoreOperator,
-                                                                          siftScoreValue, null);
+                                                                          siftScoreValue, Utils.getPageRequest(queryOptions));
         } else {
             throw new IllegalArgumentException();
         }

@@ -1,5 +1,8 @@
 package uk.ac.ebi.eva.server;
 
+import org.opencb.datastore.core.QueryOptions;
+import org.springframework.data.domain.PageRequest;
+
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
 public class Utils {
@@ -26,6 +29,13 @@ public class Utils {
                 throw new IllegalArgumentException();
         }
 
+    }
+
+    public static PageRequest getPageRequest(QueryOptions queryOptions) {
+        int limit = (int) queryOptions.get("limit");
+        int skip = (int) queryOptions.get("skip");
+        int page = Math.floorDiv(skip, limit); // page is zero based
+        return new PageRequest(page, limit);
     }
 
 }
