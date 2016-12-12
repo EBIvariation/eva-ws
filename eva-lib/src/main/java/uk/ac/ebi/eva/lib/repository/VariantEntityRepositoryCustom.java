@@ -44,8 +44,8 @@ interface VariantEntityRepositoryCustom {
      * @param polyphenScoreOperator Relational operator for querying of variants by polyphen value
      * @param polyphenScoreValue Filter for Polyphen score, which predicts the possible impact of an amino acid
      *                      substitution on the structure and function of a human protein
-     * @param siftOperator Relational operator for querying of variants by sift value
-     * @param siftValue Filter for SIFT score, which predicts if an amino acid substitution affects protein function
+     * @param siftScoreOperator Relational operator for querying of variants by sift value
+     * @param siftScoreValue Filter for SIFT score, which predicts if an amino acid substitution affects protein function
      * @return VariantEntities whose values are within the bounds of the filters
      */
     List<VariantEntity> findByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
@@ -58,42 +58,11 @@ interface VariantEntityRepositoryCustom {
                                                    Pageable pageable);
 
     /**
-     * Query for variants within a specified genomic region, and whose attributes match those values specified in the
-     * filters: study, consequence type, minor allele frequency and protein substitution scores (Polyphen and SIFT).
-     *
-     * @param chromosome Chromosome name
-     * @param start Start position, inclusive
-     * @param end End position, inclusive
-     * @param studies List of study IDs, returned variants must be found in at least one of them
-     * @param consequenceType List of genomic consequences, returned variants have at least one consequence type
-     *                        from in the list.
-     * @param mafOperator Relational operator for querying of variants by maf value
-     * @param mafValue Filter for minor allele frequency value
-     * @param polyphenScoreOperator Relational operator for querying of variants by polyphen value
-     * @param polyphenScoreValue Filter for polyphen score, which predicts the possible impact of an amino acid
-     *                      substitution on the structure and function of a human protein
-     * @param siftOperator Relational operator for querying of variants by sift value
-     * @param siftValue Filter for SIFT score, which predicts if an amino acid substitution affects protein function
-     * @return VariantEntities whose values are within the bounds of the filters
-     */
-    List<VariantEntity> findByRegionAndComplexFilters(String chromosome, int start, int end, List<String> studies,
-                                                      List<String> consequenceType,
-                                                      RelationalOperator mafOperator,
-                                                      Double mafValue,
-                                                      RelationalOperator polyphenScoreOperator,
-                                                      Double polyphenScoreValue,
-                                                      RelationalOperator siftScoreOperator,
-                                                      Double siftScoreValue,
-                                                      Pageable pageable);
-
-    /**
      * Query for variants within a set of specified genomic regions, and whose attributes match those values specified
      * in the filters: study, consequence type, minor allele frequency and protein substitution scores (Polyphen and
      * SIFT).
      *
-     * @param chr Chromosome name
-     * @param start Start position, inclusive
-     * @param end End position, inclusive
+     * @param regions List of region objects to invlude in query
      * @param studies List of study IDs, returned variants must be found in at least one of them
      * @param consequenceType List of genomic consequences, returned variants have at least one consequence type
      *                        from in the list.
@@ -102,8 +71,8 @@ interface VariantEntityRepositoryCustom {
      * @param polyphenScoreOperator Relational operator for querying of variants by polyphen value
      * @param polyphenScoreValue Filter for polyphen score, which predicts the possible impact of an amino acid
      *                      substitution on the structure and function of a human protein
-     * @param siftOperator Relational operator for querying of variants by sift value
-     * @param siftValue Filter for SIFT score, which predicts if an amino acid substitution affects protein function
+     * @param siftScoreOperator Relational operator for querying of variants by sift value
+     * @param siftScoreValue Filter for SIFT score, which predicts if an amino acid substitution affects protein function
      * @return VariantEntities whose values are within the bounds of the filters
      */
     List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<String> studies,

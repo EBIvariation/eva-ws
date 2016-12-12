@@ -71,26 +71,6 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     @Override
-    public List<VariantEntity> findByRegionAndComplexFilters(String chromosome, int start, int end,
-                                                             List<String> studies, List<String> consequenceType,
-                                                             RelationalOperator mafOperator,
-                                                             Double mafValue,
-                                                             RelationalOperator polyphenScoreOperator,
-                                                             Double polyphenScoreValue,
-                                                             RelationalOperator siftScoreOperator,
-                                                             Double siftScoreValue,
-                                                             Pageable pageable) {
-        Query query = new Query(Criteria.where("chr").is(chromosome)
-                                        .and("start").lte(end).gt(start - MARGIN)
-                                        .and("end").gte(start).lt(end + MARGIN)
-        );
-
-        return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue,
-                                          polyphenScoreOperator, polyphenScoreValue,
-                                          siftScoreOperator, siftScoreValue, pageable);
-    }
-
-    @Override
     public List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
                                                               List<String> consequenceType,
                                                               RelationalOperator mafOperator,

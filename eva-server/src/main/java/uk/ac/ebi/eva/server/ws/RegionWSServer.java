@@ -107,23 +107,10 @@ public class RegionWSServer extends EvaWSServer {
 
         PageRequest pageRequest = Utils.getPageRequest(queryOptions);
 
-        if (regions.size() > 1) {
-            variantEntities =
-                    variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,
+        variantEntities = variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,
                                                                            mafOperator, mafvalue, polyphenScoreOperator,
                                                                            polyphenScoreValue, siftScoreOperator,
                                                                            siftScoreValue, pageRequest);
-        } else if (regions.size() == 1) {
-            Region region = regions.get(0);
-            variantEntities =
-                    variantEntityRepository.findByRegionAndComplexFilters(region.getChromosome(), region.getStart(),
-                                                                          region.getEnd(), studies, consequenceType,
-                                                                          mafOperator, mafvalue, polyphenScoreOperator,
-                                                                          polyphenScoreValue, siftScoreOperator,
-                                                                          siftScoreValue, pageRequest);
-        } else {
-            throw new IllegalArgumentException();
-        }
 
         QueryResult<VariantEntity> queryResult = new QueryResult<>();
         queryResult.setResult(variantEntities);

@@ -44,16 +44,6 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
                                                    Double siftScoreValue,
                                                    Pageable pageable);
 
-    List<VariantEntity> findByRegionAndComplexFilters(String chromosome, int start, int end, List<String> studies,
-                                                      List<String> consequenceType,
-                                                      RelationalOperator mafOperator,
-                                                      Double mafValue,
-                                                      RelationalOperator polyphenScoreOperator,
-                                                      Double polyphenScoreValue,
-                                                      RelationalOperator siftScoreOperator,
-                                                      Double siftScoreValue,
-                                                      Pageable pageable);
-
     List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
                                                        List<String> consequenceType,
                                                        RelationalOperator mafOperator,
