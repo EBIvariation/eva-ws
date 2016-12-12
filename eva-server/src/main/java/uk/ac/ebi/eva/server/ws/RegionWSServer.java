@@ -27,6 +27,7 @@ import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -104,12 +105,14 @@ public class RegionWSServer extends EvaWSServer {
         List<Region> regions = Region.parseRegions(regionId);
         List<VariantEntity> variantEntities;
 
+        PageRequest pageRequest = Utils.getPageRequest(queryOptions);
+
         if (regions.size() > 1) {
             variantEntities =
                     variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,
                                                                            mafOperator, mafvalue, polyphenScoreOperator,
                                                                            polyphenScoreValue, siftScoreOperator,
-                                                                           siftScoreValue, Utils.getPageRequest(queryOptions));
+                                                                           siftScoreValue, pageRequest);
         } else if (regions.size() == 1) {
             Region region = regions.get(0);
             variantEntities =
@@ -117,7 +120,7 @@ public class RegionWSServer extends EvaWSServer {
                                                                           region.getEnd(), studies, consequenceType,
                                                                           mafOperator, mafvalue, polyphenScoreOperator,
                                                                           polyphenScoreValue, siftScoreOperator,
-                                                                          siftScoreValue, Utils.getPageRequest(queryOptions));
+                                                                          siftScoreValue, pageRequest);
         } else {
             throw new IllegalArgumentException();
         }

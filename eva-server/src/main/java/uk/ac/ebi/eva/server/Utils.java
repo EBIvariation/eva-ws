@@ -34,8 +34,11 @@ public class Utils {
     public static PageRequest getPageRequest(QueryOptions queryOptions) {
         int limit = (int) queryOptions.get("limit");
         int skip = (int) queryOptions.get("skip");
-        int page = Math.floorDiv(skip, limit); // page is zero based
-        return new PageRequest(page, limit);
+
+        int size = (limit < 0) ? 10 : limit;
+        int page = (skip < 0) ? 0 : Math.floorDiv(skip, size);
+
+        return new PageRequest(page, size);
     }
 
 }
