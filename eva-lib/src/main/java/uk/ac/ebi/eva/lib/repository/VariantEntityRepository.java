@@ -53,4 +53,8 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
                                                        RelationalOperator siftScoreOperator,
                                                        Double siftScoreValue,
                                                        Pageable pageable);
+
+    List<VariantEntity> findByChromosomeAndStartAndReferenceAndAlternate();
+
+    List<VariantEntity> findByChromosomeAndStartAndReference();
 }
