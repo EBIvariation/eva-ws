@@ -30,6 +30,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
+import uk.ac.ebi.eva.lib.repository.VariantEntityRepository.RelationalOperator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,71 +56,75 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
     @Override
     public List<VariantEntity> findByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
-                                                          VariantEntityRepository.RelationalOperator mafOperator,
+                                                          RelationalOperator mafOperator,
                                                           Double mafValue,
-                                                          VariantEntityRepository.RelationalOperator polyphenScoreOperator,
+                                                          RelationalOperator polyphenScoreOperator,
                                                           Double polyphenScoreValue,
-                                                          VariantEntityRepository.RelationalOperator siftOperator,
-                                                          Double siftValue,
+                                                          RelationalOperator siftScoreOperator,
+                                                          Double siftScoreValue,
                                                           Pageable pageable) {
-
         Query query = new Query(Criteria.where("ids").is(id));
 
-        return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue, polyphenScoreOperator,
-                                          polyphenScoreValue, siftOperator, siftValue, pageable);
+        return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue,
+                                          polyphenScoreOperator, polyphenScoreValue,
+                                          siftScoreOperator, siftScoreValue, pageable);
     }
 
     @Override
-    public List<VariantEntity> findByRegionAndComplexFilters(String chr, int start, int end,
+    public List<VariantEntity> findByRegionAndComplexFilters(String chromosome, int start, int end,
                                                              List<String> studies, List<String> consequenceType,
-                                                             VariantEntityRepository.RelationalOperator mafOperator,
+                                                             RelationalOperator mafOperator,
                                                              Double mafValue,
-                                                             VariantEntityRepository.RelationalOperator polyphenScoreOperator,
+                                                             RelationalOperator polyphenScoreOperator,
                                                              Double polyphenScoreValue,
-                                                             VariantEntityRepository.RelationalOperator siftOperator,
-                                                             Double siftValue, Pageable pageable) {
-        Query query = new Query(Criteria
-                                        .where("chr").is(chr)
+                                                             RelationalOperator siftScoreOperator,
+                                                             Double siftScoreValue,
+                                                             Pageable pageable) {
+        Query query = new Query(Criteria.where("chr").is(chromosome)
                                         .and("start").lte(end).gt(start - MARGIN)
                                         .and("end").gte(start).lt(end + MARGIN)
         );
 
-        return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue, polyphenScoreOperator,
-                                          polyphenScoreValue, siftOperator, siftValue, pageable);
+        return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue,
+                                          polyphenScoreOperator, polyphenScoreValue,
+                                          siftScoreOperator, siftScoreValue, pageable);
     }
 
     @Override
     public List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
                                                               List<String> consequenceType,
-                                                              VariantEntityRepository.RelationalOperator mafOperator,
+                                                              RelationalOperator mafOperator,
                                                               Double mafValue,
-                                                              VariantEntityRepository.RelationalOperator polyphenScoreOperator,
+                                                              RelationalOperator polyphenScoreOperator,
                                                               Double polyphenScoreValue,
-                                                              VariantEntityRepository.RelationalOperator siftOperator,
-                                                              Double siftValue, Pageable pageable) {
+                                                              RelationalOperator siftScoreOperator,
+                                                              Double siftScoreValue,
+                                                              Pageable pageable) {
 
         Query query = new Query();
-        List<Criteria> orCriteriaList = new ArrayList<>();
+        List<Criteria> orRegionCriteria = new ArrayList<>();
 
-        regions.forEach(region -> orCriteriaList.add(Criteria
-                                                             .where("chr").is(region.getChromosome())
-                                                             .and("start").lte(region.getEnd()).gt(region.getStart() - MARGIN)
-                                                             .and("end").gte(region.getStart()).lt(region.getEnd() + MARGIN)));
+        regions.forEach(region -> orRegionCriteria.add(
+                                      Criteria.where("chr").is(region.getChromosome())
+                                              .and("start").lte(region.getEnd()).gt(region.getStart() - MARGIN)
+                                              .and("end").gte(region.getStart()).lt(region.getEnd() + MARGIN)));
 
-        query.addCriteria(new Criteria().orOperator(orCriteriaList.toArray(new Criteria[orCriteriaList.size()])));
+        query.addCriteria(new Criteria().orOperator(orRegionCriteria.toArray(new Criteria[orRegionCriteria.size()])));
 
-        return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue, polyphenScoreOperator,
-                                          polyphenScoreValue, siftOperator, siftValue, pageable);
+        return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue,
+                                          polyphenScoreOperator, polyphenScoreValue,
+                                          siftScoreOperator, siftScoreValue, pageable);
     }
 
     List<VariantEntity> findByComplexFiltersHelper(Query query,
                                                    List<String> studies, List<String> consequenceType,
-                                                   VariantEntityRepository.RelationalOperator mafOperator,
+                                                   RelationalOperator mafOperator,
                                                    Double mafValue,
-                                                   VariantEntityRepository.RelationalOperator polyphenScoreOperator,
+                                                   RelationalOperator polyphenScoreOperator,
                                                    Double polyphenScoreValue,
-                                                   VariantEntityRepository.RelationalOperator siftOperator,
-                                                   Double siftValue, Pageable pageable) {
+                                                   RelationalOperator siftScoreOperator,
+                                                   Double siftScoreValue,
+                                                   Pageable pageable) {
 
         if (consequenceType != null && !consequenceType.isEmpty()) {
             queryConsequenceType(query, consequenceType);
@@ -133,8 +138,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
             queryPolyphenScore(query, polyphenScoreValue, polyphenScoreOperator);
         }
 
-        if (siftValue != null && siftOperator != VariantEntityRepository.RelationalOperator.NONE) {
-            querySift(query, siftValue, siftOperator);
+        if (siftScoreValue != null && siftScoreOperator != VariantEntityRepository.RelationalOperator.NONE) {
+            querySift(query, siftScoreValue, siftScoreOperator);
         }
 
         if (studies != null && !studies.isEmpty()) {
@@ -160,27 +165,25 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.addCriteria(Criteria.where("annot.ct.so").in(consequenceTypeConv));
     }
 
-    void queryMaf(Query query, double mafValue, VariantEntityRepository.RelationalOperator mafOperator) {
+    void queryMaf(Query query, double mafValue, RelationalOperator mafOperator) {
         relationalCriteriaHelper(query, "st.maf", mafValue, mafOperator);
     }
 
-    void queryPolyphenScore(Query query, double polyphenScoreValue,
-                            VariantEntityRepository.RelationalOperator polyphenScoreOperator) {
+    void queryPolyphenScore(Query query, double polyphenScoreValue, RelationalOperator polyphenScoreOperator) {
         relationalCriteriaHelper(query, "annot.ct.polyphen.sc", polyphenScoreValue, polyphenScoreOperator);
     }
 
-    void querySift(Query query, double siftValue, VariantEntityRepository.RelationalOperator siftOperator) {
-        relationalCriteriaHelper(query, "annot.ct.sift.sc", siftValue, siftOperator);
+    void querySift(Query query, double siftScoreValue, RelationalOperator siftScoreOperator) {
+        relationalCriteriaHelper(query, "annot.ct.sift.sc", siftScoreValue, siftScoreOperator);
     }
 
     void queryStudies(Query query, List<String> studies) {
         query.addCriteria(Criteria.where("files.sid").in(studies));
     }
 
-    void relationalCriteriaHelper(Query query, String jsonPath, double value,
-                                  VariantEntityRepository.RelationalOperator operator) {
+    void relationalCriteriaHelper(Query query, String field, double value, RelationalOperator operator) {
 
-        Criteria criteria = Criteria.where(jsonPath);
+        Criteria criteria = Criteria.where(field);
         switch (operator) {
             case EQ:
                 criteria = criteria.is(value);
