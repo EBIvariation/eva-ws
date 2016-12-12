@@ -59,21 +59,6 @@ public class Application extends SpringBootServletInitializer {
         SpringApplication.run(Application.class, args);
     }
 
-    /**
-     * This factory will allow to use the FeatureRepository with several databases, as we are providing a
-     * MultiMongoDbFactory as the implementation of MongoFactory to inject into the FeatureRepository.
-     *
-     * @return MongoDbFactory
-     * @throws IOException
-     */
-    @Bean
-    public MongoDbFactory mongoDbFactory() throws IOException {
-        Properties properties = new Properties();
-        properties.load(Application.class.getResourceAsStream("/eva.properties"));
-        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
-        return new MultiMongoDbFactory(mongoClient, "test");
-    }
-
     @Bean
     public Docket apiConfiguration() {
         return new Docket(DocumentationType.SWAGGER_2)

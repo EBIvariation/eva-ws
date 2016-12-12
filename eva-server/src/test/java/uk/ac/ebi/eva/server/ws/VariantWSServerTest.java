@@ -45,6 +45,16 @@ public class VariantWSServerTest {
         RestAssured.baseURI = "http://localhost:8080/eva/webservices/rest";
     }
 
+    @Test
+    public void testGetVariantById() throws URISyntaxException {
+        testGetVariantByIdRegionHelper("rs567000874");
+    }
+
+    @Test
+    public void testGetVariantByRegion() throws URISyntaxException {
+        testGetVariantByIdRegionHelper("20:71822:C:G");
+    }
+
     private void testGetVariantByIdRegionHelper(String testString) throws URISyntaxException {
         Response response = given().param("species", "mmusculus_grcm38").get(new URI("/v1/variants/" + testString + "/info"));
         response.then().statusCode(200);
@@ -68,17 +78,17 @@ public class VariantWSServerTest {
         assertTrue(missingField, m.containsKey("alternate"));
     }
 
-    @Test
-    public void testGetVariantById() throws URISyntaxException {
-        testGetVariantByIdRegionHelper("rs567000874");
-    }
-
-    @Test
-    public void testGetVariantByRegion() throws URISyntaxException {
-        testGetVariantByIdRegionHelper("20:71822:C:G");
-    }
-
     ///
+
+    @Test
+    public void testGetVariantByIdDoesntExist() throws URISyntaxException {
+        testGetVariantByIdRegionDoesntExistHelper("notARealId");
+    }
+
+    @Test
+    public void testGetVariantByRegionDoesntExist() throws URISyntaxException {
+        testGetVariantByIdRegionDoesntExistHelper("20:71821:C:G");
+    }
 
     private void testGetVariantByIdRegionDoesntExistHelper(String testString) throws URISyntaxException {
         Response response = given().param("species", "mmusculus_grcm38").get(new URI("/v1/variants/" + testString + "/info"));
@@ -91,17 +101,17 @@ public class VariantWSServerTest {
         assertTrue(result.size() == 0);
     }
 
-    @Test
-    public void testGetVariantByIdDoesntExist() throws URISyntaxException {
-        testGetVariantByIdRegionDoesntExistHelper("notARealId");
-    }
-
-    @Test
-    public void testGetVariantByRegionDoesntExist() throws URISyntaxException {
-        testGetVariantByIdRegionDoesntExistHelper("20:71821:C:G");
-    }
-
     ///
+
+    @Test
+    public void testCheckVariantExistsDoesExist() throws URISyntaxException {
+        assertTrue(testCheckVariantExistsHelper("20:71822:C:G"));
+    }
+
+    @Test
+    public void testCheckVariantExistsDoesntExist() throws URISyntaxException {
+        assertFalse(testCheckVariantExistsHelper("20:71821:C:G"));
+    }
 
     private Boolean testCheckVariantExistsHelper(String testRegion) throws URISyntaxException {
         Response response = given().param("species", "mmusculus_grcm38").get(new URI("/v1/variants/" + testRegion + "/exists"));
@@ -115,17 +125,5 @@ public class VariantWSServerTest {
 
         return result.get(0);
     }
-
-    @Test
-    public void testCheckVariantExistsDoesExist() throws URISyntaxException {
-        assertTrue(testCheckVariantExistsHelper("20:71822:C:G"));
-    }
-
-    @Test
-    public void testCheckVariantExistsDoesntExist() throws URISyntaxException {
-        assertFalse(testCheckVariantExistsHelper("20:71821:C:G"));
-    }
-
-
 
 }

@@ -13,34 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.server;
+package uk.ac.ebi.eva.lib;
 
 import com.mongodb.MongoClient;
-
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+
 import uk.ac.ebi.eva.commons.models.converters.data.MongoDBObjectToVariantEntityConverter;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.MongoDbFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * @author Jose Miguel Mut Lopez &lt;jmmut@ebi.ac.uk&gt;
- */
 @Configuration
-public class ApplicationConfiguration {
+public class MongoConfiguration {
     /**
      * This factory will allow to use the FeatureRepository with several databases, as we are providing a
      * MultiMongoDbFactory as the implementation of MongoFactory to inject into the FeatureRepository.
@@ -50,7 +46,7 @@ public class ApplicationConfiguration {
     @Bean
     public MongoDbFactory mongoDbFactory() throws IOException {
         Properties properties = new Properties();
-        properties.load(Application.class.getResourceAsStream("/eva.properties"));
+        properties.load(MongoConfiguration.class.getResourceAsStream("/eva.properties"));
         MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
         return new MultiMongoDbFactory(mongoClient, "test");
     }
