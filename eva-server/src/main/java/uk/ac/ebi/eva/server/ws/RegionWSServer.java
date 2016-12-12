@@ -66,9 +66,9 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "species") String species,
                                              @RequestParam(name = "studies", required = false) List<String> studies,
                                              @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
-                                             @RequestParam(name = "maf", defaultValue = "", required = false) String maf,
-                                             @RequestParam(name = "polyphen", defaultValue = "", required = false) String polyphenScore,
-                                             @RequestParam(name = "sift", defaultValue = "", required = false) String siftScore,
+                                             @RequestParam(name = "maf", required = false) String maf,
+                                             @RequestParam(name = "polyphen", required = false) String polyphenScore,
+                                             @RequestParam(name = "sift", required = false) String siftScore,
                                              HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, IOException {
         initializeQueryOptions();
@@ -82,7 +82,7 @@ public class RegionWSServer extends EvaWSServer {
 
         VariantEntityRepository.RelationalOperator mafOperator = VariantEntityRepository.RelationalOperator.NONE;
         Double mafvalue = null;
-        if (maf != null && !maf.isEmpty()) {
+        if (maf != null) {
             mafOperator = Utils.getRelationalOperatorFromRelation(maf);
             mafvalue = Utils.getValueFromRelation(maf);
         }
@@ -90,14 +90,14 @@ public class RegionWSServer extends EvaWSServer {
         VariantEntityRepository.RelationalOperator polyphenScoreOperator =
                 VariantEntityRepository.RelationalOperator.NONE;
         Double polyphenScoreValue = null;
-        if (polyphenScore != null && !polyphenScore.isEmpty()) {
+        if (polyphenScore != null) {
             polyphenScoreOperator = Utils.getRelationalOperatorFromRelation(polyphenScore);
             polyphenScoreValue = Utils.getValueFromRelation(polyphenScore);
         }
 
         VariantEntityRepository.RelationalOperator siftScoreOperator = VariantEntityRepository.RelationalOperator.NONE;
         Double siftScoreValue = null;
-        if (siftScore != null && !siftScore.isEmpty()) {
+        if (siftScore != null) {
             siftScoreOperator = Utils.getRelationalOperatorFromRelation(siftScore);
             siftScoreValue = Utils.getValueFromRelation(siftScore);
         }
