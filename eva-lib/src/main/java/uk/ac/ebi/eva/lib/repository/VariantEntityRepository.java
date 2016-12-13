@@ -21,6 +21,7 @@ package uk.ac.ebi.eva.lib.repository;
 import org.opencb.biodata.models.feature.Region;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
@@ -54,7 +55,10 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
                                                        Double siftScoreValue,
                                                        Pageable pageable);
 
-    List<VariantEntity> findByChromosomeAndStartAndReferenceAndAlternate();
+    @Query("{'chr': ?0, 'start': ?1, 'ref': ?2, 'alt': ?3}")
+    List<VariantEntity> findByChromosomeAndStartAndReferenceAndAlternate(String chromosome, int start,
+                                                                         String reference, String alternate);
 
-    List<VariantEntity> findByChromosomeAndStartAndReference();
+    @Query("{'chr': ?0, 'start': ?1, 'ref': ?2}")
+    List<VariantEntity> findByChromosomeAndStartAndReference(String chr, int start, String ref);
 }
