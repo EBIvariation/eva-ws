@@ -80,6 +80,36 @@ public class VariantWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
+        List<VariantEntity> variantEntities;
+
+        if (variantId.contains(":")) {
+            variantEntities = queryByCoordAndAllele(variantId);
+        } else {
+            variantEntities = querybyId(variantId, studies, consequenceType, maf, polyphenScore, siftScore);
+        }
+
+
+        QueryResult<VariantEntity> queryResult = new QueryResult<>();
+        queryResult.setResult(variantEntities);
+        return setQueryResponse(queryResult);
+    }
+
+    List<VariantEntity> queryByCoordAndAllele(String variantId) {
+        String[] regionId = variantId.split(":");
+        String chromosome = regionId[0];
+        int start = Integer.parseInt(regionId[1]);
+        String reference = regionId[2];
+        if (regionId.length > 3) {
+            String alternate = regionId[3];
+            return variantEntityRepository.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start,
+                                                                                            reference, alternate);
+        } else {
+            return variantEntityRepository.findByChromosomeAndStartAndReference(chromosome, start, reference);
+        }
+    }
+
+    List<VariantEntity> querybyId(String variantId, List<String> studies, List<String> consequenceType, String maf,
+                                  String polyphenScore, String siftScore) {
         VariantEntityRepository.RelationalOperator mafOperator = VariantEntityRepository.RelationalOperator.NONE;
         Double mafvalue = null;
         if (maf != null) {
@@ -102,15 +132,10 @@ public class VariantWSServer extends EvaWSServer {
             siftScoreValue = Utils.getValueFromRelation(siftScore);
         }
 
-        List<VariantEntity> variantEntities =
-                variantEntityRepository.findByIdsAndComplexFilters(variantId, studies, consequenceType, mafOperator,
-                                                                   mafvalue, polyphenScoreOperator, polyphenScoreValue,
-                                                                   siftScoreOperator, siftScoreValue,
-                                                                   Utils.getPageRequest(queryOptions));
-
-        QueryResult<VariantEntity> queryResult = new QueryResult<>();
-        queryResult.setResult(variantEntities);
-        return setQueryResponse(queryResult);
+        return variantEntityRepository.findByIdsAndComplexFilters(variantId, studies, consequenceType, mafOperator,
+                                                                  mafvalue, polyphenScoreOperator, polyphenScoreValue,
+                                                                  siftScoreOperator, siftScoreValue,
+                                                                  Utils.getPageRequest(queryOptions));
     }
 
     @RequestMapping(value = "/{variantId}/exists", method = RequestMethod.GET)
