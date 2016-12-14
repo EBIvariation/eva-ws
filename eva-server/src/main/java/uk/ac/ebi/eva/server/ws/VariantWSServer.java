@@ -83,7 +83,10 @@ public class VariantWSServer extends EvaWSServer {
         List<VariantEntity> variantEntities;
 
         if (variantId.contains(":")) {
-            variantEntities = queryByCoordinatesAndAlleles(variantId);
+            String[] regionId = variantId.split(":");
+            String alternate = (regionId.length > 3) ? regionId[3] : null;
+            variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
+                                                           alternate);
         } else {
             variantEntities = querybyId(variantId, studies, consequenceType, maf, polyphenScore, siftScore);
         }
@@ -94,13 +97,8 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    List<VariantEntity> queryByCoordinatesAndAlleles(String variantId) {
-        String[] regionId = variantId.split(":");
-        String chromosome = regionId[0];
-        int start = Integer.parseInt(regionId[1]);
-        String reference = regionId[2];
-        if (regionId.length > 3) {
-            String alternate = regionId[3];
+    List<VariantEntity> queryByCoordinatesAndAlleles(String chromosome, int start, String reference, String alternate) {
+        if (alternate != null) {
             return variantEntityRepository.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start,
                                                                                             reference, alternate);
         } else {
