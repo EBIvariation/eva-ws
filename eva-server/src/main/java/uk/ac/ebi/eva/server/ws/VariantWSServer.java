@@ -83,7 +83,7 @@ public class VariantWSServer extends EvaWSServer {
         List<VariantEntity> variantEntities;
 
         if (variantId.contains(":")) {
-            variantEntities = queryByCoordAndAllele(variantId);
+            variantEntities = queryByCoordinatesAndAlleles(variantId);
         } else {
             variantEntities = querybyId(variantId, studies, consequenceType, maf, polyphenScore, siftScore);
         }
@@ -94,7 +94,7 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    List<VariantEntity> queryByCoordAndAllele(String variantId) {
+    List<VariantEntity> queryByCoordinatesAndAlleles(String variantId) {
         String[] regionId = variantId.split(":");
         String chromosome = regionId[0];
         int start = Integer.parseInt(regionId[1]);
