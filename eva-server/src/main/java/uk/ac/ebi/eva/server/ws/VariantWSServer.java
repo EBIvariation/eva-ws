@@ -91,7 +91,25 @@ public class VariantWSServer extends EvaWSServer {
             numTotalResults = countByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
                                                            alternate);
         } else {
-            variantEntities = querybyId(variantId, studies, consequenceType, maf, polyphenScore, siftScore);
+            VariantFilterValues filterValues = new VariantFilterValues(maf, polyphenScore, siftScore);
+
+            variantEntities = variantEntityRepository.findByIdsAndComplexFilters(variantId, studies, consequenceType,
+                                                                                 filterValues.getMafOperator(),
+                                                                                 filterValues.getMafvalue(),
+                                                                                 filterValues.getPolyphenScoreOperator(),
+                                                                                 filterValues.getPolyphenScoreValue(),
+                                                                                 filterValues.getSiftScoreOperator(),
+                                                                                 filterValues.getSiftScoreValue(),
+                                                                                 Utils.getPageRequest(queryOptions));
+
+            numTotalResults = variantEntityRepository.countByIdsAndComplexFilters(variantId, studies, consequenceType,
+                                                                                  filterValues.getMafOperator(),
+                                                                                  filterValues.getMafvalue(),
+                                                                                  filterValues.getPolyphenScoreOperator(),
+                                                                                  filterValues.getPolyphenScoreValue(),
+                                                                                  filterValues.getSiftScoreOperator(),
+                                                                                  filterValues.getSiftScoreValue(),
+                                                                                  Utils.getPageRequest(queryOptions));
         }
 
 
@@ -118,36 +136,6 @@ public class VariantWSServer extends EvaWSServer {
         } else {
             return variantEntityRepository.countByChromosomeAndStartAndReference(chromosome, start, reference);
         }
-    }
-
-    List<VariantEntity> querybyId(String variantId, List<String> studies, List<String> consequenceType, String maf,
-                                  String polyphenScore, String siftScore) {
-        VariantEntityRepository.RelationalOperator mafOperator = VariantEntityRepository.RelationalOperator.NONE;
-        Double mafvalue = null;
-        if (maf != null) {
-            mafOperator = Utils.getRelationalOperatorFromRelation(maf);
-            mafvalue = Utils.getValueFromRelation(maf);
-        }
-
-        VariantEntityRepository.RelationalOperator polyphenScoreOperator =
-                VariantEntityRepository.RelationalOperator.NONE;
-        Double polyphenScoreValue = null;
-        if (polyphenScore != null) {
-            polyphenScoreOperator = Utils.getRelationalOperatorFromRelation(polyphenScore);
-            polyphenScoreValue = Utils.getValueFromRelation(polyphenScore);
-        }
-
-        VariantEntityRepository.RelationalOperator siftScoreOperator = VariantEntityRepository.RelationalOperator.NONE;
-        Double siftScoreValue = null;
-        if (siftScore != null) {
-            siftScoreOperator = Utils.getRelationalOperatorFromRelation(siftScore);
-            siftScoreValue = Utils.getValueFromRelation(siftScore);
-        }
-
-        return variantEntityRepository.findByIdsAndComplexFilters(variantId, studies, consequenceType, mafOperator,
-                                                                  mafvalue, polyphenScoreOperator, polyphenScoreValue,
-                                                                  siftScoreOperator, siftScoreValue,
-                                                                  Utils.getPageRequest(queryOptions));
     }
 
     @RequestMapping(value = "/{variantId}/exists", method = RequestMethod.GET)
