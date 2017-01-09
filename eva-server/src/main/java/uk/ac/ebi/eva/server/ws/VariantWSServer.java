@@ -81,11 +81,14 @@ public class VariantWSServer extends EvaWSServer {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
         List<VariantEntity> variantEntities;
+        Long numTotalResults;
 
         if (variantId.contains(":")) {
             String[] regionId = variantId.split(":");
             String alternate = (regionId.length > 3) ? regionId[3] : null;
             variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
+                                                           alternate);
+            numTotalResults = countByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
                                                            alternate);
         } else {
             variantEntities = querybyId(variantId, studies, consequenceType, maf, polyphenScore, siftScore);
@@ -93,6 +96,8 @@ public class VariantWSServer extends EvaWSServer {
 
 
         QueryResult<VariantEntity> queryResult = new QueryResult<>();
+        queryResult.setNumResults(variantEntities.size());
+        queryResult.setNumTotalResults(numTotalResults);
         queryResult.setResult(variantEntities);
         return setQueryResponse(queryResult);
     }
@@ -103,6 +108,15 @@ public class VariantWSServer extends EvaWSServer {
                                                                                             reference, alternate);
         } else {
             return variantEntityRepository.findByChromosomeAndStartAndReference(chromosome, start, reference);
+        }
+    }
+
+    Long countByCoordinatesAndAlleles(String chromosome, int start, String reference, String alternate) {
+        if (alternate != null) {
+            return variantEntityRepository.countByChromosomeAndStartAndReferenceAndAlternate(chromosome, start,
+                                                                                            reference, alternate);
+        } else {
+            return variantEntityRepository.countByChromosomeAndStartAndReference(chromosome, start, reference);
         }
     }
 
