@@ -108,8 +108,7 @@ public class VariantWSServer extends EvaWSServer {
                                                                                   filterValues.getPolyphenScoreOperator(),
                                                                                   filterValues.getPolyphenScoreValue(),
                                                                                   filterValues.getSiftScoreOperator(),
-                                                                                  filterValues.getSiftScoreValue(),
-                                                                                  Utils.getPageRequest(queryOptions));
+                                                                                  filterValues.getSiftScoreValue());
         }
 
 
