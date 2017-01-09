@@ -64,10 +64,20 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                                           Double siftScoreValue,
                                                           Pageable pageable) {
         Query query = new Query(Criteria.where("ids").is(id));
-
         return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue,
                                           polyphenScoreOperator, polyphenScoreValue,
                                           siftScoreOperator, siftScoreValue, pageable);
+    }
+
+    @Override
+    public Long countByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
+                                            RelationalOperator mafOperator, Double mafValue,
+                                            RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
+                                            RelationalOperator siftScoreOperator, Double siftScoreValue) {
+        Query query = new Query(Criteria.where("ids").is(id));
+        return countByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue,
+                                           polyphenScoreOperator, polyphenScoreValue, siftScoreOperator,
+                                           siftScoreValue);
     }
 
     @Override
@@ -80,20 +90,24 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                                               RelationalOperator siftScoreOperator,
                                                               Double siftScoreValue,
                                                               Pageable pageable) {
-
         Query query = new Query();
-        List<Criteria> orRegionCriteria = new ArrayList<>();
-
-        regions.forEach(region -> orRegionCriteria.add(
-                                      Criteria.where("chr").is(region.getChromosome())
-                                              .and("start").lte(region.getEnd()).gt(region.getStart() - MARGIN)
-                                              .and("end").gte(region.getStart()).lt(region.getEnd() + MARGIN)));
-
-        query.addCriteria(new Criteria().orOperator(orRegionCriteria.toArray(new Criteria[orRegionCriteria.size()])));
-
+        addRegionsToQuery(query, regions);
         return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue,
                                           polyphenScoreOperator, polyphenScoreValue,
                                           siftScoreOperator, siftScoreValue, pageable);
+    }
+
+    @Override
+    public Long countByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
+                                                List<String> consequenceType,
+                                                RelationalOperator mafOperator, Double mafValue,
+                                                RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
+                                                RelationalOperator siftScoreOperator, Double siftScoreValue) {
+        Query query = new Query();
+        addRegionsToQuery(query, regions);
+        return countByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue,
+                                           polyphenScoreOperator, polyphenScoreValue, siftScoreOperator,
+                                           siftScoreValue);
     }
 
     List<VariantEntity> findByComplexFiltersHelper(Query query,
@@ -105,6 +119,46 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                                    RelationalOperator siftScoreOperator,
                                                    Double siftScoreValue,
                                                    Pageable pageable) {
+
+        applyFilters(query, studies, consequenceType, mafOperator, mafValue,
+                     polyphenScoreOperator, polyphenScoreValue,
+                     siftScoreOperator, siftScoreValue);
+
+        ArrayList<String> sortProps = new ArrayList<String>();
+        sortProps.add("chr");
+        sortProps.add("start");
+        query.with(new Sort(Sort.Direction.ASC, sortProps));
+
+        Pageable pageable1 = (pageable != null) ? pageable : new PageRequest(0, 10);
+        query.with(pageable1);
+
+        return mongoTemplate.find(query, VariantEntity.class);
+
+    }
+
+    Long countByComplexFiltersHelper(Query query,
+                                     List<String> studies, List<String> consequenceType,
+                                     RelationalOperator mafOperator,
+                                     Double mafValue,
+                                     RelationalOperator polyphenScoreOperator,
+                                     Double polyphenScoreValue,
+                                     RelationalOperator siftScoreOperator,
+                                     Double siftScoreValue) {
+        applyFilters(query, studies, consequenceType, mafOperator, mafValue,
+                     polyphenScoreOperator, polyphenScoreValue,
+                     siftScoreOperator, siftScoreValue);
+
+        return mongoTemplate.count(query, VariantEntity.class);
+    }
+
+    void applyFilters(Query query,
+                       List<String> studies, List<String> consequenceType,
+                       RelationalOperator mafOperator,
+                       Double mafValue,
+                       RelationalOperator polyphenScoreOperator,
+                       Double polyphenScoreValue,
+                       RelationalOperator siftScoreOperator,
+                       Double siftScoreValue) {
 
         if (consequenceType != null && !consequenceType.isEmpty()) {
             queryConsequenceType(query, consequenceType);
@@ -125,17 +179,17 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         if (studies != null && !studies.isEmpty()) {
             queryStudies(query, studies);
         }
+    }
 
-        ArrayList<String> sortProps = new ArrayList<String>();
-        sortProps.add("chr");
-        sortProps.add("start");
-        query.with(new Sort(Sort.Direction.ASC, sortProps));
+    void addRegionsToQuery(Query query, List<Region> regions) {
+        List<Criteria> orRegionCriteria = new ArrayList<>();
 
-        Pageable pageable1 = (pageable != null) ? pageable : new PageRequest(0, 10);
-        query.with(pageable1);
+        regions.forEach(region -> orRegionCriteria.add(
+                Criteria.where("chr").is(region.getChromosome())
+                        .and("start").lte(region.getEnd()).gt(region.getStart() - MARGIN)
+                        .and("end").gte(region.getStart()).lt(region.getEnd() + MARGIN)));
 
-        return mongoTemplate.find(query, VariantEntity.class);
-
+        query.addCriteria(new Criteria().orOperator(orRegionCriteria.toArray(new Criteria[orRegionCriteria.size()])));
     }
 
     void queryConsequenceType(Query query, List<String> consequenceType) {

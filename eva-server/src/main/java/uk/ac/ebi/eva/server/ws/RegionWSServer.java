@@ -113,6 +113,7 @@ public class RegionWSServer extends EvaWSServer {
                                                                            siftScoreValue, pageRequest);
 
         QueryResult<VariantEntity> queryResult = new QueryResult<>();
+        queryResult.setNumResults(variantEntities.size());
         queryResult.setResult(variantEntities);
         return setQueryResponse(queryResult);
     }

@@ -37,29 +37,29 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
     enum RelationalOperator { EQ, GT, LT, GTE, LTE, NONE }
 
     List<VariantEntity> findByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
-                                                   RelationalOperator mafOperator,
-                                                   Double mafValue,
-                                                   RelationalOperator polyphenScoreOperator,
-                                                   Double polyphenScoreValue,
-                                                   RelationalOperator siftScoreOperator,
-                                                   Double siftScoreValue,
+                                                   RelationalOperator mafOperator, Double mafValue,
+                                                   RelationalOperator polyphenScore4Operator, Double polyphenScoreValue,
+                                                   RelationalOperator siftScoreOperator, Double siftScoreValue,
                                                    Pageable pageable);
 
     Long countByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
                                      RelationalOperator mafOperator, Double mafValue,
                                      RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
-                                     RelationalOperator siftScoreOperator, Double siftScoreValue,
-                                     Pageable pageable);
+                                     RelationalOperator siftScoreOperator, Double siftScoreValue);
 
     List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
                                                        List<String> consequenceType,
-                                                       RelationalOperator mafOperator,
-                                                       Double mafValue,
+                                                       RelationalOperator mafOperator, Double mafValue,
                                                        RelationalOperator polyphenScoreOperator,
                                                        Double polyphenScoreValue,
-                                                       RelationalOperator siftScoreOperator,
-                                                       Double siftScoreValue,
+                                                       RelationalOperator siftScoreOperator, Double siftScoreValue,
                                                        Pageable pageable);
+
+    Long countByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
+                                         List<String> consequenceType,
+                                         RelationalOperator mafOperator, Double mafValue,
+                                         RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
+                                         RelationalOperator siftScoreOperator, Double siftScoreValue);
 
     @Query("{'chr': ?0, 'start': ?1, 'ref': ?2, 'alt': ?3}")
     List<VariantEntity> findByChromosomeAndStartAndReferenceAndAlternate(String chromosome, int start,
