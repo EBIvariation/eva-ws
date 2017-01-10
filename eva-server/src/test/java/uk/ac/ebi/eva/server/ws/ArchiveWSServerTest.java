@@ -32,17 +32,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.models.Assembly;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -62,10 +67,16 @@ public class ArchiveWSServerTest {
     private ArchiveEvaproDBAdaptor archiveEvaproDBAdaptor;
 
     @MockBean
+    private ArchiveDgvaDBAdaptor archiveDgvaDBAdaptor;
+
+    @MockBean
     private StudyEvaproDBAdaptor studyEvaproDBAdaptor;
 
     @MockBean
     private StudyDgvaDBAdaptor studyDgvaDBAdaptor;
+
+    @MockBean
+    private DBAdaptorConnector dbAdaptorConnector;
 
     @Before
     public void setup() throws URISyntaxException {
@@ -99,6 +110,15 @@ public class ArchiveWSServerTest {
                                                new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12);
         BDDMockito.given(studyEvaproDBAdaptor.getAllStudies(anyObject()))
                   .willReturn(encapsulateInQueryResult(study1, study2, study3));
+        Map<String, Long> studiesGroupedBySpeciesName = Stream.of(study1, study2, study3).collect(
+                Collectors.groupingBy(VariantStudy::getSpeciesCommonName,
+                                      Collectors.counting()));
+        BDDMockito.given(archiveEvaproDBAdaptor.countStudiesPerSpecies(anyObject())).willReturn(encapsulateInQueryResult(studiesGroupedBySpeciesName.entrySet().toArray()));
+        Map<String, Long> studiesGroupedByStudyType = Stream.of(study1, study2, study3).map(s -> s.getType().toString())
+                                                       .collect(Collectors.groupingBy(Function.identity(),
+                                                                                      Collectors.counting()));
+        BDDMockito.given(archiveEvaproDBAdaptor.countStudiesPerType(anyObject())).willReturn(encapsulateInQueryResult(studiesGroupedByStudyType.entrySet().toArray()));
+
 
         VariantStudy svStudy1 = new VariantStudy("Human SV Test study 1", "svS1", null, "SV study 1 description",
                                                  new int[]{9606},
@@ -118,6 +138,16 @@ public class ArchiveWSServerTest {
                                                new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12);
         BDDMockito.given(studyDgvaDBAdaptor.getAllStudies(anyObject()))
                   .willReturn(encapsulateInQueryResult(svStudy1, svStudy2, svStudy3));
+        Map<String, Long> svStudiesGroupedBySpeciesName = Stream.of(svStudy1, svStudy2, svStudy3).collect(
+                Collectors.groupingBy(VariantStudy::getSpeciesCommonName,
+                                      Collectors.counting()));
+        BDDMockito.given(archiveDgvaDBAdaptor.countStudiesPerSpecies(anyObject())).willReturn(encapsulateInQueryResult(svStudiesGroupedBySpeciesName.entrySet().toArray()));
+        Map<String, Long> svStudiesGroupedByStudyType = Stream.of(svStudy1, svStudy2, svStudy3).map(s -> s.getType().toString())
+                                                     .collect(Collectors.groupingBy(Function.identity(),
+                                                                                    Collectors.counting()));
+        BDDMockito.given(archiveDgvaDBAdaptor.countStudiesPerType(anyObject())).willReturn(encapsulateInQueryResult(svStudiesGroupedByStudyType.entrySet().toArray()));
+
+        BDDMockito.given(dbAdaptorConnector.)
         // TODO: why BDDMockito.given instead of when?
 
     }
