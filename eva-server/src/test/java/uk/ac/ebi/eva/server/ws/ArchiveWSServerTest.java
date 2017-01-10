@@ -21,9 +21,11 @@ package uk.ac.ebi.eva.server.ws;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
+import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,7 @@ import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.models.Assembly;
+import uk.ac.ebi.eva.lib.models.VariantStudy;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -54,6 +57,7 @@ import static com.jayway.restassured.RestAssured.get;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.unregisterParser;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 
@@ -73,20 +77,14 @@ public class ArchiveWSServerTest {
     @MockBean
     private StudyDgvaDBAdaptor studyDgvaDBAdaptor;
 
-    private Assembly grch37;
-
-    private Assembly grch38;
-
-    private Assembly umd31;
-
     @Before
-    public void setup() {
+    public void setup() throws URISyntaxException {
         // species test data
-        grch37 = new Assembly("GCA_000001405.1", "GCA_000001405", "1", "GRCh37", "grc3h7", 9606, "Human", "Homo Sapiens", "hsapiens", "human");
+        Assembly grch37 = new Assembly("GCA_000001405.1", "GCA_000001405", "1", "GRCh37", "grc3h7", 9606, "Human", "Homo Sapiens", "hsapiens", "human");
 
-        grch38 = new Assembly("GCA_000001405.18", "GCA_000001405", "18", "GRCh38.p3", "grc3h8", 9606, "Human",
+        Assembly grch38 = new Assembly("GCA_000001405.18", "GCA_000001405", "18", "GRCh38.p3", "grc3h8", 9606, "Human",
                               "Homo Sapiens", "hsapiens", "human");
-        umd31 = new Assembly("GCA_000003055.3", "GCA_000003055", "3", "Bos_taurus_UMD_3.1", "umd31", 9913, "Cattle",
+        Assembly umd31 = new Assembly("GCA_000003055.3", "GCA_000003055", "3", "Bos_taurus_UMD_3.1", "umd31", 9913, "Cattle",
                              "Bos taurus", "btaurus", "cow");
         BDDMockito.given(this.archiveEvaproDBAdaptor.getSpecies(anyString(), eq(true))).willReturn(encapsulateInQueryResult(grch37, grch38, umd31));
         BDDMockito.given(this.archiveEvaproDBAdaptor.countSpecies()).willReturn(encapsulateInQueryResult(3L));
@@ -96,8 +94,41 @@ public class ArchiveWSServerTest {
         BDDMockito.given(this.archiveEvaproDBAdaptor.countStudies()).willReturn(encapsulateInQueryResult(3L));
 
 
-        BDDMockito.given(studyEvaproDBAdaptor.getAllStudies()
+        VariantStudy study1 = new VariantStudy("Human Test study 1", "S1", null, "Study 1 description", new int[]{9606},
+                                               "Human", "Homo Sapiens", "Germline", "EBI", "DNA", "multi-isolate",
+                                               VariantStudy.StudyType.CASE_CONTROL, "Exome Sequencing", "ES", "GRCh37",
+                                               "Illumina", new URI("http://www.s1.org"), new String[]{"10"}, 1000, 10);
+        VariantStudy study2 = new VariantStudy("Human Test study 2", "S2", null, "Study 2 description", new int[]{9606},
+                                               "Human", "Homo Sapiens", "Germline", "EBI", "DNA", "multi-isolate",
+                                               VariantStudy.StudyType.AGGREGATE, "Exome Sequencing", "ES", "GRCh38",
+                                               "Illumina", new URI("http://www.s2.org"), new String[]{"13"}, 5000, 4);
+        VariantStudy study3 = new VariantStudy("Cow Test study 1", "CS1", null, "Cow study 1 description",
+                                               new int[]{9913}, "Cow", "Bos taurus", "Germline", "EBI", "DNA",
+                                               "multi-isolate", VariantStudy.StudyType.AGGREGATE,
+                                               "Whole Genome Sequencing", "WGSS", "Bos_taurus_UMD_3.1", "Illumina",
+                                               new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12);
+        BDDMockito.given(studyEvaproDBAdaptor.getAllStudies(anyObject()))
+                  .willReturn(encapsulateInQueryResult(study1, study2, study3));
 
+        VariantStudy svStudy1 = new VariantStudy("Human SV Test study 1", "svS1", null, "SV study 1 description",
+                                                 new int[]{9606},
+                                                 "Human", "Homo Sapiens", "Germline", "EBI", "DNA", "multi-isolate",
+                                                 VariantStudy.StudyType.CASE_CONTROL, "Exome Sequencing", "ES",
+                                                 "GRCh37", "Illumina", new URI("http://www.s1.org"), new String[]{"10"},
+                                                 1000, 10);
+        VariantStudy svStudy2 = new VariantStudy("Human SVV Test study 2", "svS2", null, "SV study 2 description",
+                                                 new int[]{9606}, "Human", "Homo Sapiens", "Germline", "EBI", "DNA",
+                                                 "multi-isolate", VariantStudy.StudyType.AGGREGATE, "Exome Sequencing",
+                                                 "ES", "GRCh38", "Illumina", new URI("http://www.s2.org"),
+                                                 new String[]{"13"}, 5000, 4);
+        VariantStudy svStudy3 = new VariantStudy("Cow SV Test study 1", "svCS1", null, "SV cow study 1 description",
+                                               new int[]{9913}, "Cow", "Bos taurus", "Germline", "EBI", "DNA",
+                                               "multi-isolate", VariantStudy.StudyType.AGGREGATE,
+                                               "Whole Genome Sequencing", "WGSS", "Bos_taurus_UMD_3.1", "Illumina",
+                                               new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12);
+        BDDMockito.given(studyDgvaDBAdaptor.getAllStudies(anyObject()))
+                  .willReturn(encapsulateInQueryResult(svStudy1, svStudy2, svStudy3));
+        // TODO: why BDDMockito.given instead of when?
 
     }
 
@@ -238,7 +269,7 @@ public class ArchiveWSServerTest {
 
     @Test
     public void testGetStudiesStructural() throws URISyntaxException {
-        ResponseEntity<QueryResponse> response = this.restTemplate.getForEntity("/v1/meta/studies/all?browserType=sv&structural=true", QueryResponse.class);
+        ResponseEntity<QueryResponse> response = this.restTemplate.getForEntity("/v1/meta/studies/all?structural=true", QueryResponse.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         List queryResponse = response.getBody().getResponse();
