@@ -146,8 +146,7 @@ public class ArchiveWSServerTest {
                                                      .collect(Collectors.groupingBy(Function.identity(),
                                                                                     Collectors.counting()));
         BDDMockito.given(archiveDgvaDBAdaptor.countStudiesPerType(anyObject())).willReturn(encapsulateInQueryResult(svStudiesGroupedByStudyType.entrySet().toArray()));
-
-        BDDMockito.given(dbAdaptorConnector.)
+        
         // TODO: why BDDMockito.given instead of when?
 
     }
