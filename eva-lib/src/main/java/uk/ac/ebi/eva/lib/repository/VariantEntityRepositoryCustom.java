@@ -57,6 +57,11 @@ interface VariantEntityRepositoryCustom {
                                                    Double siftScoreValue,
                                                    Pageable pageable);
 
+    Long countByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
+                                     RelationalOperator mafOperator, Double mafValue,
+                                     RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
+                                     RelationalOperator siftScoreOperator, Double siftScoreValue);
+
     /**
      * Query for variants within a set of specified genomic regions, and whose attributes match those values specified
      * in the filters: study, consequence type, minor allele frequency and protein substitution scores (Polyphen and
@@ -84,5 +89,11 @@ interface VariantEntityRepositoryCustom {
                                                        RelationalOperator siftScoreOperator,
                                                        Double siftScoreValue,
                                                        Pageable pageable);
+
+    Long countByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
+                                         List<String> consequenceType,
+                                         RelationalOperator mafOperator, Double mafValue,
+                                         RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
+                                         RelationalOperator siftScoreOperator, Double siftScoreValue);
 
 }

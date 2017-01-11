@@ -80,39 +80,34 @@ public class RegionWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        VariantEntityRepository.RelationalOperator mafOperator = VariantEntityRepository.RelationalOperator.NONE;
-        Double mafvalue = null;
-        if (maf != null) {
-            mafOperator = Utils.getRelationalOperatorFromRelation(maf);
-            mafvalue = Utils.getValueFromRelation(maf);
-        }
-
-        VariantEntityRepository.RelationalOperator polyphenScoreOperator =
-                VariantEntityRepository.RelationalOperator.NONE;
-        Double polyphenScoreValue = null;
-        if (polyphenScore != null) {
-            polyphenScoreOperator = Utils.getRelationalOperatorFromRelation(polyphenScore);
-            polyphenScoreValue = Utils.getValueFromRelation(polyphenScore);
-        }
-
-        VariantEntityRepository.RelationalOperator siftScoreOperator = VariantEntityRepository.RelationalOperator.NONE;
-        Double siftScoreValue = null;
-        if (siftScore != null) {
-            siftScoreOperator = Utils.getRelationalOperatorFromRelation(siftScore);
-            siftScoreValue = Utils.getValueFromRelation(siftScore);
-        }
+        VariantFilterValues filterValues = new VariantFilterValues(maf, polyphenScore, siftScore);
 
         List<Region> regions = Region.parseRegions(regionId);
-        List<VariantEntity> variantEntities;
 
         PageRequest pageRequest = Utils.getPageRequest(queryOptions);
 
-        variantEntities = variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,
-                                                                           mafOperator, mafvalue, polyphenScoreOperator,
-                                                                           polyphenScoreValue, siftScoreOperator,
-                                                                           siftScoreValue, pageRequest);
+        List<VariantEntity> variantEntities
+                = variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,
+                                                                         filterValues.getMafOperator(),
+                                                                         filterValues.getMafvalue(),
+                                                                         filterValues.getPolyphenScoreOperator(),
+                                                                         filterValues.getPolyphenScoreValue(),
+                                                                         filterValues.getSiftScoreOperator(),
+                                                                         filterValues.getSiftScoreValue(),
+                                                                         pageRequest);
+
+        Long numTotalResults
+                = variantEntityRepository.countByRegionsAndComplexFilters(regions, studies, consequenceType,
+                                                                          filterValues.getMafOperator(),
+                                                                          filterValues.getMafvalue(),
+                                                                          filterValues.getPolyphenScoreOperator(),
+                                                                          filterValues.getPolyphenScoreValue(),
+                                                                          filterValues.getSiftScoreOperator(),
+                                                                          filterValues.getSiftScoreValue());
 
         QueryResult<VariantEntity> queryResult = new QueryResult<>();
+        queryResult.setNumResults(variantEntities.size());
+        queryResult.setNumTotalResults(numTotalResults);
         queryResult.setResult(variantEntities);
         return setQueryResponse(queryResult);
     }

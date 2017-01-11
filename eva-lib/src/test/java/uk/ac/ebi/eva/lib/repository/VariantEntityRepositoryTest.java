@@ -92,6 +92,14 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
+    public void testCountByIdsAndComplexFilters(){
+        String id = "rs776523794";
+        Long count =
+                variantEntityRepository.countByIdsAndComplexFilters(id, null, null, null, null, null, null, null, null);
+        assertEquals(new Long(1), count);
+    }
+
+    @Test
     public void testNonExistentVariantIdIsNotFound(){
         String id = "notarealid";
         List<VariantEntity> variantEntityList =
@@ -137,6 +145,20 @@ public class VariantEntityRepositoryTest {
         for (VariantEntity currVariantEntity : variantEntityList) {
             assertTrue(prevVariantEntity.getStart() <= currVariantEntity.getStart());
         }
+    }
+
+    @Test
+    public void testCountByRegionsAndComplexFilters(){
+        String chr = "11";
+        int start = 185000;
+        int end = 190000;
+        Region region = new Region(chr, start, end);
+        List<Region> regions = new ArrayList<>();
+        regions.add(region);
+        Long count = variantEntityRepository.countByRegionsAndComplexFilters(regions, new ArrayList<>(),
+                                                                             new ArrayList<>(), null, null, null, null,
+                                                                             null, null);
+        assertEquals(new Long(309), count);
     }
 
     @Test
@@ -242,6 +264,7 @@ public class VariantEntityRepositoryTest {
 
     @Test
     public void testFindByRegionsAndComplexFilters() {
+
         List<Region> regions = new ArrayList<>();
         regions.add(new Region("11", 183000, 183300));
         regions.add(new Region("11", 180100, 180200));

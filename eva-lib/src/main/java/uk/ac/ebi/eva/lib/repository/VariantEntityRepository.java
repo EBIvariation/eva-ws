@@ -21,6 +21,7 @@ package uk.ac.ebi.eva.lib.repository;
 import org.opencb.biodata.models.feature.Region;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
@@ -36,21 +37,41 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
     enum RelationalOperator { EQ, GT, LT, GTE, LTE, NONE }
 
     List<VariantEntity> findByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
-                                                   RelationalOperator mafOperator,
-                                                   Double mafValue,
-                                                   RelationalOperator polyphenScoreOperator,
-                                                   Double polyphenScoreValue,
-                                                   RelationalOperator siftScoreOperator,
-                                                   Double siftScoreValue,
+                                                   RelationalOperator mafOperator, Double mafValue,
+                                                   RelationalOperator polyphenScore4Operator, Double polyphenScoreValue,
+                                                   RelationalOperator siftScoreOperator, Double siftScoreValue,
                                                    Pageable pageable);
+
+    Long countByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
+                                     RelationalOperator mafOperator, Double mafValue,
+                                     RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
+                                     RelationalOperator siftScoreOperator, Double siftScoreValue);
 
     List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
                                                        List<String> consequenceType,
-                                                       RelationalOperator mafOperator,
-                                                       Double mafValue,
+                                                       RelationalOperator mafOperator, Double mafValue,
                                                        RelationalOperator polyphenScoreOperator,
                                                        Double polyphenScoreValue,
-                                                       RelationalOperator siftScoreOperator,
-                                                       Double siftScoreValue,
+                                                       RelationalOperator siftScoreOperator, Double siftScoreValue,
                                                        Pageable pageable);
+
+    Long countByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
+                                         List<String> consequenceType,
+                                         RelationalOperator mafOperator, Double mafValue,
+                                         RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
+                                         RelationalOperator siftScoreOperator, Double siftScoreValue);
+
+    @Query("{'chr': ?0, 'start': ?1, 'ref': ?2, 'alt': ?3}")
+    List<VariantEntity> findByChromosomeAndStartAndReferenceAndAlternate(String chromosome, int start,
+                                                                         String reference, String alternate);
+
+    @Query(value = "{'chr': ?0, 'start': ?1, 'ref': ?2, 'alt': ?3}", count = true)
+    Long countByChromosomeAndStartAndReferenceAndAlternate(String chromosome, int start,
+                                                           String reference, String alternate);
+
+    @Query("{'chr': ?0, 'start': ?1, 'ref': ?2}")
+    List<VariantEntity> findByChromosomeAndStartAndReference(String chr, int start, String ref);
+
+    @Query(value = "{'chr': ?0, 'start': ?1, 'ref': ?2}", count = true)
+    Long countByChromosomeAndStartAndReference(String chr, int start, String ref);
 }
