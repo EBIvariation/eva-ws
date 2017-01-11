@@ -119,7 +119,7 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    List<VariantEntity> queryByCoordinatesAndAlleles(String chromosome, int start, String reference, String alternate) {
+    private List<VariantEntity> queryByCoordinatesAndAlleles(String chromosome, int start, String reference, String alternate) {
         if (alternate != null) {
             return variantEntityRepository.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start,
                                                                                             reference, alternate);
@@ -128,7 +128,7 @@ public class VariantWSServer extends EvaWSServer {
         }
     }
 
-    Long countByCoordinatesAndAlleles(String chromosome, int start, String reference, String alternate) {
+    private Long countByCoordinatesAndAlleles(String chromosome, int start, String reference, String alternate) {
         if (alternate != null) {
             return variantEntityRepository.countByChromosomeAndStartAndReferenceAndAlternate(chromosome, start,
                                                                                             reference, alternate);
