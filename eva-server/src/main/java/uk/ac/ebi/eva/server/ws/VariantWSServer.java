@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
@@ -94,6 +95,9 @@ public class VariantWSServer extends EvaWSServer {
         } else {
             VariantFilterValues filterValues = new VariantFilterValues(maf, polyphenScore, siftScore);
 
+            List<String> excludeMapped = exclude.stream().map(e -> Utils.getApiToMongoDocNameMap().get(e)).collect(
+                    Collectors.toList());
+
             variantEntities = variantEntityRepository.findByIdsAndComplexFilters(variantId, studies, consequenceType,
                                                                                  filterValues.getMafOperator(),
                                                                                  filterValues.getMafvalue(),
@@ -101,7 +105,7 @@ public class VariantWSServer extends EvaWSServer {
                                                                                  filterValues.getPolyphenScoreValue(),
                                                                                  filterValues.getSiftScoreOperator(),
                                                                                  filterValues.getSiftScoreValue(),
-                                                                                 exclude,
+                                                                                 excludeMapped,
                                                                                  Utils.getPageRequest(queryOptions));
 
             numTotalResults = variantEntityRepository.countByIdsAndComplexFilters(variantId, studies, consequenceType,

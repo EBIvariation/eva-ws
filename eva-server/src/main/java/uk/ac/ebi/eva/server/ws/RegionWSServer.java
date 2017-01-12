@@ -44,6 +44,7 @@ import uk.ac.ebi.eva.server.Utils;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/v1/segments", produces = "application/json")
@@ -86,6 +87,9 @@ public class RegionWSServer extends EvaWSServer {
 
         PageRequest pageRequest = Utils.getPageRequest(queryOptions);
 
+        List<String> excludeMapped = exclude.stream().map(e -> Utils.getApiToMongoDocNameMap().get(e)).collect(
+                Collectors.toList());
+
         List<VariantEntity> variantEntities
                 = variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,
                                                                          filterValues.getMafOperator(),
@@ -94,7 +98,7 @@ public class RegionWSServer extends EvaWSServer {
                                                                          filterValues.getPolyphenScoreValue(),
                                                                          filterValues.getSiftScoreOperator(),
                                                                          filterValues.getSiftScoreValue(),
-                                                                         exclude,
+                                                                         excludeMapped,
                                                                          pageRequest);
 
         Long numTotalResults

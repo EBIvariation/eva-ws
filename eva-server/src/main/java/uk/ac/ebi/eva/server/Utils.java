@@ -23,7 +23,21 @@ import org.springframework.data.domain.PageRequest;
 
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 public class Utils {
+
+    private static Map<String, String> apiToMongoDocNameMap;
+
+    static {
+        initApiToMongoDocNameMap();
+    }
+
+    public static Map<String, String> getApiToMongoDocNameMap() {
+        return Collections.unmodifiableMap(apiToMongoDocNameMap);
+    }
 
     public static Double getValueFromRelation(String relation) {
         return Double.parseDouble(relation.replaceAll("[^\\d.]", ""));
@@ -57,6 +71,13 @@ public class Utils {
         int page = (skip < 0) ? 0 : Math.floorDiv(skip, size);
 
         return new PageRequest(page, size);
+    }
+
+    private static void initApiToMongoDocNameMap() {
+        apiToMongoDocNameMap = new HashMap<>();
+        apiToMongoDocNameMap.put("sourceEntries", "files");
+        apiToMongoDocNameMap.put("sourceEntries.statistics", "st");
+        apiToMongoDocNameMap.put("annotation.statistics", "annot");
     }
 
 }
