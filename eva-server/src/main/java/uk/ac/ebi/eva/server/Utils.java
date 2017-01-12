@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.eva.server;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opencb.datastore.core.QueryOptions;
 import org.springframework.data.domain.PageRequest;
 
@@ -25,6 +26,7 @@ import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Utils {
@@ -71,6 +73,14 @@ public class Utils {
         int page = (skip < 0) ? 0 : Math.floorDiv(skip, size);
 
         return new PageRequest(page, size);
+    }
+
+    public static String createExclusionFieldString(List<String> excludeList) {
+        String[] excludeArray = new String[excludeList.size()];
+        for (int i = 0; i < excludeList.size(); i++) {
+            excludeArray[i] = String.format("'%s' : 0", excludeList.get(i));
+        }
+        return "{ " + StringUtils.join(excludeArray, ", ") + " }";
     }
 
     private static void initApiToMongoDocNameMap() {
