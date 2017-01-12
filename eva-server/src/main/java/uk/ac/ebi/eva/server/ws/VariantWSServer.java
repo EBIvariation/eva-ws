@@ -89,7 +89,7 @@ public class VariantWSServer extends EvaWSServer {
             String[] regionId = variantId.split(":");
             String alternate = (regionId.length > 3) ? regionId[3] : null;
             variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
-                                                           alternate, exclude);
+                                                           alternate);
             numTotalResults = countByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
                                                            alternate);
         } else {
@@ -126,15 +126,12 @@ public class VariantWSServer extends EvaWSServer {
     }
 
     private List<VariantEntity> queryByCoordinatesAndAlleles(String chromosome, int start, String reference,
-                                                             String alternate, List<String> exclude) {
-        String excludeString = Utils.createExclusionFieldString(exclude);
+                                                             String alternate) {
         if (alternate != null) {
             return variantEntityRepository.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start,
-                                                                                            reference, alternate,
-                                                                                            excludeString);
+                                                                                            reference, alternate);
         } else {
-            return variantEntityRepository.findByChromosomeAndStartAndReference(chromosome, start, reference,
-                                                                                excludeString);
+            return variantEntityRepository.findByChromosomeAndStartAndReference(chromosome, start, reference);
         }
     }
 
