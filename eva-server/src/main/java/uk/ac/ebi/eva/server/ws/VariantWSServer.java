@@ -89,7 +89,7 @@ public class VariantWSServer extends EvaWSServer {
             String[] regionId = variantId.split(":");
             String alternate = (regionId.length > 3) ? regionId[3] : null;
             variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
-                                                           alternate);
+                                                           alternate, exclude);
             numTotalResults = countByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
                                                            alternate);
         } else {
@@ -125,12 +125,16 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    private List<VariantEntity> queryByCoordinatesAndAlleles(String chromosome, int start, String reference, String alternate) {
+    private List<VariantEntity> queryByCoordinatesAndAlleles(String chromosome, int start, String reference,
+                                                             String alternate, List<String> exclude) {
+        String excludeString = Utils.createExclusionFieldString(exclude);
         if (alternate != null) {
             return variantEntityRepository.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start,
-                                                                                            reference, alternate);
+                                                                                            reference, alternate,
+                                                                                            excludeString);
         } else {
-            return variantEntityRepository.findByChromosomeAndStartAndReference(chromosome, start, reference);
+            return variantEntityRepository.findByChromosomeAndStartAndReference(chromosome, start, reference,
+                                                                                excludeString);
         }
     }
 
