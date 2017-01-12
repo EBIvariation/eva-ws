@@ -34,6 +34,7 @@ import uk.ac.ebi.eva.lib.repository.VariantEntityRepository.RelationalOperator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -62,11 +63,11 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                                           Double polyphenScoreValue,
                                                           RelationalOperator siftScoreOperator,
                                                           Double siftScoreValue,
-                                                          Pageable pageable) {
+                                                          List<String> exclude, Pageable pageable) {
         Query query = new Query(Criteria.where("ids").is(id));
         return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue,
                                           polyphenScoreOperator, polyphenScoreValue,
-                                          siftScoreOperator, siftScoreValue, pageable);
+                                          siftScoreOperator, siftScoreValue, exclude, pageable);
     }
 
     @Override
@@ -89,12 +90,12 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                                               Double polyphenScoreValue,
                                                               RelationalOperator siftScoreOperator,
                                                               Double siftScoreValue,
-                                                              Pageable pageable) {
+                                                              List<String> exclude, Pageable pageable) {
         Query query = new Query();
         addRegionsToQuery(query, regions);
         return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue,
                                           polyphenScoreOperator, polyphenScoreValue,
-                                          siftScoreOperator, siftScoreValue, pageable);
+                                          siftScoreOperator, siftScoreValue, exclude, pageable);
     }
 
     @Override
@@ -118,7 +119,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                                    Double polyphenScoreValue,
                                                    RelationalOperator siftScoreOperator,
                                                    Double siftScoreValue,
-                                                   Pageable pageable) {
+                                                   List<String> exclude, Pageable pageable) {
 
         applyFilters(query, studies, consequenceType, mafOperator, mafValue,
                      polyphenScoreOperator, polyphenScoreValue,
@@ -131,6 +132,10 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
         Pageable pageable1 = (pageable != null) ? pageable : new PageRequest(0, 10);
         query.with(pageable1);
+
+        if (Objects.nonNull(exclude) && !exclude.isEmpty()) {
+            exclude.forEach(e -> query.fields().exclude(e));
+        }
 
         return mongoTemplate.find(query, VariantEntity.class);
 

@@ -43,7 +43,6 @@ import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -69,6 +68,7 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "maf", required = false) String maf,
                                              @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                              @RequestParam(name = "sift", required = false) String siftScore,
+                                             @RequestParam(name = "exclude", required = false) List<String> exclude,
                                              HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, IOException {
         initializeQueryOptions();
@@ -94,6 +94,7 @@ public class RegionWSServer extends EvaWSServer {
                                                                          filterValues.getPolyphenScoreValue(),
                                                                          filterValues.getSiftScoreOperator(),
                                                                          filterValues.getSiftScoreValue(),
+                                                                         exclude,
                                                                          pageRequest);
 
         Long numTotalResults

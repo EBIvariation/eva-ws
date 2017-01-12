@@ -81,7 +81,7 @@ public class VariantEntityRepositoryTest {
     public void testVariantIdIsFound(){
         String id = "rs776523794";
         List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByIdsAndComplexFilters(id, null, null, null, null, null, null, null, null,
+                variantEntityRepository.findByIdsAndComplexFilters(id, null, null, null, null, null, null, null, null, ,
                                                                    null);
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);
@@ -103,7 +103,7 @@ public class VariantEntityRepositoryTest {
     public void testNonExistentVariantIdIsNotFound(){
         String id = "notarealid";
         List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByIdsAndComplexFilters(id, null, null, null, null, null, null, null, null,
+                variantEntityRepository.findByIdsAndComplexFilters(id, null, null, null, null, null, null, null, null, ,
                                                                    null);
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() == 0);
@@ -119,7 +119,8 @@ public class VariantEntityRepositoryTest {
         regions.add(region);
         List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByRegionsAndComplexFilters(regions, new ArrayList<>(), new ArrayList<>(), null, null,
-                                                                      null, null, null, null, new PageRequest(0, 1000000));
+                                                                       null, null, null, null, ,
+                                                                       new PageRequest(0, 1000000));
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);
         assertEquals(chr, variantEntityList.get(0).getChromosome());
@@ -137,7 +138,8 @@ public class VariantEntityRepositoryTest {
         regions.add(region);
         List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByRegionsAndComplexFilters(regions, new ArrayList<>(), new ArrayList<>(), null, null,
-                                                                      null, null, null, null, new PageRequest(0, 1000000));
+                                                                       null, null, null, null, ,
+                                                                       new PageRequest(0, 1000000));
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);
         assertEquals(309, variantEntityList.size());
@@ -171,7 +173,8 @@ public class VariantEntityRepositoryTest {
         regions.add(region);
         List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByRegionsAndComplexFilters(regions, new ArrayList<>(), new ArrayList<>(), null, null,
-                                                                      null, null, null, null, new PageRequest(0, 1000000));
+                                                                       null, null, null, null, ,
+                                                                       new PageRequest(0, 1000000));
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() == 0);
     }
@@ -301,8 +304,9 @@ public class VariantEntityRepositoryTest {
                                          int expectedResultLength) {
         List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType, mafOperator,
-                                                                      mafValue, polyphenOperator, polyphenValue,
-                                                                      siftOperator, siftValue, new PageRequest(0, 10000));
+                                                                       mafValue, polyphenOperator, polyphenValue,
+                                                                       siftOperator, siftValue, ,
+                                                                       new PageRequest(0, 10000));
         assertNotNull(variantEntityList);
         assertEquals(expectedResultLength, variantEntityList.size());
     }
@@ -318,7 +322,7 @@ public class VariantEntityRepositoryTest {
                                                           int expectedResultLength) {
         List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByRegionsAndComplexFilters(regions, new ArrayList<>(), new ArrayList<>(),
-                                                                       null, null, null, null, null, null,
+                                                                       null, null, null, null, null, null, ,
                                                                        new PageRequest(0, 100000000));
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);

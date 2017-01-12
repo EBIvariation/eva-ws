@@ -68,6 +68,7 @@ public class VariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "maf", required = false) String maf,
                                         @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                         @RequestParam(name = "sift", required = false) String siftScore,
+                                        @RequestParam(name = "exclude", required = false) List<String> exclude,
                                         HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         initializeQueryOptions();
@@ -100,6 +101,7 @@ public class VariantWSServer extends EvaWSServer {
                                                                                  filterValues.getPolyphenScoreValue(),
                                                                                  filterValues.getSiftScoreOperator(),
                                                                                  filterValues.getSiftScoreValue(),
+                                                                                 exclude,
                                                                                  Utils.getPageRequest(queryOptions));
 
             numTotalResults = variantEntityRepository.countByIdsAndComplexFilters(variantId, studies, consequenceType,

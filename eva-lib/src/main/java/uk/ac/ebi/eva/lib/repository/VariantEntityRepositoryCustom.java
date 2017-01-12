@@ -46,6 +46,7 @@ interface VariantEntityRepositoryCustom {
      *                      substitution on the structure and function of a human protein
      * @param siftScoreOperator Relational operator for querying of variants by sift value
      * @param siftScoreValue Filter for SIFT score, which predicts if an amino acid substitution affects protein function
+     * @param exclude
      * @return VariantEntities whose values are within the bounds of the filters
      */
     List<VariantEntity> findByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
@@ -55,7 +56,7 @@ interface VariantEntityRepositoryCustom {
                                                    Double polyphenScoreValue,
                                                    RelationalOperator siftScoreOperator,
                                                    Double siftScoreValue,
-                                                   Pageable pageable);
+                                                   List<String> exclude, Pageable pageable);
 
     Long countByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
                                      RelationalOperator mafOperator, Double mafValue,
@@ -78,6 +79,7 @@ interface VariantEntityRepositoryCustom {
      *                      substitution on the structure and function of a human protein
      * @param siftScoreOperator Relational operator for querying of variants by sift value
      * @param siftScoreValue Filter for SIFT score, which predicts if an amino acid substitution affects protein function
+     * @param exclude
      * @return VariantEntities whose values are within the bounds of the filters
      */
     List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
@@ -88,7 +90,7 @@ interface VariantEntityRepositoryCustom {
                                                        Double polyphenScoreValue,
                                                        RelationalOperator siftScoreOperator,
                                                        Double siftScoreValue,
-                                                       Pageable pageable);
+                                                       List<String> exclude, Pageable pageable);
 
     Long countByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
                                          List<String> consequenceType,
