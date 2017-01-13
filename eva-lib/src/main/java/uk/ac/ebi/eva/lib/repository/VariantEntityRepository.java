@@ -61,7 +61,7 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
                                          RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
                                          RelationalOperator siftScoreOperator, Double siftScoreValue);
 
-    @Query(value = "{'chr': ?0, 'start': ?1, 'ref': ?2, 'alt': ?3}")
+    @Query("{'chr': ?0, 'start': ?1, 'ref': ?2, 'alt': ?3}")
     List<VariantEntity> findByChromosomeAndStartAndReferenceAndAlternate(String chromosome, int start,
                                                                          String reference, String alternate);
 
@@ -69,7 +69,7 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
     Long countByChromosomeAndStartAndReferenceAndAlternate(String chromosome, int start,
                                                            String reference, String alternate);
 
-    @Query(value = "{'chr': ?0, 'start': ?1, 'ref': ?2}")
+    @Query("{'chr': ?0, 'start': ?1, 'ref': ?2}")
     List<VariantEntity> findByChromosomeAndStartAndReference(String chr, int start, String ref);
 
     @Query(value = "{'chr': ?0, 'start': ?1, 'ref': ?2}", count = true)

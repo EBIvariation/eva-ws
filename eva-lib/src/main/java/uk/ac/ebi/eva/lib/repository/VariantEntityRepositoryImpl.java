@@ -133,7 +133,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         Pageable pageable1 = (pageable != null) ? pageable : new PageRequest(0, 10);
         query.with(pageable1);
 
-        if (Objects.nonNull(exclude) && !exclude.isEmpty()) {
+        if (exclude != null && !exclude.isEmpty()) {
             exclude.forEach(e -> query.fields().exclude(e));
         }
 

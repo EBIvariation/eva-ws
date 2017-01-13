@@ -46,7 +46,8 @@ interface VariantEntityRepositoryCustom {
      *                      substitution on the structure and function of a human protein
      * @param siftScoreOperator Relational operator for querying of variants by sift value
      * @param siftScoreValue Filter for SIFT score, which predicts if an amino acid substitution affects protein function
-     * @param exclude
+     * @param exclude List of strings, each matching a field in the variant Mongo documents. Fields specified in the
+     *                list will be excluded from the returned document(s)
      * @return VariantEntities whose values are within the bounds of the filters
      */
     List<VariantEntity> findByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
@@ -79,7 +80,8 @@ interface VariantEntityRepositoryCustom {
      *                      substitution on the structure and function of a human protein
      * @param siftScoreOperator Relational operator for querying of variants by sift value
      * @param siftScoreValue Filter for SIFT score, which predicts if an amino acid substitution affects protein function
-     * @param exclude
+     * @param exclude List of strings, each matching a field in the variant Mongo documents. Fields specified in the
+     *                list will be excluded from the returned document(s)
      * @return VariantEntities whose values are within the bounds of the filters
      */
     List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
