@@ -24,17 +24,20 @@ import org.springframework.data.domain.PageRequest;
 
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Utils {
 
     private static Map<String, String> apiToMongoDocNameMap;
 
     static {
-        initApiToMongoDocNameMap();
+        apiToMongoDocNameMap = initApiToMongoDocNameMap();
     }
 
     public static Map<String, String> getApiToMongoDocNameMap() {
@@ -76,18 +79,17 @@ public class Utils {
     }
 
     public static String createExclusionFieldString(List<String> excludeList) {
-        String[] excludeArray = new String[excludeList.size()];
-        for (int i = 0; i < excludeList.size(); i++) {
-            excludeArray[i] = String.format("'%s' : 0", excludeList.get(i));
-        }
-        return "{ " + StringUtils.join(excludeArray, ", ") + " }";
+        List<String> formattedList = excludeList.stream().map(field -> String.format("'%s' : 0", field))
+                                                .collect(Collectors.toList());
+        return "{ " + String.join(", ", formattedList) + " }";
     }
 
-    private static void initApiToMongoDocNameMap() {
-        apiToMongoDocNameMap = new HashMap<>();
-        apiToMongoDocNameMap.put("sourceEntries", "files");
-        apiToMongoDocNameMap.put("sourceEntries.statistics", "st");
-        apiToMongoDocNameMap.put("annotation.statistics", "annot");
+    private static Map<String, String> initApiToMongoDocNameMap() {
+        Map<String, String> map = new HashMap<>();
+        map.put("sourceEntries", "files");
+        map.put("sourceEntries.statistics", "st");
+        map.put("annotation", "annot");
+        return map;
     }
 
 }
