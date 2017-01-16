@@ -310,7 +310,7 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
-    public void testFindByRegionsAndComplexFiltersExclude() {
+    public void testFindByRegionsAndComplexFiltersExcludeSingleRoot() {
         List<Region> regions = new ArrayList<>();
         regions.add(new Region("11", 183000, 183300));
 
@@ -329,11 +329,9 @@ public class VariantEntityRepositoryTest {
 
         for (VariantEntity currVariantEntity : variantEntityList) {
             assertTrue(currVariantEntity.getSourceEntries().isEmpty());
-            assertFalse(currVariantEntity.getIds().isEmpty());
         }
 
         exclude = new ArrayList<>();
-        exclude.add("ids");
 
         variantEntityList =
                 variantEntityRepository.findByRegionsAndComplexFilters(regions, null, null,
@@ -347,7 +345,92 @@ public class VariantEntityRepositoryTest {
 
         for (VariantEntity currVariantEntity : variantEntityList) {
             assertFalse(currVariantEntity.getSourceEntries().isEmpty());
+        }
+    }
+
+    @Test
+    public void testFindByRegionsAndComplexFiltersExcludeMultiple() {
+        List<Region> regions = new ArrayList<>();
+        regions.add(new Region("11", 183000, 183300));
+
+        List<String> exclude = new ArrayList<>();
+        exclude.add("files");
+        exclude.add("ids");
+
+        List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByRegionsAndComplexFilters(regions, null, null,
+                                                                       VariantEntityRepository.RelationalOperator.NONE,
+                                                                       null,
+                                                                       VariantEntityRepository.RelationalOperator.NONE,
+                                                                       null,
+                                                                       VariantEntityRepository.RelationalOperator.NONE,
+                                                                       null, exclude,
+                                                                       new PageRequest(0, 100000000));
+
+        for (VariantEntity currVariantEntity : variantEntityList) {
+            assertTrue(currVariantEntity.getSourceEntries().isEmpty());
             assertTrue(currVariantEntity.getIds().isEmpty());
+        }
+
+        exclude = new ArrayList<>();
+
+        variantEntityList =
+                variantEntityRepository.findByRegionsAndComplexFilters(regions, null, null,
+                                                                       VariantEntityRepository.RelationalOperator.NONE,
+                                                                       null,
+                                                                       VariantEntityRepository.RelationalOperator.NONE,
+                                                                       null,
+                                                                       VariantEntityRepository.RelationalOperator.NONE,
+                                                                       null, exclude,
+                                                                       new PageRequest(0, 100000000));
+
+        for (VariantEntity currVariantEntity : variantEntityList) {
+            assertFalse(currVariantEntity.getSourceEntries().isEmpty());
+            assertFalse(currVariantEntity.getIds().isEmpty());
+        }
+    }
+
+    @Test
+    public void testFindByRegionsAndComplexFiltersExcludeNested() {
+        List<Region> regions = new ArrayList<>();
+        regions.add(new Region("11", 183000, 183300));
+
+        List<String> exclude = new ArrayList<>();
+        exclude.add("{files.attrs}");
+
+        List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByRegionsAndComplexFilters(regions, null, null,
+                                                                       VariantEntityRepository.RelationalOperator.NONE,
+                                                                       null,
+                                                                       VariantEntityRepository.RelationalOperator.NONE,
+                                                                       null,
+                                                                       VariantEntityRepository.RelationalOperator.NONE,
+                                                                       null, exclude,
+                                                                       new PageRequest(0, 100000000));
+
+        for (VariantEntity currVariantEntity : variantEntityList) {
+            for (Map.Entry<String, VariantSourceEntry> sourceEntry : currVariantEntity.getSourceEntries().entrySet()){
+                assertTrue(sourceEntry.getValue().getAttributes().isEmpty());
+            }
+        }
+
+        exclude = new ArrayList<>();
+
+        variantEntityList =
+                variantEntityRepository.findByRegionsAndComplexFilters(regions, null, null,
+                                                                       VariantEntityRepository.RelationalOperator.NONE,
+                                                                       null,
+                                                                       VariantEntityRepository.RelationalOperator.NONE,
+                                                                       null,
+                                                                       VariantEntityRepository.RelationalOperator.NONE,
+                                                                       null, exclude,
+                                                                       new PageRequest(0, 100000000));
+
+        for (VariantEntity currVariantEntity : variantEntityList) {
+            for (Map.Entry<String, VariantSourceEntry> sourceEntryEntry :
+                    currVariantEntity.getSourceEntries().entrySet()){
+                assertFalse(sourceEntryEntry.getValue().getAttributes().isEmpty());
+            }
         }
     }
 
