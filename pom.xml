@@ -24,7 +24,7 @@
     <properties>
         <opencga.version>0.5.2</opencga.version>
         <compileSource>1.8</compileSource>
-        <mongo-java-driver.version>2.14.2</mongo-java-driver.version>
+        <mongo-java-driver.version>3.2.2</mongo-java-driver.version>
     </properties>
 
     <dependencyManagement>
@@ -60,6 +60,14 @@
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-starter-data-jpa</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-data-mongodb</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.mongodb</groupId>
+                        <artifactId>mongo-java-driver</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -91,6 +99,10 @@
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-simple</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.mongodb</groupId>
+                        <artifactId>mongo-java-driver</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -114,11 +126,6 @@
                 <artifactId>springfox-swagger2</artifactId>
                 <version>2.5.0</version>
                 <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-mongodb</artifactId>
-                <version>1.4.3.RELEASE</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

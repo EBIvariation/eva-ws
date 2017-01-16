@@ -16,6 +16,7 @@
 package uk.ac.ebi.eva.lib;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
