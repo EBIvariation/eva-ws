@@ -105,12 +105,12 @@ public class VariantWSServerTest {
 
     @Test
     public void testCheckVariantExistsDoesExist() throws URISyntaxException {
-        assertTrue(testCheckVariantExistsHelper("20:71822:C:G"));
+        testCheckVariantExistsHelper("20:71822:C:G");
     }
 
     @Test
     public void testCheckVariantExistsDoesntExist() throws URISyntaxException {
-        assertFalse(testCheckVariantExistsHelper("20:71821:C:G"));
+        testCheckVariantExistsHelper("20:71821:C:G");
     }
 
     private Boolean testCheckVariantExistsHelper(String testRegion) throws URISyntaxException {
