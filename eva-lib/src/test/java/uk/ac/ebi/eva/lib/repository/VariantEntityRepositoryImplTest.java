@@ -128,7 +128,8 @@ public class VariantEntityRepositoryImplTest {
     @Test
     public void testQueryMafEquals() throws Exception {
         Double mafValue = 0.321;
-        variantEntityRepositoryImpl.queryMaf(testQuery, mafValue, VariantEntityRepository.RelationalOperator.EQ);
+        variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, "st.maf", mafValue,
+                VariantEntityRepository.RelationalOperator.EQ);
         expectedQuery.addCriteria(Criteria.where("st.maf").is(mafValue));
         assertEquals(expectedQuery, testQuery);
     }
@@ -136,7 +137,8 @@ public class VariantEntityRepositoryImplTest {
     @Test
     public void testQueryPolyphenScoreGreaterThan() throws Exception {
         Double polyphenScoreValue = 0.582;
-        variantEntityRepositoryImpl.queryPolyphenScore(testQuery, polyphenScoreValue, VariantEntityRepository.RelationalOperator.GT);
+        variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, "annot.ct.polyphen.sc", polyphenScoreValue,
+                VariantEntityRepository.RelationalOperator.GT);
         expectedQuery.addCriteria(Criteria.where("annot.ct.polyphen.sc").gt(polyphenScoreValue));
         assertEquals(expectedQuery, testQuery);
     }
@@ -144,7 +146,8 @@ public class VariantEntityRepositoryImplTest {
     @Test
     public void testQuerySiftLessThan() throws Exception {
         Double siftValue = 0.657;
-        variantEntityRepositoryImpl.querySift(testQuery, siftValue, VariantEntityRepository.RelationalOperator.LT);
+        variantEntityRepositoryImpl.relationalCriteriaHelper(testQuery, "annot.ct.sift.sc", siftValue,
+                VariantEntityRepository.RelationalOperator.LT);
         expectedQuery.addCriteria(Criteria.where("annot.ct.sift.sc").lt(siftValue));
         assertEquals(expectedQuery, testQuery);
     }

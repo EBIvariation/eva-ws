@@ -170,15 +170,15 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         }
 
         if (mafValue != null && mafOperator != VariantEntityRepository.RelationalOperator.NONE) {
-            queryMaf(query, mafValue, mafOperator);
+            relationalCriteriaHelper(query, "st.maf", mafValue, mafOperator);
         }
 
         if (polyphenScoreValue != null && polyphenScoreOperator != VariantEntityRepository.RelationalOperator.NONE) {
-            queryPolyphenScore(query, polyphenScoreValue, polyphenScoreOperator);
+            relationalCriteriaHelper(query, "annot.ct.polyphen.sc", polyphenScoreValue, polyphenScoreOperator);
         }
 
         if (siftScoreValue != null && siftScoreOperator != VariantEntityRepository.RelationalOperator.NONE) {
-            querySift(query, siftScoreValue, siftScoreOperator);
+            relationalCriteriaHelper(query, "annot.ct.sift.sc", siftScoreValue, siftScoreOperator);
         }
 
         if (studies != null && !studies.isEmpty()) {
@@ -202,18 +202,6 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                                            .map(c -> Integer.parseInt(c.replaceAll("[^\\d.]", ""), 10))
                                                            .collect(Collectors.toList());
         query.addCriteria(Criteria.where("annot.ct.so").in(consequenceTypeConv));
-    }
-
-    void queryMaf(Query query, double mafValue, RelationalOperator mafOperator) {
-        relationalCriteriaHelper(query, "st.maf", mafValue, mafOperator);
-    }
-
-    void queryPolyphenScore(Query query, double polyphenScoreValue, RelationalOperator polyphenScoreOperator) {
-        relationalCriteriaHelper(query, "annot.ct.polyphen.sc", polyphenScoreValue, polyphenScoreOperator);
-    }
-
-    void querySift(Query query, double siftScoreValue, RelationalOperator siftScoreOperator) {
-        relationalCriteriaHelper(query, "annot.ct.sift.sc", siftScoreValue, siftScoreOperator);
     }
 
     void queryStudies(Query query, List<String> studies) {
