@@ -70,6 +70,46 @@ public class RepositoryFilterTest {
     }
 
     @Test
+    public void getRepositoryFilterMulti() throws Exception {
+        List<RepositoryFilter> expectedFilters = new ArrayList<>();
+        expectedFilters.add(new RepositoryFilter<>("st.maf",
+                                                   0.5,
+                                                   VariantEntityRepository.RelationalOperator.EQ));
+        expectedFilters.add(new RepositoryFilter<>("annot.ct.polyphen.sc",
+                                                   0.13,
+                                                   VariantEntityRepository.RelationalOperator.GT));
+        assertEquals(expectedFilters, RepositoryFilter.getRepositoryFilters("=0.5", ">0.13", null, null, null));
+
+
+        expectedFilters = new ArrayList<>();
+        expectedFilters.add(new RepositoryFilter<>("annot.ct.sift.sc",
+                                                   0.09,
+                                                   VariantEntityRepository.RelationalOperator.LTE));
+        List<String> studies = new ArrayList<>();
+        String testStudyId = "TEST_STUDY";
+        studies.add(testStudyId);
+        expectedFilters.add(new RepositoryFilter<>("files.sid",
+                                                   studies,
+                                                   VariantEntityRepository.RelationalOperator.IN));
+        assertEquals(expectedFilters, RepositoryFilter.getRepositoryFilters(null, null, "<=0.09", studies, null));
+
+        List<String> conTypes = new ArrayList<>();
+        String testConType = "SO:000123";
+        conTypes.add(testConType);
+        List<Integer> conTypesOut = new ArrayList<>();
+        int testConTypeOut = 123;
+        conTypesOut.add(testConTypeOut);
+        expectedFilters = new ArrayList<>();
+        expectedFilters.add(new RepositoryFilter<>("st.maf",
+                                                   0.5,
+                                                   VariantEntityRepository.RelationalOperator.EQ));
+        expectedFilters.add(new RepositoryFilter<>("annot.ct.so",
+                                                   conTypesOut,
+                                                   VariantEntityRepository.RelationalOperator.IN));
+        assertEquals(expectedFilters, RepositoryFilter.getRepositoryFilters("=0.5", null, null, null, conTypes));
+    }
+
+    @Test
     public void getValueFromRelation() throws Exception {
         assertEquals(new Double(0.5), RepositoryFilter.getValueFromRelation("=0.5"));
         assertEquals(new Double(0.12), RepositoryFilter.getValueFromRelation(">0.12"));
