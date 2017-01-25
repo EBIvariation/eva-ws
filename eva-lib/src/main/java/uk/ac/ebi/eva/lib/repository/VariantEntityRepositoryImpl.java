@@ -34,7 +34,6 @@ import uk.ac.ebi.eva.lib.repository.VariantEntityRepository.RelationalOperator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -56,74 +55,35 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     @Override
-    public List<VariantEntity> findByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
-                                                          RelationalOperator mafOperator,
-                                                          Double mafValue,
-                                                          RelationalOperator polyphenScoreOperator,
-                                                          Double polyphenScoreValue,
-                                                          RelationalOperator siftScoreOperator,
-                                                          Double siftScoreValue,
-                                                          List<String> exclude, Pageable pageable) {
+    public List<VariantEntity> findByIdsAndComplexFilters(String id, List<RepositoryFilter> filters, List<String> exclude, Pageable pageable) {
         Query query = new Query(Criteria.where("ids").is(id));
-        return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue,
-                                          polyphenScoreOperator, polyphenScoreValue,
-                                          siftScoreOperator, siftScoreValue, exclude, pageable);
+        return findByComplexFiltersHelper(query, filters, exclude, pageable);
     }
 
     @Override
-    public Long countByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
-                                            RelationalOperator mafOperator, Double mafValue,
-                                            RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
-                                            RelationalOperator siftScoreOperator, Double siftScoreValue) {
+    public Long countByIdsAndComplexFilters(String id, List<RepositoryFilter> filters) {
         Query query = new Query(Criteria.where("ids").is(id));
-        return countByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue,
-                                           polyphenScoreOperator, polyphenScoreValue, siftScoreOperator,
-                                           siftScoreValue);
+        return countByComplexFiltersHelper(query, filters);
     }
 
     @Override
-    public List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
-                                                              List<String> consequenceType,
-                                                              RelationalOperator mafOperator,
-                                                              Double mafValue,
-                                                              RelationalOperator polyphenScoreOperator,
-                                                              Double polyphenScoreValue,
-                                                              RelationalOperator siftScoreOperator,
-                                                              Double siftScoreValue,
+    public List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<RepositoryFilter> filters,
                                                               List<String> exclude, Pageable pageable) {
         Query query = new Query();
         addRegionsToQuery(query, regions);
-        return findByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue,
-                                          polyphenScoreOperator, polyphenScoreValue,
-                                          siftScoreOperator, siftScoreValue, exclude, pageable);
+        return findByComplexFiltersHelper(query, filters, exclude, pageable);
     }
 
     @Override
-    public Long countByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
-                                                List<String> consequenceType,
-                                                RelationalOperator mafOperator, Double mafValue,
-                                                RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
-                                                RelationalOperator siftScoreOperator, Double siftScoreValue) {
+    public Long countByRegionsAndComplexFilters(List<Region> regions, List<RepositoryFilter> filters) {
         Query query = new Query();
         addRegionsToQuery(query, regions);
-        return countByComplexFiltersHelper(query, studies, consequenceType, mafOperator, mafValue,
-                                           polyphenScoreOperator, polyphenScoreValue, siftScoreOperator,
-                                           siftScoreValue);
+        return countByComplexFiltersHelper(query, filters);
     }
 
-    List<VariantEntity> findByComplexFiltersHelper(Query query,
-                                                   List<String> studies, List<String> consequenceType,
-                                                   RelationalOperator mafOperator,
-                                                   Double mafValue,
-                                                   RelationalOperator polyphenScoreOperator,
-                                                   Double polyphenScoreValue,
-                                                   RelationalOperator siftScoreOperator,
-                                                   Double siftScoreValue,
-                                                   List<String> exclude, Pageable pageable) {
+    List<VariantEntity> findByComplexFiltersHelper(Query query, List<RepositoryFilter> filters, List<String> exclude, Pageable pageable) {
 
-        applyFilters(query, studies, consequenceType, mafOperator, mafValue,
-                     polyphenScoreOperator, polyphenScoreValue,
-                     siftScoreOperator, siftScoreValue);
+        applyFilters(query, filters);
 
         ArrayList<String> sortProps = new ArrayList<String>();
         sortProps.add("chr");
@@ -141,48 +101,15 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
     }
 
-    Long countByComplexFiltersHelper(Query query,
-                                     List<String> studies, List<String> consequenceType,
-                                     RelationalOperator mafOperator,
-                                     Double mafValue,
-                                     RelationalOperator polyphenScoreOperator,
-                                     Double polyphenScoreValue,
-                                     RelationalOperator siftScoreOperator,
-                                     Double siftScoreValue) {
-        applyFilters(query, studies, consequenceType, mafOperator, mafValue,
-                     polyphenScoreOperator, polyphenScoreValue,
-                     siftScoreOperator, siftScoreValue);
+    Long countByComplexFiltersHelper(Query query, List<RepositoryFilter> filters) {
+        applyFilters(query, filters);
 
         return mongoTemplate.count(query, VariantEntity.class);
     }
 
-    void applyFilters(Query query,
-                       List<String> studies, List<String> consequenceType,
-                       RelationalOperator mafOperator,
-                       Double mafValue,
-                       RelationalOperator polyphenScoreOperator,
-                       Double polyphenScoreValue,
-                       RelationalOperator siftScoreOperator,
-                       Double siftScoreValue) {
-
-        if (consequenceType != null && !consequenceType.isEmpty()) {
-            queryConsequenceType(query, consequenceType);
-        }
-
-        if (mafValue != null && mafOperator != VariantEntityRepository.RelationalOperator.NONE) {
-            relationalCriteriaHelper(query, "st.maf", mafValue, mafOperator);
-        }
-
-        if (polyphenScoreValue != null && polyphenScoreOperator != VariantEntityRepository.RelationalOperator.NONE) {
-            relationalCriteriaHelper(query, "annot.ct.polyphen.sc", polyphenScoreValue, polyphenScoreOperator);
-        }
-
-        if (siftScoreValue != null && siftScoreOperator != VariantEntityRepository.RelationalOperator.NONE) {
-            relationalCriteriaHelper(query, "annot.ct.sift.sc", siftScoreValue, siftScoreOperator);
-        }
-
-        if (studies != null && !studies.isEmpty()) {
-            queryStudies(query, studies);
+    void applyFilters(Query query, List<RepositoryFilter> filters) {
+        for (RepositoryFilter filter : filters) {
+            filter.applyFilter(query);
         }
     }
 
@@ -195,17 +122,6 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                         .and("end").gte(region.getStart()).lt(region.getEnd() + MARGIN)));
 
         query.addCriteria(new Criteria().orOperator(orRegionCriteria.toArray(new Criteria[orRegionCriteria.size()])));
-    }
-
-    void queryConsequenceType(Query query, List<String> consequenceType) {
-        List<Integer> consequenceTypeConv = consequenceType.stream()
-                                                           .map(c -> Integer.parseInt(c.replaceAll("[^\\d.]", ""), 10))
-                                                           .collect(Collectors.toList());
-        query.addCriteria(Criteria.where("annot.ct.so").in(consequenceTypeConv));
-    }
-
-    void queryStudies(Query query, List<String> studies) {
-        query.addCriteria(Criteria.where("files.sid").in(studies));
     }
 
     void relationalCriteriaHelper(Query query, String field, double value, RelationalOperator operator) {

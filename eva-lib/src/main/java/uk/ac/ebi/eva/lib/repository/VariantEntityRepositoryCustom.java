@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository.RelationalOperator;
+import uk.ac.ebi.eva.lib.utils.RepositoryFilter;
 
 import java.util.List;
 
@@ -50,19 +51,9 @@ interface VariantEntityRepositoryCustom {
      *                list will be excluded from the returned document(s)
      * @return VariantEntities whose values are within the bounds of the filters
      */
-    List<VariantEntity> findByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
-                                                   RelationalOperator mafOperator,
-                                                   Double mafValue,
-                                                   RelationalOperator polyphenScoreOperator,
-                                                   Double polyphenScoreValue,
-                                                   RelationalOperator siftScoreOperator,
-                                                   Double siftScoreValue,
-                                                   List<String> exclude, Pageable pageable);
+    List<VariantEntity> findByIdsAndComplexFilters(String id, List<RepositoryFilter> filters, List<String> exclude, Pageable pageable);
 
-    Long countByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
-                                     RelationalOperator mafOperator, Double mafValue,
-                                     RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
-                                     RelationalOperator siftScoreOperator, Double siftScoreValue);
+    Long countByIdsAndComplexFilters(String id, List<RepositoryFilter> filters);
 
     /**
      * Query for variants within a set of specified genomic regions, and whose attributes match those values specified
@@ -84,20 +75,9 @@ interface VariantEntityRepositoryCustom {
      *                list will be excluded from the returned document(s)
      * @return VariantEntities whose values are within the bounds of the filters
      */
-    List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
-                                                       List<String> consequenceType,
-                                                       RelationalOperator mafOperator,
-                                                       Double mafValue,
-                                                       RelationalOperator polyphenScoreOperator,
-                                                       Double polyphenScoreValue,
-                                                       RelationalOperator siftScoreOperator,
-                                                       Double siftScoreValue,
+    List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<RepositoryFilter> filters,
                                                        List<String> exclude, Pageable pageable);
 
-    Long countByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
-                                         List<String> consequenceType,
-                                         RelationalOperator mafOperator, Double mafValue,
-                                         RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
-                                         RelationalOperator siftScoreOperator, Double siftScoreValue);
+    Long countByRegionsAndComplexFilters(List<Region> regions, List<RepositoryFilter> filters);
 
 }
