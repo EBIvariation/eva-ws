@@ -39,6 +39,7 @@ import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.RepositoryFilter;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -82,7 +83,8 @@ public class RegionWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        VariantFilterValues filterValues = new VariantFilterValues(maf, polyphenScore, siftScore);
+        List<RepositoryFilter> filters =
+                Utils.getRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
         List<Region> regions = Region.parseRegions(regionId);
 
@@ -100,25 +102,10 @@ public class RegionWSServer extends EvaWSServer {
             }
         }
 
-        List<VariantEntity> variantEntities
-                = variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,
-                                                                         filterValues.getMafOperator(),
-                                                                         filterValues.getMafvalue(),
-                                                                         filterValues.getPolyphenScoreOperator(),
-                                                                         filterValues.getPolyphenScoreValue(),
-                                                                         filterValues.getSiftScoreOperator(),
-                                                                         filterValues.getSiftScoreValue(),
-                                                                         excludeMapped,
-                                                                         pageRequest);
+        List<VariantEntity> variantEntities =
+                variantEntityRepository.findByRegionsAndComplexFilters(regions, filters, excludeMapped, pageRequest);
 
-        Long numTotalResults
-                = variantEntityRepository.countByRegionsAndComplexFilters(regions, studies, consequenceType,
-                                                                          filterValues.getMafOperator(),
-                                                                          filterValues.getMafvalue(),
-                                                                          filterValues.getPolyphenScoreOperator(),
-                                                                          filterValues.getPolyphenScoreValue(),
-                                                                          filterValues.getSiftScoreOperator(),
-                                                                          filterValues.getSiftScoreValue());
+        Long numTotalResults = variantEntityRepository.countByRegionsAndComplexFilters(regions, filters);
 
         QueryResult<VariantEntity> queryResult = new QueryResult<>();
         queryResult.setNumResults(variantEntities.size());

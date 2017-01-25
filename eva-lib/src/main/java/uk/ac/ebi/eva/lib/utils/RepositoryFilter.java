@@ -5,23 +5,16 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
-import java.util.Collection;
-
 public class RepositoryFilter<T> {
 
     private String field;
     private T value;
     private VariantEntityRepository.RelationalOperator operator = VariantEntityRepository.RelationalOperator.NONE;
 
-    public RepositoryFilter(String field, T value, String relationalOperator) {
+    public RepositoryFilter(String field, T value, VariantEntityRepository.RelationalOperator operator) {
         this.field = field;
         this.value = value;
-
-        if (value instanceof Collection) {
-            this.operator = VariantEntityRepository.RelationalOperator.IN;
-        } else {
-            setOperator(relationalOperator);
-        }
+        this.operator = operator;
     }
 
     public Query applyFilter(Query query) {
@@ -54,23 +47,23 @@ public class RepositoryFilter<T> {
         return query;
     }
 
-    private void setOperator(String relation) {
-        String relationalOperatorString = relation.replaceAll("[^<>=]", "");
-
-        switch (relationalOperatorString) {
-            case "=":
-                this.operator = VariantEntityRepository.RelationalOperator.EQ;
-            case ">":
-                this.operator = VariantEntityRepository.RelationalOperator.GT;
-            case "<":
-                this.operator = VariantEntityRepository.RelationalOperator.LT;
-            case ">=":
-                this.operator = VariantEntityRepository.RelationalOperator.GTE;
-            case "<=":
-                this.operator = VariantEntityRepository.RelationalOperator.LTE;
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
+//    private void setOperator(String relation) {
+//        String relationalOperatorString = relation.replaceAll("[^<>=]", "");
+//
+//        switch (relationalOperatorString) {
+//            case "=":
+//                this.operator = VariantEntityRepository.RelationalOperator.EQ;
+//            case ">":
+//                this.operator = VariantEntityRepository.RelationalOperator.GT;
+//            case "<":
+//                this.operator = VariantEntityRepository.RelationalOperator.LT;
+//            case ">=":
+//                this.operator = VariantEntityRepository.RelationalOperator.GTE;
+//            case "<=":
+//                this.operator = VariantEntityRepository.RelationalOperator.LTE;
+//            default:
+//                throw new IllegalArgumentException();
+//        }
+//    }
 
 }

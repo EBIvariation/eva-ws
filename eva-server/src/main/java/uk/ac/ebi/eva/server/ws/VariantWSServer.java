@@ -38,6 +38,7 @@ import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.RepositoryFilter;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -93,28 +94,16 @@ public class VariantWSServer extends EvaWSServer {
             numTotalResults = countByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
                                                            alternate);
         } else {
-            VariantFilterValues filterValues = new VariantFilterValues(maf, polyphenScore, siftScore);
+            List<RepositoryFilter> filters =
+                    Utils.getRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
             List<String> excludeMapped = exclude.stream().map(e -> Utils.getApiToMongoDocNameMap().get(e)).collect(
                     Collectors.toList());
 
-            variantEntities = variantEntityRepository.findByIdsAndComplexFilters(variantId, studies, consequenceType,
-                                                                                 filterValues.getMafOperator(),
-                                                                                 filterValues.getMafvalue(),
-                                                                                 filterValues.getPolyphenScoreOperator(),
-                                                                                 filterValues.getPolyphenScoreValue(),
-                                                                                 filterValues.getSiftScoreOperator(),
-                                                                                 filterValues.getSiftScoreValue(),
-                                                                                 excludeMapped,
+            variantEntities = variantEntityRepository.findByIdsAndComplexFilters(variantId, filters, excludeMapped,
                                                                                  Utils.getPageRequest(queryOptions));
 
-            numTotalResults = variantEntityRepository.countByIdsAndComplexFilters(variantId, studies, consequenceType,
-                                                                                  filterValues.getMafOperator(),
-                                                                                  filterValues.getMafvalue(),
-                                                                                  filterValues.getPolyphenScoreOperator(),
-                                                                                  filterValues.getPolyphenScoreValue(),
-                                                                                  filterValues.getSiftScoreOperator(),
-                                                                                  filterValues.getSiftScoreValue());
+            numTotalResults = variantEntityRepository.countByIdsAndComplexFilters(variantId, filters);
         }
 
 
@@ -125,8 +114,7 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    private List<VariantEntity> queryByCoordinatesAndAlleles(String chromosome, int start, String reference,
-                                                             String alternate) {
+    private List<VariantEntity> queryByCoordinatesAndAlleles(String chromosome, int start, String reference, String alternate) {
         if (alternate != null) {
             return variantEntityRepository.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start,
                                                                                             reference, alternate);

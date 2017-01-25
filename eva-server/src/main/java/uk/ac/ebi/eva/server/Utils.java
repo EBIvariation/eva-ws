@@ -23,6 +23,7 @@ import org.opencb.datastore.core.QueryOptions;
 import org.springframework.data.domain.PageRequest;
 
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+import uk.ac.ebi.eva.lib.utils.RepositoryFilter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +43,31 @@ public class Utils {
 
     public static Map<String, String> getApiToMongoDocNameMap() {
         return Collections.unmodifiableMap(apiToMongoDocNameMap);
+    }
+    
+
+    public static List<RepositoryFilter> getRepositoryFilters(String maf, String polyphenScore, String siftScore,
+                                                       List<String> studies, List<String> consequenceType) {
+        List<RepositoryFilter> filters = new ArrayList<>();
+
+        RepositoryFilter filter =
+                new RepositoryFilter<>("st.maf", getValueFromRelation(maf), getRelationalOperatorFromRelation(maf));
+        filters.add(filter);
+        filter = new RepositoryFilter<>("annot.ct.polyphen.sc", getValueFromRelation(polyphenScore),
+                                        getRelationalOperatorFromRelation(polyphenScore));
+        filters.add(filter);
+        filter = new RepositoryFilter<>("annot.ct.sift.sc", getValueFromRelation(siftScore),
+                                        getRelationalOperatorFromRelation(siftScore));
+        filters.add(filter);
+        filter = new RepositoryFilter<>("files.sid", studies, VariantEntityRepository.RelationalOperator.IN);
+        filters.add(filter);
+        List<Integer> consequenceTypeConv = consequenceType.stream()
+                                                           .map(c -> Integer.parseInt(c.replaceAll("[^\\d.]", ""), 10))
+                                                           .collect(Collectors.toList());
+        filter = new RepositoryFilter<>("annot.ct.so", consequenceTypeConv,
+                                        VariantEntityRepository.RelationalOperator.IN);
+        filters.add(filter);
+        return filters;
     }
 
     public static Double getValueFromRelation(String relation) {
