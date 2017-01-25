@@ -22,7 +22,6 @@ public class RepositoryFilter<T> {
         } else {
             setOperator(relationalOperator);
         }
-        }
     }
 
     public Query applyFilter(Query query) {
@@ -72,6 +71,6 @@ public class RepositoryFilter<T> {
             default:
                 throw new IllegalArgumentException();
         }
-
-
     }
+
+}
