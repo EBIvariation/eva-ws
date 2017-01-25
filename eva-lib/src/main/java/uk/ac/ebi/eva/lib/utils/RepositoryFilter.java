@@ -7,6 +7,7 @@ import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class RepositoryFilter<T> {
@@ -109,6 +110,30 @@ public class RepositoryFilter<T> {
                 throw new IllegalArgumentException();
         }
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+        if (getClass() != o.getClass()) {
+            return false;
+        }
+
+        RepositoryFilter o1 = (RepositoryFilter) o;
+
+        return (this.field.equals(o1.field) &&
+                Objects.equals(this.value, o1.value) &&
+                Objects.equals(this.operator, o1.operator));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(field, value, operator);
     }
 
 }
