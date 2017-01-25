@@ -31,6 +31,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository.RelationalOperator;
+import uk.ac.ebi.eva.lib.utils.RepositoryFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +110,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
     void applyFilters(Query query, List<RepositoryFilter> filters) {
         for (RepositoryFilter filter : filters) {
-            filter.applyFilter(query);
+            filter.apply(query);
         }
     }
 
