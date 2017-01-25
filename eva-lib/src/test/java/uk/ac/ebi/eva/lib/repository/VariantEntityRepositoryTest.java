@@ -331,55 +331,7 @@ public class VariantEntityRepositoryTest {
         exclude.add("files");
 
         List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByRegionsAndComplexFilters(regions, new ArrayList<>(), exclude,
-                                                                       new PageRequest(0, 100000000));
-
-        for (VariantEntity currVariantEntity : variantEntityList) {
-            assertTrue(currVariantEntity.getSourceEntries().isEmpty());
-        }
-    }
-
-    @Test
-    public void testFindByRegionsAndComplexFiltersExcludeMultiple() {
-        List<Region> regions = new ArrayList<>();
-        regions.add(new Region("11", 183000, 183300));
-
-        List<String> exclude = new ArrayList<>();
-        exclude.add("files");
-        exclude.add("ids");
-
-        List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByRegionsAndComplexFilters(regions, new ArrayList<>(), exclude,
-                                                                       new PageRequest(0, 100000000));
-
-        for (VariantEntity currVariantEntity : variantEntityList) {
-            assertTrue(currVariantEntity.getSourceEntries().isEmpty());
-            assertTrue(currVariantEntity.getIds().isEmpty());
-        }
-    }
-
-    @Test
-    public void testFindByRegionsAndComplexFiltersExcludeNested() {
-        List<Region> regions = new ArrayList<>();
-        regions.add(new Region("11", 183000, 183300));
-
-        List<String> exclude = new ArrayList<>();
-        exclude.add("files.attrs");
-
-        List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByRegionsAndComplexFilters(regions, new ArrayList<>(), exclude,
-                                                                       new PageRequest(0, 100000000));
-
-        for (VariantEntity currVariantEntity : variantEntityList) {
-            for (Map.Entry<String, VariantSourceEntry> sourceEntry : currVariantEntity.getSourceEntries().entrySet()){
-                assertTrue(sourceEntry.getValue().getAttributes().isEmpty());
-            }
-        }
-    }
-
-    private void testFiltersHelperRegion(List<Region> regions, List<RepositoryFilter> filters, List<String> exclude, int expectedResultLength) {
-        List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByRegionsAndComplexFilters(regions, filters, exclude, new PageRequest(0, 10000));
+                variantEntityRepository.findByRegionsAndComplexFilters(regions, filters, new PageRequest(0, 10000));
         assertNotNull(variantEntityList);
         assertEquals(expectedResultLength, variantEntityList.size());
     }
