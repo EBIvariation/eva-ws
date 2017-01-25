@@ -124,28 +124,4 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         query.addCriteria(new Criteria().orOperator(orRegionCriteria.toArray(new Criteria[orRegionCriteria.size()])));
     }
 
-    void relationalCriteriaHelper(Query query, String field, double value, RelationalOperator operator) {
-
-        Criteria criteria = Criteria.where(field);
-        switch (operator) {
-            case EQ:
-                criteria = criteria.is(value);
-                break;
-            case GT:
-                criteria = criteria.gt(value);
-                break;
-            case LT:
-                criteria = criteria.lt(value);
-                break;
-            case GTE:
-                criteria = criteria.gte(value);
-                break;
-            case LTE:
-                criteria = criteria.lte(value);
-                break;
-            case NONE:
-                throw new IllegalArgumentException();
-        }
-        query.addCriteria(criteria);
-    }
 }

@@ -39,6 +39,7 @@ import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.utils.RepositoryFilter;
+import uk.ac.ebi.eva.lib.utils.RepositoryFilterUtils;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -95,7 +96,7 @@ public class VariantWSServer extends EvaWSServer {
                                                            alternate);
         } else {
             List<RepositoryFilter> filters =
-                    Utils.getRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
+                    RepositoryFilterUtils.getRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
             List<String> excludeMapped = exclude.stream().map(e -> Utils.getApiToMongoDocNameMap().get(e)).collect(
                     Collectors.toList());
