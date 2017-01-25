@@ -33,9 +33,40 @@ public class RepositoryFilterTest {
         expectedFilters.add(new RepositoryFilter<>("st.maf",
                                                    0.5,
                                                    VariantEntityRepository.RelationalOperator.EQ));
+        assertEquals(expectedFilters, RepositoryFilter.getRepositoryFilters("=0.5", null, null, null, null));
 
-        assertEquals(expectedFilters,
-                     RepositoryFilter.getRepositoryFilters("=0.5", null, null, null, null));
+        expectedFilters = new ArrayList<>();
+        expectedFilters.add(new RepositoryFilter<>("annot.ct.polyphen.sc",
+                                                   0.13,
+                                                   VariantEntityRepository.RelationalOperator.GT));
+        assertEquals(expectedFilters, RepositoryFilter.getRepositoryFilters(null, ">0.13", null, null, null));
+
+        expectedFilters = new ArrayList<>();
+        expectedFilters.add(new RepositoryFilter<>("annot.ct.sift.sc",
+                                                   0.09,
+                                                   VariantEntityRepository.RelationalOperator.LTE));
+        assertEquals(expectedFilters, RepositoryFilter.getRepositoryFilters(null, null, "<=0.09", null, null));
+
+        List<String> studies = new ArrayList<>();
+        String testStudyId = "TEST_STUDY";
+        studies.add(testStudyId);
+        expectedFilters = new ArrayList<>();
+        expectedFilters.add(new RepositoryFilter<>("files.sid",
+                                                   studies,
+                                                   VariantEntityRepository.RelationalOperator.IN));
+        assertEquals(expectedFilters, RepositoryFilter.getRepositoryFilters(null, null, null, studies, null));
+
+        List<String> conTypes = new ArrayList<>();
+        String testConType = "SO:000123";
+        conTypes.add(testConType);
+        List<Integer> conTypesOut = new ArrayList<>();
+        int testConTypeOut = 123;
+        conTypesOut.add(testConTypeOut);
+        expectedFilters = new ArrayList<>();
+        expectedFilters.add(new RepositoryFilter<>("annot.ct.so",
+                                                   conTypesOut,
+                                                   VariantEntityRepository.RelationalOperator.IN));
+        assertEquals(expectedFilters, RepositoryFilter.getRepositoryFilters(null, null, null, null, conTypes));
     }
 
     @Test
