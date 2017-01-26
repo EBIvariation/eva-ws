@@ -96,7 +96,7 @@ public class DBAdaptorConnector {
             }
         }
 
-        List<MongoCredential> mongoCredentialList = null;
+        List<MongoCredential> mongoCredentialList = new ArrayList<>();
         String authenticationDb = properties.getProperty("eva.mongo.auth.db", null);
         if (authenticationDb != null && !authenticationDb.isEmpty()) {
             mongoCredentialList = Collections.singletonList(MongoCredential.createCredential(

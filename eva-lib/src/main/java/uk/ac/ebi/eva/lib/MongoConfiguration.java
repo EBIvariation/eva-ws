@@ -26,7 +26,7 @@ import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
-import uk.ac.ebi.eva.commons.models.converters.data.MongoDBObjectToVariantEntityConverter;
+import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantEntityConverter;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
@@ -54,7 +54,7 @@ public class MongoConfiguration {
     @Bean
     public CustomConversions customConversions() {
         List<Converter<?, ?>> converters = new ArrayList<Converter<?, ?>>();
-        converters.add(new MongoDBObjectToVariantEntityConverter());
+        converters.add(new DBObjectToVariantEntityConverter());
         return new CustomConversions(converters);
     }
 

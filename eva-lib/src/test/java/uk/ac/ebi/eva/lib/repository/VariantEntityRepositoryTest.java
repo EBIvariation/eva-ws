@@ -44,7 +44,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import uk.ac.ebi.eva.commons.models.converters.data.MongoDBObjectToVariantEntityConverter;
+import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantEntityConverter;
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
 import java.io.IOException;
@@ -357,7 +357,7 @@ public class VariantEntityRepositoryTest {
         @Bean
         public CustomConversions customConversions() {
             List<Converter<?, ?>> converters = new ArrayList<Converter<?, ?>>();
-            converters.add(new MongoDBObjectToVariantEntityConverter());
+            converters.add(new DBObjectToVariantEntityConverter());
             return new CustomConversions(converters);
         }
 
