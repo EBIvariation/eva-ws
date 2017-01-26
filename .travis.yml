@@ -1,0 +1,18 @@
+sudo: false
+
+language: java
+
+jdk:
+  - oraclejdk8
+
+env:
+  - OPENCGA_HOME=$TRAVIS_BUILD_DIR/opencga/opencga-app/build
+
+before_install:
+  - chmod +x install-dependencies.sh
+
+install:
+  - ./install-dependencies.sh
+
+script:
+  - mvn compile
