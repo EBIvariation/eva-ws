@@ -24,7 +24,6 @@
     <properties>
         <opencga.version>0.5.2</opencga.version>
         <compileSource>1.8</compileSource>
-        <mongo-java-driver.version>3.2.2</mongo-java-driver.version>
     </properties>
 
     <dependencyManagement>
