@@ -53,21 +53,7 @@
             <dependency>
                 <groupId>uk.ac.ebi.eva</groupId>
                 <artifactId>variation-commons</artifactId>
-                <version>0.1</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-starter-data-jpa</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-starter-data-mongodb</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.mongodb</groupId>
-                        <artifactId>mongo-java-driver</artifactId>
-                    </exclusion>
-                </exclusions>
+                <version>0.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opencb.opencga</groupId>

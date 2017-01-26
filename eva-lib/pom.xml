@@ -23,11 +23,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>uk.ac.ebi.eva</groupId>
-            <artifactId>variation-commons</artifactId>
-            <version>0.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
