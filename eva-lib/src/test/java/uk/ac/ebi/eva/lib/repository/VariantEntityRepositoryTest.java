@@ -27,8 +27,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.biodata.models.variant.VariantSourceEntry;
-import org.opencb.biodata.models.variant.annotation.VariantAnnotation;
-import org.opencb.biodata.models.variant.stats.VariantStats;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -52,7 +50,6 @@ import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -61,9 +58,7 @@ import java.util.Set;
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -84,6 +79,35 @@ public class VariantEntityRepositoryTest {
 
     @Autowired
     private VariantEntityRepository variantEntityRepository;
+
+    @Test
+    public void checkFieldPresence() throws IOException {
+
+        List<Region> regions = new ArrayList<>();
+        regions.add(new Region("11", 183000, 183300));
+
+        List<String> exclude = new ArrayList<>();
+
+        List<VariantEntity> variantEntityList = variantEntityRepository
+                .findByRegionsAndComplexFilters(regions, null, null,
+                                                VariantEntityRepository.RelationalOperator.NONE,
+                                                null,
+                                                VariantEntityRepository.RelationalOperator.NONE,
+                                                null,
+                                                VariantEntityRepository.RelationalOperator.NONE,
+                                                null, exclude,
+                                                new PageRequest(0, 100000000));
+
+        for (VariantEntity currVariantEntity : variantEntityList) {
+            assertFalse(currVariantEntity.getSourceEntries().isEmpty());
+            assertFalse(currVariantEntity.getIds().isEmpty());
+            for (Map.Entry<String, VariantSourceEntry> sourceEntryEntry :
+                    currVariantEntity.getSourceEntries().entrySet()){
+                assertFalse(sourceEntryEntry.getValue().getAttributes().isEmpty());
+            }
+        }
+
+    }
 
     @Test
     public void testVariantIdIsFound(){
@@ -474,6 +498,8 @@ public class VariantEntityRepositoryTest {
         assertEquals(expectedResultLength, variantEntityList.size());
     }
 
+    // config class
+    // @import
     @Configuration
     @EnableMongoRepositories
     @ComponentScan(basePackageClasses = { VariantEntityRepository.class })

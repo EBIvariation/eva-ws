@@ -87,7 +87,6 @@ public class RegionWSServer extends EvaWSServer {
         List<Region> regions = Region.parseRegions(regionId);
 
         PageRequest pageRequest = Utils.getPageRequest(queryOptions);
-        logger.info("Got page request");
 
         List<String> excludeMapped = new ArrayList<>();
         if (exclude != null && !exclude.isEmpty()){
@@ -100,9 +99,6 @@ public class RegionWSServer extends EvaWSServer {
                 excludeMapped.add(docPath);
             }
         }
-        logger.info("doc map: " + Utils.getApiToMongoDocNameMap());
-        logger.info("exclude: " + exclude);
-        logger.info("Get exclude mappings: " + excludeMapped);
 
         List<VariantEntity> variantEntities
                 = variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,
