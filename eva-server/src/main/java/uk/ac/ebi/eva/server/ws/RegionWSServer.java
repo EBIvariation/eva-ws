@@ -74,7 +74,6 @@ public class RegionWSServer extends EvaWSServer {
                                              HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, IOException {
         initializeQueryOptions();
-        logger.info("Query options initialised");
 
         if (species == null || species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -82,19 +81,21 @@ public class RegionWSServer extends EvaWSServer {
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        logger.info("Database name set");
 
         VariantFilterValues filterValues = new VariantFilterValues(maf, polyphenScore, siftScore);
 
         List<Region> regions = Region.parseRegions(regionId);
-        logger.info("Parsed regions");
 
         PageRequest pageRequest = Utils.getPageRequest(queryOptions);
+        logger.info("Got page request");
 
         List<String> excludeMapped = new ArrayList<>();
         if (exclude != null && !exclude.isEmpty()){
             excludeMapped = exclude.stream().map(e -> Utils.getApiToMongoDocNameMap().get(e)).collect(Collectors.toList());
         }
+        logger.info("doc map: " + Utils.getApiToMongoDocNameMap());
+        logger.info("exclude: " + exclude);
+        logger.info("Get exclude mappings: " + excludeMapped);
 
         List<VariantEntity> variantEntities
                 = variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,

@@ -54,19 +54,13 @@ public class RegionWSServerTest {
 
     @Test
     public void testExcludeNested() throws URISyntaxException {
-        Response response = given().param("species", "mmusculus_grcm38").param("exclude=fileAttrs").get(new URI("/v1/segments/20:60000-62000/variants"));
+        Response response = given().param("species", "mmusculus_grcm38").param("exclude", "filesAttrs").get(new URI("/v1/segments/20:60000-62000/variants"));
         response.then().statusCode(200);
-
-        List queryResponse = JsonPath.from(response.asString()).getList("response");
-
         List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
-
         for (Map m : result) {
-            System.out.println(m.get("sourceEntries").getClass());
-
             for (Map sourceEntry: (Collection<Map>) ((Map) m.get("sourceEntries")).values()) {
                 System.out.println(sourceEntry);
-                assertFalse(sourceEntry.containsKey("attributes"));
+                assertTrue(((Map) sourceEntry.get("attributes")).isEmpty());
             }
         }
     }
