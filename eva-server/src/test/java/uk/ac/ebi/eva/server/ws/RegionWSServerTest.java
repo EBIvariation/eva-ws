@@ -54,7 +54,7 @@ public class RegionWSServerTest {
 
     @Test
     public void testExcludeNested() throws URISyntaxException {
-        Response response = given().param("species", "mmusculus_grcm38").param("exclude", "filesAttrs").get(new URI("/v1/segments/20:60000-62000/variants"));
+        Response response = given().param("species", "mmusculus_grcm38").param("exclude", "sourceEntries.attributes").get(new URI("/v1/segments/20:60000-62000/variants"));
         response.then().statusCode(200);
         List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
         for (Map m : result) {
@@ -74,8 +74,6 @@ public class RegionWSServerTest {
         List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
 
         for (Map m : result) {
-            assertFalse(m.containsKey(""));
-
             String missingField = String.format("%s required field missing", m.get("name"));
 
             assertTrue(missingField, m.containsKey("id"));
