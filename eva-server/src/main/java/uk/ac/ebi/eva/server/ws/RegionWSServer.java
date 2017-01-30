@@ -91,7 +91,14 @@ public class RegionWSServer extends EvaWSServer {
 
         List<String> excludeMapped = new ArrayList<>();
         if (exclude != null && !exclude.isEmpty()){
-            excludeMapped = exclude.stream().map(e -> Utils.getApiToMongoDocNameMap().get(e)).collect(Collectors.toList());
+            for (String e : exclude) {
+                String docPath = Utils.getApiToMongoDocNameMap().get(e);
+                if (docPath == null) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    return setQueryResponse("Unrecognised exclude field: " + e);
+                }
+                excludeMapped.add(docPath);
+            }
         }
         logger.info("doc map: " + Utils.getApiToMongoDocNameMap());
         logger.info("exclude: " + exclude);
