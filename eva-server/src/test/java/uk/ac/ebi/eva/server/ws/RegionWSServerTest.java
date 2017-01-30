@@ -26,11 +26,12 @@ import org.junit.Test;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class RegionWSServerTest {
@@ -51,6 +52,25 @@ public class RegionWSServerTest {
         testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 17);
     }
 
+    @Test
+    public void testExcludeNested() throws URISyntaxException {
+        Response response = given().param("species", "mmusculus_grcm38").param("exclude=fileAttrs").get(new URI("/v1/segments/20:60000-62000/variants"));
+        response.then().statusCode(200);
+
+        List queryResponse = JsonPath.from(response.asString()).getList("response");
+
+        List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
+
+        for (Map m : result) {
+            System.out.println(m.get("sourceEntries").getClass());
+
+            for (Map sourceEntry: (Collection<Map>) ((Map) m.get("sourceEntries")).values()) {
+                System.out.println(sourceEntry);
+                assertFalse(sourceEntry.containsKey("attributes"));
+            }
+        }
+    }
+
     private void testGetVariantsByRegionHelper(String testString, int expectedSize) throws URISyntaxException {
         Response response = given().param("species", "mmusculus_grcm38").get(new URI("/v1/segments/" + testString + "/variants"));
         response.then().statusCode(200);
@@ -60,6 +80,8 @@ public class RegionWSServerTest {
         List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
 
         for (Map m : result) {
+            assertFalse(m.containsKey(""));
+
             String missingField = String.format("%s required field missing", m.get("name"));
 
             assertTrue(missingField, m.containsKey("id"));

@@ -396,7 +396,7 @@ public class VariantEntityRepositoryTest {
         regions.add(new Region("11", 183000, 183300));
 
         List<String> exclude = new ArrayList<>();
-        exclude.add("{files.attrs}");
+        exclude.add("files.attrs");
 
         List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByRegionsAndComplexFilters(regions, null, null,

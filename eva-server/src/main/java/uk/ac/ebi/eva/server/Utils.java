@@ -89,6 +89,7 @@ public class Utils {
         map.put("sourceEntries", "files");
         map.put("sourceEntries.statistics", "st");
         map.put("annotation", "annot");
+        map.put("filesAttrs", "files.attrs");
         return map;
     }
 

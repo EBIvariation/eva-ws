@@ -43,6 +43,7 @@ import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,6 +74,7 @@ public class RegionWSServer extends EvaWSServer {
                                              HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, IOException {
         initializeQueryOptions();
+        logger.info("Query options initialised");
 
         if (species == null || species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -80,15 +82,19 @@ public class RegionWSServer extends EvaWSServer {
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+        logger.info("Database name set");
 
         VariantFilterValues filterValues = new VariantFilterValues(maf, polyphenScore, siftScore);
 
         List<Region> regions = Region.parseRegions(regionId);
+        logger.info("Parsed regions");
 
         PageRequest pageRequest = Utils.getPageRequest(queryOptions);
 
-        List<String> excludeMapped = exclude.stream().map(e -> Utils.getApiToMongoDocNameMap().get(e)).collect(
-                Collectors.toList());
+        List<String> excludeMapped = new ArrayList<>();
+        if (exclude != null && !exclude.isEmpty()){
+            excludeMapped = exclude.stream().map(e -> Utils.getApiToMongoDocNameMap().get(e)).collect(Collectors.toList());
+        }
 
         List<VariantEntity> variantEntities
                 = variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,
