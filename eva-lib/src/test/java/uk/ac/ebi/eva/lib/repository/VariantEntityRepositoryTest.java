@@ -18,10 +18,8 @@
  */
 package uk.ac.ebi.eva.lib.repository;
 
-import com.github.fakemongo.Fongo;
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
-import com.mongodb.Mongo;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,23 +27,10 @@ import org.opencb.biodata.models.feature.Region;
 import org.opencb.biodata.models.variant.VariantSourceEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
-import org.springframework.data.mongodb.core.convert.CustomConversions;
-import org.springframework.data.mongodb.core.convert.DbRefResolver;
-import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
-import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
-import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantEntityConverter;
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 
 import java.io.IOException;
@@ -67,7 +52,7 @@ import static org.junit.Assert.assertTrue;
  * Uses in memory Mongo database spoof Fongo, and loading data from json using lordofthejars nosqlunit.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration
+@ContextConfiguration(classes = {RepositoryConfiguration.class})
 @UsingDataSet(locations = {"/test-data/variants.json"})
 public class VariantEntityRepositoryTest {
 
@@ -496,48 +481,5 @@ public class VariantEntityRepositoryTest {
             }
         }
         assertEquals(expectedResultLength, variantEntityList.size());
-    }
-
-    // config class
-    // @import
-    @Configuration
-    @EnableMongoRepositories
-    @ComponentScan(basePackageClasses = { VariantEntityRepository.class })
-    static class VariantEntityRepositoryConfiguration extends AbstractMongoConfiguration {
-
-        @Autowired
-        private MongoDbFactory mongoDbFactory;
-
-        @Override
-        protected String getDatabaseName() {
-            return "test-db";
-        }
-
-        @Bean
-        public Mongo mongo() {
-            return new Fongo("defaultInstance").getMongo();
-        }
-
-        @Override
-        protected String getMappingBasePackage() {
-            return "uk.ac.ebi.eva.lib.repository";
-        }
-
-        @Bean
-        public CustomConversions customConversions() {
-            List<Converter<?, ?>> converters = new ArrayList<Converter<?, ?>>();
-            converters.add(new DBObjectToVariantEntityConverter());
-            return new CustomConversions(converters);
-        }
-
-        @Bean
-        public MappingMongoConverter mongoConverter() throws IOException {
-            MongoMappingContext mappingContext = new MongoMappingContext();
-            DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
-            MappingMongoConverter mongoConverter = new MappingMongoConverter(dbRefResolver, mappingContext);
-            mongoConverter.setCustomConversions(customConversions());
-            mongoConverter.afterPropertiesSet();
-            return mongoConverter;
-        }
     }
 }
