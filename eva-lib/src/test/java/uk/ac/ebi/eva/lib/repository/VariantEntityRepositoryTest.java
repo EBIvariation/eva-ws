@@ -339,22 +339,6 @@ public class VariantEntityRepositoryTest {
         for (VariantEntity currVariantEntity : variantEntityList) {
             assertTrue(currVariantEntity.getSourceEntries().isEmpty());
         }
-
-        exclude = new ArrayList<>();
-
-        variantEntityList =
-                variantEntityRepository.findByRegionsAndComplexFilters(regions, null, null,
-                                                                       VariantEntityRepository.RelationalOperator.NONE,
-                                                                       null,
-                                                                       VariantEntityRepository.RelationalOperator.NONE,
-                                                                       null,
-                                                                       VariantEntityRepository.RelationalOperator.NONE,
-                                                                       null, exclude,
-                                                                       new PageRequest(0, 100000000));
-
-        for (VariantEntity currVariantEntity : variantEntityList) {
-            assertFalse(currVariantEntity.getSourceEntries().isEmpty());
-        }
     }
 
     @Test
@@ -380,23 +364,6 @@ public class VariantEntityRepositoryTest {
             assertTrue(currVariantEntity.getSourceEntries().isEmpty());
             assertTrue(currVariantEntity.getIds().isEmpty());
         }
-
-        exclude = new ArrayList<>();
-
-        variantEntityList =
-                variantEntityRepository.findByRegionsAndComplexFilters(regions, null, null,
-                                                                       VariantEntityRepository.RelationalOperator.NONE,
-                                                                       null,
-                                                                       VariantEntityRepository.RelationalOperator.NONE,
-                                                                       null,
-                                                                       VariantEntityRepository.RelationalOperator.NONE,
-                                                                       null, exclude,
-                                                                       new PageRequest(0, 100000000));
-
-        for (VariantEntity currVariantEntity : variantEntityList) {
-            assertFalse(currVariantEntity.getSourceEntries().isEmpty());
-            assertFalse(currVariantEntity.getIds().isEmpty());
-        }
     }
 
     @Test
@@ -420,25 +387,6 @@ public class VariantEntityRepositoryTest {
         for (VariantEntity currVariantEntity : variantEntityList) {
             for (Map.Entry<String, VariantSourceEntry> sourceEntry : currVariantEntity.getSourceEntries().entrySet()){
                 assertTrue(sourceEntry.getValue().getAttributes().isEmpty());
-            }
-        }
-
-        exclude = new ArrayList<>();
-
-        variantEntityList =
-                variantEntityRepository.findByRegionsAndComplexFilters(regions, null, null,
-                                                                       VariantEntityRepository.RelationalOperator.NONE,
-                                                                       null,
-                                                                       VariantEntityRepository.RelationalOperator.NONE,
-                                                                       null,
-                                                                       VariantEntityRepository.RelationalOperator.NONE,
-                                                                       null, exclude,
-                                                                       new PageRequest(0, 100000000));
-
-        for (VariantEntity currVariantEntity : variantEntityList) {
-            for (Map.Entry<String, VariantSourceEntry> sourceEntryEntry :
-                    currVariantEntity.getSourceEntries().entrySet()){
-                assertFalse(sourceEntryEntry.getValue().getAttributes().isEmpty());
             }
         }
     }
