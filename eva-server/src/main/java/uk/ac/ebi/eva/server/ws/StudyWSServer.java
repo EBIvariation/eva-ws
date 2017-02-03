@@ -29,9 +29,13 @@ import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
 import org.opencb.opencga.storage.mongodb.variant.DBObjectToVariantSourceConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
+import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -49,6 +53,8 @@ public class StudyWSServer extends EvaWSServer {
     private StudyDgvaDBAdaptor studyDgvaDbAdaptor;
     @Autowired
     private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
+    @Autowired
+    private VariantSourceEntityRepository variantSourceEntityRepository;
 
     @RequestMapping(value = "/{study}/files", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves all the files from a study", response = QueryResponse.class)
@@ -85,22 +91,10 @@ public class StudyWSServer extends EvaWSServer {
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         initializeQueryOptions();
 
-        StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+        VariantSourceEntity variantSourceEntity = variantSourceEntityRepository.findByStudyNameOrStudyId(study, study);
 
-        QueryResult idQueryResult = studyMongoDbAdaptor.findStudyNameOrStudyId(study, queryOptions);
-        if (idQueryResult.getNumResults() == 0) {
-            QueryResult queryResult = new QueryResult();
-            queryResult.setErrorMsg("Study identifier not found");
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse(queryResult);
-        }
-
-        BasicDBObject id = (BasicDBObject) idQueryResult.getResult().get(0);
-        QueryResult finalResult = studyMongoDbAdaptor.getStudyById(
-                id.getString(DBObjectToVariantSourceConverter.STUDYID_FIELD), queryOptions);
-        finalResult.setDbTime(finalResult.getDbTime() + idQueryResult.getDbTime());
-
-        return setQueryResponse(finalResult);
+        return setQueryResponse(variantSourceEntity);
     }
 
     @RequestMapping(value = "/{study}/summary", method = RequestMethod.GET)
