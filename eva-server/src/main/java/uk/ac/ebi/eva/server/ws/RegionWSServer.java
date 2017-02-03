@@ -45,6 +45,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/v1/segments", produces = "application/json")
@@ -69,6 +70,7 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "maf", required = false) String maf,
                                              @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                              @RequestParam(name = "sift", required = false) String siftScore,
+                                             @RequestParam(name = "exclude", required = false) List<String> exclude,
                                              HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, IOException {
         initializeQueryOptions();
@@ -86,6 +88,18 @@ public class RegionWSServer extends EvaWSServer {
 
         PageRequest pageRequest = Utils.getPageRequest(queryOptions);
 
+        List<String> excludeMapped = new ArrayList<>();
+        if (exclude != null && !exclude.isEmpty()){
+            for (String e : exclude) {
+                String docPath = Utils.getApiToMongoDocNameMap().get(e);
+                if (docPath == null) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    return setQueryResponse("Unrecognised exclude field: " + e);
+                }
+                excludeMapped.add(docPath);
+            }
+        }
+
         List<VariantEntity> variantEntities
                 = variantEntityRepository.findByRegionsAndComplexFilters(regions, studies, consequenceType,
                                                                          filterValues.getMafOperator(),
@@ -94,6 +108,7 @@ public class RegionWSServer extends EvaWSServer {
                                                                          filterValues.getPolyphenScoreValue(),
                                                                          filterValues.getSiftScoreOperator(),
                                                                          filterValues.getSiftScoreValue(),
+                                                                         excludeMapped,
                                                                          pageRequest);
 
         Long numTotalResults

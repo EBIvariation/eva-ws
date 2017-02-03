@@ -18,12 +18,31 @@
  */
 package uk.ac.ebi.eva.server;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opencb.datastore.core.QueryOptions;
 import org.springframework.data.domain.PageRequest;
 
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 public class Utils {
+
+    private static Map<String, String> apiToMongoDocNameMap;
+
+    static {
+        apiToMongoDocNameMap = initApiToMongoDocNameMap();
+    }
+
+    public static Map<String, String> getApiToMongoDocNameMap() {
+        return Collections.unmodifiableMap(apiToMongoDocNameMap);
+    }
 
     public static Double getValueFromRelation(String relation) {
         return Double.parseDouble(relation.replaceAll("[^\\d.]", ""));
@@ -57,6 +76,21 @@ public class Utils {
         int page = (skip < 0) ? 0 : Math.floorDiv(skip, size);
 
         return new PageRequest(page, size);
+    }
+
+    public static String createExclusionFieldString(List<String> excludeList) {
+        List<String> formattedList = excludeList.stream().map(field -> String.format("'%s' : 0", field))
+                                                .collect(Collectors.toList());
+        return "{ " + String.join(", ", formattedList) + " }";
+    }
+
+    private static Map<String, String> initApiToMongoDocNameMap() {
+        Map<String, String> map = new HashMap<>();
+        map.put("sourceEntries", "files");
+        map.put("sourceEntries.statistics", "st");
+        map.put("annotation", "annot");
+        map.put("sourceEntries.attributes", "files.attrs");
+        return map;
     }
 
 }

@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
@@ -68,6 +69,7 @@ public class VariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "maf", required = false) String maf,
                                         @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                         @RequestParam(name = "sift", required = false) String siftScore,
+                                        @RequestParam(name = "exclude", required = false) List<String> exclude,
                                         HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         initializeQueryOptions();
@@ -93,6 +95,9 @@ public class VariantWSServer extends EvaWSServer {
         } else {
             VariantFilterValues filterValues = new VariantFilterValues(maf, polyphenScore, siftScore);
 
+            List<String> excludeMapped = exclude.stream().map(e -> Utils.getApiToMongoDocNameMap().get(e)).collect(
+                    Collectors.toList());
+
             variantEntities = variantEntityRepository.findByIdsAndComplexFilters(variantId, studies, consequenceType,
                                                                                  filterValues.getMafOperator(),
                                                                                  filterValues.getMafvalue(),
@@ -100,6 +105,7 @@ public class VariantWSServer extends EvaWSServer {
                                                                                  filterValues.getPolyphenScoreValue(),
                                                                                  filterValues.getSiftScoreOperator(),
                                                                                  filterValues.getSiftScoreValue(),
+                                                                                 excludeMapped,
                                                                                  Utils.getPageRequest(queryOptions));
 
             numTotalResults = variantEntityRepository.countByIdsAndComplexFilters(variantId, studies, consequenceType,
@@ -119,7 +125,8 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    private List<VariantEntity> queryByCoordinatesAndAlleles(String chromosome, int start, String reference, String alternate) {
+    private List<VariantEntity> queryByCoordinatesAndAlleles(String chromosome, int start, String reference,
+                                                             String alternate) {
         if (alternate != null) {
             return variantEntityRepository.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start,
                                                                                             reference, alternate);

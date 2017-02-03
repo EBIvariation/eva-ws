@@ -40,7 +40,7 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
                                                    RelationalOperator mafOperator, Double mafValue,
                                                    RelationalOperator polyphenScore4Operator, Double polyphenScoreValue,
                                                    RelationalOperator siftScoreOperator, Double siftScoreValue,
-                                                   Pageable pageable);
+                                                   List<String> exclude, Pageable pageable);
 
     Long countByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
                                      RelationalOperator mafOperator, Double mafValue,
@@ -53,7 +53,7 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
                                                        RelationalOperator polyphenScoreOperator,
                                                        Double polyphenScoreValue,
                                                        RelationalOperator siftScoreOperator, Double siftScoreValue,
-                                                       Pageable pageable);
+                                                       List<String> exclude, Pageable pageable);
 
     Long countByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
                                          List<String> consequenceType,

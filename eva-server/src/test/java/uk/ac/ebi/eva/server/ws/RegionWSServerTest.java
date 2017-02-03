@@ -26,11 +26,12 @@ import org.junit.Test;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class RegionWSServerTest {
@@ -49,6 +50,19 @@ public class RegionWSServerTest {
     @Test
     public void testGetVariantsByRegions() throws URISyntaxException {
         testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 17);
+    }
+
+    @Test
+    public void testExcludeNested() throws URISyntaxException {
+        Response response = given().param("species", "mmusculus_grcm38").param("exclude", "sourceEntries.attributes").get(new URI("/v1/segments/20:60000-62000/variants"));
+        response.then().statusCode(200);
+        List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
+        for (Map m : result) {
+            for (Map sourceEntry: (Collection<Map>) ((Map) m.get("sourceEntries")).values()) {
+                System.out.println(sourceEntry);
+                assertTrue(((Map) sourceEntry.get("attributes")).isEmpty());
+            }
+        }
     }
 
     private void testGetVariantsByRegionHelper(String testString, int expectedSize) throws URISyntaxException {
