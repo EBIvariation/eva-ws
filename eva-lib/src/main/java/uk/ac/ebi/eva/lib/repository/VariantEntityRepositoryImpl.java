@@ -30,12 +30,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.repository.VariantEntityRepository.RelationalOperator;
 import uk.ac.ebi.eva.lib.utils.RepositoryFilter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Concrete implementation of the VariantEntityRepository interface (relationship inferred by Spring),

@@ -92,13 +92,7 @@ public class VariantEntityRepositoryTest {
         List<String> exclude = new ArrayList<>();
 
         List<VariantEntity> variantEntityList = variantEntityRepository
-                .findByRegionsAndComplexFilters(regions, null, null,
-                                                VariantEntityRepository.RelationalOperator.NONE,
-                                                null,
-                                                VariantEntityRepository.RelationalOperator.NONE,
-                                                null,
-                                                VariantEntityRepository.RelationalOperator.NONE,
-                                                null, exclude,
+                .findByRegionsAndComplexFilters(regions, new ArrayList<>(), exclude,
                                                 new PageRequest(0, 100000000));
 
         for (VariantEntity currVariantEntity : variantEntityList) {
@@ -211,15 +205,15 @@ public class VariantEntityRepositoryTest {
     @Test
     public void testRegionIsFoundWithConsequenceType() {
         List<String> cts = new ArrayList<>();
-        cts.add("SO:0001627");
+        cts.add("SO:0001566");
         String chr = "11";
-        int start = 188000;
+        int start = 180000;
         int end = 190000;
-        List<RepositoryFilter> filters = RepositoryFilterUtils.getRepositoryFilters(null, null, null, null, cts);
+        List<RepositoryFilter> filters = RepositoryFilter.getRepositoryFilters(null, null, null, null, cts);
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
-        testFiltersHelperRegion(regions, filters, new ArrayList<>(), 94);
+        testFiltersHelperRegion(regions, filters, new ArrayList<>(), 209);
     }
 
     @Test
@@ -230,7 +224,7 @@ public class VariantEntityRepositoryTest {
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
-        List<RepositoryFilter> filters = RepositoryFilterUtils.getRepositoryFilters(">0.125", null, null, null, null);
+        List<RepositoryFilter> filters = RepositoryFilter.getRepositoryFilters(">0.125", null, null, null, null);
         testFiltersHelperRegion(regions, filters, new ArrayList<>(), 37);
     }
 
@@ -242,7 +236,7 @@ public class VariantEntityRepositoryTest {
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
-        List<RepositoryFilter> filters = RepositoryFilterUtils.getRepositoryFilters(">=0.125", null, null, null, null);
+        List<RepositoryFilter> filters = RepositoryFilter.getRepositoryFilters(">=0.125", null, null, null, null);
         testFiltersHelperRegion(regions, filters, new ArrayList<>(), 15);
     }
 
@@ -254,7 +248,7 @@ public class VariantEntityRepositoryTest {
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
-        List<RepositoryFilter> filters = RepositoryFilterUtils.getRepositoryFilters("=0.5", null, null, null, null);
+        List<RepositoryFilter> filters = RepositoryFilter.getRepositoryFilters("=0.5", null, null, null, null);
         testFiltersHelperRegion(regions, filters, new ArrayList<>(), 8);
     }
 
@@ -266,7 +260,7 @@ public class VariantEntityRepositoryTest {
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
-        List<RepositoryFilter> filters = RepositoryFilterUtils.getRepositoryFilters(null, ">0.5", null, null, null);
+        List<RepositoryFilter> filters = RepositoryFilter.getRepositoryFilters(null, ">0.5", null, null, null);
         testFiltersHelperRegion(regions, filters, new ArrayList<>(), 4);
     }
 
@@ -278,7 +272,7 @@ public class VariantEntityRepositoryTest {
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
-        List<RepositoryFilter> filters = RepositoryFilterUtils.getRepositoryFilters(null, null, "<0.5", null, null);
+        List<RepositoryFilter> filters = RepositoryFilter.getRepositoryFilters(null, null, "<0.5", null, null);
         testFiltersHelperRegion(regions, filters, new ArrayList<>(), 11);
     }
 
@@ -287,12 +281,12 @@ public class VariantEntityRepositoryTest {
         List<String> studies = new ArrayList<>();
         studies.add("PRJEB6930");
         String chr = "11";
-        int start = 190000;
-        int end = 191000;
+        int start = 1;
+        int end = 20000;
+        List<RepositoryFilter> filters = RepositoryFilter.getRepositoryFilters(null, null, null, studies, null);
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
-        List<RepositoryFilter> filters = RepositoryFilterUtils.getRepositoryFilters(null, null, null, studies, null);
         testFiltersHelperRegion(regions, filters, new ArrayList<>(), 14);
     }
 
@@ -319,7 +313,7 @@ public class VariantEntityRepositoryTest {
 
         regions.add(new Region("11", 180205, 180221)); //2
 
-        testFindByRegionsAndComplexFiltersHelper(regions, filters, null 11);
+        testFindByRegionsAndComplexFiltersHelper(regions, filters, null, 11);
     }
 
     @Test
@@ -331,7 +325,18 @@ public class VariantEntityRepositoryTest {
         exclude.add("files");
 
         List<VariantEntity> variantEntityList =
-                variantEntityRepository.findByRegionsAndComplexFilters(regions, filters, new PageRequest(0, 10000));
+                variantEntityRepository.findByRegionsAndComplexFilters(regions, new ArrayList<>(), exclude, new PageRequest(0, 10000));
+        assertNotNull(variantEntityList);
+        for (VariantEntity currVariantEntity : variantEntityList) {
+            assertTrue(currVariantEntity.getSourceEntries().isEmpty());
+        }
+    }
+
+    private void testFiltersHelperRegion(List<Region> regions, List<RepositoryFilter> filters,
+                                         List<String> exclude, int expectedResultLength) {
+        List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByRegionsAndComplexFilters(regions, filters, exclude,
+                                                                       new PageRequest(0, 10000));
         assertNotNull(variantEntityList);
         assertEquals(expectedResultLength, variantEntityList.size());
     }
