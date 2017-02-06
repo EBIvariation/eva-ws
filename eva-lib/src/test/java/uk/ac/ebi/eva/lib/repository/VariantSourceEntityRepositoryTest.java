@@ -94,7 +94,7 @@ public class VariantSourceEntityRepositoryTest {
 
         Set<StudyName> uniqueStudies = new TreeSet<>(studies);
 
-        // TODO: return only distinct StudyNames
+        // TODO: return only distinct StudyNames. right now I'm not sure spring data can support that
 //        assertEquals(studies.size(), uniqueStudies.size());
 //        assertEquals(EXPECTED_STUDIES_COUNT, studies.size());
 

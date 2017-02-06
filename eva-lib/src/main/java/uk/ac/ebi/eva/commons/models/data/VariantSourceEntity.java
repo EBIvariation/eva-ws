@@ -29,6 +29,7 @@ import java.util.Map;
  * Represents a file (VariantSource) in a database.
  * <p>
  * TODO jmmut: VariantSource also has pedigree
+ * TODO jmmut: unhardcode the collection name. when this class is in variation-commons, we can try to retrieve it from a application.properties?
  */
 @Document(collection = "files_1_2")
 public class VariantSourceEntity {

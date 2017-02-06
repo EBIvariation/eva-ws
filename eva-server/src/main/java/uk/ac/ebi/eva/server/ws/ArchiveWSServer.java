@@ -25,23 +25,29 @@ import io.swagger.annotations.Api;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import uk.ac.ebi.eva.commons.models.data.StudyName;
+import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
@@ -60,6 +66,8 @@ public class ArchiveWSServer extends EvaWSServer {
     private StudyDgvaDBAdaptor studyDgvaDbAdaptor;
     @Autowired
     private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
+    @Autowired
+    private VariantSourceEntityRepository variantSourceEntityRepository;
 
     private Properties properties;
     
@@ -110,8 +118,11 @@ public class ArchiveWSServer extends EvaWSServer {
     @RequestMapping(value = "/studies/list", method = RequestMethod.GET)
     public QueryResponse getBrowsableStudies(@RequestParam("species") String species)
             throws IllegalOpenCGACredentialsException, IOException {
-        StudyDBAdaptor studyMongoDbAdaptor = DBAdaptorConnector.getStudyDBAdaptor(species);
-        return setQueryResponse(studyMongoDbAdaptor.listStudies());
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+        List<StudyName> nonUniqueStudies = variantSourceEntityRepository.findBy();
+        Set<StudyName> uniqueStudies = new TreeSet<>(nonUniqueStudies);
+        ArrayList<StudyName> uniqueStudiesList = new ArrayList<>(uniqueStudies);
+        return setQueryResponse(uniqueStudiesList);
     }
 
     @RequestMapping(value = "/studies/stats", method = RequestMethod.GET)
