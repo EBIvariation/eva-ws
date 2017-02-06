@@ -44,6 +44,7 @@ import uk.ac.ebi.eva.server.Utils;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -97,8 +98,17 @@ public class VariantWSServer extends EvaWSServer {
             List<RepositoryFilter> filters =
                     RepositoryFilter.getRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
-            List<String> excludeMapped = exclude.stream().map(e -> Utils.getApiToMongoDocNameMap().get(e)).collect(
-                    Collectors.toList());
+            List<String> excludeMapped = new ArrayList<>();
+            if (exclude != null && !exclude.isEmpty()){
+                for (String e : exclude) {
+                    String docPath = Utils.getApiToMongoDocNameMap().get(e);
+                    if (docPath == null) {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        return setQueryResponse("Unrecognised exclude field: " + e);
+                    }
+                    excludeMapped.add(docPath);
+                }
+            }
 
             variantEntities = variantEntityRepository.findByIdsAndComplexFilters(variantId, filters, excludeMapped,
                                                                                  Utils.getPageRequest(queryOptions));
