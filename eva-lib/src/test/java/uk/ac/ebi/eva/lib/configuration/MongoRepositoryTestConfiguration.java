@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.lib.repository;
+package uk.ac.ebi.eva.lib.configuration;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.Mongo;
@@ -32,6 +32,7 @@ import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantEntityConverter;
@@ -41,9 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-@EnableMongoRepositories
-@ComponentScan(basePackages = { "uk.ac.ebi.eva.lib.repository" })
-public class RepositoryConfiguration extends AbstractMongoConfiguration {
+@EnableMongoRepositories(basePackages = "uk.ac.ebi.eva.lib.repository")
+public class MongoRepositoryTestConfiguration extends AbstractMongoConfiguration {
 
     @Autowired
     private MongoDbFactory mongoDbFactory;

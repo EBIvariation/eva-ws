@@ -5,13 +5,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.ac.ebi.eva.lib.configuration.MongoRepositoryTestConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +19,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@EnableMongoRepositories
-@ComponentScan("uk.ac.ebi.eva.lib.repository")
+@ContextConfiguration(classes = {MongoRepositoryTestConfiguration.class})
 public class VariantEntityRepositoryImplTest {
 
     @Autowired
