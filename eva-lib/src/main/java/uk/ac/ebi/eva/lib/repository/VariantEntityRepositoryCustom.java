@@ -37,6 +37,7 @@ interface VariantEntityRepositoryCustom {
      * filters: study, consequence type, minor allele frequency and protein substitution scores (Polyphen and SIFT).
      *
      * @param id Variant id
+     * @param filters List of RepositoryFilter objects by which to filter the query
      * @param exclude List of strings, each matching a field in the variant Mongo documents. Fields specified in the
      *                list will be excluded from the returned document(s)
      * @return VariantEntities whose values are within the bounds of the filters
@@ -51,6 +52,7 @@ interface VariantEntityRepositoryCustom {
      * SIFT).
      *
      * @param regions List of region objects to invlude in query
+     * @param filters List of RepositoryFilter objects by which to filter the query
      * @param exclude List of strings, each matching a field in the variant Mongo documents. Fields specified in the
      *                list will be excluded from the returned document(s)
      * @return VariantEntities whose values are within the bounds of the filters
