@@ -16,6 +16,7 @@
 package uk.ac.ebi.eva.lib;
 
 import com.mongodb.MongoClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -37,6 +38,14 @@ import java.util.Properties;
 
 @Configuration
 public class MongoConfiguration {
+    @Value("${eva.mongo.collections.files}")
+    private String mongoCollectionsFiles;
+
+    @Bean
+    public String mongoCollectionsFiles() {
+        return mongoCollectionsFiles;
+    }
+
     /**
      * This factory will allow to use the FeatureRepository with several databases, as we are providing a
      * MultiMongoDbFactory as the implementation of MongoFactory to inject into the FeatureRepository.

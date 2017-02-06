@@ -31,7 +31,7 @@ import java.util.Map;
  * TODO jmmut: VariantSource also has pedigree
  * TODO jmmut: unhardcode the collection name. when this class is in variation-commons, we can try to retrieve it from a application.properties?
  */
-@Document(collection = "files_1_2")
+@Document(collection = "#{mongoCollectionsFiles}")
 public class VariantSourceEntity {
 
     public final static String FILEID_FIELD = "fid";
