@@ -32,6 +32,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
+import uk.ac.ebi.eva.lib.configuration.MongoRepositoryTestConfiguration;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ import static org.junit.Assert.assertTrue;
  * Uses in memory Mongo database spoof Fongo, and loading data from json using lordofthejars nosqlunit.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {RepositoryConfiguration.class})
+@ContextConfiguration(classes = {MongoRepositoryTestConfiguration.class})
 @UsingDataSet(locations = {"/test-data/variants.json"})
 public class VariantEntityRepositoryTest {
 

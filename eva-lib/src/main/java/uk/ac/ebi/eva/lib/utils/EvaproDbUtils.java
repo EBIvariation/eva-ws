@@ -44,16 +44,18 @@ public class EvaproDbUtils {
 
         Specifications speciesSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.SPECIES)) {
-            String[] species = queryOptions.getAsStringList(QueryOptionsConstants.SPECIES).toArray(new String[]{});
-            speciesSpecifications = where(GenericSpecifications.in(EvaStudyBrowserRepository.COMMON_NAME, species)).or(GenericSpecifications.in(EvaStudyBrowserRepository.SCIENTIFIC_NAME, species));
+            Object[] species = queryOptions.getAsStringList(QueryOptionsConstants.SPECIES).toArray(new Object[]{});
+            speciesSpecifications = where(GenericSpecifications.in(EvaStudyBrowserRepository.COMMON_NAME, species))
+                    .or(GenericSpecifications.in(EvaStudyBrowserRepository.SCIENTIFIC_NAME, species));
         }
 
         Specifications typeSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.TYPE)) {
-            String[] types = queryOptions.getAsStringList(QueryOptionsConstants.TYPE).toArray(new String[]{});
+            Object[] types = queryOptions.getAsStringList(QueryOptionsConstants.TYPE).toArray(new Object[]{});
             typeSpecifications = where(GenericSpecifications.in(EvaStudyBrowserRepository.EXPERIMENT_TYPE, types));
-            for (String type : types) {
-                typeSpecifications = typeSpecifications.or(GenericSpecifications.like(EvaStudyBrowserRepository.EXPERIMENT_TYPE, "%" + type + "%"));
+            for (Object type : types) {
+                typeSpecifications = typeSpecifications.or(
+                        GenericSpecifications.like(EvaStudyBrowserRepository.EXPERIMENT_TYPE, "%" + type + "%"));
             }
         }
 
