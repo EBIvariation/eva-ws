@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
+import uk.ac.ebi.eva.lib.filter.Helpers;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
@@ -82,8 +83,9 @@ public class RegionWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List<VariantEntityRepositoryFilter> filters = Utils.getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore,
-                                                                                              studies, consequenceType);
+        List<VariantEntityRepositoryFilter> filters =
+                Helpers.getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies,
+                                                          consequenceType);
         List<Region> regions = Region.parseRegions(regionId);
         PageRequest pageRequest = Utils.getPageRequest(queryOptions);
 

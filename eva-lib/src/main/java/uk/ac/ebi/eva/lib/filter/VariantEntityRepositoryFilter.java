@@ -68,42 +68,6 @@ public class VariantEntityRepositoryFilter<T> {
         return criteria;
     }
 
-    public static List<VariantEntityRepositoryFilter> getRepositoryFilters(String maf, String polyphenScore, String siftScore,
-                                                                           List<String> studies, List<String> consequenceType) {
-        List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
-
-        VariantEntityRepositoryFilter filter;
-
-        if (maf != null) {
-            filter = new VariantEntityRepositoryFilter<>("st.maf", getValueFromRelation(maf), getRelationalOperatorFromRelation(maf));
-            filters.add(filter);
-        }
-        if (polyphenScore != null) {
-            filter = new VariantEntityRepositoryFilter<>("annot.ct.polyphen.sc", getValueFromRelation(polyphenScore),
-                                                         getRelationalOperatorFromRelation(polyphenScore));
-            filters.add(filter);
-        }
-        if (siftScore != null) {
-            filter = new VariantEntityRepositoryFilter<>("annot.ct.sift.sc", getValueFromRelation(siftScore),
-                                                         getRelationalOperatorFromRelation(siftScore));
-            filters.add(filter);
-        }
-        if (studies != null && !studies.isEmpty()) {
-            filter = new VariantEntityRepositoryFilter<>("files.sid", studies, VariantEntityRepository.RelationalOperator.IN);
-            filters.add(filter);
-        }
-        if (consequenceType != null && !consequenceType.isEmpty()) {
-            List<Integer> consequenceTypeConv = consequenceType.stream()
-                                                               .map(c -> Integer
-                                                                       .parseInt(c.replaceAll("[^\\d.]", ""), 10))
-                                                               .collect(Collectors.toList());
-            filter = new VariantEntityRepositoryFilter<>("annot.ct.so", consequenceTypeConv,
-                                                         VariantEntityRepository.RelationalOperator.IN);
-            filters.add(filter);
-        }
-        return filters;
-    }
-
     static Double getValueFromRelation(String relation) {
         return Double.parseDouble(relation.replaceAll("[^\\d.]", ""));
     }

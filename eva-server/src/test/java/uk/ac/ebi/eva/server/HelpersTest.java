@@ -25,7 +25,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class UtilsTest {
+public class HelpersTest {
     @Test
     public void createExclusionFieldString() throws Exception {
         List<String> exclude = new ArrayList<>();
