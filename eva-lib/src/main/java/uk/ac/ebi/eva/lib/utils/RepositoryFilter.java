@@ -22,7 +22,7 @@ public class RepositoryFilter<T> {
         this.operator = operator;
     }
 
-    public Query apply(Query query) {
+    public Criteria createCriteria() {
         Criteria criteria = Criteria.where(field);
 
         switch (operator) {
@@ -46,10 +46,11 @@ public class RepositoryFilter<T> {
                 break;
             case NONE:
                 throw new IllegalArgumentException();
+            default:
+                throw new IllegalArgumentException();
         }
 
-        query.addCriteria(criteria);
-        return query;
+        return criteria;
     }
 
     public static List<RepositoryFilter> getRepositoryFilters(String maf, String polyphenScore, String siftScore,
