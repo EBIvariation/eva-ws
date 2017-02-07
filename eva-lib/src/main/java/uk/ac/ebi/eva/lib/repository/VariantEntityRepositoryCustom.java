@@ -42,7 +42,8 @@ interface VariantEntityRepositoryCustom {
      *                list will be excluded from the returned document(s)
      * @return VariantEntities whose values are within the bounds of the filters
      */
-    List<VariantEntity> findByIdsAndComplexFilters(String id, List<RepositoryFilter> filters, List<String> exclude, Pageable pageable);
+    List<VariantEntity> findByIdsAndComplexFilters(String id, List<RepositoryFilter> filters, List<String> exclude,
+                                                   Pageable pageable);
 
     Long countByIdsAndComplexFilters(String id, List<RepositoryFilter> filters);
 

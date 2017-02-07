@@ -54,7 +54,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     @Override
-    public List<VariantEntity> findByIdsAndComplexFilters(String id, List<RepositoryFilter> filters, List<String> exclude, Pageable pageable) {
+    public List<VariantEntity> findByIdsAndComplexFilters(String id, List<RepositoryFilter> filters,
+                                                          List<String> exclude, Pageable pageable) {
         Query query = new Query(Criteria.where("ids").is(id));
         return findByComplexFiltersHelper(query, filters, exclude, pageable);
     }
@@ -80,14 +81,15 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         return countByComplexFiltersHelper(query, filters);
     }
 
-    List<VariantEntity> findByComplexFiltersHelper(Query query, List<RepositoryFilter> filters, List<String> exclude, Pageable pageable) {
+    private List<VariantEntity> findByComplexFiltersHelper(Query query, List<RepositoryFilter> filters, List<String> exclude,
+                                                   Pageable pageable) {
 
         applyFilters(query, filters);
 
-        ArrayList<String> sortProps = new ArrayList<String>();
-        sortProps.add("chr");
-        sortProps.add("start");
-        query.with(new Sort(Sort.Direction.ASC, sortProps));
+        ArrayList<String> sortProperties = new ArrayList<String>();
+        sortProperties.add("chr");
+        sortProperties.add("start");
+        query.with(new Sort(Sort.Direction.ASC, sortProperties));
 
         Pageable pageable1 = (pageable != null) ? pageable : new PageRequest(0, 10);
         query.with(pageable1);
@@ -100,19 +102,19 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
     }
 
-    Long countByComplexFiltersHelper(Query query, List<RepositoryFilter> filters) {
+    private Long countByComplexFiltersHelper(Query query, List<RepositoryFilter> filters) {
         applyFilters(query, filters);
 
         return mongoTemplate.count(query, VariantEntity.class);
     }
 
-    void applyFilters(Query query, List<RepositoryFilter> filters) {
+    private void applyFilters(Query query, List<RepositoryFilter> filters) {
         for (RepositoryFilter filter : filters) {
             filter.apply(query);
         }
     }
 
-    void addRegionsToQuery(Query query, List<Region> regions) {
+    private void addRegionsToQuery(Query query, List<Region> regions) {
         List<Criteria> orRegionCriteria = new ArrayList<>();
 
         regions.forEach(region -> orRegionCriteria.add(
