@@ -12,15 +12,6 @@ import static org.junit.Assert.*;
 
 public class RepositoryFilterTest {
 
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @Test
-    public void apply() throws Exception {
-
-    }
-
     @Test
     public void getRepositoryFiltersAllNull() throws Exception {
         assertEquals(new ArrayList<RepositoryFilter>(),
