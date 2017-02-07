@@ -35,7 +35,7 @@ import java.util.List;
  */
 public interface VariantEntityRepository extends MongoRepository<VariantEntity, String>, VariantEntityRepositoryCustom {
 
-    enum RelationalOperator { EQ, GT, LT, GTE, LTE, IN, NONE }
+    enum RelationalOperator { EQ, GT, LT, GTE, LTE, IN }
 
     List<VariantEntity> findByIdsAndComplexFilters(String id, List<VariantRepositoryFilter> filters, List<String> exclude,
                                                    Pageable pageable);
