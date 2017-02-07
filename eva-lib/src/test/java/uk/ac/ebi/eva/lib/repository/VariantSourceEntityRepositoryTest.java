@@ -23,13 +23,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import uk.ac.ebi.eva.commons.models.data.StudyName;
-import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 import uk.ac.ebi.eva.lib.configuration.MongoRepositoryTestConfiguration;
+import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 
 import java.util.Iterator;
 import java.util.List;
@@ -64,6 +65,9 @@ public class VariantSourceEntityRepositoryTest {
     @Rule
     public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
 
+    @Value(value = "#{mongoCollectionsFiles}")
+    private String mongoCollectionName;
+
     @Test
     public void findsByNameOrIdProvidingName() {
         String studyNameOrId = STUDY_NAME;
@@ -89,14 +93,10 @@ public class VariantSourceEntityRepositoryTest {
 
     @Test
     public void listStudies() {
-        List<StudyName> studies = repository.findBy();
-        assertNotNull(studies);
+        List<StudyName> nonUniqueStudies = repository.findBy();
+        assertNotNull(nonUniqueStudies);
 
-        Set<StudyName> uniqueStudies = new TreeSet<>(studies);
-
-        // TODO: return only distinct StudyNames. right now I'm not sure spring data can support that
-//        assertEquals(studies.size(), uniqueStudies.size());
-//        assertEquals(EXPECTED_STUDIES_COUNT, studies.size());
+        Set<StudyName> uniqueStudies = new TreeSet<>(nonUniqueStudies);
 
         Iterator<StudyName> studiesIterator = uniqueStudies.iterator();
         StudyName next = studiesIterator.next();

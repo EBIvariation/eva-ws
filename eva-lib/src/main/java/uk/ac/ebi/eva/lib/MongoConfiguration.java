@@ -15,10 +15,14 @@
  */
 package uk.ac.ebi.eva.lib;
 
-import com.mongodb.MongoClient;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
@@ -26,18 +30,24 @@ import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.expression.BeanResolver;
 
 import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantEntityConverter;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 @Configuration
+@PropertySource("/eva.properties")
 public class MongoConfiguration {
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private MongoDbFactory mongoDbFactory;
+
     @Value("${eva.mongo.collections.files}")
     private String mongoCollectionsFiles;
 
@@ -46,34 +56,30 @@ public class MongoConfiguration {
         return mongoCollectionsFiles;
     }
 
-    /**
-     * This factory will allow to use the FeatureRepository with several databases, as we are providing a
-     * MultiMongoDbFactory as the implementation of MongoFactory to inject into the FeatureRepository.
-     * @return MongoDbFactory
-     * @throws IOException
-     */
-    @Bean
-    public MongoDbFactory mongoDbFactory() throws IOException {
-        Properties properties = new Properties();
-        properties.load(MongoConfiguration.class.getResourceAsStream("/eva.properties"));
-        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
-        return new MultiMongoDbFactory(mongoClient, "test");
-    }
-
     @Bean
     public CustomConversions customConversions() {
-        List<Converter<?, ?>> converters = new ArrayList<Converter<?, ?>>();
+        List<Converter<?, ?>> converters = new ArrayList<>();
         converters.add(new DBObjectToVariantEntityConverter());
         return new CustomConversions(converters);
     }
 
     @Bean
-    public MappingMongoConverter mongoConverter() throws IOException {
+    public MongoMappingContext mongoMappingContext() {
         MongoMappingContext mappingContext = new MongoMappingContext();
-        DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory());
-        MappingMongoConverter mongoConverter = new MappingMongoConverter(dbRefResolver, mappingContext);
+        mappingContext.setApplicationContext(applicationContext);
+        return mappingContext;
+    }
+
+    @Bean
+    public MappingMongoConverter mappingMongoConverter() throws IOException {
+        DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
+        MappingMongoConverter mongoConverter = new MappingMongoConverter(dbRefResolver, mongoMappingContext());
+
         mongoConverter.setCustomConversions(customConversions());
         mongoConverter.afterPropertiesSet();
+
+        // TODO jmmut: see if this works if we want to exclude the _class
+        //    converter.setTypeMapper(new DefaultMongoTypeMapper(null));
         return mongoConverter;
     }
 

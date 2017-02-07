@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.ac.ebi.eva.commons.models.data;
 
 import org.opencb.biodata.models.variant.VariantSource;
@@ -75,7 +76,6 @@ public class VariantSourceEntity {
     public final static String METADATA_FILEFORMAT_FIELD = "fileformat";
 
     public final static String METADATA_HEADER_FIELD = "header";
-
 
     @Field(value = FILEID_FIELD)
     private String fileId;
