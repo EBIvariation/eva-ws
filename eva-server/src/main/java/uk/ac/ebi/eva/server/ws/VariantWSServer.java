@@ -35,10 +35,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
+import uk.ac.ebi.eva.lib.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
-import uk.ac.ebi.eva.lib.filter.RepositoryFilter;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -94,8 +94,8 @@ public class VariantWSServer extends EvaWSServer {
             numTotalResults = countByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
                                                            alternate);
         } else {
-            List<RepositoryFilter> filters =
-                    RepositoryFilter.getRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
+            List<VariantRepositoryFilter> filters =
+                    VariantRepositoryFilter.getRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
             List<String> excludeMapped = new ArrayList<>();
             if (exclude != null && !exclude.isEmpty()){

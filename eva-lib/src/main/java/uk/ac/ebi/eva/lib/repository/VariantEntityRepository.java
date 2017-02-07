@@ -24,7 +24,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.filter.RepositoryFilter;
+import uk.ac.ebi.eva.lib.filter.VariantRepositoryFilter;
 
 import java.util.List;
 
@@ -37,15 +37,15 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
 
     enum RelationalOperator { EQ, GT, LT, GTE, LTE, IN, NONE }
 
-    List<VariantEntity> findByIdsAndComplexFilters(String id, List<RepositoryFilter> filters, List<String> exclude,
+    List<VariantEntity> findByIdsAndComplexFilters(String id, List<VariantRepositoryFilter> filters, List<String> exclude,
                                                    Pageable pageable);
 
-    Long countByIdsAndComplexFilters(String id, List<RepositoryFilter> filters);
+    Long countByIdsAndComplexFilters(String id, List<VariantRepositoryFilter> filters);
 
-    List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<RepositoryFilter> filters,
+    List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<VariantRepositoryFilter> filters,
                                                        List<String> exclude, Pageable pageable);
 
-    Long countByRegionsAndComplexFilters(List<Region> regions, List<RepositoryFilter> filters);
+    Long countByRegionsAndComplexFilters(List<Region> regions, List<VariantRepositoryFilter> filters);
 
     @Query("{'chr': ?0, 'start': ?1, 'ref': ?2, 'alt': ?3}")
     List<VariantEntity> findByChromosomeAndStartAndReferenceAndAlternate(String chromosome, int start,

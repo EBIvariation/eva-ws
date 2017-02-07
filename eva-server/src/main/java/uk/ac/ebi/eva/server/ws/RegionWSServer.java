@@ -39,7 +39,7 @@ import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
-import uk.ac.ebi.eva.lib.filter.RepositoryFilter;
+import uk.ac.ebi.eva.lib.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -82,8 +82,8 @@ public class RegionWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List<RepositoryFilter> filters =
-                RepositoryFilter.getRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
+        List<VariantRepositoryFilter> filters =
+                VariantRepositoryFilter.getRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
         List<Region> regions = Region.parseRegions(regionId);
 

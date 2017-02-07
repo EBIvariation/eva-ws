@@ -22,7 +22,7 @@ import org.opencb.biodata.models.feature.Region;
 import org.springframework.data.domain.Pageable;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.filter.RepositoryFilter;
+import uk.ac.ebi.eva.lib.filter.VariantRepositoryFilter;
 
 import java.util.List;
 
@@ -37,15 +37,15 @@ interface VariantEntityRepositoryCustom {
      * filters: study, consequence type, minor allele frequency and protein substitution scores (Polyphen and SIFT).
      *
      * @param id Variant id
-     * @param filters List of RepositoryFilter objects by which to filter the query
+     * @param filters List of VariantRepositoryFilter objects by which to filter the query
      * @param exclude List of strings, each matching a field in the variant Mongo documents. Fields specified in the
      *                list will be excluded from the returned document(s)
      * @return VariantEntities whose values are within the bounds of the filters
      */
-    List<VariantEntity> findByIdsAndComplexFilters(String id, List<RepositoryFilter> filters, List<String> exclude,
+    List<VariantEntity> findByIdsAndComplexFilters(String id, List<VariantRepositoryFilter> filters, List<String> exclude,
                                                    Pageable pageable);
 
-    Long countByIdsAndComplexFilters(String id, List<RepositoryFilter> filters);
+    Long countByIdsAndComplexFilters(String id, List<VariantRepositoryFilter> filters);
 
     /**
      * Query for variants within a set of specified genomic regions, and whose attributes match those values specified
@@ -53,14 +53,14 @@ interface VariantEntityRepositoryCustom {
      * SIFT).
      *
      * @param regions List of region objects to invlude in query
-     * @param filters List of RepositoryFilter objects by which to filter the query
+     * @param filters List of VariantRepositoryFilter objects by which to filter the query
      * @param exclude List of strings, each matching a field in the variant Mongo documents. Fields specified in the
      *                list will be excluded from the returned document(s)
      * @return VariantEntities whose values are within the bounds of the filters
      */
-    List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<RepositoryFilter> filters,
+    List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<VariantRepositoryFilter> filters,
                                                        List<String> exclude, Pageable pageable);
 
-    Long countByRegionsAndComplexFilters(List<Region> regions, List<RepositoryFilter> filters);
+    Long countByRegionsAndComplexFilters(List<Region> regions, List<VariantRepositoryFilter> filters);
 
 }

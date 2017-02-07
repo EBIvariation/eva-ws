@@ -30,7 +30,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.filter.RepositoryFilter;
+import uk.ac.ebi.eva.lib.filter.VariantRepositoryFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,20 +54,20 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     @Override
-    public List<VariantEntity> findByIdsAndComplexFilters(String id, List<RepositoryFilter> filters,
+    public List<VariantEntity> findByIdsAndComplexFilters(String id, List<VariantRepositoryFilter> filters,
                                                           List<String> exclude, Pageable pageable) {
         Query query = new Query(Criteria.where("ids").is(id));
         return findByComplexFiltersHelper(query, filters, exclude, pageable);
     }
 
     @Override
-    public Long countByIdsAndComplexFilters(String id, List<RepositoryFilter> filters) {
+    public Long countByIdsAndComplexFilters(String id, List<VariantRepositoryFilter> filters) {
         Query query = new Query(Criteria.where("ids").is(id));
         return countByComplexFiltersHelper(query, filters);
     }
 
     @Override
-    public List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<RepositoryFilter> filters,
+    public List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<VariantRepositoryFilter> filters,
                                                               List<String> exclude, Pageable pageable) {
         Query query = new Query();
         addRegionsToQuery(query, regions);
@@ -75,14 +75,14 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     @Override
-    public Long countByRegionsAndComplexFilters(List<Region> regions, List<RepositoryFilter> filters) {
+    public Long countByRegionsAndComplexFilters(List<Region> regions, List<VariantRepositoryFilter> filters) {
         Query query = new Query();
         addRegionsToQuery(query, regions);
         return countByComplexFiltersHelper(query, filters);
     }
 
-    private List<VariantEntity> findByComplexFiltersHelper(Query query, List<RepositoryFilter> filters, List<String> exclude,
-                                                   Pageable pageable) {
+    private List<VariantEntity> findByComplexFiltersHelper(Query query, List<VariantRepositoryFilter> filters, List<String> exclude,
+                                                           Pageable pageable) {
 
         applyFilters(query, filters);
 
@@ -102,14 +102,14 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
     }
 
-    private Long countByComplexFiltersHelper(Query query, List<RepositoryFilter> filters) {
+    private Long countByComplexFiltersHelper(Query query, List<VariantRepositoryFilter> filters) {
         applyFilters(query, filters);
 
         return mongoTemplate.count(query, VariantEntity.class);
     }
 
-    private void applyFilters(Query query, List<RepositoryFilter> filters) {
-        for (RepositoryFilter filter : filters) {
+    private void applyFilters(Query query, List<VariantRepositoryFilter> filters) {
+        for (VariantRepositoryFilter filter : filters) {
             query.addCriteria(filter.createCriteria());
         }
     }
