@@ -18,16 +18,9 @@
  */
 package uk.ac.ebi.eva.server;
 
-import org.apache.commons.lang3.StringUtils;
 import org.opencb.datastore.core.QueryOptions;
 import org.springframework.data.domain.PageRequest;
 
-import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
-import uk.ac.ebi.eva.lib.utils.RepositoryFilter;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

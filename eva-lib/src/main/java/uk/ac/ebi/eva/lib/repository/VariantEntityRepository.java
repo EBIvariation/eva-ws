@@ -24,7 +24,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.utils.RepositoryFilter;
+import uk.ac.ebi.eva.lib.filter.RepositoryFilter;
 
 import java.util.List;
 

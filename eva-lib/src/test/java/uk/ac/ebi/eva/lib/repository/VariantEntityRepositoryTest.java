@@ -47,9 +47,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantEntityConverter;
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
+import uk.ac.ebi.eva.lib.filter.RepositoryFilter;
 import uk.ac.ebi.eva.lib.configuration.MongoRepositoryTestConfiguration;
-import uk.ac.ebi.eva.lib.utils.RepositoryFilter;
-import uk.ac.ebi.eva.lib.utils.RepositoryFilterUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;

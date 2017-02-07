@@ -1,7 +1,6 @@
-package uk.ac.ebi.eva.lib.utils;
+package uk.ac.ebi.eva.lib.filter;
 
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 

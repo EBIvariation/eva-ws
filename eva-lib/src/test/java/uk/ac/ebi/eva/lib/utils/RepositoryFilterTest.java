@@ -1,8 +1,8 @@
 package uk.ac.ebi.eva.lib.utils;
 
-import org.junit.Before;
 import org.junit.Test;
 
+import uk.ac.ebi.eva.lib.filter.RepositoryFilter;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
 import java.util.ArrayList;
