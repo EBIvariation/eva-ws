@@ -21,13 +21,12 @@ package uk.ac.ebi.eva.lib.filter;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class VariantRepositoryStudyFilter extends VariantRepositoryFilter<List<String>> {
+public class VariantEntityRepositoryStudyFilter extends VariantEntityRepositoryFilter<List<String>> {
 
     private static final String FIELD = "files.sid";
 
-    public VariantRepositoryStudyFilter(List<String> studies) {
+    public VariantEntityRepositoryStudyFilter(List<String> studies) {
         super(FIELD, studies, VariantEntityRepository.RelationalOperator.IN);
     }
 }

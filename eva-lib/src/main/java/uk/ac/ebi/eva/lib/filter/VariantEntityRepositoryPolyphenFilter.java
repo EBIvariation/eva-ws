@@ -18,20 +18,11 @@
  */
 package uk.ac.ebi.eva.lib.filter;
 
-import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+public class VariantEntityRepositoryPolyphenFilter extends VariantEntityRepositoryFilter<Double> {
 
-import java.util.List;
-import java.util.stream.Collectors;
+    private static final String FIELD = "annot.ct.polyphen.sc";
 
-public class VariantRepositoryConsequenceTypeFilter extends VariantRepositoryFilter<List<Integer>> {
-
-    private static final String FIELD = "annot.ct.so";
-
-    public VariantRepositoryConsequenceTypeFilter(List<String> consequenceType) {
-        super(FIELD,
-              consequenceType.stream()
-                             .map(c -> Integer.parseInt(c.replaceAll("[^\\d.]", ""), 10))  // parse integer from string
-                             .collect(Collectors.toList()),
-              VariantEntityRepository.RelationalOperator.IN);
+    public VariantEntityRepositoryPolyphenFilter(String polyphen) {
+        super(FIELD, getValueFromRelation(polyphen), getRelationalOperatorFromRelation(polyphen));
     }
 }

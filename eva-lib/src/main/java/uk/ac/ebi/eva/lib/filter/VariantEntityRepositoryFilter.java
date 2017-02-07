@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class VariantRepositoryFilter<T> {
+public class VariantEntityRepositoryFilter<T> {
 
     private String field;
     private T value;
     private VariantEntityRepository.RelationalOperator operator;
 
-    public VariantRepositoryFilter(String field, T value, VariantEntityRepository.RelationalOperator operator) {
+    public VariantEntityRepositoryFilter(String field, T value, VariantEntityRepository.RelationalOperator operator) {
         this.field = field;
         this.value = value;
         this.operator = operator;
@@ -68,28 +68,28 @@ public class VariantRepositoryFilter<T> {
         return criteria;
     }
 
-    public static List<VariantRepositoryFilter> getRepositoryFilters(String maf, String polyphenScore, String siftScore,
-                                                                     List<String> studies, List<String> consequenceType) {
-        List<VariantRepositoryFilter> filters = new ArrayList<>();
+    public static List<VariantEntityRepositoryFilter> getRepositoryFilters(String maf, String polyphenScore, String siftScore,
+                                                                           List<String> studies, List<String> consequenceType) {
+        List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
 
-        VariantRepositoryFilter filter;
+        VariantEntityRepositoryFilter filter;
 
         if (maf != null) {
-            filter = new VariantRepositoryFilter<>("st.maf", getValueFromRelation(maf), getRelationalOperatorFromRelation(maf));
+            filter = new VariantEntityRepositoryFilter<>("st.maf", getValueFromRelation(maf), getRelationalOperatorFromRelation(maf));
             filters.add(filter);
         }
         if (polyphenScore != null) {
-            filter = new VariantRepositoryFilter<>("annot.ct.polyphen.sc", getValueFromRelation(polyphenScore),
-                                                   getRelationalOperatorFromRelation(polyphenScore));
+            filter = new VariantEntityRepositoryFilter<>("annot.ct.polyphen.sc", getValueFromRelation(polyphenScore),
+                                                         getRelationalOperatorFromRelation(polyphenScore));
             filters.add(filter);
         }
         if (siftScore != null) {
-            filter = new VariantRepositoryFilter<>("annot.ct.sift.sc", getValueFromRelation(siftScore),
-                                                   getRelationalOperatorFromRelation(siftScore));
+            filter = new VariantEntityRepositoryFilter<>("annot.ct.sift.sc", getValueFromRelation(siftScore),
+                                                         getRelationalOperatorFromRelation(siftScore));
             filters.add(filter);
         }
         if (studies != null && !studies.isEmpty()) {
-            filter = new VariantRepositoryFilter<>("files.sid", studies, VariantEntityRepository.RelationalOperator.IN);
+            filter = new VariantEntityRepositoryFilter<>("files.sid", studies, VariantEntityRepository.RelationalOperator.IN);
             filters.add(filter);
         }
         if (consequenceType != null && !consequenceType.isEmpty()) {
@@ -97,8 +97,8 @@ public class VariantRepositoryFilter<T> {
                                                                .map(c -> Integer
                                                                        .parseInt(c.replaceAll("[^\\d.]", ""), 10))
                                                                .collect(Collectors.toList());
-            filter = new VariantRepositoryFilter<>("annot.ct.so", consequenceTypeConv,
-                                                   VariantEntityRepository.RelationalOperator.IN);
+            filter = new VariantEntityRepositoryFilter<>("annot.ct.so", consequenceTypeConv,
+                                                         VariantEntityRepository.RelationalOperator.IN);
             filters.add(filter);
         }
         return filters;
@@ -140,7 +140,7 @@ public class VariantRepositoryFilter<T> {
             return false;
         }
 
-        VariantRepositoryFilter o1 = (VariantRepositoryFilter) o;
+        VariantEntityRepositoryFilter o1 = (VariantEntityRepositoryFilter) o;
 
         return (this.field.equals(o1.field) &&
                 Objects.equals(this.value, o1.value) &&
