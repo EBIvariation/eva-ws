@@ -22,7 +22,7 @@ public class VariantRepositoryPolyphenFilter extends VariantRepositoryFilter<Dou
 
     private static final String FIELD = "annot.ct.polyphen.sc";
 
-    public VariantRepositoryPolyphenFilter(String maf) {
-        super(FIELD, getValueFromRelation(maf), getRelationalOperatorFromRelation(maf));
+    public VariantRepositoryPolyphenFilter(String polyphen) {
+        super(FIELD, getValueFromRelation(polyphen), getRelationalOperatorFromRelation(polyphen));
     }
 }

@@ -18,11 +18,16 @@
  */
 package uk.ac.ebi.eva.lib.filter;
 
-public class VariantRepositorySiftFilter extends VariantRepositoryFilter<Double> {
+import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
-    private static final String FIELD = "annot.ct.sift.sc";
+import java.util.List;
+import java.util.stream.Collectors;
 
-    public VariantRepositorySiftFilter(String sift) {
-        super(FIELD, getValueFromRelation(sift), getRelationalOperatorFromRelation(sift));
+public class VariantRepositoryStudyFilter extends VariantRepositoryFilter<List<String>> {
+
+    private static final String FIELD = "files.sid";
+
+    public VariantRepositoryStudyFilter(List<String> studies) {
+        super(FIELD, studies, VariantEntityRepository.RelationalOperator.IN);
     }
 }
