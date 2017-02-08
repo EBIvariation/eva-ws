@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 EMBL - European Bioinformatics Institute
+ * Copyright 2016-2017 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.ac.ebi.eva.commons.models.data;
+package uk.ac.ebi.eva.lib.repository.projections;
 
 import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
 

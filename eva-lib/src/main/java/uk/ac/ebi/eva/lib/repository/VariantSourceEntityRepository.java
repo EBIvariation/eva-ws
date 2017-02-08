@@ -17,7 +17,7 @@ package uk.ac.ebi.eva.lib.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import uk.ac.ebi.eva.commons.models.data.StudyName;
+import uk.ac.ebi.eva.lib.repository.projections.StudyName;
 import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 
 import java.util.List;

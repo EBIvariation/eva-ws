@@ -26,10 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import uk.ac.ebi.eva.commons.models.data.StudyName;
+import uk.ac.ebi.eva.lib.repository.projections.StudyName;
 import uk.ac.ebi.eva.lib.configuration.MongoRepositoryTestConfiguration;
 import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 

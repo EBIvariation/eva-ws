@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.ac.ebi.eva.commons.models.data.StudyName;
+import uk.ac.ebi.eva.lib.repository.projections.StudyName;
 import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
@@ -120,9 +120,13 @@ public class ArchiveWSServer extends EvaWSServer {
             throws IllegalOpenCGACredentialsException, IOException {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List<StudyName> nonUniqueStudies = variantSourceEntityRepository.findBy();
+        List<StudyName> uniqueStudies = getUniqueStudies(nonUniqueStudies);
+        return setQueryResponse(uniqueStudies);
+    }
+
+    private List<StudyName> getUniqueStudies(List<StudyName> nonUniqueStudies) {
         Set<StudyName> uniqueStudies = new TreeSet<>(nonUniqueStudies);
-        ArrayList<StudyName> uniqueStudiesList = new ArrayList<>(uniqueStudies);
-        return setQueryResponse(uniqueStudiesList);
+        return new ArrayList<>(uniqueStudies);
     }
 
     @RequestMapping(value = "/studies/stats", method = RequestMethod.GET)
