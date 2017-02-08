@@ -94,26 +94,29 @@ public class VariantEntityRepositoryFilter<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null) {
-            return false;
-        }
-        if (getClass() != o.getClass()) {
+        if (this == o) return true;
+        if (!(o instanceof VariantEntityRepositoryFilter)) {
             return false;
         }
 
-        VariantEntityRepositoryFilter o1 = (VariantEntityRepositoryFilter) o;
+        VariantEntityRepositoryFilter<?> that = (VariantEntityRepositoryFilter<?>) o;
 
-        return (this.field.equals(o1.field) &&
-                Objects.equals(this.value, o1.value) &&
-                Objects.equals(this.operator, o1.operator));
+        if (!field.equals(that.field)) {
+            return false;
+        }
+        if (!value.equals(that.value)) {
+            return false;
+        }
+        return operator == that.operator;
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(field, value, operator);
+        int result = field.hashCode();
+        result = 31 * result + value.hashCode();
+        result = 31 * result + operator.hashCode();
+        return result;
     }
 
 }
