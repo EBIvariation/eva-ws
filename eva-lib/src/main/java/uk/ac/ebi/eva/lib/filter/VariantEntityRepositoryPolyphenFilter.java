@@ -20,7 +20,7 @@ package uk.ac.ebi.eva.lib.filter;
 
 public class VariantEntityRepositoryPolyphenFilter extends VariantEntityRepositoryDoubleFilter {
 
-    private static final String FIELD = "annot.ct.polyphen.sc";
+    private static final String FIELD = VariantEntityRepositoryFilter.POLYPHEN_FIELD;
 
     public VariantEntityRepositoryPolyphenFilter(String polyphen) {
         super(FIELD, polyphen);

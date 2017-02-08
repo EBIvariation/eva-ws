@@ -24,37 +24,49 @@ import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
 public abstract class VariantEntityRepositoryFilter<T> {
 
-    private final String FIELD;
-    private final T VALUE;
-    private final VariantEntityRepository.RelationalOperator OPERATOR;
+    public final static String ANNOTATION_FIELD = "annot";
+    public final static String STATISTICS_FIELD = "st";
+    public final static String FILES_FIELD = "st";
+
+    public final static String MAF_FIELD = STATISTICS_FIELD + ".maf";
+    public final static String STUDY_ID_FIELD = FILES_FIELD + ".sid";
+    public final static String CONSEQUENCE_TYPE_FIELD = ANNOTATION_FIELD + ".ct";
+
+    public final static String POLYPHEN_FIELD = CONSEQUENCE_TYPE_FIELD + ".polyphen.sc";
+    public final static String SIFT_FIELD = CONSEQUENCE_TYPE_FIELD + ".sift.sc";
+    public final static String CONSEQUENCE_TYPE_SO_FIELD = CONSEQUENCE_TYPE_FIELD + ".so";
+
+    private final String field;
+    private final T value;
+    private final VariantEntityRepository.RelationalOperator operator;
 
     public VariantEntityRepositoryFilter(String field, T value, VariantEntityRepository.RelationalOperator operator) {
-        this.FIELD = field;
-        this.VALUE = value;
-        this.OPERATOR = operator;
+        this.field = field;
+        this.value = value;
+        this.operator = operator;
     }
 
     public Criteria getCriteria() {
-        Criteria criteria = Criteria.where(FIELD);
+        Criteria criteria = Criteria.where(field);
 
-        switch (OPERATOR) {
+        switch (operator) {
             case EQ:
-                criteria = criteria.is(VALUE);
+                criteria = criteria.is(value);
                 break;
             case GT:
-                criteria = criteria.gt(VALUE);
+                criteria = criteria.gt(value);
                 break;
             case LT:
-                criteria = criteria.lt(VALUE);
+                criteria = criteria.lt(value);
                 break;
             case GTE:
-                criteria = criteria.gte(VALUE);
+                criteria = criteria.gte(value);
                 break;
             case LTE:
-                criteria = criteria.lte(VALUE);
+                criteria = criteria.lte(value);
                 break;
             case IN:
-                criteria = criteria.in(VALUE);
+                criteria = criteria.in(value);
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -73,20 +85,20 @@ public abstract class VariantEntityRepositoryFilter<T> {
 
         VariantEntityRepositoryFilter<?> that = (VariantEntityRepositoryFilter<?>) o;
 
-        if (!FIELD.equals(that.FIELD)) {
+        if (!field.equals(that.field)) {
             return false;
         }
-        if (!VALUE.equals(that.VALUE)) {
+        if (!value.equals(that.value)) {
             return false;
         }
-        return OPERATOR == that.OPERATOR;
+        return operator == that.operator;
     }
 
     @Override
     public int hashCode() {
-        int result = FIELD.hashCode();
-        result = 31 * result + VALUE.hashCode();
-        result = 31 * result + OPERATOR.hashCode();
+        int result = field.hashCode();
+        result = 31 * result + value.hashCode();
+        result = 31 * result + operator.hashCode();
         return result;
     }
 

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public class VariantEntityRepositoryConsequenceTypeFilter extends VariantEntityRepositoryFilter<List<Integer>> {
 
-    private static final String FIELD = "annot.ct.so";
+    private static final String FIELD = VariantEntityRepositoryFilter.CONSEQUENCE_TYPE_SO_FIELD;
 
     public VariantEntityRepositoryConsequenceTypeFilter(List<String> consequenceType) {
         super(FIELD,

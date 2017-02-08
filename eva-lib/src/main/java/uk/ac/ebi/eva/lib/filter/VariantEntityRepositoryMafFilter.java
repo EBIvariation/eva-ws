@@ -20,7 +20,7 @@ package uk.ac.ebi.eva.lib.filter;
 
 public class VariantEntityRepositoryMafFilter extends VariantEntityRepositoryDoubleFilter {
 
-    private static final String FIELD = "st.maf";
+    private static final String FIELD = VariantEntityRepositoryFilter.MAF_FIELD;
 
     public VariantEntityRepositoryMafFilter(String maf) {
         super(FIELD, maf);

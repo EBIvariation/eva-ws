@@ -20,7 +20,7 @@ package uk.ac.ebi.eva.lib.filter;
 
 public class VariantEntityRepositorySiftFilter extends VariantEntityRepositoryDoubleFilter {
 
-    private static final String FIELD = "annot.ct.sift.sc";
+    private static final String FIELD = VariantEntityRepositoryFilter.SIFT_FIELD;
 
     public VariantEntityRepositorySiftFilter(String sift) {
         super(FIELD, sift);
