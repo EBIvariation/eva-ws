@@ -110,7 +110,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
     private void applyFilters(Query query, List<VariantEntityRepositoryFilter> filters) {
         for (VariantEntityRepositoryFilter filter : filters) {
-            query.addCriteria(filter.createCriteria());
+            query.addCriteria(filter.getCriteria());
         }
     }
 
