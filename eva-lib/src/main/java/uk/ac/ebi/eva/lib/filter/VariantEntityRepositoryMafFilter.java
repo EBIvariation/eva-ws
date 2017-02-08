@@ -18,11 +18,11 @@
  */
 package uk.ac.ebi.eva.lib.filter;
 
-public class VariantEntityRepositoryMafFilter extends VariantEntityRepositoryFilter<Double> {
+public class VariantEntityRepositoryMafFilter extends VariantEntityRepositoryDoubleFilter {
 
     private static final String FIELD = "st.maf";
 
     public VariantEntityRepositoryMafFilter(String maf) {
-        super(FIELD, getValueFromRelation(maf), getRelationalOperatorFromRelation(maf));
+        super(FIELD, maf);
     }
 }

@@ -18,11 +18,11 @@
  */
 package uk.ac.ebi.eva.lib.filter;
 
-public class VariantEntityRepositoryPolyphenFilter extends VariantEntityRepositoryFilter<Double> {
+public class VariantEntityRepositoryPolyphenFilter extends VariantEntityRepositoryDoubleFilter {
 
     private static final String FIELD = "annot.ct.polyphen.sc";
 
     public VariantEntityRepositoryPolyphenFilter(String polyphen) {
-        super(FIELD, getValueFromRelation(polyphen), getRelationalOperatorFromRelation(polyphen));
+        super(FIELD, polyphen);
     }
 }
