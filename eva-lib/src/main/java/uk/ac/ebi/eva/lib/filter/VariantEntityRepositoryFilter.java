@@ -22,6 +22,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
+import java.util.Collection;
+
 public abstract class VariantEntityRepositoryFilter<T> {
 
     public final static String ANNOTATION_FIELD = "annot";
@@ -66,7 +68,7 @@ public abstract class VariantEntityRepositoryFilter<T> {
                 criteria = criteria.lte(value);
                 break;
             case IN:
-                criteria = criteria.in(value);
+                criteria = criteria.in((Collection) value);
                 break;
             default:
                 throw new IllegalArgumentException();
