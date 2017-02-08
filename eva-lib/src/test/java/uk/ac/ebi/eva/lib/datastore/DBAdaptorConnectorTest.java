@@ -3,6 +3,7 @@ package uk.ac.ebi.eva.lib.datastore;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.ReadPreference;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,10 @@ import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import uk.ac.ebi.eva.lib.MongoConfiguration;
 import uk.ac.ebi.eva.lib.MultiMongoFactoryConfiguration;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
-import uk.ac.ebi.eva.lib.MongoConfiguration;
 
 import java.util.Properties;
 
@@ -25,6 +26,8 @@ public class DBAdaptorConnectorTest {
 
     @Autowired
     private MongoDbFactory factory;
+
+    private Properties properties;
 
     /**
      * Check that spring is autowiring our MultiMongoDbFactory as the MongoDbFactory to use.
@@ -47,10 +50,7 @@ public class DBAdaptorConnectorTest {
      */
     @Test
     public void testDefaultReadPreferenceInMongoClient() throws Exception {
-        Properties properties = new Properties();
-        properties.load(DBAdaptorConnectorTest.class.getResourceAsStream("/eva.properties"));
         MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
-
         assertEquals(ReadPreference.secondaryPreferred(), mongoClient.getReadPreference());
     }
 
@@ -63,12 +63,16 @@ public class DBAdaptorConnectorTest {
      */
     @Test
     public void testReadPreferenceInMongoClient() throws Exception {
-        Properties properties = new Properties();
-        properties.load(DBAdaptorConnectorTest.class.getResourceAsStream("/eva.properties"));
-        properties.put("eva.mongo.read-preference", "nearest");
+        ReadPreference readPreference = ReadPreference.nearest();
+        properties.put("eva.mongo.read-preference", readPreference.getName());
         MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
 
-        assertEquals(ReadPreference.nearest(), mongoClient.getReadPreference());
+        assertEquals(readPreference, mongoClient.getReadPreference());
     }
 
+    @Before
+    public void setUp() throws Exception {
+        properties = new Properties();
+        properties.load(DBAdaptorConnectorTest.class.getResourceAsStream("/eva.properties"));
+    }
 }

@@ -15,14 +15,11 @@
  */
 package uk.ac.ebi.eva.lib;
 
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
@@ -30,7 +27,6 @@ import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
-import org.springframework.expression.BeanResolver;
 
 import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantEntityConverter;
 
@@ -39,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-@PropertySource("/eva.properties")
 public class MongoConfiguration {
 
     @Autowired

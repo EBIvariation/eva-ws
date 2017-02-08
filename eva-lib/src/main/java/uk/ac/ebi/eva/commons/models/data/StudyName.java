@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 EMBL - European Bioinformatics Institute
+ * Copyright 2017 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,12 @@
 
 package uk.ac.ebi.eva.commons.models.data;
 
+import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
+
+/**
+ * Subset of fields from VariantSourceEntity. This is used to make an automatic MongoDB projection in
+ * {@link VariantSourceEntityRepository}
+ */
 public class StudyName implements Comparable {
 
     private String studyId;

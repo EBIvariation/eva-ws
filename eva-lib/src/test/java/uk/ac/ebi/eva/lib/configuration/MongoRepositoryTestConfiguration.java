@@ -23,19 +23,19 @@ import com.mongodb.MongoClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.test.context.TestPropertySource;
 
 import uk.ac.ebi.eva.lib.MongoConfiguration;
 
 @Configuration
 @EnableMongoRepositories(basePackages = "uk.ac.ebi.eva.lib.repository")
 @Import({MongoConfiguration.class})
-@TestPropertySource({"classpath:eva.properties"})
+@PropertySource({"classpath:eva.properties"})
 public class MongoRepositoryTestConfiguration {
 
     @Bean
