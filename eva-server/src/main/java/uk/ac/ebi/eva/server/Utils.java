@@ -18,14 +18,17 @@
  */
 package uk.ac.ebi.eva.server;
 
-import org.apache.commons.lang3.StringUtils;
 import org.opencb.datastore.core.QueryOptions;
 import org.springframework.data.domain.PageRequest;
 
-import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryConsequenceTypeFilter;
+import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryMafFilter;
+import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryStudyFilter;
+import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryPolyphenFilter;
+import uk.ac.ebi.eva.lib.filter.VariantEntityRepositorySiftFilter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -42,30 +45,6 @@ public class Utils {
 
     public static Map<String, String> getApiToMongoDocNameMap() {
         return Collections.unmodifiableMap(apiToMongoDocNameMap);
-    }
-
-    public static Double getValueFromRelation(String relation) {
-        return Double.parseDouble(relation.replaceAll("[^\\d.]", ""));
-    }
-
-    public static VariantEntityRepository.RelationalOperator getRelationalOperatorFromRelation(String relation) {
-        String relationalOperatorString = relation.replaceAll("[^<>=]", "");
-
-        switch (relationalOperatorString) {
-            case "=":
-                return VariantEntityRepository.RelationalOperator.EQ;
-            case ">":
-                return VariantEntityRepository.RelationalOperator.GT;
-            case "<":
-                return VariantEntityRepository.RelationalOperator.LT;
-            case ">=":
-                return VariantEntityRepository.RelationalOperator.GTE;
-            case "<=":
-                return VariantEntityRepository.RelationalOperator.LTE;
-            default:
-                throw new IllegalArgumentException();
-        }
-
     }
 
     public static PageRequest getPageRequest(QueryOptions queryOptions) {

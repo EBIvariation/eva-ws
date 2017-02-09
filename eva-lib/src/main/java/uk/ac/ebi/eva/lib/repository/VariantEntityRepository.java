@@ -24,6 +24,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
+import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
 
 import java.util.List;
 
@@ -34,32 +35,17 @@ import java.util.List;
  */
 public interface VariantEntityRepository extends MongoRepository<VariantEntity, String>, VariantEntityRepositoryCustom {
 
-    enum RelationalOperator { EQ, GT, LT, GTE, LTE, NONE }
+    enum RelationalOperator { EQ, GT, LT, GTE, LTE, IN }
 
-    List<VariantEntity> findByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
-                                                   RelationalOperator mafOperator, Double mafValue,
-                                                   RelationalOperator polyphenScore4Operator, Double polyphenScoreValue,
-                                                   RelationalOperator siftScoreOperator, Double siftScoreValue,
-                                                   List<String> exclude, Pageable pageable);
+    List<VariantEntity> findByIdsAndComplexFilters(String id, List<VariantEntityRepositoryFilter> filters, List<String> exclude,
+                                                   Pageable pageable);
 
-    Long countByIdsAndComplexFilters(String id, List<String> studies, List<String> consequenceType,
-                                     RelationalOperator mafOperator, Double mafValue,
-                                     RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
-                                     RelationalOperator siftScoreOperator, Double siftScoreValue);
+    Long countByIdsAndComplexFilters(String id, List<VariantEntityRepositoryFilter> filters);
 
-    List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
-                                                       List<String> consequenceType,
-                                                       RelationalOperator mafOperator, Double mafValue,
-                                                       RelationalOperator polyphenScoreOperator,
-                                                       Double polyphenScoreValue,
-                                                       RelationalOperator siftScoreOperator, Double siftScoreValue,
+    List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<VariantEntityRepositoryFilter> filters,
                                                        List<String> exclude, Pageable pageable);
 
-    Long countByRegionsAndComplexFilters(List<Region> regions, List<String> studies,
-                                         List<String> consequenceType,
-                                         RelationalOperator mafOperator, Double mafValue,
-                                         RelationalOperator polyphenScoreOperator, Double polyphenScoreValue,
-                                         RelationalOperator siftScoreOperator, Double siftScoreValue);
+    Long countByRegionsAndComplexFilters(List<Region> regions, List<VariantEntityRepositoryFilter> filters);
 
     @Query("{'chr': ?0, 'start': ?1, 'ref': ?2, 'alt': ?3}")
     List<VariantEntity> findByChromosomeAndStartAndReferenceAndAlternate(String chromosome, int start,

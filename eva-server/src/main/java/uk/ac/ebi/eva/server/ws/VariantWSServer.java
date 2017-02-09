@@ -35,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
+import uk.ac.ebi.eva.lib.filter.Helpers;
+import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
@@ -43,9 +45,9 @@ import uk.ac.ebi.eva.server.Utils;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
@@ -93,28 +95,26 @@ public class VariantWSServer extends EvaWSServer {
             numTotalResults = countByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
                                                            alternate);
         } else {
-            VariantFilterValues filterValues = new VariantFilterValues(maf, polyphenScore, siftScore);
+            List<VariantEntityRepositoryFilter> filters =
+                    Helpers.getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore,
+                                                              studies, consequenceType);
 
-            List<String> excludeMapped = exclude.stream().map(e -> Utils.getApiToMongoDocNameMap().get(e)).collect(
-                    Collectors.toList());
+            List<String> excludeMapped = new ArrayList<>();
+            if (exclude != null && !exclude.isEmpty()){
+                for (String e : exclude) {
+                    String docPath = Utils.getApiToMongoDocNameMap().get(e);
+                    if (docPath == null) {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        return setQueryResponse("Unrecognised exclude field: " + e);
+                    }
+                    excludeMapped.add(docPath);
+                }
+            }
 
-            variantEntities = variantEntityRepository.findByIdsAndComplexFilters(variantId, studies, consequenceType,
-                                                                                 filterValues.getMafOperator(),
-                                                                                 filterValues.getMafvalue(),
-                                                                                 filterValues.getPolyphenScoreOperator(),
-                                                                                 filterValues.getPolyphenScoreValue(),
-                                                                                 filterValues.getSiftScoreOperator(),
-                                                                                 filterValues.getSiftScoreValue(),
-                                                                                 excludeMapped,
+            variantEntities = variantEntityRepository.findByIdsAndComplexFilters(variantId, filters, excludeMapped,
                                                                                  Utils.getPageRequest(queryOptions));
 
-            numTotalResults = variantEntityRepository.countByIdsAndComplexFilters(variantId, studies, consequenceType,
-                                                                                  filterValues.getMafOperator(),
-                                                                                  filterValues.getMafvalue(),
-                                                                                  filterValues.getPolyphenScoreOperator(),
-                                                                                  filterValues.getPolyphenScoreValue(),
-                                                                                  filterValues.getSiftScoreOperator(),
-                                                                                  filterValues.getSiftScoreValue());
+            numTotalResults = variantEntityRepository.countByIdsAndComplexFilters(variantId, filters);
         }
 
 
@@ -125,8 +125,7 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    private List<VariantEntity> queryByCoordinatesAndAlleles(String chromosome, int start, String reference,
-                                                             String alternate) {
+    private List<VariantEntity> queryByCoordinatesAndAlleles(String chromosome, int start, String reference, String alternate) {
         if (alternate != null) {
             return variantEntityRepository.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start,
                                                                                             reference, alternate);
