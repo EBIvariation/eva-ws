@@ -284,15 +284,15 @@ public class VariantEntityRepositoryTest {
         List<String> studies = new ArrayList<>();
         studies.add("PRJEB6930");
         String chr = "11";
-        int start = 1;
-        int end = 20000;
+        int start = 180000;
+        int end = 180500;
         List<VariantEntityRepositoryFilter> filters =
                 Helpers.getVariantEntityRepositoryFilters(null, null, null, studies, null);
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 14);
+        testFiltersHelperRegion(regions, filters, exclude, 20);
     }
 
     @Test
