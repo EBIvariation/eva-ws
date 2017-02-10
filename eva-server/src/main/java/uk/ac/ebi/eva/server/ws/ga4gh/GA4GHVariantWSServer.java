@@ -74,7 +74,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         initializeQueryOptions();
         
-        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
+        VariantDBAdaptor variantMongoDbAdaptor = dbAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
         
         if (files != null && !files.isEmpty()) {
             queryOptions.put("files", files);

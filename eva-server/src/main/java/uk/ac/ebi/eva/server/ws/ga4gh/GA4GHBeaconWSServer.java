@@ -64,7 +64,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
                     "Please provide a positive number as start position");
         }
         
-        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
+        VariantDBAdaptor variantMongoDbAdaptor = dbAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
         
         Region region = new Region(chromosome, start, start + allele.length());
         if (allele.equalsIgnoreCase("INDEL")) {

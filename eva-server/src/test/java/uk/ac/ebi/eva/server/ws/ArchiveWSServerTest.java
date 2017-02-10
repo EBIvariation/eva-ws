@@ -24,6 +24,9 @@ import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
+import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
+import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
+import org.opencb.opencga.storage.mongodb.variant.StudyMongoDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,6 +43,7 @@ import uk.ac.ebi.eva.lib.models.Assembly;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -76,10 +80,14 @@ public class ArchiveWSServerTest {
     private StudyDgvaDBAdaptor studyDgvaDBAdaptor;
 
     @MockBean
+    private StudyMongoDBAdaptor studyMongoDBAdaptor;
+    // TODO: merge the three study adaptors into one?
+
+    @MockBean
     private DBAdaptorConnector dbAdaptorConnector;
 
     @Before
-    public void setup() throws URISyntaxException {
+    public void setup() throws URISyntaxException, IOException, IllegalOpenCGACredentialsException {
         // species test data
         Assembly grch37 = new Assembly("GCA_000001405.1", "GCA_000001405", "1", "GRCh37", "grc3h7", 9606, "Human", "Homo Sapiens", "hsapiens", "human");
 
@@ -146,7 +154,10 @@ public class ArchiveWSServerTest {
                                                      .collect(Collectors.groupingBy(Function.identity(),
                                                                                     Collectors.counting()));
         BDDMockito.given(archiveDgvaDBAdaptor.countStudiesPerType(anyObject())).willReturn(encapsulateInQueryResult(svStudiesGroupedByStudyType.entrySet().toArray()));
-        
+
+
+//        BDDMockito.given(studyMongoDBAdaptor.listStudies()).willReturn(encapsulateInQueryResult(TODO));
+        BDDMockito.given(dbAdaptorConnector.getStudyDBAdaptor("hsapiens_grch37")).willReturn(studyMongoDBAdaptor);
         // TODO: why BDDMockito.given instead of when?
 
     }

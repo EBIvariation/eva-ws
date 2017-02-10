@@ -63,7 +63,7 @@ public class GeneWSServer extends EvaWSServer {
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         initializeQueryOptions();
         
-        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
+        VariantDBAdaptor variantMongoDbAdaptor = dbAdaptorConnector.getVariantDBAdaptor(species);
         
         if (studies != null && !studies.isEmpty()) {
             queryOptions.put(VariantDBAdaptor.STUDIES, studies);

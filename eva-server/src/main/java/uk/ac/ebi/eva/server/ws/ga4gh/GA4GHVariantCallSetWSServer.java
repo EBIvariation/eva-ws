@@ -73,7 +73,7 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
             throw new IllegalArgumentException("The 'variantSetIds' argument must not be empty");
         }
         
-        VariantSourceDBAdaptor dbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor("hsapiens_grch37");
+        VariantSourceDBAdaptor dbAdaptor = dbAdaptorConnector.getVariantSourceDBAdaptor("hsapiens_grch37");
         
         int idxCurrentPage = 0;
         if (pageToken != null && !pageToken.isEmpty() && StringUtils.isNumeric(pageToken)) {

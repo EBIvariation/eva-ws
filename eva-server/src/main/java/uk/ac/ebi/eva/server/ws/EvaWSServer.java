@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+
 /**
  * Created by imedina on 01/04/14.
  */
@@ -59,7 +61,10 @@ public class EvaWSServer {
     protected long endTime;
 
     protected static Logger logger = LoggerFactory.getLogger(EvaWSServer.class);
-    
+
+    @Autowired
+    protected DBAdaptorConnector dbAdaptorConnector;
+
     @Bean
     public Jackson2ObjectMapperBuilder jacksonBuilder() {
         Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
