@@ -75,6 +75,36 @@ public class EvaStudyBrowser {
 
     private String resource;
 
+    public EvaStudyBrowser(String projectAccession, long studyId, String projectTitle, String description,
+                           String taxId, String commonName, String scientificName, String sourceType,
+                           String studyType, Long variantCount, Integer samples, String center, String scope,
+                           String material, String publications, String associatedProjects, String experimentType,
+                           String experimentTypeAbbreviation, String assemblyAccession, String assemblyName,
+                           String platform, String resource) {
+        this.projectAccession = projectAccession;
+        this.studyId = studyId;
+        this.projectTitle = projectTitle;
+        this.description = description;
+        this.taxId = taxId;
+        this.commonName = commonName;
+        this.scientificName = scientificName;
+        this.sourceType = sourceType;
+        this.studyType = studyType;
+        this.variantCount = variantCount;
+        this.samples = samples;
+        this.center = center;
+        this.scope = scope;
+        this.material = material;
+        this.publications = publications;
+        this.associatedProjects = associatedProjects;
+        this.experimentType = experimentType;
+        this.experimentTypeAbbreviation = experimentTypeAbbreviation;
+        this.assemblyAccession = assemblyAccession;
+        this.assemblyName = assemblyName;
+        this.platform = platform;
+        this.resource = resource;
+    }
+
     public VariantStudy generateVariantStudy() {
         // Convert the list of tax ids to integer values
         int[] taxIds = Arrays.stream(taxId.split(", ")).map(String::trim).mapToInt(Integer::parseInt).toArray();
