@@ -15,6 +15,8 @@ import uk.ac.ebi.eva.lib.entity.EvaStudyBrowser;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
 import uk.ac.ebi.eva.lib.utils.QueryOptionsConstants;
 
+import java.util.function.Predicate;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -64,12 +66,11 @@ public class StudyEvaproDBAdaptorTest {
         entityManager.persist(humanWGSStudy2);
         entityManager.persist(humanESStudy);
         entityManager.persist(cowESStudy);
-
     }
 
     @After
     public void tearDown() throws Exception {
-
+        entityManager.clear();
     }
 
     @Test
@@ -77,7 +78,6 @@ public class StudyEvaproDBAdaptorTest {
         QueryResult<VariantStudy> queryResult = studyEvaproDBAdaptor.getAllStudies(new QueryOptions());
 
         assertEquals(4, queryResult.getNumTotalResults());
-
     }
 
     @Test
@@ -86,8 +86,7 @@ public class StudyEvaproDBAdaptorTest {
         queryOptions.put(QueryOptionsConstants.SPECIES, HUMAN);
         QueryResult<VariantStudy> queryResult = studyEvaproDBAdaptor.getAllStudies(queryOptions);
 
-        assertEquals(3, queryResult.getNumTotalResults());
-        assertTrue(queryResult.getResult().stream().allMatch(study -> study.getSpeciesCommonName().equals(HUMAN)));
+        checkReturnedStudies(queryResult, 3, study -> study.getSpeciesCommonName().equals(HUMAN));
     }
 
     @Test
@@ -96,9 +95,7 @@ public class StudyEvaproDBAdaptorTest {
         queryOptions.put(QueryOptionsConstants.TYPE, EXOME_SEQUENCING);
         QueryResult<VariantStudy> queryResult = studyEvaproDBAdaptor.getAllStudies(queryOptions);
 
-        assertEquals(2, queryResult.getNumTotalResults());
-        assertTrue(
-                queryResult.getResult().stream().allMatch(study -> study.getExperimentType().equals(EXOME_SEQUENCING)));
+        checkReturnedStudies(queryResult, 2, study -> study.getExperimentType().equals(EXOME_SEQUENCING));
     }
 
     @Test
@@ -108,10 +105,9 @@ public class StudyEvaproDBAdaptorTest {
         queryOptions.put(QueryOptionsConstants.TYPE, EXOME_SEQUENCING);
         QueryResult<VariantStudy> queryResult = studyEvaproDBAdaptor.getAllStudies(queryOptions);
 
-        assertEquals(1, queryResult.getNumTotalResults());
-        assertTrue(queryResult.getResult().stream().allMatch(
-                study -> study.getSpeciesCommonName().equals(HUMAN) && study.getExperimentType()
-                                                                            .equals(EXOME_SEQUENCING)));
+        checkReturnedStudies(queryResult, 1,
+                             study -> study.getSpeciesCommonName().equals(HUMAN) && study.getExperimentType()
+                                                                                         .equals(EXOME_SEQUENCING));
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -128,8 +124,7 @@ public class StudyEvaproDBAdaptorTest {
     public void getStudyById() throws Exception {
         QueryResult<VariantStudy> queryResult = studyEvaproDBAdaptor.getStudyById(PROJECT_ID_1, new QueryOptions());
 
-        assertEquals(1, queryResult.getNumTotalResults());
-        assertTrue(queryResult.getResult().stream().allMatch(study -> study.getId().equals(PROJECT_ID_1)));
+        checkReturnedStudies(queryResult, 1, study -> study.getId().equals(PROJECT_ID_1));
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -137,4 +132,9 @@ public class StudyEvaproDBAdaptorTest {
         studyEvaproDBAdaptor.close();
     }
 
+    private void checkReturnedStudies(QueryResult<VariantStudy> queryResult, int expectedNumberOfResults,
+                                      Predicate<VariantStudy> predicate) {
+        assertEquals(expectedNumberOfResults, queryResult.getNumTotalResults());
+        assertTrue(queryResult.getResult().stream().allMatch(predicate));
+    }
 }
