@@ -36,12 +36,16 @@ public class VariantSourceEvaProDBAdaptorTest {
 
     public static final String FILE_2_NAME = "file2.vcf.gz";
 
+    public static final String FILE_NOT_BROWSABLE = "file.notBroswable.vcf.gz";
+
     @Before
     public void setUp() throws Exception {
         File file1 = new File(1L, "ERF1", FILE_1_NAME, "sd3245as8dasiu2345d", "/dir/path", "vcf", "submitted", 1, true,
                               "/parentdir/dir1/" + FILE_1_NAME, true, "EVAF1");
-        File file2 = new File(2L, "ERF2", FILE_2_NAME, "sd3245as8dasiu2345d", "/dir/path", "vcf", "submitted", 2, true,
+        File file2 = new File(2L, "ERF2", FILE_2_NAME, "zd32452343242345c", "/dir/path", "vcf", "submitted", 1, true,
                               "/parentdir/dir2/" + FILE_2_NAME, true, "EVAF2");
+        File incompleteFile3 = new File(3L, "ERF3", FILE_NOT_BROWSABLE, "kd3345as234156456f", "/dir/path", "vcf",
+                                        "submitted", 1, true, "/parentdir/dir2/" + FILE_NOT_BROWSABLE, true, "EVAF3");
 
         entityManager.persist(file1);
         entityManager.persist(file2);
@@ -85,6 +89,14 @@ public class VariantSourceEvaProDBAdaptorTest {
 
         assertEquals(1, sourceUrls.getNumTotalResults());
         assertEquals(new URI("ftp://parentdir/dir1/file1.vcf.gz").toURL(), sourceUrls.getResult().get(0));
+    }
+
+    @Test
+    public void getSourceDownloadUrlByNameFileNotInBrowsableFiles() throws Exception {
+        QueryResult<URL> sourceUrls = variantSourceEvaproDBAdaptor
+                .getSourceDownloadUrlByName(FILE_NOT_BROWSABLE);
+
+        assertEquals(0, sourceUrls.getNumTotalResults());
     }
 
     @Test
