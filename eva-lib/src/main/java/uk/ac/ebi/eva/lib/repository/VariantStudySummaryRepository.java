@@ -25,8 +25,7 @@ import java.util.List;
 /**
  * This interface documents how studies can be queried.
  * <p>
- * This interface is used by Spring to create the query methods for VariantSourceEntity.
- * Spring creates the implementation automatically by looking at the method name.
+ * The implementation is in {@link VariantStudySummaryRepositoryImpl}
  */
 public interface VariantStudySummaryRepository
         extends MongoRepository<VariantSourceEntity, String>, VariantStudySummaryRepositoryCustom {

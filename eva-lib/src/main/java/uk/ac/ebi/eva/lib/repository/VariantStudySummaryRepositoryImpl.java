@@ -80,7 +80,6 @@ public class VariantStudySummaryRepositoryImpl implements VariantStudySummaryRep
                 VariantSourceEntity.class,
                 VariantStudySummary.class);
 
-
         VariantStudySummary variantStudySummary;
         if (studies.getMappedResults().size() == 0) {
             variantStudySummary = null;

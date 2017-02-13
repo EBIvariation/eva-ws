@@ -119,14 +119,8 @@ public class ArchiveWSServer extends EvaWSServer {
     public QueryResponse getBrowsableStudies(@RequestParam("species") String species)
             throws IllegalOpenCGACredentialsException, IOException {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        List<VariantStudySummary> nonUniqueStudies = variantStudySummaryRepository.findBy();
-        List<VariantStudySummary> uniqueStudies = getUniqueStudies(nonUniqueStudies);
+        List<VariantStudySummary> uniqueStudies = variantStudySummaryRepository.findBy();
         return setQueryResponse(uniqueStudies);
-    }
-
-    private List<VariantStudySummary> getUniqueStudies(List<VariantStudySummary> nonUniqueStudies) {
-        Set<VariantStudySummary> uniqueStudies = new TreeSet<>(nonUniqueStudies);
-        return new ArrayList<>(uniqueStudies);
     }
 
     @RequestMapping(value = "/studies/stats", method = RequestMethod.GET)

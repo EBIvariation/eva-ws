@@ -94,7 +94,12 @@ public class StudyWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         VariantStudySummary variantStudySummary = variantStudySummaryRepository.findByStudyNameOrStudyId(study);
-
+        if (variantStudySummary == null) {
+            QueryResult queryResult = new QueryResult();
+            queryResult.setErrorMsg("Study identifier not found");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(queryResult);
+        }
         return setQueryResponse(variantStudySummary);
     }
 

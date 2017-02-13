@@ -92,10 +92,7 @@ public class VariantStudySummaryRepositoryTest {
 
     @Test
     public void listStudies() {
-        List<VariantStudySummary> nonUniqueStudies = repository.findBy();
-        assertNotNull(nonUniqueStudies);
-
-        Set<VariantStudySummary> uniqueStudies = new TreeSet<>(nonUniqueStudies);
+        List<VariantStudySummary> uniqueStudies = repository.findBy();
         assertEquals(EXPECTED_UNIQUE_STUDIES_COUNT, uniqueStudies.size());
 
         Iterator<VariantStudySummary> studiesIterator = uniqueStudies.iterator();
