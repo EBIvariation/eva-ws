@@ -30,7 +30,6 @@ import org.opencb.opencga.storage.mongodb.variant.DBObjectToVariantSourceConvert
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
 import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
@@ -41,6 +40,8 @@ import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
@@ -94,13 +95,20 @@ public class StudyWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         VariantStudySummary variantStudySummary = variantStudySummaryRepository.findByStudyNameOrStudyId(study);
+
+        QueryResult<VariantStudySummary> queryResult = new QueryResult<>();
         if (variantStudySummary == null) {
-            QueryResult queryResult = new QueryResult();
             queryResult.setErrorMsg("Study identifier not found");
+            queryResult.setNumTotalResults(0);
+            queryResult.setNumResults(0);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse(queryResult);
+        } else {
+            List<VariantStudySummary> summaries = Collections.singletonList(variantStudySummary);
+            queryResult.setResult(summaries);
+            queryResult.setNumResults(summaries.size());
+            queryResult.setNumTotalResults(summaries.size());
         }
-        return setQueryResponse(variantStudySummary);
+        return setQueryResponse(queryResult);
     }
 
     @RequestMapping(value = "/{study}/summary", method = RequestMethod.GET)

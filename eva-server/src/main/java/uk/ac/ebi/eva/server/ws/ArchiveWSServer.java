@@ -31,23 +31,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
-import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
+import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
@@ -120,7 +117,12 @@ public class ArchiveWSServer extends EvaWSServer {
             throws IllegalOpenCGACredentialsException, IOException {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List<VariantStudySummary> uniqueStudies = variantStudySummaryRepository.findBy();
-        return setQueryResponse(uniqueStudies);
+
+        QueryResult<VariantStudySummary> result = new QueryResult<>();
+        result.setResult(uniqueStudies);
+        result.setNumResults(uniqueStudies.size());
+        result.setNumTotalResults(uniqueStudies.size());
+        return setQueryResponse(result);
     }
 
     @RequestMapping(value = "/studies/stats", method = RequestMethod.GET)
