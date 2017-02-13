@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.ac.ebi.eva.lib.repository.projections.StudyName;
-import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
+import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
+import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
@@ -67,7 +67,7 @@ public class ArchiveWSServer extends EvaWSServer {
     @Autowired
     private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
     @Autowired
-    private VariantSourceEntityRepository variantSourceEntityRepository;
+    private VariantStudySummaryRepository variantStudySummaryRepository;
 
     private Properties properties;
     
@@ -119,13 +119,13 @@ public class ArchiveWSServer extends EvaWSServer {
     public QueryResponse getBrowsableStudies(@RequestParam("species") String species)
             throws IllegalOpenCGACredentialsException, IOException {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        List<StudyName> nonUniqueStudies = variantSourceEntityRepository.findBy();
-        List<StudyName> uniqueStudies = getUniqueStudies(nonUniqueStudies);
+        List<VariantStudySummary> nonUniqueStudies = variantStudySummaryRepository.findBy();
+        List<VariantStudySummary> uniqueStudies = getUniqueStudies(nonUniqueStudies);
         return setQueryResponse(uniqueStudies);
     }
 
-    private List<StudyName> getUniqueStudies(List<StudyName> nonUniqueStudies) {
-        Set<StudyName> uniqueStudies = new TreeSet<>(nonUniqueStudies);
+    private List<VariantStudySummary> getUniqueStudies(List<VariantStudySummary> nonUniqueStudies) {
+        Set<VariantStudySummary> uniqueStudies = new TreeSet<>(nonUniqueStudies);
         return new ArrayList<>(uniqueStudies);
     }
 

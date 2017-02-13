@@ -16,36 +16,53 @@
 
 package uk.ac.ebi.eva.lib.repository.projections;
 
-import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
+import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
 
 /**
  * Subset of fields from VariantSourceEntity. This is used to make an automatic MongoDB projection in
- * {@link VariantSourceEntityRepository}
+ * {@link VariantStudySummaryRepository}
  */
-public class StudyName implements Comparable {
+public class VariantStudySummary implements Comparable {
 
     private String studyId;
 
     private String studyName;
 
+    private int filesCount;
+
     public void setStudyId(String studyId) {
         this.studyId = studyId;
-    }
-
-    public void setStudyName(String studyName) {
-        this.studyName = studyName;
     }
 
     public String getStudyId() {
         return studyId;
     }
 
+    public void setStudyName(String studyName) {
+        this.studyName = studyName;
+    }
+
     public String getStudyName() {
         return studyName;
     }
 
+    public void setFilesCount(int filesCount) {
+        this.filesCount = filesCount;
+    }
+
+    public int getFilesCount() {
+        return filesCount;
+    }
+
+    /**
+     * This method is required to use a Tree of VariantStudySummary to ignore duplicated summaries.
+     */
     @Override
     public int compareTo(Object o) {
-        return studyId.compareTo(((StudyName) o).getStudyId());
+        return studyId.compareTo(((VariantStudySummary) o).getStudyId());
     }
 }

@@ -17,20 +17,22 @@ package uk.ac.ebi.eva.lib.repository;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import uk.ac.ebi.eva.lib.repository.projections.StudyName;
 import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
+import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
 
 import java.util.List;
 
 /**
  * This interface documents how studies can be queried.
- *
+ * <p>
  * This interface is used by Spring to create the query methods for VariantSourceEntity.
  * Spring creates the implementation automatically by looking at the method name.
  */
-public interface VariantSourceEntityRepository extends MongoRepository<VariantSourceEntity, String> {
-    VariantSourceEntity findByStudyNameOrStudyId(String studyName, String studyId);
-    VariantSourceEntity findByStudyId(String studyName);
-    List<StudyName> findBy();
+public interface VariantStudySummaryRepository
+        extends MongoRepository<VariantSourceEntity, String>, VariantStudySummaryRepositoryCustom {
+
+    VariantStudySummary findByStudyNameOrStudyId(String studyNameOrId);
+
+    List<VariantStudySummary> findBy();
 }
 

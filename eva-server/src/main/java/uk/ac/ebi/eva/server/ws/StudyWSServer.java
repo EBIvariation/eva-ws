@@ -31,7 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
-import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
+import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
+import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
@@ -54,7 +55,7 @@ public class StudyWSServer extends EvaWSServer {
     @Autowired
     private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
     @Autowired
-    private VariantSourceEntityRepository variantSourceEntityRepository;
+    private VariantStudySummaryRepository variantStudySummaryRepository;
 
     @RequestMapping(value = "/{study}/files", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves all the files from a study", response = QueryResponse.class)
@@ -92,9 +93,9 @@ public class StudyWSServer extends EvaWSServer {
         initializeQueryOptions();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        VariantSourceEntity variantSourceEntity = variantSourceEntityRepository.findByStudyNameOrStudyId(study, study);
+        VariantStudySummary variantStudySummary = variantStudySummaryRepository.findByStudyNameOrStudyId(study);
 
-        return setQueryResponse(variantSourceEntity);
+        return setQueryResponse(variantStudySummary);
     }
 
     @RequestMapping(value = "/{study}/summary", method = RequestMethod.GET)
