@@ -78,4 +78,20 @@ public class File {
     @Column(length = 15, name = "eva_submission_file_id")
     private String evaSubmissionFileId;
 
+    public File(Long fileId, String enaSubmissionFileId, String filename, String fileMd5, String fileLocation,
+                String fileType, String fileClass, int fileVersion, boolean isCurrent, String ftpFile,
+                boolean mongoLoadStatus, String evaSubmissionFileId) {
+        this.fileId = fileId;
+        this.enaSubmissionFileId = enaSubmissionFileId;
+        this.filename = filename;
+        this.fileMd5 = fileMd5;
+        this.fileLocation = fileLocation;
+        this.fileType = fileType;
+        this.fileClass = fileClass;
+        this.fileVersion = fileVersion;
+        this.isCurrent = isCurrent;
+        this.ftpFile = ftpFile;
+        this.mongoLoadStatus = mongoLoadStatus;
+        this.evaSubmissionFileId = evaSubmissionFileId;
+    }
 }
