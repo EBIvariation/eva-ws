@@ -76,6 +76,21 @@ public class ArchiveEvaproDBAdaptorTest {
     }
 
     @Test
+    public void countStudiesPerSpeciesFilteringBySpeciesAndtype() throws Exception {
+        QueryOptions queryOptions = new QueryOptions();
+        queryOptions.put(QueryOptionsConstants.SPECIES, EvaStudyBrowserTestData.HUMAN);
+        queryOptions.put(QueryOptionsConstants.TYPE, EvaStudyBrowserTestData.EXOME_SEQUENCING);
+
+        QueryResult<Map.Entry<String, Long>> countStudiesResult = archiveEvaproDBAdaptor
+                .countStudiesPerSpecies(queryOptions);
+
+        assertEquals(1, countStudiesResult.getNumResults());
+        Map.Entry<String, Long> result = countStudiesResult.getResult().get(0);
+        assertEquals(EvaStudyBrowserTestData.HUMAN, result.getKey());
+        assertEquals(1, result.getValue().longValue());
+    }
+
+    @Test
     public void countStudiesPerSpeciesUnfiltered() throws Exception {
         QueryResult<Map.Entry<String, Long>> countStudiesResult = archiveEvaproDBAdaptor
                 .countStudiesPerSpecies(new QueryOptions());
