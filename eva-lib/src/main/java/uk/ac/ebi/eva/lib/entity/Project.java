@@ -79,4 +79,26 @@ public class Project {
     @Column(length = 100, name= "study_type")
     private String studyType;
 
+    public Project(String projectAccession, String centerName, String alias, String title, String description,
+                   String scope, String material, String selection, String type, String secondaryStudyId,
+                   String sourceType, Long projectAccessionCode, String evaDescription,
+                   String evaCenterName, String evaSubmitterLink, Long evaStudyAccession, String studyType) {
+        this.projectAccession = projectAccession;
+        this.centerName = centerName;
+        this.alias = alias;
+        this.title = title;
+        this.description = description;
+        this.scope = scope;
+        this.material = material;
+        this.selection = selection;
+        this.type = type;
+        this.secondaryStudyId = secondaryStudyId;
+        this.sourceType = sourceType;
+        this.projectAccessionCode = projectAccessionCode;
+        this.evaDescription = evaDescription;
+        this.evaCenterName = evaCenterName;
+        this.evaSubmitterLink = evaSubmitterLink;
+        this.evaStudyAccession = evaStudyAccession;
+        this.studyType = studyType;
+    }
 }

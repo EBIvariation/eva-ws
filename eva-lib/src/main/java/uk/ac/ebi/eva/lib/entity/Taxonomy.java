@@ -58,4 +58,12 @@ public class Taxonomy {
     @Column(length = 25, name = "eva_name")
     private String evaName;
 
+    public Taxonomy(Long taxonomyId, String commonName, String scientificName, String taxonomyCode,
+                    String evaName) {
+        this.taxonomyId = taxonomyId;
+        this.commonName = commonName;
+        this.scientificName = scientificName;
+        this.taxonomyCode = taxonomyCode;
+        this.evaName = evaName;
+    }
 }
