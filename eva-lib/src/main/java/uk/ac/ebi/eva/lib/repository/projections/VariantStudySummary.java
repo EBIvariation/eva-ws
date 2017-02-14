@@ -65,4 +65,32 @@ public class VariantStudySummary implements Comparable {
     public int compareTo(Object o) {
         return studyId.compareTo(((VariantStudySummary) o).getStudyId());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof VariantStudySummary)) {
+            return false;
+        }
+
+        VariantStudySummary that = (VariantStudySummary) o;
+
+        if (getFilesCount() != that.getFilesCount()) {
+            return false;
+        }
+        if (getStudyId() != null ? !getStudyId().equals(that.getStudyId()) : that.getStudyId() != null) {
+            return false;
+        }
+        return getStudyName() != null ? getStudyName().equals(that.getStudyName()) : that.getStudyName() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getStudyId() != null ? getStudyId().hashCode() : 0;
+        result = 31 * result + (getStudyName() != null ? getStudyName().hashCode() : 0);
+        result = 31 * result + getFilesCount();
+        return result;
+    }
 }

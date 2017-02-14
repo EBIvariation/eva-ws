@@ -19,7 +19,12 @@ import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
 
 import java.util.List;
 
+/**
+ * Interface to declare additional repository methods with a custom implementation,
+ * instead of the one that Spring Data would provide by default.
+ */
 interface VariantStudySummaryRepositoryCustom {
-    List<VariantStudySummary> findBy();
     VariantStudySummary findByStudyNameOrStudyId(String studyNameOrId);
+
+    List<VariantStudySummary> findBy();
 }

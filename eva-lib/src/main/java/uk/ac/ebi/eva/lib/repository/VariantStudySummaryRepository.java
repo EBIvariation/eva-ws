@@ -18,20 +18,17 @@ package uk.ac.ebi.eva.lib.repository;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
-import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
-
-import java.util.List;
 
 /**
- * This interface documents how studies can be queried.
+ * Spring MongoRepository for VariantStudySummary class.
+ * <p>
+ * Please note that this interface queries the VariantSourceEntity collection, and returns VariantStudySummary
+ * which is a subset (mongo projection) with the fields related to the study.
  * <p>
  * The implementation is in {@link VariantStudySummaryRepositoryImpl}
  */
 public interface VariantStudySummaryRepository
         extends MongoRepository<VariantSourceEntity, String>, VariantStudySummaryRepositoryCustom {
 
-    VariantStudySummary findByStudyNameOrStudyId(String studyNameOrId);
-
-    List<VariantStudySummary> findBy();
 }
 

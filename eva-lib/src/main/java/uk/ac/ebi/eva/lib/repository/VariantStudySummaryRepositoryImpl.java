@@ -40,10 +40,10 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.matc
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
 
 /**
- * This interface documents how studies can be queried.
+ * Implementation of the {@link VariantStudySummaryRepositoryCustom} interface (relationship with
+ * {@link VariantStudySummaryRepository} inferred by Spring).
  * <p>
- * This interface is used by Spring to create the query methods for VariantSourceEntity.
- * Spring creates the implementation automatically by looking at the method name.
+ * The repository implementation could not be made implicitly by spring, due to use of MongoDB Aggregation Framework.
  */
 public class VariantStudySummaryRepositoryImpl implements VariantStudySummaryRepositoryCustom {
 
@@ -68,6 +68,12 @@ public class VariantStudySummaryRepositoryImpl implements VariantStudySummaryRep
      *  {$group:{_id: {studyId:"$sid",studyName:"$sname"}, filesCount:{$sum:1}}},
      *  {$project:{"studyId" : "$_id.studyId", "studyName" : "$_id.studyName", "_id" : 0, "filesCount":"$filesCount" }}
      *  ])
+     * First, match only the documents that contain the argument as studyName or studyId.
+     * Then, group by both "studyName" and "studyId", and count the documents in the group into an accumulator field
+     * "filesCount". The idea behind grouping by 2 fields is not to have the combinations (because a studyId will have
+     * always the same studyName), but to include both fields without further projections or queries.
+     * Then, flatten the document from {_id: {sid, sname}, filesCount} to {sid, sname, filesCount} which is ready to
+     * be mapped into a {@link VariantStudySummary}.
      */
     public VariantStudySummary findByStudyNameOrStudyId(String studyNameOrId) {
         Aggregation aggregation = Aggregation.newAggregation(
@@ -96,6 +102,11 @@ public class VariantStudySummaryRepositoryImpl implements VariantStudySummaryRep
      *  {$group:{_id: {studyId:"$sid",studyName:"$sname"}, filesCount:{$sum:1}}},
      *  {$project:{"studyId" : "$_id.studyId", "studyName" : "$_id.studyName", "_id" : 0, "filesCount":"$filesCount" }}
      *  ])
+     * First group by both "studyName" and "studyId", and count the documents in the group into an accumulator field
+     * "filesCount". The idea behind grouping by 2 fields is not to have the combinations (because a studyId will have
+     * always the same studyName), but to include both fields without further projections or queries.
+     * Then, flatten the document from {_id: {sid, sname}, filesCount} to {sid, sname, filesCount} which is ready to
+     * be mapped into a {@link VariantStudySummary}.
      */
     public List<VariantStudySummary> findBy() {
         Aggregation aggregation = Aggregation.newAggregation(

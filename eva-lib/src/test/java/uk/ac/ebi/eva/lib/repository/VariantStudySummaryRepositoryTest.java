@@ -40,6 +40,7 @@ import java.util.TreeSet;
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -73,12 +74,12 @@ public class VariantStudySummaryRepositoryTest {
     public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
 
     @Test
-    public void findsByNameOrIdProvidingName() {
+    public void testFindsByNameOrIdProvidingName() {
         assertFindBySecondNameOrId(SECOND_STUDY_NAME);
     }
 
     @Test
-    public void findsByNameOrIdProvidingId() {
+    public void testFindsByNameOrIdProvidingId() {
         assertFindBySecondNameOrId(SECOND_STUDY_ID);
     }
 
@@ -91,7 +92,13 @@ public class VariantStudySummaryRepositoryTest {
     }
 
     @Test
-    public void listStudies() {
+    public void testDoesntFindNonPresentStudies() throws Exception {
+        VariantStudySummary study = repository.findByStudyNameOrStudyId("wrongStudyId");
+        assertNull(study);
+    }
+
+    @Test
+    public void testListStudies() {
         List<VariantStudySummary> uniqueStudies = repository.findBy();
         assertEquals(EXPECTED_UNIQUE_STUDIES_COUNT, uniqueStudies.size());
 
@@ -106,7 +113,6 @@ public class VariantStudySummaryRepositoryTest {
         assertEquals(SECOND_STUDY_ID, next.getStudyId());
         assertEquals(SECOND_STUDY_NAME, next.getStudyName());
         assertCorrectCount(EXPECTED_FILE_COUNT_FROM_SECOND_STUDY_ID, next);
-
     }
 
     public void assertCorrectCount(int expectedFileCount, VariantStudySummary study) {
