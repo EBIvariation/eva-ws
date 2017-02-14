@@ -73,6 +73,32 @@ public class DgvaStudyBrowser {
     @Column(name = "assembly_name")
     private String assemblyName;
 
+    public DgvaStudyBrowser(String studyAccession, Integer callCount, Integer regionCount, Integer variantCount,
+                            String taxId, String commonName, String scientificName, String pubmedId, String alias,
+                            String displayName, String studyType, String projectId, String studyUrl,
+                            String studyDescription, String analysisType, String detectionMethod,
+                            String methodType, String platformName, String assemblyName) {
+        this.studyAccession = studyAccession;
+        this.callCount = callCount;
+        this.regionCount = regionCount;
+        this.variantCount = variantCount;
+        this.taxId = taxId;
+        this.commonName = commonName;
+        this.scientificName = scientificName;
+        this.pubmedId = pubmedId;
+        this.alias = alias;
+        this.displayName = displayName;
+        this.studyType = studyType;
+        this.projectId = projectId;
+        this.studyUrl = studyUrl;
+        this.studyDescription = studyDescription;
+        this.analysisType = analysisType;
+        this.detectionMethod = detectionMethod;
+        this.methodType = methodType;
+        this.platformName = platformName;
+        this.assemblyName = assemblyName;
+    }
+
     public VariantStudy generateVariantStudy() {
         // Convert the list of tax ids to integer values
         int[] taxIds = Arrays.stream(taxId.split(", ")).map(String::trim).mapToInt(Integer::parseInt).toArray();
