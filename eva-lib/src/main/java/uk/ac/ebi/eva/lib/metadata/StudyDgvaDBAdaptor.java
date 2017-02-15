@@ -50,7 +50,6 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
     @Override
     public QueryResult getStudyById(String studyId, QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
-        Specification filterSpecification = DgvaDBUtils.getSpeciesAndTypeFilters(queryOptions);
         DgvaStudyBrowser dgvaStudy = dgvaStudyBrowserRepository.getOne(studyId);
         List<VariantStudy> variantStudy = new ArrayList<>();
         if (dgvaStudy != null) {
