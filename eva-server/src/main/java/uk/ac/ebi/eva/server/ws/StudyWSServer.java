@@ -36,6 +36,7 @@ import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -98,15 +99,11 @@ public class StudyWSServer extends EvaWSServer {
 
         QueryResult<VariantStudySummary> queryResult = new QueryResult<>();
         if (variantStudySummary == null) {
+            queryResult = Utils.buildQueryResult(Collections.emptyList());
             queryResult.setErrorMsg("Study identifier not found");
-            queryResult.setNumTotalResults(0);
-            queryResult.setNumResults(0);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } else {
-            List<VariantStudySummary> summaries = Collections.singletonList(variantStudySummary);
-            queryResult.setResult(summaries);
-            queryResult.setNumResults(summaries.size());
-            queryResult.setNumTotalResults(summaries.size());
+            queryResult = Utils.buildQueryResult(Collections.singletonList(variantStudySummary));
         }
         return setQueryResponse(queryResult);
     }

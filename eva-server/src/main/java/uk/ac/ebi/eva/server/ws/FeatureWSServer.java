@@ -23,12 +23,17 @@ import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import uk.ac.ebi.eva.commons.models.data.FeatureCoordinates;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.repository.FeatureRepository;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -65,8 +70,7 @@ public class FeatureWSServer extends EvaWSServer {
 
         List<FeatureCoordinates> features = featureRepository.findByIdOrName(featureIdOrName, featureIdOrName);
 
-        QueryResult<FeatureCoordinates> queryResult = new QueryResult<>();
-        queryResult.setResult(features);
+        QueryResult<FeatureCoordinates> queryResult = Utils.buildQueryResult(features);
         return setQueryResponse(queryResult);
     }
 

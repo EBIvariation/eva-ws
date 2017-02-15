@@ -118,10 +118,8 @@ public class VariantWSServer extends EvaWSServer {
         }
 
 
-        QueryResult<VariantEntity> queryResult = new QueryResult<>();
-        queryResult.setNumResults(variantEntities.size());
+        QueryResult<VariantEntity> queryResult = Utils.buildQueryResult(variantEntities);
         queryResult.setNumTotalResults(numTotalResults);
-        queryResult.setResult(variantEntities);
         return setQueryResponse(queryResult);
     }
 

@@ -39,6 +39,7 @@ import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
 import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.server.Utils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -117,11 +118,7 @@ public class ArchiveWSServer extends EvaWSServer {
             throws IllegalOpenCGACredentialsException, IOException {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List<VariantStudySummary> uniqueStudies = variantStudySummaryRepository.findBy();
-
-        QueryResult<VariantStudySummary> result = new QueryResult<>();
-        result.setResult(uniqueStudies);
-        result.setNumResults(uniqueStudies.size());
-        result.setNumTotalResults(uniqueStudies.size());
+        QueryResult<VariantStudySummary> result = Utils.buildQueryResult(uniqueStudies);
         return setQueryResponse(result);
     }
 
