@@ -106,8 +106,7 @@ public class RegionWSServer extends EvaWSServer {
 
         Long numTotalResults = variantEntityRepository.countByRegionsAndComplexFilters(regions, filters);
 
-        QueryResult<VariantEntity> queryResult = Utils.buildQueryResult(variantEntities);
-        queryResult.setNumTotalResults(numTotalResults);
+        QueryResult<VariantEntity> queryResult = Utils.buildQueryResult(variantEntities, numTotalResults);
         return setQueryResponse(queryResult);
     }
 

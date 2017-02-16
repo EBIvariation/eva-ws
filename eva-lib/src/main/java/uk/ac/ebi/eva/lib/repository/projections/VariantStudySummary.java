@@ -16,10 +16,6 @@
 
 package uk.ac.ebi.eva.lib.repository.projections;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.core.mapping.Field;
-
-import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
 
 /**
@@ -32,6 +28,9 @@ public class VariantStudySummary implements Comparable {
 
     private String studyName;
 
+    /**
+     * How many files are associated with this study
+     */
     private int filesCount;
 
     public void setStudyId(String studyId) {

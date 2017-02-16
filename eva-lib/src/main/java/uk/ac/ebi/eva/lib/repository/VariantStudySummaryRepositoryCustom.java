@@ -24,7 +24,13 @@ import java.util.List;
  * instead of the one that Spring Data would provide by default.
  */
 interface VariantStudySummaryRepositoryCustom {
+    /**
+     * Return a {@link VariantStudySummary} of the first study where the given argument matches the ID or the name
+     */
     VariantStudySummary findByStudyNameOrStudyId(String studyNameOrId);
 
+    /**
+     * For every study, return its {@link VariantStudySummary}
+     */
     List<VariantStudySummary> findBy();
 }

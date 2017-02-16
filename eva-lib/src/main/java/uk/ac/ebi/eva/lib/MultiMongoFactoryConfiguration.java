@@ -31,16 +31,14 @@ import java.util.Properties;
 public class MultiMongoFactoryConfiguration {
 
     /**
-     * This factory will allow to use the FeatureRepository with several databases, as we are providing a
-     * MultiMongoDbFactory as the implementation of MongoFactory to inject into the FeatureRepository.
-     * @return MongoDbFactory
-     * @throws IOException
+     * Inject into the spring context a MultiMongoDbFactory as the implementation of MongoDbFactory.
+     * This factory will allow to use the Repositories with several databases.
      */
     @Bean
     public MongoDbFactory mongoDbFactory() throws IOException {
         Properties properties = new Properties();
         properties.load(MongoConfiguration.class.getResourceAsStream("/eva.properties"));
         MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
-        return new MultiMongoDbFactory(mongoClient, "test");
+        return new MultiMongoDbFactory(mongoClient, "unusedDefaultDB");
     }
 }
