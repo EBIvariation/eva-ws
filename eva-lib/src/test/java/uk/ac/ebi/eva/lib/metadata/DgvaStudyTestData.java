@@ -4,9 +4,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import uk.ac.ebi.eva.lib.entity.DgvaStudyBrowser;
 
-public class DgvaStudyTestData {
-    private final TestEntityManager entityManager;
-
+final class DgvaStudyTestData {
     static final String HUMAN = "Human";
 
     static final String MOUSE = "Mouse";
@@ -17,11 +15,9 @@ public class DgvaStudyTestData {
 
     static final String STUDY_1_ID = "estd1";
 
-    DgvaStudyTestData(TestEntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    private DgvaStudyTestData() {}
 
-    void persistTestData() {
+    static void persistTestData(TestEntityManager entityManager) {
         DgvaStudyBrowser study1 = new DgvaStudyBrowser(STUDY_1_ID, 1000, 10, 100, "9606", HUMAN, "Homo sapiens", "1111",
                                                        "alias1", "Study 1", CONTROL_SET, "PRJ1", "www.study1.com",
                                                        "This is study 1", "Sequence alignment", "HMM", "Sequencing",

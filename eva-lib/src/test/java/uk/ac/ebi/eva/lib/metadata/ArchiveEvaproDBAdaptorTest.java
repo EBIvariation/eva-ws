@@ -48,12 +48,9 @@ public class ArchiveEvaproDBAdaptorTest {
         entityManager.persist(humanTaxonomy);
         entityManager.persist(cowTaxonomy);
 
-        EvaStudyBrowserTestData studyBrowserTestData = new EvaStudyBrowserTestData(entityManager);
-        studyBrowserTestData.persistTestData();
+        EvaStudyBrowserTestData.persistTestData(entityManager);
 
-        FileTestData fileTestData = new FileTestData(entityManager);
-        fileTestData.persistTestData();
-
+        FileTestData.persistTestData(entityManager);
     }
 
     @Test

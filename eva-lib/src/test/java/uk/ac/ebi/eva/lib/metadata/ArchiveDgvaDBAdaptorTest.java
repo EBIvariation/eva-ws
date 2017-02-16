@@ -29,8 +29,7 @@ public class ArchiveDgvaDBAdaptorTest {
 
     @Before
     public void setUp() throws Exception {
-        DgvaStudyTestData testData = new DgvaStudyTestData(entityManager);
-        testData.persistTestData();
+        DgvaStudyTestData.persistTestData(entityManager);
     }
 
     @Test

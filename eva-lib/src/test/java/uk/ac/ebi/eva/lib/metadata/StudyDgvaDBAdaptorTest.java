@@ -26,8 +26,7 @@ public class StudyDgvaDBAdaptorTest {
 
     @Before
     public void setUp() throws Exception {
-        DgvaStudyTestData testData = new DgvaStudyTestData(entityManager);
-        testData.persistTestData();
+        DgvaStudyTestData.persistTestData(entityManager);
     }
 
     @Test

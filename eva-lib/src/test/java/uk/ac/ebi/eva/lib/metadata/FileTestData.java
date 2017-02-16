@@ -4,23 +4,19 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import uk.ac.ebi.eva.lib.entity.File;
 
-public class FileTestData {
+final class FileTestData {
 
-    private final TestEntityManager entityManager;
+    static final String FILE_1_NAME = "file1.vcf.gz";
 
-    public static final String FILE_1_NAME = "file1.vcf.gz";
+    static final String FILE_2_NAME = "file2.vcf.gz";
 
-    public static final String FILE_2_NAME = "file2.vcf.gz";
+    static final String FILE_2_TABIX_NAME = FILE_2_NAME + ".tbi";
 
-    public static final String FILE_2_TABIX_NAME = FILE_2_NAME + ".tbi";
+    static final String FILE_NOT_BROWSABLE = "file.notBroswable.vcf.gz";
 
-    public static final String FILE_NOT_BROWSABLE = "file.notBroswable.vcf.gz";
+    private FileTestData() {}
 
-    FileTestData(TestEntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-
-    void persistTestData() {
+    static void persistTestData(TestEntityManager entityManager) {
         File file1 = new File(1L, "ERF1", FILE_1_NAME, "sd3245as8dasiu2345d", "/dir/path", "vcf", "submitted", 1, true,
                               "/parentdir/dir1/" + FILE_1_NAME, true, "EVAF1");
         File file2 = new File(2L, "ERF2", FILE_2_NAME, "zd32452343242345c", "/dir/path", "vcf", "submitted", 1, true,

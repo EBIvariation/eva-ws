@@ -31,8 +31,7 @@ public class StudyEvaproDBAdaptorTest {
 
     @Before
     public void setUp() throws Exception {
-        EvaStudyBrowserTestData testData = new EvaStudyBrowserTestData(entityManager);
-        testData.persistTestData();
+        EvaStudyBrowserTestData.persistTestData(entityManager);
     }
 
     @After

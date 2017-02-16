@@ -4,9 +4,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import uk.ac.ebi.eva.lib.entity.EvaStudyBrowser;
 
-public class EvaStudyBrowserTestData {
-
-    private TestEntityManager entityManager;
+final class EvaStudyBrowserTestData {
 
     static final String HUMAN = "human";
 
@@ -20,11 +18,9 @@ public class EvaStudyBrowserTestData {
 
     static final String PROJECT_ID_1 = "PRJ0001";
 
-    EvaStudyBrowserTestData(TestEntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    private EvaStudyBrowserTestData() {}
 
-    void persistTestData() {
+    static void persistTestData(TestEntityManager entityManager) {
         EvaStudyBrowser humanWGSStudy1 = new EvaStudyBrowser(PROJECT_ID_1, 1, "Project 1", "This is project 1", "1111",
                                                              HUMAN, "Homo sapiens", "source 1",
                                                              "Whole genome sequencing", 1000000L, 1000, "center 1",

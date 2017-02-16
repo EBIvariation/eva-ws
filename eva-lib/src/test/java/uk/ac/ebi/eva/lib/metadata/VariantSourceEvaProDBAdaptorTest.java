@@ -32,8 +32,7 @@ public class VariantSourceEvaProDBAdaptorTest {
 
     @Before
     public void setUp() throws Exception {
-        FileTestData fileTestData = new FileTestData(entityManager);
-        fileTestData.persistTestData();
+        FileTestData.persistTestData(entityManager);
     }
 
     @Test
