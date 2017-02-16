@@ -76,20 +76,11 @@ public class VariantStudySummary implements Comparable {
 
         VariantStudySummary that = (VariantStudySummary) o;
 
-        if (getFilesCount() != that.getFilesCount()) {
-            return false;
-        }
-        if (getStudyId() != null ? !getStudyId().equals(that.getStudyId()) : that.getStudyId() != null) {
-            return false;
-        }
-        return getStudyName() != null ? getStudyName().equals(that.getStudyName()) : that.getStudyName() == null;
+        return getStudyId() != null ? getStudyId().equals(that.getStudyId()) : that.getStudyId() == null;
     }
 
     @Override
     public int hashCode() {
-        int result = getStudyId() != null ? getStudyId().hashCode() : 0;
-        result = 31 * result + (getStudyName() != null ? getStudyName().hashCode() : 0);
-        result = 31 * result + getFilesCount();
-        return result;
+        return getStudyId() != null ? getStudyId().hashCode() : 0;
     }
 }

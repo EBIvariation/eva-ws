@@ -79,7 +79,7 @@ public class VariantStudySummaryRepositoryTest {
         assertFindBySecondNameOrId(SECOND_STUDY_ID);
     }
 
-    public void assertFindBySecondNameOrId(String studyNameOrId) {
+    private void assertFindBySecondNameOrId(String studyNameOrId) {
         VariantStudySummary study = repository.findByStudyNameOrStudyId(studyNameOrId);
         assertNotNull(study);
         assertEquals(SECOND_STUDY_ID, study.getStudyId());
@@ -111,7 +111,7 @@ public class VariantStudySummaryRepositoryTest {
         assertCorrectCount(EXPECTED_FILE_COUNT_FROM_SECOND_STUDY_ID, next);
     }
 
-    public void assertCorrectCount(int expectedFileCount, VariantStudySummary study) {
+    private void assertCorrectCount(int expectedFileCount, VariantStudySummary study) {
         int buggedFongoCount = 0;
         if (study.getFilesCount() == buggedFongoCount) {
             logger.warn("Although the expected files count is different from the actual one ({} != {}) " +
