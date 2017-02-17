@@ -103,6 +103,14 @@ public class ArchiveEvaproDBAdaptorTest {
     }
 
     @Test
+    public void countStudiesPerSpeciesFilteringByNotExistingSpecies() throws Exception {
+        QueryResult<Map.Entry<String, Long>> countStudiesResult = archiveEvaproDBAdaptor
+                .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.SPECIES, "NotExistingSpecies"));
+
+        assertEquals(0, countStudiesResult.getNumResults());
+    }
+
+    @Test
     public void countStudiesPerSpeciesUnfiltered() throws Exception {
         QueryResult<Map.Entry<String, Long>> countStudiesResult = archiveEvaproDBAdaptor
                 .countStudiesPerSpecies(new QueryOptions());
@@ -126,6 +134,15 @@ public class ArchiveEvaproDBAdaptorTest {
         Map.Entry<String, Long> result = countStudiesResult.first();
         assertEquals(EvaStudyBrowserTestData.EXOME_SEQUENCING, result.getKey());
         assertEquals(2, result.getValue().longValue());
+    }
+
+    @Test
+    public void countStudiesPerTypeFilteringByNotExistingType() throws Exception {
+        QueryResult<Map.Entry<String, Long>> countStudiesResult = archiveEvaproDBAdaptor
+                .countStudiesPerType(
+                        new QueryOptions(QueryOptionsConstants.TYPE, "NotExistingType"));
+        assertEquals(0, countStudiesResult.getNumResults());
+        Map.Entry<String, Long> result = countStudiesResult.first();
     }
 
     @Test

@@ -95,6 +95,15 @@ public class ArchiveDgvaDBAdaptorTest {
     }
 
     @Test
+    public void countStudiesPerSpeciesFilteringByNonExistingSpecies() throws Exception {
+        QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor
+                .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.SPECIES, "notExistingSpecies"));
+
+        assertEquals(0, queryResult.getNumTotalResults());
+    }
+
+
+    @Test
     public void countStudiesPerTypeFilteringByType() throws Exception {
         QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor
                 .countStudiesPerType(new QueryOptions(QueryOptionsConstants.TYPE, DgvaStudyTestData.CONTROL_SET));
@@ -103,6 +112,14 @@ public class ArchiveDgvaDBAdaptorTest {
         Map.Entry<String, Long> result = queryResult.first();
         assertEquals(DgvaStudyTestData.CONTROL_SET, result.getKey());
         assertEquals(2, result.getValue().longValue());
+    }
+
+    @Test
+    public void countStudiesPerSpeciesFilteringByNonExistingType() throws Exception {
+        QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor
+                .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.TYPE, "notExistingType"));
+
+        assertEquals(0, queryResult.getNumTotalResults());
     }
 
     @Test
