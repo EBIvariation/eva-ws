@@ -19,16 +19,9 @@
 package uk.ac.ebi.eva.server;
 
 import org.opencb.datastore.core.QueryOptions;
+import org.opencb.datastore.core.QueryResult;
 import org.springframework.data.domain.PageRequest;
 
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryConsequenceTypeFilter;
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryMafFilter;
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryStudyFilter;
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryPolyphenFilter;
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositorySiftFilter;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +63,18 @@ public class Utils {
         map.put("annotation", "annot");
         map.put("sourceEntries.attributes", "files.attrs");
         return map;
+    }
+
+    public static <T> QueryResult<T> buildQueryResult(List<T> results) {
+        return buildQueryResult(results, results.size());
+    }
+
+    public static <T> QueryResult<T> buildQueryResult(List<T> results, long numTotalResults) {
+        QueryResult<T> queryResult = new QueryResult<>();
+        queryResult.setResult(results);
+        queryResult.setNumResults(results.size());
+        queryResult.setNumTotalResults(numTotalResults);
+        return queryResult;
     }
 
 }
