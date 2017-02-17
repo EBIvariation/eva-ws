@@ -73,7 +73,7 @@ public class ArchiveEvaproDBAdaptorTest {
         QueryResult<Long> countStudiesResult = archiveEvaproDBAdaptor.countStudies();
 
         assertEquals(1, countStudiesResult.getNumResults());
-        assertEquals(2, countStudiesResult.getResult().get(0).longValue());
+        assertEquals(2, countStudiesResult.first().longValue());
     }
 
     @Test
@@ -82,7 +82,7 @@ public class ArchiveEvaproDBAdaptorTest {
                 .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.SPECIES, EvaStudyBrowserTestData.HUMAN));
 
         assertEquals(1, countStudiesResult.getNumResults());
-        Map.Entry<String, Long> result = countStudiesResult.getResult().get(0);
+        Map.Entry<String, Long> result = countStudiesResult.first();
         assertEquals(EvaStudyBrowserTestData.HUMAN, result.getKey());
         assertEquals(3, result.getValue().longValue());
     }
@@ -97,7 +97,7 @@ public class ArchiveEvaproDBAdaptorTest {
                 .countStudiesPerSpecies(queryOptions);
 
         assertEquals(1, countStudiesResult.getNumResults());
-        Map.Entry<String, Long> result = countStudiesResult.getResult().get(0);
+        Map.Entry<String, Long> result = countStudiesResult.first();
         assertEquals(EvaStudyBrowserTestData.HUMAN, result.getKey());
         assertEquals(1, result.getValue().longValue());
     }
@@ -123,7 +123,7 @@ public class ArchiveEvaproDBAdaptorTest {
                 .countStudiesPerType(
                         new QueryOptions(QueryOptionsConstants.TYPE, EvaStudyBrowserTestData.EXOME_SEQUENCING));
         assertEquals(1, countStudiesResult.getNumResults());
-        Map.Entry<String, Long> result = countStudiesResult.getResult().get(0);
+        Map.Entry<String, Long> result = countStudiesResult.first();
         assertEquals(EvaStudyBrowserTestData.EXOME_SEQUENCING, result.getKey());
         assertEquals(2, result.getValue().longValue());
     }
@@ -153,7 +153,7 @@ public class ArchiveEvaproDBAdaptorTest {
         QueryResult<Long> queryResult = archiveEvaproDBAdaptor.countFiles();
 
         assertEquals(1, queryResult.getNumTotalResults());
-        assertEquals(3, queryResult.getResult().get(0).longValue());
+        assertEquals(3, queryResult.first().longValue());
     }
 
     @Test
@@ -161,7 +161,7 @@ public class ArchiveEvaproDBAdaptorTest {
         QueryResult<Long> queryResult = archiveEvaproDBAdaptor.countSpecies();
 
         assertEquals(1, queryResult.getNumTotalResults());
-        assertEquals(2, queryResult.getResult().get(0).longValue());
+        assertEquals(2, queryResult.first().longValue());
     }
 
     @Test

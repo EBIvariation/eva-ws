@@ -52,7 +52,7 @@ public class ArchiveDgvaDBAdaptorTest {
         QueryResult<Long> queryResult = archiveDgvaDBAdaptor.countStudies();
 
         assertEquals(1, queryResult.getNumTotalResults());
-        assertEquals(3, queryResult.getResult().get(0).longValue());
+        assertEquals(3, queryResult.first().longValue());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class ArchiveDgvaDBAdaptorTest {
                 .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.SPECIES, DgvaStudyTestData.HUMAN));
 
         assertEquals(1, queryResult.getNumTotalResults());
-        Map.Entry<String, Long> result = queryResult.getResult().get(0);
+        Map.Entry<String, Long> result = queryResult.first();
         assertEquals(DgvaStudyTestData.HUMAN, result.getKey());
         assertEquals(2, result.getValue().longValue());
     }
@@ -74,7 +74,7 @@ public class ArchiveDgvaDBAdaptorTest {
         QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor.countStudiesPerSpecies(queryOptions);
 
         assertEquals(1, queryResult.getNumTotalResults());
-        Map.Entry<String, Long> result = queryResult.getResult().get(0);
+        Map.Entry<String, Long> result = queryResult.first();
         assertEquals(DgvaStudyTestData.HUMAN, result.getKey());
         assertEquals(1, result.getValue().longValue());
     }
@@ -100,7 +100,7 @@ public class ArchiveDgvaDBAdaptorTest {
                 .countStudiesPerType(new QueryOptions(QueryOptionsConstants.TYPE, DgvaStudyTestData.CONTROL_SET));
 
         assertEquals(1, queryResult.getNumTotalResults());
-        Map.Entry<String, Long> result = queryResult.getResult().get(0);
+        Map.Entry<String, Long> result = queryResult.first();
         assertEquals(DgvaStudyTestData.CONTROL_SET, result.getKey());
         assertEquals(2, result.getValue().longValue());
     }

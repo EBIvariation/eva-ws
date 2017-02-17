@@ -54,7 +54,7 @@ public class VariantSourceEvaProDBAdaptorTest {
     public void countSources() throws Exception {
         QueryResult<Long> count = variantSourceEvaproDBAdaptor.countSources();
         assertEquals(1, count.getNumResults());
-        assertEquals(3, count.getResult().get(0).longValue());
+        assertEquals(3, count.first().longValue());
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -87,7 +87,7 @@ public class VariantSourceEvaProDBAdaptorTest {
         QueryResult<URL> sourceUrls = variantSourceEvaproDBAdaptor.getSourceDownloadUrlByName(FileTestData.FILE_1_NAME);
 
         assertEquals(1, sourceUrls.getNumTotalResults());
-        assertEquals(new URI("ftp://parentdir/dir1/file1.vcf.gz").toURL(), sourceUrls.getResult().get(0));
+        assertEquals(new URI("ftp://parentdir/dir1/file1.vcf.gz").toURL(), sourceUrls.first());
     }
 
     @Test
@@ -107,9 +107,9 @@ public class VariantSourceEvaProDBAdaptorTest {
         URL expectedFtpUrlFile1 = new URI("ftp://parentdir/dir1/file1.vcf.gz").toURL();
         URL expectedFtpUrlFile2 = new URI("ftp://parentdir/dir2/file2.vcf.gz").toURL();
         assertTrue(sourceUrls.stream()
-                             .anyMatch(queryResult -> queryResult.getResult().get(0).equals(expectedFtpUrlFile1)));
+                             .anyMatch(queryResult -> queryResult.first().equals(expectedFtpUrlFile1)));
         assertTrue(sourceUrls.stream()
-                             .anyMatch(queryResult -> queryResult.getResult().get(0).equals(expectedFtpUrlFile2)));
+                             .anyMatch(queryResult -> queryResult.first().equals(expectedFtpUrlFile2)));
 
     }
 
