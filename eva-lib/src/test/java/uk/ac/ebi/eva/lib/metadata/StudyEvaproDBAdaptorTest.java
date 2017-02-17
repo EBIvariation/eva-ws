@@ -33,6 +33,7 @@ import java.util.function.Predicate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.HUMAN;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -64,11 +65,11 @@ public class StudyEvaproDBAdaptorTest {
     @Test
     public void getAllStudiesForOneSpecies() throws Exception {
         QueryOptions queryOptions = new QueryOptions();
-        queryOptions.put(QueryOptionsConstants.SPECIES, EvaStudyBrowserTestData.HUMAN);
+        queryOptions.put(QueryOptionsConstants.SPECIES, HUMAN);
         QueryResult<VariantStudy> queryResult = studyEvaproDBAdaptor.getAllStudies(queryOptions);
 
         checkReturnedStudies(queryResult, 3,
-                             study -> study.getSpeciesCommonName().equals(EvaStudyBrowserTestData.HUMAN));
+                             study -> study.getSpeciesCommonName().equals(HUMAN));
     }
 
     @Test
@@ -84,12 +85,12 @@ public class StudyEvaproDBAdaptorTest {
     @Test
     public void getAllStudiesForAnSpeciesAndType() throws Exception {
         QueryOptions queryOptions = new QueryOptions();
-        queryOptions.put(QueryOptionsConstants.SPECIES, EvaStudyBrowserTestData.HUMAN);
+        queryOptions.put(QueryOptionsConstants.SPECIES, HUMAN);
         queryOptions.put(QueryOptionsConstants.TYPE, EvaStudyBrowserTestData.EXOME_SEQUENCING);
         QueryResult<VariantStudy> queryResult = studyEvaproDBAdaptor.getAllStudies(queryOptions);
 
         checkReturnedStudies(queryResult, 1,
-                             study -> study.getSpeciesCommonName().equals(EvaStudyBrowserTestData.HUMAN) && study
+                             study -> study.getSpeciesCommonName().equals(HUMAN) && study
                                      .getExperimentType()
                                      .equals(EvaStudyBrowserTestData.EXOME_SEQUENCING));
     }

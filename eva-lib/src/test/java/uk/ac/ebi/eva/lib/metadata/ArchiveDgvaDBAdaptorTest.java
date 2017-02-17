@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.HUMAN;
+import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.MOUSE;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -58,24 +60,24 @@ public class ArchiveDgvaDBAdaptorTest {
     @Test
     public void countStudiesPerSpeciesFilteringBySpecies() throws Exception {
         QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor
-                .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.SPECIES, DgvaStudyTestData.HUMAN));
+                .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.SPECIES, HUMAN));
 
         assertEquals(1, queryResult.getNumTotalResults());
         Map.Entry<String, Long> result = queryResult.first();
-        assertEquals(DgvaStudyTestData.HUMAN, result.getKey());
+        assertEquals(HUMAN, result.getKey());
         assertEquals(2, result.getValue().longValue());
     }
 
     @Test
     public void countStudiesPerSpeciesFilteringBySpeciesAndType() throws Exception {
         QueryOptions queryOptions = new QueryOptions();
-        queryOptions.put(QueryOptionsConstants.SPECIES, DgvaStudyTestData.HUMAN);
+        queryOptions.put(QueryOptionsConstants.SPECIES, HUMAN);
         queryOptions.put(QueryOptionsConstants.TYPE, DgvaStudyTestData.CONTROL_SET);
         QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor.countStudiesPerSpecies(queryOptions);
 
         assertEquals(1, queryResult.getNumTotalResults());
         Map.Entry<String, Long> result = queryResult.first();
-        assertEquals(DgvaStudyTestData.HUMAN, result.getKey());
+        assertEquals(HUMAN, result.getKey());
         assertEquals(1, result.getValue().longValue());
     }
 
@@ -86,9 +88,9 @@ public class ArchiveDgvaDBAdaptorTest {
 
         assertEquals(2, queryResult.getNumTotalResults());
         List<Map.Entry<String, Long>> results =  queryResult.getResult();
-        long humanStudiesCount = results.stream().filter(e -> e.getKey().equals(DgvaStudyTestData.HUMAN))
+        long humanStudiesCount = results.stream().filter(e -> e.getKey().equals(HUMAN))
                                         .mapToLong(Map.Entry::getValue).findAny().getAsLong();
-        long mouseStudiesCount = results.stream().filter(e -> e.getKey().equals(DgvaStudyTestData.MOUSE))
+        long mouseStudiesCount = results.stream().filter(e -> e.getKey().equals(MOUSE))
                                       .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         assertEquals(2, humanStudiesCount);
         assertEquals(1, mouseStudiesCount);
@@ -149,6 +151,6 @@ public class ArchiveDgvaDBAdaptorTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void getSpecies() throws Exception {
-        archiveDgvaDBAdaptor.getSpecies(DgvaStudyTestData.HUMAN, true);
+        archiveDgvaDBAdaptor.getSpecies(HUMAN, true);
     }
 }

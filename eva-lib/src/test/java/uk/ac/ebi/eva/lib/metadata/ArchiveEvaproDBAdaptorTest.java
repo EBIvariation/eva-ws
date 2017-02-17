@@ -33,6 +33,10 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.BOS_TAURUS;
+import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.CATTLE;
+import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.HOMO_SAPIENS;
+import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.HUMAN;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -57,8 +61,8 @@ public class ArchiveEvaproDBAdaptorTest {
         entityManager.persist(prj1);
         entityManager.persist(prj2);
 
-        Taxonomy humanTaxonomy = new Taxonomy(9606L, "Human", "Homo sapiens", "hsapiens", "human");
-        Taxonomy cowTaxonomy = new Taxonomy(9913L, "Cattle", "Bos taurus", "btaurus", "cow");
+        Taxonomy humanTaxonomy = new Taxonomy(9606L, HUMAN, HOMO_SAPIENS, "hsapiens", "human");
+        Taxonomy cowTaxonomy = new Taxonomy(9913L, CATTLE, BOS_TAURUS, "btaurus", "cow");
 
         entityManager.persist(humanTaxonomy);
         entityManager.persist(cowTaxonomy);
@@ -79,18 +83,18 @@ public class ArchiveEvaproDBAdaptorTest {
     @Test
     public void countStudiesPerSpeciesFilteringBySpecies() throws Exception {
         QueryResult<Map.Entry<String, Long>> countStudiesResult = archiveEvaproDBAdaptor
-                .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.SPECIES, EvaStudyBrowserTestData.HUMAN));
+                .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.SPECIES, HUMAN));
 
         assertEquals(1, countStudiesResult.getNumResults());
         Map.Entry<String, Long> result = countStudiesResult.first();
-        assertEquals(EvaStudyBrowserTestData.HUMAN, result.getKey());
+        assertEquals(HUMAN, result.getKey());
         assertEquals(3, result.getValue().longValue());
     }
 
     @Test
     public void countStudiesPerSpeciesFilteringBySpeciesAndtype() throws Exception {
         QueryOptions queryOptions = new QueryOptions();
-        queryOptions.put(QueryOptionsConstants.SPECIES, EvaStudyBrowserTestData.HUMAN);
+        queryOptions.put(QueryOptionsConstants.SPECIES, HUMAN);
         queryOptions.put(QueryOptionsConstants.TYPE, EvaStudyBrowserTestData.EXOME_SEQUENCING);
 
         QueryResult<Map.Entry<String, Long>> countStudiesResult = archiveEvaproDBAdaptor
@@ -98,7 +102,7 @@ public class ArchiveEvaproDBAdaptorTest {
 
         assertEquals(1, countStudiesResult.getNumResults());
         Map.Entry<String, Long> result = countStudiesResult.first();
-        assertEquals(EvaStudyBrowserTestData.HUMAN, result.getKey());
+        assertEquals(HUMAN, result.getKey());
         assertEquals(1, result.getValue().longValue());
     }
 
@@ -117,9 +121,9 @@ public class ArchiveEvaproDBAdaptorTest {
 
         assertEquals(2, countStudiesResult.getNumResults());
         List<Map.Entry<String, Long>> results =  countStudiesResult.getResult();
-        long humanStudiesCount = results.stream().filter(e -> e.getKey().equals(EvaStudyBrowserTestData.HUMAN))
+        long humanStudiesCount = results.stream().filter(e -> e.getKey().equals(HUMAN))
                                         .mapToLong(Map.Entry::getValue).findAny().getAsLong();
-        long cowStudiesCount = results.stream().filter(e -> e.getKey().equals(EvaStudyBrowserTestData.COW))
+        long cowStudiesCount = results.stream().filter(e -> e.getKey().equals(CATTLE))
                                       .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         assertEquals(3, humanStudiesCount);
         assertEquals(1, cowStudiesCount);
