@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014-2017 EMBL - European Bioinformatics Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package uk.ac.ebi.eva.lib.entity;
 
 
@@ -74,6 +89,36 @@ public class EvaStudyBrowser {
     private String platform;
 
     private String resource;
+
+    public EvaStudyBrowser(String projectAccession, long studyId, String projectTitle, String description,
+                           String taxId, String commonName, String scientificName, String sourceType,
+                           String studyType, Long variantCount, Integer samples, String center, String scope,
+                           String material, String publications, String associatedProjects, String experimentType,
+                           String experimentTypeAbbreviation, String assemblyAccession, String assemblyName,
+                           String platform, String resource) {
+        this.projectAccession = projectAccession;
+        this.studyId = studyId;
+        this.projectTitle = projectTitle;
+        this.description = description;
+        this.taxId = taxId;
+        this.commonName = commonName;
+        this.scientificName = scientificName;
+        this.sourceType = sourceType;
+        this.studyType = studyType;
+        this.variantCount = variantCount;
+        this.samples = samples;
+        this.center = center;
+        this.scope = scope;
+        this.material = material;
+        this.publications = publications;
+        this.associatedProjects = associatedProjects;
+        this.experimentType = experimentType;
+        this.experimentTypeAbbreviation = experimentTypeAbbreviation;
+        this.assemblyAccession = assemblyAccession;
+        this.assemblyName = assemblyName;
+        this.platform = platform;
+        this.resource = resource;
+    }
 
     public VariantStudy generateVariantStudy() {
         // Convert the list of tax ids to integer values

@@ -119,6 +119,12 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>1.4.193</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.lordofthejars</groupId>
                 <artifactId>nosqlunit-core</artifactId>
                 <version>0.10.0</version>

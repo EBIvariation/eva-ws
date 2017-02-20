@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014-2017 EMBL - European Bioinformatics Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.ac.ebi.eva.lib.entity;
 
 
@@ -72,6 +88,32 @@ public class DgvaStudyBrowser {
 
     @Column(name = "assembly_name")
     private String assemblyName;
+
+    public DgvaStudyBrowser(String studyAccession, Integer callCount, Integer regionCount, Integer variantCount,
+                            String taxId, String commonName, String scientificName, String pubmedId, String alias,
+                            String displayName, String studyType, String projectId, String studyUrl,
+                            String studyDescription, String analysisType, String detectionMethod,
+                            String methodType, String platformName, String assemblyName) {
+        this.studyAccession = studyAccession;
+        this.callCount = callCount;
+        this.regionCount = regionCount;
+        this.variantCount = variantCount;
+        this.taxId = taxId;
+        this.commonName = commonName;
+        this.scientificName = scientificName;
+        this.pubmedId = pubmedId;
+        this.alias = alias;
+        this.displayName = displayName;
+        this.studyType = studyType;
+        this.projectId = projectId;
+        this.studyUrl = studyUrl;
+        this.studyDescription = studyDescription;
+        this.analysisType = analysisType;
+        this.detectionMethod = detectionMethod;
+        this.methodType = methodType;
+        this.platformName = platformName;
+        this.assemblyName = assemblyName;
+    }
 
     public VariantStudy generateVariantStudy() {
         // Convert the list of tax ids to integer values
