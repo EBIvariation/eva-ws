@@ -21,7 +21,7 @@ import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 
 import java.util.List;
 
-public interface VariantSourceEntryRepository extends MongoRepository<VariantSourceEntity, String> {
+public interface VariantSourceEntityRepository extends MongoRepository<VariantSourceEntity, String> {
 
     List<VariantSourceEntity> findAll();
 
