@@ -60,5 +60,13 @@ public class VariantSourceEntityRepositoryTest {
         assertEquals(3, variantSourceEntityList.size());
     }
 
+    @Test
+    public void findByStudyIdTest() {
+        List<VariantSourceEntity> variantSourceEntityList = repository.findByStudyId("firstStudyId");
+        assertEquals(1, variantSourceEntityList.size());
+        variantSourceEntityList = repository.findByStudyId("secondStudyId");
+        assertEquals(2, variantSourceEntityList.size());
+    }
+
 
 }
