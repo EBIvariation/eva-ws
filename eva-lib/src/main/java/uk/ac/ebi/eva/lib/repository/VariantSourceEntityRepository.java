@@ -21,6 +21,15 @@ import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 
 import java.util.List;
 
+/**
+ * Extension of Spring's MongoRepository for VariantSourceEntity class.
+ *
+ * This interface queries the VariantSourceEntity collection- i.e. collection containing information on files.
+ *
+ * Methods include: finding all "VariantSourceEntity"s in the collection, finding "VariantSourceEntity"s with either
+ * studyId matching given value, or studyName matching given value.
+ *
+ */
 public interface VariantSourceEntityRepository extends MongoRepository<VariantSourceEntity, String> {
 
     List<VariantSourceEntity> findAll();
