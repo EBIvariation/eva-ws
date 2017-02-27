@@ -25,6 +25,6 @@ public interface VariantSourceEntityRepository extends MongoRepository<VariantSo
 
     List<VariantSourceEntity> findAll();
 
-    List<VariantSourceEntity> findByStudyId(String studyId);
+    List<VariantSourceEntity> findByStudyIdOrStudyName(String studyId, String studyName);
 
 }

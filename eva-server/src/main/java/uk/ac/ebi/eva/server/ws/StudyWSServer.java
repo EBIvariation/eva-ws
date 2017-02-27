@@ -73,7 +73,8 @@ public class StudyWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        QueryResult queryResult = Utils.buildQueryResult(variantSourceEntityRepository.findByStudyId(study));
+        QueryResult queryResult =
+                Utils.buildQueryResult(variantSourceEntityRepository.findByStudyIdOrStudyName(study, study));
 
         if (queryResult.getResult().size() == 0) {
             queryResult = Utils.buildQueryResult(Collections.emptyList());
@@ -82,12 +83,7 @@ public class StudyWSServer extends EvaWSServer {
             return setQueryResponse(queryResult);
         }
 
-        VariantSourceEntity variantSourceEntity = (VariantSourceEntity) queryResult.getResult().get(0);
-        QueryResult finalResult
-                = Utils.buildQueryResult(variantSourceEntityRepository.findByStudyId(variantSourceEntity.getStudyId()));
-        finalResult.setDbTime(finalResult.getDbTime() - queryResult.getDbTime());
-
-        return setQueryResponse(finalResult);
+        return setQueryResponse(queryResult);
     }
 
     @RequestMapping(value = "/{study}/view", method = RequestMethod.GET)
