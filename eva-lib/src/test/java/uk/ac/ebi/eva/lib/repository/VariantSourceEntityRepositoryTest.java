@@ -42,7 +42,7 @@ public class VariantSourceEntityRepositoryTest {
 
     protected static Logger logger = LoggerFactory.getLogger(VariantSourceEntityRepositoryTest.class);
 
-    private static final String TEST_DB = "test-db";
+    private static final String TEST_DB = "test-db-vse";
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -61,10 +61,16 @@ public class VariantSourceEntityRepositoryTest {
 
     @Test
     public void findByStudyIdTest() {
-        List<VariantSourceEntity> variantSourceEntityList = repository.findByStudyId("firstStudyId");
+        List<VariantSourceEntity> variantSourceEntityList = repository.findByStudyIdOrStudyName("firstStudyId", "firstStudyId");
         assertEquals(1, variantSourceEntityList.size());
-        variantSourceEntityList = repository.findByStudyId("secondStudyId");
+        variantSourceEntityList = repository.findByStudyIdOrStudyName("secondStudyId", "secondStudyId");
         assertEquals(2, variantSourceEntityList.size());
+    }
+
+    @Test
+    public void findByStudyIdTestNonExistent() {
+        List<VariantSourceEntity> variantSourceEntityList = repository.findByStudyIdOrStudyName("notARealId", "notARealId");
+        assertEquals(0, variantSourceEntityList.size());
     }
 
 
