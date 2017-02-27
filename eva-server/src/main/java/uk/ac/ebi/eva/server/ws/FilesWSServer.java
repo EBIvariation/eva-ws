@@ -29,6 +29,7 @@ import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.metadata.VariantSourceEvaProDBAdaptor;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.server.Utils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -58,7 +59,7 @@ public class FilesWSServer extends EvaWSServer {
         initializeQueryOptions();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        return setQueryResponse(variantSourceEntityRepository.findAll());
+        return setQueryResponse(Utils.buildQueryResult(variantSourceEntityRepository.findAll()));
     }
 
     @RequestMapping(value = "/{files}/url", method = RequestMethod.GET)
