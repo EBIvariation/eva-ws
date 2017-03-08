@@ -115,6 +115,8 @@ public class DgvaStudyBrowser {
         this.assemblyName = assemblyName;
     }
 
+    DgvaStudyBrowser() { }
+
     public VariantStudy generateVariantStudy() {
         // Convert the list of tax ids to integer values
         int[] taxIds = Arrays.stream(taxId.split(", ")).map(String::trim).mapToInt(Integer::parseInt).toArray();

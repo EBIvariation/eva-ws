@@ -22,11 +22,14 @@ package uk.ac.ebi.eva.server.ws;
 import io.swagger.annotations.Api;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.metadata.VariantSourceEvaProDBAdaptor;
+import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.server.Utils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -42,6 +45,9 @@ public class FilesWSServer extends EvaWSServer {
     @Autowired
     private VariantSourceEvaProDBAdaptor variantSourceEvaproDbAdaptor;
 
+    @Autowired
+    private VariantSourceEntityRepository variantSourceEntityRepository;
+
     public FilesWSServer() {
         this.startTime = System.currentTimeMillis();
     }
@@ -52,8 +58,8 @@ public class FilesWSServer extends EvaWSServer {
             throws IllegalOpenCGACredentialsException, IOException {
         initializeQueryOptions();
 
-        VariantSourceDBAdaptor variantSourceMongoDbAdaptor = DBAdaptorConnector.getVariantSourceDBAdaptor(species);
-        return setQueryResponse(variantSourceMongoDbAdaptor.getAllSources(queryOptions));
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+        return setQueryResponse(Utils.buildQueryResult(variantSourceEntityRepository.findAll()));
     }
 
     @RequestMapping(value = "/{files}/url", method = RequestMethod.GET)
