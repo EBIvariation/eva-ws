@@ -124,32 +124,6 @@ public class GA4GHVariantWSServer extends EvaWSServer {
 
         // Create the custom response for the GA4GH API
         return new GASearchVariantsResponse(gaVariants, nextPageToken);
-
-        ///////
-//
-//        if (files != null && !files.isEmpty()) {
-//            queryOptions.put("files", files);
-//        }
-//
-//        int idxCurrentPage = 0;
-//        if (pageToken != null && !pageToken.isEmpty() && StringUtils.isNumeric(pageToken)) {
-//            idxCurrentPage = Integer.parseInt(pageToken);
-//            queryOptions.put("skip", idxCurrentPage * limit);
-//        }
-//        queryOptions.put("limit", limit);
-//
-//        // Create the provided region, whose size can't exceed 1 million positions
-////        Region region = new Region(chromosome, start, end);
-//
-//        QueryResult<Variant> qr = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
-//        // Convert Variant objects to GAVariant
-//        List<GAVariant> gaVariants = GAVariantFactory.create(qr.getResult());
-//        // Calculate the next page token
-//        int idxLastElement = idxCurrentPage * limit + limit;
-//        String nextPageToken = (idxLastElement < qr.getNumTotalResults()) ? String.valueOf(idxCurrentPage + 1) : null;
-//
-//        // Create the custom response for the GA4GH API
-//        return new GASearchVariantsResponse(gaVariants, nextPageToken);
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, consumes = "application/json")
