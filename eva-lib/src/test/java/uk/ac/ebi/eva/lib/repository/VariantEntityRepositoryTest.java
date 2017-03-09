@@ -298,6 +298,22 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
+    public void testRegionIsFoundWithFiles() {
+        List<String> files = new ArrayList<>();
+        files.add("218");
+        String chr = "11";
+        int start = 180000;
+        int end = 180500;
+        List<VariantEntityRepositoryFilter> filters =
+                Helpers.getVariantEntityRepositoryFilters(null, null, null, null, null, files);
+        Region region = new Region(chr, start, end);
+        List<Region> regions = new ArrayList<>();
+        regions.add(region);
+        List<String> exclude = new ArrayList<>();
+        testFiltersHelperRegion(regions, filters, exclude, 7);
+    }
+
+    @Test
     public void testFindByRegionsAndComplexFilters() {
 
         List<Region> regions = new ArrayList<>();
