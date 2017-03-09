@@ -44,6 +44,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 
+import uk.ac.ebi.eva.lib.filter.Helpers;
+import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
 /**
