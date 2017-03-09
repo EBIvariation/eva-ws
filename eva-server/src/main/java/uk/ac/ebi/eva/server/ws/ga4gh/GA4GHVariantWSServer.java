@@ -44,20 +44,31 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 
+import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.filter.Helpers;
 import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
-/**
- *
- * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
- */
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/v1/ga4gh/variants", produces = "application/json")
 @Api(tags = { "ga4gh", "variants" })
 public class GA4GHVariantWSServer extends EvaWSServer {
+
+    @Autowired
+    private VariantEntityRepository variantEntityRepository;
+
+    protected static Logger logger = LoggerFactory.getLogger(GA4GHVariantWSServer.class);
     
     public GA4GHVariantWSServer() { }
     
@@ -77,37 +88,68 @@ public class GA4GHVariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "pageSize", defaultValue = "10") int limit)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         initializeQuery();
-        
-        VariantDBAdaptor variantMongoDbAdaptor = dbAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
-        
+
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
+
         if (files != null && !files.isEmpty()) {
             queryOptions.put("files", files);
         }
-        
+        List<VariantEntityRepositoryFilter> filters = Helpers.getVariantEntityRepositoryFilters(null, null, null, null,
+                                                                                                null, files);
+
         int idxCurrentPage = 0;
         if (pageToken != null && !pageToken.isEmpty() && StringUtils.isNumeric(pageToken)) {
             idxCurrentPage = Integer.parseInt(pageToken);
             queryOptions.put("skip", idxCurrentPage * limit);
         }
         queryOptions.put("limit", limit);
-        
-        // Create the provided region, whose size can't exceed 1 million positions
-        Region region = new Region(chromosome, start, end);
-        int regionSize = region.getEnd()-region.getStart();
-        
-        if (regionSize > 1000000) {
-            throw new IllegalArgumentException("The size of the region is larger than 1 million nucleotides");
-        }
 
-        QueryResult<Variant> qr = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
+        Region region = new Region(chromosome, start, end);
+        List<Region> regions = new ArrayList<>();
+        regions.add(region);
+
+        PageRequest pageRequest = Utils.getPageRequest(queryOptions);
+
+        List<VariantEntity> variantEntities = variantEntityRepository.findByRegionsAndComplexFilters(regions, filters,
+                                                                                                     null, pageRequest);
+        List<Variant> variants = Collections.unmodifiableList(variantEntities);
+
+        Long numTotalResults = variantEntityRepository.countByRegionsAndComplexFilters(regions, filters);
+
         // Convert Variant objects to GAVariant
-        List<GAVariant> gaVariants = GAVariantFactory.create(qr.getResult());
+        List<GAVariant> gaVariants = GAVariantFactory.create(variants);
         // Calculate the next page token
         int idxLastElement = idxCurrentPage * limit + limit;
-        String nextPageToken = (idxLastElement < qr.getNumTotalResults()) ? String.valueOf(idxCurrentPage + 1) : null;
-        
+        String nextPageToken = (idxLastElement < numTotalResults) ? String.valueOf(idxCurrentPage + 1) : null;
+
         // Create the custom response for the GA4GH API
         return new GASearchVariantsResponse(gaVariants, nextPageToken);
+
+        ///////
+//
+//        if (files != null && !files.isEmpty()) {
+//            queryOptions.put("files", files);
+//        }
+//
+//        int idxCurrentPage = 0;
+//        if (pageToken != null && !pageToken.isEmpty() && StringUtils.isNumeric(pageToken)) {
+//            idxCurrentPage = Integer.parseInt(pageToken);
+//            queryOptions.put("skip", idxCurrentPage * limit);
+//        }
+//        queryOptions.put("limit", limit);
+//
+//        // Create the provided region, whose size can't exceed 1 million positions
+////        Region region = new Region(chromosome, start, end);
+//
+//        QueryResult<Variant> qr = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
+//        // Convert Variant objects to GAVariant
+//        List<GAVariant> gaVariants = GAVariantFactory.create(qr.getResult());
+//        // Calculate the next page token
+//        int idxLastElement = idxCurrentPage * limit + limit;
+//        String nextPageToken = (idxLastElement < qr.getNumTotalResults()) ? String.valueOf(idxCurrentPage + 1) : null;
+//
+//        // Create the custom response for the GA4GH API
+//        return new GASearchVariantsResponse(gaVariants, nextPageToken);
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, consumes = "application/json")
