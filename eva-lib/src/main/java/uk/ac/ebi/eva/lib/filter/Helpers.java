@@ -8,13 +8,17 @@ public class Helpers {
                                                                                         String polyphenScore,
                                                                                         String siftScore,
                                                                                         List<String> studies,
-                                                                                        List<String> consequenceType) {
+                                                                                        List<String> consequenceType,
+                                                                                        List<String> files) {
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
         if (studies != null && !studies.isEmpty()) {
             filters.add(new VariantEntityRepositoryStudyFilter(studies));
         }
         if (consequenceType != null && !consequenceType.isEmpty()) {
             filters.add(new VariantEntityRepositoryConsequenceTypeFilter(consequenceType));
+        }
+        if (files != null && !files.isEmpty()) {
+            filters.add(new VariantEntityRepositoryFileFilter(files));
         }
         if (maf != null){
             filters.add(new VariantEntityRepositoryMafFilter(maf));
