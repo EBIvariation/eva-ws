@@ -41,11 +41,14 @@ import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.models.Assembly;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
+import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
+import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +88,9 @@ public class ArchiveWSServerTest {
 
     @MockBean
     private DBAdaptorConnector dbAdaptorConnector;
+
+    @MockBean
+    private VariantStudySummaryRepository variantStudySummaryRepository;
 
     @Before
     public void setup() throws URISyntaxException, IOException, IllegalOpenCGACredentialsException {
@@ -160,10 +166,23 @@ public class ArchiveWSServerTest {
         BDDMockito.given(dbAdaptorConnector.getStudyDBAdaptor("hsapiens_grch37")).willReturn(studyMongoDBAdaptor);
         // TODO: why BDDMockito.given instead of when?
 
+        List<VariantStudySummary> studies = buildVariantStudySummaries();
+        BDDMockito.given(variantStudySummaryRepository.findBy()).willReturn(studies);
+
     }
 
-    private QueryResult encapsulateInQueryResult(Object... results) {
-        return new QueryResult(null, 0, results.length, results.length, null, null, Arrays.asList(results));
+    private List<VariantStudySummary> buildVariantStudySummaries() {
+        List<VariantStudySummary> studies = new ArrayList<>();
+        VariantStudySummary study = new VariantStudySummary();
+        study.setFilesCount(1);
+        study.setStudyId("studyId");
+        study.setStudyName("studyName");
+        studies.add(study);
+        return studies;
+    }
+
+    private <T> QueryResult<T> encapsulateInQueryResult(T... results) {
+        return new QueryResult<>(null, 0, results.length, results.length, null, null, Arrays.asList(results));
     }
 
 
