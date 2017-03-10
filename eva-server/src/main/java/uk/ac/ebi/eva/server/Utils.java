@@ -18,10 +18,14 @@
  */
 package uk.ac.ebi.eva.server;
 
+import org.opencb.biodata.models.variant.VariantSource;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
 import org.springframework.data.domain.PageRequest;
 
+import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +67,45 @@ public class Utils {
         map.put("annotation", "annot");
         map.put("sourceEntries.attributes", "files.attrs");
         return map;
+    }
+
+    public static <T> QueryResult<T> buildQueryResult(List<T> results) {
+        return buildQueryResult(results, results.size());
+    }
+
+    public static <T> QueryResult<T> buildQueryResult(List<T> results, long numTotalResults) {
+        QueryResult<T> queryResult = new QueryResult<>();
+        queryResult.setResult(results);
+        queryResult.setNumResults(results.size());
+        queryResult.setNumTotalResults(numTotalResults);
+        return queryResult;
+    }
+
+    public static List<VariantSource> convertVariantSourceEntitysToVariantSources(List<VariantSourceEntity>
+                                                                                          variantSourceEntities) {
+
+        List<VariantSource> variantSources = new ArrayList<>();
+
+        for (VariantSourceEntity variantSourceEntity: variantSourceEntities) {
+            VariantSource variantSource = new VariantSource(variantSourceEntity.getFileName(),
+                                                            variantSourceEntity.getFileId(),
+                                                            variantSourceEntity.getStudyId(),
+                                                            variantSourceEntity.getStudyName(),
+                                                            variantSourceEntity.getType(),
+                                                            variantSourceEntity.getAggregation());
+            if (variantSourceEntity.getSamplesPosition() != null) {
+                variantSource.setSamplesPosition(variantSourceEntity.getSamplesPosition());
+            }
+            if (variantSourceEntity.getMetadata() != null) {
+                variantSource.setMetadata(variantSourceEntity.getMetadata());
+            }
+            if (variantSourceEntity.getStats() != null) {
+                variantSource.setStats(variantSourceEntity.getStats());
+            }
+            variantSources.add(variantSource);
+        }
+
+        return variantSources;
     }
 
 }
