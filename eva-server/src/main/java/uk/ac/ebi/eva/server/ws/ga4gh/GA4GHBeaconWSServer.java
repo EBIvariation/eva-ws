@@ -73,30 +73,15 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
 
-        Region region;
-        List<Region> regions = new ArrayList<>();
-        List<VariantEntityRepositoryFilter> filters;
-
+        long totalCount;
         if (allele.equalsIgnoreCase("INDEL")) {
-            region = new Region(chromosome, start);
-            List<Variant.VariantType> types = new ArrayList<>();
-            types.add(Variant.VariantType.INDEL);
-            filters = Helpers.getVariantEntityRepositoryFilters(null, null, null, studies, null, null, types, null);
+            totalCount = variantEntityRepository.countByChromosomeAndStartAndTypeAndStudyIn(chromosome, start,
+                                                                                            Variant.VariantType.INDEL,
+                                                                                            studies);
         } else {
-            if (allele.contains("<")) {
-                region = new Region(chromosome, start);
-            } else {
-                region = new Region(chromosome, start, start + allele.length());
-            }
-            List<String> alternates = new ArrayList<>();
-            alternates.add(allele);
-            filters = Helpers.getVariantEntityRepositoryFilters(null, null, null, studies, null, null, null, alternates);
+            totalCount = variantEntityRepository.countByChromosomeAndStartAndEndAndAltAndStudyIn(chromosome, start,
+                                                                                                 allele, studies);
         }
-
-        logger.warn("filters: " + filters.toString());
-        regions.add(region);
-        long totalCount = variantEntityRepository.countByRegionsAndComplexFilters(regions, filters);
-        logger.warn("totalCount: " + totalCount);
 
         return new GA4GHBeaconResponse(chromosome, start, allele, String.join(",", studies), totalCount > 0);
     }
