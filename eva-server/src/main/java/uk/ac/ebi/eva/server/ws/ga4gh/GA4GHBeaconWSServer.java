@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014-2016 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2017 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,33 +19,40 @@
 
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-
-import javax.servlet.http.HttpServletResponse;
-
+import io.swagger.annotations.Api;
 import org.opencb.biodata.models.feature.Region;
-import org.opencb.datastore.core.QueryResult;
+import org.opencb.biodata.models.variant.Variant;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-
+import uk.ac.ebi.eva.lib.filter.Helpers;
+import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
-/**
- *
- * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
- */
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/v1/ga4gh", produces = "application/json")
 @Api(tags = { "ga4gh" })
 public class GA4GHBeaconWSServer extends EvaWSServer {
+
+    @Autowired
+    private VariantEntityRepository variantEntityRepository;
+
+    protected static Logger logger = LoggerFactory.getLogger(GA4GHBeaconWSServer.class);
 
     public GA4GHBeaconWSServer() { }
     
@@ -53,34 +60,43 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
     public GA4GHBeaconResponse beacon(@RequestParam("referenceName") String chromosome,
                                       @RequestParam("start") int start,
                                       @RequestParam("allele") String allele,
-                                      @RequestParam("datasetIds") String studies,
+                                      @RequestParam("datasetIds") List<String> studies,
                                       HttpServletResponse response) 
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         initializeQuery();
         
         if (start < 0) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return new GA4GHBeaconResponse(chromosome, start, allele, studies, 
+            return new GA4GHBeaconResponse(chromosome, start, allele, String.join(",", studies),
                     "Please provide a positive number as start position");
         }
-        
-        VariantDBAdaptor variantMongoDbAdaptor = dbAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
-        
-        Region region = new Region(chromosome, start, start + allele.length());
+
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
+
+        Region region;
+        List<Region> regions = new ArrayList<>();
+        List<VariantEntityRepositoryFilter> filters;
+
         if (allele.equalsIgnoreCase("INDEL")) {
-            queryOptions.put("type", "INDEL");
+            region = new Region(chromosome, start);
+            List<Variant.VariantType> types = new ArrayList<>();
+            types.add(Variant.VariantType.INDEL);
+            filters = Helpers.getVariantEntityRepositoryFilters(null, null, null, studies, null, null, types, null);
         } else {
-            queryOptions.put("alternate", allele);
+            if (allele.contains("<")) {
+                region = new Region(chromosome, start);
+            } else {
+                region = new Region(chromosome, start, allele.length());
+            }
+            List<String> alternates = new ArrayList<>();
+            alternates.add(allele);
+            filters = Helpers.getVariantEntityRepositoryFilters(null, null, null, studies, null, null, null, alternates);
         }
-        
-        if (studies != null && !studies.isEmpty()) {
-            queryOptions.put("studies", Arrays.asList(studies.split(",")));
-        }
-        
-        QueryResult queryResult = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
-//        queryResult.setResult(Arrays.asList(queryResult.getNumResults() > 0));
-//        queryResult.setResultType(Boolean.class.getCanonicalName());
-        return new GA4GHBeaconResponse(chromosome, start, allele, studies, queryResult.getNumResults() > 0);
+
+        regions.add(region);
+        long totalCount = variantEntityRepository.countByRegionsAndComplexFilters(regions, filters);
+
+        return new GA4GHBeaconResponse(chromosome, start, allele, String.join(",", studies), totalCount > 0);
     }
     
     class GA4GHBeaconResponse {

@@ -12,7 +12,8 @@ public class Helpers {
                                                                                         List<String> studies,
                                                                                         List<String> consequenceType,
                                                                                         List<String> files,
-                                                                                        List<Variant.VariantType> types) {
+                                                                                        List<Variant.VariantType> types,
+                                                                                        List<String> alternates) {
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
         if (studies != null && !studies.isEmpty()) {
             filters.add(new VariantEntityRepositoryStudyFilter(studies));
@@ -25,6 +26,9 @@ public class Helpers {
         }
         if (types != null && !types.isEmpty()) {
             filters.add(new VariantEntityRepositoryTypeFilter(types));
+        }
+        if (alternates != null && !alternates.isEmpty()) {
+            filters.add(new VariantEntityRepositoryAlternateFilter(alternates));
         }
         if (maf != null){
             filters.add(new VariantEntityRepositoryMafFilter(maf));

@@ -96,7 +96,7 @@ public class VariantWSServer extends EvaWSServer {
         } else {
             List<VariantEntityRepositoryFilter> filters =
                     Helpers.getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore,
-                                                              studies, consequenceType, null, null);
+                                                              studies, consequenceType, null, null, null);
 
             List<String> excludeMapped = new ArrayList<>();
             if (exclude != null && !exclude.isEmpty()){
