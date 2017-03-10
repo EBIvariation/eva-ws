@@ -30,6 +30,7 @@ public abstract class VariantEntityRepositoryFilter<T> {
     public final static String STATISTICS_FIELD = "st";
     public final static String FILES_FIELD = "files";
     public final static String TYPE_FIELD = "type";
+    public final static String ALT_FIELD = "alt";
 
     public final static String MAF_FIELD = STATISTICS_FIELD + ".maf";
 

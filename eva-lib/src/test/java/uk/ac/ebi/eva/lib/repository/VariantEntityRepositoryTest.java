@@ -24,6 +24,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opencb.biodata.models.feature.Region;
+import org.opencb.biodata.models.variant.Variant;
 import org.opencb.biodata.models.variant.VariantSourceEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -311,6 +312,38 @@ public class VariantEntityRepositoryTest {
         regions.add(region);
         List<String> exclude = new ArrayList<>();
         testFiltersHelperRegion(regions, filters, exclude, 7);
+    }
+
+    @Test
+    public void testRegionIsFoundWithTypes() {
+        List<Variant.VariantType> types = new ArrayList<>();
+        types.add(Variant.VariantType.INDEL);
+        String chr = "11";
+        int start = 180000;
+        int end = 180500;
+        List<VariantEntityRepositoryFilter> filters =
+                Helpers.getVariantEntityRepositoryFilters(null, null, null, null, null, null, types, null);
+        Region region = new Region(chr, start, end);
+        List<Region> regions = new ArrayList<>();
+        regions.add(region);
+        List<String> exclude = new ArrayList<>();
+        testFiltersHelperRegion(regions, filters, exclude, 3);
+    }
+
+    @Test
+    public void testRegionIsFoundWithAlternates() {
+        List<String> alternates = new ArrayList<>();
+        alternates.add("T");
+        String chr = "11";
+        int start = 180000;
+        int end = 180500;
+        List<VariantEntityRepositoryFilter> filters =
+                Helpers.getVariantEntityRepositoryFilters(null, null, null, null, null, null, null, alternates);
+        Region region = new Region(chr, start, end);
+        List<Region> regions = new ArrayList<>();
+        regions.add(region);
+        List<String> exclude = new ArrayList<>();
+        testFiltersHelperRegion(regions, filters, exclude, 21);
     }
 
     @Test

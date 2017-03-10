@@ -19,6 +19,8 @@
 package uk.ac.ebi.eva.lib.repository;
 
 import org.opencb.biodata.models.feature.Region;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +47,8 @@ import java.util.List;
 public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCustom {
 
     private MongoTemplate mongoTemplate;
+
+    protected static Logger logger = LoggerFactory.getLogger(VariantEntityRepositoryImpl.class);
 
     private final int MARGIN = 1000000;
 

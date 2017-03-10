@@ -24,7 +24,7 @@ import java.util.List;
 
 public class VariantEntityRepositoryAlternateFilter extends VariantEntityRepositoryFilter<List<String>> {
 
-    private static final String FIELD = VariantEntityRepositoryFilter.TYPE_FIELD;
+    private static final String FIELD = VariantEntityRepositoryFilter.ALT_FIELD;
 
     public VariantEntityRepositoryAlternateFilter(List<String> alternates) {
         super(FIELD, alternates, VariantEntityRepository.RelationalOperator.IN);
