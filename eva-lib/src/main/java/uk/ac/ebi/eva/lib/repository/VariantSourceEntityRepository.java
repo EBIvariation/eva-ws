@@ -37,6 +37,6 @@ public interface VariantSourceEntityRepository extends MongoRepository<VariantSo
 
     List<VariantSourceEntity> findByStudyIdOrStudyName(String studyId, String studyName);
 
-    List<VariantSourceEntity> findByStudyId(String studyId, Pageable pageable);
+    List<VariantSourceEntity> findByStudyIdIn(List<String> studyIds, Pageable pageable);
 
 }

@@ -32,6 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 import uk.ac.ebi.eva.lib.configuration.MongoRepositoryTestConfiguration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
@@ -77,13 +78,26 @@ public class VariantSourceEntityRepositoryTest {
 
     @Test
     public void testFindByStudyId() {
+        List<String> studyIds = new ArrayList<>();
+        studyIds.add("secondStudyId");
+
         Pageable pageable = new PageRequest(0, 1);
-        List<VariantSourceEntity> variantSourceEntityList = repository.findByStudyId("secondStudyId", pageable);
+        List<VariantSourceEntity> variantSourceEntityList = repository.findByStudyIdIn(studyIds, pageable);
         assertEquals(1, variantSourceEntityList.size());
 
         pageable = new PageRequest(0, 2);
-        variantSourceEntityList = repository.findByStudyId("secondStudyId", pageable);
+        variantSourceEntityList = repository.findByStudyIdIn(studyIds, pageable);
         assertEquals(2, variantSourceEntityList.size());
+
+        studyIds.add("firstStudyId");
+
+        pageable = new PageRequest(1, 2);
+        variantSourceEntityList = repository.findByStudyIdIn(studyIds, pageable);
+        assertEquals(1, variantSourceEntityList.size());
+
+        pageable = new PageRequest(2, 2);
+        variantSourceEntityList = repository.findByStudyIdIn(studyIds, pageable);
+        assertEquals(0, variantSourceEntityList.size());
     }
 
 
