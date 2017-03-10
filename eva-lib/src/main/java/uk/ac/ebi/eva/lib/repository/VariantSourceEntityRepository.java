@@ -39,4 +39,6 @@ public interface VariantSourceEntityRepository extends MongoRepository<VariantSo
 
     List<VariantSourceEntity> findByStudyIdIn(List<String> studyIds, Pageable pageable);
 
+    int countByStudyIdIn(List<String> studyIds);
+
 }

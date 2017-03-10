@@ -100,5 +100,19 @@ public class VariantSourceEntityRepositoryTest {
         assertEquals(0, variantSourceEntityList.size());
     }
 
+    @Test
+    public void testCountByStudyIdIn() {
+        List<String> studyIds = new ArrayList<>();
+        studyIds.add("secondStudyId");
+
+        int count = repository.countByStudyIdIn(studyIds);
+        assertEquals(2, count);
+
+        studyIds.add("firstStudyId");
+
+        count = repository.countByStudyIdIn(studyIds);
+        assertEquals(3, count);
+    }
+
 
 }
