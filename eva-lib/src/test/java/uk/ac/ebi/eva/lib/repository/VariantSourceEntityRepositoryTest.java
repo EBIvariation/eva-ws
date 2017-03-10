@@ -105,7 +105,7 @@ public class VariantSourceEntityRepositoryTest {
         List<String> studyIds = new ArrayList<>();
         studyIds.add("secondStudyId");
 
-        int count = repository.countByStudyIdIn(studyIds);
+        long count = repository.countByStudyIdIn(studyIds);
         assertEquals(2, count);
 
         studyIds.add("firstStudyId");
