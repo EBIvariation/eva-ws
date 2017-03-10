@@ -37,12 +37,14 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
 
     enum RelationalOperator { EQ, GT, LT, GTE, LTE, IN }
 
-    List<VariantEntity> findByIdsAndComplexFilters(String id, List<VariantEntityRepositoryFilter> filters, List<String> exclude,
+    List<VariantEntity> findByIdsAndComplexFilters(String id, List<VariantEntityRepositoryFilter> filters,
+                                                   List<String> exclude,
                                                    Pageable pageable);
 
     Long countByIdsAndComplexFilters(String id, List<VariantEntityRepositoryFilter> filters);
 
-    List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<VariantEntityRepositoryFilter> filters,
+    List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions,
+                                                       List<VariantEntityRepositoryFilter> filters,
                                                        List<String> exclude, Pageable pageable);
 
     Long countByRegionsAndComplexFilters(List<Region> regions, List<VariantEntityRepositoryFilter> filters);

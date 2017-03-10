@@ -67,7 +67,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     @Override
-    public List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<VariantEntityRepositoryFilter> filters,
+    public List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions,
+                                                              List<VariantEntityRepositoryFilter> filters,
                                                               List<String> exclude, Pageable pageable) {
         Query query = new Query();
         addRegionsToQuery(query, regions);
@@ -87,8 +88,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                            .distinct("chr");
     }
 
-    private List<VariantEntity> findByComplexFiltersHelper(Query query, List<VariantEntityRepositoryFilter> filters, List<String> exclude,
-                                                           Pageable pageable) {
+    private List<VariantEntity> findByComplexFiltersHelper(Query query, List<VariantEntityRepositoryFilter> filters,
+                                                           List<String> exclude, Pageable pageable) {
 
         applyFilters(query, filters);
 

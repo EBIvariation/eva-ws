@@ -1,5 +1,7 @@
 package uk.ac.ebi.eva.lib.filter;
 
+import org.opencb.biodata.models.variant.Variant;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +11,8 @@ public class Helpers {
                                                                                         String siftScore,
                                                                                         List<String> studies,
                                                                                         List<String> consequenceType,
-                                                                                        List<String> files) {
+                                                                                        List<String> files,
+                                                                                        List<Variant.VariantType> types) {
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
         if (studies != null && !studies.isEmpty()) {
             filters.add(new VariantEntityRepositoryStudyFilter(studies));
@@ -19,6 +22,9 @@ public class Helpers {
         }
         if (files != null && !files.isEmpty()) {
             filters.add(new VariantEntityRepositoryFileFilter(files));
+        }
+        if (types != null && !types.isEmpty()) {
+            filters.add(new VariantEntityRepositoryTypeFilter(types));
         }
         if (maf != null){
             filters.add(new VariantEntityRepositoryMafFilter(maf));
