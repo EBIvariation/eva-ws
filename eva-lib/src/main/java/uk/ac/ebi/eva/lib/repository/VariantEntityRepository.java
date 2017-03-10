@@ -19,6 +19,7 @@
 package uk.ac.ebi.eva.lib.repository;
 
 import org.opencb.biodata.models.feature.Region;
+import org.opencb.biodata.models.variant.Variant;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -64,4 +65,10 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
     Long countByChromosomeAndStartAndReference(String chr, int start, String ref);
 
     List<String> findDistinctChromosomes();
+    
+    @Query(value = "{'chr': ?0, 'start': ?1, 'alt': ?2, 'files.sid': ?3}", count = true)
+    Long countByChromosomeAndStartAndEndAndAltAndStudy(String chr, int start, String alt, String studyId);
+
+    @Query(value = "{'chr': ?0, 'start': ?1, 'type': ?2, 'files.sid': ?3}}", count = true)
+    Long countByChromosomeAndStartAndTypeAndStudy(String chr, int start, Variant.VariantType type, String studyId);
 }

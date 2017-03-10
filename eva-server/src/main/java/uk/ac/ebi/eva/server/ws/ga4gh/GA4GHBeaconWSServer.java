@@ -86,15 +86,17 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
             if (allele.contains("<")) {
                 region = new Region(chromosome, start);
             } else {
-                region = new Region(chromosome, start, allele.length());
+                region = new Region(chromosome, start, start + allele.length());
             }
             List<String> alternates = new ArrayList<>();
             alternates.add(allele);
             filters = Helpers.getVariantEntityRepositoryFilters(null, null, null, studies, null, null, null, alternates);
         }
 
+        logger.warn("filters: " + filters.toString());
         regions.add(region);
         long totalCount = variantEntityRepository.countByRegionsAndComplexFilters(regions, filters);
+        logger.warn("totalCount: " + totalCount);
 
         return new GA4GHBeaconResponse(chromosome, start, allele, String.join(",", studies), totalCount > 0);
     }

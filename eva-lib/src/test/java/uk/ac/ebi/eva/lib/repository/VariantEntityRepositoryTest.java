@@ -423,6 +423,20 @@ public class VariantEntityRepositoryTest {
         assertEquals(expectedChromosomeList, chromosomeList);
     }
 
+    @Test
+    public void testCountByChromosomeAndStartAndEndAndAltAndStudy() {
+        Long count = variantEntityRepository.countByChromosomeAndStartAndEndAndAltAndStudy("11", 180002, "A", "PRJEB5829");
+        assertEquals(new Long(1), count);
+    }
+
+    @Test
+    public void testCountByChromosomeAndStartAndTypeAndStudy() {
+        Long count = variantEntityRepository.countByChromosomeAndStartAndTypeAndStudy("11", 180077,
+                                                                                      Variant.VariantType.INDEL,
+                                                                                      "PRJX00001");
+        assertEquals(new Long(1), count);
+    }
+
     private void testFiltersHelperRegion(List<Region> regions, List<VariantEntityRepositoryFilter> filters,
                                          List<String> exclude, int expectedResultLength) {
         List<VariantEntity> variantEntityList =
