@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -60,7 +62,7 @@ public class VariantSourceEntityRepositoryTest {
     }
 
     @Test
-    public void testFindByStudyId() {
+    public void testFindByStudyIdOrStudyName() {
         List<VariantSourceEntity> variantSourceEntityList = repository.findByStudyIdOrStudyName("firstStudyId", "firstStudyId");
         assertEquals(1, variantSourceEntityList.size());
         variantSourceEntityList = repository.findByStudyIdOrStudyName("secondStudyId", "secondStudyId");
@@ -68,9 +70,20 @@ public class VariantSourceEntityRepositoryTest {
     }
 
     @Test
-    public void testFindByStudyIdTestNonExistent() {
+    public void testFindByStudyIdOrStudyNameTestNonExistent() {
         List<VariantSourceEntity> variantSourceEntityList = repository.findByStudyIdOrStudyName("notARealId", "notARealId");
         assertEquals(0, variantSourceEntityList.size());
+    }
+
+    @Test
+    public void testFindByStudyId() {
+        Pageable pageable = new PageRequest(0, 1);
+        List<VariantSourceEntity> variantSourceEntityList = repository.findByStudyId("secondStudyId", pageable);
+        assertEquals(1, variantSourceEntityList.size());
+
+        pageable = new PageRequest(0, 2);
+        variantSourceEntityList = repository.findByStudyId("secondStudyId", pageable);
+        assertEquals(2, variantSourceEntityList.size());
     }
 
 

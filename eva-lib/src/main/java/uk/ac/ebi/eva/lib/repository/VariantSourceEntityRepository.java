@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.eva.lib.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
@@ -35,5 +36,7 @@ public interface VariantSourceEntityRepository extends MongoRepository<VariantSo
     List<VariantSourceEntity> findAll();
 
     List<VariantSourceEntity> findByStudyIdOrStudyName(String studyId, String studyName);
+
+    List<VariantSourceEntity> findByStudyId(String studyId, Pageable pageable);
 
 }
