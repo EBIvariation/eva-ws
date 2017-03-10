@@ -25,7 +25,6 @@ import org.mockito.BDDMockito;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import org.opencb.opencga.storage.mongodb.variant.StudyMongoDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
