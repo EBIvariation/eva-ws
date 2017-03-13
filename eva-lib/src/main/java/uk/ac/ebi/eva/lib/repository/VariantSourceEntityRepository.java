@@ -46,4 +46,7 @@ public interface VariantSourceEntityRepository extends MongoRepository<VariantSo
     @Query(value = "{fid: {$in : ?0}}}", fields = "{fid : 1, samp : 1}")
     List<VariantSourceEntity> findByFileIdIn(List<String> fileIds, Pageable pageable);
 
+    @Query(value = "{fid: {$in : ?0}}}", count = true)
+    long countByFileIdIn(List<String> fileIds);
+
 }
