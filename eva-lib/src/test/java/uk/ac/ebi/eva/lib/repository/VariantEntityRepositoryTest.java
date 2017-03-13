@@ -340,6 +340,26 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
+    public void testFindByRegionsAndComplexFiltersExcludeSourceEntries() {
+        List<Region> regions = new ArrayList<>();
+        regions.add(new Region("11", 183000, 183300));
+
+        List<String> exclude = new ArrayList<>();
+        exclude.add("files.attrs");
+        List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
+
+        List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByRegionsAndComplexFilters(regions, filters, exclude, new PageRequest(0, 10000));
+        assertNotNull(variantEntityList);
+        for (VariantEntity currVariantEntity : variantEntityList) {
+            for (VariantSourceEntry variantSourceEntry : currVariantEntity.getSourceEntries().values()) {
+                assertFalse(variantSourceEntry.getFileId().isEmpty());
+                assertTrue(variantSourceEntry.getAttributes().isEmpty());
+            }
+        }
+    }
+
+    @Test
     public void testFindDistinctChromosomesByStudyId() {
         List<String> chromosomeList = variantEntityRepository.findDistinctChromosomes();
 

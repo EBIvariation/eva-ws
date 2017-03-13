@@ -18,68 +18,88 @@
  */
 package uk.ac.ebi.eva.server.ws;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
-import org.junit.BeforeClass;
+import org.hamcrest.Matcher;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.BDDMockito;
+import org.mockito.Mockito;
+import org.opencb.biodata.models.feature.Region;
+import org.opencb.datastore.core.QueryResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import java.net.URI;
+import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
+import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.junit.Assert.assertFalse;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.argThat;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class RegionWSServerTest {
 
-    @BeforeClass
-    public static void startJetty() throws Exception {
-        RestAssured.port = 8080;
-        RestAssured.baseURI = "http://localhost:8080/eva/webservices/rest";
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @MockBean
+    private VariantEntityRepository variantEntityRepository;
+
+    @Before
+    public void setUp() throws Exception {
+        VariantEntity variantEntity = new VariantEntity("chr1", 1000, 1005, "reference", "alternate");
+
+        List<Region> oneRegion = (List<Region>) argThat(hasSize(1));
+        BDDMockito.given(variantEntityRepository.findByRegionsAndComplexFilters(oneRegion, any(), any(), any()))
+                .willReturn(Collections.singletonList(variantEntity));
+
+        List<Region> twoRegions = (List<Region>) argThat(hasSize(2));
+        BDDMockito.given(variantEntityRepository.findByRegionsAndComplexFilters(twoRegions, any(), any(), any()))
+                .willReturn(Arrays.asList(variantEntity, variantEntity));
     }
 
     @Test
     public void testGetVariantsByRegion() throws URISyntaxException {
-        testGetVariantsByRegionHelper("20:60000-62000", 40);
+        testGetVariantsByRegionHelper("20:60000-62000", 1);
     }
 
     @Test
     public void testGetVariantsByRegions() throws URISyntaxException {
-        testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 17);
+        testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 2);
     }
 
-    @Test
-    public void testExcludeNested() throws URISyntaxException {
-        Response response = given().param("species", "mmusculus_grcm38").param("exclude", "sourceEntries.attributes").get(new URI("/v1/segments/20:60000-62000/variants"));
-        response.then().statusCode(200);
-        List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
-        for (Map m : result) {
-            for (Map sourceEntry: (Collection<Map>) ((Map) m.get("sourceEntries")).values()) {
-                System.out.println(sourceEntry);
-                assertTrue(((Map) sourceEntry.get("attributes")).isEmpty());
-            }
-        }
-    }
+    private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants) throws URISyntaxException {
+        String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38";
+        ResponseEntity<QueryResponse> response = restTemplate.getForEntity(url, QueryResponse.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
-    private void testGetVariantsByRegionHelper(String testString, int expectedSize) throws URISyntaxException {
-        Response response = given().param("species", "mmusculus_grcm38").get(new URI("/v1/segments/" + testString + "/variants"));
-        response.then().statusCode(200);
+        List<Map<String, List>> queryResponse = (List<Map<String, List>>) response.getBody().getResponse();
+        assertEquals(1, queryResponse.size());
 
-        List queryResponse = JsonPath.from(response.asString()).getList("response");
+        List<Map> results = (List<Map>) queryResponse.get(0).get("result");
+        assertEquals(expectedVariants, results.size());
 
-        List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
-
-        for (Map m : result) {
-            String missingField = String.format("%s required field missing", m.get("name"));
-
-            assertTrue(missingField, m.containsKey("id"));
-            assertTrue(missingField, m.containsKey("chromosome"));
-            assertTrue(missingField, m.containsKey("start"));
-            assertTrue(missingField, m.containsKey("end"));
+        for (Map variantEntity : results) {
+        assertTrue(variantEntity.containsKey("chromosome"));
+        assertTrue(variantEntity.containsKey("start"));
+        assertTrue(variantEntity.containsKey("end"));
+        assertTrue(variantEntity.containsKey("reference"));
+        assertTrue(variantEntity.containsKey("alternate"));
         }
     }
 
