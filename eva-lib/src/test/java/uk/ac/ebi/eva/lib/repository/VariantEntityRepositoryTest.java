@@ -328,7 +328,7 @@ public class VariantEntityRepositoryTest {
         regions.add(new Region("11", 183000, 183300));
 
         List<String> exclude = new ArrayList<>();
-        exclude.add("files");
+        exclude.add(VariantEntityRepositoryFilter.FILES_FIELD);
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
 
         List<VariantEntity> variantEntityList =

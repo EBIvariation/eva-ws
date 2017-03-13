@@ -28,7 +28,7 @@ public abstract class VariantEntityRepositoryFilter<T> {
 
     public final static String ANNOTATION_FIELD = "annot";
     public final static String STATISTICS_FIELD = "st";
-    public final static String FILES_FIELD = "st";
+    public final static String FILES_FIELD = "files";
 
     public final static String MAF_FIELD = STATISTICS_FIELD + ".maf";
     public final static String STUDY_ID_FIELD = FILES_FIELD + ".sid";
