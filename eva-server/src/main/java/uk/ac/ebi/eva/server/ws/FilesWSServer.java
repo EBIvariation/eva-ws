@@ -29,7 +29,6 @@ import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.metadata.VariantSourceEvaProDBAdaptor;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
-import uk.ac.ebi.eva.server.Utils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -48,24 +47,20 @@ public class FilesWSServer extends EvaWSServer {
     @Autowired
     private VariantSourceEntityRepository variantSourceEntityRepository;
 
-    public FilesWSServer() {
-        this.startTime = System.currentTimeMillis();
-    }
-
     @RequestMapping(value = "/all", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Gets the files of a species")
     public QueryResponse getFiles(@RequestParam("species") String species)
             throws IllegalOpenCGACredentialsException, IOException {
-        initializeQueryOptions();
+        initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        return setQueryResponse(Utils.buildQueryResult(variantSourceEntityRepository.findAll()));
+        return setQueryResponse(buildQueryResult(variantSourceEntityRepository.findAll()));
     }
 
     @RequestMapping(value = "/{files}/url", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Gets the URL of a file")
     public QueryResponse getFileUrl(@PathVariable("files") String filenames) {
-        initializeQueryOptions();
+        initializeQuery();
         return setQueryResponse(variantSourceEvaproDbAdaptor.getSourceDownloadUrlByName(Arrays.asList(filenames.split(","))));
     }
 

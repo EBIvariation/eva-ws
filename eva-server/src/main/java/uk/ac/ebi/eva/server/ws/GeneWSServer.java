@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 
 /**
  *
@@ -61,7 +60,7 @@ public class GeneWSServer extends EvaWSServer {
                                            @RequestParam(name = "miss_alleles", defaultValue = "") String missingAlleles,
                                            @RequestParam(name = "miss_gts", defaultValue = "") String missingGenotypes)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
-        initializeQueryOptions();
+        initializeQuery();
         
         VariantDBAdaptor variantMongoDbAdaptor = dbAdaptorConnector.getVariantDBAdaptor(species);
         

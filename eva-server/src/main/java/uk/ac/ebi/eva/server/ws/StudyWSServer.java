@@ -19,18 +19,13 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import com.mongodb.BasicDBObject;
 import io.swagger.annotations.Api;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
-import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
-import org.opencb.opencga.storage.mongodb.variant.DBObjectToVariantSourceConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
 import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
 import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
@@ -38,7 +33,6 @@ import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
-import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -69,20 +63,20 @@ public class StudyWSServer extends EvaWSServer {
                                          @RequestParam("species") String species,
                                          HttpServletResponse response)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        initializeQueryOptions();
+        initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List variantSourceEntityList = variantSourceEntityRepository.findByStudyIdOrStudyName(study, study);
         QueryResult queryResult;
 
         if (variantSourceEntityList.size() == 0) {
-            queryResult = Utils.buildQueryResult(Collections.emptyList());
+            queryResult = buildQueryResult(Collections.emptyList());
             queryResult.setErrorMsg("Study identifier not found");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(queryResult);
         }
 
-        queryResult = Utils.buildQueryResult(variantSourceEntityList);
+        queryResult = buildQueryResult(variantSourceEntityList);
         return setQueryResponse(queryResult);
     }
 
@@ -92,18 +86,18 @@ public class StudyWSServer extends EvaWSServer {
                                   @RequestParam(name = "species") String species,
                                   HttpServletResponse response)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        initializeQueryOptions();
+        initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         VariantStudySummary variantStudySummary = variantStudySummaryRepository.findByStudyNameOrStudyId(study);
 
         QueryResult<VariantStudySummary> queryResult;
         if (variantStudySummary == null) {
-            queryResult = Utils.buildQueryResult(Collections.emptyList());
+            queryResult = buildQueryResult(Collections.emptyList());
             queryResult.setErrorMsg("Study identifier not found");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } else {
-            queryResult = Utils.buildQueryResult(Collections.singletonList(variantStudySummary));
+            queryResult = buildQueryResult(Collections.singletonList(variantStudySummary));
         }
         return setQueryResponse(queryResult);
     }

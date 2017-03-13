@@ -33,7 +33,6 @@ import uk.ac.ebi.eva.commons.models.data.FeatureCoordinates;
 import uk.ac.ebi.eva.lib.repository.FeatureRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
-import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -59,8 +58,7 @@ public class FeatureWSServer extends EvaWSServer {
                                               @RequestParam("species") String species,
                                               HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, IOException {
-
-        initializeQueryOptions();
+        initializeQuery();
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -73,7 +71,7 @@ public class FeatureWSServer extends EvaWSServer {
 
         List<FeatureCoordinates> features = featureRepository.findByIdOrName(featureIdOrName, featureIdOrName);
 
-        QueryResult<FeatureCoordinates> queryResult = Utils.buildQueryResult(features);
+        QueryResult<FeatureCoordinates> queryResult = buildQueryResult(features);
         return setQueryResponse(queryResult);
     }
 

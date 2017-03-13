@@ -74,7 +74,7 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "exclude", required = false) List<String> exclude,
                                              HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, IOException {
-        initializeQueryOptions();
+        initializeQuery();
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -106,7 +106,7 @@ public class RegionWSServer extends EvaWSServer {
 
         Long numTotalResults = variantEntityRepository.countByRegionsAndComplexFilters(regions, filters);
 
-        QueryResult<VariantEntity> queryResult = Utils.buildQueryResult(variantEntities, numTotalResults);
+        QueryResult<VariantEntity> queryResult = buildQueryResult(variantEntities, numTotalResults);
         return setQueryResponse(queryResult);
     }
 
@@ -128,7 +128,7 @@ public class RegionWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List<String> chromosomeList = variantEntityRepository.findDistinctChromosomes();
-        QueryResult<String> queryResult = Utils.buildQueryResult(chromosomeList);
+        QueryResult<String> queryResult = buildQueryResult(chromosomeList);
         return setQueryResponse(queryResult);
     }
 }

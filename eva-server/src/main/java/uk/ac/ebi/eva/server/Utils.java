@@ -65,16 +65,4 @@ public class Utils {
         return map;
     }
 
-    public static <T> QueryResult<T> buildQueryResult(List<T> results) {
-        return buildQueryResult(results, results.size());
-    }
-
-    public static <T> QueryResult<T> buildQueryResult(List<T> results, long numTotalResults) {
-        QueryResult<T> queryResult = new QueryResult<>();
-        queryResult.setResult(results);
-        queryResult.setNumResults(results.size());
-        queryResult.setNumTotalResults(numTotalResults);
-        return queryResult;
-    }
-
 }

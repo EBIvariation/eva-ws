@@ -74,7 +74,7 @@ public class VariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "exclude", required = false) List<String> exclude,
                                         HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
-        initializeQueryOptions();
+        initializeQuery();
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -116,7 +116,7 @@ public class VariantWSServer extends EvaWSServer {
             numTotalResults = variantEntityRepository.countByIdsAndComplexFilters(variantId, filters);
         }
 
-        QueryResult<VariantEntity> queryResult = Utils.buildQueryResult(variantEntities, numTotalResults);
+        QueryResult<VariantEntity> queryResult = buildQueryResult(variantEntities, numTotalResults);
         return setQueryResponse(queryResult);
     }
 
@@ -145,7 +145,7 @@ public class VariantWSServer extends EvaWSServer {
                                             @RequestParam("species") String species,
                                             HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
-        initializeQueryOptions();
+        initializeQuery();
 
         VariantDBAdaptor variantMongoDbAdaptor = dbAdaptorConnector.getVariantDBAdaptor(species);
 

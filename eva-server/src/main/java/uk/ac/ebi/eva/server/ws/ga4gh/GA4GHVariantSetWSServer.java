@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
 /**
@@ -68,7 +68,7 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
                                                       @RequestParam(name = "histogram", defaultValue = "false") boolean histogram,
                                                       @RequestParam(name = "histogram_interval", defaultValue = "-1") int interval)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        initializeQueryOptions();
+        initializeQuery();
         
         if (studies.isEmpty()) {
             throw new IllegalArgumentException("The 'datasetIds' argument must not be empty");
