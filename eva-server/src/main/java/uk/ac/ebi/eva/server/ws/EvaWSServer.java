@@ -46,9 +46,6 @@ import java.util.Map;
 
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 
-/**
- * Created by imedina on 01/04/14.
- */
 public class EvaWSServer {
 
     protected final String version = "v1";
@@ -106,12 +103,12 @@ public class EvaWSServer {
 
     protected QueryResponse setQueryResponse(Object obj) {
         QueryResponse queryResponse = new QueryResponse();
-    	endTime = System.currentTimeMillis() - startTime;
-    	// TODO Restore span time calculation
+        endTime = System.currentTimeMillis() - startTime;
+        // TODO Restore span time calculation
 //        queryResponse.setTime(new Long(endTime - startTime).intValue());
         queryResponse.setApiVersion(version);
         queryResponse.setQueryOptions(queryOptions);
-        
+
         // Guarantee that the QueryResponse object contains a coll of results
         List coll;
         if (obj instanceof List) {
@@ -121,14 +118,7 @@ public class EvaWSServer {
             coll.add(obj);
         }
         queryResponse.setResponse(coll);
-        
+
         return queryResponse;
     }
-
-//    private Response buildResponse(Response.ResponseBuilder responseBuilder) {
-//        return responseBuilder.header("Access-Control-Allow-Origin", "*")
-//                .header("Access-Control-Allow-Headers", "x-requested-with, content-type, accept")
-//                .header("Access-Control-Allow-Methods", "POST, GET, OPTIONS").build();
-//    }
-    
 }

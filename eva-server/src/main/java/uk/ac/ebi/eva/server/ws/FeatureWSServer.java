@@ -37,6 +37,7 @@ import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -61,9 +62,11 @@ public class FeatureWSServer extends EvaWSServer {
 
         initializeQueryOptions();
 
-        if (species == null || species.isEmpty()) {
+        if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify a species");
+            QueryResponse queryResponse = setQueryResponse(Collections.EMPTY_LIST);
+            queryResponse.setError("Please specify a species");
+            return queryResponse;
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
