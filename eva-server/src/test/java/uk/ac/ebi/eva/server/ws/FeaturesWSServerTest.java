@@ -64,9 +64,9 @@ public class FeaturesWSServerTest {
     }
 
     @Test
-    public void testGetGenes() throws URISyntaxException {
-        ResponseEntity<QueryResponse> response = restTemplate.getForEntity(
-                "/v1/features/" + FEATURE_NAME + "?species=hsapiens_grch37", QueryResponse.class);
+    public void testGetFeatures() throws URISyntaxException {
+        String url = "/v1/features/" + FEATURE_NAME + "?species=hsapiens_grch37";
+        ResponseEntity<QueryResponse> response = restTemplate.getForEntity(url, QueryResponse.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         List<Map<String, List>> queryResponse = (List<Map<String, List>>) response.getBody().getResponse();
@@ -78,9 +78,9 @@ public class FeaturesWSServerTest {
     }
 
     @Test
-    public void testGetGenesEmptySpecies() throws URISyntaxException {
-        ResponseEntity<QueryResponse> response = restTemplate.getForEntity(
-                "/v1/features/" + FEATURE_NAME + "?species=", QueryResponse.class);
+    public void testGetFeaturesWithEmptySpeciesShouldFail() throws URISyntaxException {
+        String url = "/v1/features/" + FEATURE_NAME + "?species=";
+        ResponseEntity<QueryResponse> response = restTemplate.getForEntity(url, QueryResponse.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
         QueryResponse queryResponse = response.getBody();
@@ -91,9 +91,9 @@ public class FeaturesWSServerTest {
     }
 
     @Test
-    public void testGetGenesWithoutSpecies() throws URISyntaxException {
-        ResponseEntity<QueryResponse> response = restTemplate.getForEntity("/v1/features/" + FEATURE_NAME,
-                QueryResponse.class);
+    public void testGetFeaturesWithoutSpeciesShouldFail() throws URISyntaxException {
+        String url = "/v1/features/" + FEATURE_NAME;
+        ResponseEntity<QueryResponse> response = restTemplate.getForEntity(url, QueryResponse.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
         QueryResponse queryResponse = response.getBody();

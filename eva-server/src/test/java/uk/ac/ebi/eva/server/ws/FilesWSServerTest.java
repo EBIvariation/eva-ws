@@ -18,64 +18,73 @@
  */
 package uk.ac.ebi.eva.server.ws;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static com.jayway.restassured.RestAssured.*;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
+import org.junit.runner.RunWith;
+import org.mockito.BDDMockito;
+import org.opencb.biodata.models.variant.stats.VariantGlobalStats;
+import org.opencb.datastore.core.QueryResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
+import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
+
+import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.junit.BeforeClass;
 
+import static org.junit.Assert.assertEquals;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class FilesWSServerTest {
-    
-    @BeforeClass
-    public static void startJetty() throws Exception {
-        RestAssured.port = 8080;
-        RestAssured.baseURI = "http://localhost:8080/eva/webservices/rest";
+
+    private static final String FILE_ID = "test_fid";
+
+    private static final int VARIANTS_COUNT = 10;
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @MockBean
+    private VariantSourceEntityRepository variantSourceEntityRepository;
+
+    @Before
+    public void setup() throws Exception {
+        VariantGlobalStats variantGlobalStats = new VariantGlobalStats();
+        variantGlobalStats.setVariantsCount(VARIANTS_COUNT);
+
+        VariantSourceEntity variantSourceEntity = new VariantSourceEntity();
+        variantSourceEntity.setFileId(FILE_ID);
+        variantSourceEntity.setStats(variantGlobalStats);
+        List<VariantSourceEntity> variantSourceEntities = Collections.singletonList(variantSourceEntity);
+
+        BDDMockito.given(variantSourceEntityRepository.findAll()).willReturn(variantSourceEntities);
     }
     
     @Test
     public void testGetFiles() throws URISyntaxException {
-        Response response = given().param("species", "mmusculus_grcm38").get(new URI("/v1/files/all"));
-        response.then().statusCode(200);
-        
-        List queryResponse = JsonPath.from(response.asString()).getList("response");
+        String url = "/v1/files/all?species=hsapiens_grch37";
+        ResponseEntity<QueryResponse> response = restTemplate.getForEntity(url, QueryResponse.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        List<Map<String, List>> queryResponse = (List<Map<String, List>>) response.getBody().getResponse();
         assertEquals(1, queryResponse.size());
-        
-        List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
-        assertTrue(result.size() >= 1);
-        
-        for (int i = 0; i < result.size() ; i++) {
-            Map m = result.get(i);
-            String missingField = String.format("%s required field missing", m.get("name"));
-            
-            assertTrue(missingField, m.containsKey("fileName"));
-            assertTrue(missingField, m.containsKey("fileId"));
-            assertTrue(missingField, m.containsKey("studyName"));
-            assertTrue(missingField, m.containsKey("studyId"));
-            assertTrue(missingField, m.containsKey("aggregation"));
-            assertTrue(missingField, m.containsKey("type"));
-            assertTrue(missingField, m.containsKey("metadata"));
-            assertTrue(missingField, m.containsKey("samplesPosition"));
-            
-            if (m.containsKey("stats")) {
-                Map<String, ?> stats = JsonPath.from(response.asString()).getJsonObject("response[0].result[" + i + "].stats");
-                assertTrue(missingField, stats.containsKey("variantsCount"));
-                assertTrue(missingField, stats.containsKey("samplesCount"));
-                assertTrue(missingField, stats.containsKey("snpsCount"));
-                assertTrue(missingField, stats.containsKey("indelsCount"));
-                assertTrue(missingField, stats.containsKey("structuralCount"));
-                assertTrue(missingField, stats.containsKey("passCount"));
-                assertTrue(missingField, stats.containsKey("transitionsCount"));
-                assertTrue(missingField, stats.containsKey("transversionsCount"));
-                assertTrue(missingField, stats.containsKey("accumulatedQuality"));
-                assertTrue(missingField, stats.containsKey("meanQuality"));
-            }
+
+        List<Map> results = (List<Map>) queryResponse.get(0).get("result");
+        assertEquals(1, results.size());
+
+        for (Map variantSourceEntity : results) {
+            assertEquals(FILE_ID, variantSourceEntity.get("fileId"));
+            Object stats = variantSourceEntity.get("stats");
+            assertEquals(VARIANTS_COUNT, ((Map) stats).get("variantsCount"));
         }
     }
 
