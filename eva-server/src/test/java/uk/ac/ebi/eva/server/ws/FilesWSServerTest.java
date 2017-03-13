@@ -22,6 +22,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
+import org.opencb.biodata.models.variant.VariantSource;
+import org.opencb.biodata.models.variant.VariantStudy;
 import org.opencb.biodata.models.variant.stats.VariantGlobalStats;
 import org.opencb.datastore.core.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +41,11 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -58,12 +63,14 @@ public class FilesWSServerTest {
 
     @Before
     public void setup() throws Exception {
+        Map<String, Object> metadata = new TreeMap<>();
+        Map<String, Integer> samples = new TreeMap<>();
         VariantGlobalStats variantGlobalStats = new VariantGlobalStats();
         variantGlobalStats.setVariantsCount(VARIANTS_COUNT);
 
-        VariantSourceEntity variantSourceEntity = new VariantSourceEntity();
-        variantSourceEntity.setFileId(FILE_ID);
-        variantSourceEntity.setStats(variantGlobalStats);
+        VariantSourceEntity variantSourceEntity = new VariantSourceEntity(FILE_ID, "", "", "",
+                VariantStudy.StudyType.COLLECTION, VariantSource.Aggregation.NONE, samples, metadata,
+                variantGlobalStats);
         List<VariantSourceEntity> variantSourceEntities = Collections.singletonList(variantSourceEntity);
 
         BDDMockito.given(variantSourceEntityRepository.findAll()).willReturn(variantSourceEntities);
@@ -82,9 +89,29 @@ public class FilesWSServerTest {
         assertEquals(1, results.size());
 
         for (Map variantSourceEntity : results) {
+            assertTrue(variantSourceEntity.containsKey("fileName"));
             assertEquals(FILE_ID, variantSourceEntity.get("fileId"));
-            Object stats = variantSourceEntity.get("stats");
-            assertEquals(VARIANTS_COUNT, ((Map) stats).get("variantsCount"));
+            assertTrue(variantSourceEntity.containsKey("fileId"));
+            assertTrue(variantSourceEntity.containsKey("studyName"));
+            assertTrue(variantSourceEntity.containsKey("studyId"));
+            assertTrue(variantSourceEntity.containsKey("aggregation"));
+            assertTrue(variantSourceEntity.containsKey("type"));
+            assertTrue(variantSourceEntity.containsKey("metadata"));
+            assertTrue(variantSourceEntity.containsKey("samplesPosition"));
+
+            assertNotNull(variantSourceEntity.get("stats"));
+            Map stats = (Map) variantSourceEntity.get("stats");
+            assertTrue(stats.containsKey("variantsCount"));
+            assertEquals(VARIANTS_COUNT, stats.get("variantsCount"));
+            assertTrue(stats.containsKey("samplesCount"));
+            assertTrue(stats.containsKey("snpsCount"));
+            assertTrue(stats.containsKey("indelsCount"));
+            assertTrue(stats.containsKey("structuralCount"));
+            assertTrue(stats.containsKey("passCount"));
+            assertTrue(stats.containsKey("transitionsCount"));
+            assertTrue(stats.containsKey("transversionsCount"));
+            assertTrue(stats.containsKey("accumulatedQuality"));
+            assertTrue(stats.containsKey("meanQuality"));
         }
     }
 
