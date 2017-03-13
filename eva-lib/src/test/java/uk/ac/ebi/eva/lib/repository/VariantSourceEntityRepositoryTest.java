@@ -37,6 +37,9 @@ import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {MongoRepositoryTestConfiguration.class})
@@ -112,6 +115,21 @@ public class VariantSourceEntityRepositoryTest {
 
         count = repository.countByStudyIdIn(studyIds);
         assertEquals(3, count);
+    }
+
+    @Test
+    public void testFindByFileIdIn() {
+        List<String> fileIds = new ArrayList<>();
+        fileIds.add("firstFileId");
+
+        Pageable pageable = new PageRequest(0, 100);
+        List<VariantSourceEntity> variantSourceEntityList = repository.findByFileIdIn(fileIds, pageable);
+        assertEquals(1, variantSourceEntityList.size());
+
+        for (VariantSourceEntity variantSourceEntity : variantSourceEntityList) {
+            assertFalse(variantSourceEntity.getSamplesPosition().isEmpty());
+            assertEquals("firstFileId", variantSourceEntity.getFileId());
+        }
     }
 
 
