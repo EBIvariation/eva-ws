@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -153,14 +154,17 @@ public class VariantWSServer extends EvaWSServer {
             queryOptions.put("studies", studies);
         }
 
+        String invalidCoordinatesMessage =
+                "Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt";
+
         if (!variantId.contains(":")) { // Query by accession id
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
+            return setErrorQueryResponse(invalidCoordinatesMessage);
         } else { // Query by chr:pos:ref:alt
             String parts[] = variantId.split(":", -1);
             if (parts.length < 3) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return setQueryResponse("Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt");
+                return setErrorQueryResponse(invalidCoordinatesMessage);
             }
 
             Region region = new Region(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[1]));

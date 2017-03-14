@@ -42,6 +42,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -120,6 +121,20 @@ public class EvaWSServer {
         coll.add(obj);
         queryResponse.setResponse(coll);
 
+        return queryResponse;
+    }
+
+    protected <T> QueryResponse<T> setErrorQueryResponse(String message) {
+        QueryResponse<T> queryResponse = new QueryResponse<>();
+        endTime = System.currentTimeMillis();
+        queryResponse.setApiVersion(version);
+        queryResponse.setQueryOptions(queryOptions);
+
+        // TODO why is this lost? because it's a native int?
+        queryResponse.setTime(new Long(endTime - startTime).intValue());
+
+        queryResponse.setResponse(Collections.EMPTY_LIST);
+        queryResponse.setError(message);
         return queryResponse;
     }
 
