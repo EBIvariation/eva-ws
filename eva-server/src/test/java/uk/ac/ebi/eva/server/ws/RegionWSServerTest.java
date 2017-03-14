@@ -18,18 +18,18 @@
  */
 package uk.ac.ebi.eva.server.ws;
 
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.datastore.core.QueryResponse;
+import org.opencb.datastore.core.QueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -39,14 +39,14 @@ import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 
@@ -65,11 +65,11 @@ public class RegionWSServerTest {
         VariantEntity variantEntity = new VariantEntity("chr1", 1000, 1005, "reference", "alternate");
 
         List<Region> oneRegion = (List<Region>) argThat(hasSize(1));
-        BDDMockito.given(variantEntityRepository.findByRegionsAndComplexFilters(oneRegion, any(), any(), any()))
+        given(variantEntityRepository.findByRegionsAndComplexFilters(oneRegion, any(), any(), any()))
                 .willReturn(Collections.singletonList(variantEntity));
 
         List<Region> twoRegions = (List<Region>) argThat(hasSize(2));
-        BDDMockito.given(variantEntityRepository.findByRegionsAndComplexFilters(twoRegions, any(), any(), any()))
+        given(variantEntityRepository.findByRegionsAndComplexFilters(twoRegions, any(), any(), any()))
                 .willReturn(Arrays.asList(variantEntity, variantEntity));
     }
 
@@ -85,21 +85,23 @@ public class RegionWSServerTest {
 
     private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants) throws URISyntaxException {
         String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38";
-        ResponseEntity<QueryResponse> response = restTemplate.getForEntity(url, QueryResponse.class);
+        ResponseEntity<QueryResponse<QueryResult<VariantEntity>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantEntity>>>() {});
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        List<Map<String, List>> queryResponse = (List<Map<String, List>>) response.getBody().getResponse();
-        assertEquals(1, queryResponse.size());
+        QueryResponse<QueryResult<VariantEntity>> queryResponse = response.getBody();
+        assertEquals(1, queryResponse.getResponse().size());
 
-        List<Map> results = (List<Map>) queryResponse.get(0).get("result");
+        List<VariantEntity> results = queryResponse.getResponse().get(0).getResult();
         assertEquals(expectedVariants, results.size());
 
-        for (Map variantEntity : results) {
-        assertTrue(variantEntity.containsKey("chromosome"));
-        assertTrue(variantEntity.containsKey("start"));
-        assertTrue(variantEntity.containsKey("end"));
-        assertTrue(variantEntity.containsKey("reference"));
-        assertTrue(variantEntity.containsKey("alternate"));
+        for (VariantEntity variantEntity : results) {
+            assertFalse(variantEntity.getChromosome().isEmpty());
+            assertFalse(variantEntity.getReference().isEmpty());
+            assertFalse(variantEntity.getAlternate().isEmpty());
+            assertNotEquals(0, variantEntity.getStart());
+            assertNotEquals(0, variantEntity.getEnd());
         }
     }
 

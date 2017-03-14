@@ -62,9 +62,7 @@ public class FeatureWSServer extends EvaWSServer {
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            QueryResponse queryResponse = setQueryResponse(Collections.EMPTY_LIST);
-            queryResponse.setError("Please specify a species");
-            return queryResponse;
+            return setErrorQueryResponse("Please specify a species");
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));

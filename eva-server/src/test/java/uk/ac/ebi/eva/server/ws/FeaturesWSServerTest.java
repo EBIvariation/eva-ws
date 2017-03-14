@@ -21,13 +21,15 @@ package uk.ac.ebi.eva.server.ws;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
 import org.opencb.datastore.core.QueryResponse;
+import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -39,10 +41,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -59,44 +61,49 @@ public class FeaturesWSServerTest {
     @Before
     public void setup() throws URISyntaxException, IOException, IllegalOpenCGACredentialsException {
         FeatureCoordinates exampleFeature = new FeatureCoordinates("id", FEATURE_NAME, "feature", "chr", 0, 1);
-        BDDMockito.given(featureRepository.findByIdOrName(FEATURE_NAME, FEATURE_NAME)).willReturn(
-                Collections.singletonList(exampleFeature));
+        given(featureRepository.findByIdOrName(FEATURE_NAME, FEATURE_NAME))
+                .willReturn(Collections.singletonList(exampleFeature));
     }
 
     @Test
     public void testGetFeatures() throws URISyntaxException {
         String url = "/v1/features/" + FEATURE_NAME + "?species=hsapiens_grch37";
-        ResponseEntity<QueryResponse> response = restTemplate.getForEntity(url, QueryResponse.class);
+        ResponseEntity<QueryResponse<QueryResult<FeatureCoordinates>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<FeatureCoordinates>>>() {});
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        List<Map<String, List>> queryResponse = (List<Map<String, List>>) response.getBody().getResponse();
-        assertEquals(1, queryResponse.size());
+        QueryResponse<QueryResult<FeatureCoordinates>> queryResponse = response.getBody();
+        assertEquals(1, queryResponse.getResponse().size());
 
-        List<Map<String, String>> results = (List<Map<String, String>>) queryResponse.get(0).get("result");
+        List<FeatureCoordinates> results = queryResponse.getResponse().get(0).getResult();
         assertEquals(1, results.size());
-        assertEquals(FEATURE_NAME, results.get(0).get("name"));
+
+        assertEquals(FEATURE_NAME, results.get(0).getName());
     }
 
     @Test
     public void testGetFeaturesWithEmptySpeciesShouldFail() throws URISyntaxException {
         String url = "/v1/features/" + FEATURE_NAME + "?species=";
-        ResponseEntity<QueryResponse> response = restTemplate.getForEntity(url, QueryResponse.class);
+        ResponseEntity<QueryResponse<QueryResult<FeatureCoordinates>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<FeatureCoordinates>>>() {});
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
-        QueryResponse queryResponse = response.getBody();
+        QueryResponse<QueryResult<FeatureCoordinates>> queryResponse = response.getBody();
         assertEquals("Please specify a species", queryResponse.getError());
-
-        List<Map<String, String>> results = (List<Map<String, String>>) queryResponse.getResponse();
-        assertEquals(0, results.size());
+        assertEquals(0, queryResponse.getResponse().size());
     }
 
     @Test
     public void testGetFeaturesWithoutSpeciesShouldFail() throws URISyntaxException {
         String url = "/v1/features/" + FEATURE_NAME;
-        ResponseEntity<QueryResponse> response = restTemplate.getForEntity(url, QueryResponse.class);
+        ResponseEntity<QueryResponse<QueryResult<FeatureCoordinates>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<FeatureCoordinates>>>() {});
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
-        QueryResponse queryResponse = response.getBody();
+        QueryResponse<QueryResult<FeatureCoordinates>> queryResponse = response.getBody();
         assertNull(queryResponse.getResponse());
     }
 

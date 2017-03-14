@@ -21,15 +21,17 @@ package uk.ac.ebi.eva.server.ws;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.BDDMockito;
 import org.opencb.biodata.models.variant.VariantSource;
 import org.opencb.biodata.models.variant.VariantStudy;
 import org.opencb.biodata.models.variant.stats.VariantGlobalStats;
 import org.opencb.datastore.core.QueryResponse;
+import org.opencb.datastore.core.QueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -45,7 +47,7 @@ import java.util.TreeMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -73,45 +75,32 @@ public class FilesWSServerTest {
                 variantGlobalStats);
         List<VariantSourceEntity> variantSourceEntities = Collections.singletonList(variantSourceEntity);
 
-        BDDMockito.given(variantSourceEntityRepository.findAll()).willReturn(variantSourceEntities);
+        given(variantSourceEntityRepository.findAll()).willReturn(variantSourceEntities);
     }
     
     @Test
     public void testGetFiles() throws URISyntaxException {
         String url = "/v1/files/all?species=hsapiens_grch37";
-        ResponseEntity<QueryResponse> response = restTemplate.getForEntity(url, QueryResponse.class);
+        ResponseEntity<QueryResponse<QueryResult<VariantSourceEntity>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantSourceEntity>>>() {});
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        List<Map<String, List>> queryResponse = (List<Map<String, List>>) response.getBody().getResponse();
-        assertEquals(1, queryResponse.size());
+        QueryResponse<QueryResult<VariantSourceEntity>> queryResponse = response.getBody();
+        assertEquals(1, queryResponse.getResponse().size());
 
-        List<Map> results = (List<Map>) queryResponse.get(0).get("result");
+        List<VariantSourceEntity> results = queryResponse.getResponse().get(0).getResult();
         assertEquals(1, results.size());
 
-        for (Map variantSourceEntity : results) {
-            assertTrue(variantSourceEntity.containsKey("fileName"));
-            assertEquals(FILE_ID, variantSourceEntity.get("fileId"));
-            assertTrue(variantSourceEntity.containsKey("fileId"));
-            assertTrue(variantSourceEntity.containsKey("studyName"));
-            assertTrue(variantSourceEntity.containsKey("studyId"));
-            assertTrue(variantSourceEntity.containsKey("aggregation"));
-            assertTrue(variantSourceEntity.containsKey("type"));
-            assertTrue(variantSourceEntity.containsKey("metadata"));
-            assertTrue(variantSourceEntity.containsKey("samplesPosition"));
+        for (VariantSourceEntity variantSourceEntity : results) {
+            assertEquals(FILE_ID, variantSourceEntity.getFileId());
+            assertNotNull(variantSourceEntity.getFileName());
+            assertNotNull(variantSourceEntity.getStudyId());
+            assertNotNull(variantSourceEntity.getStudyName());
 
-            assertNotNull(variantSourceEntity.get("stats"));
-            Map stats = (Map) variantSourceEntity.get("stats");
-            assertTrue(stats.containsKey("variantsCount"));
-            assertEquals(VARIANTS_COUNT, stats.get("variantsCount"));
-            assertTrue(stats.containsKey("samplesCount"));
-            assertTrue(stats.containsKey("snpsCount"));
-            assertTrue(stats.containsKey("indelsCount"));
-            assertTrue(stats.containsKey("structuralCount"));
-            assertTrue(stats.containsKey("passCount"));
-            assertTrue(stats.containsKey("transitionsCount"));
-            assertTrue(stats.containsKey("transversionsCount"));
-            assertTrue(stats.containsKey("accumulatedQuality"));
-            assertTrue(stats.containsKey("meanQuality"));
+            VariantGlobalStats stats = variantSourceEntity.getStats();
+            assertNotNull(stats);
+            assertEquals(VARIANTS_COUNT, stats.getVariantsCount());
         }
     }
 
