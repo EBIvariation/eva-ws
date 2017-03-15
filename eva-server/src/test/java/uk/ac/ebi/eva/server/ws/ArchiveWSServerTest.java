@@ -196,51 +196,16 @@ public class ArchiveWSServerTest {
 
 
     @Test
-    public void testCountFiles() throws URISyntaxException {
-        String url = "/v1/meta/files/count";
-        ResponseEntity<QueryResponse<QueryResult<Integer>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Integer>>>() {});
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        QueryResponse<QueryResult<Integer>> queryResponse = response.getBody();
-        assertEquals(1, queryResponse.getResponse().size());
-
-        List<Integer> results = queryResponse.getResponse().get(0).getResult();
-        assertEquals(1, results.size());
-
-        assertTrue(results.get(0) >= 1);
-    }
-
-    @Test
     public void testCountSpecies() throws URISyntaxException {
         String url = "/v1/meta/species/count";
-        ResponseEntity<QueryResponse<QueryResult<Integer>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Integer>>>() {});
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        QueryResponse<QueryResult<Integer>> queryResponse = response.getBody();
-        assertEquals(1, queryResponse.getResponse().size());
-
-        List<Integer> results = queryResponse.getResponse().get(0).getResult();
-        assertEquals(1, results.size());
+        List<Integer> results = assertNonEmptyResults(url);
         assertEquals(3, results.get(0).intValue());
     }
 
     @Test
     public void testGetSpecies() throws URISyntaxException {
         String url = "/v1/meta/species/list";
-        ResponseEntity<QueryResponse<QueryResult<Assembly>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Assembly>>>() {});
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        QueryResponse<QueryResult<Assembly>> queryResponse = response.getBody();
-        assertEquals(1, queryResponse.getResponse().size());
-
-        List<Assembly> results = queryResponse.getResponse().get(0).getResult();
-        assertTrue(results.size() >= 1);
+        List<Assembly> results = assertNonEmptyResults(url);
 
         for (Assembly assembly : results) {
             assertFalse(assembly.getAssemblyCode().isEmpty());
@@ -248,8 +213,6 @@ public class ArchiveWSServerTest {
             if (assembly.getAssemblyChain() != null) { // Accessioned assembly
                 assertFalse(assembly.getAssemblyAccession().isEmpty());
                 assertFalse(assembly.getAssemblyChain().isEmpty());
-                assertFalse(assembly.getAssemblyCode().isEmpty());
-                assertFalse(assembly.getAssemblyName().isEmpty());
                 assertFalse(assembly.getAssemblyVersion().isEmpty());
             }
 
@@ -261,19 +224,19 @@ public class ArchiveWSServerTest {
     }
 
     @Test
+    public void testCountFiles() throws URISyntaxException {
+        String url = "/v1/meta/files/count";
+        assertGetCountIsGreaterThanZero(url);
+    }
+
+    @Test
     public void testCountStudies() throws URISyntaxException {
         String url = "/v1/meta/studies/count";
-        ResponseEntity<QueryResponse<QueryResult<Integer>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Integer>>>() {});
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertGetCountIsGreaterThanZero(url);
+    }
 
-        QueryResponse<QueryResult<Integer>> queryResponse = response.getBody();
-        assertEquals(1, queryResponse.getResponse().size());
-
-        List<Integer> results = queryResponse.getResponse().get(0).getResult();
-        assertEquals(1, results.size());
-
+    private void assertGetCountIsGreaterThanZero(String url) {
+        List<Integer> results = assertNonEmptyResults(url);
         assertTrue(results.get(0) >= 1);
     }
 
@@ -292,32 +255,28 @@ public class ArchiveWSServerTest {
     @Test
     public void testGetBrowsableStudiesBySpecies() throws URISyntaxException {
         String url = "/v1/meta/studies/list?species=hsapiens_grch37";
-        ResponseEntity<QueryResponse<QueryResult<Integer>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Integer>>>() {});
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        QueryResponse<QueryResult<Integer>> queryResponse = response.getBody();
-        assertEquals(1, queryResponse.getResponse().size());
-
-        List<Integer> results = queryResponse.getResponse().get(0).getResult();
-        assertTrue(results.size() >= 1);
+        List<VariantStudySummary> results = assertNonEmptyResults(url);
+        for (VariantStudySummary variantStudySummary : results) {
+            assertTrue(variantStudySummary.getFilesCount() > 0);
+            assertNotNull(variantStudySummary.getStudyName());
+            assertNotNull(variantStudySummary.getStudyId());
+        }
     }
 
     @Test
     public void testGetStudies() throws URISyntaxException {
         String url = "/v1/meta/studies/all";
-        ResponseEntity<QueryResponse<QueryResult<VariantStudy>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantStudy>>>() {});
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertGetStudiesAll(url);
+    }
 
-        QueryResponse<QueryResult<VariantStudy>> queryResponse = response.getBody();
-        assertEquals(1, queryResponse.getResponse().size());
+    @Test
+    public void testGetStudiesStructural() throws URISyntaxException {
+        String url = "/v1/meta/studies/all?structural=true";
+        assertGetStudiesAll(url);
+    }
 
-        List<VariantStudy> results = queryResponse.getResponse().get(0).getResult();
-        assertTrue(results.size() >= 1);
-
+    private void assertGetStudiesAll(String url) {
+        List<VariantStudy> results = assertNonEmptyResults(url);
         assertVariantStudiesAreNotEmpty(results);
     }
 
@@ -348,64 +307,19 @@ public class ArchiveWSServerTest {
     }
 
     @Test
-    public void testGetStudiesStructural() throws URISyntaxException {
-        String url = "/v1/meta/studies/all?structural=true";
-        ResponseEntity<QueryResponse<QueryResult<VariantStudy>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantStudy>>>() {});
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        QueryResponse<QueryResult<VariantStudy>> queryResponse = response.getBody();
-        assertEquals(1, queryResponse.getResponse().size());
-
-        List<VariantStudy> results = queryResponse.getResponse().get(0).getResult();
-        assertTrue(results.size() >= 1);
-
-        assertVariantStudiesAreNotEmpty(results);
-    }
-
-    @Test
     public void testGetStudiesStats() throws URISyntaxException {
         String url = "/v1/meta/studies/stats";
-        ResponseEntity<QueryResponse<QueryResult<ObjectNode>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<ObjectNode>>>() {});
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        QueryResponse<QueryResult<ObjectNode>> queryResponse = response.getBody();
-        assertEquals(1, queryResponse.getResponse().size());
-
-        List<ObjectNode> results = queryResponse.getResponse().get(0).getResult();
-        assertTrue(results.size() >= 1);
-
-        JsonNode species = results.get(0).get("species");
-        assertTrue(species.size() >= 1);
-
-        for (JsonNode eachSpecies : species) {
-            assertTrue(eachSpecies.isIntegralNumber());
-        }
-
-        JsonNode types = results.get(0).get("type");
-        assertTrue(types.size() >= 1);
-
-        for (JsonNode type : types) {
-            assertTrue(type.isIntegralNumber());
-        }
+        assertGetStudiesStats(url);
     }
 
     @Test
     public void testGetStudiesStatsStructural() throws URISyntaxException {
         String url = "/v1/meta/studies/stats?structural=true";
-        ResponseEntity<QueryResponse<QueryResult<ObjectNode>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<ObjectNode>>>() {});
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertGetStudiesStats(url);
+    }
 
-        QueryResponse<QueryResult<ObjectNode>> queryResponse = response.getBody();
-        assertEquals(1, queryResponse.getResponse().size());
-
-        List<ObjectNode> results = queryResponse.getResponse().get(0).getResult();
-        assertTrue(results.size() >= 1);
+    private void assertGetStudiesStats(String url) {
+        List<ObjectNode> results = assertNonEmptyResults(url);
 
         JsonNode species = results.get(0).get("species");
         assertTrue(species.size() >= 1);
@@ -420,6 +334,20 @@ public class ArchiveWSServerTest {
         for (JsonNode type : types) {
             assertTrue(type.isIntegralNumber());
         }
+    }
+
+    private <T> List<T> assertNonEmptyResults(String url) {
+        ResponseEntity<QueryResponse<QueryResult<T>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<T>>>() {});
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        QueryResponse<QueryResult<T>> queryResponse = response.getBody();
+        assertEquals(1, queryResponse.getResponse().size());
+
+        List<T> results = queryResponse.getResponse().get(0).getResult();
+        assertTrue(results.size() >= 1);
+        return results;
     }
 
 }
