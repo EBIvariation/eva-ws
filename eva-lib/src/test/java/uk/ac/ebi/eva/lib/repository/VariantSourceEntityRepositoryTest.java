@@ -52,6 +52,7 @@ public class VariantSourceEntityRepositoryTest {
     private static final String SECOND_STUDY_ID = "secondStudyId";
 
     private static final String FIRST_FILE_ID = "firstFileId";
+    private static final String SECOND_FILE_ID = "secondFileId";
 
     private static final String TEST_DB = "test-db";
 
@@ -135,6 +136,20 @@ public class VariantSourceEntityRepositoryTest {
             assertFalse(variantSourceEntity.getSamplesPosition().isEmpty());
             assertEquals(FIRST_FILE_ID, variantSourceEntity.getFileId());
         }
+    }
+
+    @Test
+    public void testCountByFileIdIn() {
+        List<String> fileIds = new ArrayList<>();
+        fileIds.add(SECOND_FILE_ID);
+
+        long count = repository.countByFileIdIn(fileIds);
+        assertEquals(1, count);
+
+        fileIds.add(FIRST_FILE_ID);
+
+        count = repository.countByFileIdIn(fileIds);
+        assertEquals(2, count);
     }
 
 
