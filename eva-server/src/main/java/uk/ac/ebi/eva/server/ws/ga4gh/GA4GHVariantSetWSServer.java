@@ -72,8 +72,8 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
                                                       @RequestParam(name = "histogram", defaultValue = "false") boolean histogram,
                                                       @RequestParam(name = "histogram_interval", defaultValue = "-1") int interval)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        initializeQuery();
-        
+        initializeQueryOptions();
+
         if (studies.isEmpty()) {
             throw new IllegalArgumentException("The 'datasetIds' argument must not be empty");
         }

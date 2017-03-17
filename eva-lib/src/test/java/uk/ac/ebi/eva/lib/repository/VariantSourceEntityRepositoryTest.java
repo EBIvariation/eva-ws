@@ -48,6 +48,11 @@ public class VariantSourceEntityRepositoryTest {
 
     protected static Logger logger = LoggerFactory.getLogger(VariantSourceEntityRepositoryTest.class);
 
+    private static final String FIRST_STUDY_ID = "firstStudyId";
+    private static final String SECOND_STUDY_ID = "secondStudyId";
+
+    private static final String FIRST_FILE_ID = "firstFileId";
+
     private static final String TEST_DB = "test-db";
 
     @Autowired
@@ -67,9 +72,9 @@ public class VariantSourceEntityRepositoryTest {
 
     @Test
     public void testFindByStudyIdOrStudyName() {
-        List<VariantSourceEntity> variantSourceEntityList = repository.findByStudyIdOrStudyName("firstStudyId", "firstStudyId");
+        List<VariantSourceEntity> variantSourceEntityList = repository.findByStudyIdOrStudyName(FIRST_STUDY_ID, FIRST_STUDY_ID);
         assertEquals(1, variantSourceEntityList.size());
-        variantSourceEntityList = repository.findByStudyIdOrStudyName("secondStudyId", "secondStudyId");
+        variantSourceEntityList = repository.findByStudyIdOrStudyName(SECOND_STUDY_ID, SECOND_STUDY_ID);
         assertEquals(2, variantSourceEntityList.size());
     }
 
@@ -82,7 +87,7 @@ public class VariantSourceEntityRepositoryTest {
     @Test
     public void testFindByStudyId() {
         List<String> studyIds = new ArrayList<>();
-        studyIds.add("secondStudyId");
+        studyIds.add(SECOND_STUDY_ID);
 
         Pageable pageable = new PageRequest(0, 1);
         List<VariantSourceEntity> variantSourceEntityList = repository.findByStudyIdIn(studyIds, pageable);
@@ -92,7 +97,7 @@ public class VariantSourceEntityRepositoryTest {
         variantSourceEntityList = repository.findByStudyIdIn(studyIds, pageable);
         assertEquals(2, variantSourceEntityList.size());
 
-        studyIds.add("firstStudyId");
+        studyIds.add(FIRST_STUDY_ID);
 
         pageable = new PageRequest(1, 2);
         variantSourceEntityList = repository.findByStudyIdIn(studyIds, pageable);
@@ -106,12 +111,12 @@ public class VariantSourceEntityRepositoryTest {
     @Test
     public void testCountByStudyIdIn() {
         List<String> studyIds = new ArrayList<>();
-        studyIds.add("secondStudyId");
+        studyIds.add(SECOND_STUDY_ID);
 
         long count = repository.countByStudyIdIn(studyIds);
         assertEquals(2, count);
 
-        studyIds.add("firstStudyId");
+        studyIds.add(FIRST_STUDY_ID);
 
         count = repository.countByStudyIdIn(studyIds);
         assertEquals(3, count);
@@ -120,7 +125,7 @@ public class VariantSourceEntityRepositoryTest {
     @Test
     public void testFindByFileIdIn() {
         List<String> fileIds = new ArrayList<>();
-        fileIds.add("firstFileId");
+        fileIds.add(FIRST_FILE_ID);
 
         Pageable pageable = new PageRequest(0, 100);
         List<VariantSourceEntity> variantSourceEntityList = repository.findByFileIdIn(fileIds, pageable);
@@ -128,7 +133,7 @@ public class VariantSourceEntityRepositoryTest {
 
         for (VariantSourceEntity variantSourceEntity : variantSourceEntityList) {
             assertFalse(variantSourceEntity.getSamplesPosition().isEmpty());
-            assertEquals("firstFileId", variantSourceEntity.getFileId());
+            assertEquals(FIRST_FILE_ID, variantSourceEntity.getFileId());
         }
     }
 

@@ -436,7 +436,7 @@ public class VariantEntityRepositoryTest {
         List<String> studies = new ArrayList<>();
         studies.add("PRJX00001");
         Long count = variantEntityRepository.countByChromosomeAndStartAndTypeAndStudyIn("11", 180077,
-                                                                                      Variant.VariantType.INDEL,
+                                                                                        Variant.VariantType.INDEL,
                                                                                         studies);
         assertEquals(new Long(1), count);
     }
