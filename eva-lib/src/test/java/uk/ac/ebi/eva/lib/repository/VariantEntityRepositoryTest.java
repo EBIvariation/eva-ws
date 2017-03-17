@@ -424,6 +424,12 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
+    public void testCountByChromosomeAndStartAndReferenceAndAlternate() {
+        Long count = variantEntityRepository.countByChromosomeAndStartAndReferenceAndAlternate("11", 180002, "G", "A");
+        assertEquals(new Long(1), count);
+    }
+
+    @Test
     public void testCountByChromosomeAndStartAndEndAndAltAndStudy() {
         List<String> studies = new ArrayList<>();
         studies.add("PRJEB5829");
