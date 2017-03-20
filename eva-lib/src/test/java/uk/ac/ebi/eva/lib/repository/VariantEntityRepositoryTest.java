@@ -31,6 +31,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantConverter;
+import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantSourceEntryConverter;
+import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.configuration.MongoRepositoryTestConfiguration;
 import uk.ac.ebi.eva.lib.filter.Helpers;
@@ -328,7 +331,7 @@ public class VariantEntityRepositoryTest {
         regions.add(new Region("11", 183000, 183300));
 
         List<String> exclude = new ArrayList<>();
-        exclude.add(VariantEntityRepositoryFilter.FILES_FIELD);
+        exclude.add(DBObjectToVariantConverter.FILES_FIELD);
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
 
         List<VariantEntity> variantEntityList =
@@ -345,7 +348,8 @@ public class VariantEntityRepositoryTest {
         regions.add(new Region("11", 183000, 183300));
 
         List<String> exclude = new ArrayList<>();
-        exclude.add("files.attrs");
+        exclude.add(
+                DBObjectToVariantConverter.FILES_FIELD + "." + DBObjectToVariantSourceEntryConverter.ATTRIBUTES_FIELD);
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
 
         List<VariantEntity> variantEntityList =

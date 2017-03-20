@@ -59,13 +59,13 @@ import static org.mockito.Matchers.eq;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class VariantWSServerTest {
 
-    private static final String CHROMOSOME = "existentChromosome";
+    private static final String CHROMOSOME = "existingChromosome";
 
-    private static final String VARIANT_ID = "existentId";
+    private static final String VARIANT_ID = "existingId";
 
-    private static final String NON_EXISTENT_VARIANT_ID = "notARealId";
+    private static final String NON_EXISTING_VARIANT_ID = "notARealId";
 
-    private static final String NON_EXISTENT_CHROMOSOME = "notARealChromosome";
+    private static final String NON_EXISTING_CHROMOSOME = "notARealChromosome";
 
     private static final VariantEntity VARIANT = new VariantEntity("1", 1000, 1005, "reference", "alternate");
 
@@ -93,7 +93,7 @@ public class VariantWSServerTest {
                 .willReturn(variantEntities);
 
         Region region = new Region(CHROMOSOME, 1, 1);
-        Region badRegion = new Region(NON_EXISTENT_CHROMOSOME, 1, 1);
+        Region badRegion = new Region(NON_EXISTING_CHROMOSOME, 1, 1);
 
         QueryResult<Variant> queryResult = new QueryResult<>();
         queryResult.setNumResults(1);
@@ -132,12 +132,12 @@ public class VariantWSServerTest {
 
     @Test
     public void testGetVariantByIdDoesntExist() throws URISyntaxException {
-        testGetVariantByIdRegionDoesntExistHelper(NON_EXISTENT_VARIANT_ID);
+        testGetVariantByIdRegionDoesntExistHelper(NON_EXISTING_VARIANT_ID);
     }
 
     @Test
     public void testGetVariantByRegionDoesntExist() throws URISyntaxException {
-        testGetVariantByIdRegionDoesntExistHelper(NON_EXISTENT_CHROMOSOME + ":71821:C:G");
+        testGetVariantByIdRegionDoesntExistHelper(NON_EXISTING_CHROMOSOME + ":71821:C:G");
     }
 
     private void testGetVariantByIdRegionDoesntExistHelper(String testString) throws URISyntaxException {
@@ -163,7 +163,7 @@ public class VariantWSServerTest {
 
     @Test
     public void testCheckVariantExistsDoesntExist() throws URISyntaxException {
-        assertFalse(testCheckVariantExistsHelper(NON_EXISTENT_CHROMOSOME + ":1:C:G"));
+        assertFalse(testCheckVariantExistsHelper(NON_EXISTING_CHROMOSOME + ":1:C:G"));
     }
 
     private Boolean testCheckVariantExistsHelper(String testRegion) throws URISyntaxException {

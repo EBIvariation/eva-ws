@@ -16,5 +16,5 @@ install:
 
 script:
   - mvn compile
-  - mvn test -DfailIfNoTests=false -pl eva-lib
+  - mvn test
 

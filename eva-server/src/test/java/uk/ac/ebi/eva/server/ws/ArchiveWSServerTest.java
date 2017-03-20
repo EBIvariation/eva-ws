@@ -245,16 +245,16 @@ public class ArchiveWSServerTest {
     @Test
     public void testCountFiles() throws URISyntaxException {
         String url = "/v1/meta/files/count";
-        assertGetCountIsGreaterThanZero(url);
+        assertGetCount(url, 5);
     }
 
     @Test
     public void testCountStudies() throws URISyntaxException {
         String url = "/v1/meta/studies/count";
-        assertGetCountIsGreaterThanZero(url);
+        assertGetCount(url, 3);
     }
 
-    private void assertGetCountIsGreaterThanZero(String url) {
+    private void assertGetCount(String url, Integer expectedCount) {
         ResponseEntity<QueryResponse<QueryResult<Integer>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<Integer>>>() {});
@@ -264,9 +264,9 @@ public class ArchiveWSServerTest {
         assertEquals(1, queryResponse.getResponse().size());
 
         List<Integer> results = queryResponse.getResponse().get(0).getResult();
-        assertTrue(results.size() >= 1);
+        assertEquals(1, results.size());
 
-        assertTrue(results.get(0) >= 1);
+        assertEquals(expectedCount, results.get(0));
     }
 
     @Test

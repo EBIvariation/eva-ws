@@ -37,7 +37,7 @@ public class Assembly {
     private String taxonomyCode;
     private String taxonomyEvaName;
 
-    public Assembly() {
+    Assembly() {
     }
 
     public Assembly(String assemblyAccession, String assemblyChain, String assemblyVersion, String assemblyName, String assemblyCode,
