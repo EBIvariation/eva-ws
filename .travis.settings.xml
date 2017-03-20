@@ -1,0 +1,22 @@
+<settings>
+    <profiles>
+        <profile>
+            <id>test</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <eva.mongo.host>localhost:27017</eva.mongo.host>
+                <eva.mongo.user></eva.mongo.user>
+                <eva.mongo.passwd></eva.mongo.passwd>
+                <eva.mongo.auth.db></eva.mongo.auth.db>
+                <eva.mongo.read-preference>secondaryPreferred</eva.mongo.read-preference>
+                <eva.mongo.collections.variants>variants</eva.mongo.collections.variants>
+                <eva.mongo.collections.files>files</eva.mongo.collections.files>
+                <eva.version>1.2</eva.version>
+                <eva.context.root>http://localhost:8080/eva</eva.context.root>
+                <eva.evapro.datasource>evadev</eva.evapro.datasource>
+            </properties>
+        </profile>
+    </profiles>
+</settings>
