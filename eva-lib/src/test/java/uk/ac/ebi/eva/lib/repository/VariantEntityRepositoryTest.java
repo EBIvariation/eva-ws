@@ -433,7 +433,7 @@ public class VariantEntityRepositoryTest {
     public void testCountByChromosomeAndStartAndEndAndAltAndStudy() {
         List<String> studies = new ArrayList<>();
         studies.add("PRJEB5829");
-        Long count = variantEntityRepository.countByChromosomeAndStartAndEndAndAltAndStudyIn("11", 180002, "A", studies);
+        Long count = variantEntityRepository.countByChromosomeAndStartAndAltAndStudyIn("11", 180002, "A", studies);
         assertEquals(new Long(1), count);
     }
 
