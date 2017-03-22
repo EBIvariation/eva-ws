@@ -343,7 +343,7 @@ public class VariantEntityRepositoryTest {
     public void testFindDistinctChromosomesByStudyId() {
         List<String> studyIds = new ArrayList<>();
         studyIds.add("PRJEB8705");
-        List<String> chromosomeList = variantEntityRepository.findDistinctChromosomesByStudyId(studyIds);
+        List<String> chromosomeList = variantEntityRepository.findDistinctChromosomes(studyIds);
 
         List<String> expectedChromosomeList = new ArrayList<>();
         expectedChromosomeList.add("11");

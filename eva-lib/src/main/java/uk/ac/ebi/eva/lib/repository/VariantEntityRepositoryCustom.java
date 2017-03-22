@@ -64,11 +64,10 @@ interface VariantEntityRepositoryCustom {
     Long countByRegionsAndComplexFilters(List<Region> regions, List<VariantEntityRepositoryFilter> filters);
 
     /**
-     * Query for distinct chromosomes for which there are variants within the given studies.
+     * Query for distinct chromosomes for variants in the collection
      *
-     * @param studyIds List of study IDs
      * @return List of chromosome names
      */
-    List<String> findDistinctChromosomesByStudyId(List<String> studyIds);
+    List<String> findDistinctChromosomes();
 
 }

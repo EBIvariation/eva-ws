@@ -61,5 +61,5 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
     @Query(value = "{'chr': ?0, 'start': ?1, 'ref': ?2}", count = true)
     Long countByChromosomeAndStartAndReference(String chr, int start, String ref);
 
-    List<String> findDistinctChromosomesByStudyId(List<String> studyIds);
+    List<String> findDistinctChromosomes();
 }

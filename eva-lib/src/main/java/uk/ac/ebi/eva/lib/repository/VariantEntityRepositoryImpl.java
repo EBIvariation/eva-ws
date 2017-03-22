@@ -82,11 +82,9 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     @Override
-    public List<String> findDistinctChromosomesByStudyId(List<String> studyIds) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("st.sid").in(studyIds));
+    public List<String> findDistinctChromosomes() {
         return (List<String>) mongoTemplate.getCollection(mongoTemplate.getCollectionName(VariantEntity.class))
-                                           .distinct("chr", query.getQueryObject());
+                                           .distinct("chr", new Query().getQueryObject());
     }
 
     private List<VariantEntity> findByComplexFiltersHelper(Query query, List<VariantEntityRepositoryFilter> filters, List<String> exclude,
