@@ -79,7 +79,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
                                                                                             Variant.VariantType.INDEL,
                                                                                             studies);
         } else {
-            totalCount = variantEntityRepository.countByChromosomeAndStartAndEndAndAltAndStudyIn(chromosome, start,
+            totalCount = variantEntityRepository.countByChromosomeAndStartAndAltAndStudyIn(chromosome, start,
                                                                                                  allele, studies);
         }
 

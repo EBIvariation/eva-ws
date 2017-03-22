@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.eva.server;
 
+import org.apache.commons.lang.StringUtils;
 import org.opencb.biodata.models.variant.VariantSource;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
@@ -47,10 +48,20 @@ public class Utils {
     public static PageRequest getPageRequest(QueryOptions queryOptions) {
         int limit = (int) queryOptions.get("limit");
         int skip = (int) queryOptions.get("skip");
+        return getPageRequest(limit, skip);
+    }
 
+    public static PageRequest getPageRequest(int limit, String pageToken) {
+        int idxCurrentPage = 0;
+        if (pageToken != null && !pageToken.isEmpty() && StringUtils.isNumeric(pageToken)) {
+            idxCurrentPage = Integer.parseInt(pageToken);
+        }
+        return getPageRequest(limit, idxCurrentPage * limit);
+    }
+
+    public static PageRequest getPageRequest(int limit, int skip) {
         int size = (limit < 0) ? 10 : limit;
         int page = (skip < 0) ? 0 : Math.floorDiv(skip, size);
-
         return new PageRequest(page, size);
     }
 

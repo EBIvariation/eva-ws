@@ -68,9 +68,7 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public GASearchVariantSetsResponse getVariantSets(@RequestParam(name = "datasetIds") List<String> studies,
                                                       @RequestParam(name = "pageToken", required = false) String pageToken,
-                                                      @RequestParam(name = "pageSize", defaultValue = "10") int limit,
-                                                      @RequestParam(name = "histogram", defaultValue = "false") boolean histogram,
-                                                      @RequestParam(name = "histogram_interval", defaultValue = "-1") int interval)
+                                                      @RequestParam(name = "pageSize", defaultValue = "10") int limit)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         initializeQueryOptions();
 
@@ -80,13 +78,7 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
 
-        int idxCurrentPage = 0;
-        if (pageToken != null && !pageToken.isEmpty() && StringUtils.isNumeric(pageToken)) {
-            idxCurrentPage = Integer.parseInt(pageToken);
-            queryOptions.put("skip", idxCurrentPage * limit);
-        }
-        queryOptions.put("limit", limit);
-        PageRequest pageRequest = Utils.getPageRequest(queryOptions);
+        PageRequest pageRequest = Utils.getPageRequest(limit, pageToken);
 
         List<VariantSource> variantSources =
                 Utils.convertVariantSourceEntitysToVariantSources(repository.findByStudyIdIn(studies, pageRequest));
@@ -95,8 +87,8 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
         // Convert VariantSource objects to GAVariantSet
         List<GAVariantSet> gaVariantSets = GAVariantSetFactory.create(variantSources);
         // Calculate the next page token
-        int idxLastElement = idxCurrentPage * limit + limit;
-        String nextPageToken = (idxLastElement < numTotalResults) ? String.valueOf(idxCurrentPage + 1) : null;
+        int idxLastElement = pageRequest.getPageNumber() * limit + limit;
+        String nextPageToken = (idxLastElement < numTotalResults) ? String.valueOf(pageRequest.getPageNumber() + 1) : null;
 
         // Create the custom response for the GA4GH API
         return new GASearchVariantSetsResponse(gaVariantSets, nextPageToken);
@@ -105,7 +97,7 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
     @RequestMapping(value = "/search", method = RequestMethod.POST, consumes = "application/json")
     public GASearchVariantSetsResponse getVariantSets(GASearchVariantSetsRequest request)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return getVariantSets(request.getDatasetIds(), request.getPageToken(), request.getPageSize(), false, -1);
+        return getVariantSets(request.getDatasetIds(), request.getPageToken(), request.getPageSize());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

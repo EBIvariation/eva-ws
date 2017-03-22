@@ -97,18 +97,11 @@ public class GA4GHVariantWSServer extends EvaWSServer {
         List<VariantEntityRepositoryFilter> filters = Helpers.getVariantEntityRepositoryFilters(null, null, null, null,
                                                                                                 null, files, null, null);
 
-        int idxCurrentPage = 0;
-        if (pageToken != null && !pageToken.isEmpty() && StringUtils.isNumeric(pageToken)) {
-            idxCurrentPage = Integer.parseInt(pageToken);
-            queryOptions.put("skip", idxCurrentPage * limit);
-        }
-        queryOptions.put("limit", limit);
+        PageRequest pageRequest = Utils.getPageRequest(limit, pageToken);
 
         Region region = new Region(chromosome, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
-
-        PageRequest pageRequest = Utils.getPageRequest(queryOptions);
 
         List<VariantEntity> variantEntities = variantEntityRepository.findByRegionsAndComplexFilters(regions, filters,
                                                                                                      null, pageRequest);
@@ -119,8 +112,8 @@ public class GA4GHVariantWSServer extends EvaWSServer {
         // Convert Variant objects to GAVariant
         List<GAVariant> gaVariants = GAVariantFactory.create(variants);
         // Calculate the next page token
-        int idxLastElement = idxCurrentPage * limit + limit;
-        String nextPageToken = (idxLastElement < numTotalResults) ? String.valueOf(idxCurrentPage + 1) : null;
+        int idxLastElement = pageRequest.getPageNumber() * limit + limit;
+        String nextPageToken = (idxLastElement < numTotalResults) ? String.valueOf(pageRequest.getPageNumber() + 1) : null;
 
         // Create the custom response for the GA4GH API
         return new GASearchVariantsResponse(gaVariants, nextPageToken);
