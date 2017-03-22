@@ -114,4 +114,21 @@ public class RegionWSServer extends EvaWSServer {
     public QueryResponse getVariantsByRegion() {
         return setQueryResponse("");
     }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    @ResponseBody
+//    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants from region", response = QueryResponse.class)
+    public QueryResponse getChromosomes(@RequestParam(name = "species") String species,
+                                        HttpServletResponse response)
+            throws IllegalOpenCGACredentialsException, IOException {
+        if (species == null || species.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse("Please specify a species");
+        }
+
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+        List<String> chromosomeList = variantEntityRepository.findDistinctChromosomes();
+        QueryResult<String> queryResult = Utils.buildQueryResult(chromosomeList);
+        return setQueryResponse(queryResult);
+    }
 }
