@@ -87,8 +87,7 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
         // Convert VariantSource objects to GAVariantSet
         List<GAVariantSet> gaVariantSets = GAVariantSetFactory.create(variantSources);
         // Calculate the next page token
-        int idxLastElement = pageRequest.getPageNumber() * limit + limit;
-        String nextPageToken = (idxLastElement < numTotalResults) ? String.valueOf(pageRequest.getPageNumber() + 1) : null;
+        String nextPageToken = Utils.getNextPageToken(pageRequest, limit, numTotalResults);
 
         // Create the custom response for the GA4GH API
         return new GASearchVariantSetsResponse(gaVariantSets, nextPageToken);

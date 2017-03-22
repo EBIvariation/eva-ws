@@ -65,6 +65,11 @@ public class Utils {
         return new PageRequest(page, size);
     }
 
+    public static String getNextPageToken(PageRequest pageRequest, int limit, long numTotalResults) {
+        int idxLastElement = pageRequest.getPageNumber() * limit + limit;
+        return (idxLastElement < numTotalResults) ? String.valueOf(pageRequest.getPageNumber() + 1) : null;
+    }
+
     public static String createExclusionFieldString(List<String> excludeList) {
         List<String> formattedList = excludeList.stream().map(field -> String.format("'%s' : 0", field))
                                                 .collect(Collectors.toList());
