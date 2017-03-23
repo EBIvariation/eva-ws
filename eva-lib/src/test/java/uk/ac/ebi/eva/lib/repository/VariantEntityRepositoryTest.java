@@ -343,7 +343,7 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
-    public void testFindByRegionsAndComplexFiltersExcludeSourceEntries() {
+    public void testFindByRegionsAndComplexFiltersExcludeAttributes() {
         List<Region> regions = new ArrayList<>();
         regions.add(new Region("11", 183000, 183300));
 

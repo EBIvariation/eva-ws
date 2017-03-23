@@ -21,6 +21,7 @@ package uk.ac.ebi.eva.server.ws;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.AdditionalMatchers;
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
@@ -42,13 +43,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.AdditionalMatchers.and;
+import static org.mockito.AdditionalMatchers.not;
+import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -64,13 +67,20 @@ public class RegionWSServerTest {
     public void setUp() throws Exception {
         VariantEntity variantEntity = new VariantEntity("chr1", 1000, 1005, "reference", "alternate");
 
-        List<Region> oneRegion = (List<Region>) argThat(hasSize(1));
-        given(variantEntityRepository.findByRegionsAndComplexFilters(oneRegion, any(), any(), any()))
+        List<Region> oneRegion = Arrays.asList(
+                new Region("20", 60000, 62000));
+        given(variantEntityRepository.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any()))
                 .willReturn(Collections.singletonList(variantEntity));
 
-        List<Region> twoRegions = (List<Region>) argThat(hasSize(2));
-        given(variantEntityRepository.findByRegionsAndComplexFilters(twoRegions, any(), any(), any()))
+        List<Region> twoRegions = Arrays.asList(
+                new Region("20", 60000, 61000),
+                new Region("20", 61500, 62500));
+        given(variantEntityRepository.findByRegionsAndComplexFilters(eq(twoRegions), any(), any(), any()))
                 .willReturn(Arrays.asList(variantEntity, variantEntity));
+
+        given(variantEntityRepository
+                .findByRegionsAndComplexFilters(not(or(eq(oneRegion), eq(twoRegions))), any(), any(), any()))
+                .willReturn(Collections.emptyList());
     }
 
     @Test
@@ -81,6 +91,11 @@ public class RegionWSServerTest {
     @Test
     public void testGetVariantsByRegions() throws URISyntaxException {
         testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 2);
+    }
+
+    @Test
+    public void testGetVariantsByNonExistingRegion() throws URISyntaxException {
+        testGetVariantsByRegionHelper("21:8000-9000", 0);
     }
 
     private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants) throws URISyntaxException {

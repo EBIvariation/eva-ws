@@ -15,6 +15,5 @@ install:
   - ./install-dependencies.sh
 
 script:
-  - mvn compile -s .travis.settings.xml
   - mvn test -s .travis.settings.xml
 

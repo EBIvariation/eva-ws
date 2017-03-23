@@ -114,7 +114,7 @@ public class EvaWSServer {
         queryResponse.setApiVersion(version);
         queryResponse.setQueryOptions(queryOptions);
 
-        // TODO why is this lost? because it's a native int?
+        // TODO why the QueryResponse.time is null when the tests get the QueryResponse from the WS? because it's a native int?
         queryResponse.setTime(new Long(endTime - startTime).intValue());
 
         List<T> coll = new ArrayList<>();
@@ -130,7 +130,7 @@ public class EvaWSServer {
         queryResponse.setApiVersion(version);
         queryResponse.setQueryOptions(queryOptions);
 
-        // TODO why is this lost? because it's a native int?
+        // TODO why the QueryResponse.time is null when the tests get the QueryResponse from the WS? because it's a native int?
         queryResponse.setTime(new Long(endTime - startTime).intValue());
 
         queryResponse.setResponse(Collections.EMPTY_LIST);
