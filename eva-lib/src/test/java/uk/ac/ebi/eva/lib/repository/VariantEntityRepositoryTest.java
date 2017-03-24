@@ -345,6 +345,8 @@ public class VariantEntityRepositoryTest {
 
         List<String> expectedChromosomeList = new ArrayList<>();
         expectedChromosomeList.add("11");
+        expectedChromosomeList.add("9");
+        expectedChromosomeList.add("2");
 
         assertEquals(expectedChromosomeList, chromosomeList);
     }
