@@ -121,7 +121,7 @@ public class RegionWSServer extends EvaWSServer {
     public QueryResponse getChromosomes(@RequestParam(name = "species") String species,
                                         HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, IOException {
-        if (species == null || species.isEmpty()) {
+        if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse("Please specify a species");
         }
