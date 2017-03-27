@@ -88,9 +88,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
         if (files != null && !files.isEmpty()) {
             queryOptions.put("files", files);
         }
-        List<VariantEntityRepositoryFilter> filters = FilterBuilder
-                .getEvaWsVariantEntityRepositoryFilters(null, null, null, null,
-                                                        null, files, null, null);
+        List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withFiles(files).build();
 
         PageRequest pageRequest = Utils.getPageRequest(limit, pageToken);
 
