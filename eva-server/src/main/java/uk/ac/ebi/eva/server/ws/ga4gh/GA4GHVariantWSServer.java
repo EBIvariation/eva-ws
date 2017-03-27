@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014-2016 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2017 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,22 +19,18 @@
 
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
+import io.swagger.annotations.Api;
 import org.opencb.biodata.ga4gh.GASearchVariantRequest;
 import org.opencb.biodata.ga4gh.GASearchVariantsResponse;
 import org.opencb.biodata.ga4gh.GAVariant;
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.biodata.models.variant.Variant;
 import org.opencb.biodata.models.variant.ga4gh.GAVariantFactory;
-import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,10 +38,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.filter.Helpers;
+import uk.ac.ebi.eva.lib.filter.FilterBuilder;
 import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
@@ -94,8 +88,9 @@ public class GA4GHVariantWSServer extends EvaWSServer {
         if (files != null && !files.isEmpty()) {
             queryOptions.put("files", files);
         }
-        List<VariantEntityRepositoryFilter> filters = Helpers.getVariantEntityRepositoryFilters(null, null, null, null,
-                                                                                                null, files, null, null);
+        List<VariantEntityRepositoryFilter> filters = FilterBuilder
+                .getEvaWsVariantEntityRepositoryFilters(null, null, null, null,
+                                                        null, files, null, null);
 
         PageRequest pageRequest = Utils.getPageRequest(limit, pageToken);
 

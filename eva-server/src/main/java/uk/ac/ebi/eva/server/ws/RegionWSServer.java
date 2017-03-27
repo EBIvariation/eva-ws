@@ -36,11 +36,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.filter.Helpers;
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.lib.filter.FilterBuilder;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -76,16 +76,16 @@ public class RegionWSServer extends EvaWSServer {
             throws IllegalOpenCGACredentialsException, IOException {
         initializeQuery();
 
-        if (species.isEmpty()) {
+        if (species == null || species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse("Please specify a species");
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List<VariantEntityRepositoryFilter> filters =
-                Helpers.getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies,
-                                                          consequenceType, null, null, null);
+        List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
+                .getEvaWsVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType, null,
+                                                        null, null);
         List<Region> regions = Region.parseRegions(regionId);
         PageRequest pageRequest = Utils.getPageRequest(queryOptions);
 
