@@ -13,18 +13,12 @@ public class FilterBuilder {
                                                                                       String polyphenScore,
                                                                                       String siftScore,
                                                                                       List<String> studies,
-                                                                                      List<String> consequenceType,
-                                                                                      List<String> files,
-                                                                                      List<Variant.VariantType> types,
-                                                                                      List<String> alternates) {
+                                                                                      List<String> consequenceType) {
         return this.withMaf(maf)
                    .withPolyphenScore(polyphenScore)
                    .withSiftScore(siftScore)
                    .withStudies(studies)
                    .withConsequenceType(consequenceType)
-                   .withFiles(files)
-                   .withVariantTypes(types)
-                   .withAlternates(alternates)
                    .build();
     }
 

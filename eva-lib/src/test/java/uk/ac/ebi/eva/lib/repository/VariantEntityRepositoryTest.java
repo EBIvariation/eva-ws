@@ -205,8 +205,8 @@ public class VariantEntityRepositoryTest {
         int end = 190000;
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().getEvaWsVariantEntityRepositoryFilters(null, null,
                                                                                                                  null, null,
-                                                                                                                 cts, null,
-                                                                                                                 null, null);
+                                                                                                                 cts
+        );
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
@@ -223,7 +223,7 @@ public class VariantEntityRepositoryTest {
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
-                .getEvaWsVariantEntityRepositoryFilters(">0.125", null, null, null, null, null, null, null);
+                .getEvaWsVariantEntityRepositoryFilters(">0.125", null, null, null, null);
         List<String> exclude = new ArrayList<>();
         testFiltersHelperRegion(regions, filters, exclude, 37);
     }
@@ -237,7 +237,7 @@ public class VariantEntityRepositoryTest {
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
-                .getEvaWsVariantEntityRepositoryFilters(">=0.125", null, null, null, null, null, null, null);
+                .getEvaWsVariantEntityRepositoryFilters(">=0.125", null, null, null, null);
         List<String> exclude = new ArrayList<>();
         testFiltersHelperRegion(regions, filters, exclude, 15);
     }
@@ -251,7 +251,7 @@ public class VariantEntityRepositoryTest {
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
-                .getEvaWsVariantEntityRepositoryFilters("=0.5", null, null, null, null, null, null, null);
+                .getEvaWsVariantEntityRepositoryFilters("=0.5", null, null, null, null);
         List<String> exclude = new ArrayList<>();
         testFiltersHelperRegion(regions, filters, exclude, 8);
     }
@@ -265,7 +265,7 @@ public class VariantEntityRepositoryTest {
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
-                .getEvaWsVariantEntityRepositoryFilters(null, ">0.5", null, null, null, null, null, null);
+                .getEvaWsVariantEntityRepositoryFilters(null, ">0.5", null, null, null);
         List<String> exclude = new ArrayList<>();
         testFiltersHelperRegion(regions, filters, exclude, 4);
     }
@@ -279,7 +279,7 @@ public class VariantEntityRepositoryTest {
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
-                .getEvaWsVariantEntityRepositoryFilters(null, null, "<0.5", null, null, null, null, null);
+                .getEvaWsVariantEntityRepositoryFilters(null, null, "<0.5", null, null);
         List<String> exclude = new ArrayList<>();
         testFiltersHelperRegion(regions, filters, exclude, 11);
     }
@@ -292,7 +292,7 @@ public class VariantEntityRepositoryTest {
         int start = 180000;
         int end = 180500;
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
-                .getEvaWsVariantEntityRepositoryFilters(null, null, null, studies, null, null, null, null);
+                .getEvaWsVariantEntityRepositoryFilters(null, null, null, studies, null);
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
@@ -308,7 +308,7 @@ public class VariantEntityRepositoryTest {
         int start = 180000;
         int end = 180500;
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
-                .getEvaWsVariantEntityRepositoryFilters(null, null, null, null, null, files, null, null);
+                .getEvaWsVariantEntityRepositoryFilters(null, null, null, null, null);
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
@@ -324,7 +324,7 @@ public class VariantEntityRepositoryTest {
         int start = 180000;
         int end = 180500;
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
-                .getEvaWsVariantEntityRepositoryFilters(null, null, null, null, null, null, types, null);
+                .getEvaWsVariantEntityRepositoryFilters(null, null, null, null, null);
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
@@ -340,7 +340,7 @@ public class VariantEntityRepositoryTest {
         int start = 180000;
         int end = 180500;
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
-                .getEvaWsVariantEntityRepositoryFilters(null, null, null, null, null, null, null, alternates);
+                .getEvaWsVariantEntityRepositoryFilters(null, null, null, null, null);
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
