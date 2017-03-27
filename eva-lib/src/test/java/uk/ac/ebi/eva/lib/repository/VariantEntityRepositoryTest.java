@@ -339,6 +339,18 @@ public class VariantEntityRepositoryTest {
         }
     }
 
+    @Test
+    public void testFindDistinctChromosomesByStudyId() {
+        List<String> chromosomeList = variantEntityRepository.findDistinctChromosomes();
+
+        List<String> expectedChromosomeList = new ArrayList<>();
+        expectedChromosomeList.add("11");
+        expectedChromosomeList.add("9");
+        expectedChromosomeList.add("2");
+
+        assertEquals(expectedChromosomeList, chromosomeList);
+    }
+
     private void testFiltersHelperRegion(List<Region> regions, List<VariantEntityRepositoryFilter> filters,
                                          List<String> exclude, int expectedResultLength) {
         List<VariantEntity> variantEntityList =
