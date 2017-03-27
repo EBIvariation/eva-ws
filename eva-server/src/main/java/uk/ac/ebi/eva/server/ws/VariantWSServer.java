@@ -91,8 +91,7 @@ public class VariantWSServer extends EvaWSServer {
             String alternate = (regionId.length > 3) ? regionId[3] : null;
             variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
                                                            alternate);
-            numTotalResults = countByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
-                                                           alternate);
+            numTotalResults = (long) variantEntities.size();
         } else {
             List<VariantEntityRepositoryFilter> filters =
                     Helpers.getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore,
@@ -126,15 +125,6 @@ public class VariantWSServer extends EvaWSServer {
                                                                                             reference, alternate);
         } else {
             return variantEntityRepository.findByChromosomeAndStartAndReference(chromosome, start, reference);
-        }
-    }
-
-    private Long countByCoordinatesAndAlleles(String chromosome, int start, String reference, String alternate) {
-        if (alternate != null) {
-            return variantEntityRepository.countByChromosomeAndStartAndReferenceAndAlternate(chromosome, start,
-                                                                                            reference, alternate);
-        } else {
-            return variantEntityRepository.countByChromosomeAndStartAndReference(chromosome, start, reference);
         }
     }
 

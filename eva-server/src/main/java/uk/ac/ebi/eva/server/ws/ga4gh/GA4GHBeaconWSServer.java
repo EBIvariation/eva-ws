@@ -20,7 +20,6 @@
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import io.swagger.annotations.Api;
-import org.opencb.biodata.models.feature.Region;
 import org.opencb.biodata.models.variant.Variant;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.slf4j.Logger;
@@ -31,8 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.ac.ebi.eva.lib.filter.Helpers;
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
@@ -41,7 +39,6 @@ import uk.ac.ebi.eva.server.ws.EvaWSServer;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -73,17 +70,18 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
 
-        long totalCount;
+        List<VariantEntity> variantEntities;
         if (allele.equalsIgnoreCase("INDEL")) {
-            totalCount = variantEntityRepository.countByChromosomeAndStartAndTypeAndStudyIn(chromosome, start,
-                                                                                            Variant.VariantType.INDEL,
-                                                                                            studies);
+            variantEntities = variantEntityRepository.findByChromosomeAndStartAndTypeAndStudyIn(chromosome, start,
+                                                                                           Variant.VariantType.INDEL,
+                                                                                           studies);
         } else {
-            totalCount = variantEntityRepository.countByChromosomeAndStartAndAltAndStudyIn(chromosome, start,
-                                                                                                 allele, studies);
+            variantEntities = variantEntityRepository.findByChromosomeAndStartAndAltAndStudyIn(chromosome, start,
+                                                                                          allele, studies);
         }
 
-        return new GA4GHBeaconResponse(chromosome, start, allele, String.join(",", studies), totalCount > 0);
+        return new GA4GHBeaconResponse(chromosome, start, allele, String.join(",", studies),
+                                       variantEntities.size() > 0);
     }
     
     class GA4GHBeaconResponse {
