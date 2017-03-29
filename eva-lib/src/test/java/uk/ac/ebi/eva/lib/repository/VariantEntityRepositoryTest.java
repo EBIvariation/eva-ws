@@ -33,7 +33,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantConverter;
 import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantSourceEntryConverter;
-import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.configuration.MongoRepositoryTestConfiguration;
 import uk.ac.ebi.eva.lib.filter.Helpers;

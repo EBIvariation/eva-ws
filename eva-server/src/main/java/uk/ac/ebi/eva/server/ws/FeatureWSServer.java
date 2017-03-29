@@ -36,7 +36,6 @@ import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 /**

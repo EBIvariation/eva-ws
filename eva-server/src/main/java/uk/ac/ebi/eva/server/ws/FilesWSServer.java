@@ -23,11 +23,15 @@ import io.swagger.annotations.Api;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import uk.ac.ebi.eva.lib.metadata.VariantSourceEvaProDBAdaptor;
 import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.metadata.VariantSourceEvaProDBAdaptor;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
 import java.io.IOException;

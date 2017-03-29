@@ -20,10 +20,7 @@
 package uk.ac.ebi.eva.server.ws;
 
 import com.mongodb.BasicDBObject;
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.List;
-
+import io.swagger.annotations.Api;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
@@ -33,7 +30,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.List;
 
 /**
  *

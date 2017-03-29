@@ -40,13 +40,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 
 public class EvaWSServer {
 
@@ -109,13 +109,7 @@ public class EvaWSServer {
     }
 
     protected <T> QueryResponse<T> setQueryResponse(T obj) {
-        QueryResponse<T> queryResponse = new QueryResponse<>();
-        endTime = System.currentTimeMillis();
-        queryResponse.setApiVersion(version);
-        queryResponse.setQueryOptions(queryOptions);
-
-        // TODO why the QueryResponse.time is null when the tests get the QueryResponse from the WS? because it's a native int?
-        queryResponse.setTime(new Long(endTime - startTime).intValue());
+        QueryResponse<T> queryResponse = buildQueryResponse();
 
         List<T> coll = new ArrayList<>();
         coll.add(obj);
@@ -125,6 +119,14 @@ public class EvaWSServer {
     }
 
     protected <T> QueryResponse<T> setErrorQueryResponse(String message) {
+        QueryResponse<T> queryResponse = buildQueryResponse();
+
+        queryResponse.setResponse(Collections.EMPTY_LIST);
+        queryResponse.setError(message);
+        return queryResponse;
+    }
+
+    private <T> QueryResponse<T> buildQueryResponse() {
         QueryResponse<T> queryResponse = new QueryResponse<>();
         endTime = System.currentTimeMillis();
         queryResponse.setApiVersion(version);
@@ -132,9 +134,6 @@ public class EvaWSServer {
 
         // TODO why the QueryResponse.time is null when the tests get the QueryResponse from the WS? because it's a native int?
         queryResponse.setTime(new Long(endTime - startTime).intValue());
-
-        queryResponse.setResponse(Collections.EMPTY_LIST);
-        queryResponse.setError(message);
         return queryResponse;
     }
 
