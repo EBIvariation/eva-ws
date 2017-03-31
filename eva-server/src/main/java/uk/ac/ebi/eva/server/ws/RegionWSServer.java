@@ -37,10 +37,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.filter.Helpers;
+import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -74,9 +74,9 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "exclude", required = false) List<String> exclude,
                                              HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, IOException {
-        initializeQueryOptions();
+        initializeQuery();
 
-        if (species == null || species.isEmpty()) {
+        if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse("Please specify a species");
         }
@@ -106,7 +106,7 @@ public class RegionWSServer extends EvaWSServer {
 
         Long numTotalResults = variantEntityRepository.countByRegionsAndComplexFilters(regions, filters);
 
-        QueryResult<VariantEntity> queryResult = Utils.buildQueryResult(variantEntities, numTotalResults);
+        QueryResult<VariantEntity> queryResult = buildQueryResult(variantEntities, numTotalResults);
         return setQueryResponse(queryResult);
     }
 
@@ -128,7 +128,7 @@ public class RegionWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List<String> chromosomeList = variantEntityRepository.findDistinctChromosomes();
-        QueryResult<String> queryResult = Utils.buildQueryResult(chromosomeList);
+        QueryResult<String> queryResult = buildQueryResult(chromosomeList);
         return setQueryResponse(queryResult);
     }
 }

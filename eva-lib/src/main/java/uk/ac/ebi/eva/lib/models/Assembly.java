@@ -37,8 +37,10 @@ public class Assembly {
     private String taxonomyCode;
     private String taxonomyEvaName;
 
-    
-    public Assembly(String assemblyAccession, String assemblyChain, String assemblyVersion, String assemblyName, String assemblyCode, 
+    Assembly() {
+    }
+
+    public Assembly(String assemblyAccession, String assemblyChain, String assemblyVersion, String assemblyName, String assemblyCode,
             int taxonomyId, String taxonomyCommonName, String taxonomyScientificName, String taxonomyCode, String taxonomyEvaName) {
         this.assemblyAccession = assemblyAccession;
         this.assemblyChain = assemblyChain;

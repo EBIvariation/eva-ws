@@ -15,6 +15,5 @@ install:
   - ./install-dependencies.sh
 
 script:
-  - mvn compile
-  - mvn test -DfailIfNoTests=false -pl eva-lib
+  - mvn test -s .travis.settings.xml
 

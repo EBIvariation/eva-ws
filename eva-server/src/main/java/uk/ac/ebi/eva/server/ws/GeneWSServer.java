@@ -20,10 +20,7 @@
 package uk.ac.ebi.eva.server.ws;
 
 import com.mongodb.BasicDBObject;
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.List;
-
+import io.swagger.annotations.Api;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
@@ -33,8 +30,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.List;
 
 /**
  *
@@ -61,9 +59,9 @@ public class GeneWSServer extends EvaWSServer {
                                            @RequestParam(name = "miss_alleles", defaultValue = "") String missingAlleles,
                                            @RequestParam(name = "miss_gts", defaultValue = "") String missingGenotypes)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
-        initializeQueryOptions();
+        initializeQuery();
         
-        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor(species);
+        VariantDBAdaptor variantMongoDbAdaptor = dbAdaptorConnector.getVariantDBAdaptor(species);
         
         if (studies != null && !studies.isEmpty()) {
             queryOptions.put(VariantDBAdaptor.STUDIES, studies);

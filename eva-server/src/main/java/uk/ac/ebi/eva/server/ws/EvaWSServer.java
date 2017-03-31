@@ -28,6 +28,7 @@ import org.opencb.biodata.models.variant.VariantSourceEntry;
 import org.opencb.biodata.models.variant.stats.VariantStats;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResponse;
+import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.variant.io.json.GenotypeJsonMixin;
 import org.opencb.opencga.storage.core.variant.io.json.VariantSourceEntryJsonMixin;
 import org.opencb.opencga.storage.core.variant.io.json.VariantSourceJsonMixin;
@@ -39,14 +40,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by imedina on 01/04/14.
- */
 public class EvaWSServer {
 
     protected final String version = "v1";
@@ -59,7 +60,10 @@ public class EvaWSServer {
     protected long endTime;
 
     protected static Logger logger = LoggerFactory.getLogger(EvaWSServer.class);
-    
+
+    @Autowired
+    protected DBAdaptorConnector dbAdaptorConnector;
+
     @Bean
     public Jackson2ObjectMapperBuilder jacksonBuilder() {
         Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
@@ -78,10 +82,15 @@ public class EvaWSServer {
     
     public EvaWSServer() { }
 
-    protected void initializeQueryOptions() {
+    protected void initializeQuery() {
+        startTime = System.currentTimeMillis();
+        initializeQueryOptions();
+    }
+
+    private void initializeQueryOptions() {
         this.queryOptions = new QueryOptions();
         Map<String, String[]> multivaluedMap = httpServletRequest.getParameterMap();
-        
+
         boolean metadata = (multivaluedMap.get("metadata") != null) ? multivaluedMap.get("metadata")[0].equals("true") : true ;
         int limit = (multivaluedMap.get("limit") != null) ? Integer.parseInt(multivaluedMap.get("limit")[0]) : -1;
         int skip = (multivaluedMap.get("skip") != null) ? Integer.parseInt(multivaluedMap.get("skip")[0]) : -1;
@@ -89,41 +98,55 @@ public class EvaWSServer {
 
         String[] exclude = multivaluedMap.get("exclude");
         String[] include = multivaluedMap.get("include");
-        
+
         queryOptions.put("metadata", metadata);
         queryOptions.put("exclude", (exclude != null && exclude.length > 0) ? Splitter.on(",").splitToList(exclude[0]) : null);
         queryOptions.put("include", (include != null && include.length > 0) ? Splitter.on(",").splitToList(include[0]) : null);
         queryOptions.put("limit", (limit > 0) ? limit : -1);
         queryOptions.put("skip", (skip > 0) ? skip : -1);
         queryOptions.put("count", count);
-        System.out.println(queryOptions.toJson());
+        logger.debug(queryOptions.toJson());
     }
 
-    protected QueryResponse setQueryResponse(Object obj) {
-        QueryResponse queryResponse = new QueryResponse();
-    	endTime = System.currentTimeMillis() - startTime;
-    	// TODO Restore span time calculation
-//        queryResponse.setTime(new Long(endTime - startTime).intValue());
-        queryResponse.setApiVersion(version);
-        queryResponse.setQueryOptions(queryOptions);
-        
-        // Guarantee that the QueryResponse object contains a coll of results
-        List coll;
-        if (obj instanceof List) {
-            coll = (List) obj;
-        } else {
-            coll = new ArrayList();
-            coll.add(obj);
-        }
+    protected <T> QueryResponse<T> setQueryResponse(T obj) {
+        QueryResponse<T> queryResponse = buildQueryResponse();
+
+        List<T> coll = new ArrayList<>();
+        coll.add(obj);
         queryResponse.setResponse(coll);
-        
+
         return queryResponse;
     }
 
-//    private Response buildResponse(Response.ResponseBuilder responseBuilder) {
-//        return responseBuilder.header("Access-Control-Allow-Origin", "*")
-//                .header("Access-Control-Allow-Headers", "x-requested-with, content-type, accept")
-//                .header("Access-Control-Allow-Methods", "POST, GET, OPTIONS").build();
-//    }
-    
+    protected <T> QueryResponse<T> setErrorQueryResponse(String message) {
+        QueryResponse<T> queryResponse = buildQueryResponse();
+
+        queryResponse.setResponse(Collections.EMPTY_LIST);
+        queryResponse.setError(message);
+        return queryResponse;
+    }
+
+    private <T> QueryResponse<T> buildQueryResponse() {
+        QueryResponse<T> queryResponse = new QueryResponse<>();
+        endTime = System.currentTimeMillis();
+        queryResponse.setApiVersion(version);
+        queryResponse.setQueryOptions(queryOptions);
+
+        // TODO why the QueryResponse.time is null when the tests get the QueryResponse from the WS? because it's a native int?
+        queryResponse.setTime(new Long(endTime - startTime).intValue());
+        return queryResponse;
+    }
+
+    protected <T> QueryResult<T> buildQueryResult(List<T> results) {
+        return buildQueryResult(results, results.size());
+    }
+
+    protected <T> QueryResult<T> buildQueryResult(List<T> results, long numTotalResults) {
+        QueryResult<T> queryResult = new QueryResult<>();
+        queryResult.setResult(results);
+        queryResult.setNumResults(results.size());
+        queryResult.setNumTotalResults(numTotalResults);
+        queryResult.setDbTime(new Long(System.currentTimeMillis() - startTime).intValue());
+        return queryResult;
+    }
 }

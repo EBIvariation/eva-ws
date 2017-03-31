@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
 /**
@@ -72,9 +72,9 @@ public class GA4GHVariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "pageToken", required = false) String pageToken,
                                         @RequestParam(name = "pageSize", defaultValue = "10") int limit)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
-        initializeQueryOptions();
+        initializeQuery();
         
-        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
+        VariantDBAdaptor variantMongoDbAdaptor = dbAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
         
         if (files != null && !files.isEmpty()) {
             queryOptions.put("files", files);

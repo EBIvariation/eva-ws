@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
 /**
@@ -56,7 +56,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
                                       @RequestParam("datasetIds") String studies,
                                       HttpServletResponse response) 
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        initializeQueryOptions();
+        initializeQuery();
         
         if (start < 0) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -64,7 +64,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
                     "Please provide a positive number as start position");
         }
         
-        VariantDBAdaptor variantMongoDbAdaptor = DBAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
+        VariantDBAdaptor variantMongoDbAdaptor = dbAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
         
         Region region = new Region(chromosome, start, start + allele.length());
         if (allele.equalsIgnoreCase("INDEL")) {

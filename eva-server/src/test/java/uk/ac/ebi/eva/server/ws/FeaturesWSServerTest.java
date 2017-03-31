@@ -18,55 +18,93 @@
  */
 package uk.ac.ebi.eva.server.ws;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.opencb.datastore.core.QueryResponse;
+import org.opencb.datastore.core.QueryResult;
+import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import java.net.URI;
+import uk.ac.ebi.eva.commons.models.data.FeatureCoordinates;
+import uk.ac.ebi.eva.lib.repository.FeatureRepository;
+
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import static com.jayway.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.mockito.BDDMockito.given;
 
-
-/**
- * This test, just as FilesWSServerTest, needs a DB named "eva_mmusculus_grcm38" with a collection "features".
- * There should be at least one document with "_id" or "name" called "FBXO25".
- */
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class FeaturesWSServerTest {
-    
-    @BeforeClass
-    public static void startJetty() throws Exception {
-        RestAssured.port = 8080;
-        RestAssured.baseURI = "http://localhost:8080/eva/webservices/rest";
+
+    private static final String FEATURE_NAME = "FBXO2";
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @MockBean
+    private FeatureRepository featureRepository;
+
+    @Before
+    public void setup() throws URISyntaxException, IOException, IllegalOpenCGACredentialsException {
+        FeatureCoordinates exampleFeature = new FeatureCoordinates("id", FEATURE_NAME, "feature", "chr", 0, 1);
+        given(featureRepository.findByIdOrName(FEATURE_NAME, FEATURE_NAME))
+                .willReturn(Collections.singletonList(exampleFeature));
     }
-    
+
     @Test
-    public void testGetGenes() throws URISyntaxException {
-        Response response = given().param("species", "mmusculus_grcm38").get(new URI("/v1/features/FBXO25"));
-        response.then().statusCode(200);
-        
-        List queryResponse = JsonPath.from(response.asString()).getList("response");
-        assertEquals(1, queryResponse.size());
-        
-        List<Map> result = JsonPath.from(response.asString()).getJsonObject("response[0].result");
-        assertTrue(result.size() >= 1);
+    public void testGetFeatures() throws URISyntaxException {
+        String url = "/v1/features/" + FEATURE_NAME + "?species=hsapiens_grch37";
+        ResponseEntity<QueryResponse<QueryResult<FeatureCoordinates>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<FeatureCoordinates>>>() {});
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        for (Map m : result) {
-            String missingField = String.format("%s required field missing", m.get("name"));
+        QueryResponse<QueryResult<FeatureCoordinates>> queryResponse = response.getBody();
+        assertEquals(1, queryResponse.getResponse().size());
 
-            assertTrue(missingField, m.containsKey("id"));
-            assertTrue(missingField, m.containsKey("name"));
-            assertTrue(missingField, m.containsKey("feature"));
-            assertTrue(missingField, m.containsKey("chromosome"));
-            assertTrue(missingField, m.containsKey("start"));
-            assertTrue(missingField, m.containsKey("end"));
-        }
+        List<FeatureCoordinates> results = queryResponse.getResponse().get(0).getResult();
+        assertEquals(1, results.size());
+
+        assertEquals(FEATURE_NAME, results.get(0).getName());
+    }
+
+    @Test
+    public void testGetFeaturesWithEmptySpeciesShouldFail() throws URISyntaxException {
+        String url = "/v1/features/" + FEATURE_NAME + "?species=";
+        ResponseEntity<QueryResponse<QueryResult<FeatureCoordinates>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<FeatureCoordinates>>>() {});
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        QueryResponse<QueryResult<FeatureCoordinates>> queryResponse = response.getBody();
+        assertEquals("Please specify a species", queryResponse.getError());
+        assertEquals(0, queryResponse.getResponse().size());
+    }
+
+    @Test
+    public void testGetFeaturesWithoutSpeciesShouldFail() throws URISyntaxException {
+        String url = "/v1/features/" + FEATURE_NAME;
+        ResponseEntity<QueryResponse<QueryResult<FeatureCoordinates>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<FeatureCoordinates>>>() {});
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        QueryResponse<QueryResult<FeatureCoordinates>> queryResponse = response.getBody();
+        assertNull(queryResponse.getResponse());
     }
 
 }

@@ -31,6 +31,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantConverter;
+import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantSourceEntryConverter;
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.configuration.MongoRepositoryTestConfiguration;
 import uk.ac.ebi.eva.lib.filter.Helpers;
@@ -328,7 +330,7 @@ public class VariantEntityRepositoryTest {
         regions.add(new Region("11", 183000, 183300));
 
         List<String> exclude = new ArrayList<>();
-        exclude.add("files");
+        exclude.add(DBObjectToVariantConverter.FILES_FIELD);
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
 
         List<VariantEntity> variantEntityList =
@@ -336,6 +338,27 @@ public class VariantEntityRepositoryTest {
         assertNotNull(variantEntityList);
         for (VariantEntity currVariantEntity : variantEntityList) {
             assertTrue(currVariantEntity.getSourceEntries().isEmpty());
+        }
+    }
+
+    @Test
+    public void testFindByRegionsAndComplexFiltersExcludeAttributes() {
+        List<Region> regions = new ArrayList<>();
+        regions.add(new Region("11", 183000, 183300));
+
+        List<String> exclude = new ArrayList<>();
+        exclude.add(
+                DBObjectToVariantConverter.FILES_FIELD + "." + DBObjectToVariantSourceEntryConverter.ATTRIBUTES_FIELD);
+        List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
+
+        List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByRegionsAndComplexFilters(regions, filters, exclude, new PageRequest(0, 10000));
+        assertNotNull(variantEntityList);
+        for (VariantEntity currVariantEntity : variantEntityList) {
+            for (VariantSourceEntry variantSourceEntry : currVariantEntity.getSourceEntries().values()) {
+                assertFalse(variantSourceEntry.getFileId().isEmpty());
+                assertTrue(variantSourceEntry.getAttributes().isEmpty());
+            }
         }
     }
 
