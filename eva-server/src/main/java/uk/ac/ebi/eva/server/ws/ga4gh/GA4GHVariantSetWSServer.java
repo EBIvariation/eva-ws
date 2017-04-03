@@ -70,7 +70,7 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
                                                       @RequestParam(name = "pageToken", required = false) String pageToken,
                                                       @RequestParam(name = "pageSize", defaultValue = "10") int limit)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        initializeQueryOptions();
+        initializeQuery();
 
         if (studies.isEmpty()) {
             throw new IllegalArgumentException("The 'datasetIds' argument must not be empty");
