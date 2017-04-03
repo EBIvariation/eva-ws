@@ -46,8 +46,8 @@ public class Utils {
     }
 
     public static PageRequest getPageRequest(QueryOptions queryOptions) {
-        int limit = (int) queryOptions.get("limit");
-        int skip = (int) queryOptions.get("skip");
+        int limit = (queryOptions.get("limit") == null) ? 10 : (int) queryOptions.get("limit");
+        int skip = (queryOptions.get("skip") == null) ? 0 : (int) queryOptions.get("skip");
         return getPageRequest(limit, skip);
     }
 
@@ -97,7 +97,7 @@ public class Utils {
         return queryResult;
     }
 
-    public static List<VariantSource> convertVariantSourceEntitysToVariantSources(List<VariantSourceEntity>
+    public static List<VariantSource> convertVariantSourceEntitiesToVariantSources(List<VariantSourceEntity>
                                                                                           variantSourceEntities) {
 
         List<VariantSource> variantSources = new ArrayList<>();

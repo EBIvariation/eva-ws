@@ -76,7 +76,7 @@ public class RegionWSServer extends EvaWSServer {
             throws IllegalOpenCGACredentialsException, IOException {
         initializeQuery();
 
-        if (species == null || species.isEmpty()) {
+        if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse("Please specify a species");
         }
@@ -84,7 +84,7 @@ public class RegionWSServer extends EvaWSServer {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
-                .getEvaWsVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType
+                .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType
                 );
         List<Region> regions = Region.parseRegions(regionId);
         PageRequest pageRequest = Utils.getPageRequest(queryOptions);

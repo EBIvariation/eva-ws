@@ -20,7 +20,6 @@
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import io.swagger.annotations.Api;
-import org.apache.commons.lang.StringUtils;
 import org.opencb.biodata.ga4gh.GASearchVariantSetsRequest;
 import org.opencb.biodata.ga4gh.GASearchVariantSetsResponse;
 import org.opencb.biodata.ga4gh.GAVariantSet;
@@ -81,7 +80,7 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
         PageRequest pageRequest = Utils.getPageRequest(limit, pageToken);
 
         List<VariantSource> variantSources =
-                Utils.convertVariantSourceEntitysToVariantSources(repository.findByStudyIdIn(studies, pageRequest));
+                Utils.convertVariantSourceEntitiesToVariantSources(repository.findByStudyIdIn(studies, pageRequest));
         Long numTotalResults = repository.countByStudyIdIn(studies);
 
         // Convert VariantSource objects to GAVariantSet
