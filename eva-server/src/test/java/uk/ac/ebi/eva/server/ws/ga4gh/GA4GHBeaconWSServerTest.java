@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
@@ -66,6 +67,11 @@ public class GA4GHBeaconWSServerTest {
     @Test
     public void testAltAlleleExistsBeacon() throws Exception {
         assertTrue(testBeaconHelper("1", 1000, "alternate", new ArrayList<>()));
+    }
+
+    @Test
+    public void testAltAlleleDoesntExistsBeacon() throws Exception {
+        assertFalse(testBeaconHelper("2", 2000, "alternateOther", new ArrayList<>()));
     }
 
     private Boolean testBeaconHelper(String chromosome, int start, String allele, List<String> datasetIds) {
