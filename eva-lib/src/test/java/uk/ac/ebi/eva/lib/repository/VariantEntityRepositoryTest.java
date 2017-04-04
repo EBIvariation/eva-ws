@@ -24,6 +24,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opencb.biodata.models.feature.Region;
+import org.opencb.biodata.models.variant.Variant;
 import org.opencb.biodata.models.variant.VariantSourceEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -35,7 +36,7 @@ import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantConverter;
 import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantSourceEntryConverter;
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.configuration.MongoRepositoryTestConfiguration;
-import uk.ac.ebi.eva.lib.filter.Helpers;
+import uk.ac.ebi.eva.lib.filter.FilterBuilder;
 import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
 
 import java.io.IOException;
@@ -202,8 +203,7 @@ public class VariantEntityRepositoryTest {
         String chr = "11";
         int start = 180000;
         int end = 190000;
-        List<VariantEntityRepositoryFilter> filters = Helpers.getVariantEntityRepositoryFilters(null, null, null, null,
-                                                                                                cts);
+        List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withConsequenceType(cts).build();
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
@@ -219,8 +219,7 @@ public class VariantEntityRepositoryTest {
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
-        List<VariantEntityRepositoryFilter> filters =
-                Helpers.getVariantEntityRepositoryFilters(">0.125", null, null, null, null);
+        List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withMaf(">0.125").build();
         List<String> exclude = new ArrayList<>();
         testFiltersHelperRegion(regions, filters, exclude, 37);
     }
@@ -233,8 +232,7 @@ public class VariantEntityRepositoryTest {
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
-        List<VariantEntityRepositoryFilter> filters =
-                Helpers.getVariantEntityRepositoryFilters(">=0.125", null, null, null, null);
+        List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withMaf(">=0.125").build();
         List<String> exclude = new ArrayList<>();
         testFiltersHelperRegion(regions, filters, exclude, 15);
     }
@@ -247,8 +245,7 @@ public class VariantEntityRepositoryTest {
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
-        List<VariantEntityRepositoryFilter> filters =
-                Helpers.getVariantEntityRepositoryFilters("=0.5", null, null, null, null);
+        List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withMaf("=0.5").build();
         List<String> exclude = new ArrayList<>();
         testFiltersHelperRegion(regions, filters, exclude, 8);
     }
@@ -261,8 +258,7 @@ public class VariantEntityRepositoryTest {
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
-        List<VariantEntityRepositoryFilter> filters =
-                Helpers.getVariantEntityRepositoryFilters(null, ">0.5", null, null, null);
+        List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withPolyphenScore(">0.5").build();
         List<String> exclude = new ArrayList<>();
         testFiltersHelperRegion(regions, filters, exclude, 4);
     }
@@ -275,8 +271,7 @@ public class VariantEntityRepositoryTest {
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
-        List<VariantEntityRepositoryFilter> filters =
-                Helpers.getVariantEntityRepositoryFilters(null, null, "<0.5", null, null);
+        List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withSiftScore("<0.5").build();
         List<String> exclude = new ArrayList<>();
         testFiltersHelperRegion(regions, filters, exclude, 11);
     }
@@ -288,13 +283,57 @@ public class VariantEntityRepositoryTest {
         String chr = "11";
         int start = 180000;
         int end = 180500;
-        List<VariantEntityRepositoryFilter> filters =
-                Helpers.getVariantEntityRepositoryFilters(null, null, null, studies, null);
+        List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<String> exclude = new ArrayList<>();
         testFiltersHelperRegion(regions, filters, exclude, 20);
+    }
+
+    @Test
+    public void testRegionIsFoundWithFiles() {
+        List<String> files = new ArrayList<>();
+        files.add("218");
+        String chr = "11";
+        int start = 180000;
+        int end = 180500;
+        List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withFiles(files).build();
+        Region region = new Region(chr, start, end);
+        List<Region> regions = new ArrayList<>();
+        regions.add(region);
+        List<String> exclude = new ArrayList<>();
+        testFiltersHelperRegion(regions, filters, exclude, 7);
+    }
+
+    @Test
+    public void testRegionIsFoundWithTypes() {
+        List<Variant.VariantType> types = new ArrayList<>();
+        types.add(Variant.VariantType.INDEL);
+        String chr = "11";
+        int start = 180000;
+        int end = 180500;
+        List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withVariantTypes(types).build();
+        Region region = new Region(chr, start, end);
+        List<Region> regions = new ArrayList<>();
+        regions.add(region);
+        List<String> exclude = new ArrayList<>();
+        testFiltersHelperRegion(regions, filters, exclude, 3);
+    }
+
+    @Test
+    public void testRegionIsFoundWithAlternates() {
+        List<String> alternates = new ArrayList<>();
+        alternates.add("T");
+        String chr = "11";
+        int start = 180000;
+        int end = 180500;
+        List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withAlternates(alternates).build();
+        Region region = new Region(chr, start, end);
+        List<Region> regions = new ArrayList<>();
+        regions.add(region);
+        List<String> exclude = new ArrayList<>();
+        testFiltersHelperRegion(regions, filters, exclude, 21);
     }
 
     @Test
@@ -372,6 +411,26 @@ public class VariantEntityRepositoryTest {
         expectedChromosomeList.add("2");
 
         assertEquals(expectedChromosomeList, chromosomeList);
+    }
+
+    @Test
+    public void testCountByChromosomeAndStartAndEndAndAltAndStudy() {
+        List<String> studies = new ArrayList<>();
+        studies.add("PRJEB5829");
+        Long count = (long) variantEntityRepository.findByChromosomeAndStartAndAltAndStudyIn("11", 180002, "A", studies)
+                                                   .size();
+        assertEquals(new Long(1), count);
+    }
+
+    @Test
+    public void testCountByChromosomeAndStartAndTypeAndStudy() {
+        List<String> studies = new ArrayList<>();
+        studies.add("PRJX00001");
+        Long count = (long) variantEntityRepository.findByChromosomeAndStartAndTypeAndStudyIn("11", 180077,
+                                                                                              Variant.VariantType.INDEL,
+                                                                                              studies)
+                                                   .size();
+        assertEquals(new Long(1), count);
     }
 
     private void testFiltersHelperRegion(List<Region> regions, List<VariantEntityRepositoryFilter> filters,

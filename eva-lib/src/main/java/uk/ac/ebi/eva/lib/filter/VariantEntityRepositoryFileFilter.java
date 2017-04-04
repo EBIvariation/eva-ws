@@ -16,24 +16,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.server;
+package uk.ac.ebi.eva.lib.filter;
 
-import org.junit.Test;
+import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+public class VariantEntityRepositoryFileFilter extends VariantEntityRepositoryFilter<List<String>> {
 
-public class HelpersTest {
-    @Test
-    public void createExclusionFieldString() throws Exception {
-        List<String> exclude = new ArrayList<>();
-        exclude.add("files");
-        exclude.add("st");
-        String expected = "{ 'files' : 0, 'st' : 0 }";
+    private static final String FIELD = VariantEntityRepositoryFilter.FILE_ID_FIELD;
 
-        assertEquals(expected, Utils.createExclusionFieldString(exclude));
+    public VariantEntityRepositoryFileFilter(List<String> files) {
+        super(FIELD, files, VariantEntityRepository.RelationalOperator.IN);
     }
-
 }

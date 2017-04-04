@@ -15,11 +15,14 @@
  */
 package uk.ac.ebi.eva.lib.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Extension of Spring's MongoRepository for VariantSourceEntity class.
@@ -35,5 +38,13 @@ public interface VariantSourceEntityRepository extends MongoRepository<VariantSo
     List<VariantSourceEntity> findAll();
 
     List<VariantSourceEntity> findByStudyIdOrStudyName(String studyId, String studyName);
+
+    List<VariantSourceEntity> findByStudyIdIn(List<String> studyIds, Pageable pageable);
+
+    long countByStudyIdIn(List<String> studyIds);
+
+    List<VariantSourceEntity> findByFileIdIn(List<String> fileIds, Pageable pageable);
+
+    long countByFileIdIn(List<String> fileIds);
 
 }

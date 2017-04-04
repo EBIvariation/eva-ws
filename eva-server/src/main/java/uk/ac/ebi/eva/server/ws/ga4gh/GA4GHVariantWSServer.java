@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014-2016 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2017 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,22 +19,18 @@
 
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
+import io.swagger.annotations.Api;
 import org.opencb.biodata.ga4gh.GASearchVariantRequest;
 import org.opencb.biodata.ga4gh.GASearchVariantsResponse;
 import org.opencb.biodata.ga4gh.GAVariant;
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.biodata.models.variant.Variant;
 import org.opencb.biodata.models.variant.ga4gh.GAVariantFactory;
-import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,18 +38,31 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-
+import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
+import uk.ac.ebi.eva.lib.filter.FilterBuilder;
+import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
-/**
- *
- * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
- */
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/v1/ga4gh/variants", produces = "application/json")
 @Api(tags = { "ga4gh", "variants" })
 public class GA4GHVariantWSServer extends EvaWSServer {
+
+    @Autowired
+    private VariantEntityRepository variantEntityRepository;
+
+    protected static Logger logger = LoggerFactory.getLogger(GA4GHVariantWSServer.class);
     
     public GA4GHVariantWSServer() { }
     
@@ -73,35 +82,31 @@ public class GA4GHVariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "pageSize", defaultValue = "10") int limit)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         initializeQuery();
-        
-        VariantDBAdaptor variantMongoDbAdaptor = dbAdaptorConnector.getVariantDBAdaptor("hsapiens_grch37");
-        
+
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
+
         if (files != null && !files.isEmpty()) {
             queryOptions.put("files", files);
         }
-        
-        int idxCurrentPage = 0;
-        if (pageToken != null && !pageToken.isEmpty() && StringUtils.isNumeric(pageToken)) {
-            idxCurrentPage = Integer.parseInt(pageToken);
-            queryOptions.put("skip", idxCurrentPage * limit);
-        }
-        queryOptions.put("limit", limit);
-        
-        // Create the provided region, whose size can't exceed 1 million positions
-        Region region = new Region(chromosome, start, end);
-        int regionSize = region.getEnd()-region.getStart();
-        
-        if (regionSize > 1000000) {
-            throw new IllegalArgumentException("The size of the region is larger than 1 million nucleotides");
-        }
+        List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withFiles(files).build();
 
-        QueryResult<Variant> qr = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
+        PageRequest pageRequest = Utils.getPageRequest(limit, pageToken);
+
+        Region region = new Region(chromosome, start, end);
+        List<Region> regions = new ArrayList<>();
+        regions.add(region);
+
+        List<VariantEntity> variantEntities = variantEntityRepository.findByRegionsAndComplexFilters(regions, filters,
+                                                                                                     null, pageRequest);
+        List<Variant> variants = Collections.unmodifiableList(variantEntities);
+
+        Long numTotalResults = variantEntityRepository.countByRegionsAndComplexFilters(regions, filters);
+
         // Convert Variant objects to GAVariant
-        List<GAVariant> gaVariants = GAVariantFactory.create(qr.getResult());
+        List<GAVariant> gaVariants = GAVariantFactory.create(variants);
         // Calculate the next page token
-        int idxLastElement = idxCurrentPage * limit + limit;
-        String nextPageToken = (idxLastElement < qr.getNumTotalResults()) ? String.valueOf(idxCurrentPage + 1) : null;
-        
+        String nextPageToken = Utils.getNextPageToken(pageRequest, limit, numTotalResults);
+
         // Create the custom response for the GA4GH API
         return new GASearchVariantsResponse(gaVariants, nextPageToken);
     }

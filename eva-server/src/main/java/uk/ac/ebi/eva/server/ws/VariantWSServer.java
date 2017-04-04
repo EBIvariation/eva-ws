@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.filter.Helpers;
+import uk.ac.ebi.eva.lib.filter.FilterBuilder;
 import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
@@ -91,12 +91,11 @@ public class VariantWSServer extends EvaWSServer {
             String alternate = (regionId.length > 3) ? regionId[3] : null;
             variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
                                                            alternate);
-            numTotalResults = countByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
-                                                           alternate);
+            numTotalResults = (long) variantEntities.size();
         } else {
-            List<VariantEntityRepositoryFilter> filters =
-                    Helpers.getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore,
-                                                              studies, consequenceType);
+            List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
+                    .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType
+                    );
 
             List<String> excludeMapped = new ArrayList<>();
             if (exclude != null && !exclude.isEmpty()){
@@ -126,15 +125,6 @@ public class VariantWSServer extends EvaWSServer {
                                                                                             reference, alternate);
         } else {
             return variantEntityRepository.findByChromosomeAndStartAndReference(chromosome, start, reference);
-        }
-    }
-
-    private Long countByCoordinatesAndAlleles(String chromosome, int start, String reference, String alternate) {
-        if (alternate != null) {
-            return variantEntityRepository.countByChromosomeAndStartAndReferenceAndAlternate(chromosome, start,
-                                                                                            reference, alternate);
-        } else {
-            return variantEntityRepository.countByChromosomeAndStartAndReference(chromosome, start, reference);
         }
     }
 

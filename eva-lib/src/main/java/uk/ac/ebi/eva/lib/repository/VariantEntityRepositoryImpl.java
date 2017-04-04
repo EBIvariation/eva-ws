@@ -19,6 +19,8 @@
 package uk.ac.ebi.eva.lib.repository;
 
 import org.opencb.biodata.models.feature.Region;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,6 +48,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
     private MongoTemplate mongoTemplate;
 
+    protected static Logger logger = LoggerFactory.getLogger(VariantEntityRepositoryImpl.class);
+
     private final int MARGIN = 1000000;
 
     @Autowired
@@ -67,7 +71,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     @Override
-    public List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions, List<VariantEntityRepositoryFilter> filters,
+    public List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions,
+                                                              List<VariantEntityRepositoryFilter> filters,
                                                               List<String> exclude, Pageable pageable) {
         Query query = new Query();
         addRegionsToQuery(query, regions);
@@ -87,8 +92,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                            .distinct("chr");
     }
 
-    private List<VariantEntity> findByComplexFiltersHelper(Query query, List<VariantEntityRepositoryFilter> filters, List<String> exclude,
-                                                           Pageable pageable) {
+    private List<VariantEntity> findByComplexFiltersHelper(Query query, List<VariantEntityRepositoryFilter> filters,
+                                                           List<String> exclude, Pageable pageable) {
 
         applyFilters(query, filters);
 
