@@ -77,13 +77,22 @@ public class GA4GHVariantWSServerTest {
 
     @Test
     public void testRegionWithVariants() throws Exception {
-        GASearchVariantsResponse gaSearchVariantsResponse = testVariantWsHelper("1", 500, 2000, new ArrayList<>(), "0", 10);
+        GASearchVariantsResponse gaSearchVariantsResponse = testVariantWsHelper("1", 500, 2000, new ArrayList<>(),
+                                                                                "0", 10);
         assertEquals(1, gaSearchVariantsResponse.getVariants().size());
-        assertEquals(GAVariantFactory.create(Collections.singletonList(VARIANT)), gaSearchVariantsResponse.getVariants());
+        assertEquals(GAVariantFactory.create(Collections.singletonList(VARIANT)),
+                     gaSearchVariantsResponse.getVariants());
     }
 
-    private GASearchVariantsResponse testVariantWsHelper(String chromosome, int start, int end, List<String> variantSetIds,
-                                        String pageToken, int pageSize) {
+    @Test
+    public void testRegionWithNoVariants() throws Exception {
+        GASearchVariantsResponse gaSearchVariantsResponse = testVariantWsHelper("2", 5000, 10000, new ArrayList<>(),
+                                                                                "0", 10);
+        assertEquals(0, gaSearchVariantsResponse.getVariants().size());
+    }
+
+    private GASearchVariantsResponse testVariantWsHelper(String chromosome, int start, int end,
+                                                         List<String> variantSetIds, String pageToken, int pageSize) {
 
         String url = String.format("/v1/ga4gh/variants/search?" +
                                            "referenceName=%s" +
