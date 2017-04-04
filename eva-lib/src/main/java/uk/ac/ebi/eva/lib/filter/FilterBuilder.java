@@ -23,6 +23,9 @@ import org.opencb.biodata.models.variant.Variant;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class for building filters for querying using the VariantEntityRepository
+ */
 public class FilterBuilder {
 
     private List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
