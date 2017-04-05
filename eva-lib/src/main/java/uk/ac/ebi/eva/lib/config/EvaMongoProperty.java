@@ -4,8 +4,8 @@ package uk.ac.ebi.eva.lib.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-@Component
 @ConfigurationProperties(prefix = "eva.mongo")
+@Component
 public class EvaMongoProperty {
 
     private String host;
