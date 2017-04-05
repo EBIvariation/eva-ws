@@ -1,27 +1,9 @@
-/*
- * European Variation Archive (EVA) - Open-access database of all types of genetic
- * variation data from all species
- *
- * Copyright 2017 EMBL - European Bioinformatics Institute
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opencb.biodata.ga4gh.GASearchCallSetsResponse;
+import org.opencb.biodata.ga4gh.GASearchVariantSetsResponse;
 import org.opencb.biodata.models.variant.VariantSource;
 import org.opencb.biodata.models.variant.VariantStudy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +29,7 @@ import static org.mockito.Matchers.eq;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class GA4GHVariantCallSetWSServerTest {
+public class GA4GHVariantSetWSServerTest {
 
     private static VariantSourceEntity VARIANT_SOURCE_ENTITY =
             new VariantSourceEntity("fileId", "fileName", "studyId", "studyName", VariantStudy.StudyType.CASE,
@@ -59,38 +41,37 @@ public class GA4GHVariantCallSetWSServerTest {
     @MockBean
     private VariantSourceEntityRepository variantSourceEntityRepository;
 
+
     @Before
     public void setUp() throws Exception {
         Map<String, Integer> samplesPosition = new HashMap<>();
         samplesPosition.put("sample1", 123);
         VARIANT_SOURCE_ENTITY.setSamplesPosition(samplesPosition);
 
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("header", "myHeader");
+        VARIANT_SOURCE_ENTITY.setMetadata(metadata);
+
         List<VariantSourceEntity> variantSourceEntities = Collections.singletonList(VARIANT_SOURCE_ENTITY);
 
-        given(variantSourceEntityRepository.findByFileIdIn(eq(Collections.singletonList("fileId")), any()))
+        given(variantSourceEntityRepository.findByStudyIdIn(eq(Collections.singletonList("studyId")), any()))
                 .willReturn(variantSourceEntities);
 
-        given(variantSourceEntityRepository.countByFileIdIn(eq(Collections.singletonList("fileId"))))
+        given(variantSourceEntityRepository.countByStudyIdIn(eq(Collections.singletonList("studyId"))))
                 .willReturn(1L);
     }
 
     @Test
-    public void testGetCallSetsExisting() {
-        GASearchCallSetsResponse gaSearchCallSetsResponse = testGetCallSetsHelper(Collections.singletonList("fileId"));
-        assertEquals(1, gaSearchCallSetsResponse.getCallSets().size());
+    public void testGetVariantSetsExisting() {
+        GASearchVariantSetsResponse response = testGetVariantSetsHelper(Collections.singletonList("studyId"));
+        assertEquals(1, response.getVariantSets().size());
     }
 
-    @Test
-    public void testGetCallSetsNotExisting() {
-        GASearchCallSetsResponse response = testGetCallSetsHelper(Collections.singletonList("otherFileId"));
-        assertEquals(0, response.getCallSets().size());
-    }
+    private GASearchVariantSetsResponse testGetVariantSetsHelper(List<String> datasetIds) {
+        String url = String.format("/v1/ga4gh/variantsets/search?datasetIds=%s", String.join(",", datasetIds));
 
-    private GASearchCallSetsResponse testGetCallSetsHelper(List<String> variantSetIds) {
-        String url = String.format("/v1/ga4gh/callsets/search?variantSetIds=%s", String.join(",", variantSetIds));
-
-        ResponseEntity<GASearchCallSetsResponse> response = restTemplate.getForEntity(
-                url, GASearchCallSetsResponse.class);
+        ResponseEntity<GASearchVariantSetsResponse> response = restTemplate.getForEntity(
+                url, GASearchVariantSetsResponse.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
