@@ -67,6 +67,12 @@ public class GA4GHVariantSetWSServerTest {
         assertEquals(1, response.getVariantSets().size());
     }
 
+    @Test
+    public void testGetVariantSetsNotExisting() {
+        GASearchVariantSetsResponse response = testGetVariantSetsHelper(Collections.singletonList("otherStudyId"));
+        assertEquals(0, response.getVariantSets().size());
+    }
+
     private GASearchVariantSetsResponse testGetVariantSetsHelper(List<String> datasetIds) {
         String url = String.format("/v1/ga4gh/variantsets/search?datasetIds=%s", String.join(",", datasetIds));
 
