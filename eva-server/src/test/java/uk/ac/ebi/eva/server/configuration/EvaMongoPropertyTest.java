@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import uk.ac.ebi.eva.lib.config.EvaMongoProperty;
+import uk.ac.ebi.eva.lib.config.EvaProperty;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 public class EvaMongoPropertyTest {
 
     @Autowired
-    private EvaMongoProperty evaMongoProperty;
+    private EvaProperty evaProperty;
 
     @Value("${eva.mongo.host}")
     private String expectedHostProp;
@@ -24,7 +24,7 @@ public class EvaMongoPropertyTest {
     @Test
     public void testLoadingOfProperties() {
         System.out.println("expectedHostProp: " + expectedHostProp);
-        assertEquals(expectedHostProp, evaMongoProperty.getHost());
+        assertEquals(expectedHostProp, evaProperty.getMongo().getHost());
     }
 
 }
