@@ -31,6 +31,8 @@ import org.opencb.opencga.storage.mongodb.variant.VariantMongoDBAdaptor;
 import org.opencb.opencga.storage.mongodb.variant.VariantSourceMongoDBAdaptor;
 import org.springframework.stereotype.Component;
 
+import uk.ac.ebi.eva.lib.config.EvaProperty;
+
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -115,6 +117,40 @@ public class DBAdaptorConnector {
         MongoClientOptions options = MongoClientOptions.builder()
                 .readPreference(ReadPreference.valueOf(readPreference))
                 .build();
+
+        return new MongoClient(servers, mongoCredentialList, options);
+    }
+
+    public static MongoClient getMongoClient(EvaProperty evaProperty) throws UnknownHostException {
+
+        String[] hosts = evaProperty.getMongo().getHost().split(",");
+        List<ServerAddress> servers = new ArrayList<>();
+
+        // Get the list of hosts (optionally including the port number)
+        for (String host : hosts) {
+            String[] params = host.split(":");
+            if (params.length > 1) {
+                servers.add(new ServerAddress(params[0], Integer.parseInt(params[1])));
+            } else {
+                servers.add(new ServerAddress(params[0], 27017));
+            }
+        }
+
+        List<MongoCredential> mongoCredentialList = new ArrayList<>();
+        String authenticationDb = evaProperty.getMongo().getAuth().getDb();
+        if (authenticationDb != null && !authenticationDb.isEmpty()) {
+            mongoCredentialList = Collections.singletonList(MongoCredential.createCredential(
+                    evaProperty.getMongo().getUser(),
+                    authenticationDb,
+                    evaProperty.getMongo().getPasswd().toCharArray()));
+        }
+
+        String readPreference = evaProperty.getMongo().getReadPreference();
+        readPreference = readPreference == null || readPreference.isEmpty()? "secondaryPreferred" : readPreference;
+
+        MongoClientOptions options = MongoClientOptions.builder()
+                                                       .readPreference(ReadPreference.valueOf(readPreference))
+                                                       .build();
 
         return new MongoClient(servers, mongoCredentialList, options);
     }

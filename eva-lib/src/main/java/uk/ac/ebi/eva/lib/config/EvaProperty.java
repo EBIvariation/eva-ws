@@ -1,10 +1,13 @@
 package uk.ac.ebi.eva.lib.config;
 
+import com.sun.istack.internal.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @ConfigurationProperties(prefix = "eva")
 @Component
+@Configuration
 public class EvaProperty {
 
 //    eva.mongo.host=@eva.mongo.host@

@@ -5,5 +5,5 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan(basePackages = {"uk.ac.ebi.eva.lib.config"})
-public class EvaMongoPropertyConfiguration {
+public class EvaPropertyConfiguration {
 }
