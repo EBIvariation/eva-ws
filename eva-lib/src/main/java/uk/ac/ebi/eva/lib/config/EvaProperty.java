@@ -26,7 +26,21 @@ public class EvaProperty {
         private String passwd;
         private String readPreference;
 
+        private Auth auth;
+
         private Collections collections;
+
+        public static class Auth {
+            private String db;
+
+            public String getDb() {
+                return db;
+            }
+
+            public void setDb(String db) {
+                this.db = db;
+            }
+        }
 
         public static class Collections {
             private String variants;
@@ -79,6 +93,14 @@ public class EvaProperty {
 
         public void setReadPreference(String readPreference) {
             this.readPreference = readPreference;
+        }
+
+        public Auth getAuth() {
+            return auth;
+        }
+
+        public void setAuth(Auth auth) {
+            this.auth = auth;
         }
 
         public Collections getCollections() {
