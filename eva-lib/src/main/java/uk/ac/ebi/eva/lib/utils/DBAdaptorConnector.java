@@ -86,41 +86,6 @@ public class DBAdaptorConnector {
      * @return MongoClient with given credentials
      * @throws UnknownHostException
      */
-    public static MongoClient getMongoClient(Properties properties) throws UnknownHostException {
-
-        String[] hosts = properties.getProperty("eva.mongo.host").split(",");
-        List<ServerAddress> servers = new ArrayList<>();
-
-        // Get the list of hosts (optionally including the port number)
-        for (String host : hosts) {
-            String[] params = host.split(":");
-            if (params.length > 1) {
-                servers.add(new ServerAddress(params[0], Integer.parseInt(params[1])));
-            } else {
-                servers.add(new ServerAddress(params[0], 27017));
-            }
-        }
-
-        List<MongoCredential> mongoCredentialList = new ArrayList<>();
-        String authenticationDb = properties.getProperty("eva.mongo.auth.db", null);
-        if (authenticationDb != null && !authenticationDb.isEmpty()) {
-            mongoCredentialList = Collections.singletonList(MongoCredential.createCredential(
-                    properties.getProperty("eva.mongo.user"),
-                    authenticationDb,
-                    properties.getProperty("eva.mongo.passwd").toCharArray()));
-        }
-
-
-        String readPreference = properties.getProperty("eva.mongo.read-preference");
-        readPreference = readPreference == null || readPreference.isEmpty()? "secondaryPreferred" : readPreference;
-
-        MongoClientOptions options = MongoClientOptions.builder()
-                .readPreference(ReadPreference.valueOf(readPreference))
-                .build();
-
-        return new MongoClient(servers, mongoCredentialList, options);
-    }
-
     public static MongoClient getMongoClient(EvaProperty evaProperty) throws UnknownHostException {
 
         String[] hosts = evaProperty.getMongo().getHost().split(",");
