@@ -42,7 +42,6 @@ public class DBAdaptorConnectorTest {
 
     @Test
     public void testEvaPropertyAutowiring() {
-//        EvaProperty evaProperty = DBAdaptorConnector.getEvaProperty();
         assertNotNull(evaProperty);
         assertNotNull(evaProperty.getMongo());
         System.out.println(evaProperty);
@@ -68,31 +67,9 @@ public class DBAdaptorConnectorTest {
      * @throws Exception
      */
     @Test
-    public void testDefaultReadPreferenceInMongoClient() throws Exception {
-        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
-        assertEquals(ReadPreference.secondaryPreferred(), mongoClient.getReadPreference());
-    }
-
-    @Test
     public void testDefaultReadPreferenceInMongoClientEvaProperty() throws Exception {
         MongoClient mongoClient = DBAdaptorConnector.getMongoClient(evaProperty);
         assertEquals(ReadPreference.secondaryPreferred(), mongoClient.getReadPreference());
-    }
-
-    /**
-     * Check that the value:
-     * eva.mongo.read-preference=nearest
-     * is properly read by DBAdaptorConnector::getMongoClient
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testReadPreferenceInMongoClient() throws Exception {
-        ReadPreference readPreference = ReadPreference.nearest();
-        properties.put("eva.mongo.read-preference", readPreference.getName());
-        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
-
-        assertEquals(readPreference, mongoClient.getReadPreference());
     }
 
     @Before
