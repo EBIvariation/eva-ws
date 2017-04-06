@@ -35,8 +35,6 @@ public class DBAdaptorConnectorTest {
     @Autowired
     private MongoDbFactory factory;
 
-    private Properties properties;
-
     @Autowired
     private EvaProperty evaProperty;
 
@@ -70,11 +68,5 @@ public class DBAdaptorConnectorTest {
     public void testDefaultReadPreferenceInMongoClientEvaProperty() throws Exception {
         MongoClient mongoClient = DBAdaptorConnector.getMongoClient(evaProperty);
         assertEquals(ReadPreference.secondaryPreferred(), mongoClient.getReadPreference());
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        properties = new Properties();
-        properties.load(DBAdaptorConnectorTest.class.getResourceAsStream("/eva.properties"));
     }
 }
