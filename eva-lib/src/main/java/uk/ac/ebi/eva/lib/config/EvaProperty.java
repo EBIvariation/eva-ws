@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @ConfigurationProperties(prefix = "eva")
 @Component
-@Configuration
+//@Configuration
 public class EvaProperty {
 
 //    eva.mongo.host=@eva.mongo.host@
