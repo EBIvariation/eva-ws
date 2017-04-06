@@ -17,10 +17,14 @@
 package uk.ac.ebi.eva.lib;
 
 import com.mongodb.MongoClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.test.context.ContextConfiguration;
 
+import uk.ac.ebi.eva.lib.config.EvaProperty;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
@@ -28,7 +32,23 @@ import java.io.IOException;
 import java.util.Properties;
 
 @Configuration
+@Import(EvaProperty.class)
 public class MultiMongoFactoryConfiguration {
+
+    @Autowired
+    private EvaProperty evaProperty;
+
+//    /**
+//     * Inject into the spring context a MultiMongoDbFactory as the implementation of MongoDbFactory.
+//     * This factory will allow to use the Repositories with several databases.
+//     */
+//    @Bean
+//    public MongoDbFactory mongoDbFactory() throws IOException {
+//        Properties properties = new Properties();
+//        properties.load(MongoConfiguration.class.getResourceAsStream("/eva.properties"));
+//        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
+//        return new MultiMongoDbFactory(mongoClient, "unusedDefaultDB");
+//    }
 
     /**
      * Inject into the spring context a MultiMongoDbFactory as the implementation of MongoDbFactory.
@@ -36,9 +56,8 @@ public class MultiMongoFactoryConfiguration {
      */
     @Bean
     public MongoDbFactory mongoDbFactory() throws IOException {
-        Properties properties = new Properties();
-        properties.load(MongoConfiguration.class.getResourceAsStream("/eva.properties"));
-        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
+        assert(evaProperty != null);
+        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(evaProperty);
         return new MultiMongoDbFactory(mongoClient, "unusedDefaultDB");
     }
 }
