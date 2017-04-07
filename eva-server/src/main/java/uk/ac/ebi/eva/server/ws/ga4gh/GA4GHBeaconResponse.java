@@ -14,7 +14,7 @@ public class GA4GHBeaconResponse {
 
     private String errorMessage;
 
-    public GA4GHBeaconResponse() {
+    GA4GHBeaconResponse() {
     }
 
     public GA4GHBeaconResponse(String chromosome, Integer start, String allele, String datasetIds, boolean exists) {
@@ -33,51 +33,7 @@ public class GA4GHBeaconResponse {
         this.errorMessage = errorMessage;
     }
 
-    public String getChromosome() {
-        return chromosome;
-    }
-
-    public Integer getStart() {
-        return start;
-    }
-
-    public String getAllele() {
-        return allele;
-    }
-
-    public String getDatasetIds() {
-        return datasetIds;
-    }
-
     public boolean isExists() {
         return exists;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setChromosome(String chromosome) {
-        this.chromosome = chromosome;
-    }
-
-    public void setStart(Integer start) {
-        this.start = start;
-    }
-
-    public void setAllele(String allele) {
-        this.allele = allele;
-    }
-
-    public void setDatasetIds(String datasetIds) {
-        this.datasetIds = datasetIds;
-    }
-
-    public void setExists(boolean exists) {
-        this.exists = exists;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
     }
 }
