@@ -72,7 +72,7 @@ public class GA4GHVariantWSServerTest {
                 .willReturn(variantEntities);
         given(variantEntityRepository.countByRegionsAndComplexFilters(eq(Collections.singletonList(region)),
                                                                      any()))
-                .willReturn(new Long(variantEntities.size()));
+                .willReturn(Long.valueOf(variantEntities.size()));
     }
 
     @Test

@@ -74,7 +74,7 @@ public class GA4GHBeaconWSServerTest {
         assertFalse(testBeaconHelper("2", 2000, "alternateOther", new ArrayList<>()));
     }
 
-    private Boolean testBeaconHelper(String chromosome, int start, String allele, List<String> datasetIds) {
+    private boolean testBeaconHelper(String chromosome, int start, String allele, List<String> datasetIds) {
         String url = String.format("/v1/ga4gh/beacon?referenceName=%s&start=%d&allele=%s&datasetIds=%s",
                                    chromosome,
                                    start,
@@ -85,7 +85,7 @@ public class GA4GHBeaconWSServerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        GA4GHBeaconResponse ga4GHBeaconResponse = response.getBody();
-        return ga4GHBeaconResponse.isExists();
+        GA4GHBeaconResponse ga4ghBeaconResponse = response.getBody();
+        return ga4ghBeaconResponse.isExists();
     }
 }

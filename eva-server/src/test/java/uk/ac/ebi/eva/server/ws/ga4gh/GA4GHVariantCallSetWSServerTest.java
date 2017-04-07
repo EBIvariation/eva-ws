@@ -71,7 +71,7 @@ public class GA4GHVariantCallSetWSServerTest {
                 .willReturn(variantSourceEntities);
 
         given(variantSourceEntityRepository.countByFileIdIn(eq(Collections.singletonList("fileId"))))
-                .willReturn(1L);
+                .willReturn(Long.valueOf(variantSourceEntities.size()));
     }
 
     @Test

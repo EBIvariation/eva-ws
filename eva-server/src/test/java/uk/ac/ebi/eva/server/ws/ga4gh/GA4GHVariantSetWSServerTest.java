@@ -58,7 +58,7 @@ public class GA4GHVariantSetWSServerTest {
                 .willReturn(variantSourceEntities);
 
         given(variantSourceEntityRepository.countByStudyIdIn(eq(Collections.singletonList("studyId"))))
-                .willReturn(1L);
+                .willReturn(Long.valueOf(variantSourceEntities.size()));
     }
 
     @Test
