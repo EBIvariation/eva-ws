@@ -48,8 +48,6 @@ import static org.mockito.Matchers.eq;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GA4GHBeaconWSServerTest {
 
-    private static final VariantEntity VARIANT = new VariantEntity("1", 1000, 1005, "reference", "alternate");
-
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -58,7 +56,8 @@ public class GA4GHBeaconWSServerTest {
 
     @Before
     public void setUp() throws Exception {
-        List<VariantEntity> variantEntities = Collections.singletonList(VARIANT);
+        VariantEntity variant = new VariantEntity("1", 1000, 1005, "reference", "alternate");
+        List<VariantEntity> variantEntities = Collections.singletonList(variant);
 
         given(variantEntityRepository.findByChromosomeAndStartAndAltAndStudyIn(eq("1"), anyInt(), any(), any()))
                 .willReturn(variantEntities);

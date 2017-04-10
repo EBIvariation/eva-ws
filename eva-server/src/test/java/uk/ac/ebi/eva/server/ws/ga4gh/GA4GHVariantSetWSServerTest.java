@@ -31,10 +31,6 @@ import static org.mockito.Matchers.eq;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GA4GHVariantSetWSServerTest {
 
-    private static VariantSourceEntity VARIANT_SOURCE_ENTITY =
-            new VariantSourceEntity("fileId", "fileName", "studyId", "studyName", VariantStudy.StudyType.CASE,
-                                    VariantSource.Aggregation.NONE, null, null, null);
-
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -44,15 +40,20 @@ public class GA4GHVariantSetWSServerTest {
 
     @Before
     public void setUp() throws Exception {
+        VariantSourceEntity variantSourceEntity = new VariantSourceEntity("fileId", "fileName", "studyId", "studyName",
+                                                                          VariantStudy.StudyType.CASE,
+                                                                          VariantSource.Aggregation.NONE, null, null,
+                                                                          null);
+
         Map<String, Integer> samplesPosition = new HashMap<>();
         samplesPosition.put("sample1", 123);
-        VARIANT_SOURCE_ENTITY.setSamplesPosition(samplesPosition);
+        variantSourceEntity.setSamplesPosition(samplesPosition);
 
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("header", "myHeader");
-        VARIANT_SOURCE_ENTITY.setMetadata(metadata);
+        variantSourceEntity.setMetadata(metadata);
 
-        List<VariantSourceEntity> variantSourceEntities = Collections.singletonList(VARIANT_SOURCE_ENTITY);
+        List<VariantSourceEntity> variantSourceEntities = Collections.singletonList(variantSourceEntity);
 
         given(variantSourceEntityRepository.findByStudyIdIn(eq(Collections.singletonList("studyId")), any()))
                 .willReturn(variantSourceEntities);
