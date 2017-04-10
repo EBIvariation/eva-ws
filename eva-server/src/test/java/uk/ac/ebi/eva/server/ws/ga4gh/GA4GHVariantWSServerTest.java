@@ -49,7 +49,7 @@ import static org.mockito.Matchers.eq;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GA4GHVariantWSServerTest {
 
-    private static VariantEntity VARIANT = new VariantEntity("1", 1000, 1005, "A", "C");
+    private VariantEntity variant;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -59,9 +59,10 @@ public class GA4GHVariantWSServerTest {
 
     @Before
     public void setUp() throws Exception {
-        VARIANT.setIds(Collections.singleton("1_1000_A_C"));
-        VARIANT.addSourceEntry(new VariantSourceEntry("FILE_ID", "STUDY_ID"));
-        List<VariantEntity> variantEntities = Collections.singletonList(VARIANT);
+        variant = new VariantEntity("1", 1000, 1005, "A", "C");
+        variant.setIds(Collections.singleton("1_1000_A_C"));
+        variant.addSourceEntry(new VariantSourceEntry("FILE_ID", "STUDY_ID"));
+        List<VariantEntity> variantEntities = Collections.singletonList(variant);
 
         Region region = new Region("1", 500, 2000);
 
@@ -80,7 +81,7 @@ public class GA4GHVariantWSServerTest {
         GASearchVariantsResponse gaSearchVariantsResponse = testVariantWsHelper("1", 500, 2000, new ArrayList<>(),
                                                                                 "0", 10);
         assertEquals(1, gaSearchVariantsResponse.getVariants().size());
-        assertEquals(GAVariantFactory.create(Collections.singletonList(VARIANT)),
+        assertEquals(GAVariantFactory.create(Collections.singletonList(variant)),
                      gaSearchVariantsResponse.getVariants());
     }
 
