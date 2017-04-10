@@ -13,7 +13,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.opencb.opencga</groupId>
+            <groupId>uk.ac.ebi.eva</groupId>
             <artifactId>opencga-storage-mongodb</artifactId>
             <exclusions>
                 <exclusion>

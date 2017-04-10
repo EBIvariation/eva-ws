@@ -51,7 +51,7 @@
                 <version>0.2-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>org.opencb.opencga</groupId>
+                <groupId>uk.ac.ebi.eva</groupId>
                 <artifactId>opencga-storage-mongodb</artifactId>
                 <version>${opencga.version}</version>
                 <exclusions>
