@@ -1,14 +1,18 @@
 package uk.ac.ebi.eva.lib.config;
 
-import com.sun.istack.internal.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @ConfigurationProperties(prefix = "eva")
 @Component
-//@Configuration
+@Configuration
 public class EvaProperty {
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
 //    eva.mongo.host=@eva.mongo.host@
 //    eva.mongo.user=@eva.mongo.user@
