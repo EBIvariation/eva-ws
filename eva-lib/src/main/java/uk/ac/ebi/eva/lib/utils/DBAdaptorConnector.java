@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2017 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,11 @@
 
 package uk.ac.ebi.eva.lib.utils;
 
-import com.mongodb.*;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoCredential;
+import com.mongodb.ReadPreference;
+import com.mongodb.ServerAddress;
 import org.opencb.datastore.core.config.DataStoreServerAddress;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
@@ -29,6 +33,7 @@ import org.opencb.opencga.storage.mongodb.utils.MongoCredentials;
 import org.opencb.opencga.storage.mongodb.variant.StudyMongoDBAdaptor;
 import org.opencb.opencga.storage.mongodb.variant.VariantMongoDBAdaptor;
 import org.opencb.opencga.storage.mongodb.variant.VariantSourceMongoDBAdaptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.eva.lib.config.EvaProperty;
@@ -38,39 +43,30 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
-/**
- *
- * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
- */
 @Component
 public class DBAdaptorConnector {
 
-    private Properties properties;
-
-    public DBAdaptorConnector() throws IOException {
-        properties = new Properties();
-        properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
-    }
+    @Autowired
+    private EvaProperty evaProperty;
 
     public VariantDBAdaptor getVariantDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return new VariantMongoDBAdaptor(getCredentials(species, properties),
-                properties.getProperty("eva.mongo.collections.variants"), 
-                properties.getProperty("eva.mongo.collections.files"));
+        return new VariantMongoDBAdaptor(getCredentials(species, evaProperty),
+                                         evaProperty.getMongo().getCollections().getVariants(),
+                                         evaProperty.getMongo().getCollections().getFiles());
     }
     
     public StudyDBAdaptor getStudyDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return new StudyMongoDBAdaptor(getCredentials(species, properties),
-                properties.getProperty("eva.mongo.collections.files"));
+        return new StudyMongoDBAdaptor(getCredentials(species, evaProperty),
+                                       evaProperty.getMongo().getCollections().getFiles());
     }
     
     public VariantSourceDBAdaptor getVariantSourceDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return new VariantSourceMongoDBAdaptor(getCredentials(species, properties),
-                properties.getProperty("eva.mongo.collections.files"));
+        return new VariantSourceMongoDBAdaptor(getCredentials(species, evaProperty),
+                                               evaProperty.getMongo().getCollections().getFiles());
     }
 
     /**
@@ -131,13 +127,13 @@ public class DBAdaptorConnector {
      * @return org.opencb.opencga.storage.mongodb.utils.MongoCredentials
      * @throws UnknownHostException
      */
-    private MongoCredentials getCredentials(String species, Properties properties)
+    private MongoCredentials getCredentials(String species, EvaProperty evaProperty)
             throws IllegalOpenCGACredentialsException, IOException {
         if (species == null || species.isEmpty()) {
             throw new IllegalArgumentException("Please specify a species");
         }
-        
-        String[] hosts = properties.getProperty("eva.mongo.host").split(",");
+
+        String[] hosts = evaProperty.getMongo().getHost().split(",");
         List<DataStoreServerAddress> servers = new ArrayList();
         
         // Get the list of hosts (optionally including the port number)
@@ -151,12 +147,12 @@ public class DBAdaptorConnector {
         }
         
         MongoCredentials credentials = new MongoCredentials(servers,
-                getDBName(species),
-                properties.getProperty("eva.mongo.user"),
-                properties.getProperty("eva.mongo.passwd"));
+                                                            getDBName(species),
+                                                            evaProperty.getMongo().getUser(),
+                                                            evaProperty.getMongo().getPasswd());
         
         // Set authentication database, if specified in the configuration
-        credentials.setAuthenticationDatabase(properties.getProperty("eva.mongo.auth.db", null));
+        credentials.setAuthenticationDatabase(evaProperty.getMongo().getAuth().getDb());
         
         return credentials;
     }
