@@ -15,13 +15,9 @@ import uk.ac.ebi.eva.lib.configuration.EvaPropertyTestConfiguration;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {EvaPropertyTestConfiguration.class})
 @SpringBootTest(classes = {EvaPropertyTestConfiguration.class})
 @EnableConfigurationProperties
 public class EvaPropertyTest {
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     @Autowired
     private EvaProperty evaProperty;
