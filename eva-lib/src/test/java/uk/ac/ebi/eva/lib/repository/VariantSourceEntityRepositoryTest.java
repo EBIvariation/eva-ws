@@ -24,11 +24,12 @@ import org.opencb.biodata.models.variant.stats.VariantGlobalStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 import uk.ac.ebi.eva.lib.configuration.MongoRepositoryTestConfiguration;
@@ -41,9 +42,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {MongoRepositoryTestConfiguration.class})
 @UsingDataSet(locations = {"/test-data/files.json"})
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class VariantSourceEntityRepositoryTest {
 
     protected static Logger logger = LoggerFactory.getLogger(VariantSourceEntityRepositoryTest.class);
