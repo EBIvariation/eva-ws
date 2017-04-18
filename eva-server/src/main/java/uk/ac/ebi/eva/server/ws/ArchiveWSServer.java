@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import uk.ac.ebi.eva.lib.config.EvaProperty;
 import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
@@ -66,12 +67,8 @@ public class ArchiveWSServer extends EvaWSServer {
     @Autowired
     private VariantStudySummaryRepository variantStudySummaryRepository;
 
-    private Properties properties;
-    
-    public ArchiveWSServer() throws IOException {
-        properties = new Properties();
-        properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
-    }
+    @Autowired
+    private EvaProperty evaProperty;
 
     @RequestMapping(value = "/files/count", method = RequestMethod.GET)
     public QueryResponse countFiles() {
@@ -85,7 +82,7 @@ public class ArchiveWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/species/list", method = RequestMethod.GET)
     public QueryResponse getSpecies() {
-        return setQueryResponse(archiveEvaproDbAdaptor.getSpecies(properties.getProperty("eva.version"), true));
+        return setQueryResponse(archiveEvaproDbAdaptor.getSpecies(evaProperty.getVersion(), true));
     }
 
     @RequestMapping(value = "/studies/count", method = RequestMethod.GET)
