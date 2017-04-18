@@ -38,18 +38,6 @@ public class MultiMongoFactoryConfiguration {
     @Autowired
     private EvaProperty evaProperty;
 
-//    /**
-//     * Inject into the spring context a MultiMongoDbFactory as the implementation of MongoDbFactory.
-//     * This factory will allow to use the Repositories with several databases.
-//     */
-//    @Bean
-//    public MongoDbFactory mongoDbFactory() throws IOException {
-//        Properties properties = new Properties();
-//        properties.load(MongoConfiguration.class.getResourceAsStream("/eva.properties"));
-//        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
-//        return new MultiMongoDbFactory(mongoClient, "unusedDefaultDB");
-//    }
-
     /**
      * Inject into the spring context a MultiMongoDbFactory as the implementation of MongoDbFactory.
      * This factory will allow to use the Repositories with several databases.
