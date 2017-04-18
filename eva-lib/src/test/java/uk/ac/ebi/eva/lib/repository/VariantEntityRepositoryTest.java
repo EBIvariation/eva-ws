@@ -27,6 +27,7 @@ import org.opencb.biodata.models.feature.Region;
 import org.opencb.biodata.models.variant.Variant;
 import org.opencb.biodata.models.variant.VariantSourceEntry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
@@ -62,6 +63,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {MongoRepositoryTestConfiguration.class})
 @SpringBootTest
+@EnableConfigurationProperties
 @UsingDataSet(locations = {"/test-data/variants.json", "/test-data/files.json"})
 public class VariantEntityRepositoryTest {
 

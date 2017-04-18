@@ -24,6 +24,7 @@ import org.opencb.biodata.models.variant.stats.VariantGlobalStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
@@ -46,6 +47,7 @@ import static org.junit.Assert.assertNotEquals;
 @UsingDataSet(locations = {"/test-data/files.json"})
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@EnableConfigurationProperties
 public class VariantSourceEntityRepositoryTest {
 
     protected static Logger logger = LoggerFactory.getLogger(VariantSourceEntityRepositoryTest.class);
