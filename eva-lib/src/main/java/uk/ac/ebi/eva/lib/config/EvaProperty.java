@@ -8,11 +8,7 @@ import org.springframework.stereotype.Component;
 
 @ConfigurationProperties(prefix = "eva")
 @Component
-@Configuration
 public class EvaProperty {
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
 //    eva.mongo.host=@eva.mongo.host@
 //    eva.mongo.user=@eva.mongo.user@
