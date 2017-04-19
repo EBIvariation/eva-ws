@@ -3,32 +3,27 @@ package uk.ac.ebi.eva.lib.datastore;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.ReadPreference;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import uk.ac.ebi.eva.lib.EvaPropertyConfiguration;
 import uk.ac.ebi.eva.lib.MongoConfiguration;
 import uk.ac.ebi.eva.lib.MultiMongoFactoryConfiguration;
 import uk.ac.ebi.eva.lib.config.EvaProperty;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
-import java.util.Properties;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { MongoConfiguration.class, MultiMongoFactoryConfiguration.class, EvaPropertyConfiguration.class})
-@SpringBootTest(classes = {EvaPropertyConfiguration.class})
+@ContextConfiguration(classes = { MongoConfiguration.class, MultiMongoFactoryConfiguration.class})
+@SpringBootTest
 @EnableConfigurationProperties
 public class DBAdaptorConnectorTest {
 
