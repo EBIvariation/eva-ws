@@ -4,14 +4,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import uk.ac.ebi.eva.lib.config.EvaProperty;
-
 @Configuration
-@Import({EvaProperty.class})
-public class EvaPropertyTestConfiguration {
+@Import({EvaProperties.class})
+public class EvaPropertiesTestConfiguration {
 
     @Bean
-    public EvaProperty evaProperty() {
-        return new EvaProperty();
+    public EvaProperties evaProperties() {
+        return new EvaProperties();
     }
 }

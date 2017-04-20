@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.ac.ebi.eva.lib.config.EvaProperty;
+import uk.ac.ebi.eva.lib.configuration.EvaProperties;
 import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
@@ -45,7 +45,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
@@ -68,7 +67,7 @@ public class ArchiveWSServer extends EvaWSServer {
     private VariantStudySummaryRepository variantStudySummaryRepository;
 
     @Autowired
-    private EvaProperty evaProperty;
+    private EvaProperties evaProperties;
 
     @RequestMapping(value = "/files/count", method = RequestMethod.GET)
     public QueryResponse countFiles() {
@@ -82,7 +81,7 @@ public class ArchiveWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/species/list", method = RequestMethod.GET)
     public QueryResponse getSpecies() {
-        return setQueryResponse(archiveEvaproDbAdaptor.getSpecies(evaProperty.getVersion(), true));
+        return setQueryResponse(archiveEvaproDbAdaptor.getSpecies(evaProperties.getVersion(), true));
     }
 
     @RequestMapping(value = "/studies/count", method = RequestMethod.GET)

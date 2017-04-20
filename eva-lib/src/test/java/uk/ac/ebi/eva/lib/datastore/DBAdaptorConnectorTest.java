@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import uk.ac.ebi.eva.lib.MongoConfiguration;
 import uk.ac.ebi.eva.lib.MultiMongoFactoryConfiguration;
-import uk.ac.ebi.eva.lib.config.EvaProperty;
+import uk.ac.ebi.eva.lib.configuration.EvaProperties;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
@@ -31,13 +31,13 @@ public class DBAdaptorConnectorTest {
     private MongoDbFactory factory;
 
     @Autowired
-    private EvaProperty evaProperty;
+    private EvaProperties evaProperties;
 
     @Test
     public void testEvaPropertyAutowiring() {
-        assertNotNull(evaProperty);
-        assertNotNull(evaProperty.getMongo());
-        System.out.println(evaProperty);
+        assertNotNull(evaProperties);
+        assertNotNull(evaProperties.getMongo());
+        System.out.println(evaProperties);
     }
 
     /**
@@ -61,7 +61,7 @@ public class DBAdaptorConnectorTest {
      */
     @Test
     public void testDefaultReadPreferenceInMongoClientEvaProperty() throws Exception {
-        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(evaProperty);
+        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(evaProperties);
         assertEquals(ReadPreference.secondaryPreferred(), mongoClient.getReadPreference());
     }
 }

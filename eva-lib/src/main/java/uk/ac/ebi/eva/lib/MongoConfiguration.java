@@ -29,15 +29,15 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantEntityConverter;
-import uk.ac.ebi.eva.lib.config.EvaProperty;
 import uk.ac.ebi.eva.commons.models.converters.data.DbObjectToVariantGlobalStatsConverter;
+import uk.ac.ebi.eva.lib.configuration.EvaProperties;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-@Import(EvaProperty.class)
+@Import(EvaProperties.class)
 public class MongoConfiguration {
 
     @Autowired
@@ -47,14 +47,14 @@ public class MongoConfiguration {
     private MongoDbFactory mongoDbFactory;
 
     @Autowired
-    private EvaProperty evaProperty;
+    private EvaProperties evaProperties;
 
     @Value("${eva.mongo.collections.annotation_metadata}")
     private String mongoCollectionsAnnotationMetadata;
 
     @Bean
     public String mongoCollectionsFiles() {
-        return evaProperty.getMongo().getCollections().getFiles();
+        return evaProperties.getMongo().getCollections().getFiles();
     }
 
     @Bean

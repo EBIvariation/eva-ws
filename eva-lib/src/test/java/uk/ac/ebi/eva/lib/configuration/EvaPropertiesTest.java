@@ -1,4 +1,4 @@
-package uk.ac.ebi.eva.lib.config;
+package uk.ac.ebi.eva.lib.configuration;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,27 +8,25 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import uk.ac.ebi.eva.lib.configuration.EvaPropertyTestConfiguration;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {EvaPropertyTestConfiguration.class})
+@SpringBootTest(classes = {EvaPropertiesTestConfiguration.class})
 @EnableConfigurationProperties
-public class EvaPropertyTest {
+public class EvaPropertiesTest {
 
     @Autowired
-    private EvaProperty evaProperty;
+    private EvaProperties evaProperties;
 
     @Value("${eva.mongo.host}")
     private String expectedHostProp;
 
     @Test
     public void testEvaPropertyAutowiring() {
-        assertNotNull(evaProperty);
-        assertNotNull(evaProperty.getMongo());
-        assertEquals(expectedHostProp, evaProperty.getMongo().getHost());
+        assertNotNull(evaProperties);
+        assertNotNull(evaProperties.getMongo());
+        assertEquals(expectedHostProp, evaProperties.getMongo().getHost());
     }
 
 }
