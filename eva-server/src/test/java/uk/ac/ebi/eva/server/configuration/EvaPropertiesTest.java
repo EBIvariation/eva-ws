@@ -38,8 +38,7 @@ public class EvaPropertiesTest {
 
     @Test
     public void testLoadingOfProperties() {
-        System.out.println("expectedHostProp: " + expectedHostProp);
-        assertEquals(expectedHostProp, evaProperties.getMongo().getHost());
+        assertEquals("expectedHostProp: " + expectedHostProp, expectedHostProp, evaProperties.getMongo().getHost());
     }
 
 }
