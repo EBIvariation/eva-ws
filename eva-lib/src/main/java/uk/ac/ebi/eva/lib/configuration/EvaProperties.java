@@ -15,28 +15,38 @@
  */
 package uk.ac.ebi.eva.lib.configuration;
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.*;
 
-@ConfigurationProperties(prefix = "eva")
+@ConfigurationProperties(ignoreUnknownFields = false, prefix = "eva")
 @Component
 public class EvaProperties {
 
     private String version;
 
+    @javax.validation.constraints.NotNull
     private Mongo mongo;
 
     public static class Mongo {
+        @NotBlank
         private String host;
+        @NotBlank
         private String user;
+        @NotBlank
         private String passwd;
+        @NotBlank
         private String readPreference;
 
+        @javax.validation.constraints.NotNull
         private Auth auth;
 
+        @javax.validation.constraints.NotNull
         private Collections collections;
 
         public static class Auth {
+            @NotBlank
             private String db;
 
             public String getDb() {
@@ -49,7 +59,9 @@ public class EvaProperties {
         }
 
         public static class Collections {
+            @NotBlank
             private String variants;
+            @NotBlank
             private String files;
 
             public String getVariants() {
