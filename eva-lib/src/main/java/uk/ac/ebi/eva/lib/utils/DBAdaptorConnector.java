@@ -36,7 +36,7 @@ import org.opencb.opencga.storage.mongodb.variant.VariantSourceMongoDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import uk.ac.ebi.eva.lib.config.EvaProperty;
+import uk.ac.ebi.eva.lib.configuration.EvaProperties;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -48,25 +48,25 @@ import java.util.List;
 public class DBAdaptorConnector {
 
     @Autowired
-    private EvaProperty evaProperty;
+    private EvaProperties evaProperties;
 
     public VariantDBAdaptor getVariantDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return new VariantMongoDBAdaptor(getCredentials(species, evaProperty),
-                                         evaProperty.getMongo().getCollections().getVariants(),
-                                         evaProperty.getMongo().getCollections().getFiles());
+        return new VariantMongoDBAdaptor(getCredentials(species, evaProperties),
+                                         evaProperties.getMongo().getCollections().getVariants(),
+                                         evaProperties.getMongo().getCollections().getFiles());
     }
     
     public StudyDBAdaptor getStudyDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return new StudyMongoDBAdaptor(getCredentials(species, evaProperty),
-                                       evaProperty.getMongo().getCollections().getFiles());
+        return new StudyMongoDBAdaptor(getCredentials(species, evaProperties),
+                                       evaProperties.getMongo().getCollections().getFiles());
     }
     
     public VariantSourceDBAdaptor getVariantSourceDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return new VariantSourceMongoDBAdaptor(getCredentials(species, evaProperty),
-                                               evaProperty.getMongo().getCollections().getFiles());
+        return new VariantSourceMongoDBAdaptor(getCredentials(species, evaProperties),
+                                               evaProperties.getMongo().getCollections().getFiles());
     }
 
     /**
@@ -82,9 +82,9 @@ public class DBAdaptorConnector {
      * @return MongoClient with given credentials
      * @throws UnknownHostException
      */
-    public static MongoClient getMongoClient(EvaProperty evaProperty) throws UnknownHostException {
+    public static MongoClient getMongoClient(EvaProperties evaProperties) throws UnknownHostException {
 
-        String[] hosts = evaProperty.getMongo().getHost().split(",");
+        String[] hosts = evaProperties.getMongo().getHost().split(",");
         List<ServerAddress> servers = new ArrayList<>();
 
         // Get the list of hosts (optionally including the port number)
@@ -98,15 +98,15 @@ public class DBAdaptorConnector {
         }
 
         List<MongoCredential> mongoCredentialList = new ArrayList<>();
-        String authenticationDb = evaProperty.getMongo().getAuth().getDb();
+        String authenticationDb = evaProperties.getMongo().getAuth().getDb();
         if (authenticationDb != null && !authenticationDb.isEmpty()) {
             mongoCredentialList = Collections.singletonList(MongoCredential.createCredential(
-                    evaProperty.getMongo().getUser(),
+                    evaProperties.getMongo().getUser(),
                     authenticationDb,
-                    evaProperty.getMongo().getPasswd().toCharArray()));
+                    evaProperties.getMongo().getPasswd().toCharArray()));
         }
 
-        String readPreference = evaProperty.getMongo().getReadPreference();
+        String readPreference = evaProperties.getMongo().getReadPreference();
         readPreference = readPreference == null || readPreference.isEmpty()? "secondaryPreferred" : readPreference;
 
         MongoClientOptions options = MongoClientOptions.builder()
@@ -127,13 +127,13 @@ public class DBAdaptorConnector {
      * @return org.opencb.opencga.storage.mongodb.utils.MongoCredentials
      * @throws UnknownHostException
      */
-    private MongoCredentials getCredentials(String species, EvaProperty evaProperty)
+    private MongoCredentials getCredentials(String species, EvaProperties evaProperties)
             throws IllegalOpenCGACredentialsException, IOException {
         if (species == null || species.isEmpty()) {
             throw new IllegalArgumentException("Please specify a species");
         }
 
-        String[] hosts = evaProperty.getMongo().getHost().split(",");
+        String[] hosts = evaProperties.getMongo().getHost().split(",");
         List<DataStoreServerAddress> servers = new ArrayList();
         
         // Get the list of hosts (optionally including the port number)
@@ -148,11 +148,11 @@ public class DBAdaptorConnector {
         
         MongoCredentials credentials = new MongoCredentials(servers,
                                                             getDBName(species),
-                                                            evaProperty.getMongo().getUser(),
-                                                            evaProperty.getMongo().getPasswd());
+                                                            evaProperties.getMongo().getUser(),
+                                                            evaProperties.getMongo().getPasswd());
         
         // Set authentication database, if specified in the configuration
-        credentials.setAuthenticationDatabase(evaProperty.getMongo().getAuth().getDb());
+        credentials.setAuthenticationDatabase(evaProperties.getMongo().getAuth().getDb());
         
         return credentials;
     }
