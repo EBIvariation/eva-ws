@@ -22,15 +22,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class EvaProperties {
 
-//    eva.mongo.host=@eva.mongo.host@
-//    eva.mongo.user=@eva.mongo.user@
-//    eva.mongo.passwd=@eva.mongo.passwd@
-//    eva.mongo.auth.db=@eva.mongo.auth.db@
-//    eva.mongo.read-preference=@eva.mongo.read-preference@
-//    eva.mongo.collections.variants=@eva.mongo.collections.variants@
-//    eva.mongo.collections.files=@eva.mongo.collections.files@
-//    eva.version=@eva.version@
-
     private String version;
 
     private Mongo mongo;
