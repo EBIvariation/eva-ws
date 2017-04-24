@@ -23,6 +23,6 @@ import java.util.List;
 
 public interface AnnotationMetadataRepository extends MongoRepository<AnnotationMetadata, String> {
 
-    List<AnnotationMetadata> findAll();
+    List<AnnotationMetadata> findAllByOrderByCacheVersionDescVepVersionDesc();
 
 }

@@ -17,6 +17,7 @@ import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {MongoRepositoryTestConfiguration.class})
@@ -35,9 +36,33 @@ public class AnnotationMetadataRepositoryTest {
     public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
 
     @Test
-    public void findAllOrderByvepVersion() throws Exception {
-        List<AnnotationMetadata> annotationMetadataList = repository.findAll();
+    public void testFindAllByOrderByCacheVersionDescVepVersionDescSize() throws Exception {
+        List<AnnotationMetadata> annotationMetadataList = repository.findAllByOrderByCacheVersionDescVepVersionDesc();
         assertEquals(4, annotationMetadataList.size());
+    }
+
+    @Test
+    public void testFindAllByOrderByCacheVersionDescVepVersionDescCacheVersionOrder() throws Exception {
+        List<AnnotationMetadata> annotationMetadataList = repository.findAllByOrderByCacheVersionDescVepVersionDesc();
+        AnnotationMetadata prevAnnotationMetadata = annotationMetadataList.get(0);
+        for (AnnotationMetadata curAnnotationMetadata :
+                annotationMetadataList.subList(1, annotationMetadataList.size())) {
+            assertTrue(Integer.parseInt(curAnnotationMetadata.getCacheVersion())
+                               <= Integer.parseInt(prevAnnotationMetadata.getCacheVersion()));
+        }
+    }
+
+    @Test
+    public void testFindAllByOrderByCacheVersionDescVepVersionDescVepVersionOrder() throws Exception {
+        List<AnnotationMetadata> annotationMetadataList = repository.findAllByOrderByCacheVersionDescVepVersionDesc();
+        AnnotationMetadata prevAnnotationMetadata = annotationMetadataList.get(0);
+        for (AnnotationMetadata curAnnotationMetadata :
+                annotationMetadataList.subList(1, annotationMetadataList.size())) {
+            if (curAnnotationMetadata.getCacheVersion().equals(prevAnnotationMetadata.getCacheVersion())) {
+                assertTrue(Integer.parseInt(curAnnotationMetadata.getCacheVersion())
+                                   <= Integer.parseInt(prevAnnotationMetadata.getCacheVersion()));
+            }
+        }
     }
 
 }
