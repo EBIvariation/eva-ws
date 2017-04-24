@@ -21,8 +21,17 @@ import uk.ac.ebi.eva.commons.models.metadata.AnnotationMetadata;
 
 import java.util.List;
 
+/**
+ * Spring MongoRepository for querying collection of AnnotationMetadata documents
+ */
 public interface AnnotationMetadataRepository extends MongoRepository<AnnotationMetadata, String> {
 
+    /**
+     * Query for all AnnotationMetadata from collection, ordered first by cache version descending and then vep version
+     * descending.
+     *
+     * @return List of AnnotationMetadata objects
+     */
     List<AnnotationMetadata> findAllByOrderByCacheVersionDescVepVersionDesc();
 
 }
