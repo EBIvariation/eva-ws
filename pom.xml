@@ -22,7 +22,7 @@
     </parent>
 
     <properties>
-        <opencga.version>0.5.3</opencga.version>
+        <opencga.version>0.5.4</opencga.version>
         <compileSource>1.8</compileSource>
     </properties>
 
@@ -177,4 +177,31 @@
         </plugins>
     </build>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>eva-snapshots</id>
+            <url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+        </snapshotRepository>
+        <repository>
+            <id>eva-releases</id>
+            <url>https://oss.jfrog.org/artifactory/oss-release-local</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <id>eva-releases</id>
+          <url>https://oss.jfrog.org/artifactory/libs-release</url>
+        </repository>
+        <repository>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+          <id>eva-snapshots</id>
+          <url>https://oss.jfrog.org/artifactory/libs-snapshot</url>
+        </repository>
+    </repositories>
 </project>
