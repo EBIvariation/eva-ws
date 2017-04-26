@@ -8,16 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpringDataMongoDbProperties {
 
-    @NotBlank
     private String host;
 
-    @NotBlank
     private String authenticationDatabase;
 
-    @NotBlank
     private String username;
 
-    @NotBlank
     private String password;
 
     private String readPreference;
