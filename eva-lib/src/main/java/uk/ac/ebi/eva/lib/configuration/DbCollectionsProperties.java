@@ -26,16 +26,13 @@ public class DbCollectionsProperties {
 
     private String version;
 
-    @javax.validation.constraints.NotNull
     private Files files;
 
-    @javax.validation.constraints.NotNull
     private Variants variants;
 
     private AnnotationMetadata annotationMetadata;
 
     public static class Files {
-        @NotBlank
         private String name;
 
         public String getName() {
@@ -48,7 +45,6 @@ public class DbCollectionsProperties {
     }
 
     public static class Variants {
-        @NotBlank
         private String name;
 
         public String getName() {
