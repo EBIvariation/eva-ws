@@ -5,11 +5,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import({EvaProperties.class})
-public class EvaPropertiesTestConfiguration {
+@Import({DbCollectionsProperties.class})
+public class DbCollectionsPropertiesTestConfiguration {
 
     @Bean
-    public EvaProperties evaProperties() {
-        return new EvaProperties();
+    public DbCollectionsProperties dbCollectionsProperties() {
+        return new DbCollectionsProperties();
     }
 }
