@@ -36,7 +36,7 @@ import org.opencb.opencga.storage.mongodb.variant.VariantSourceMongoDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import uk.ac.ebi.eva.lib.configuration.EvaProperties;
+import uk.ac.ebi.eva.lib.configuration.DbCollectionsProperties;
 import uk.ac.ebi.eva.lib.configuration.SpringDataMongoDbProperties;
 
 import java.io.IOException;
@@ -49,7 +49,7 @@ import java.util.List;
 public class DBAdaptorConnector {
 
     @Autowired
-    private EvaProperties evaProperties;
+    private DbCollectionsProperties dbCollectionsProperties;
 
     @Autowired
     private SpringDataMongoDbProperties springDataMongoDbProperties;
@@ -57,20 +57,20 @@ public class DBAdaptorConnector {
     public VariantDBAdaptor getVariantDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         return new VariantMongoDBAdaptor(getCredentials(species, springDataMongoDbProperties),
-                                         evaProperties.getCollections().getVariants(),
-                                         evaProperties.getCollections().getFiles());
+                                         dbCollectionsProperties.getVariants().getName(),
+                                         dbCollectionsProperties.getFiles().getName());
     }
     
     public StudyDBAdaptor getStudyDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         return new StudyMongoDBAdaptor(getCredentials(species, springDataMongoDbProperties),
-                                       evaProperties.getCollections().getFiles());
+                                       dbCollectionsProperties.getFiles().getName());
     }
     
     public VariantSourceDBAdaptor getVariantSourceDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         return new VariantSourceMongoDBAdaptor(getCredentials(species, springDataMongoDbProperties),
-                                               evaProperties.getCollections().getFiles());
+                                               dbCollectionsProperties.getFiles().getName());
     }
 
     /**

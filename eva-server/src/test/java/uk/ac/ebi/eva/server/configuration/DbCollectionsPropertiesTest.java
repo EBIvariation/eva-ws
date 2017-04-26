@@ -22,26 +22,26 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import uk.ac.ebi.eva.lib.configuration.EvaProperties;
+import uk.ac.ebi.eva.lib.configuration.DbCollectionsProperties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class EvaPropertiesTest {
+public class DbCollectionsPropertiesTest {
 
     @Autowired
-    private EvaProperties evaProperties;
+    private DbCollectionsProperties dbCollectionsProperties;
 
-    @Value("${eva.collections.files}")
+    @Value("${db.collections.files.name}")
     private String expectedFiles;
 
     @Test
     public void testEvaPropertyAutowiring() {
-        assertNotNull(evaProperties);
-        assertNotNull(evaProperties.getCollections());
-        assertEquals(expectedFiles, evaProperties.getCollections().getFiles());
+        assertNotNull(dbCollectionsProperties);
+        assertNotNull(dbCollectionsProperties.getVariants());
+        assertEquals(expectedFiles, dbCollectionsProperties.getFiles().getName());
     }
 
 }

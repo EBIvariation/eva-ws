@@ -12,21 +12,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {EvaPropertiesTestConfiguration.class})
+@SpringBootTest(classes = {DbCollectionsPropertiesTestConfiguration.class})
 @EnableConfigurationProperties
-public class EvaPropertiesTest {
+public class DbCollectionsPropertiesTest {
 
     @Autowired
-    private EvaProperties evaProperties;
+    private DbCollectionsProperties dbCollectionsProperties;
 
-    @Value("${eva.collections.files}")
+    @Value("${db.collections.files.name}")
     private String expectedFiles;
 
     @Test
     public void testEvaPropertyAutowiring() {
-        assertNotNull(evaProperties);
-        assertNotNull(evaProperties.getCollections());
-        assertEquals(expectedFiles, evaProperties.getCollections().getFiles());
+        assertNotNull(dbCollectionsProperties);
+        assertNotNull(dbCollectionsProperties.getVariants());
+        assertEquals(expectedFiles, dbCollectionsProperties.getFiles().getName());
     }
 
 }
