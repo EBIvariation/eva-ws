@@ -25,6 +25,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.lib.configuration.EvaProperties;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -33,12 +34,14 @@ public class EvaPropertiesTest {
     @Autowired
     private EvaProperties evaProperties;
 
-    @Value("${eva.mongo.host}")
-    private String expectedHostProp;
+    @Value("${eva.collections.files}")
+    private String expectedFiles;
 
     @Test
-    public void testLoadingOfProperties() {
-        assertEquals("expectedHostProp: " + expectedHostProp, expectedHostProp, evaProperties.getMongo().getHost());
+    public void testEvaPropertyAutowiring() {
+        assertNotNull(evaProperties);
+        assertNotNull(evaProperties.getCollections());
+        assertEquals(expectedFiles, evaProperties.getCollections().getFiles());
     }
 
 }

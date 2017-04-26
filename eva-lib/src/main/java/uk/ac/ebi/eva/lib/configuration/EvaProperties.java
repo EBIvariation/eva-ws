@@ -27,107 +27,37 @@ public class EvaProperties {
     private String version;
 
     @javax.validation.constraints.NotNull
-    private Mongo mongo;
+    private Collections collections;
 
-    public static class Mongo {
+    public static class Collections {
         @NotBlank
-        private String host;
+        private String variants;
         @NotBlank
-        private String user;
-        @NotBlank
-        private String passwd;
-        @NotBlank
-        private String readPreference;
+        private String files;
 
-        @javax.validation.constraints.NotNull
-        private Auth auth;
-
-        @javax.validation.constraints.NotNull
-        private Collections collections;
-
-        public static class Auth {
-            @NotBlank
-            private String db;
-
-            public String getDb() {
-                return db;
-            }
-
-            public void setDb(String db) {
-                this.db = db;
-            }
+        public String getVariants() {
+            return variants;
         }
 
-        public static class Collections {
-            @NotBlank
-            private String variants;
-            @NotBlank
-            private String files;
-
-            public String getVariants() {
-                return variants;
-            }
-
-            public void setVariants(String variants) {
-                this.variants = variants;
-            }
-
-            public String getFiles() {
-                return files;
-            }
-
-            public void setFiles(String files) {
-                this.files = files;
-            }
+        public void setVariants(String variants) {
+            this.variants = variants;
         }
 
-        public String getHost() {
-            return host;
+        public String getFiles() {
+            return files;
         }
 
-        public void setHost(String host) {
-            this.host = host;
+        public void setFiles(String files) {
+            this.files = files;
         }
+    }
 
-        public String getUser() {
-            return user;
-        }
+    public Collections getCollections() {
+        return collections;
+    }
 
-        public void setUser(String user) {
-            this.user = user;
-        }
-
-        public String getPasswd() {
-            return passwd;
-        }
-
-        public void setPasswd(String passwd) {
-            this.passwd = passwd;
-        }
-
-        public String getReadPreference() {
-            return readPreference;
-        }
-
-        public void setReadPreference(String readPreference) {
-            this.readPreference = readPreference;
-        }
-
-        public Auth getAuth() {
-            return auth;
-        }
-
-        public void setAuth(Auth auth) {
-            this.auth = auth;
-        }
-
-        public Collections getCollections() {
-            return collections;
-        }
-
-        public void setCollections(Collections collections) {
-            this.collections = collections;
-        }
+    public void setCollections(Collections collections) {
+        this.collections = collections;
     }
 
     public String getVersion() {
@@ -136,13 +66,5 @@ public class EvaProperties {
 
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public Mongo getMongo() {
-        return mongo;
-    }
-
-    public void setMongo(Mongo mongo) {
-        this.mongo = mongo;
     }
 }
