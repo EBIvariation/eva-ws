@@ -20,7 +20,6 @@ public class SpringDataMongoDbProperties {
     @NotBlank
     private String password;
 
-    @NotBlank
     private String readPreference;
 
     public String getHost() {

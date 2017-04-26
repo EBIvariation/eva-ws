@@ -54,7 +54,7 @@ public class MongoConfiguration {
 
     @Bean
     public String mongoCollectionsFiles() {
-        return evaProperties.getMongo().getCollections().getFiles();
+        return evaProperties.getCollections().getFiles();
     }
 
     @Bean

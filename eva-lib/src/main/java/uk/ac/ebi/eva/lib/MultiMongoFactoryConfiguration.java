@@ -24,17 +24,18 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.MongoDbFactory;
 
 import uk.ac.ebi.eva.lib.configuration.EvaProperties;
+import uk.ac.ebi.eva.lib.configuration.SpringDataMongoDbProperties;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
 import java.io.IOException;
 
 @Configuration
-@Import(EvaProperties.class)
+@Import(SpringDataMongoDbProperties.class)
 public class MultiMongoFactoryConfiguration {
 
     @Autowired
-    private EvaProperties evaProperties;
+    private SpringDataMongoDbProperties springDataMongoDbProperties;
 
     /**
      * Inject into the spring context a MultiMongoDbFactory as the implementation of MongoDbFactory.
@@ -42,8 +43,8 @@ public class MultiMongoFactoryConfiguration {
      */
     @Bean
     public MongoDbFactory mongoDbFactory() throws IOException {
-        assert(evaProperties != null);
-        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(evaProperties);
+        assert(springDataMongoDbProperties != null);
+        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(springDataMongoDbProperties);
         return new MultiMongoDbFactory(mongoClient, "unusedDefaultDB");
     }
 }

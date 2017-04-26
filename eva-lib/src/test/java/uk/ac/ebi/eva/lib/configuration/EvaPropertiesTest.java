@@ -19,14 +19,14 @@ public class EvaPropertiesTest {
     @Autowired
     private EvaProperties evaProperties;
 
-    @Value("${eva.mongo.host}")
-    private String expectedHostProp;
+    @Value("${eva.collections.files}")
+    private String expectedFiles;
 
     @Test
     public void testEvaPropertyAutowiring() {
         assertNotNull(evaProperties);
-        assertNotNull(evaProperties.getMongo());
-        assertEquals(expectedHostProp, evaProperties.getMongo().getHost());
+        assertNotNull(evaProperties.getCollections());
+        assertEquals(expectedFiles, evaProperties.getCollections().getFiles());
     }
 
 }
