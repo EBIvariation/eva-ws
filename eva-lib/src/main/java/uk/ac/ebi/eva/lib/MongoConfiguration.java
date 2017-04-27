@@ -29,6 +29,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantEntityConverter;
+import uk.ac.ebi.eva.commons.models.converters.data.DbObjectToVariantGlobalStatsConverter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ public class MongoConfiguration {
     public CustomConversions customConversions() {
         List<Converter<?, ?>> converters = new ArrayList<>();
         converters.add(new DBObjectToVariantEntityConverter());
+        converters.add(new DbObjectToVariantGlobalStatsConverter());
         return new CustomConversions(converters);
     }
 
