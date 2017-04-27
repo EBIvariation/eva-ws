@@ -1,19 +1,23 @@
 package uk.ac.ebi.eva.lib.configuration;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.Size;
 
 @ConfigurationProperties(ignoreUnknownFields = false, prefix = "spring.data.mongodb")
 @Component
 public class SpringDataMongoDbProperties {
 
+    @Size(min = 1)
     private String host;
 
     private String authenticationDatabase;
 
+    @Size(min = 1)
     private String username;
 
+    @Size(min = 1)
     private String password;
 
     private String readPreference;
