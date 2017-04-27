@@ -20,19 +20,27 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.*;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 @ConfigurationProperties(ignoreUnknownFields = false, prefix = "db.collections")
 @Component
 public class DbCollectionsProperties {
 
+    @Size(min = 1)
     private String version;
 
+    @NotNull
     private Files files;
 
+    @NotNull
     private Variants variants;
 
+    @NotNull
     private AnnotationMetadata annotationMetadata;
 
     public static class Files {
+        @Size(min = 1)
         private String name;
 
         public String getName() {
@@ -45,6 +53,7 @@ public class DbCollectionsProperties {
     }
 
     public static class Variants {
+        @Size(min = 1)
         private String name;
 
         public String getName() {
@@ -57,6 +66,7 @@ public class DbCollectionsProperties {
     }
 
     public static class AnnotationMetadata {
+        @Size(min = 1)
         private String name;
 
         public String getName() {
