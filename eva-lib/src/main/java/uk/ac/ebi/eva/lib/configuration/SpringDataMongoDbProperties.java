@@ -14,10 +14,8 @@ public class SpringDataMongoDbProperties {
 
     private String authenticationDatabase;
 
-    @Size(min = 1)
     private String username;
 
-    @Size(min = 1)
     private String password;
 
     private String readPreference;
