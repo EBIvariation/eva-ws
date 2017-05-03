@@ -20,6 +20,7 @@ import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opencb.biodata.models.variant.stats.VariantGlobalStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,7 @@ import java.util.List;
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {MongoRepositoryTestConfiguration.class})
@@ -136,6 +136,28 @@ public class VariantSourceEntityRepositoryTest {
             assertFalse(variantSourceEntity.getSamplesPosition().isEmpty());
             assertEquals(FIRST_FILE_ID, variantSourceEntity.getFileId());
         }
+    }
+
+    @Test
+    public void testStatsNotZero() {
+        List<String> fileIds = new ArrayList<>();
+        fileIds.add(FIRST_FILE_ID);
+
+        Pageable pageable = new PageRequest(0, 100);
+        List<VariantSourceEntity> variantSourceEntityList = repository.findByFileIdIn(fileIds, pageable);
+        assertEquals(1, variantSourceEntityList.size());
+
+        VariantSourceEntity variantSourceEntity = variantSourceEntityList.get(0);
+        VariantGlobalStats variantGlobalStats = variantSourceEntity.getStats();
+
+        assertNotEquals(0, variantGlobalStats.getSamplesCount());
+        assertNotEquals(0, variantGlobalStats.getVariantsCount());
+        assertNotEquals(0, variantGlobalStats.getSnpsCount());
+        assertNotEquals(0, variantGlobalStats.getIndelsCount());
+        assertNotEquals(0, variantGlobalStats.getPassCount());
+        assertNotEquals(0, variantGlobalStats.getTransitionsCount());
+        assertNotEquals(0, variantGlobalStats.getTransversionsCount());
+        assertNotEquals(0, variantGlobalStats.getMeanQuality());
     }
 
     @Test
