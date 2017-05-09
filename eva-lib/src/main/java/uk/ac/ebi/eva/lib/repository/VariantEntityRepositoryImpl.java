@@ -68,8 +68,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
     @Override
     public Long countByIdsAndComplexFilters(String id, List<VariantEntityRepositoryFilter> filters) {
-        Query query = new Query(Criteria.where("ids").is(id));
-        return countByComplexFiltersHelper(query, filters);
+        Criteria criteria = Criteria.where("ids").is(id);
+        return countByComplexFiltersHelper(criteria, filters);
     }
 
     @Override
@@ -85,16 +85,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     @Override
     public Long countByRegionsAndComplexFilters(List<Region> regions, List<VariantEntityRepositoryFilter> filters) {
         Criteria criteria = getRegionsCriteria(regions);
-
-        Aggregation aggregation = Aggregation.newAggregation(
-                Aggregation.match(criteria),
-                Aggregation.group().count().as("count")
-        );
-
-        AggregationResults<VariantAggregationCount> aggregationResults =
-                mongoTemplate.aggregate(aggregation, VariantEntity.class, VariantAggregationCount.class);
-
-        return aggregationResults.getMappedResults().get(0).getCount();
+        return countByComplexFiltersHelper(criteria, filters);
     }
 
     private class VariantAggregationCount {
@@ -114,7 +105,10 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     private List<VariantEntity> findByComplexFiltersHelper(Query query, List<VariantEntityRepositoryFilter> filters,
                                                            List<String> exclude, Pageable pageable) {
 
-        applyFilters(query, filters);
+        if (filters.size() > 0){
+            Criteria criteria = getFiltersCriteria(filters);
+            query.addCriteria(criteria);
+        }
 
         ArrayList<String> sortProperties = new ArrayList<String>();
         sortProperties.add("chr");
@@ -132,16 +126,27 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
     }
 
-    private Long countByComplexFiltersHelper(Query query, List<VariantEntityRepositoryFilter> filters) {
-        applyFilters(query, filters);
+    private Long countByComplexFiltersHelper(Criteria existingCriteria, List<VariantEntityRepositoryFilter> filters) {
+        Criteria criteria = getFiltersCriteria(filters);
+        criteria = criteria.andOperator(existingCriteria);
 
-        return mongoTemplate.count(query, VariantEntity.class);
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(criteria),
+                Aggregation.group().count().as("count")
+        );
+
+        AggregationResults<VariantAggregationCount> aggregationResults =
+                mongoTemplate.aggregate(aggregation, VariantEntity.class, VariantAggregationCount.class);
+
+        return aggregationResults.getMappedResults().get(0).getCount();
     }
 
-    private void applyFilters(Query query, List<VariantEntityRepositoryFilter> filters) {
+    private Criteria getFiltersCriteria(List<VariantEntityRepositoryFilter> filters) {
+        List<Criteria> criteriaList = new ArrayList<>();
         for (VariantEntityRepositoryFilter filter : filters) {
-            query.addCriteria(filter.getCriteria());
+            criteriaList.add(filter.getCriteria());
         }
+        return new Criteria().andOperator(criteriaList.toArray(new Criteria[criteriaList.size()]));
     }
 
     private Criteria getRegionsCriteria(List<Region> regions) {
