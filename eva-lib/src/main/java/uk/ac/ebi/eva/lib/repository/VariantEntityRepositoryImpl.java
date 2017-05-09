@@ -150,7 +150,6 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         for (VariantEntityRepositoryFilter filter : filters) {
             criteriaList.add(filter.getCriteria());
         }
-//        return new Criteria().andOperator(criteriaList.toArray(new Criteria[criteriaList.size()])); TODO remove
         return criteriaList;
     }
 
