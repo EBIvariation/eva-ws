@@ -52,7 +52,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
     protected static Logger logger = LoggerFactory.getLogger(VariantEntityRepositoryImpl.class);
 
-    private final int MARGIN = 1000000;
+    private final int MARGIN = 5000;
 
     @Autowired
     public VariantEntityRepositoryImpl(MongoDbFactory mongoDbFactory, MappingMongoConverter mappingMongoConverter) {
