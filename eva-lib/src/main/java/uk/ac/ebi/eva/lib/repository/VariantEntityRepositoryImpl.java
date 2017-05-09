@@ -133,7 +133,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         AggregationResults<VariantAggregationCount> aggregationResults =
                 mongoTemplate.aggregate(aggregation, VariantEntity.class, VariantAggregationCount.class);
 
-        return aggregationResults.getMappedResults().get(0).getCount();
+        return aggregationResults.getMappedResults().size() > 0
+                ? aggregationResults.getMappedResults().get(0).getCount() : 0;
     }
 
     private class VariantAggregationCount {

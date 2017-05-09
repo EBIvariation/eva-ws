@@ -118,6 +118,14 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
+    public void testCountByIdsAndComplexFiltersZeroCount(){
+        String id = "not_a_real_id";
+        List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
+        Long count = variantEntityRepository.countByIdsAndComplexFilters(id, filters);
+        assertEquals(new Long(0), count);
+    }
+
+    @Test
     public void testNonExistentVariantIdIsNotFound(){
         String id = "notarealid";
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
