@@ -18,6 +18,7 @@
  */
 package uk.ac.ebi.eva.lib.repository;
 
+import com.amazonaws.services.dynamodb.model.CreateTableRequest;
 import org.opencb.biodata.models.feature.Region;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,14 +89,6 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         return countByComplexFiltersHelper(criteria, filters);
     }
 
-    private class VariantAggregationCount {
-        private Long count;
-
-        public Long getCount() {
-            return count;
-        }
-    }
-
     @Override
     public List<String> findDistinctChromosomes() {
         return (List<String>) mongoTemplate.getCollection(mongoTemplate.getCollectionName(VariantEntity.class))
@@ -106,8 +99,10 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                                            List<String> exclude, Pageable pageable) {
 
         if (filters.size() > 0){
-            Criteria criteria = getFiltersCriteria(filters);
-            query.addCriteria(criteria);
+            List<Criteria> criteriaList = getFiltersCriteria(filters);
+            for (Criteria criteria : criteriaList) {
+                query.addCriteria(criteria);
+            }
         }
 
         ArrayList<String> sortProperties = new ArrayList<String>();
@@ -127,8 +122,10 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     private Long countByComplexFiltersHelper(Criteria existingCriteria, List<VariantEntityRepositoryFilter> filters) {
-        Criteria criteria = getFiltersCriteria(filters);
-        criteria = criteria.andOperator(existingCriteria);
+        List<Criteria> filtersCriteria = getFiltersCriteria(filters);
+        Criteria criteria = new Criteria()
+                .andOperator(existingCriteria)
+                .andOperator(filtersCriteria.toArray(new Criteria[filtersCriteria.size()]));
 
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.match(criteria),
@@ -141,12 +138,21 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         return aggregationResults.getMappedResults().get(0).getCount();
     }
 
-    private Criteria getFiltersCriteria(List<VariantEntityRepositoryFilter> filters) {
+    private class VariantAggregationCount {
+        private Long count;
+
+        public Long getCount() {
+            return count;
+        }
+    }
+
+    private List<Criteria> getFiltersCriteria(List<VariantEntityRepositoryFilter> filters) {
         List<Criteria> criteriaList = new ArrayList<>();
         for (VariantEntityRepositoryFilter filter : filters) {
             criteriaList.add(filter.getCriteria());
         }
-        return new Criteria().andOperator(criteriaList.toArray(new Criteria[criteriaList.size()]));
+//        return new Criteria().andOperator(criteriaList.toArray(new Criteria[criteriaList.size()])); TODO remove
+        return criteriaList;
     }
 
     private Criteria getRegionsCriteria(List<Region> regions) {
