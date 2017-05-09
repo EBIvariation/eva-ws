@@ -122,10 +122,9 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     private Long countByComplexFiltersHelper(Criteria existingCriteria, List<VariantEntityRepositoryFilter> filters) {
-        List<Criteria> filtersCriteria = getFiltersCriteria(filters);
-        Criteria criteria = new Criteria()
-                .andOperator(existingCriteria)
-                .andOperator(filtersCriteria.toArray(new Criteria[filtersCriteria.size()]));
+        List<Criteria> criteriaList = getFiltersCriteria(filters);
+        criteriaList.add(existingCriteria);
+        Criteria criteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[criteriaList.size()]));
 
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.match(criteria),
