@@ -18,7 +18,6 @@
  */
 package uk.ac.ebi.eva.lib.repository;
 
-import com.amazonaws.services.dynamodb.model.CreateTableRequest;
 import org.opencb.biodata.models.feature.Region;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
