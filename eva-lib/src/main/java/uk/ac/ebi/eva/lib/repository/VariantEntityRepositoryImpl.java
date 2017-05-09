@@ -97,12 +97,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     private List<VariantEntity> findByComplexFiltersHelper(Query query, List<VariantEntityRepositoryFilter> filters,
                                                            List<String> exclude, Pageable pageable) {
 
-        if (filters.size() > 0){
-            List<Criteria> criteriaList = getFiltersCriteria(filters);
-            for (Criteria criteria : criteriaList) {
-                query.addCriteria(criteria);
-            }
-        }
+        addFilterCriteriaToQuery(query, filters);
 
         ArrayList<String> sortProperties = new ArrayList<String>();
         sortProperties.add("chr");
@@ -120,7 +115,16 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
     }
 
-    private Long countByComplexFiltersHelper(Criteria existingCriteria, List<VariantEntityRepositoryFilter> filters) {
+    private void addFilterCriteriaToQuery(Query query, List<VariantEntityRepositoryFilter> filters) {
+        if (filters.size() > 0){
+            List<Criteria> criteriaList = getFiltersCriteria(filters);
+            for (Criteria criteria : criteriaList) {
+                query.addCriteria(criteria);
+            }
+        }
+    }
+
+    private long countByComplexFiltersHelper(Criteria existingCriteria, List<VariantEntityRepositoryFilter> filters) {
         List<Criteria> criteriaList = getFiltersCriteria(filters);
         criteriaList.add(existingCriteria);
         Criteria criteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[criteriaList.size()]));
@@ -138,9 +142,9 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     private class VariantAggregationCount {
-        private Long count;
+        private long count;
 
-        public Long getCount() {
+        public long getCount() {
             return count;
         }
     }
