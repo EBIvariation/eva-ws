@@ -47,7 +47,43 @@
             <dependency>
                 <groupId>uk.ac.ebi.eva</groupId>
                 <artifactId>variation-commons</artifactId>
-                <version>0.2.1</version>
+                <version>0.3-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>uk.ac.ebi.eva</groupId>
+                <artifactId>opencga-storage-mongodb</artifactId>
+                <version>${opencga.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.jersey</groupId>
+                        <artifactId>jersey-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.jersey</groupId>
+                        <artifactId>jersey-client</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.jersey.contribs</groupId>
+                        <artifactId>jersey-multipart</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>jackson-databind</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-simple</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.mongodb</groupId>
+                        <artifactId>mongo-java-driver</artifactId>
+                    </exclusion>
+                </exclusions>
+>>>>>>> 0d7bb2e... Using variation-commons version 0.3-SNAPSHOT
             </dependency>
             <dependency>
                 <groupId>org.postgresql</groupId>
