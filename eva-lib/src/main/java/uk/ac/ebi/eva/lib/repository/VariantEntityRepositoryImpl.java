@@ -19,6 +19,7 @@
 package uk.ac.ebi.eva.lib.repository;
 
 import org.opencb.biodata.models.feature.Region;
+import org.opencb.biodata.models.variant.VariantSourceEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +34,14 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Concrete implementation of the VariantEntityRepository interface (relationship inferred by Spring),
@@ -47,6 +51,9 @@ import java.util.List;
  * to provide an explicit implementation of the region query, using a margin for efficiency.
  */
 public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCustom {
+
+    @Autowired
+    private VariantSourceEntityRepository variantSourceEntityRepository;
 
     private MongoTemplate mongoTemplate;
 
@@ -94,6 +101,36 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                            .distinct("chr");
     }
 
+    private Map<
+                String, Map<
+                    String, Map<
+                        String, String>>> studyIdsToFileIdsToIndexesToNames() {
+
+        List<VariantSourceEntity> variantSourceEntities = variantSourceEntityRepository.findAll();
+        Map<String, Map<String, Map<String, String>>> studyIdsToFileIds = new HashMap<>();
+        for (VariantSourceEntity variantSourceEntity : variantSourceEntities) {
+            if (variantSourceEntity.getSamplesPosition() == null) {
+                continue;
+            }
+            String studyId = variantSourceEntity.getStudyId();
+            if (!studyIdsToFileIds.containsKey(studyId)) {
+                studyIdsToFileIds.put(studyId, new HashMap<>());
+            }
+
+            String fileId = variantSourceEntity.getFileId();
+
+            Map<String, Integer> samplesPosition = variantSourceEntity.getSamplesPosition();
+            Map<String, String> positionSamples = new HashMap<>();
+            for(Map.Entry<String, Integer> entry : samplesPosition.entrySet()) {
+                positionSamples.put(Integer.toString(entry.getValue()), entry.getKey());
+            }
+
+            studyIdsToFileIds.get(studyId).put(fileId, positionSamples);
+        }
+
+        return studyIdsToFileIds;
+    }
+
     private List<VariantEntity> findByComplexFiltersHelper(Query query, List<VariantEntityRepositoryFilter> filters,
                                                            List<String> exclude, Pageable pageable) {
 
@@ -111,8 +148,60 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
             exclude.forEach(e -> query.fields().exclude(e));
         }
 
-        return mongoTemplate.find(query, VariantEntity.class);
+        List<VariantEntity> variantEntities = mongoTemplate.find(query, VariantEntity.class);
 
+        Map<String, Map<String, Map<String, String>>> studyIdsToFileIdsToIndexesToNames =
+                studyIdsToFileIdsToIndexesToNames();
+
+        variantEntities = updateVariantEntitySampleNames(variantEntities, studyIdsToFileIdsToIndexesToNames);
+
+        return variantEntities;
+    }
+
+    private List<VariantEntity> updateVariantEntitySampleNames(List<VariantEntity> variantEntities,
+                                                               Map<String, Map<String, Map<String, String>>>
+                                                                       studyIdsToFileIdsToIndexesToNames) {
+
+        // For each variant entity
+        for (VariantEntity variantEntity : variantEntities) {
+
+            // For each variant source entry in that variant entity
+            for (VariantSourceEntry variantSourceEntry : variantEntity.getSourceEntries().values()) {
+
+                // Get samples data from that variant entry
+                Map<String,Map<String,String>> samplesData = variantSourceEntry.getSamplesData();
+                if ((samplesData == null) || (samplesData.size() == 0)) {
+                    continue;
+                }
+
+                // Get the default genotype string for that variant entry and remove it
+                String defaultGt = samplesData.get("def").get("GT");
+                samplesData.remove("def");
+
+                String studyId = variantSourceEntry.getStudyId();
+                String fileId = variantSourceEntry.getFileId();
+
+                // Get the map of sample index to sample name for that study and file
+                Map<String, String> indexesToNames = studyIdsToFileIdsToIndexesToNames.get(studyId).get(fileId);
+                for (Map.Entry<String, String> indexToName : indexesToNames.entrySet()) {
+                    String sampleIndex = indexToName.getKey();
+                    String sampleName = indexToName.getValue();
+
+                    // New sample data ("GT" -> gtString)
+                    Map<String, String> sampleData = new HashMap<>(1);
+                    // If the sample index is already in the samplesData then remove it
+                    if (samplesData.containsKey(sampleIndex)) {
+                        sampleData = samplesData.remove(sampleIndex);
+                    } else {
+                        // If sample index not in samplesData then infer it has the default gt string
+                        sampleData.put("GT", defaultGt);
+                    }
+                    // Put the new sample data into samplesData
+                    samplesData.put(sampleName, sampleData);
+                }
+            }
+        }
+        return variantEntities;
     }
 
     private void addFilterCriteriaToQuery(Query query, List<VariantEntityRepositoryFilter> filters) {

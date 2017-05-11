@@ -59,7 +59,7 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {MongoRepositoryTestConfiguration.class})
-@UsingDataSet(locations = {"/test-data/variants.json"})
+@UsingDataSet(locations = {"/test-data/variants.json", "/test-data/files.json"})
 public class VariantEntityRepositoryTest {
 
     @Autowired
