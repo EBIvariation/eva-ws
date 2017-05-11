@@ -116,7 +116,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     private void addFilterCriteriaToQuery(Query query, List<VariantEntityRepositoryFilter> filters) {
-        if (filters.size() > 0){
+        if ((filters != null) && (filters.size() > 0)){
             List<Criteria> criteriaList = getFiltersCriteria(filters);
             for (Criteria criteria : criteriaList) {
                 query.addCriteria(criteria);

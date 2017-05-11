@@ -448,6 +448,25 @@ public class VariantEntityRepositoryTest {
         assertEquals(new Long(1), count);
     }
 
+    @Test
+    public void testSamplesDataPopulated() {
+        String chr = "11";
+        int start = 180001;
+        int end = 180003;
+        Region region = new Region(chr, start, end);
+        List<Region> regions = new ArrayList<>();
+        regions.add(region);
+        List<String> exclude = new ArrayList<>();
+
+
+        List<VariantEntity> variantEntityList =
+                variantEntityRepository.findByRegionsAndComplexFilters(regions, null, null, new PageRequest(0, 10000));
+
+        variantEntityList.get(0);
+
+        // todo add an actual test
+    }
+
     private void testFiltersHelperRegion(List<Region> regions, List<VariantEntityRepositoryFilter> filters,
                                          List<String> exclude, int expectedResultLength) {
         List<VariantEntity> variantEntityList =
