@@ -234,7 +234,7 @@ public class VariantEntityRepositoryTest {
         regions.add(region);
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withMaf(">0.125").build();
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 37);
+        testFiltersHelperRegion(regions, filters, exclude, 43);
     }
 
     @Test
@@ -247,7 +247,7 @@ public class VariantEntityRepositoryTest {
         regions.add(region);
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withMaf(">=0.125").build();
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 15);
+        testFiltersHelperRegion(regions, filters, exclude, 16);
     }
 
     @Test
@@ -260,7 +260,7 @@ public class VariantEntityRepositoryTest {
         regions.add(region);
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withMaf("=0.5").build();
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 8);
+        testFiltersHelperRegion(regions, filters, exclude, 22);
     }
 
     @Test
@@ -307,7 +307,7 @@ public class VariantEntityRepositoryTest {
     @Test
     public void testRegionIsFoundWithFiles() {
         List<String> files = new ArrayList<>();
-        files.add("218");
+        files.add("ERZ019961");
         String chr = "11";
         int start = 180000;
         int end = 180500;
@@ -420,12 +420,12 @@ public class VariantEntityRepositoryTest {
     public void testFindDistinctChromosomesByStudyId() {
         List<String> chromosomeList = variantEntityRepository.findDistinctChromosomes();
 
-        List<String> expectedChromosomeList = new ArrayList<>();
-        expectedChromosomeList.add("11");
-        expectedChromosomeList.add("9");
-        expectedChromosomeList.add("2");
+        Set<String> expectedChromosomeSet = new HashSet<>();
+        expectedChromosomeSet.add("11");
+        expectedChromosomeSet.add("9");
+        expectedChromosomeSet.add("2");
 
-        assertEquals(expectedChromosomeList, chromosomeList);
+        assertEquals(expectedChromosomeSet, new HashSet<>(chromosomeList));
     }
 
     @Test
