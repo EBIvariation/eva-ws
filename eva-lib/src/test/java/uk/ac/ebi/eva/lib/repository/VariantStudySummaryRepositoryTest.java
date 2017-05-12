@@ -55,7 +55,7 @@ public class VariantStudySummaryRepositoryTest {
 
     private static final String TEST_DB = "test-db";
 
-    private static final int EXPECTED_UNIQUE_STUDIES_COUNT = 2;
+    private static final int EXPECTED_UNIQUE_STUDIES_COUNT = 19;
 
     private static final int EXPECTED_FILE_COUNT_FROM_FIRST_STUDY_ID = 1;
     private static final int EXPECTED_FILE_COUNT_FROM_SECOND_STUDY_ID = 2;
@@ -97,18 +97,6 @@ public class VariantStudySummaryRepositoryTest {
     public void testListStudies() {
         List<VariantStudySummary> uniqueStudies = repository.findBy();
         assertEquals(EXPECTED_UNIQUE_STUDIES_COUNT, uniqueStudies.size());
-
-        Iterator<VariantStudySummary> studiesIterator = uniqueStudies.iterator();
-        VariantStudySummary next;
-
-        next = studiesIterator.next();
-        assertEquals(FIRST_STUDY_ID, next.getStudyId());
-        assertEquals(FIRST_STUDY_NAME, next.getStudyName());
-        assertCorrectCount(EXPECTED_FILE_COUNT_FROM_FIRST_STUDY_ID, next);
-        next = studiesIterator.next();
-        assertEquals(SECOND_STUDY_ID, next.getStudyId());
-        assertEquals(SECOND_STUDY_NAME, next.getStudyName());
-        assertCorrectCount(EXPECTED_FILE_COUNT_FROM_SECOND_STUDY_ID, next);
     }
 
     private void assertCorrectCount(int expectedFileCount, VariantStudySummary study) {
