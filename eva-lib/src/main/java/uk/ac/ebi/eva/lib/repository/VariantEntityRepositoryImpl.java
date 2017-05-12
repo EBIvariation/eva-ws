@@ -40,8 +40,10 @@ import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -97,39 +99,10 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     @Override
-    public List<String> findDistinctChromosomes() {
-        return (List<String>) mongoTemplate.getCollection(mongoTemplate.getCollectionName(VariantEntity.class))
-                                           .distinct("chr");
-    }
-
-    private Map<
-                String, Map<
-                    String, Map<
-                        String, String>>> studyIdsToFileIdsToIndexesToNames() {
-
-        List<VariantSourceEntity> variantSourceEntities = variantSourceEntityRepository.findAll();
-        Map<String, Map<String, Map<String, String>>> studyIdsToFileIds = new HashMap<>();
-        for (VariantSourceEntity variantSourceEntity : variantSourceEntities) {
-            if (variantSourceEntity.getSamplesPosition() == null) {
-                continue;
-            }
-            String studyId = variantSourceEntity.getStudyId();
-            if (!studyIdsToFileIds.containsKey(studyId)) {
-                studyIdsToFileIds.put(studyId, new HashMap<>());
-            }
-
-            String fileId = variantSourceEntity.getFileId();
-
-            Map<String, Integer> samplesPosition = variantSourceEntity.getSamplesPosition();
-            Map<String, String> positionSamples = new HashMap<>();
-            for(Map.Entry<String, Integer> entry : samplesPosition.entrySet()) {
-                positionSamples.put(Integer.toString(entry.getValue()), entry.getKey());
-            }
-
-            studyIdsToFileIds.get(studyId).put(fileId, positionSamples);
-        }
-
-        return studyIdsToFileIds;
+    public Set<String> findDistinctChromosomes() {
+        return new HashSet<>(
+                (List<String>) mongoTemplate.getCollection(mongoTemplate.getCollectionName(VariantEntity.class))
+                                            .distinct("chr"));
     }
 
     private List<VariantEntity> findByComplexFiltersHelper(Query query, List<VariantEntityRepositoryFilter> filters,
@@ -157,6 +130,36 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         variantEntities = updateVariantEntitiesSampleNames(variantEntities, studyIdsToFileIdsToIndexesToNames);
 
         return variantEntities;
+    }
+
+    private Map<
+            String, Map<
+            String, Map<
+            String, String>>> studyIdsToFileIdsToIndexesToNames() {
+
+        List<VariantSourceEntity> variantSourceEntities = variantSourceEntityRepository.findAll();
+        Map<String, Map<String, Map<String, String>>> studyIdsToFileIds = new HashMap<>();
+        for (VariantSourceEntity variantSourceEntity : variantSourceEntities) {
+            if (variantSourceEntity.getSamplesPosition() == null) {
+                continue;
+            }
+            String studyId = variantSourceEntity.getStudyId();
+            if (!studyIdsToFileIds.containsKey(studyId)) {
+                studyIdsToFileIds.put(studyId, new HashMap<>());
+            }
+
+            String fileId = variantSourceEntity.getFileId();
+
+            Map<String, Integer> samplesPosition = variantSourceEntity.getSamplesPosition();
+            Map<String, String> positionSamples = new HashMap<>();
+            for(Map.Entry<String, Integer> entry : samplesPosition.entrySet()) {
+                positionSamples.put(Integer.toString(entry.getValue()), entry.getKey());
+            }
+
+            studyIdsToFileIds.get(studyId).put(fileId, positionSamples);
+        }
+
+        return studyIdsToFileIds;
     }
 
     private List<VariantEntity> updateVariantEntitiesSampleNames(List<VariantEntity> variantEntities,
@@ -220,7 +223,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     private void addFilterCriteriaToQuery(Query query, List<VariantEntityRepositoryFilter> filters) {
-        if ((filters != null) && (filters.size() > 0)){
+        if (filters != null && filters.size() > 0){
             List<Criteria> criteriaList = getFiltersCriteria(filters);
             for (Criteria criteria : criteriaList) {
                 query.addCriteria(criteria);
