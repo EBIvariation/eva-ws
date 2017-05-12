@@ -49,6 +49,7 @@ import java.util.Set;
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -449,22 +450,26 @@ public class VariantEntityRepositoryTest {
     }
 
     @Test
-    public void testSamplesDataPopulated() {
+    public void testSamplesData() {
         String chr = "11";
         int start = 180001;
         int end = 180003;
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
-        List<String> exclude = new ArrayList<>();
-
 
         List<VariantEntity> variantEntityList =
                 variantEntityRepository.findByRegionsAndComplexFilters(regions, null, null, new PageRequest(0, 10000));
 
-        variantEntityList.get(0);
-
-        // todo add an actual test
+        assertEquals(1, variantEntityList.size());
+        for (VariantSourceEntry variantSourceEntry : variantEntityList.get(0).getSourceEntries().values()) {
+            if (!variantSourceEntry.getFileId().equals("ERZ015345")) {
+                continue;
+            }
+            assertNotEquals(0, variantSourceEntry.getSamplesData().size());
+            Map<String, Map<String, String>> samplesData = variantSourceEntry.getSamplesData();
+            assertEquals("1|1", samplesData.get("HG00096").get("GT"));
+        }
     }
 
     private void testFiltersHelperRegion(List<Region> regions, List<VariantEntityRepositoryFilter> filters,

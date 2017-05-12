@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Concrete implementation of the VariantEntityRepository interface (relationship inferred by Spring),
@@ -153,55 +154,60 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         Map<String, Map<String, Map<String, String>>> studyIdsToFileIdsToIndexesToNames =
                 studyIdsToFileIdsToIndexesToNames();
 
-        variantEntities = updateVariantEntitySampleNames(variantEntities, studyIdsToFileIdsToIndexesToNames);
+        variantEntities = updateVariantEntitiesSampleNames(variantEntities, studyIdsToFileIdsToIndexesToNames);
 
         return variantEntities;
     }
 
-    private List<VariantEntity> updateVariantEntitySampleNames(List<VariantEntity> variantEntities,
-                                                               Map<String, Map<String, Map<String, String>>>
+    private List<VariantEntity> updateVariantEntitiesSampleNames(List<VariantEntity> variantEntities,
+                                                                 Map<String, Map<String, Map<String, String>>>
                                                                        studyIdsToFileIdsToIndexesToNames) {
 
-        // For each variant entity
-        for (VariantEntity variantEntity : variantEntities) {
+        variantEntities.stream().map(
+                variantEntity -> updateVariantEntitySampleNames(variantEntity, studyIdsToFileIdsToIndexesToNames)
+        ).collect(Collectors.toList());
+        return variantEntities;
+    }
 
-            // For each variant source entry in that variant entity
-            for (VariantSourceEntry variantSourceEntry : variantEntity.getSourceEntries().values()) {
+    private VariantEntity updateVariantEntitySampleNames(VariantEntity variantEntity,
+                                                         Map<String, Map<String, Map<String, String>>>
+                                                                 studyIdsToFileIdsToIndexesToNames) {
+        // For each variant source entry in that variant entity
+        for (VariantSourceEntry variantSourceEntry : variantEntity.getSourceEntries().values()) {
 
-                // Get samples data from that variant entry
-                Map<String,Map<String,String>> samplesData = variantSourceEntry.getSamplesData();
-                if ((samplesData == null) || (samplesData.size() == 0)) {
-                    continue;
+            // Get samples data from that variant entry
+            Map<String,Map<String,String>> samplesData = variantSourceEntry.getSamplesData();
+            if ((samplesData == null) || (samplesData.size() == 0)) {
+                continue;
+            }
+
+            // Get the default genotype string for that variant entry and remove it
+            String defaultGt = samplesData.get("def").get("GT");
+            samplesData.remove("def");
+
+            String studyId = variantSourceEntry.getStudyId();
+            String fileId = variantSourceEntry.getFileId();
+
+            // Get the map of sample index to sample name for that study and file
+            Map<String, String> indexesToNames = studyIdsToFileIdsToIndexesToNames.get(studyId).get(fileId);
+            for (Map.Entry<String, String> indexToName : indexesToNames.entrySet()) {
+                String sampleIndex = indexToName.getKey();
+                String sampleName = indexToName.getValue();
+
+                // New sample data ("GT" -> gtString)
+                Map<String, String> sampleData = new HashMap<>(1);
+                // If the sample index is already in the samplesData then remove it
+                if (samplesData.containsKey(sampleIndex)) {
+                    sampleData = samplesData.remove(sampleIndex);
+                } else {
+                    // If sample index not in samplesData then infer it has the default gt string
+                    sampleData.put("GT", defaultGt);
                 }
-
-                // Get the default genotype string for that variant entry and remove it
-                String defaultGt = samplesData.get("def").get("GT");
-                samplesData.remove("def");
-
-                String studyId = variantSourceEntry.getStudyId();
-                String fileId = variantSourceEntry.getFileId();
-
-                // Get the map of sample index to sample name for that study and file
-                Map<String, String> indexesToNames = studyIdsToFileIdsToIndexesToNames.get(studyId).get(fileId);
-                for (Map.Entry<String, String> indexToName : indexesToNames.entrySet()) {
-                    String sampleIndex = indexToName.getKey();
-                    String sampleName = indexToName.getValue();
-
-                    // New sample data ("GT" -> gtString)
-                    Map<String, String> sampleData = new HashMap<>(1);
-                    // If the sample index is already in the samplesData then remove it
-                    if (samplesData.containsKey(sampleIndex)) {
-                        sampleData = samplesData.remove(sampleIndex);
-                    } else {
-                        // If sample index not in samplesData then infer it has the default gt string
-                        sampleData.put("GT", defaultGt);
-                    }
-                    // Put the new sample data into samplesData
-                    samplesData.put(sampleName, sampleData);
-                }
+                // Put the new sample data into samplesData
+                samplesData.put(sampleName, sampleData);
             }
         }
-        return variantEntities;
+        return variantEntity;
     }
 
     private void addFilterCriteriaToQuery(Query query, List<VariantEntityRepositoryFilter> filters) {
