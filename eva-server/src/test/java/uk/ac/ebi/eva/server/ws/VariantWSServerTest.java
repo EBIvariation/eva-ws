@@ -183,7 +183,7 @@ public class VariantWSServerTest {
 
     @Test
     public void testExistsFailsIfGivenId() throws URISyntaxException {
-        String url = "/v1/variants/" + VARIANT_ID + "/exists?species=";
+        String url = "/v1/variants/" + VARIANT_ID + "/exists?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<Boolean>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<Boolean>>>() {});

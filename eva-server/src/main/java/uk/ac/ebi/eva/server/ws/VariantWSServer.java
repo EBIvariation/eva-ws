@@ -137,35 +137,58 @@ public class VariantWSServer extends EvaWSServer {
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         initializeQuery();
 
-        VariantDBAdaptor variantMongoDbAdaptor = dbAdaptorConnector.getVariantDBAdaptor(species);
-
-        if (studies != null && !studies.isEmpty()) {
-            queryOptions.put("studies", studies);
+        if (species.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse("Please specify a species");
         }
+
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+
+        List<VariantEntity> variantEntities;
+        Long numTotalResults;
 
         String invalidCoordinatesMessage =
                 "Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt";
 
-        if (!variantId.contains(":")) { // Query by accession id
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setErrorQueryResponse(invalidCoordinatesMessage);
-        } else { // Query by chr:pos:ref:alt
-            String parts[] = variantId.split(":", -1);
-            if (parts.length < 3) {
+        if (variantId.contains(":")) {
+            String[] regionId = variantId.split(":", -1);
+            if (regionId.length < 3) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return setErrorQueryResponse(invalidCoordinatesMessage);
             }
 
-            Region region = new Region(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[1]));
-            queryOptions.put("reference", parts[2]);
-            if (parts.length > 3) {
-                queryOptions.put("alternate", parts[3]);
+            String alternate = (regionId.length > 3) ? regionId[3] : null;
+
+            if (studies != null && !studies.isEmpty()) {
+                variantEntities = queryByCoordinatesAndAllelesAndStudyIds(regionId[0], Integer.parseInt(regionId[1]),
+                                                                          regionId[2], alternate, studies);
+            } else {
+                variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]),
+                                                               regionId[2], alternate);
             }
 
-            QueryResult queryResult = variantMongoDbAdaptor.getAllVariantsByRegion(region, queryOptions);
-            queryResult.setResult(Arrays.asList(queryResult.getNumResults() > 0));
-            queryResult.setResultType(Boolean.class.getCanonicalName());
-            return setQueryResponse(queryResult);
+            numTotalResults = (long) variantEntities.size();
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setErrorQueryResponse(invalidCoordinatesMessage);
+        }
+
+        QueryResult queryResult = new QueryResult();
+        queryResult.setResult(Arrays.asList(numTotalResults > 0));
+        queryResult.setResultType(Boolean.class.getCanonicalName());
+        return setQueryResponse(queryResult);
+    }
+
+    private List<VariantEntity> queryByCoordinatesAndAllelesAndStudyIds(String chromosome, int start, String reference,
+                                                                        String alternate, List<String> studyIds) {
+        if (alternate != null) {
+            return variantEntityRepository.findByChromosomeAndStartAndReferenceAndAlternateAndStudyIn(chromosome, start,
+                                                                                                      reference,
+                                                                                                      alternate,
+                                                                                                      studyIds);
+        } else {
+            return variantEntityRepository.findByChromosomeAndStartAndReferenceAndStudyIn(chromosome, start, reference,
+                                                                                          studyIds);
         }
     }
 
