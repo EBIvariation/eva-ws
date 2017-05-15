@@ -22,7 +22,6 @@ import org.opencb.biodata.models.variant.Variant;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Filter;
 
 /**
  * Class for building filters for querying using the VariantEntityRepository
@@ -35,12 +34,17 @@ public class FilterBuilder {
                                                                                  String polyphenScore,
                                                                                  String siftScore,
                                                                                  List<String> studies,
-                                                                                 List<String> consequenceType) {
+                                                                                 List<String> consequenceType,
+                                                                                 String ref, List<String> alts,
+                                                                                 List<String> xrefIds) {
         return this.withMaf(maf)
                    .withPolyphenScore(polyphenScore)
                    .withSiftScore(siftScore)
                    .withStudies(studies)
                    .withConsequenceType(consequenceType)
+                   .withRef(ref)
+                   .withAlternates(alts)
+                   .withXrefsIds(xrefIds)
                    .build();
     }
 
@@ -113,14 +117,7 @@ public class FilterBuilder {
 
     public FilterBuilder withRef(String ref) {
         if (ref != null) {
-            filters.add(new VariantEntityRepositoryRefFilter(ref));
-        }
-        return this;
-    }
-
-    public FilterBuilder withAlt(String alt) {
-        if (alt != null) {
-            filters.add(new VariantEntityRepositoryAltFilter(alt));
+            filters.add(new VariantEntityRepositoryReferenceFilter(ref));
         }
         return this;
     }

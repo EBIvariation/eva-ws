@@ -20,11 +20,11 @@ import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 
 import java.util.List;
 
-public class VariantEntityRepositoryRefFilter extends VariantEntityRepositoryFilter<String> {
+public class VariantEntityRepositoryReferenceFilter extends VariantEntityRepositoryFilter<String> {
 
     private static final String FIELD = VariantEntityRepositoryFilter.REF_FIELD;
 
-    public VariantEntityRepositoryRefFilter(String ref) {
+    public VariantEntityRepositoryReferenceFilter(String ref) {
         super(FIELD, ref, VariantEntityRepository.RelationalOperator.EQ);
     }
 }

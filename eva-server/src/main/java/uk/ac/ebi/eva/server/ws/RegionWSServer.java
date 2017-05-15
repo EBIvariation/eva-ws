@@ -84,8 +84,8 @@ public class RegionWSServer extends EvaWSServer {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
-                .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType
-                );
+                .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType,
+                                                   null, null, null);
         List<Region> regions = Region.parseRegions(regionId);
         PageRequest pageRequest = Utils.getPageRequest(queryOptions);
 

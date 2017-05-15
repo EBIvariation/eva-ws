@@ -39,6 +39,7 @@ import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -77,8 +78,9 @@ public class GeneWSServer extends EvaWSServer {
         FilterBuilder filterBuilder = new FilterBuilder();
 
         List<VariantEntityRepositoryFilter> filters =
-                filterBuilder.getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
-        filters.addAll(filterBuilder.withXrefsIds(geneIds).build());
+                filterBuilder.getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType,
+                                                                reference, Collections.singletonList(alternate),
+                                                                geneIds);
 
 
 
