@@ -102,4 +102,11 @@ public class FilterBuilder {
         }
         return this;
     }
+
+    public FilterBuilder withXrefsIds(List<String> xrefsIds) {
+        if (xrefsIds != null && !xrefsIds.isEmpty()) {
+            filters.add(new VariantEntityRepositoryXrefsIdFilter(xrefsIds));
+        }
+        return this;
+    }
 }
