@@ -127,7 +127,7 @@ public class RegionWSServer extends EvaWSServer {
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        List<String> chromosomeList = variantEntityRepository.findDistinctChromosomes();
+        List<String> chromosomeList = new ArrayList<>(variantEntityRepository.findDistinctChromosomes());
         QueryResult<String> queryResult = buildQueryResult(chromosomeList);
         return setQueryResponse(queryResult);
     }
