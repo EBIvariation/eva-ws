@@ -73,6 +73,16 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     @Override
+    public List<VariantEntity> findByComplexFilters(List<VariantEntityRepositoryFilter> filters, Pageable pageable) {
+        return findByComplexFiltersHelper(new Query(), filters, null, pageable);
+    }
+
+    @Override
+    public Long countByComplexFilters(List<VariantEntityRepositoryFilter> filters) {
+        return countByComplexFiltersHelper(null, filters);
+    }
+
+    @Override
     public List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions,
                                                               List<VariantEntityRepositoryFilter> filters,
                                                               List<String> exclude, Pageable pageable) {
@@ -126,7 +136,9 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
     private long countByComplexFiltersHelper(Criteria existingCriteria, List<VariantEntityRepositoryFilter> filters) {
         List<Criteria> criteriaList = getFiltersCriteria(filters);
-        criteriaList.add(existingCriteria);
+        if (existingCriteria != null) {
+            criteriaList.add(existingCriteria);
+        }
         Criteria criteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[criteriaList.size()]));
 
         Aggregation aggregation = Aggregation.newAggregation(

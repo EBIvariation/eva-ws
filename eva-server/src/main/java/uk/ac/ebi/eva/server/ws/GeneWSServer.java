@@ -19,11 +19,11 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import com.mongodb.BasicDBObject;
 import io.swagger.annotations.Api;
 import org.opencb.datastore.core.QueryResponse;
+import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,8 +33,10 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.filter.FilterBuilder;
 import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -46,6 +48,9 @@ import java.util.List;
 @RequestMapping(value = "/v1/genes", produces = "application/json")
 @Api(tags = { "genes" })
 public class GeneWSServer extends EvaWSServer {
+
+    @Autowired
+    private VariantEntityRepository variantEntityRepository;
 
     public GeneWSServer() { }
 
@@ -72,8 +77,6 @@ public class GeneWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List<VariantEntity> variantEntities;
-        Long numTotalResults;
 
         FilterBuilder filterBuilder = new FilterBuilder();
 
@@ -82,43 +85,12 @@ public class GeneWSServer extends EvaWSServer {
                                                                 reference, Collections.singletonList(alternate),
                                                                 geneIds);
 
+        List<VariantEntity> variantEntities =
+                variantEntityRepository.findByComplexFilters(filters, Utils.getPageRequest(queryOptions));
+        Long numTotalResults = variantEntityRepository.countByComplexFilters(filters);
 
-
-        // OLD IMPLEMENTATION
-
-        initializeQuery();
-
-        VariantDBAdaptor variantMongoDbAdaptor = dbAdaptorConnector.getVariantDBAdaptor(species);
-
-        if (studies != null && !studies.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.STUDIES, studies);
-        }
-
-        if (consequenceType != null && !consequenceType.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.ANNOT_CONSEQUENCE_TYPE, consequenceType);
-        }
-
-        if (!maf.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.MAF, maf);
-        }
-        if (!polyphenScore.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.POLYPHEN, polyphenScore);
-        }
-        if (!siftScore.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.SIFT, siftScore);
-        }
-
-        if (!reference.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.REFERENCE, reference);
-        }
-        if (!alternate.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.ALTERNATE, alternate);
-        }
-
-        queryOptions.put(VariantDBAdaptor.SORT, new BasicDBObject("chr", 1).append("start", 1));
-        queryOptions.put(VariantDBAdaptor.GENE, String.join(",", geneIds));
-
-        return setQueryResponse(variantMongoDbAdaptor.getAllVariants(queryOptions));
+        QueryResult<VariantEntity> queryResult = buildQueryResult(variantEntities, numTotalResults);
+        return setQueryResponse(queryResult);
 
     }
 

@@ -47,6 +47,10 @@ interface VariantEntityRepositoryCustom {
 
     Long countByIdsAndComplexFilters(String id, List<VariantEntityRepositoryFilter> filters);
 
+    List<VariantEntity> findByComplexFilters(List<VariantEntityRepositoryFilter> filters, Pageable pageable);
+
+    Long countByComplexFilters(List<VariantEntityRepositoryFilter> filters);
+
     /**
      * Query for variants within a set of specified genomic regions, and whose attributes match those values specified
      * in the filters: study, consequence type, minor allele frequency and protein substitution scores (Polyphen and
