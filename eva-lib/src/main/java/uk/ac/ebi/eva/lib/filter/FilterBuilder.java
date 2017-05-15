@@ -22,6 +22,7 @@ import org.opencb.biodata.models.variant.Variant;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Filter;
 
 /**
  * Class for building filters for querying using the VariantEntityRepository
@@ -106,6 +107,20 @@ public class FilterBuilder {
     public FilterBuilder withXrefsIds(List<String> xrefsIds) {
         if (xrefsIds != null && !xrefsIds.isEmpty()) {
             filters.add(new VariantEntityRepositoryXrefsIdFilter(xrefsIds));
+        }
+        return this;
+    }
+
+    public FilterBuilder withRef(String ref) {
+        if (ref != null) {
+            filters.add(new VariantEntityRepositoryRefFilter(ref));
+        }
+        return this;
+    }
+
+    public FilterBuilder withAlt(String alt) {
+        if (alt != null) {
+            filters.add(new VariantEntityRepositoryAltFilter(alt));
         }
         return this;
     }
