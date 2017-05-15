@@ -49,9 +49,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
- */
 @RestController
 @RequestMapping(value = "/v1/variants", produces = "application/json")
 @Api(tags = {"variants"})

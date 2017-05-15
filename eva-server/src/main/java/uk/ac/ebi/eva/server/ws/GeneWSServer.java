@@ -30,14 +30,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
+import uk.ac.ebi.eva.lib.filter.FilterBuilder;
+import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.List;
 
-/**
- *
- * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
- */
 @RestController
 @RequestMapping(value = "/v1/genes", produces = "application/json")
 @Api(tags = { "genes" })
@@ -49,28 +52,50 @@ public class GeneWSServer extends EvaWSServer {
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants of a gene", response = QueryResponse.class)
     public QueryResponse getVariantsByGene(@PathVariable("geneIds") List<String> geneIds,
                                            @RequestParam(name = "species") String species,
-                                           @RequestParam(name = "studies", required = false) String studies,
+                                           @RequestParam(name = "studies", required = false) List<String> studies,
                                            @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
                                            @RequestParam(name = "maf", defaultValue = "") String maf,
                                            @RequestParam(name = "polyphen", defaultValue = "") String polyphenScore,
                                            @RequestParam(name = "sift", defaultValue = "") String siftScore,
                                            @RequestParam(name = "ref", defaultValue = "") String reference,
                                            @RequestParam(name = "alt", defaultValue = "") String alternate,
-                                           @RequestParam(name = "miss_alleles", defaultValue = "") String missingAlleles,
-                                           @RequestParam(name = "miss_gts", defaultValue = "") String missingGenotypes)
+                                           HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
+
         initializeQuery();
-        
+
+        if (species.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse("Please specify a species");
+        }
+
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+
+        List<VariantEntity> variantEntities;
+        Long numTotalResults;
+
+        FilterBuilder filterBuilder = new FilterBuilder();
+
+        List<VariantEntityRepositoryFilter> filters =
+                filterBuilder.getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
+        filters.addAll(filterBuilder.withXrefsIds(geneIds).build());
+
+
+
+        // OLD IMPLEMENTATION
+
+        initializeQuery();
+
         VariantDBAdaptor variantMongoDbAdaptor = dbAdaptorConnector.getVariantDBAdaptor(species);
-        
+
         if (studies != null && !studies.isEmpty()) {
             queryOptions.put(VariantDBAdaptor.STUDIES, studies);
         }
-        
+
         if (consequenceType != null && !consequenceType.isEmpty()) {
             queryOptions.put(VariantDBAdaptor.ANNOT_CONSEQUENCE_TYPE, consequenceType);
         }
-        
+
         if (!maf.isEmpty()) {
             queryOptions.put(VariantDBAdaptor.MAF, maf);
         }
@@ -80,42 +105,35 @@ public class GeneWSServer extends EvaWSServer {
         if (!siftScore.isEmpty()) {
             queryOptions.put(VariantDBAdaptor.SIFT, siftScore);
         }
-        
+
         if (!reference.isEmpty()) {
             queryOptions.put(VariantDBAdaptor.REFERENCE, reference);
         }
         if (!alternate.isEmpty()) {
             queryOptions.put(VariantDBAdaptor.ALTERNATE, alternate);
         }
-        
-        if (!missingAlleles.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.MISSING_ALLELES, missingAlleles);
-        }
-        if (!missingGenotypes.isEmpty()) {
-            queryOptions.put(VariantDBAdaptor.MISSING_GENOTYPES, missingGenotypes);
-        }
-        
+
         queryOptions.put(VariantDBAdaptor.SORT, new BasicDBObject("chr", 1).append("start", 1));
         queryOptions.put(VariantDBAdaptor.GENE, String.join(",", geneIds));
-        
+
         return setQueryResponse(variantMongoDbAdaptor.getAllVariants(queryOptions));
+
     }
 
     @RequestMapping(value = "/{geneIds}/variants", method = RequestMethod.POST)
     public QueryResponse getVariantsByGenePOST(@PathVariable("geneIds") List<String> geneIds,
                                                @RequestParam(name = "species") String species,
-                                               @RequestParam(name = "studies", required = false) String studies,
+                                               @RequestParam(name = "studies", required = false) List<String> studies,
                                                @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
                                                @RequestParam(name = "maf", defaultValue = "") String maf,
                                                @RequestParam(name = "polyphen", defaultValue = "") String polyphenScore,
                                                @RequestParam(name = "sift", defaultValue = "") String siftScore,
                                                @RequestParam(name = "ref", defaultValue = "") String reference,
                                                @RequestParam(name = "alt", defaultValue = "") String alternate,
-                                               @RequestParam(name = "miss_alleles", defaultValue = "") String missingAlleles,
-                                               @RequestParam(name = "miss_gts", defaultValue = "") String missingGenotypes)
+                                               HttpServletResponse response)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         return getVariantsByGene(geneIds, species, studies, consequenceType, maf, polyphenScore, siftScore,
-                                 reference, alternate, missingAlleles, missingGenotypes);
+                                 reference, alternate, response);
     }
 
 }
