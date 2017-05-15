@@ -419,14 +419,14 @@ public class VariantEntityRepositoryTest {
 
     @Test
     public void testFindDistinctChromosomesByStudyId() {
-        List<String> chromosomeList = variantEntityRepository.findDistinctChromosomes();
+        Set<String> chromosomeSet = variantEntityRepository.findDistinctChromosomes();
 
         Set<String> expectedChromosomeSet = new HashSet<>();
         expectedChromosomeSet.add("11");
         expectedChromosomeSet.add("9");
         expectedChromosomeSet.add("2");
 
-        assertEquals(expectedChromosomeSet, new HashSet<>(chromosomeList));
+        assertEquals(expectedChromosomeSet, new HashSet<>(chromosomeSet));
     }
 
     @Test
