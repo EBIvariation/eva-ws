@@ -98,7 +98,7 @@ public class VariantEntityRepositoryTest {
 
     @Test
     public void testVariantIdIsFound() {
-        String id = "rs776523794";
+        String id = "rs148957270";
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
         List<String> exclude = new ArrayList<>();
         List<VariantEntity> variantEntityList = variantEntityRepository
@@ -107,13 +107,13 @@ public class VariantEntityRepositoryTest {
         assertTrue(variantEntityList.size() > 0);
         Set<String> idSet = new HashSet<>();
         idSet.add(id);
-        idSet.add("ss664037839");
+        idSet.add("ss254803838");
         assertEquals(idSet, variantEntityList.get(0).getIds());
     }
 
     @Test
     public void testCountByIdsAndComplexFilters() {
-        String id = "rs776523794";
+        String id = "rs575961545";
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
         Long count = variantEntityRepository.countByIdsAndComplexFilters(id, filters);
         assertEquals(new Long(1), count);
@@ -141,8 +141,8 @@ public class VariantEntityRepositoryTest {
     @Test
     public void testVariantRegionIsFound() {
         String chr = "11";
-        int start = 180002;
-        int end = 180002;
+        int start = 190013;
+        int end = 190013;
         Region region = new Region(chr, start, end);
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
         List<String> exclude = new ArrayList<>();
@@ -161,8 +161,8 @@ public class VariantEntityRepositoryTest {
     @Test
     public void testVariantRegionIsFoundMultiple() {
         String chr = "11";
-        int start = 185000;
-        int end = 190000;
+        int start = 190000;
+        int end = 195000;
         Region region = new Region(chr, start, end);
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
         List<String> exclude = new ArrayList<>();
@@ -173,7 +173,7 @@ public class VariantEntityRepositoryTest {
                         .findByRegionsAndComplexFilters(regions, filters, exclude, new PageRequest(0, 1000000));
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);
-        assertEquals(309, variantEntityList.size());
+        assertEquals(611, variantEntityList.size());
         VariantEntity prevVariantEntity = variantEntityList.get(0);
         for (VariantEntity currVariantEntity : variantEntityList) {
             assertTrue(prevVariantEntity.getStart() <= currVariantEntity.getStart());
