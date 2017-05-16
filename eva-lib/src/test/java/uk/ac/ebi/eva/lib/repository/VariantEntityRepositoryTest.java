@@ -354,27 +354,27 @@ public class VariantEntityRepositoryTest {
     public void testFindByRegionsAndComplexFilters() {
 
         List<Region> regions = new ArrayList<>();
-        regions.add(new Region("11", 183000, 183300));
-        regions.add(new Region("11", 180100, 180200));
+        regions.add(new Region("11", 193000, 193300));
+        regions.add(new Region("11", 190100, 190200));
         regions.add(new Region("11", 190000, 190200));
 
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
         List<String> exclude = new ArrayList<>();
 
-        testFindByRegionsAndComplexFiltersHelper(regions, filters, exclude, 28);
+        testFindByRegionsAndComplexFiltersHelper(regions, filters, exclude, 106);
 
         regions = new ArrayList<>();
-        regions.add(new Region("11", 180001, 180079)); //4
+        regions.add(new Region("11", 190001, 190079)); //7
 
-        testFindByRegionsAndComplexFiltersHelper(regions, filters, null, 4);
+        testFindByRegionsAndComplexFiltersHelper(regions, filters, null, 7);
 
-        regions.add(new Region("11", 180150, 180180)); //5
+        regions.add(new Region("11", 190150, 190250)); //3
 
-        testFindByRegionsAndComplexFiltersHelper(regions, filters, null, 9);
+        testFindByRegionsAndComplexFiltersHelper(regions, filters, null, 10);
 
-        regions.add(new Region("11", 180205, 180221)); //2
+        regions.add(new Region("11", 191222, 191333)); //6
 
-        testFindByRegionsAndComplexFiltersHelper(regions, filters, null, 11);
+        testFindByRegionsAndComplexFiltersHelper(regions, filters, null, 16);
     }
 
     @Test
