@@ -183,14 +183,14 @@ public class VariantEntityRepositoryTest {
     @Test
     public void testCountByRegionsAndComplexFilters() {
         String chr = "11";
-        int start = 185000;
-        int end = 190000;
+        int start = 195000;
+        int end = 200000;
         Region region = new Region(chr, start, end);
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         Long count = variantEntityRepository.countByRegionsAndComplexFilters(regions, filters);
-        assertEquals(new Long(309), count);
+        assertEquals(new Long(567), count);
     }
 
     @Test
@@ -215,53 +215,53 @@ public class VariantEntityRepositoryTest {
         List<String> cts = new ArrayList<>();
         cts.add("SO:0001566");
         String chr = "11";
-        int start = 180000;
-        int end = 190000;
+        int start = 194000;
+        int end = 198000;
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withConsequenceType(cts).build();
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 209);
+        testFiltersHelperRegion(regions, filters, exclude, 195);
     }
 
     @Test
     public void testRegionIsFoundWithMafGreaterThan() {
         String chr = "11";
-        int start = 185000;
-        int end = 190000;
+        int start = 191000;
+        int end = 193000;
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withMaf(">0.125").build();
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 43);
+        testFiltersHelperRegion(regions, filters, exclude, 13);
     }
 
     @Test
     public void testRegionIsFoundWithMafGreaterThanEquals() {
         String chr = "11";
-        int start = 189000;
-        int end = 190000;
+        int start = 195000;
+        int end = 199000;
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withMaf(">=0.125").build();
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 16);
+        testFiltersHelperRegion(regions, filters, exclude, 26);
     }
 
     @Test
     public void testRegionIsFoundWithMafEquals() {
         String chr = "11";
-        int start = 185000;
-        int end = 190000;
+        int start = 192000;
+        int end = 196000;
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withMaf("=0.5").build();
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 22);
+        testFiltersHelperRegion(regions, filters, exclude, 6);
     }
 
     @Test
