@@ -66,6 +66,7 @@ public class GeneWSServerTest {
     private DBAdaptorConnector dbAdaptorConnector;
 
     private String GENE_ID = "GeneId";
+    private VariantEntity testVariantEntity;
 
     @Before
     public void setUp() throws Exception {
@@ -74,11 +75,11 @@ public class GeneWSServerTest {
         int end = 1005;
         String reference = "reference";
         String alternate = "alternate";
-        VariantEntity variantEntity = new VariantEntity(chromosome, start, end, reference, alternate);
+        testVariantEntity = new VariantEntity(chromosome, start, end, reference, alternate);
         VariantAnnotation variantAnnotation = new VariantAnnotation(chromosome, start, end, reference, alternate);
         variantAnnotation.setXrefs(Collections.singletonList(new Xref(GENE_ID, "HGNC")));
-        variantEntity.setAnnotation(variantAnnotation);
-        List<VariantEntity> variantEntities = Collections.singletonList(variantEntity);
+        testVariantEntity.setAnnotation(variantAnnotation);
+        List<VariantEntity> variantEntities = Collections.singletonList(testVariantEntity);
 
         List<String> geneIds = new ArrayList<>();
         geneIds.add(GENE_ID);
@@ -96,6 +97,9 @@ public class GeneWSServerTest {
         assertEquals(1, queryResponse.getResponse().size());
 
         List<VariantEntity> results = queryResponse.getResponse().get(0).getResult();
+
+        assertEquals(1, results.size());
+        assertEquals(testVariantEntity, results.get(0));
     }
 
     private QueryResponse<QueryResult<VariantEntity>> testGetVariantByGeneHelper(List<String> geneIds) {
