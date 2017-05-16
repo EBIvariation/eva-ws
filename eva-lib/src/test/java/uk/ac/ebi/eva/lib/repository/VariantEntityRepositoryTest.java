@@ -295,14 +295,14 @@ public class VariantEntityRepositoryTest {
         List<String> studies = new ArrayList<>();
         studies.add("PRJEB6930");
         String chr = "11";
-        int start = 180000;
-        int end = 180500;
+        int start = 196000;
+        int end = 197000;
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 20);
+        testFiltersHelperRegion(regions, filters, exclude, 23);
     }
 
     @Test
@@ -310,14 +310,14 @@ public class VariantEntityRepositoryTest {
         List<String> files = new ArrayList<>();
         files.add("ERZ019961");
         String chr = "11";
-        int start = 180000;
-        int end = 180500;
+        int start = 191000;
+        int end = 192000;
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withFiles(files).build();
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 7);
+        testFiltersHelperRegion(regions, filters, exclude, 2);
     }
 
     @Test
@@ -325,14 +325,14 @@ public class VariantEntityRepositoryTest {
         List<Variant.VariantType> types = new ArrayList<>();
         types.add(Variant.VariantType.INDEL);
         String chr = "11";
-        int start = 180000;
-        int end = 180500;
+        int start = 192000;
+        int end = 194000;
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withVariantTypes(types).build();
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 3);
+        testFiltersHelperRegion(regions, filters, exclude, 17);
     }
 
     @Test
@@ -340,14 +340,14 @@ public class VariantEntityRepositoryTest {
         List<String> alternates = new ArrayList<>();
         alternates.add("T");
         String chr = "11";
-        int start = 180000;
-        int end = 180500;
+        int start = 194000;
+        int end = 199000;
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withAlternates(alternates).build();
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 21);
+        testFiltersHelperRegion(regions, filters, exclude, 169);
     }
 
     @Test
@@ -432,8 +432,8 @@ public class VariantEntityRepositoryTest {
     @Test
     public void testCountByChromosomeAndStartAndEndAndAltAndStudy() {
         List<String> studies = new ArrayList<>();
-        studies.add("PRJEB5829");
-        Long count = (long) variantEntityRepository.findByChromosomeAndStartAndAltAndStudyIn("11", 180002, "A", studies)
+        studies.add("PRJEB6930");
+        Long count = (long) variantEntityRepository.findByChromosomeAndStartAndAltAndStudyIn("11", 190057, "T", studies)
                                                    .size();
         assertEquals(new Long(1), count);
     }
@@ -442,18 +442,18 @@ public class VariantEntityRepositoryTest {
     public void testCountByChromosomeAndStartAndTypeAndStudy() {
         List<String> studies = new ArrayList<>();
         studies.add("PRJX00001");
-        Long count = (long) variantEntityRepository.findByChromosomeAndStartAndTypeAndStudyIn("11", 180077,
-                                                                                              Variant.VariantType.INDEL,
+        Long count = (long) variantEntityRepository.findByChromosomeAndStartAndTypeAndStudyIn("11", 190523,
+                                                                                              Variant.VariantType.SNV,
                                                                                               studies)
                                                    .size();
         assertEquals(new Long(1), count);
     }
 
     @Test
-    public void testSamplesData() {
+    public void testSamplesDataIsNotEmpty() {
         String chr = "11";
-        int start = 180001;
-        int end = 180003;
+        int start = 190062;
+        int end = 190064;
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
@@ -463,12 +463,12 @@ public class VariantEntityRepositoryTest {
 
         assertEquals(1, variantEntityList.size());
         for (VariantSourceEntry variantSourceEntry : variantEntityList.get(0).getSourceEntries().values()) {
-            if (!variantSourceEntry.getFileId().equals("ERZ015345")) {
+            if (!variantSourceEntry.getFileId().equals("ERZX00051")) {
                 continue;
             }
             assertNotEquals(0, variantSourceEntry.getSamplesData().size());
             Map<String, Map<String, String>> samplesData = variantSourceEntry.getSamplesData();
-            assertEquals("1|1", samplesData.get("HG00096").get("GT"));
+            assertEquals("0|1", samplesData.get("HG03805").get("GT"));
         }
     }
 
