@@ -76,7 +76,7 @@ public class VariantEntityRepositoryTest {
     public void checkFieldPresence() throws IOException {
 
         List<Region> regions = new ArrayList<>();
-        regions.add(new Region("11", 183000, 183300));
+        regions.add(new Region("11", 190000, 190300));
 
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
         List<String> exclude = new ArrayList<>();
@@ -162,7 +162,7 @@ public class VariantEntityRepositoryTest {
     public void testVariantRegionIsFoundMultiple() {
         String chr = "11";
         int start = 190000;
-        int end = 195000;
+        int end = 194000;
         Region region = new Region(chr, start, end);
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
         List<String> exclude = new ArrayList<>();
@@ -173,7 +173,7 @@ public class VariantEntityRepositoryTest {
                         .findByRegionsAndComplexFilters(regions, filters, exclude, new PageRequest(0, 1000000));
         assertNotNull(variantEntityList);
         assertTrue(variantEntityList.size() > 0);
-        assertEquals(611, variantEntityList.size());
+        assertEquals(478, variantEntityList.size());
         VariantEntity prevVariantEntity = variantEntityList.get(0);
         for (VariantEntity currVariantEntity : variantEntityList) {
             assertTrue(prevVariantEntity.getStart() <= currVariantEntity.getStart());
@@ -183,14 +183,14 @@ public class VariantEntityRepositoryTest {
     @Test
     public void testCountByRegionsAndComplexFilters() {
         String chr = "11";
-        int start = 195000;
-        int end = 200000;
+        int start = 191000;
+        int end = 194000;
         Region region = new Region(chr, start, end);
         List<VariantEntityRepositoryFilter> filters = new ArrayList<>();
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         Long count = variantEntityRepository.countByRegionsAndComplexFilters(regions, filters);
-        assertEquals(new Long(567), count);
+        assertEquals(new Long(418), count);
     }
 
     @Test
@@ -215,14 +215,14 @@ public class VariantEntityRepositoryTest {
         List<String> cts = new ArrayList<>();
         cts.add("SO:0001566");
         String chr = "11";
-        int start = 194000;
-        int end = 198000;
+        int start = 190000;
+        int end = 194000;
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withConsequenceType(cts).build();
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 195);
+        testFiltersHelperRegion(regions, filters, exclude, 270);
     }
 
     @Test
@@ -241,27 +241,27 @@ public class VariantEntityRepositoryTest {
     @Test
     public void testRegionIsFoundWithMafGreaterThanEquals() {
         String chr = "11";
-        int start = 195000;
-        int end = 199000;
+        int start = 191000;
+        int end = 193000;
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withMaf(">=0.125").build();
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 26);
+        testFiltersHelperRegion(regions, filters, exclude, 13);
     }
 
     @Test
     public void testRegionIsFoundWithMafEquals() {
         String chr = "11";
         int start = 192000;
-        int end = 196000;
+        int end = 194000;
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withMaf("=0.5").build();
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 6);
+        testFiltersHelperRegion(regions, filters, exclude, 3);
     }
 
     @Test
@@ -295,14 +295,14 @@ public class VariantEntityRepositoryTest {
         List<String> studies = new ArrayList<>();
         studies.add("PRJEB6930");
         String chr = "11";
-        int start = 196000;
-        int end = 197000;
+        int start = 192000;
+        int end = 193000;
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 23);
+        testFiltersHelperRegion(regions, filters, exclude, 41);
     }
 
     @Test
@@ -340,14 +340,14 @@ public class VariantEntityRepositoryTest {
         List<String> alternates = new ArrayList<>();
         alternates.add("T");
         String chr = "11";
-        int start = 194000;
-        int end = 199000;
+        int start = 192000;
+        int end = 194000;
         List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withAlternates(alternates).build();
         Region region = new Region(chr, start, end);
         List<Region> regions = new ArrayList<>();
         regions.add(region);
         List<String> exclude = new ArrayList<>();
-        testFiltersHelperRegion(regions, filters, exclude, 169);
+        testFiltersHelperRegion(regions, filters, exclude, 93);
     }
 
     @Test
@@ -380,7 +380,7 @@ public class VariantEntityRepositoryTest {
     @Test
     public void testFindByRegionsAndComplexFiltersExcludeSingleRoot() {
         List<Region> regions = new ArrayList<>();
-        regions.add(new Region("11", 183000, 183300));
+        regions.add(new Region("11", 193000, 193300));
 
         List<String> exclude = new ArrayList<>();
         exclude.add(DBObjectToVariantConverter.FILES_FIELD);
@@ -398,7 +398,7 @@ public class VariantEntityRepositoryTest {
     @Test
     public void testFindByRegionsAndComplexFiltersExcludeAttributes() {
         List<Region> regions = new ArrayList<>();
-        regions.add(new Region("11", 183000, 183300));
+        regions.add(new Region("11", 193000, 193300));
 
         List<String> exclude = new ArrayList<>();
         exclude.add(
