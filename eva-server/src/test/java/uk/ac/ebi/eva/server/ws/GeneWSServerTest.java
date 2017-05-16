@@ -86,6 +86,7 @@ public class GeneWSServerTest {
                 new FilterBuilder().getVariantEntityRepositoryFilters(null, null, null, null, null, null, null, geneIds);
 
         given(variantEntityRepository.findByComplexFilters(eq(filters), any())).willReturn(variantEntities);
+        given(variantEntityRepository.countByComplexFilters(eq(filters))).willReturn(1L);
     }
 
     @Test
