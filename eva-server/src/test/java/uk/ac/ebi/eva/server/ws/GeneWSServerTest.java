@@ -102,6 +102,17 @@ public class GeneWSServerTest {
         assertEquals(testVariantEntity, results.get(0));
     }
 
+    @Test
+    public void testGetVariantByGeneNotExisting() {
+        QueryResponse<QueryResult<VariantEntity>> queryResponse =
+                testGetVariantByGeneHelper(Collections.singletonList("not_a_real_id"));
+        assertEquals(1, queryResponse.getResponse().size());
+
+        List<VariantEntity> results = queryResponse.getResponse().get(0).getResult();
+
+        assertEquals(0, results.size());
+    }
+
     private QueryResponse<QueryResult<VariantEntity>> testGetVariantByGeneHelper(List<String> geneIds) {
         String url = "/v1/genes/" + String.join(",", geneIds) + "/variants?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<VariantEntity>>> response = restTemplate.exchange(
