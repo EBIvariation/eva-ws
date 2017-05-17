@@ -157,17 +157,27 @@ public class VariantWSServerTest {
     ///
 
     @Test
-    public void testCheckVariantExistsDoesExist() throws URISyntaxException {
+    public void testCheckVariantExistsDoesExistRegion() throws URISyntaxException {
         assertTrue(testCheckVariantExistsHelper(CHROMOSOME + ":1:C:G"));
     }
 
     @Test
-    public void testCheckVariantExistsDoesntExist() throws URISyntaxException {
+    public void testCheckVariantExistsDoesntExistRegion() throws URISyntaxException {
         assertFalse(testCheckVariantExistsHelper(NON_EXISTING_CHROMOSOME + ":1:C:G"));
     }
 
-    private Boolean testCheckVariantExistsHelper(String testRegion) throws URISyntaxException {
-        String url = "/v1/variants/" + testRegion + "/exists?species=mmusculus_grcm38";
+    @Test
+    public void testCheckVariantExistsDoesExistId() throws URISyntaxException {
+        assertTrue(testCheckVariantExistsHelper(VARIANT_ID));
+    }
+
+    @Test
+    public void testCheckVariantExistsDoesntExistId() throws URISyntaxException {
+        assertFalse(testCheckVariantExistsHelper(NON_EXISTING_VARIANT_ID));
+    }
+
+    private Boolean testCheckVariantExistsHelper(String testIdRegion) throws URISyntaxException {
+        String url = "/v1/variants/" + testIdRegion + "/exists?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<Boolean>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<Boolean>>>() {});
@@ -179,19 +189,6 @@ public class VariantWSServerTest {
         List<Boolean> results = queryResponse.getResponse().get(0).getResult();
         assertEquals(1, results.size());
         return results.get(0);
-    }
-
-    @Test
-    public void testExistsFailsIfGivenId() throws URISyntaxException {
-        String url = "/v1/variants/" + VARIANT_ID + "/exists?species=mmusculus_grcm38";
-        ResponseEntity<QueryResponse<QueryResult<Boolean>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Boolean>>>() {});
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-
-        QueryResponse<QueryResult<Boolean>> queryResponse = response.getBody();
-        assertEquals(0, queryResponse.getResponse().size());
-        assertFalse(queryResponse.getError().isEmpty());
     }
 
 }
