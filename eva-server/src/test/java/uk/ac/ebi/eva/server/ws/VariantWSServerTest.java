@@ -128,8 +128,6 @@ public class VariantWSServerTest {
         assertEquals(VARIANT, results.get(0));
     }
 
-    ///
-
     @Test
     public void testGetVariantByIdDoesntExist() throws URISyntaxException {
         testGetVariantByIdRegionDoesntExistHelper(NON_EXISTING_VARIANT_ID);
@@ -153,8 +151,6 @@ public class VariantWSServerTest {
         List<VariantEntity> results = queryResponse.getResponse().get(0).getResult();
         assertEquals(0, results.size());
     }
-
-    ///
 
     @Test
     public void testCheckVariantExistsDoesExistRegion() throws URISyntaxException {
