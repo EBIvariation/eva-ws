@@ -18,6 +18,8 @@
  */
 package uk.ac.ebi.eva.lib.repository;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import org.opencb.biodata.models.feature.Region;
 import org.opencb.biodata.models.variant.VariantSourceEntry;
 import org.slf4j.Logger;
@@ -124,30 +126,24 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
 
         List<VariantEntity> variantEntities = mongoTemplate.find(query, VariantEntity.class);
 
-        Map<String, Map<String, Map<String, String>>> studyIdsToFileIdsToIndexesToNames =
-                studyIdsToFileIdsToIndexesToNames();
+        Table<String, String, Map<String, String>> studyFileIdsToPositionSamples = studyFileIdsToPositionSamples();
 
-        variantEntities = updateVariantEntitiesSampleNames(variantEntities, studyIdsToFileIdsToIndexesToNames);
+        variantEntities = updateVariantEntitiesSampleNames(variantEntities, studyFileIdsToPositionSamples);
 
         return variantEntities;
     }
 
-    private Map<
-            String, Map<
-            String, Map<
-            String, String>>> studyIdsToFileIdsToIndexesToNames() {
-
+    private Table<String, String, Map<String, String>> studyFileIdsToPositionSamples() {
         List<VariantSourceEntity> variantSourceEntities = variantSourceEntityRepository.findAll();
-        Map<String, Map<String, Map<String, String>>> studyIdsToFileIds = new HashMap<>();
+
+        Table<String, String, Map<String, String>> studyFileIdsToPositionSamples = HashBasedTable.create();
+
         for (VariantSourceEntity variantSourceEntity : variantSourceEntities) {
             if (variantSourceEntity.getSamplesPosition() == null) {
                 continue;
             }
-            String studyId = variantSourceEntity.getStudyId();
-            if (!studyIdsToFileIds.containsKey(studyId)) {
-                studyIdsToFileIds.put(studyId, new HashMap<>());
-            }
 
+            String studyId = variantSourceEntity.getStudyId();
             String fileId = variantSourceEntity.getFileId();
 
             Map<String, Integer> samplesPosition = variantSourceEntity.getSamplesPosition();
@@ -156,29 +152,29 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                 positionSamples.put(Integer.toString(entry.getValue()), entry.getKey());
             }
 
-            studyIdsToFileIds.get(studyId).put(fileId, positionSamples);
+            studyFileIdsToPositionSamples.put(studyId, fileId, positionSamples);
         }
 
-        return studyIdsToFileIds;
+        return studyFileIdsToPositionSamples;
     }
 
     private List<VariantEntity> updateVariantEntitiesSampleNames(List<VariantEntity> variantEntities,
-                                                                 Map<String, Map<String, Map<String, String>>>
-                                                                       studyIdsToFileIdsToIndexesToNames) {
+                                                                 Table<String, String, Map<String, String>>
+                                                                         studyFileIdsToPositionSamples) {
 
         variantEntities = variantEntities.stream().map(
-                variantEntity -> updateVariantEntitySampleNames(variantEntity, studyIdsToFileIdsToIndexesToNames)
+                variantEntity -> updateVariantEntitySampleNames(variantEntity, studyFileIdsToPositionSamples)
         ).collect(Collectors.toList());
         return variantEntities;
     }
 
     private VariantEntity updateVariantEntitySampleNames(VariantEntity variantEntity,
-                                                         Map<String, Map<String, Map<String, String>>>
-                                                                 studyIdsToFileIdsToIndexesToNames) {
+                                                         Table<String, String, Map<String, String>>
+                                                                 studyFileIdsToPositionSamples) {
         Map<String, VariantSourceEntry> variantSourceEntryMap = variantEntity.getSourceEntries().entrySet().stream().collect(
                 Collectors.toMap(
                         Map.Entry::getKey,
-                        e -> updateVariantEntitySampleNames(e.getValue(), studyIdsToFileIdsToIndexesToNames)
+                        e -> updateVariantEntitySampleNames(e.getValue(), studyFileIdsToPositionSamples)
                 )
         );
         variantEntity.setSourceEntries(variantSourceEntryMap);
@@ -186,8 +182,8 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     private VariantSourceEntry updateVariantEntitySampleNames(VariantSourceEntry variantSourceEntry,
-                                                              Map<String, Map<String, Map<String, String>>>
-                                                                     studyIdsToFileIdsToIndexesToNames) {
+                                                              Table<String, String, Map<String, String>>
+                                                                      studyFileIdsToPositionSamples) {
         // Get samples data from that variant entry
         Map<String,Map<String,String>> samplesData = variantSourceEntry.getSamplesData();
         if ((samplesData == null) || (samplesData.size() == 0)) {
@@ -202,7 +198,7 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
         String fileId = variantSourceEntry.getFileId();
 
         // Get the map of sample index to sample name for that study and file
-        Map<String, String> indexesToNames = studyIdsToFileIdsToIndexesToNames.get(studyId).get(fileId);
+        Map<String, String> indexesToNames = studyFileIdsToPositionSamples.get(studyId, fileId);
         for (Map.Entry<String, String> indexToName : indexesToNames.entrySet()) {
             String sampleIndex = indexToName.getKey();
             String sampleName = indexToName.getValue();
