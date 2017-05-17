@@ -83,11 +83,9 @@ public class GeneWSServerTest {
 
         List<String> geneIds = new ArrayList<>();
         geneIds.add(GENE_ID);
-        List<VariantEntityRepositoryFilter> filters =
-                new FilterBuilder().getVariantEntityRepositoryFilters(null, null, null, null, null, null, null, geneIds);
 
-        given(variantEntityRepository.findByComplexFilters(eq(filters), any())).willReturn(variantEntities);
-        given(variantEntityRepository.countByComplexFilters(eq(filters))).willReturn(1L);
+        given(variantEntityRepository.findByGenesAndComplexFilters(eq(geneIds), any(), any())).willReturn(variantEntities);
+        given(variantEntityRepository.countByGenesAndComplexFilters(eq(geneIds), any())).willReturn(1L);
     }
 
     @Test

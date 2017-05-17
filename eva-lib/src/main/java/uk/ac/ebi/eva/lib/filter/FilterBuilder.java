@@ -34,17 +34,12 @@ public class FilterBuilder {
                                                                                  String polyphenScore,
                                                                                  String siftScore,
                                                                                  List<String> studies,
-                                                                                 List<String> consequenceType,
-                                                                                 String ref, List<String> alts,
-                                                                                 List<String> xrefIds) {
+                                                                                 List<String> consequenceType) {
         return this.withMaf(maf)
                    .withPolyphenScore(polyphenScore)
                    .withSiftScore(siftScore)
                    .withStudies(studies)
                    .withConsequenceType(consequenceType)
-                   .withRef(ref)
-                   .withAlternates(alts)
-                   .withXrefsIds(xrefIds)
                    .build();
     }
 
@@ -104,20 +99,6 @@ public class FilterBuilder {
     public FilterBuilder withAlternates(List<String> alternates) {
         if (alternates != null && !alternates.isEmpty()) {
             filters.add(new VariantEntityRepositoryAlternateFilter(alternates));
-        }
-        return this;
-    }
-
-    public FilterBuilder withXrefsIds(List<String> xrefsIds) {
-        if (xrefsIds != null && !xrefsIds.isEmpty()) {
-            filters.add(new VariantEntityRepositoryXrefsIdFilter(xrefsIds));
-        }
-        return this;
-    }
-
-    public FilterBuilder withRef(String ref) {
-        if (ref != null && !ref.isEmpty()) {
-            filters.add(new VariantEntityRepositoryReferenceFilter(ref));
         }
         return this;
     }

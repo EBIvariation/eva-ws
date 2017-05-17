@@ -47,9 +47,10 @@ interface VariantEntityRepositoryCustom {
 
     Long countByIdsAndComplexFilters(String id, List<VariantEntityRepositoryFilter> filters);
 
-    List<VariantEntity> findByComplexFilters(List<VariantEntityRepositoryFilter> filters, Pageable pageable);
+    List<VariantEntity> findByGenesAndComplexFilters(List<String> geneIds, List<VariantEntityRepositoryFilter> filters,
+                                                     Pageable pageable);
 
-    Long countByComplexFilters(List<VariantEntityRepositoryFilter> filters);
+    Long countByGenesAndComplexFilters(List<String> geneIds, List<VariantEntityRepositoryFilter> filters);
 
     /**
      * Query for variants within a set of specified genomic regions, and whose attributes match those values specified

@@ -41,7 +41,6 @@ import uk.ac.ebi.eva.server.Utils;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -63,8 +62,6 @@ public class GeneWSServer extends EvaWSServer {
                                            @RequestParam(name = "maf", required = false) String maf,
                                            @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                            @RequestParam(name = "sift", required = false) String siftScore,
-                                           @RequestParam(name = "ref", required = false) String reference,
-                                           @RequestParam(name = "alt", required = false) String alternate,
                                            HttpServletResponse response)
             throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
         initializeQuery();
@@ -76,19 +73,14 @@ public class GeneWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List alternates = null;
-        if (alternate != null && !alternate.isEmpty()) {
-            alternates = Collections.singletonList(alternate);
-        }
-
         List<VariantEntityRepositoryFilter> filters =
                 new FilterBuilder().getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies,
-                                                                      consequenceType, reference,
-                                                                      alternates, geneIds);
+                                                                      consequenceType);
 
         List<VariantEntity> variantEntities =
-                variantEntityRepository.findByComplexFilters(filters, Utils.getPageRequest(queryOptions));
-        Long numTotalResults = variantEntityRepository.countByComplexFilters(filters);
+                variantEntityRepository.findByGenesAndComplexFilters(geneIds, filters,
+                                                                     Utils.getPageRequest(queryOptions));
+        Long numTotalResults = variantEntityRepository.countByGenesAndComplexFilters(null, filters);
 
         QueryResult<VariantEntity> queryResult = buildQueryResult(variantEntities, numTotalResults);
         return setQueryResponse(queryResult);
@@ -102,12 +94,9 @@ public class GeneWSServer extends EvaWSServer {
                                                @RequestParam(name = "maf", defaultValue = "") String maf,
                                                @RequestParam(name = "polyphen", defaultValue = "") String polyphenScore,
                                                @RequestParam(name = "sift", defaultValue = "") String siftScore,
-                                               @RequestParam(name = "ref", defaultValue = "") String reference,
-                                               @RequestParam(name = "alt", defaultValue = "") String alternate,
                                                HttpServletResponse response)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return getVariantsByGene(geneIds, species, studies, consequenceType, maf, polyphenScore, siftScore,
-                                 reference, alternate, response);
+        return getVariantsByGene(geneIds, species, studies, consequenceType, maf, polyphenScore, siftScore, response);
     }
 
 }

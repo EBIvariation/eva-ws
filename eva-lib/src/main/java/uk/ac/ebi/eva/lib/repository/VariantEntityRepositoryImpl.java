@@ -73,13 +73,17 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     }
 
     @Override
-    public List<VariantEntity> findByComplexFilters(List<VariantEntityRepositoryFilter> filters, Pageable pageable) {
-        return findByComplexFiltersHelper(new Query(), filters, null, pageable);
+    public List<VariantEntity> findByGenesAndComplexFilters(List<String> geneIds,
+                                                            List<VariantEntityRepositoryFilter> filters,
+                                                            Pageable pageable) {
+        Query query = new Query(Criteria.where("annot.xrefs.id").in(geneIds));
+        return findByComplexFiltersHelper(query, filters, null, pageable);
     }
 
     @Override
-    public Long countByComplexFilters(List<VariantEntityRepositoryFilter> filters) {
-        return countByComplexFiltersHelper(null, filters);
+    public Long countByGenesAndComplexFilters(List<String> geneIds, List<VariantEntityRepositoryFilter> filters) {
+        Criteria criteria = Criteria.where("annot.xrefs.id").in(geneIds);
+        return countByComplexFiltersHelper(criteria, filters);
     }
 
     @Override
