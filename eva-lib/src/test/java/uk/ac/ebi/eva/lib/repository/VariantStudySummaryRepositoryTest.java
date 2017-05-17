@@ -55,7 +55,7 @@ public class VariantStudySummaryRepositoryTest {
 
     private static final String TEST_DB = "test-db";
 
-    private static final int EXPECTED_UNIQUE_STUDIES_COUNT = 19;
+    private static final int EXPECTED_UNIQUE_STUDIES_COUNT = 18;
 
     private static final int EXPECTED_FILE_COUNT_FROM_FIRST_STUDY_ID = 1;
     private static final int EXPECTED_FILE_COUNT_FROM_SECOND_STUDY_ID = 2;
