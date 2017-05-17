@@ -20,11 +20,9 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
-import org.opencb.biodata.models.feature.Region;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +47,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
- */
 @RestController
 @RequestMapping(value = "/v1/variants", produces = "application/json")
 @Api(tags = {"variants"})
@@ -167,12 +162,12 @@ public class VariantWSServer extends EvaWSServer {
                                                                regionId[2], alternate);
             }
 
-            numTotalResults = (long) variantEntities.size();
         } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setErrorQueryResponse(invalidCoordinatesMessage);
+            List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
+            variantEntities = variantEntityRepository.findByIdsAndComplexFilters(variantId, filters, null, Utils.getPageRequest(queryOptions));
         }
 
+        numTotalResults = (long) variantEntities.size();
         QueryResult queryResult = new QueryResult();
         queryResult.setResult(Arrays.asList(numTotalResults > 0));
         queryResult.setResultType(Boolean.class.getCanonicalName());
