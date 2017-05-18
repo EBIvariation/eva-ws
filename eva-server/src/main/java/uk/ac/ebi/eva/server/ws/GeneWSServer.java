@@ -80,7 +80,7 @@ public class GeneWSServer extends EvaWSServer {
         List<VariantEntity> variantEntities =
                 variantEntityRepository.findByGenesAndComplexFilters(geneIds, filters,
                                                                      Utils.getPageRequest(queryOptions));
-        Long numTotalResults = variantEntityRepository.countByGenesAndComplexFilters(null, filters);
+        Long numTotalResults = variantEntityRepository.countByGenesAndComplexFilters(geneIds, filters);
 
         QueryResult<VariantEntity> queryResult = buildQueryResult(variantEntities, numTotalResults);
         return setQueryResponse(queryResult);
