@@ -55,7 +55,6 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
     List<VariantEntity> findByChromosomeAndStartAndReferenceAndAlternate(String chromosome, int start,
                                                                          String reference, String alternate);
 
-    Set<String> findDistinctChromosomes();
     @Query("{'chr': ?0, 'start': ?1, 'ref': ?2, 'alt': ?3, 'files.sid': {$in : ?4}}")
     List<VariantEntity> findByChromosomeAndStartAndReferenceAndAlternateAndStudyIn(String chromosome, int start,
                                                                                    String reference, String alternate,
