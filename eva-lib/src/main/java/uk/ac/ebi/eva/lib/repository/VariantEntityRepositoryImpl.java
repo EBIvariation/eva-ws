@@ -162,27 +162,26 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                                                  Table<String, String, Map<String, String>>
                                                                          studyFileIdsToPositionSamples) {
 
-        variantEntities = variantEntities.stream().map(
-                variantEntity -> updateVariantEntitySampleNames(variantEntity, studyFileIdsToPositionSamples)
+        return variantEntities.stream().map(
+                variantEntity -> updateVariantSourceEntrySampleNames(variantEntity, studyFileIdsToPositionSamples)
         ).collect(Collectors.toList());
-        return variantEntities;
     }
 
-    private VariantEntity updateVariantEntitySampleNames(VariantEntity variantEntity,
-                                                         Table<String, String, Map<String, String>>
+    private VariantEntity updateVariantSourceEntrySampleNames(VariantEntity variantEntity,
+                                                              Table<String, String, Map<String, String>>
                                                                  studyFileIdsToPositionSamples) {
         Map<String, VariantSourceEntry> variantSourceEntryMap = variantEntity.getSourceEntries().entrySet().stream().collect(
                 Collectors.toMap(
                         Map.Entry::getKey,
-                        e -> updateVariantEntitySampleNames(e.getValue(), studyFileIdsToPositionSamples)
+                        e -> updateVariantSourceEntrySampleNames(e.getValue(), studyFileIdsToPositionSamples)
                 )
         );
         variantEntity.setSourceEntries(variantSourceEntryMap);
         return variantEntity;
     }
 
-    private VariantSourceEntry updateVariantEntitySampleNames(VariantSourceEntry variantSourceEntry,
-                                                              Table<String, String, Map<String, String>>
+    private VariantSourceEntry updateVariantSourceEntrySampleNames(VariantSourceEntry variantSourceEntry,
+                                                                   Table<String, String, Map<String, String>>
                                                                       studyFileIdsToPositionSamples) {
         // Get samples data from that variant entry
         Map<String,Map<String,String>> samplesData = variantSourceEntry.getSamplesData();
