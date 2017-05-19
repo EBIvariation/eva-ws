@@ -62,8 +62,7 @@ public class GeneWSServer extends EvaWSServer {
                                            @RequestParam(name = "maf", required = false) String maf,
                                            @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                            @RequestParam(name = "sift", required = false) String siftScore,
-                                           HttpServletResponse response)
-            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
+                                           HttpServletResponse response) {
         initializeQuery();
 
         if (species.isEmpty()) {
@@ -94,8 +93,7 @@ public class GeneWSServer extends EvaWSServer {
                                                @RequestParam(name = "maf", defaultValue = "") String maf,
                                                @RequestParam(name = "polyphen", defaultValue = "") String polyphenScore,
                                                @RequestParam(name = "sift", defaultValue = "") String siftScore,
-                                               HttpServletResponse response)
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+                                               HttpServletResponse response) {
         return getVariantsByGene(geneIds, species, studies, consequenceType, maf, polyphenScore, siftScore, response);
     }
 

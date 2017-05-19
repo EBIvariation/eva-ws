@@ -60,9 +60,6 @@ public class GeneWSServerTest {
     private VariantEntityRepository variantEntityRepository;
 
     @MockBean
-    private VariantDBAdaptor variantMongoDbAdaptor;
-
-    @MockBean
     private DBAdaptorConnector dbAdaptorConnector;
 
     private String GENE_ID = "GeneId";
