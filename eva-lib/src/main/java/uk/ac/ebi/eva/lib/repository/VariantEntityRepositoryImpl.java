@@ -146,9 +146,9 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
             String studyId = variantSourceEntity.getStudyId();
             String fileId = variantSourceEntity.getFileId();
 
-            Map<String, Integer> samplesPosition = variantSourceEntity.getSamplesPosition();
+            Map<String, Integer> samplesPositionFromVariantSource = variantSourceEntity.getSamplesPosition();
             Map<String, String> positionSamples = new HashMap<>();
-            for(Map.Entry<String, Integer> entry : samplesPosition.entrySet()) {
+            for(Map.Entry<String, Integer> entry : samplesPositionFromVariantSource.entrySet()) {
                 positionSamples.put(Integer.toString(entry.getValue()), entry.getKey());
             }
 
@@ -163,12 +163,12 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
                                                                          studyFileIdsToPositionSamples) {
 
         return variantEntities.stream().map(
-                variantEntity -> updateVariantSourceEntrySampleNames(variantEntity, studyFileIdsToPositionSamples)
+                variantEntity -> updateVariantEntitySampleNames(variantEntity, studyFileIdsToPositionSamples)
         ).collect(Collectors.toList());
     }
 
-    private VariantEntity updateVariantSourceEntrySampleNames(VariantEntity variantEntity,
-                                                              Table<String, String, Map<String, String>>
+    private VariantEntity updateVariantEntitySampleNames(VariantEntity variantEntity,
+                                                         Table<String, String, Map<String, String>>
                                                                  studyFileIdsToPositionSamples) {
         Map<String, VariantSourceEntry> variantSourceEntryMap = variantEntity.getSourceEntries().entrySet().stream().collect(
                 Collectors.toMap(
