@@ -75,9 +75,9 @@ public class VariantEntityRepositoryImpl implements VariantEntityRepositoryCusto
     @Override
     public List<VariantEntity> findByGenesAndComplexFilters(List<String> geneIds,
                                                             List<VariantEntityRepositoryFilter> filters,
-                                                            Pageable pageable) {
+                                                            List<String> exclude, Pageable pageable) {
         Query query = new Query(Criteria.where("annot.xrefs.id").in(geneIds));
-        return findByComplexFiltersHelper(query, filters, null, pageable);
+        return findByComplexFiltersHelper(query, filters, exclude, pageable);
     }
 
     @Override

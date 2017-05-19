@@ -23,7 +23,6 @@ import org.opencb.biodata.models.variant.annotation.VariantAnnotation;
 import org.opencb.biodata.models.variant.annotation.Xref;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -35,8 +34,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.filter.FilterBuilder;
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 
@@ -81,7 +78,8 @@ public class GeneWSServerTest {
         List<String> geneIds = new ArrayList<>();
         geneIds.add(GENE_ID);
 
-        given(variantEntityRepository.findByGenesAndComplexFilters(eq(geneIds), any(), any())).willReturn(variantEntities);
+        given(variantEntityRepository.findByGenesAndComplexFilters(eq(geneIds), any(), null, any()
+        )).willReturn(variantEntities);
         given(variantEntityRepository.countByGenesAndComplexFilters(eq(geneIds), any())).willReturn(1L);
     }
 

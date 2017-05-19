@@ -22,7 +22,6 @@ package uk.ac.ebi.eva.server.ws;
 import io.swagger.annotations.Api;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,8 +38,6 @@ import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.List;
 
 @RestController
@@ -62,6 +59,7 @@ public class GeneWSServer extends EvaWSServer {
                                            @RequestParam(name = "maf", required = false) String maf,
                                            @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                            @RequestParam(name = "sift", required = false) String siftScore,
+                                           @RequestParam(name = "exclude", required = false) List<String> exclude,
                                            HttpServletResponse response) {
         initializeQuery();
 
@@ -77,7 +75,7 @@ public class GeneWSServer extends EvaWSServer {
                                                                       consequenceType);
 
         List<VariantEntity> variantEntities =
-                variantEntityRepository.findByGenesAndComplexFilters(geneIds, filters,
+                variantEntityRepository.findByGenesAndComplexFilters(geneIds, filters, exclude,
                                                                      Utils.getPageRequest(queryOptions));
         Long numTotalResults = variantEntityRepository.countByGenesAndComplexFilters(geneIds, filters);
 
@@ -93,8 +91,10 @@ public class GeneWSServer extends EvaWSServer {
                                                @RequestParam(name = "maf", defaultValue = "") String maf,
                                                @RequestParam(name = "polyphen", defaultValue = "") String polyphenScore,
                                                @RequestParam(name = "sift", defaultValue = "") String siftScore,
+                                               @RequestParam(name = "exclude", required = false) List<String> exclude,
                                                HttpServletResponse response) {
-        return getVariantsByGene(geneIds, species, studies, consequenceType, maf, polyphenScore, siftScore, response);
+        return getVariantsByGene(geneIds, species, studies, consequenceType, maf, polyphenScore, siftScore, exclude,
+                                 response);
     }
 
 }
