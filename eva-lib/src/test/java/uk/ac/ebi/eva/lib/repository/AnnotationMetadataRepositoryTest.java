@@ -62,7 +62,8 @@ public class AnnotationMetadataRepositoryTest {
         AnnotationMetadata prevAnnotationMetadata = annotationMetadataList.get(0);
         for (AnnotationMetadata curAnnotationMetadata :
                 annotationMetadataList.subList(1, annotationMetadataList.size())) {
-            assertTrue(0 >= curAnnotationMetadata.getCacheVersion().compareTo(prevAnnotationMetadata.getCacheVersion()));
+            assertTrue(curAnnotationMetadata.getCacheVersion().compareTo(prevAnnotationMetadata.getCacheVersion())
+                               <= 0);
         }
     }
 
@@ -73,7 +74,8 @@ public class AnnotationMetadataRepositoryTest {
         for (AnnotationMetadata curAnnotationMetadata :
                 annotationMetadataList.subList(1, annotationMetadataList.size())) {
             if (curAnnotationMetadata.getCacheVersion().equals(prevAnnotationMetadata.getCacheVersion())) {
-                assertTrue(0 >= curAnnotationMetadata.getCacheVersion().compareTo(prevAnnotationMetadata.getCacheVersion()));
+                assertTrue(curAnnotationMetadata.getCacheVersion().compareTo(prevAnnotationMetadata.getCacheVersion())
+                                   <= 0);
             }
         }
     }
