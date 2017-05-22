@@ -97,16 +97,7 @@ public class RegionWSServerTest {
     }
 
     private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants) throws URISyntaxException {
-        String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38";
-        ResponseEntity<QueryResponse<QueryResult<VariantEntity>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantEntity>>>() {});
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        QueryResponse<QueryResult<VariantEntity>> queryResponse = response.getBody();
-        assertEquals(1, queryResponse.getResponse().size());
-
-        List<VariantEntity> results = queryResponse.getResponse().get(0).getResult();
+        List<VariantEntity> results = regionWsHelper(testRegion);
         assertEquals(expectedVariants, results.size());
 
         for (VariantEntity variantEntity : results) {
@@ -116,6 +107,19 @@ public class RegionWSServerTest {
             assertNotEquals(0, variantEntity.getStart());
             assertNotEquals(0, variantEntity.getEnd());
         }
+    }
+
+    private List<VariantEntity> regionWsHelper(String testRegion) {
+        String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38";
+        ResponseEntity<QueryResponse<QueryResult<VariantEntity>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantEntity>>>() {});
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        QueryResponse<QueryResult<VariantEntity>> queryResponse = response.getBody();
+        assertEquals(1, queryResponse.getResponse().size());
+
+        return queryResponse.getResponse().get(0).getResult();
     }
 
 }

@@ -25,6 +25,7 @@ import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Interface to declare additional repository methods with a custom implementation,
@@ -68,6 +69,6 @@ interface VariantEntityRepositoryCustom {
      *
      * @return List of chromosome names
      */
-    List<String> findDistinctChromosomes();
+    Set<String> findDistinctChromosomes();
 
 }

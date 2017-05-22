@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2016 EMBL - European Bioinformatics Institute
+ * Copyright 2016-2017 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Spring MongoRepository for VariantEntity class.
@@ -63,7 +64,7 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
     List<VariantEntity> findByChromosomeAndStartAndReferenceAndStudyIn(String chromosome, int start, String reference,
                                                                        List<String> studyIds);
 
-    List<String> findDistinctChromosomes();
+    Set<String> findDistinctChromosomes();
 
     @Query("{'chr': ?0, 'start': ?1, 'ref': ?2}")
     List<VariantEntity> findByChromosomeAndStartAndReference(String chr, int start, String ref);
