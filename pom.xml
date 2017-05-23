@@ -12,6 +12,7 @@
     <modules>
         <module>eva-lib</module>
         <module>eva-server</module>
+        <module>dgva-server</module>
     </modules>
 
     <parent>
