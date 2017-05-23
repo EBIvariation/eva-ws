@@ -45,6 +45,11 @@ public interface VariantEntityRepository extends MongoRepository<VariantEntity, 
 
     Long countByIdsAndComplexFilters(String id, List<VariantEntityRepositoryFilter> filters);
 
+    List<VariantEntity> findByGenesAndComplexFilters(List<String> geneIds, List<VariantEntityRepositoryFilter> filters,
+                                                     List<String> exclude, Pageable pageable);
+
+    Long countByGenesAndComplexFilters(List<String> geneIds, List<VariantEntityRepositoryFilter> filters);
+
     List<VariantEntity> findByRegionsAndComplexFilters(List<Region> regions,
                                                        List<VariantEntityRepositoryFilter> filters,
                                                        List<String> exclude, Pageable pageable);

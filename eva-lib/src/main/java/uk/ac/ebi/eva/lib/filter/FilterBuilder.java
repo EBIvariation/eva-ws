@@ -48,21 +48,21 @@ public class FilterBuilder {
     }
 
     public FilterBuilder withMaf(String maf) {
-        if (maf != null) {
+        if (maf != null && !maf.isEmpty()) {
             filters.add(new VariantEntityRepositoryMafFilter(maf));
         }
         return this;
     }
 
     public FilterBuilder withPolyphenScore(String polyphenScore) {
-        if (polyphenScore != null) {
+        if (polyphenScore != null && !polyphenScore.isEmpty()) {
             filters.add(new VariantEntityRepositoryPolyphenFilter(polyphenScore));
         }
         return this;
     }
 
     public FilterBuilder withSiftScore(String siftScore) {
-        if (siftScore != null) {
+        if (siftScore != null && !siftScore.isEmpty()) {
             filters.add(new VariantEntityRepositorySiftFilter(siftScore));
         }
         return this;

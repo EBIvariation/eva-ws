@@ -31,6 +31,7 @@ public abstract class VariantEntityRepositoryFilter<T> {
     public final static String FILES_FIELD = "files";
     public final static String TYPE_FIELD = "type";
     public final static String ALT_FIELD = "alt";
+    public final static String REF_FIELD = "ref";
 
     public final static String MAF_FIELD = STATISTICS_FIELD + ".maf";
 
@@ -41,6 +42,9 @@ public abstract class VariantEntityRepositoryFilter<T> {
     public final static String POLYPHEN_FIELD = CONSEQUENCE_TYPE_FIELD + ".polyphen.sc";
     public final static String SIFT_FIELD = CONSEQUENCE_TYPE_FIELD + ".sift.sc";
     public final static String CONSEQUENCE_TYPE_SO_FIELD = CONSEQUENCE_TYPE_FIELD + ".so";
+
+    public final static String XREFS_FIELD = ANNOTATION_FIELD + ".xrefs";
+    public final static String XREFS_ID_FIELD = XREFS_FIELD + ".id";
 
     private final String field;
     private final T value;
