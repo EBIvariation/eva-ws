@@ -58,6 +58,9 @@ public class EvaWSServer {
 
     protected static Logger logger = LoggerFactory.getLogger(EvaWSServer.class);
 
+    @Autowired
+    protected DBAdaptorConnector dbAdaptorConnector;
+
     @Bean
     public Jackson2ObjectMapperBuilder jacksonBuilder() {
         Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()

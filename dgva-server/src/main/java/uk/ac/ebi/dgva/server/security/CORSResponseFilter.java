@@ -16,7 +16,7 @@
 
 package uk.ac.ebi.dgva.server.security;
 
-import org.springframework.stereotype.Component;
+import java.io.IOException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -25,8 +25,13 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
+import org.springframework.stereotype.Component;
+
+/**
+ *
+ * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
+ */
 @Component
 public class CORSResponseFilter implements Filter {
 
