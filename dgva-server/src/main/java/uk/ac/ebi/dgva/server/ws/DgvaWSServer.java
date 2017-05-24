@@ -37,6 +37,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +49,22 @@ public class DgvaWSServer {
 
     protected final String version = "v1";
 
+    @Autowired
+    private QueryUtils queryUtils;
+
     protected static Logger logger = LoggerFactory.getLogger(DgvaWSServer.class);
     
     public DgvaWSServer() { }
+
+    protected QueryOptions getQueryOptions() {
+        return queryUtils.getQueryOptions();
+    }
+
+    protected void initializeQuery() {
+        queryUtils.initializeQuery();
+    }
+
+    protected <T> QueryResponse<T> setQueryResponse(T obj) {
+        return queryUtils.setQueryResponse(obj);
+    }
 }

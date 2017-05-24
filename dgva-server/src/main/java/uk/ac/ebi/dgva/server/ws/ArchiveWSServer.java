@@ -44,9 +44,6 @@ public class ArchiveWSServer extends DgvaWSServer {
     @Autowired
     private StudyDgvaDBAdaptor studyDgvaDbAdaptor;
 
-    @Autowired
-    private QueryUtils queryUtils;
-
     private Properties properties;
     
     public ArchiveWSServer() throws IOException {
@@ -55,14 +52,14 @@ public class ArchiveWSServer extends DgvaWSServer {
     @RequestMapping(value = "/studies/all", method = RequestMethod.GET)
     public QueryResponse getStudies(@RequestParam(name = "species", required = false) String species,
                                     @RequestParam(name = "type", required = false) String types) {
-        queryUtils.initializeQuery();
+        initializeQuery();
         if (species != null && !species.isEmpty()) {
-            queryUtils.getQueryOptions().put("species", Arrays.asList(species.split(",")));
+            getQueryOptions().put("species", Arrays.asList(species.split(",")));
         }
         if (types != null && !types.isEmpty()) {
-            queryUtils.getQueryOptions().put("type", Arrays.asList(types.split(",")));
+            getQueryOptions().put("type", Arrays.asList(types.split(",")));
         }
 
-        return queryUtils.setQueryResponse(studyDgvaDbAdaptor.getAllStudies(queryUtils.getQueryOptions()));
+        return setQueryResponse(studyDgvaDbAdaptor.getAllStudies(getQueryOptions()));
     }
 }
