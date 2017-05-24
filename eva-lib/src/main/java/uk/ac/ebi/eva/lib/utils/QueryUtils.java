@@ -75,6 +75,12 @@ public class QueryUtils {
         logger.debug(queryOptions.toJson());
     }
 
+    public <T> QueryResponse<T> setQueryResponse(List<T> coll) {
+        QueryResponse<T> queryResponse = buildQueryResponse();
+        queryResponse.setResponse(coll);
+        return queryResponse;
+    }
+    
     public <T> QueryResponse<T> setQueryResponse(T obj) {
         QueryResponse<T> queryResponse = buildQueryResponse();
 
@@ -85,7 +91,7 @@ public class QueryUtils {
         return queryResponse;
     }
 
-    protected <T> QueryResponse<T> setErrorQueryResponse(String message) {
+    public <T> QueryResponse<T> setErrorQueryResponse(String message) {
         QueryResponse<T> queryResponse = buildQueryResponse();
 
         queryResponse.setResponse(Collections.EMPTY_LIST);
@@ -104,11 +110,11 @@ public class QueryUtils {
         return queryResponse;
     }
 
-    protected <T> QueryResult<T> buildQueryResult(List<T> results) {
+    public <T> QueryResult<T> buildQueryResult(List<T> results) {
         return buildQueryResult(results, results.size());
     }
 
-    protected <T> QueryResult<T> buildQueryResult(List<T> results, long numTotalResults) {
+    public <T> QueryResult<T> buildQueryResult(List<T> results, long numTotalResults) {
         QueryResult<T> queryResult = new QueryResult<>();
         queryResult.setResult(results);
         queryResult.setNumResults(results.size());
