@@ -18,15 +18,12 @@
  */
 package uk.ac.ebi.dgva.server.ws;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.mongodb.variant.StudyMongoDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -38,14 +35,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.models.Assembly;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
-import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
 import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 
 import java.io.IOException;
 import java.net.URI;
@@ -62,12 +54,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -81,9 +70,6 @@ public class ArchiveWSServerTest {
 
     @MockBean
     private StudyDgvaDBAdaptor studyDgvaDBAdaptor;
-
-    @MockBean
-    private VariantStudySummaryRepository variantStudySummaryRepository;
 
     @Before
     public void setup() throws URISyntaxException, IOException, IllegalOpenCGACredentialsException {
