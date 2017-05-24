@@ -36,7 +36,7 @@ public class Swagger2Configuration {
                 .apiInfo(apiInfo())
                 .pathMapping("/")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("uk.ac.ebi.eva.server"))
+                .apis(RequestHandlerSelectors.basePackage("uk.ac.ebi.dgva.server"))
                 .build();
     }
 
