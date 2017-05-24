@@ -14,30 +14,16 @@
  * limitations under the License.
  */
 
-package uk.ac.ebi.dgva.server.ws;
+package uk.ac.ebi.eva.lib.utils;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.base.Splitter;
-import org.opencb.biodata.models.feature.Genotype;
-import org.opencb.biodata.models.variant.VariantSource;
-import org.opencb.biodata.models.variant.VariantSourceEntry;
-import org.opencb.biodata.models.variant.stats.VariantStats;
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.storage.core.variant.io.json.GenotypeJsonMixin;
-import org.opencb.opencga.storage.core.variant.io.json.VariantSourceEntryJsonMixin;
-import org.opencb.opencga.storage.core.variant.io.json.VariantSourceJsonMixin;
-import org.opencb.opencga.storage.core.variant.io.json.VariantStatsJsonMixin;
-import org.opencb.opencga.storage.core.variant.io.json.VariantStatsJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -45,38 +31,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class EvaWSServer {
+@Component
+public class QueryUtils {
 
     protected final String version = "v1";
 
     @Autowired
     protected HttpServletRequest httpServletRequest;
 
-    protected QueryOptions queryOptions;
+    private QueryOptions queryOptions;
     protected long startTime;
     protected long endTime;
 
-    protected static Logger logger = LoggerFactory.getLogger(EvaWSServer.class);
+    protected static Logger logger = LoggerFactory.getLogger(QueryUtils.class);
 
-    @Bean
-    public Jackson2ObjectMapperBuilder jacksonBuilder() {
-        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
-                       .mixIn(VariantSourceEntry.class, VariantSourceEntryJsonMixin.class)
-                       .mixIn(Genotype.class, GenotypeJsonMixin.class)
-                       .mixIn(VariantStats.class, VariantStatsJsonMixin.class)
-                       .mixIn(VariantSource.class, VariantSourceJsonMixin.class)
-                       .serializationInclusion(Include.NON_NULL);
-        
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(VariantStats.class, new VariantStatsJsonSerializer());
-        builder.modules(module);
-        
-        return builder;
+    public QueryOptions getQueryOptions() {
+        return queryOptions;
     }
-    
-    public EvaWSServer() { }
 
-    protected void initializeQuery() {
+    public void initializeQuery() {
         startTime = System.currentTimeMillis();
         initializeQueryOptions();
     }
@@ -102,7 +75,7 @@ public class EvaWSServer {
         logger.debug(queryOptions.toJson());
     }
 
-    protected <T> QueryResponse<T> setQueryResponse(T obj) {
+    public <T> QueryResponse<T> setQueryResponse(T obj) {
         QueryResponse<T> queryResponse = buildQueryResponse();
 
         List<T> coll = new ArrayList<>();
@@ -143,4 +116,5 @@ public class EvaWSServer {
         queryResult.setDbTime(new Long(System.currentTimeMillis() - startTime).intValue());
         return queryResult;
     }
+
 }
