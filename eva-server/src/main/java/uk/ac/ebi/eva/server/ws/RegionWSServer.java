@@ -94,7 +94,7 @@ public class RegionWSServer extends EvaWSServer {
         List<VariantRepositoryFilter> filters = new FilterBuilder()
                 .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
         List<Region> regions = Region.parseRegions(regionId);
-        PageRequest pageRequest = Utils.getPageRequest(queryOptions);
+        PageRequest pageRequest = Utils.getPageRequest(getQueryOptions());
 
         List<String> excludeMapped = new ArrayList<>();
         if (exclude != null && !exclude.isEmpty()){

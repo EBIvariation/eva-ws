@@ -34,9 +34,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Properties;
 
-/**
- * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
- */
 @RestController
 @RequestMapping(value = "/v1/meta", produces = "application/json")
 @Api(tags = {"archive"})

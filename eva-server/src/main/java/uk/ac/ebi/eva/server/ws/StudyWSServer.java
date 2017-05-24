@@ -41,9 +41,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
- */
 @RestController
 @RequestMapping(value = "/v1/studies", produces = "application/json")
 @Api(tags = {"studies"})
@@ -107,9 +104,9 @@ public class StudyWSServer extends EvaWSServer {
     public QueryResponse getStudySummary(@PathVariable("study") String study,
                                          @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
         if (structural) {
-            return setQueryResponse(studyDgvaDbAdaptor.getStudyById(study, queryOptions));
+            return setQueryResponse(studyDgvaDbAdaptor.getStudyById(study, getQueryOptions()));
         } else {
-            return setQueryResponse(studyEvaproDbAdaptor.getStudyById(study, queryOptions));
+            return setQueryResponse(studyEvaproDbAdaptor.getStudyById(study, getQueryOptions()));
         }
     }
 }

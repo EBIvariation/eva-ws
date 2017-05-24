@@ -44,7 +44,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/v1/genes", produces = "application/json")
-@Api(tags = {"genes"})
+@Api(tags = { "genes" })
 public class GeneWSServer extends EvaWSServer {
 
     @Autowired

@@ -43,9 +43,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
- */
 @RestController
 @RequestMapping(value = "/v1/meta", produces = "application/json")
 @Api(tags = {"archive"})
@@ -89,16 +86,16 @@ public class ArchiveWSServer extends EvaWSServer {
                                     @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
         initializeQuery();
         if (species != null && !species.isEmpty()) {
-            queryOptions.put("species", Arrays.asList(species.split(",")));
+            getQueryOptions().put("species", Arrays.asList(species.split(",")));
         }
         if (types != null && !types.isEmpty()) {
-            queryOptions.put("type", Arrays.asList(types.split(",")));
+            getQueryOptions().put("type", Arrays.asList(types.split(",")));
         }
 
         if (structural) {
-            return setQueryResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
+            return setQueryResponse(studyDgvaDbAdaptor.getAllStudies(getQueryOptions()));
         } else {
-            return setQueryResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
+            return setQueryResponse(studyEvaproDbAdaptor.getAllStudies(getQueryOptions()));
         }
     }
 
@@ -117,20 +114,20 @@ public class ArchiveWSServer extends EvaWSServer {
                                          @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
         initializeQuery();
         if (species != null && !species.isEmpty()) {
-            queryOptions.put("species", species);
+            getQueryOptions().put("species", species);
         }
         if (types != null && !types.isEmpty()) {
-            queryOptions.put("type", types);
+            getQueryOptions().put("type", types);
         }
 
         QueryResult<Map.Entry<String, Long>> resultSpecies, resultTypes;
 
         if (structural) {
-            resultSpecies = archiveDgvaDbAdaptor.countStudiesPerSpecies(queryOptions);
-            resultTypes = archiveDgvaDbAdaptor.countStudiesPerType(queryOptions);
+            resultSpecies = archiveDgvaDbAdaptor.countStudiesPerSpecies(getQueryOptions());
+            resultTypes = archiveDgvaDbAdaptor.countStudiesPerType(getQueryOptions());
         } else {
-            resultSpecies = archiveEvaproDbAdaptor.countStudiesPerSpecies(queryOptions);
-            resultTypes = archiveEvaproDbAdaptor.countStudiesPerType(queryOptions);
+            resultSpecies = archiveEvaproDbAdaptor.countStudiesPerSpecies(getQueryOptions());
+            resultTypes = archiveEvaproDbAdaptor.countStudiesPerType(getQueryOptions());
         }
 
         QueryResult combinedQueryResult = new QueryResult();
