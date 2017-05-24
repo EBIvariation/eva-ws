@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -39,9 +40,12 @@ import java.util.Properties;
 @RestController
 @RequestMapping(value = "/v1/meta", produces = "application/json")
 @Api(tags = {"archive"})
-public class ArchiveWSServer extends EvaWSServer {
+public class ArchiveWSServer extends DgvaWSServer {
     @Autowired
     private StudyDgvaDBAdaptor studyDgvaDbAdaptor;
+
+    @Autowired
+    private QueryUtils queryUtils;
 
     private Properties properties;
     
@@ -51,14 +55,14 @@ public class ArchiveWSServer extends EvaWSServer {
     @RequestMapping(value = "/studies/all", method = RequestMethod.GET)
     public QueryResponse getStudies(@RequestParam(name = "species", required = false) String species,
                                     @RequestParam(name = "type", required = false) String types) {
-        initializeQuery();
+        queryUtils.initializeQuery();
         if (species != null && !species.isEmpty()) {
-            queryOptions.put("species", Arrays.asList(species.split(",")));
+            queryUtils.getQueryOptions().put("species", Arrays.asList(species.split(",")));
         }
         if (types != null && !types.isEmpty()) {
-            queryOptions.put("type", Arrays.asList(types.split(",")));
+            queryUtils.getQueryOptions().put("type", Arrays.asList(types.split(",")));
         }
 
-        return setQueryResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
+        return queryUtils.setQueryResponse(studyDgvaDbAdaptor.getAllStudies(queryUtils.getQueryOptions()));
     }
 }
