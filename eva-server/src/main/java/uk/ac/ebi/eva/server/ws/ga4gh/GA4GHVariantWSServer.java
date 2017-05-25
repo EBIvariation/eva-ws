@@ -84,7 +84,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
 
         if (files != null && !files.isEmpty()) {
-            queryOptions.put("files", files);
+            getQueryOptions().put("files", files);
         }
         List<VariantRepositoryFilter> filters = new FilterBuilder().withFiles(files).build();
 
