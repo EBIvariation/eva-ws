@@ -85,10 +85,10 @@ public class ArchiveWSServerTest {
                                                  "ES", "GRCh38", "GCA_000001405.14", "Illumina", new URI("http://www.s2.org"),
                                                  new String[]{"13"}, 5000, 4);
         VariantStudy svStudy3 = new VariantStudy("Cow SV Test study 1", "svCS1", null, "SV cow study 1 description",
-                                               new int[]{9913}, "Cow", "Bos taurus", "Germline", "EBI", "DNA",
-                                               "multi-isolate", VariantStudy.StudyType.AGGREGATE,
-                                               "Whole Genome Sequencing", "WGSS", "Bos_taurus_UMD_3.1", "GCA_000003055.3", "Illumina",
-                                               new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12);
+                                                 new int[]{9913}, "Cow", "Bos taurus", "Germline", "EBI", "DNA",
+                                                 "multi-isolate", VariantStudy.StudyType.AGGREGATE,
+                                                 "Whole Genome Sequencing", "WGSS", "Bos_taurus_UMD_3.1", "GCA_000003055.3", "Illumina",
+                                                 new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12);
         given(studyDgvaDBAdaptor.getAllStudies(anyObject()))
                   .willReturn(encapsulateInQueryResult(svStudy1, svStudy2, svStudy3));
 
@@ -161,7 +161,6 @@ public class ArchiveWSServerTest {
             assertFalse(variantStudy.getPlatform().isEmpty());
             assertNotNull(variantStudy.getUrl());
             assertNotNull(variantStudy.getPublications());
-            assertNotEquals(0, variantStudy.getNumVariants());
             assertNotEquals(0, variantStudy.getNumSamples());
         }
     }

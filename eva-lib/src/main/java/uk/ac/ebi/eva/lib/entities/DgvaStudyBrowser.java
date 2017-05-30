@@ -35,15 +35,6 @@ public class DgvaStudyBrowser {
     @Column(name = "study_accession")
     private String studyAccession;
 
-    @Column(name = "call_count")
-    private Integer callCount;
-
-    @Column(name = "region_count")
-    private Integer regionCount;
-
-    @Column(name = "variant_count")
-    private Integer variantCount;
-
     @Column(name = "tax_id")
     private String taxId;
 
@@ -55,8 +46,6 @@ public class DgvaStudyBrowser {
 
     @Column(name = "pubmed_id")
     private String pubmedId;
-
-    private String alias;
 
     @Column(name = "display_name")
     private String displayName;
@@ -88,20 +77,15 @@ public class DgvaStudyBrowser {
     @Column(name = "assembly_name")
     private String assemblyName;
 
-    public DgvaStudyBrowser(String studyAccession, Integer callCount, Integer regionCount, Integer variantCount,
-                            String taxId, String commonName, String scientificName, String pubmedId, String alias,
-                            String displayName, String studyType, String projectId, String studyUrl,
-                            String studyDescription, String analysisType, String detectionMethod,
-                            String methodType, String platformName, String assemblyName) {
+    public DgvaStudyBrowser(String studyAccession, String taxId, String commonName, String scientificName,
+                            String pubmedId, String displayName, String studyType, String projectId, String studyUrl,
+                            String studyDescription, String analysisType, String detectionMethod, String methodType,
+                            String platformName, String assemblyName) {
         this.studyAccession = studyAccession;
-        this.callCount = callCount;
-        this.regionCount = regionCount;
-        this.variantCount = variantCount;
         this.taxId = taxId;
         this.commonName = commonName;
         this.scientificName = scientificName;
         this.pubmedId = pubmedId;
-        this.alias = alias;
         this.displayName = displayName;
         this.studyType = studyType;
         this.projectId = projectId;
@@ -133,8 +117,7 @@ public class DgvaStudyBrowser {
         VariantStudy study = new VariantStudy(displayName, studyAccession, null,
                 studyDescription, taxIds, commonName, scientificName,
                 null, null, null, null, EvaproDbUtils.stringToStudyType(studyType), analysisType,
-                null, assemblyName, null, platformName, uri, publications,
-                variantCount, -1);
+                null, assemblyName, null, platformName, uri, publications, -1);
         return study;
     }
 }
