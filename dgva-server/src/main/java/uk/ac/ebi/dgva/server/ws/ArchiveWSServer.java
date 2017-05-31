@@ -32,6 +32,7 @@ import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 @RestController
@@ -47,14 +48,14 @@ public class ArchiveWSServer extends DgvaWSServer {
     }
 
     @RequestMapping(value = "/studies/all", method = RequestMethod.GET)
-    public QueryResponse getStudies(@RequestParam(name = "species", required = false) String species,
-                                    @RequestParam(name = "type", required = false) String types) {
+    public QueryResponse getStudies(@RequestParam(name = "species", required = false) List<String> species,
+                                    @RequestParam(name = "type", required = false) List<String> types) {
         initializeQuery();
         if (species != null && !species.isEmpty()) {
-            getQueryOptions().put("species", Arrays.asList(species.split(",")));
+            getQueryOptions().put("species", species);
         }
         if (types != null && !types.isEmpty()) {
-            getQueryOptions().put("type", Arrays.asList(types.split(",")));
+            getQueryOptions().put("type", types);
         }
 
         return setQueryResponse(studyDgvaDbAdaptor.getAllStudies(getQueryOptions()));
