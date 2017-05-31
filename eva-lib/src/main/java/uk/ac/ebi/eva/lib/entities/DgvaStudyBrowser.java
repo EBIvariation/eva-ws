@@ -35,16 +35,16 @@ public class DgvaStudyBrowser {
     @Column(name = "study_accession")
     private String studyAccession;
 
-    @Column(name = "tax_id")
+    @Column(name = "taxonomy_ids")
     private String taxId;
 
-    @Column(name = "common_name")
+    @Column(name = "common_names")
     private String commonName;
 
-    @Column(name = "scientific_name")
+    @Column(name = "scientific_names")
     private String scientificName;
 
-    @Column(name = "pubmed_id")
+    @Column(name = "pubmed_ids")
     private String pubmedId;
 
     @Column(name = "display_name")
@@ -53,28 +53,25 @@ public class DgvaStudyBrowser {
     @Column(name = "study_type")
     private String studyType;
 
-    @Column(name = "project_id")
-    private String projectId;
-
     @Column(name = "study_url")
     private String studyUrl;
 
     @Column(name = "study_description")
     private String studyDescription;
 
-    @Column(length = 100, name = "analysis_type")
+    @Column(length = 100, name = "analysis_types")
     private String analysisType;
 
-    @Column(name = "detection_method")
+    @Column(name = "detection_methods")
     private String detectionMethod;
 
-    @Column(name = "method_type")
+    @Column(name = "method_types")
     private String methodType;
 
-    @Column(name = "platform_name")
+    @Column(name = "platform_names")
     private String platformName;
 
-    @Column(name = "assembly_name")
+    @Column(name = "assembly_names")
     private String assemblyName;
 
     public DgvaStudyBrowser(String studyAccession, String taxId, String commonName, String scientificName,
@@ -88,7 +85,6 @@ public class DgvaStudyBrowser {
         this.pubmedId = pubmedId;
         this.displayName = displayName;
         this.studyType = studyType;
-        this.projectId = projectId;
         this.studyUrl = studyUrl;
         this.studyDescription = studyDescription;
         this.analysisType = analysisType;
@@ -102,14 +98,14 @@ public class DgvaStudyBrowser {
 
     public VariantStudy generateVariantStudy() {
         // Convert the list of tax ids to integer values
-        int[] taxIds = Arrays.stream(taxId.split(", ")).map(String::trim).mapToInt(Integer::parseInt).toArray();
+        int[] taxIds = Arrays.stream(taxId.split(",")).map(String::trim).mapToInt(Integer::parseInt).toArray();
 
         // Build the variant study object
         URI uri = null;
         String[] publications = null;
         try {
             uri = new URI(studyUrl);
-            publications = (pubmedId == null) ? null : pubmedId.split(", ");
+            publications = (pubmedId == null) ? null : pubmedId.split(",");
         } catch (URISyntaxException | NullPointerException ex) {
             // Ignore, default value null.
         }
