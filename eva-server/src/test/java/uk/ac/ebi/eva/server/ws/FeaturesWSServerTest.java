@@ -35,7 +35,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.commons.models.data.FeatureCoordinates;
-import uk.ac.ebi.eva.lib.repository.FeatureRepository;
+import uk.ac.ebi.eva.commons.mongodb.repositories.FeatureRepository;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

@@ -29,19 +29,13 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-
-import uk.ac.ebi.eva.lib.MongoConfiguration;
+import uk.ac.ebi.eva.commons.configuration.EvaRepositoriesConfiguration;
+import uk.ac.ebi.eva.lib.MultiMongoFactoryConfiguration;
 
 @Configuration
-@EnableMongoRepositories(basePackages = "uk.ac.ebi.eva.lib.repository")
-@Import({MongoConfiguration.class})
+@Import({EvaRepositoriesConfiguration.class, MultiMongoFactoryConfiguration.class})
 @PropertySource({"classpath:eva.properties"})
-public class MongoRepositoryTestConfiguration {
-
-    @Bean
-    public MongoClient mongoClient() {
-        return new Fongo("defaultInstance").getMongo();
-    }
+public class DBAdaptorConnectorTestConfiguration {
 
     @Bean
     public MongoTemplate mongoTemplate(MongoDbFactory mongoDbFactory,
@@ -49,12 +43,4 @@ public class MongoRepositoryTestConfiguration {
         return new MongoTemplate(mongoDbFactory, mappingMongoConverter);
     }
 
-    @Bean
-    public MongoDbFactory mongoDbFactory(MongoClient mongoClient) throws Exception {
-        return new SimpleMongoDbFactory(mongoClient, this.getDatabaseName());
-    }
-
-    private String getDatabaseName() {
-        return "test-db";
-    }
 }

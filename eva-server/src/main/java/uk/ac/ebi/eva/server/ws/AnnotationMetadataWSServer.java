@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.commons.models.metadata.AnnotationMetadata;
-import uk.ac.ebi.eva.lib.repository.AnnotationMetadataRepository;
+import uk.ac.ebi.eva.commons.mongodb.repositories.AnnotationMetadataRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 

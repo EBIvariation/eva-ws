@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import uk.ac.ebi.eva.commons.mongodb.repositories.VariantSourceEntityRepository;
 import uk.ac.ebi.eva.lib.metadata.VariantSourceEvaProDBAdaptor;
-import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
