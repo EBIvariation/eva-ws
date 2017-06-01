@@ -37,7 +37,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+import uk.ac.ebi.eva.commons.mongodb.repositories.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 
 import java.net.URISyntaxException;

@@ -37,14 +37,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import uk.ac.ebi.eva.commons.mongodb.projections.VariantStudySummary;
+import uk.ac.ebi.eva.commons.mongodb.repositories.VariantStudySummaryRepository;
 import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.models.Assembly;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
-import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
-import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 
 import java.io.IOException;

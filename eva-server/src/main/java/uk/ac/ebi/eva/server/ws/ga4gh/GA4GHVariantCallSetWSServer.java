@@ -20,7 +20,6 @@
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import io.swagger.annotations.Api;
-import org.apache.commons.lang.StringUtils;
 import org.opencb.biodata.ga4gh.GACallSet;
 import org.opencb.biodata.ga4gh.GASearchCallSetsRequest;
 import org.opencb.biodata.ga4gh.GASearchCallSetsResponse;
@@ -38,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
-import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
+import uk.ac.ebi.eva.commons.mongodb.repositories.VariantSourceEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;

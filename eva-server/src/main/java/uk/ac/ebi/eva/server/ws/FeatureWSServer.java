@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.commons.models.data.FeatureCoordinates;
-import uk.ac.ebi.eva.lib.repository.FeatureRepository;
+import uk.ac.ebi.eva.commons.mongodb.repositories.FeatureRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 

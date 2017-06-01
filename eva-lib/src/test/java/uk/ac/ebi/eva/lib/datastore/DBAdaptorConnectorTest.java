@@ -11,8 +11,9 @@ import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import uk.ac.ebi.eva.lib.MongoConfiguration;
+import uk.ac.ebi.eva.commons.configuration.EvaRepositoriesConfiguration;
 import uk.ac.ebi.eva.lib.MultiMongoFactoryConfiguration;
+import uk.ac.ebi.eva.lib.configuration.DBAdaptorConnectorTestConfiguration;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
@@ -21,7 +22,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { MongoConfiguration.class, MultiMongoFactoryConfiguration.class})
+@ContextConfiguration(classes = {DBAdaptorConnectorTestConfiguration.class})
 public class DBAdaptorConnectorTest {
 
     @Autowired

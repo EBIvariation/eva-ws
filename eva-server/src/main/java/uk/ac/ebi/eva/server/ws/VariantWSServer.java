@@ -35,9 +35,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.filter.FilterBuilder;
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
-import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
+import uk.ac.ebi.eva.commons.mongodb.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.commons.mongodb.repositories.VariantEntityRepository;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;

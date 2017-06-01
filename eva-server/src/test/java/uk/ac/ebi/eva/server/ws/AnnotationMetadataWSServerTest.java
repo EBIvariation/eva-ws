@@ -31,7 +31,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.commons.models.metadata.AnnotationMetadata;
-import uk.ac.ebi.eva.lib.repository.AnnotationMetadataRepository;
+import uk.ac.ebi.eva.commons.mongodb.repositories.AnnotationMetadataRepository;
 
 import java.util.Arrays;
 import java.util.List;
