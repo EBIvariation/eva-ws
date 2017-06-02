@@ -9,8 +9,8 @@ env:
   - OPENCGA_HOME=$TRAVIS_BUILD_DIR/opencga/opencga-app/build
 
 install:
-  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -P Travis
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -PTravis
 
 script:
-  - mvn test -s .travis.settings.xml -P Travis
+  - mvn test -s .travis.settings.xml -PTravis
 
