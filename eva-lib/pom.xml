@@ -14,16 +14,6 @@
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.eva</groupId>
-            <artifactId>opencga-storage-mongodb</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.mongodb</groupId>
-                    <artifactId>mongo-java-driver</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>uk.ac.ebi.eva</groupId>
             <artifactId>variation-commons</artifactId>
         </dependency>
         <dependency>
