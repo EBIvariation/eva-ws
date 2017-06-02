@@ -87,15 +87,21 @@
 
     <profiles>
         <profile>
-            <id>Travis</id>
+            <id>Non-Travis</id>
             <dependencies>
                 <dependency>
                     <groupId>com.oracle.jdbc</groupId>
                     <artifactId>ojdbc8</artifactId>
                     <version>12.2.0.1</version>
-                    <scope>provided</scope>
                 </dependency>
             </dependencies>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+
+        <profile>
+            <id>Travis</id>
         </profile>
     </profiles>
 
