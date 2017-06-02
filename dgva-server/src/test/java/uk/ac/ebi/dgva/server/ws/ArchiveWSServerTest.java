@@ -18,6 +18,8 @@
  */
 package uk.ac.ebi.dgva.server.ws;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -102,6 +104,10 @@ public class ArchiveWSServerTest {
                                                                                              Collectors.counting()));
         given(archiveDgvaDBAdaptor.countStudiesPerType(anyObject()))
                 .willReturn(encapsulateInQueryResult(svStudiesGroupedByStudyType.entrySet().toArray()));
+
+
+
+
     }
 
     private <T> QueryResult<T> encapsulateInQueryResult(T... results) {
@@ -151,6 +157,39 @@ public class ArchiveWSServerTest {
             assertNotNull(variantStudy.getUrl());
             assertNotNull(variantStudy.getPublications());
             assertNotEquals(0, variantStudy.getNumSamples());
+        }
+    }
+
+    @Test
+    public void testGetStudiesStats() throws URISyntaxException {
+        String url = "/v1/meta/studies/stats";
+        assertGetStudiesStats(url);
+    }
+
+    private void assertGetStudiesStats(String url) {
+        ResponseEntity<QueryResponse<QueryResult<ObjectNode>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<ObjectNode>>>() {});
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        QueryResponse<QueryResult<ObjectNode>> queryResponse = response.getBody();
+        assertEquals(1, queryResponse.getResponse().size());
+
+        List<ObjectNode> results = queryResponse.getResponse().get(0).getResult();
+        assertTrue(results.size() >= 1);
+
+        JsonNode species = results.get(0).get("species");
+        assertTrue(species.size() >= 1);
+
+        for (JsonNode eachSpecies : species) {
+            assertTrue(eachSpecies.isIntegralNumber());
+        }
+
+        JsonNode types = results.get(0).get("type");
+        assertTrue(types.size() >= 1);
+
+        for (JsonNode type : types) {
+            assertTrue(type.isIntegralNumber());
         }
     }
 }

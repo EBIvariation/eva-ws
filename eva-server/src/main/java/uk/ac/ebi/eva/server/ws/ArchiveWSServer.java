@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 @RestController
 @RequestMapping(value = "/v1/meta", produces = "application/json")
@@ -51,14 +52,11 @@ import java.util.Map;
 public class ArchiveWSServer extends EvaWSServer {
 
     @Autowired
-    private ArchiveDgvaDBAdaptor archiveDgvaDbAdaptor;
-    @Autowired
     private ArchiveEvaproDBAdaptor archiveEvaproDbAdaptor;
 
     @Autowired
-    private StudyDgvaDBAdaptor studyDgvaDbAdaptor;
-    @Autowired
     private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
+
     @Autowired
     private VariantStudySummaryService variantStudySummaryService;
 
@@ -108,8 +106,7 @@ public class ArchiveWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/studies/stats", method = RequestMethod.GET)
     public QueryResponse getStudiesStats(@RequestParam(name = "species", required = false) List<String> species,
-                                         @RequestParam(name = "type", required = false) List<String> types,
-                                         @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
+                                         @RequestParam(name = "type", required = false) List<String> types) {
         initializeQuery();
         QueryOptions queryOptions = getQueryOptions();
         if (species != null && !species.isEmpty()) {
@@ -121,13 +118,8 @@ public class ArchiveWSServer extends EvaWSServer {
 
         QueryResult<Map.Entry<String, Long>> resultSpecies, resultTypes;
 
-        if (structural) {
-            resultSpecies = archiveDgvaDbAdaptor.countStudiesPerSpecies(queryOptions);
-            resultTypes = archiveDgvaDbAdaptor.countStudiesPerType(queryOptions);
-        } else {
-            resultSpecies = archiveEvaproDbAdaptor.countStudiesPerSpecies(queryOptions);
-            resultTypes = archiveEvaproDbAdaptor.countStudiesPerType(queryOptions);
-        }
+        resultSpecies = archiveEvaproDbAdaptor.countStudiesPerSpecies(queryOptions);
+        resultTypes = archiveEvaproDbAdaptor.countStudiesPerType(queryOptions);
 
         QueryResult combinedQueryResult = new QueryResult();
         combinedQueryResult.setDbTime(resultSpecies.getDbTime() + resultTypes.getDbTime());

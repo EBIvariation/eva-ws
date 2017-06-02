@@ -348,12 +348,6 @@ public class ArchiveWSServerTest {
         assertGetStudiesStats(url);
     }
 
-    @Test
-    public void testGetStudiesStatsStructural() throws URISyntaxException {
-        String url = "/v1/meta/studies/stats?structural=true";
-        assertGetStudiesStats(url);
-    }
-
     private void assertGetStudiesStats(String url) {
         ResponseEntity<QueryResponse<QueryResult<ObjectNode>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
