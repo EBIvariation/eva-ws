@@ -35,7 +35,7 @@ public class EvaWSServer {
     protected final String version = "v1";
 
     @Autowired
-    private QueryUtils queryUtils;
+    protected QueryUtils queryUtils;
 
     protected static Logger logger = LoggerFactory.getLogger(EvaWSServer.class);
     

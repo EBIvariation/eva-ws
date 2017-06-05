@@ -18,17 +18,49 @@ package uk.ac.ebi.eva.lib.metadata;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.opencb.datastore.core.QueryOptions;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
-import org.springframework.stereotype.Component;
 
+import uk.ac.ebi.eva.lib.utils.QueryOptions;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
+
+import java.util.List;
 import java.util.Map;
 
-@Component
 public class ArchiveWSServerHelper {
 
-    public QueryResult getStudiesStats(QueryOptions queryOptions, ArchiveDBAdaptor archiveDBAdaptor) {
+    private String version;
+
+    public ArchiveWSServerHelper(String version) {
+        this.version = version;
+    }
+
+    public QueryResponse getStudies(List<String> species, List<String> types, QueryUtils queryUtils,
+                                    StudyDBAdaptor studyDBAdaptor) {
+        queryUtils.initializeQuery();
+        if (species != null && !species.isEmpty()) {
+            queryUtils.getQueryOptions().put("species", species);
+        }
+        if (types != null && !types.isEmpty()) {
+            queryUtils.getQueryOptions().put("type", types);
+        }
+
+        return queryUtils.setQueryResponse(studyDBAdaptor.getAllStudies(queryUtils.getQueryOptions()), version);
+    }
+
+    public QueryResponse getStudiesStats(List<String> species, List<String> types, QueryUtils queryUtils,
+                                         ArchiveDBAdaptor archiveDBAdaptor) {
+
+        queryUtils.initializeQuery();
+        if (species != null && !species.isEmpty()) {
+            queryUtils.getQueryOptions().put("species", species);
+        }
+        if (types != null && !types.isEmpty()) {
+            queryUtils.getQueryOptions().put("type", types);
+        }
+
+        QueryOptions queryOptions = queryUtils.getQueryOptions();
+
         QueryResult<Map.Entry<String, Long>> resultSpecies, resultTypes;
 
         resultSpecies = archiveDBAdaptor.countStudiesPerSpecies(queryOptions);
@@ -56,7 +88,7 @@ public class ArchiveWSServerHelper {
         }
         root.put("type", typesNode);
 
-        return combinedQueryResult;
+        return queryUtils.setQueryResponse(combinedQueryResult, version);
     }
 
 }

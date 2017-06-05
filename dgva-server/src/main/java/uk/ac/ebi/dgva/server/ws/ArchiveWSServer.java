@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014-2016 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2017 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@
 
 package uk.ac.ebi.dgva.server.ws;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +34,6 @@ import uk.ac.ebi.eva.lib.utils.QueryResponse;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 @RestController
@@ -50,40 +47,22 @@ public class ArchiveWSServer extends DgvaWSServer {
     @Autowired
     private StudyDgvaDBAdaptor studyDgvaDbAdaptor;
 
-    @Autowired
     private ArchiveWSServerHelper archiveWSServerHelper;
 
-    private Properties properties;
-    
+
     public ArchiveWSServer() throws IOException {
+        archiveWSServerHelper = new ArchiveWSServerHelper(this.version);
     }
 
     @RequestMapping(value = "/studies/all", method = RequestMethod.GET)
     public QueryResponse getStudies(@RequestParam(name = "species", required = false) List<String> species,
                                     @RequestParam(name = "type", required = false) List<String> types) {
-        initializeQuery();
-        QueryOptions queryOptions = getQueryOptions();
-        if (species != null && !species.isEmpty()) {
-            queryOptions.put("species", species);
-        }
-        if (types != null && !types.isEmpty()) {
-            queryOptions.put("type", types);
-        }
-
-        return setQueryResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
+        return archiveWSServerHelper.getStudies(species, types, queryUtils, studyDgvaDbAdaptor);
     }
 
     @RequestMapping(value = "/studies/stats", method = RequestMethod.GET)
     public QueryResponse getStudiesStats(@RequestParam(name = "species", required = false) List<String> species,
                                          @RequestParam(name = "type", required = false) List<String> types) {
-        initializeQuery();
-        if (species != null && !species.isEmpty()) {
-            getQueryOptions().put("species", species);
-        }
-        if (types != null && !types.isEmpty()) {
-            getQueryOptions().put("type", types);
-        }
-
-        return setQueryResponse(archiveWSServerHelper.getStudiesStats(getQueryOptions(), archiveDgvaDbAdaptor));
+        return archiveWSServerHelper.getStudiesStats(species, types, queryUtils, archiveDgvaDbAdaptor);
     }
 }

@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014-2016 EMBL - European Bioinformatics Institute
+ * Copyright 2014-2017 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.annotations.Api;
 
 import uk.ac.ebi.eva.commons.mongodb.entities.projections.VariantStudySummary;
@@ -33,9 +31,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantStudySummaryService;
-import uk.ac.ebi.eva.lib.metadata.dgva.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.eva.ArchiveEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.ArchiveWSServerHelper;
 import uk.ac.ebi.eva.lib.metadata.eva.StudyEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
@@ -43,8 +40,6 @@ import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 @RestController
 @RequestMapping(value = "/v1/meta", produces = "application/json")
@@ -58,10 +53,13 @@ public class ArchiveWSServer extends EvaWSServer {
     private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
 
     @Autowired
+    private VariantStudySummaryService variantStudySummaryService;
+
     private ArchiveWSServerHelper archiveWSServerHelper;
 
-    @Autowired
-    private VariantStudySummaryService variantStudySummaryService;
+    public ArchiveWSServer() {
+        archiveWSServerHelper = new ArchiveWSServerHelper(this.version);
+    }
 
     @RequestMapping(value = "/files/count", method = RequestMethod.GET)
     public QueryResponse countFiles() {
@@ -84,18 +82,9 @@ public class ArchiveWSServer extends EvaWSServer {
     }
 
     @RequestMapping(value = "/studies/all", method = RequestMethod.GET)
-    public QueryResponse getStudies(@RequestParam(name = "species", required = false) String species,
-                                    @RequestParam(name = "type", required = false) String types) {
-        initializeQuery();
-        QueryOptions queryOptions = getQueryOptions();
-        if (species != null && !species.isEmpty()) {
-            queryOptions.put("species", Arrays.asList(species.split(",")));
-        }
-        if (types != null && !types.isEmpty()) {
-            queryOptions.put("type", Arrays.asList(types.split(",")));
-        }
-
-        return setQueryResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
+    public QueryResponse getStudies(@RequestParam(name = "species", required = false) List<String> species,
+                                    @RequestParam(name = "type", required = false) List<String> types) {
+        return archiveWSServerHelper.getStudies(species, types, queryUtils, studyEvaproDbAdaptor);
     }
 
     @RequestMapping(value = "/studies/list", method = RequestMethod.GET)
@@ -110,15 +99,6 @@ public class ArchiveWSServer extends EvaWSServer {
     @RequestMapping(value = "/studies/stats", method = RequestMethod.GET)
     public QueryResponse getStudiesStats(@RequestParam(name = "species", required = false) List<String> species,
                                          @RequestParam(name = "type", required = false) List<String> types) {
-        initializeQuery();
-        QueryOptions queryOptions = getQueryOptions();
-        if (species != null && !species.isEmpty()) {
-            queryOptions.put("species", species);
-        }
-        if (types != null && !types.isEmpty()) {
-            queryOptions.put("type", types);
-        }
-
-        return setQueryResponse(archiveWSServerHelper.getStudiesStats(queryOptions, archiveEvaproDbAdaptor));
+        return archiveWSServerHelper.getStudiesStats(species, types, queryUtils, archiveEvaproDbAdaptor);
     }
 }
