@@ -104,10 +104,6 @@ public class ArchiveWSServerTest {
                                                                                              Collectors.counting()));
         given(archiveDgvaDBAdaptor.countStudiesPerType(anyObject()))
                 .willReturn(encapsulateInQueryResult(svStudiesGroupedByStudyType.entrySet().toArray()));
-
-
-
-
     }
 
     private <T> QueryResult<T> encapsulateInQueryResult(T... results) {
