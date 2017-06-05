@@ -45,7 +45,6 @@ public class ArchiveWSServerHelper {
         }
 
         return queryUtils.setQueryResponse(studyDBAdaptor.getAllStudies(queryUtils.getQueryOptions()));
-
     }
 
     public QueryResponse getStudiesStats(List<String> species, List<String> types, QueryUtils queryUtils,

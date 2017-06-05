@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import io.swagger.annotations.Api;
@@ -42,6 +43,7 @@ import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +56,9 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
 
     @Autowired
     private VariantSourceService service;
+
+    @Autowired
+    private QueryUtils queryUtils;
 
     protected static Logger logger = LoggerFactory.getLogger(GA4GHVariantCallSetWSServer.class);
     
@@ -68,7 +73,7 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
                                                 @RequestParam(name = "pageToken", required = false) String pageToken,
                                                 @RequestParam(name = "pageSize", defaultValue = "10") int limit)
             throws IOException {
-        initializeQuery();
+        queryUtils.initializeQuery();
         
         if (files.isEmpty()) {
             throw new IllegalArgumentException("The 'variantSetIds' argument must not be empty");

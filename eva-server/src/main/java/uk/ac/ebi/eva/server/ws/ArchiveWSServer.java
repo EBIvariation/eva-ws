@@ -72,12 +72,12 @@ public class ArchiveWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/files/count", method = RequestMethod.GET)
     public QueryResponse countFiles() {
-        return setQueryResponse(archiveEvaproDbAdaptor.countFiles());
+        return queryUtils.setQueryResponse(archiveEvaproDbAdaptor.countFiles());
     }
 
     @RequestMapping(value = "/species/count", method = RequestMethod.GET)
     public QueryResponse countSpecies() {
-        return setQueryResponse(archiveEvaproDbAdaptor.countSpecies());
+        return queryUtils.setQueryResponse(archiveEvaproDbAdaptor.countSpecies());
     }
 
     @RequestMapping(value = "/species/list", method = RequestMethod.GET)
@@ -87,7 +87,7 @@ public class ArchiveWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/studies/count", method = RequestMethod.GET)
     public QueryResponse countStudies() {
-        return setQueryResponse(archiveEvaproDbAdaptor.countStudies());
+        return queryUtils.setQueryResponse(archiveEvaproDbAdaptor.countStudies());
     }
 
     @RequestMapping(value = "/studies/all", method = RequestMethod.GET)
@@ -101,8 +101,8 @@ public class ArchiveWSServer extends EvaWSServer {
             throws IOException {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List<VariantStudySummary> uniqueStudies = variantStudySummaryService.findAll();
-        QueryResult<VariantStudySummary> result = buildQueryResult(uniqueStudies);
-        return setQueryResponse(result);
+        QueryResult<VariantStudySummary> result = queryUtils.buildQueryResult(uniqueStudies);
+        return queryUtils.setQueryResponse(result);
     }
 
     @RequestMapping(value = "/studies/stats", method = RequestMethod.GET)

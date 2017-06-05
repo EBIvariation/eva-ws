@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import io.swagger.annotations.Api;
@@ -41,6 +42,7 @@ import uk.ac.ebi.eva.lib.models.ga4gh.GAVariant;
 import uk.ac.ebi.eva.lib.models.ga4gh.GAVariantFactory;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
@@ -53,13 +55,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/v1/ga4gh/variants", produces = "application/json")
-@Api(tags = {"ga4gh", "variants"})
+@Api(tags = { "ga4gh", "variants" })
 public class GA4GHVariantWSServer extends EvaWSServer {
 
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
-    protected static Logger logger = LoggerFactory.getLogger(GA4GHVariantWSServer.class);
+    @Autowired
+    private QueryUtils queryUtils;
 
     public GA4GHVariantWSServer() {
     }
@@ -84,7 +87,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
 
         if (files != null && !files.isEmpty()) {
-            getQueryOptions().put("files", files);
+            queryUtils.getQueryOptions().put("files", files);
         }
         List<VariantRepositoryFilter> filters = new FilterBuilder().withFiles(files).build();
 
@@ -114,8 +117,8 @@ public class GA4GHVariantWSServer extends EvaWSServer {
     public GASearchVariantsResponse getVariantsByRegion(GASearchVariantRequest request)
             throws UnknownHostException, IOException, AnnotationMetadataNotFoundException {
         request.validate();
-        return getVariantsByRegion(request.getReferenceName(), (int) request.getStart(), (int) request.getEnd(),
-                request.getVariantSetIds(), request.getPageToken(), request.getPageSize());
+        return getVariantsByRegion(request.getReferenceName(), (int) request.getStart(), (int) request.getEnd(), 
+                                   request.getVariantSetIds(), request.getPageToken(), request.getPageSize());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

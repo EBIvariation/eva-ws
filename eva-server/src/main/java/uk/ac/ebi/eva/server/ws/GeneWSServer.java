@@ -37,6 +37,7 @@ import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundExceptio
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -50,8 +51,10 @@ public class GeneWSServer extends EvaWSServer {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
-    public GeneWSServer() {
-    }
+    @Autowired
+    private QueryUtils queryUtils;
+
+    public GeneWSServer() { }
 
     @RequestMapping(value = "/{geneIds}/variants", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants of a gene", response = QueryResponse.class)
@@ -66,7 +69,7 @@ public class GeneWSServer extends EvaWSServer {
                                            @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
                                            @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
                                            HttpServletResponse response) throws AnnotationMetadataNotFoundException {
-        initializeQuery();
+        queryUtils.initializeQuery();
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -75,7 +78,7 @@ public class GeneWSServer extends EvaWSServer {
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify a species");
+            return queryUtils.setQueryResponse("Please specify a species");
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
@@ -93,8 +96,8 @@ public class GeneWSServer extends EvaWSServer {
 
         Long numTotalResults = service.countByGenesAndComplexFilters(geneIds, filters);
 
-        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
-        return setQueryResponse(queryResult);
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = queryUtils.buildQueryResult(variantEntities, numTotalResults);
+        return queryUtils.setQueryResponse(queryResult);
     }
 
     @RequestMapping(value = "/{geneIds}/variants", method = RequestMethod.POST)

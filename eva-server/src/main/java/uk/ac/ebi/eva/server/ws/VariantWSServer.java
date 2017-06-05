@@ -39,6 +39,7 @@ import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundExceptio
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -56,6 +57,9 @@ public class VariantWSServer extends EvaWSServer {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
+    @Autowired
+    private QueryUtils queryUtils;
+
     protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
 
     @RequestMapping(value = "/{variantId}/info", method = RequestMethod.GET)
@@ -72,7 +76,7 @@ public class VariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
                                         HttpServletResponse response)
             throws IOException, AnnotationMetadataNotFoundException {
-        initializeQuery();
+        queryUtils.initializeQuery();
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -81,7 +85,7 @@ public class VariantWSServer extends EvaWSServer {
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify a species");
+            return queryUtils.setQueryResponse("Please specify a species");
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
@@ -105,7 +109,7 @@ public class VariantWSServer extends EvaWSServer {
                     String docPath = Utils.getApiToMongoDocNameMap().get(e);
                     if (docPath == null) {
                         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        return setQueryResponse("Unrecognised exclude field: " + e);
+                        return queryUtils.setQueryResponse("Unrecognised exclude field: " + e);
                     }
                     excludeMapped.add(docPath);
                 }
@@ -117,13 +121,13 @@ public class VariantWSServer extends EvaWSServer {
             }
 
             variantEntities = service.findByIdsAndComplexFilters(variantId, filters, annotationMetadata, excludeMapped,
-                                                                 Utils.getPageRequest(getQueryOptions()));
+                                                                 Utils.getPageRequest(queryUtils.getQueryOptions()));
 
             numTotalResults = service.countByIdsAndComplexFilters(variantId, filters);
         }
 
-        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
-        return setQueryResponse(queryResult);
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = queryUtils.buildQueryResult(variantEntities, numTotalResults);
+        return queryUtils.setQueryResponse(queryResult);
     }
 
     private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAlleles(String chromosome, int start,
@@ -149,11 +153,11 @@ public class VariantWSServer extends EvaWSServer {
                                             @RequestParam("species") String species,
                                             HttpServletResponse response)
             throws IOException, AnnotationMetadataNotFoundException {
-        initializeQuery();
+        queryUtils.initializeQuery();
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify a species");
+            return queryUtils.setQueryResponse("Please specify a species");
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
@@ -168,7 +172,7 @@ public class VariantWSServer extends EvaWSServer {
             String[] regionId = variantId.split(":", -1);
             if (regionId.length < 3) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return setErrorQueryResponse(invalidCoordinatesMessage);
+                return queryUtils.setErrorQueryResponse(invalidCoordinatesMessage);
             }
 
             String alternate = (regionId.length > 3) ? regionId[3] : null;
@@ -183,15 +187,15 @@ public class VariantWSServer extends EvaWSServer {
 
         } else {
             List<VariantRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
-            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null, null,
-                    Utils.getPageRequest(getQueryOptions()));
+            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null,
+                    Utils.getPageRequest(queryUtils.getQueryOptions()));
         }
 
         numTotalResults = (long) variantEntities.size();
         QueryResult queryResult = new QueryResult();
         queryResult.setResult(Arrays.asList(numTotalResults > 0));
         queryResult.setResultType(Boolean.class.getCanonicalName());
-        return setQueryResponse(queryResult);
+        return queryUtils.setQueryResponse(queryResult);
     }
 
     private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAllelesAndStudyIds(String chromosome, int start,

@@ -36,9 +36,11 @@ import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,27 +58,29 @@ public class StudyWSServer extends EvaWSServer {
     @Autowired
     private VariantSourceService variantSourceService;
 
+    @Autowired
+    private QueryUtils queryUtils;
+
     @RequestMapping(value = "/{study}/files", method = RequestMethod.GET)
-//    @ApiOperation(httpMethod = "GET", value = "Retrieves all the files from a study", response = QueryResponse.class)
     public QueryResponse getFilesByStudy(@PathVariable("study") String study,
                                          @RequestParam("species") String species,
                                          HttpServletResponse response)
             throws IOException {
-        initializeQuery();
+        queryUtils.initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List variantSourceEntityList = variantSourceService.findByStudyIdOrStudyName(study, study);
         QueryResult queryResult;
 
         if (variantSourceEntityList.size() == 0) {
-            queryResult = buildQueryResult(Collections.emptyList());
+            queryResult = queryUtils.buildQueryResult(Collections.emptyList());
             queryResult.setErrorMsg("Study identifier not found");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse(queryResult);
+            return queryUtils.setQueryResponse(queryResult);
         }
 
-        queryResult = buildQueryResult(variantSourceEntityList);
-        return setQueryResponse(queryResult);
+        queryResult = queryUtils.buildQueryResult(variantSourceEntityList);
+        return queryUtils.setQueryResponse(queryResult);
     }
 
     @RequestMapping(value = "/{study}/view", method = RequestMethod.GET)
@@ -84,30 +88,30 @@ public class StudyWSServer extends EvaWSServer {
     public QueryResponse getStudy(@PathVariable("study") String study,
                                   @RequestParam(name = "species") String species,
                                   HttpServletResponse response)
-            throws IOException {
-        initializeQuery();
+            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+        queryUtils.initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         VariantStudySummary variantStudySummary = variantStudySummaryService.findByStudyNameOrStudyId(study);
 
         QueryResult<VariantStudySummary> queryResult;
         if (variantStudySummary == null) {
-            queryResult = buildQueryResult(Collections.emptyList());
+            queryResult = queryUtils.buildQueryResult(Collections.emptyList());
             queryResult.setErrorMsg("Study identifier not found");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } else {
-            queryResult = buildQueryResult(Collections.singletonList(variantStudySummary));
+            queryResult = queryUtils.buildQueryResult(Collections.singletonList(variantStudySummary));
         }
-        return setQueryResponse(queryResult);
+        return queryUtils.setQueryResponse(queryResult);
     }
 
     @RequestMapping(value = "/{study}/summary", method = RequestMethod.GET)
     public QueryResponse getStudySummary(@PathVariable("study") String study,
                                          @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
         if (structural) {
-            return setQueryResponse(studyDgvaDbAdaptor.getStudyById(study, getQueryOptions()));
+            return queryUtils.setQueryResponse(studyDgvaDbAdaptor.getStudyById(study, queryUtils.getQueryOptions()));
         } else {
-            return setQueryResponse(studyEvaproDbAdaptor.getStudyById(study, getQueryOptions()));
+            return queryUtils.setQueryResponse(studyEvaproDbAdaptor.getStudyById(study, queryUtils.getQueryOptions()));
         }
     }
 }
