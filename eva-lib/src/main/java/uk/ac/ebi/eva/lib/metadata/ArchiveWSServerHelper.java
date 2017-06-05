@@ -19,16 +19,33 @@ package uk.ac.ebi.eva.lib.metadata;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opencb.datastore.core.QueryOptions;
+import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
+
+import java.util.List;
 import java.util.Map;
 
-@Component
+@Service
 public class ArchiveWSServerHelper {
 
-    public QueryResult getStudiesStats(QueryOptions queryOptions, ArchiveDBAdaptor archiveDBAdaptor) {
+    public QueryResponse getStudiesStats(List<String> species, List<String> types, QueryUtils queryUtils,
+                                         ArchiveDBAdaptor archiveDBAdaptor) {
+
+        queryUtils.initializeQuery();
+        if (species != null && !species.isEmpty()) {
+            queryUtils.getQueryOptions().put("species", species);
+        }
+        if (types != null && !types.isEmpty()) {
+            queryUtils.getQueryOptions().put("type", types);
+        }
+
+        QueryOptions queryOptions = queryUtils.getQueryOptions();
+
         QueryResult<Map.Entry<String, Long>> resultSpecies, resultTypes;
 
         resultSpecies = archiveDBAdaptor.countStudiesPerSpecies(queryOptions);
@@ -56,7 +73,7 @@ public class ArchiveWSServerHelper {
         }
         root.put("type", typesNode);
 
-        return combinedQueryResult;
+        return queryUtils.setQueryResponse(combinedQueryResult);
     }
 
 }

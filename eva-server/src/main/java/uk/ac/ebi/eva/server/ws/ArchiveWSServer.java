@@ -35,10 +35,14 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantStudySummaryService;
 import uk.ac.ebi.eva.lib.metadata.dgva.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.eva.ArchiveEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.ArchiveWSServerHelper;
 import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.eva.StudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
+import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -59,6 +63,9 @@ public class ArchiveWSServer extends EvaWSServer {
 
     @Autowired
     private ArchiveWSServerHelper archiveWSServerHelper;
+
+    @Autowired
+    private QueryUtils queryUtils;
 
     @Autowired
     private VariantStudySummaryService variantStudySummaryService;
@@ -110,15 +117,6 @@ public class ArchiveWSServer extends EvaWSServer {
     @RequestMapping(value = "/studies/stats", method = RequestMethod.GET)
     public QueryResponse getStudiesStats(@RequestParam(name = "species", required = false) List<String> species,
                                          @RequestParam(name = "type", required = false) List<String> types) {
-        initializeQuery();
-        QueryOptions queryOptions = getQueryOptions();
-        if (species != null && !species.isEmpty()) {
-            queryOptions.put("species", species);
-        }
-        if (types != null && !types.isEmpty()) {
-            queryOptions.put("type", types);
-        }
-
-        return setQueryResponse(archiveWSServerHelper.getStudiesStats(queryOptions, archiveEvaproDbAdaptor));
+        return archiveWSServerHelper.getStudiesStats(species, types, queryUtils, archiveEvaproDbAdaptor);
     }
 }

@@ -33,6 +33,7 @@ import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.ArchiveWSServerHelper;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -53,6 +54,9 @@ public class ArchiveWSServer extends DgvaWSServer {
     @Autowired
     private ArchiveWSServerHelper archiveWSServerHelper;
 
+    @Autowired
+    private QueryUtils queryUtils;
+
     private Properties properties;
     
     public ArchiveWSServer() throws IOException {
@@ -61,8 +65,8 @@ public class ArchiveWSServer extends DgvaWSServer {
     @RequestMapping(value = "/studies/all", method = RequestMethod.GET)
     public QueryResponse getStudies(@RequestParam(name = "species", required = false) List<String> species,
                                     @RequestParam(name = "type", required = false) List<String> types) {
-        initializeQuery();
-        QueryOptions queryOptions = getQueryOptions();
+        queryUtils.initializeQuery();
+        QueryOptions queryOptions = queryUtils.getQueryOptions();
         if (species != null && !species.isEmpty()) {
             queryOptions.put("species", species);
         }
@@ -70,20 +74,12 @@ public class ArchiveWSServer extends DgvaWSServer {
             queryOptions.put("type", types);
         }
 
-        return setQueryResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
+        return queryUtils.setQueryResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
     }
 
     @RequestMapping(value = "/studies/stats", method = RequestMethod.GET)
     public QueryResponse getStudiesStats(@RequestParam(name = "species", required = false) List<String> species,
                                          @RequestParam(name = "type", required = false) List<String> types) {
-        initializeQuery();
-        if (species != null && !species.isEmpty()) {
-            getQueryOptions().put("species", species);
-        }
-        if (types != null && !types.isEmpty()) {
-            getQueryOptions().put("type", types);
-        }
-
-        return setQueryResponse(archiveWSServerHelper.getStudiesStats(getQueryOptions(), archiveDgvaDbAdaptor));
+        return archiveWSServerHelper.getStudiesStats(species, types, queryUtils, archiveDgvaDbAdaptor);
     }
 }
