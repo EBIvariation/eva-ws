@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.lib.metadata.dgva.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.ArchiveWSServerHelper;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 
@@ -48,6 +49,9 @@ public class ArchiveWSServer extends DgvaWSServer {
 
     @Autowired
     private StudyDgvaDBAdaptor studyDgvaDbAdaptor;
+
+    @Autowired
+    private ArchiveWSServerHelper archiveWSServerHelper;
 
     private Properties properties;
     
@@ -80,33 +84,6 @@ public class ArchiveWSServer extends DgvaWSServer {
             getQueryOptions().put("type", types);
         }
 
-        QueryResult<Map.Entry<String, Long>> resultSpecies, resultTypes;
-
-        resultSpecies = archiveDgvaDbAdaptor.countStudiesPerSpecies(getQueryOptions());
-        resultTypes = archiveDgvaDbAdaptor.countStudiesPerType(getQueryOptions());
-
-        QueryResult combinedQueryResult = new QueryResult();
-        combinedQueryResult.setDbTime(resultSpecies.getDbTime() + resultTypes.getDbTime());
-
-        JsonNodeFactory factory = new JsonNodeFactory(true);
-        ObjectNode root = factory.objectNode();
-        combinedQueryResult.addResult(root);
-        combinedQueryResult.setNumTotalResults(combinedQueryResult.getNumResults());
-
-        // Species
-        ObjectNode speciesNode = factory.objectNode();
-        for (Map.Entry<String, Long> speciesCount : resultSpecies.getResult()) {
-            speciesNode.put(speciesCount.getKey(), speciesCount.getValue());
-        }
-        root.put("species", speciesNode);
-
-        // Types
-        ObjectNode typesNode = factory.objectNode();
-        for (Map.Entry<String, Long> typesCount : resultTypes.getResult()) {
-            typesNode.put(typesCount.getKey(), typesCount.getValue());
-        }
-        root.put("type", typesNode);
-
-        return setQueryResponse(combinedQueryResult);
+        return setQueryResponse(archiveWSServerHelper.getStudiesStats(getQueryOptions(), archiveDgvaDbAdaptor));
     }
 }

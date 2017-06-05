@@ -58,6 +58,9 @@ public class ArchiveWSServer extends EvaWSServer {
     private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
 
     @Autowired
+    private ArchiveWSServerHelper archiveWSServerHelper;
+
+    @Autowired
     private VariantStudySummaryService variantStudySummaryService;
 
     @RequestMapping(value = "/files/count", method = RequestMethod.GET)
@@ -116,33 +119,6 @@ public class ArchiveWSServer extends EvaWSServer {
             queryOptions.put("type", types);
         }
 
-        QueryResult<Map.Entry<String, Long>> resultSpecies, resultTypes;
-
-        resultSpecies = archiveEvaproDbAdaptor.countStudiesPerSpecies(queryOptions);
-        resultTypes = archiveEvaproDbAdaptor.countStudiesPerType(queryOptions);
-
-        QueryResult combinedQueryResult = new QueryResult();
-        combinedQueryResult.setDbTime(resultSpecies.getDbTime() + resultTypes.getDbTime());
-
-        JsonNodeFactory factory = new JsonNodeFactory(true);
-        ObjectNode root = factory.objectNode();
-        combinedQueryResult.addResult(root);
-        combinedQueryResult.setNumTotalResults(combinedQueryResult.getNumResults());
-
-        // Species
-        ObjectNode speciesNode = factory.objectNode();
-        for (Map.Entry<String, Long> speciesCount : resultSpecies.getResult()) {
-            speciesNode.put(speciesCount.getKey(), speciesCount.getValue());
-        }
-        root.put("species", speciesNode);
-
-        // Types
-        ObjectNode typesNode = factory.objectNode();
-        for (Map.Entry<String, Long> typesCount : resultTypes.getResult()) {
-            typesNode.put(typesCount.getKey(), typesCount.getValue());
-        }
-        root.put("type", typesNode);
-
-        return setQueryResponse(combinedQueryResult);
+        return setQueryResponse(archiveWSServerHelper.getStudiesStats(queryOptions, archiveEvaproDbAdaptor));
     }
 }
