@@ -22,7 +22,7 @@ import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResponse;
 import org.opencb.datastore.core.QueryResult;
 import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
-import org.springframework.stereotype.Component;
+import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import org.springframework.stereotype.Service;
 
 import uk.ac.ebi.eva.lib.utils.QueryUtils;
@@ -32,6 +32,21 @@ import java.util.Map;
 
 @Service
 public class ArchiveWSServerHelper {
+
+    public QueryResponse getStudies(List<String> species, List<String> types, QueryUtils queryUtils,
+                                    StudyDBAdaptor studyDBAdaptor) {
+
+        queryUtils.initializeQuery();
+        if (species != null && !species.isEmpty()) {
+            queryUtils.getQueryOptions().put("species", species);
+        }
+        if (types != null && !types.isEmpty()) {
+            queryUtils.getQueryOptions().put("type", types);
+        }
+
+        return queryUtils.setQueryResponse(studyDBAdaptor.getAllStudies(queryUtils.getQueryOptions()));
+
+    }
 
     public QueryResponse getStudiesStats(List<String> species, List<String> types, QueryUtils queryUtils,
                                          ArchiveDBAdaptor archiveDBAdaptor) {

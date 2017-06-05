@@ -65,16 +65,7 @@ public class ArchiveWSServer extends DgvaWSServer {
     @RequestMapping(value = "/studies/all", method = RequestMethod.GET)
     public QueryResponse getStudies(@RequestParam(name = "species", required = false) List<String> species,
                                     @RequestParam(name = "type", required = false) List<String> types) {
-        queryUtils.initializeQuery();
-        QueryOptions queryOptions = queryUtils.getQueryOptions();
-        if (species != null && !species.isEmpty()) {
-            queryOptions.put("species", species);
-        }
-        if (types != null && !types.isEmpty()) {
-            queryOptions.put("type", types);
-        }
-
-        return queryUtils.setQueryResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
+        return archiveWSServerHelper.getStudies(species, types, queryUtils, studyDgvaDbAdaptor);
     }
 
     @RequestMapping(value = "/studies/stats", method = RequestMethod.GET)

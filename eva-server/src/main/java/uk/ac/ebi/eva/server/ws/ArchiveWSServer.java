@@ -91,18 +91,9 @@ public class ArchiveWSServer extends EvaWSServer {
     }
 
     @RequestMapping(value = "/studies/all", method = RequestMethod.GET)
-    public QueryResponse getStudies(@RequestParam(name = "species", required = false) String species,
-                                    @RequestParam(name = "type", required = false) String types) {
-        initializeQuery();
-        QueryOptions queryOptions = getQueryOptions();
-        if (species != null && !species.isEmpty()) {
-            queryOptions.put("species", Arrays.asList(species.split(",")));
-        }
-        if (types != null && !types.isEmpty()) {
-            queryOptions.put("type", Arrays.asList(types.split(",")));
-        }
-
-        return setQueryResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
+    public QueryResponse getStudies(@RequestParam(name = "species", required = false) List<String> species,
+                                    @RequestParam(name = "type", required = false) List<String> types) {
+        return archiveWSServerHelper.getStudies(species, types, queryUtils, studyEvaproDbAdaptor);
     }
 
     @RequestMapping(value = "/studies/list", method = RequestMethod.GET)
