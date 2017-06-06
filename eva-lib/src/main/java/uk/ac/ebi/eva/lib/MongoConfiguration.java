@@ -49,9 +49,6 @@ public class MongoConfiguration {
     @Autowired
     private DbCollectionsProperties dbCollectionsProperties;
 
-    @Value("${eva.mongo.collections.annotation_metadata}")
-    private String mongoCollectionsAnnotationMetadata;
-
     @Bean
     public String mongoCollectionsFiles() {
         return dbCollectionsProperties.getFiles().getName();
@@ -59,7 +56,7 @@ public class MongoConfiguration {
 
     @Bean
     public String mongoCollectionsAnnotationMetadata() {
-        return mongoCollectionsAnnotationMetadata;
+        return dbCollectionsProperties.getAnnotationMetadata().getName();
     }
 
     @Bean
