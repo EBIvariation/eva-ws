@@ -40,8 +40,8 @@ public class QueryUtils {
     protected HttpServletRequest httpServletRequest;
 
     private QueryOptions queryOptions;
-    protected long startTime;
-    protected long endTime;
+    private long startTime;
+    private long endTime;
 
     protected static Logger logger = LoggerFactory.getLogger(QueryUtils.class);
 
