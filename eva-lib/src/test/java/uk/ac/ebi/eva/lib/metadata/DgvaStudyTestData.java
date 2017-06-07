@@ -40,10 +40,10 @@ final class DgvaStudyTestData {
                                                        "Study 1", CONTROL_SET, "PRJ1", "www.study1.com",
                                                        "This is study 1", "Sequence alignment", "HMM", "Sequencing",
                                                        "Illumina", "GRCh38");
-        DgvaStudyBrowser study2= new DgvaStudyBrowser("estd2", "9606", HUMAN, HOMO_SAPIENS, "2222",
-                                                      "Study 2", COLLECTION, "PRJ2", "www.study2.com",
-                                                      "This is study 2", "Sequence alignment", "HMM", "Sequencing",
-                                                      "Illumina", "GRCh38");
+        DgvaStudyBrowser study2 = new DgvaStudyBrowser("estd2", "9606", HUMAN, HOMO_SAPIENS, "2222",
+                                                       "Study 2", COLLECTION, "PRJ2", "www.study2.com",
+                                                       "This is study 2", "Sequence alignment", "HMM", "Sequencing",
+                                                       "Illumina", "GRCh38");
         DgvaStudyBrowser study3 = new DgvaStudyBrowser("estd3", "9606", MOUSE, M_MUSCULUS, "3333",
                                                        "Study 3", CONTROL_SET, "PRJ3", "www.study3.com",
                                                        "This is study 3", "Sequence alignment", "HMM", "Sequencing",
