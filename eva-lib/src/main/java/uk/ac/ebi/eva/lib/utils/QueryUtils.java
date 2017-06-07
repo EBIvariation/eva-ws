@@ -34,8 +34,6 @@ import java.util.Map;
 @Component
 public class QueryUtils {
 
-    protected final String version = "v1";
-
     @Autowired
     protected HttpServletRequest httpServletRequest;
 
@@ -75,14 +73,14 @@ public class QueryUtils {
         logger.debug(queryOptions.toJson());
     }
 
-    public <T> QueryResponse<T> setQueryResponse(List<T> coll) {
-        QueryResponse<T> queryResponse = buildQueryResponse();
+    public <T> QueryResponse<T> setQueryResponse(List<T> coll, String version) {
+        QueryResponse<T> queryResponse = buildQueryResponse(version);
         queryResponse.setResponse(coll);
         return queryResponse;
     }
     
-    public <T> QueryResponse<T> setQueryResponse(T obj) {
-        QueryResponse<T> queryResponse = buildQueryResponse();
+    public <T> QueryResponse<T> setQueryResponse(T obj, String version) {
+        QueryResponse<T> queryResponse = buildQueryResponse(version);
 
         List<T> coll = new ArrayList<>();
         coll.add(obj);
@@ -91,15 +89,15 @@ public class QueryUtils {
         return queryResponse;
     }
 
-    public <T> QueryResponse<T> setErrorQueryResponse(String message) {
-        QueryResponse<T> queryResponse = buildQueryResponse();
+    public <T> QueryResponse<T> setErrorQueryResponse(String message, String version) {
+        QueryResponse<T> queryResponse = buildQueryResponse(version);
 
         queryResponse.setResponse(Collections.EMPTY_LIST);
         queryResponse.setError(message);
         return queryResponse;
     }
 
-    private <T> QueryResponse<T> buildQueryResponse() {
+    private <T> QueryResponse<T> buildQueryResponse(String version) {
         QueryResponse<T> queryResponse = new QueryResponse<>();
         endTime = System.currentTimeMillis();
         queryResponse.setApiVersion(version);

@@ -65,6 +65,6 @@ public class DgvaWSServer {
     }
 
     protected <T> QueryResponse<T> setQueryResponse(T obj) {
-        return queryUtils.setQueryResponse(obj);
+        return queryUtils.setQueryResponse(obj, version);
     }
 }
