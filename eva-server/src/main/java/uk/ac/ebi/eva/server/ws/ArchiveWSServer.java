@@ -22,6 +22,10 @@ package uk.ac.ebi.eva.server.ws;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.annotations.Api;
+import org.opencb.datastore.core.QueryOptions;
+import org.opencb.datastore.core.QueryResponse;
+import org.opencb.datastore.core.QueryResult;
+import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,8 +37,8 @@ import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
+import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
@@ -84,19 +88,20 @@ public class ArchiveWSServer extends EvaWSServer {
     public QueryResponse getStudies(@RequestParam(name = "species", required = false) String species,
                                     @RequestParam(name = "type", required = false) String types) {
         initializeQuery();
+        QueryOptions queryOptions = getQueryOptions();
         if (species != null && !species.isEmpty()) {
-            getQueryOptions().put("species", Arrays.asList(species.split(",")));
+            queryOptions.put("species", Arrays.asList(species.split(",")));
         }
         if (types != null && !types.isEmpty()) {
-            getQueryOptions().put("type", Arrays.asList(types.split(",")));
+            queryOptions.put("type", Arrays.asList(types.split(",")));
         }
 
-        return setQueryResponse(studyEvaproDbAdaptor.getAllStudies(getQueryOptions()));
+        return setQueryResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
     }
 
     @RequestMapping(value = "/studies/list", method = RequestMethod.GET)
     public QueryResponse getBrowsableStudies(@RequestParam("species") String species)
-            throws IOException {
+            throws IllegalOpenCGACredentialsException, IOException {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List<VariantStudySummary> uniqueStudies = variantStudySummaryService.findAll();
         QueryResult<VariantStudySummary> result = buildQueryResult(uniqueStudies);
@@ -108,21 +113,22 @@ public class ArchiveWSServer extends EvaWSServer {
                                          @RequestParam(name = "type", required = false) List<String> types,
                                          @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
         initializeQuery();
+        QueryOptions queryOptions = getQueryOptions();
         if (species != null && !species.isEmpty()) {
-            getQueryOptions().put("species", species);
+            queryOptions.put("species", species);
         }
         if (types != null && !types.isEmpty()) {
-            getQueryOptions().put("type", types);
+            queryOptions.put("type", types);
         }
 
         QueryResult<Map.Entry<String, Long>> resultSpecies, resultTypes;
 
         if (structural) {
-            resultSpecies = archiveDgvaDbAdaptor.countStudiesPerSpecies(getQueryOptions());
-            resultTypes = archiveDgvaDbAdaptor.countStudiesPerType(getQueryOptions());
+            resultSpecies = archiveDgvaDbAdaptor.countStudiesPerSpecies(queryOptions);
+            resultTypes = archiveDgvaDbAdaptor.countStudiesPerType(queryOptions);
         } else {
-            resultSpecies = archiveEvaproDbAdaptor.countStudiesPerSpecies(getQueryOptions());
-            resultTypes = archiveEvaproDbAdaptor.countStudiesPerType(getQueryOptions());
+            resultSpecies = archiveEvaproDbAdaptor.countStudiesPerSpecies(queryOptions);
+            resultTypes = archiveEvaproDbAdaptor.countStudiesPerType(queryOptions);
         }
 
         QueryResult combinedQueryResult = new QueryResult();
