@@ -85,11 +85,11 @@ public class EvaWSServer {
     }
 
     protected <T> QueryResponse<T> setQueryResponse(T obj) {
-        return queryUtils.setQueryResponse(obj);
+        return queryUtils.setQueryResponse(obj, version);
     }
 
     protected <T> QueryResponse<T> setErrorQueryResponse(String message) {
-        return queryUtils.setErrorQueryResponse(message);
+        return queryUtils.setErrorQueryResponse(message, version);
     }
 
     protected <T> QueryResult<T> buildQueryResult(List<T> results) {
