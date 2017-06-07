@@ -1,14 +1,11 @@
 /*
- * European Variation Archive (EVA) - Open-access database of all types of genetic
- * variation data from all species
- *
- * Copyright 2014, 2015 EMBL - European Bioinformatics Institute
+ * Copyright 2017 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +14,9 @@
  * limitations under the License.
  */
 
-package uk.ac.ebi.eva.server.security;
+package uk.ac.ebi.eva.lib.security;
 
-import java.io.IOException;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -28,13 +25,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-import org.springframework.stereotype.Component;
-
-/**
- *
- * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
- */
 @Component
 public class CORSResponseFilter implements Filter {
 
