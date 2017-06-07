@@ -20,6 +20,7 @@
 package uk.ac.ebi.dgva.server.ws;
 
 import io.swagger.annotations.Api;
+import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,13 +50,14 @@ public class ArchiveWSServer extends DgvaWSServer {
     public QueryResponse getStudies(@RequestParam(name = "species", required = false) List<String> species,
                                     @RequestParam(name = "type", required = false) List<String> types) {
         initializeQuery();
+        QueryOptions queryOptions = getQueryOptions();
         if (species != null && !species.isEmpty()) {
-            getQueryOptions().put("species", species);
+            queryOptions.put("species", species);
         }
         if (types != null && !types.isEmpty()) {
-            getQueryOptions().put("type", types);
+            queryOptions.put("type", types);
         }
 
-        return setQueryResponse(studyDgvaDbAdaptor.getAllStudies(getQueryOptions()));
+        return setQueryResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
     }
 }
