@@ -5,7 +5,7 @@
     <parent>
         <artifactId>eva</artifactId>
         <groupId>uk.ac.ebi.eva</groupId>
-        <version>1.4-SNAPSHOT</version>
+        <version>1.4</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -49,21 +49,8 @@
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.eva</groupId>
-            <artifactId>opencga-storage-mongodb</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.mongodb</groupId>
-                    <artifactId>mongo-java-driver</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>uk.ac.ebi.eva</groupId>
             <artifactId>variation-commons</artifactId>
-            <version>0.2-SNAPSHOT</version>
         </dependency>
-
-
 
         <dependency>
             <groupId>asm</groupId>
