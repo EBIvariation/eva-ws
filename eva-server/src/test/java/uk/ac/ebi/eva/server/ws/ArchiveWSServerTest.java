@@ -104,7 +104,7 @@ public class ArchiveWSServerTest {
                               "Homo Sapiens", "hsapiens", "human");
         Assembly umd31 = new Assembly("GCA_000003055.3", "GCA_000003055", "3", "Bos_taurus_UMD_3.1", "umd31", 9913, "Cattle",
                              "Bos taurus", "btaurus", "cow");
-        given(this.archiveEvaproDBAdaptor.getSpecies(eq(true)))
+        given(this.archiveEvaproDBAdaptor.getSpecies())
                 .willReturn(encapsulateInQueryResult(grch37, grch38, umd31));
         given(this.archiveEvaproDBAdaptor.countSpecies()).willReturn(encapsulateInQueryResult(3L));
 
