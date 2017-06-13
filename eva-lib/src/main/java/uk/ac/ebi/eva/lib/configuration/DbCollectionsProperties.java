@@ -19,99 +19,45 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@ConfigurationProperties(ignoreUnknownFields = false, prefix = "db.collections")
+@ConfigurationProperties(ignoreUnknownFields = false, prefix = "db.collection-names")
 @Component
 @Validated
 public class DbCollectionsProperties {
 
     @Size(min = 1)
-    private String version;
+    private String files;
 
-    @NotNull
-    @Valid
-    private Files files;
+    @Size(min = 1)
+    private String variants;
 
-    @NotNull
-    @Valid
-    private Variants variants;
+    @Size(min = 1)
+    private String annotationMetadata;
 
-    @NotNull
-    @Valid
-    private AnnotationMetadata annotationMetadata;
 
-    public static class Files {
-        @Size(min = 1)
-        private String name;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
-
-    public static class Variants {
-        @Size(min = 1)
-        private String name;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
-
-    public static class AnnotationMetadata {
-        @Size(min = 1)
-        private String name;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public Files getFiles() {
+    public String getFiles() {
         return files;
     }
 
-    public void setFiles(Files files) {
+    public void setFiles(String files) {
         this.files = files;
     }
 
-    public Variants getVariants() {
+    public String getVariants() {
         return variants;
     }
 
-    public void setVariants(Variants variants) {
+    public void setVariants(String variants) {
         this.variants = variants;
     }
 
-    public AnnotationMetadata getAnnotationMetadata() {
+    public String getAnnotationMetadata() {
         return annotationMetadata;
     }
 
     public void setAnnotationMetadata(
-            AnnotationMetadata annotationMetadata) {
+            String annotationMetadata) {
         this.annotationMetadata = annotationMetadata;
     }
 }

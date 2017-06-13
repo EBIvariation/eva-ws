@@ -34,14 +34,14 @@ public class DbCollectionsPropertiesTest {
     @Autowired
     private DbCollectionsProperties dbCollectionsProperties;
 
-    @Value("${db.collections.files.name}")
+    @Value("${db.collection-names.files}")
     private String expectedFiles;
 
     @Test
     public void testEvaPropertyAutowiring() {
         assertNotNull(dbCollectionsProperties);
         assertNotNull(dbCollectionsProperties.getVariants());
-        assertEquals(expectedFiles, dbCollectionsProperties.getFiles().getName());
+        assertEquals(expectedFiles, dbCollectionsProperties.getFiles());
     }
 
 }

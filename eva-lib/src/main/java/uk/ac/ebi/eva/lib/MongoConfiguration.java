@@ -51,12 +51,12 @@ public class MongoConfiguration {
 
     @Bean
     public String mongoCollectionsFiles() {
-        return dbCollectionsProperties.getFiles().getName();
+        return dbCollectionsProperties.getFiles();
     }
 
     @Bean
     public String mongoCollectionsAnnotationMetadata() {
-        return dbCollectionsProperties.getAnnotationMetadata().getName();
+        return dbCollectionsProperties.getAnnotationMetadata();
     }
 
     @Bean

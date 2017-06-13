@@ -57,20 +57,20 @@ public class DBAdaptorConnector {
     public VariantDBAdaptor getVariantDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         return new VariantMongoDBAdaptor(getCredentials(species, springDataMongoDbProperties),
-                                         dbCollectionsProperties.getVariants().getName(),
-                                         dbCollectionsProperties.getFiles().getName());
+                                         dbCollectionsProperties.getVariants(),
+                                         dbCollectionsProperties.getFiles());
     }
     
     public StudyDBAdaptor getStudyDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         return new StudyMongoDBAdaptor(getCredentials(species, springDataMongoDbProperties),
-                                       dbCollectionsProperties.getFiles().getName());
+                                       dbCollectionsProperties.getFiles());
     }
     
     public VariantSourceDBAdaptor getVariantSourceDBAdaptor(String species)
             throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
         return new VariantSourceMongoDBAdaptor(getCredentials(species, springDataMongoDbProperties),
-                                               dbCollectionsProperties.getFiles().getName());
+                                               dbCollectionsProperties.getFiles());
     }
 
     /**

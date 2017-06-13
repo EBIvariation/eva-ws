@@ -35,13 +35,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
 import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -55,9 +54,6 @@ public class GeneWSServerTest {
 
     @MockBean
     private VariantEntityRepository variantEntityRepository;
-
-    @MockBean
-    private DBAdaptorConnector dbAdaptorConnector;
 
     private String GENE_ID = "GeneId";
     private VariantEntity testVariantEntity;
