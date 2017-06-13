@@ -13,7 +13,6 @@ import java.io.IOException;
 
 @Configuration
 @EnableMongoRepositories("uk.ac.ebi.eva.lib.repository")
-@PropertySource("classpath:eva.properties")
 @Import({MongoConfiguration.class, MultiMongoFactoryConfiguration.class})
 public class MongoEvaLibConfiguration {
 

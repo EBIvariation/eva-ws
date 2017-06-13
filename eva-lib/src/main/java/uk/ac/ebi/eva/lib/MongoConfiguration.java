@@ -16,10 +16,10 @@
 package uk.ac.ebi.eva.lib;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
@@ -29,6 +29,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantEntityConverter;
+import uk.ac.ebi.eva.lib.configuration.DbCollectionsProperties;
 import uk.ac.ebi.eva.commons.models.converters.data.DbObjectToVariantGlobalStatsConverter;
 
 import java.io.IOException;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
+@Import(DbCollectionsProperties.class)
 public class MongoConfiguration {
 
     @Autowired
@@ -44,20 +46,17 @@ public class MongoConfiguration {
     @Autowired
     private MongoDbFactory mongoDbFactory;
 
-    @Value("${eva.mongo.collections.files}")
-    private String mongoCollectionsFiles;
-
-    @Value("${eva.mongo.collections.annotation_metadata}")
-    private String mongoCollectionsAnnotationMetadata;
+    @Autowired
+    private DbCollectionsProperties dbCollectionsProperties;
 
     @Bean
     public String mongoCollectionsFiles() {
-        return mongoCollectionsFiles;
+        return dbCollectionsProperties.getFiles();
     }
 
     @Bean
     public String mongoCollectionsAnnotationMetadata() {
-        return mongoCollectionsAnnotationMetadata;
+        return dbCollectionsProperties.getAnnotationMetadata();
     }
 
     @Bean

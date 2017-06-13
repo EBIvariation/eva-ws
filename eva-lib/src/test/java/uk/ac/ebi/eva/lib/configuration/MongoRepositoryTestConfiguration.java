@@ -35,7 +35,6 @@ import uk.ac.ebi.eva.lib.MongoConfiguration;
 @Configuration
 @EnableMongoRepositories(basePackages = "uk.ac.ebi.eva.lib.repository")
 @Import({MongoConfiguration.class})
-@PropertySource({"classpath:eva.properties"})
 public class MongoRepositoryTestConfiguration {
 
     @Bean

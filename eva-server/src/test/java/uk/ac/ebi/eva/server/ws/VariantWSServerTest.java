@@ -78,9 +78,6 @@ public class VariantWSServerTest {
     @MockBean
     private VariantDBAdaptor variantMongoDbAdaptor;
 
-    @MockBean
-    private DBAdaptorConnector dbAdaptorConnector;
-
     @Before
     public void setUp() throws Exception {
         List<VariantEntity> variantEntities = Collections.singletonList(VARIANT);
@@ -99,7 +96,6 @@ public class VariantWSServerTest {
         queryResult.setNumResults(1);
         given(variantMongoDbAdaptor.getAllVariantsByRegion(eq(region), any())).willReturn(queryResult);
         given(variantMongoDbAdaptor.getAllVariantsByRegion(eq(badRegion), any())).willReturn(new QueryResult<>());
-        given(dbAdaptorConnector.getVariantDBAdaptor(any())).willReturn(variantMongoDbAdaptor);
     }
 
     @Test

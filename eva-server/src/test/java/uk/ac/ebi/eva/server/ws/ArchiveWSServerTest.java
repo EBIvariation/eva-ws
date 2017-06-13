@@ -93,9 +93,6 @@ public class ArchiveWSServerTest {
     // TODO: merge the three study adaptors into one?
 
     @MockBean
-    private DBAdaptorConnector dbAdaptorConnector;
-
-    @MockBean
     private VariantStudySummaryRepository variantStudySummaryRepository;
 
     @Before
@@ -107,7 +104,7 @@ public class ArchiveWSServerTest {
                               "Homo Sapiens", "hsapiens", "human");
         Assembly umd31 = new Assembly("GCA_000003055.3", "GCA_000003055", "3", "Bos_taurus_UMD_3.1", "umd31", 9913, "Cattle",
                              "Bos taurus", "btaurus", "cow");
-        given(this.archiveEvaproDBAdaptor.getSpecies(anyString(), eq(true)))
+        given(this.archiveEvaproDBAdaptor.getSpecies())
                 .willReturn(encapsulateInQueryResult(grch37, grch38, umd31));
         given(this.archiveEvaproDBAdaptor.countSpecies()).willReturn(encapsulateInQueryResult(3L));
 
@@ -173,9 +170,6 @@ public class ArchiveWSServerTest {
                                                                                              Collectors.counting()));
         given(archiveDgvaDBAdaptor.countStudiesPerType(anyObject()))
                 .willReturn(encapsulateInQueryResult(svStudiesGroupedByStudyType.entrySet().toArray()));
-
-
-        given(dbAdaptorConnector.getStudyDBAdaptor("hsapiens_grch37")).willReturn(studyMongoDBAdaptor);
 
         List<VariantStudySummary> studies = buildVariantStudySummaries();
         given(variantStudySummaryRepository.findBy()).willReturn(studies);
