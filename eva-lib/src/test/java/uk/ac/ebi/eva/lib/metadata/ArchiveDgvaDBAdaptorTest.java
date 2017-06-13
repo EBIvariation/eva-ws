@@ -151,6 +151,6 @@ public class ArchiveDgvaDBAdaptorTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void getSpecies() throws Exception {
-        archiveDgvaDBAdaptor.getSpecies(true);
+        archiveDgvaDBAdaptor.getSpecies();
     }
 }
