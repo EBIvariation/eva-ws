@@ -17,24 +17,30 @@ package uk.ac.ebi.eva.lib.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @ConfigurationProperties(ignoreUnknownFields = false, prefix = "db.collections")
 @Component
+@Validated
 public class DbCollectionsProperties {
 
     @Size(min = 1)
     private String version;
 
     @NotNull
+    @Valid
     private Files files;
 
     @NotNull
+    @Valid
     private Variants variants;
 
     @NotNull
+    @Valid
     private AnnotationMetadata annotationMetadata;
 
     public static class Files {
