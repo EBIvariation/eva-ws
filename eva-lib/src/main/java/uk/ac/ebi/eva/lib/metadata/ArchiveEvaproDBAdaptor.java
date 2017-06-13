@@ -89,7 +89,7 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
     }
 
     @Override
-    public QueryResult getSpecies(boolean b) {
+    public QueryResult getSpecies() {
         long start = System.currentTimeMillis();
         List<Assembly> result = taxonomyRepository.getSpecies();
         long end = System.currentTimeMillis();

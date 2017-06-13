@@ -78,7 +78,7 @@ public class ArchiveWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/species/list", method = RequestMethod.GET)
     public QueryResponse getSpecies() {
-        return setQueryResponse(archiveEvaproDbAdaptor.getSpecies(true));
+        return setQueryResponse(archiveEvaproDbAdaptor.getSpecies());
     }
 
     @RequestMapping(value = "/studies/count", method = RequestMethod.GET)

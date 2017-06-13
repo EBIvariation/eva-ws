@@ -67,7 +67,7 @@ public class ArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
     }
 
     @Override
-    public QueryResult getSpecies(boolean b) {
+    public QueryResult getSpecies() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

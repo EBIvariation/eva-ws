@@ -30,6 +30,6 @@ public interface ArchiveDBAdaptor {
 
     QueryResult countSpecies();
 
-    QueryResult getSpecies(boolean var2);
+    QueryResult getSpecies();
 }
 
