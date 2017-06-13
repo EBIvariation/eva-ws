@@ -2,7 +2,6 @@ package uk.ac.ebi.eva.lib.metadata;
 
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -13,9 +12,6 @@ import java.util.*;
 
 import static uk.ac.ebi.eva.lib.utils.DgvaDBUtils.getSpeciesAndTypeFilters;
 
-/**
- * Created by jorizci on 28/09/16.
- */
 @Component
 public class ArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
 
@@ -71,7 +67,7 @@ public class ArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
     }
 
     @Override
-    public QueryResult getSpecies(String s, boolean b) {
+    public QueryResult getSpecies(boolean b) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

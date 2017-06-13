@@ -66,9 +66,6 @@ public class ArchiveWSServer extends EvaWSServer {
     @Autowired
     private VariantStudySummaryRepository variantStudySummaryRepository;
 
-    @Autowired
-    private DbCollectionsProperties dbCollectionsProperties;
-
     @RequestMapping(value = "/files/count", method = RequestMethod.GET)
     public QueryResponse countFiles() {
         return setQueryResponse(archiveEvaproDbAdaptor.countFiles());
@@ -81,7 +78,7 @@ public class ArchiveWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/species/list", method = RequestMethod.GET)
     public QueryResponse getSpecies() {
-        return setQueryResponse(archiveEvaproDbAdaptor.getSpecies(dbCollectionsProperties.getVersion(), true));
+        return setQueryResponse(archiveEvaproDbAdaptor.getSpecies(true));
     }
 
     @RequestMapping(value = "/studies/count", method = RequestMethod.GET)
