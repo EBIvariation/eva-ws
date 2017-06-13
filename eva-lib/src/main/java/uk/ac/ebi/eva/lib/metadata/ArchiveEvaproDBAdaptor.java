@@ -2,7 +2,6 @@ package uk.ac.ebi.eva.lib.metadata;
 
 import org.opencb.datastore.core.QueryOptions;
 import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
@@ -20,9 +19,6 @@ import java.util.*;
 
 import static org.springframework.data.jpa.domain.Specifications.where;
 
-/**
- * Created by jorizci on 03/10/16.
- */
 @Component
 public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
 
@@ -93,7 +89,7 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
     }
 
     @Override
-    public QueryResult getSpecies(String s, boolean b) {
+    public QueryResult getSpecies(boolean b) {
         long start = System.currentTimeMillis();
         List<Assembly> result = taxonomyRepository.getSpecies();
         long end = System.currentTimeMillis();
