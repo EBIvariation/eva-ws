@@ -20,9 +20,6 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +29,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.filter.FilterBuilder;
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
-import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
+import uk.ac.ebi.eva.commons.mongodb.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
@@ -53,7 +52,7 @@ import java.util.List;
 public class VariantWSServer extends EvaWSServer {
 
     @Autowired
-    private VariantEntityRepository variantEntityRepository;
+    private VariantWithSamplesAndAnnotationsService service;
 
     protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
 
@@ -68,7 +67,7 @@ public class VariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "sift", required = false) String siftScore,
                                         @RequestParam(name = "exclude", required = false) List<String> exclude,
                                         HttpServletResponse response)
-            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
+            throws IOException {
         initializeQuery();
 
         if (species.isEmpty()) {
@@ -78,21 +77,21 @@ public class VariantWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List<VariantEntity> variantEntities;
+        List<VariantWithSamplesAndAnnotations> variantEntities;
         Long numTotalResults;
 
         if (variantId.contains(":")) {
             String[] regionId = variantId.split(":");
             String alternate = (regionId.length > 3) ? regionId[3] : null;
             variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
-                                                           alternate);
+                    alternate);
             numTotalResults = (long) variantEntities.size();
         } else {
             List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
                     .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
             List<String> excludeMapped = new ArrayList<>();
-            if (exclude != null && !exclude.isEmpty()){
+            if (exclude != null && !exclude.isEmpty()) {
                 for (String e : exclude) {
                     String docPath = Utils.getApiToMongoDocNameMap().get(e);
                     if (docPath == null) {
@@ -103,22 +102,23 @@ public class VariantWSServer extends EvaWSServer {
                 }
             }
 
-            variantEntities = variantEntityRepository.findByIdsAndComplexFilters(variantId, filters, excludeMapped,
-                                                                                 Utils.getPageRequest(queryOptions));
+            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, excludeMapped,
+                    Utils.getPageRequest(queryOptions));
 
-            numTotalResults = variantEntityRepository.countByIdsAndComplexFilters(variantId, filters);
+            numTotalResults = service.countByIdsAndComplexFilters(variantId, filters);
         }
 
-        QueryResult<VariantEntity> queryResult = buildQueryResult(variantEntities, numTotalResults);
+        QueryResult<VariantWithSamplesAndAnnotations> queryResult = buildQueryResult(variantEntities, numTotalResults);
         return setQueryResponse(queryResult);
     }
 
-    private List<VariantEntity> queryByCoordinatesAndAlleles(String chromosome, int start, String reference, String alternate) {
+    private List<VariantWithSamplesAndAnnotations> queryByCoordinatesAndAlleles(String chromosome, int start,
+                                                                                String reference, String alternate) {
         if (alternate != null) {
-            return variantEntityRepository.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start,
-                                                                                            reference, alternate);
+            return service.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start, reference,
+                    alternate);
         } else {
-            return variantEntityRepository.findByChromosomeAndStartAndReference(chromosome, start, reference);
+            return service.findByChromosomeAndStartAndReference(chromosome, start, reference);
         }
     }
 
@@ -128,7 +128,7 @@ public class VariantWSServer extends EvaWSServer {
                                             @RequestParam(name = "studies", required = false) List<String> studies,
                                             @RequestParam("species") String species,
                                             HttpServletResponse response)
-            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
+            throws IOException {
         initializeQuery();
 
         if (species.isEmpty()) {
@@ -138,7 +138,7 @@ public class VariantWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List<VariantEntity> variantEntities;
+        List<VariantWithSamplesAndAnnotations> variantEntities;
         Long numTotalResults;
 
         String invalidCoordinatesMessage =
@@ -155,15 +155,16 @@ public class VariantWSServer extends EvaWSServer {
 
             if (studies != null && !studies.isEmpty()) {
                 variantEntities = queryByCoordinatesAndAllelesAndStudyIds(regionId[0], Integer.parseInt(regionId[1]),
-                                                                          regionId[2], alternate, studies);
+                        regionId[2], alternate, studies);
             } else {
                 variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]),
-                                                               regionId[2], alternate);
+                        regionId[2], alternate);
             }
 
         } else {
             List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
-            variantEntities = variantEntityRepository.findByIdsAndComplexFilters(variantId, filters, null, Utils.getPageRequest(queryOptions));
+            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null,
+                    Utils.getPageRequest(queryOptions));
         }
 
         numTotalResults = (long) variantEntities.size();
@@ -173,16 +174,18 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    private List<VariantEntity> queryByCoordinatesAndAllelesAndStudyIds(String chromosome, int start, String reference,
-                                                                        String alternate, List<String> studyIds) {
+    private List<VariantWithSamplesAndAnnotations> queryByCoordinatesAndAllelesAndStudyIds(String chromosome, int start,
+                                                                                           String reference,
+                                                                                           String alternate,
+                                                                                           List<String> studyIds) {
         if (alternate != null) {
-            return variantEntityRepository.findByChromosomeAndStartAndReferenceAndAlternateAndStudyIn(chromosome, start,
-                                                                                                      reference,
-                                                                                                      alternate,
-                                                                                                      studyIds);
+            return service.findByChromosomeAndStartAndReferenceAndAlternateAndStudyIn(chromosome, start,
+                    reference,
+                    alternate,
+                    studyIds);
         } else {
-            return variantEntityRepository.findByChromosomeAndStartAndReferenceAndStudyIn(chromosome, start, reference,
-                                                                                          studyIds);
+            return service.findByChromosomeAndStartAndReferenceAndStudyIn(chromosome, start, reference,
+                    studyIds);
         }
     }
 

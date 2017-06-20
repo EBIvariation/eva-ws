@@ -16,16 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import io.swagger.annotations.Api;
-import org.opencb.biodata.ga4gh.GASearchVariantSetsRequest;
-import org.opencb.biodata.ga4gh.GASearchVariantSetsResponse;
-import org.opencb.biodata.ga4gh.GAVariantSet;
-import org.opencb.biodata.models.variant.VariantSource;
-import org.opencb.biodata.models.variant.ga4gh.GAVariantSetFactory;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +29,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
+import uk.ac.ebi.eva.commons.core.models.VariantSource;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
+import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantSetsRequest;
+import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantSetsResponse;
+import uk.ac.ebi.eva.lib.models.ga4gh.GAVariantSet;
+import uk.ac.ebi.eva.lib.models.ga4gh.GAVariantSetFactory;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
@@ -45,7 +42,6 @@ import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.List;
 
 @RestController
@@ -54,7 +50,7 @@ import java.util.List;
 public class GA4GHVariantSetWSServer extends EvaWSServer {
 
     @Autowired
-    private VariantSourceEntityRepository repository;
+    private VariantSourceService service;
 
     protected static Logger logger = LoggerFactory.getLogger(GA4GHVariantSetWSServer.class);
     
@@ -68,7 +64,7 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
     public GASearchVariantSetsResponse getVariantSets(@RequestParam(name = "datasetIds") List<String> studies,
                                                       @RequestParam(name = "pageToken", required = false) String pageToken,
                                                       @RequestParam(name = "pageSize", defaultValue = "10") int limit)
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+            throws IOException {
         initializeQuery();
 
         if (studies.isEmpty()) {
@@ -79,9 +75,8 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
 
         PageRequest pageRequest = Utils.getPageRequest(limit, pageToken);
 
-        List<VariantSource> variantSources =
-                Utils.convertVariantSourceEntitiesToVariantSources(repository.findByStudyIdIn(studies, pageRequest));
-        Long numTotalResults = repository.countByStudyIdIn(studies);
+        List<VariantSource> variantSources = service.findByStudyIdIn(studies, pageRequest);
+        Long numTotalResults = service.countByStudyIdIn(studies);
 
         // Convert VariantSource objects to GAVariantSet
         List<GAVariantSet> gaVariantSets = GAVariantSetFactory.create(variantSources);
@@ -94,7 +89,7 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
     
     @RequestMapping(value = "/search", method = RequestMethod.POST, consumes = "application/json")
     public GASearchVariantSetsResponse getVariantSets(GASearchVariantSetsRequest request)
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+            throws IOException {
         return getVariantSets(request.getDatasetIds(), request.getPageToken(), request.getPageSize());
     }
 

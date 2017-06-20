@@ -11,6 +11,10 @@
 
     <artifactId>eva-lib</artifactId>
 
+    <properties>
+        <compileSource>1.8</compileSource>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.eva</groupId>

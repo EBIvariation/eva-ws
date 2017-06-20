@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import uk.ac.ebi.eva.lib.extension.ExtendedJpaRepositoryFunctionsImpl;
 
 @Configuration
-@EnableJpaRepositories(basePackages = {"uk.ac.ebi.eva.lib.repository"},
+@EnableJpaRepositories(basePackages = {"uk.ac.ebi.eva.lib.repositories"},
         repositoryBaseClass = ExtendedJpaRepositoryFunctionsImpl.class)
-@EntityScan(basePackages = {"uk.ac.ebi.eva.lib.entity"})
+@EntityScan(basePackages = {"uk.ac.ebi.eva.lib.entities"})
 @ComponentScan(basePackages = {"uk.ac.ebi.eva.lib.metadata"})
 public class JpaRepositoryConfiguration {
 }

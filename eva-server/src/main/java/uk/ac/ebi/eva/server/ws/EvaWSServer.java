@@ -19,28 +19,14 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.base.Splitter;
-import org.opencb.biodata.models.feature.Genotype;
-import org.opencb.biodata.models.variant.VariantSource;
-import org.opencb.biodata.models.variant.VariantSourceEntry;
-import org.opencb.biodata.models.variant.stats.VariantStats;
-import org.opencb.datastore.core.QueryOptions;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.storage.core.variant.io.json.GenotypeJsonMixin;
-import org.opencb.opencga.storage.core.variant.io.json.VariantSourceEntryJsonMixin;
-import org.opencb.opencga.storage.core.variant.io.json.VariantSourceJsonMixin;
-import org.opencb.opencga.storage.core.variant.io.json.VariantStatsJsonMixin;
-import org.opencb.opencga.storage.core.variant.io.json.VariantStatsJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.utils.QueryOptions;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -64,21 +50,21 @@ public class EvaWSServer {
     @Autowired
     protected DBAdaptorConnector dbAdaptorConnector;
 
-    @Bean
-    public Jackson2ObjectMapperBuilder jacksonBuilder() {
-        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
-                       .mixIn(VariantSourceEntry.class, VariantSourceEntryJsonMixin.class)
-                       .mixIn(Genotype.class, GenotypeJsonMixin.class)
-                       .mixIn(VariantStats.class, VariantStatsJsonMixin.class)
-                       .mixIn(VariantSource.class, VariantSourceJsonMixin.class)
-                       .serializationInclusion(Include.NON_NULL);
-        
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(VariantStats.class, new VariantStatsJsonSerializer());
-        builder.modules(module);
-        
-        return builder;
-    }
+//    @Bean
+//    public Jackson2ObjectMapperBuilder jacksonBuilder() {
+//        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
+//                       .mixIn(VariantSourceEntry.class, VariantSourceEntryJsonMixin.class)
+//                       .mixIn(Genotype.class, GenotypeJsonMixin.class)
+//                       .mixIn(VariantStats.class, VariantStatsJsonMixin.class)
+//                       .mixIn(VariantSource.class, VariantSourceJsonMixin.class)
+//                       .serializationInclusion(Include.NON_NULL);
+//
+//        SimpleModule module = new SimpleModule();
+//        module.addSerializer(VariantStats.class, new VariantStatsJsonSerializer());
+//        builder.modules(module);
+//
+//        return builder;
+//    }
     
     public EvaWSServer() { }
 
@@ -105,7 +91,6 @@ public class EvaWSServer {
         queryOptions.put("limit", (limit > 0) ? limit : -1);
         queryOptions.put("skip", (skip > 0) ? skip : -1);
         queryOptions.put("count", count);
-        logger.debug(queryOptions.toJson());
     }
 
     protected <T> QueryResponse<T> setQueryResponse(T obj) {

@@ -17,7 +17,7 @@ package uk.ac.ebi.eva.lib.metadata;
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import uk.ac.ebi.eva.lib.entity.File;
+import uk.ac.ebi.eva.lib.entities.File;
 
 final class FileTestData {
 

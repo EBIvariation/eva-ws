@@ -17,7 +17,7 @@ package uk.ac.ebi.eva.lib.metadata;
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import uk.ac.ebi.eva.lib.entity.EvaStudyBrowser;
+import uk.ac.ebi.eva.lib.entities.EvaStudyBrowser;
 
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.BOS_TAURUS;
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.CATTLE;

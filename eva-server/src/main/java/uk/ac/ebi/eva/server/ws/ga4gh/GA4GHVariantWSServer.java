@@ -16,17 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import io.swagger.annotations.Api;
-import org.opencb.biodata.ga4gh.GASearchVariantRequest;
-import org.opencb.biodata.ga4gh.GASearchVariantsResponse;
-import org.opencb.biodata.ga4gh.GAVariant;
-import org.opencb.biodata.models.feature.Region;
-import org.opencb.biodata.models.variant.Variant;
-import org.opencb.biodata.models.variant.ga4gh.GAVariantFactory;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +29,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.filter.FilterBuilder;
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
-import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
+import uk.ac.ebi.eva.commons.mongodb.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
+import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantRequest;
+import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantsResponse;
+import uk.ac.ebi.eva.lib.models.ga4gh.GAVariant;
+import uk.ac.ebi.eva.lib.models.ga4gh.GAVariantFactory;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
@@ -56,31 +52,32 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/v1/ga4gh/variants", produces = "application/json")
-@Api(tags = { "ga4gh", "variants" })
+@Api(tags = {"ga4gh", "variants"})
 public class GA4GHVariantWSServer extends EvaWSServer {
 
     @Autowired
-    private VariantEntityRepository variantEntityRepository;
+    private VariantWithSamplesAndAnnotationsService service;
 
     protected static Logger logger = LoggerFactory.getLogger(GA4GHVariantWSServer.class);
-    
-    public GA4GHVariantWSServer() { }
-    
+
+    public GA4GHVariantWSServer() {
+    }
+
     /**
      * "start" and "end" are 0-based, whereas all the position stored are 1-based
-     * 
+     *
      * @see http://ga4gh.org/documentation/api/v0.5/ga4gh_api.html#/schema/org.ga4gh.GASearchVariantsRequest
      */
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public GASearchVariantsResponse getVariantsByRegion(@RequestParam("referenceName") String chromosome,
-                                        @RequestParam("start") int start,
-                                        @RequestParam("end") int end,
+                                                        @RequestParam("start") int start,
+                                                        @RequestParam("end") int end,
 //                                        @RequestParam("variantName") String id,
-                                        @RequestParam(name = "variantSetIds", required = false) List<String> files,
+                                                        @RequestParam(name = "variantSetIds", required = false) List<String> files,
 //                                        @RequestParam(name = "callSetIds", required = false) String samples,
-                                        @RequestParam(name = "pageToken", required = false) String pageToken,
-                                        @RequestParam(name = "pageSize", defaultValue = "10") int limit)
-            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
+                                                        @RequestParam(name = "pageToken", required = false) String pageToken,
+                                                        @RequestParam(name = "pageSize", defaultValue = "10") int limit)
+            throws UnknownHostException, IOException {
         initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
@@ -96,11 +93,11 @@ public class GA4GHVariantWSServer extends EvaWSServer {
         List<Region> regions = new ArrayList<>();
         regions.add(region);
 
-        List<VariantEntity> variantEntities = variantEntityRepository.findByRegionsAndComplexFilters(regions, filters,
-                                                                                                     null, pageRequest);
-        List<Variant> variants = Collections.unmodifiableList(variantEntities);
+        List<VariantWithSamplesAndAnnotations> variantEntities = service.findByRegionsAndComplexFilters(regions, filters,
+                null, pageRequest);
+        List<VariantWithSamplesAndAnnotations> variants = Collections.unmodifiableList(variantEntities);
 
-        Long numTotalResults = variantEntityRepository.countByRegionsAndComplexFilters(regions, filters);
+        Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
         // Convert Variant objects to GAVariant
         List<GAVariant> gaVariants = GAVariantFactory.create(variants);
@@ -113,10 +110,10 @@ public class GA4GHVariantWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, consumes = "application/json")
     public GASearchVariantsResponse getVariantsByRegion(GASearchVariantRequest request)
-            throws IllegalOpenCGACredentialsException, UnknownHostException, IOException {
+            throws UnknownHostException, IOException {
         request.validate();
-        return getVariantsByRegion(request.getReferenceName(), (int) request.getStart(), (int) request.getEnd(), 
-                                   request.getVariantSetIds(), request.getPageToken(), request.getPageSize());
+        return getVariantsByRegion(request.getReferenceName(), (int) request.getStart(), (int) request.getEnd(),
+                request.getVariantSetIds(), request.getPageToken(), request.getPageSize());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

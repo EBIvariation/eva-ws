@@ -26,6 +26,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class FilterBuilderTest {
+
     @Test
     public void createExclusionFieldString() throws Exception {
         List<String> exclude = new ArrayList<>();

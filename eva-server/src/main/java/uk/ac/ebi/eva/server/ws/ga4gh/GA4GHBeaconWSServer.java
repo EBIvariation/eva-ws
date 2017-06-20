@@ -20,8 +20,6 @@
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import io.swagger.annotations.Api;
-import org.opencb.biodata.models.variant.Variant;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +27,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+import uk.ac.ebi.eva.commons.core.models.VariantType;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.List;
 
 @RestController
@@ -47,7 +44,7 @@ import java.util.List;
 public class GA4GHBeaconWSServer extends EvaWSServer {
 
     @Autowired
-    private VariantEntityRepository variantEntityRepository;
+    private VariantWithSamplesAndAnnotationsService service;
 
     protected static Logger logger = LoggerFactory.getLogger(GA4GHBeaconWSServer.class);
 
@@ -59,7 +56,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
                                       @RequestParam("allele") String allele,
                                       @RequestParam("datasetIds") List<String> studies,
                                       HttpServletResponse response) 
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+            throws IOException {
         initializeQuery();
 
         if (start < 0) {
@@ -70,13 +67,12 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
 
-        List<VariantEntity> variantEntities;
+        List<VariantWithSamplesAndAnnotations> variantEntities;
         if (allele.equalsIgnoreCase("INDEL")) {
-            variantEntities = variantEntityRepository.findByChromosomeAndStartAndTypeAndStudyIn(chromosome, start,
-                                                                                                Variant.VariantType.INDEL,
+            variantEntities = service.findByChromosomeAndStartAndTypeAndStudyIn(chromosome, start, VariantType.INDEL,
                                                                                                 studies);
         } else {
-            variantEntities = variantEntityRepository.findByChromosomeAndStartAndAltAndStudyIn(chromosome, start,
+            variantEntities = service.findByChromosomeAndStartAndAltAndStudyIn(chromosome, start,
                                                                                                allele, studies);
         }
 

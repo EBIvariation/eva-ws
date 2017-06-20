@@ -23,10 +23,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.mongodb.variant.StudyMongoDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -36,16 +32,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-
+import uk.ac.ebi.eva.commons.core.models.StudyType;
+import uk.ac.ebi.eva.commons.mongodb.projections.VariantStudySummary;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantStudySummaryService;
 import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.models.Assembly;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
-import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
-import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import java.io.IOException;
 import java.net.URI;
@@ -66,8 +63,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -88,15 +83,13 @@ public class ArchiveWSServerTest {
     @MockBean
     private StudyDgvaDBAdaptor studyDgvaDBAdaptor;
 
-    @MockBean
-    private StudyMongoDBAdaptor studyMongoDBAdaptor;
     // TODO: merge the three study adaptors into one?
 
     @MockBean
-    private VariantStudySummaryRepository variantStudySummaryRepository;
+    private VariantStudySummaryService service;
 
     @Before
-    public void setup() throws URISyntaxException, IOException, IllegalOpenCGACredentialsException {
+    public void setup() throws URISyntaxException, IOException {
         // species test data
         Assembly grch37 = new Assembly("GCA_000001405.1", "GCA_000001405", "1", "GRCh37", "grc3h7", 9606, "Human", "Homo Sapiens", "hsapiens", "human");
 
@@ -115,15 +108,15 @@ public class ArchiveWSServerTest {
 
         VariantStudy study1 = new VariantStudy("Human Test study 1", "S1", null, "Study 1 description", new int[]{9606},
                                                "Human", "Homo Sapiens", "Germline", "EBI", "DNA", "multi-isolate",
-                                               VariantStudy.StudyType.CASE_CONTROL, "Exome Sequencing", "ES", "GRCh37",
+                                               StudyType.CASE_CONTROL, "Exome Sequencing", "ES", "GRCh37",
                                                "Illumina", new URI("http://www.s1.org"), new String[]{"10"}, 1000, 10);
         VariantStudy study2 = new VariantStudy("Human Test study 2", "S2", null, "Study 2 description", new int[]{9606},
                                                "Human", "Homo Sapiens", "Germline", "EBI", "DNA", "multi-isolate",
-                                               VariantStudy.StudyType.AGGREGATE, "Exome Sequencing", "ES", "GRCh38",
+                                               StudyType.AGGREGATE, "Exome Sequencing", "ES", "GRCh38",
                                                "Illumina", new URI("http://www.s2.org"), new String[]{"13"}, 5000, 4);
         VariantStudy study3 = new VariantStudy("Cow Test study 1", "CS1", null, "Cow study 1 description",
                                                new int[]{9913}, "Cow", "Bos taurus", "Germline", "EBI", "DNA",
-                                               "multi-isolate", VariantStudy.StudyType.AGGREGATE,
+                                               "multi-isolate", StudyType.AGGREGATE,
                                                "Whole Genome Sequencing", "WGSS", "Bos_taurus_UMD_3.1", "Illumina",
                                                new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12);
         given(studyEvaproDBAdaptor.getAllStudies(anyObject()))
@@ -143,17 +136,17 @@ public class ArchiveWSServerTest {
         VariantStudy svStudy1 = new VariantStudy("Human SV Test study 1", "svS1", null, "SV study 1 description",
                                                  new int[]{9606},
                                                  "Human", "Homo Sapiens", "Germline", "EBI", "DNA", "multi-isolate",
-                                                 VariantStudy.StudyType.CASE_CONTROL, "Exome Sequencing", "ES",
+                                                 StudyType.CASE_CONTROL, "Exome Sequencing", "ES",
                                                  "GRCh37", "Illumina", new URI("http://www.s1.org"), new String[]{"10"},
                                                  1000, 10);
         VariantStudy svStudy2 = new VariantStudy("Human SVV Test study 2", "svS2", null, "SV study 2 description",
                                                  new int[]{9606}, "Human", "Homo Sapiens", "Germline", "EBI", "DNA",
-                                                 "multi-isolate", VariantStudy.StudyType.AGGREGATE, "Exome Sequencing",
+                                                 "multi-isolate", StudyType.AGGREGATE, "Exome Sequencing",
                                                  "ES", "GRCh38", "Illumina", new URI("http://www.s2.org"),
                                                  new String[]{"13"}, 5000, 4);
         VariantStudy svStudy3 = new VariantStudy("Cow SV Test study 1", "svCS1", null, "SV cow study 1 description",
                                                new int[]{9913}, "Cow", "Bos taurus", "Germline", "EBI", "DNA",
-                                               "multi-isolate", VariantStudy.StudyType.AGGREGATE,
+                                               "multi-isolate", StudyType.AGGREGATE,
                                                "Whole Genome Sequencing", "WGSS", "Bos_taurus_UMD_3.1", "Illumina",
                                                new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12);
         given(studyDgvaDBAdaptor.getAllStudies(anyObject()))
@@ -172,7 +165,7 @@ public class ArchiveWSServerTest {
                 .willReturn(encapsulateInQueryResult(svStudiesGroupedByStudyType.entrySet().toArray()));
 
         List<VariantStudySummary> studies = buildVariantStudySummaries();
-        given(variantStudySummaryRepository.findBy()).willReturn(studies);
+        given(service.findAll()).willReturn(studies);
     }
 
     private List<VariantStudySummary> buildVariantStudySummaries() {

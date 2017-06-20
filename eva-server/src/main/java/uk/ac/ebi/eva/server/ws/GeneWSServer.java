@@ -20,19 +20,18 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.filter.FilterBuilder;
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
-import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
+import uk.ac.ebi.eva.commons.mongodb.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
@@ -42,13 +41,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/v1/genes", produces = "application/json")
-@Api(tags = { "genes" })
+@Api(tags = {"genes"})
 public class GeneWSServer extends EvaWSServer {
 
     @Autowired
-    private VariantEntityRepository variantEntityRepository;
+    private VariantWithSamplesAndAnnotationsService service;
 
-    public GeneWSServer() { }
+    public GeneWSServer() {
+    }
 
     @RequestMapping(value = "/{geneIds}/variants", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants of a gene", response = QueryResponse.class)
@@ -72,14 +72,14 @@ public class GeneWSServer extends EvaWSServer {
 
         List<VariantEntityRepositoryFilter> filters =
                 new FilterBuilder().getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies,
-                                                                      consequenceType);
+                        consequenceType);
 
-        List<VariantEntity> variantEntities =
-                variantEntityRepository.findByGenesAndComplexFilters(geneIds, filters, exclude,
-                                                                     Utils.getPageRequest(queryOptions));
-        Long numTotalResults = variantEntityRepository.countByGenesAndComplexFilters(geneIds, filters);
+        List<VariantWithSamplesAndAnnotations> variantEntities =
+                service.findByGenesAndComplexFilters(geneIds, filters, exclude,
+                        Utils.getPageRequest(queryOptions));
+        Long numTotalResults = service.countByGenesAndComplexFilters(geneIds, filters);
 
-        QueryResult<VariantEntity> queryResult = buildQueryResult(variantEntities, numTotalResults);
+        QueryResult<VariantWithSamplesAndAnnotations> queryResult = buildQueryResult(variantEntities, numTotalResults);
         return setQueryResponse(queryResult);
     }
 
@@ -94,7 +94,7 @@ public class GeneWSServer extends EvaWSServer {
                                                @RequestParam(name = "exclude", required = false) List<String> exclude,
                                                HttpServletResponse response) {
         return getVariantsByGene(geneIds, species, studies, consequenceType, maf, polyphenScore, siftScore, exclude,
-                                 response);
+                response);
     }
 
 }

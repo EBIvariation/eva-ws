@@ -24,7 +24,7 @@ import uk.ac.ebi.eva.lib.extension.ExtendedJpaRepositoryFunctionsImpl;
 
 @SpringBootConfiguration
 @ComponentScan
-@EntityScan(basePackages = {"uk.ac.ebi.eva.lib.entity"})
-@EnableJpaRepositories(basePackages = {"uk.ac.ebi.eva.lib.repository"}, repositoryBaseClass = ExtendedJpaRepositoryFunctionsImpl.class)
+@EntityScan(basePackages = {"uk.ac.ebi.eva.lib.entities"})
+@EnableJpaRepositories(basePackages = {"uk.ac.ebi.eva.lib.repositories"}, repositoryBaseClass = ExtendedJpaRepositoryFunctionsImpl.class)
 public class MetadataTestConfiguration {
 }

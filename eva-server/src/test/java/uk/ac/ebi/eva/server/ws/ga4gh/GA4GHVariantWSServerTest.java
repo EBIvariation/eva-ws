@@ -21,10 +21,6 @@ package uk.ac.ebi.eva.server.ws.ga4gh;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opencb.biodata.ga4gh.GASearchVariantsResponse;
-import org.opencb.biodata.models.feature.Region;
-import org.opencb.biodata.models.variant.VariantSourceEntry;
-import org.opencb.biodata.models.variant.ga4gh.GAVariantFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -33,8 +29,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
+import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantsResponse;
+import uk.ac.ebi.eva.lib.models.ga4gh.GAVariantFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,46 +49,47 @@ import static org.mockito.Matchers.eq;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GA4GHVariantWSServerTest {
 
-    private VariantEntity variant;
+    private VariantWithSamplesAndAnnotations variant;
 
     @Autowired
     private TestRestTemplate restTemplate;
 
     @MockBean
-    private VariantEntityRepository variantEntityRepository;
+    private VariantWithSamplesAndAnnotationsService variantEntityRepository;
 
     @Before
     public void setUp() throws Exception {
-        variant = new VariantEntity("1", 1000, 1005, "A", "C");
+        variant = new VariantWithSamplesAndAnnotations("1", 1000, 1005, "A", "C");
         variant.setIds(Collections.singleton("1_1000_A_C"));
-        variant.addSourceEntry(new VariantSourceEntry("FILE_ID", "STUDY_ID"));
-        List<VariantEntity> variantEntities = Collections.singletonList(variant);
+        variant.addSourceEntry(new VariantSourceEntryWithSampleNames("FILE_ID", "STUDY_ID", null, null, null, null,
+                null));
+        List<VariantWithSamplesAndAnnotations> variantEntities = Collections.singletonList(variant);
 
         Region region = new Region("1", 500, 2000);
 
         given(variantEntityRepository.findByRegionsAndComplexFilters(eq(Collections.singletonList(region)),
-                                                                     any(),
-                                                                     any(),
-                                                                     any()))
+                any(),
+                any(),
+                any()))
                 .willReturn(variantEntities);
         given(variantEntityRepository.countByRegionsAndComplexFilters(eq(Collections.singletonList(region)),
-                                                                     any()))
+                any()))
                 .willReturn(Long.valueOf(variantEntities.size()));
     }
 
     @Test
     public void testRegionWithVariants() throws Exception {
         GASearchVariantsResponse gaSearchVariantsResponse = testVariantWsHelper("1", 500, 2000, new ArrayList<>(),
-                                                                                "0", 10);
+                "0", 10);
         assertEquals(1, gaSearchVariantsResponse.getVariants().size());
         assertEquals(GAVariantFactory.create(Collections.singletonList(variant)),
-                     gaSearchVariantsResponse.getVariants());
+                gaSearchVariantsResponse.getVariants());
     }
 
     @Test
     public void testRegionWithNoVariants() throws Exception {
         GASearchVariantsResponse gaSearchVariantsResponse = testVariantWsHelper("2", 5000, 10000, new ArrayList<>(),
-                                                                                "0", 10);
+                "0", 10);
         assertEquals(0, gaSearchVariantsResponse.getVariants().size());
     }
 
@@ -96,18 +97,18 @@ public class GA4GHVariantWSServerTest {
                                                          List<String> variantSetIds, String pageToken, int pageSize) {
 
         String url = String.format("/v1/ga4gh/variants/search?" +
-                                           "referenceName=%s" +
-                                           "&start=%d" +
-                                           "&end=%d" +
-                                           "&variantSetIds=%s" +
-                                           "&pageToken=%s" +
-                                           "&pageSize=%d",
-                                   chromosome,
-                                   start,
-                                   end,
-                                   String.join(",", variantSetIds),
-                                   pageToken,
-                                   pageSize);
+                        "referenceName=%s" +
+                        "&start=%d" +
+                        "&end=%d" +
+                        "&variantSetIds=%s" +
+                        "&pageToken=%s" +
+                        "&pageSize=%d",
+                chromosome,
+                start,
+                end,
+                String.join(",", variantSetIds),
+                pageToken,
+                pageSize);
 
         ResponseEntity<GASearchVariantsResponse> response = restTemplate.getForEntity(
                 url, GASearchVariantsResponse.class);

@@ -18,6 +18,7 @@ package uk.ac.ebi.eva.lib;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.convert.converter.Converter;
@@ -27,10 +28,8 @@ import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
-
-import uk.ac.ebi.eva.commons.models.converters.data.DBObjectToVariantEntityConverter;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import uk.ac.ebi.eva.lib.configuration.DbCollectionsProperties;
-import uk.ac.ebi.eva.commons.models.converters.data.DbObjectToVariantGlobalStatsConverter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,6 +37,8 @@ import java.util.List;
 
 @Configuration
 @Import(DbCollectionsProperties.class)
+@EnableMongoRepositories(basePackages = "uk.ac.ebi.eva.commons.mongodb.repositories")
+@ComponentScan(basePackages = "uk.ac.ebi.eva.commons.mongodb.services")
 public class MongoConfiguration {
 
     @Autowired
@@ -62,8 +63,6 @@ public class MongoConfiguration {
     @Bean
     public CustomConversions customConversions() {
         List<Converter<?, ?>> converters = new ArrayList<>();
-        converters.add(new DBObjectToVariantEntityConverter());
-        converters.add(new DbObjectToVariantGlobalStatsConverter());
         return new CustomConversions(converters);
     }
 
