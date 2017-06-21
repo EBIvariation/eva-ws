@@ -28,20 +28,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
-import uk.ac.ebi.eva.commons.mongodb.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,7 +85,7 @@ public class VariantWSServer extends EvaWSServer {
                     alternate);
             numTotalResults = (long) variantEntities.size();
         } else {
-            List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
+            List<VariantRepositoryFilter> filters = new FilterBuilder()
                     .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
             List<String> excludeMapped = new ArrayList<>();
@@ -162,7 +160,7 @@ public class VariantWSServer extends EvaWSServer {
             }
 
         } else {
-            List<VariantEntityRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
+            List<VariantRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
             variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null,
                     Utils.getPageRequest(queryOptions));
         }
