@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.eva.server.configuration;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
@@ -26,9 +27,71 @@ public class JacksonConfiguration {
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
     }
 
+//    @Bean
+//    public ObjectMapper objectMapper() {
+//        ObjectMapper mapper = new ObjectMapper();
+//
+//        SimpleModule module = new SimpleModule("test", new Version(1, 0, 0, null, null, null));
+//
+////        module.addDeserializer(LinkedHashMap.class, new JsonDeserializer<LinkedHashMap>() {
+////            @Override
+////            public LinkedHashMap deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+////                return null;
+////            }
+////
+////            @Override
+////            public LinkedHashMap getNullValue(DeserializationContext ctxt) {
+////                return new LinkedHashMap();
+////            }
+////
+////            @Override
+////            public LinkedHashMap getEmptyValue(DeserializationContext ctxt) {
+////                return new LinkedHashMap();
+////            }
+////        });
+////
+////        module.addDeserializer(HashMap.class, new JsonDeserializer<HashMap>() {
+////            @Override
+////            public HashMap deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+////                return jp.readValueAs(HashMap.class);
+////            }
+////
+////            @Override
+////            public HashMap getNullValue(DeserializationContext ctxt) {
+////                return new HashMap();
+////            }
+////
+////            @Override
+////            public HashMap getEmptyValue(DeserializationContext ctxt) {
+////                return new HashMap();
+////            }
+////        });
+////
+////        module.addDeserializer(Map.class, new JsonDeserializer<Map>() {
+////            @Override
+////            public Map deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+////                return jp.readValueAs(HashMap.class);
+////            }
+////
+////            @Override
+////            public Map getNullValue(DeserializationContext ctxt) {
+////                return new HashMap();
+////            }
+////
+////            @Override
+////            public Map getEmptyValue(DeserializationContext ctxt) {
+////                return new HashMap();
+////            }
+////        });
+//
+//        module.addDeserializer(Map.class, new EmptyNullMapDeserializer());
+//
+//        mapper.registerModule(module);
+//        return mapper;
+//    }
 }

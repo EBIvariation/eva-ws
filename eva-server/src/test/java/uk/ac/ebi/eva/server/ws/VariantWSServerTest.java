@@ -63,7 +63,7 @@ public class VariantWSServerTest {
 
     private static final String NON_EXISTING_CHROMOSOME = "notARealChromosome";
 
-    private static final VariantWithSamplesAndAnnotations VARIANT = new VariantWithSamplesAndAnnotations("1", 1000, 1005, "reference", "alternate");
+    private static final VariantWithSamplesAndAnnotations VARIANT = new VariantWithSamplesAndAnnotations("1", 1000, 1005, "A", "T");
 
     @Autowired
     private TestRestTemplate restTemplate;
