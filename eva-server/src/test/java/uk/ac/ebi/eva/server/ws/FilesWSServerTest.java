@@ -70,7 +70,7 @@ public class FilesWSServerTest {
         VariantGlobalStats variantGlobalStats = new VariantGlobalStats();
         variantGlobalStats.setVariantsCount(VARIANTS_COUNT);
 
-        VariantSource variantSourceEntity = new VariantSource(FILE_ID, "", "", "",
+        VariantSource variantSourceEntity = new VariantSource(FILE_ID, "file_name", "study_id", "study_name",
                 StudyType.COLLECTION, Aggregation.NONE, new Date(), samples, metadata, variantGlobalStats);
         List<VariantSource> variantSourceEntities = Collections.singletonList(variantSourceEntity);
 

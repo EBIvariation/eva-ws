@@ -62,8 +62,8 @@ public class GeneWSServerTest {
         String chromosome = "1";
         int start = 1000;
         int end = 1005;
-        String reference = "reference";
-        String alternate = "alternate";
+        String reference = "A";
+        String alternate = "T";
         String vepVersion = "88";
         String vepCacheVersion = "89";
         testVariantEntity = new VariantWithSamplesAndAnnotations(chromosome, start, end, reference, alternate);
