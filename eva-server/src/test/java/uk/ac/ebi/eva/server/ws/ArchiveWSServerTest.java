@@ -265,7 +265,7 @@ public class ArchiveWSServerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
         QueryResponse<QueryResult<VariantStudySummary>> queryResponse = response.getBody();
-        assertNull(queryResponse.getResponse());
+        assertEquals(0, queryResponse.getResponse().size());
     }
 
     @Test

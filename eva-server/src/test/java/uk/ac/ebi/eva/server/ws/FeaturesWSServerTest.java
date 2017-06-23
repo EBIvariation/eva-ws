@@ -102,7 +102,7 @@ public class FeaturesWSServerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
         QueryResponse<QueryResult<FeatureCoordinates>> queryResponse = response.getBody();
-        assertNull(queryResponse.getResponse());
+        assertEquals(0, queryResponse.getResponse().size());
     }
 
 }
