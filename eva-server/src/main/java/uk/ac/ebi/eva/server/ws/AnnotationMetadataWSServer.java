@@ -22,12 +22,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import uk.ac.ebi.eva.commons.mongodb.entities.AnnotationMetadataMongo;
-import uk.ac.ebi.eva.commons.mongodb.repositories.AnnotationMetadataRepository;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
+
+import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
+import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataService;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -38,7 +39,7 @@ import java.util.List;
 public class AnnotationMetadataWSServer extends EvaWSServer {
 
     @Autowired
-    private AnnotationMetadataRepository repository;
+    private AnnotationMetadataService service;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ResponseBody
@@ -50,8 +51,8 @@ public class AnnotationMetadataWSServer extends EvaWSServer {
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        List<AnnotationMetadataMongo> annotationMetadataList = repository.findAllByOrderByCacheVersionDescVepVersionDesc();
-        QueryResult<AnnotationMetadataMongo> queryResult = buildQueryResult(annotationMetadataList);
+        List<AnnotationMetadata> annotationMetadataList = service.findAllByOrderByCacheVersionDescVepVersionDesc();
+        QueryResult<AnnotationMetadata> queryResult = buildQueryResult(annotationMetadataList);
         return setQueryResponse(queryResult);
     }
 
