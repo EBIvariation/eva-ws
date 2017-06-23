@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.eva.lib.models.ga4gh;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GASearchVariantsResponse {
@@ -33,10 +34,11 @@ public class GASearchVariantsResponse {
     private String nextPageToken;
 
     public GASearchVariantsResponse() {
+        this(null, null);
     }
 
     public GASearchVariantsResponse(List<GAVariant> variants, String nextPageToken) {
-        this.variants = variants;
+        this.variants = variants != null ? variants : new ArrayList<GAVariant>();;
         this.nextPageToken = nextPageToken;
     }
 

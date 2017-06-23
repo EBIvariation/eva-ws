@@ -33,6 +33,7 @@ public class GASearchVariantSetsResponse {
     private String nextPageToken;
 
     public GASearchVariantSetsResponse() {
+        this(null, null);
     }
 
     public GASearchVariantSetsResponse(List<GAVariantSet> variantSets, String nextPageToken) {

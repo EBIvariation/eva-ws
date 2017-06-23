@@ -34,6 +34,7 @@ public class GASearchCallSetsResponse {
 
 
     public GASearchCallSetsResponse() {
+        this(null, null);
     }
 
     public GASearchCallSetsResponse(List<GACallSet> callSets, String nextPageToken) {
