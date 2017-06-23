@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.eva.lib.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class QueryResponse<T>{
@@ -42,7 +43,7 @@ public class QueryResponse<T>{
         this.warning = "";
         this.error = "";
         this.queryOptions = queryOptions;
-        this.response = response;
+        this.response = response != null ? response : new ArrayList<T>();
         this.time = time;
     }
 
