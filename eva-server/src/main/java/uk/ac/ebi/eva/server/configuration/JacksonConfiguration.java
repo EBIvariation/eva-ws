@@ -21,6 +21,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.lib.json.QueryResponseMixin;
+import uk.ac.ebi.eva.lib.json.VariantMixin;
+import uk.ac.ebi.eva.lib.json.VariantStudyMixin;
+import uk.ac.ebi.eva.lib.models.VariantStudy;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+
 @Configuration
 public class JacksonConfiguration {
 
@@ -28,6 +35,9 @@ public class JacksonConfiguration {
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        objectMapper.addMixIn(VariantWithSamplesAndAnnotations.class, VariantMixin.class);
+        objectMapper.addMixIn(QueryResponse.class, QueryResponseMixin.class);
+        objectMapper.addMixIn(VariantStudy.class, VariantStudyMixin.class);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;
     }
