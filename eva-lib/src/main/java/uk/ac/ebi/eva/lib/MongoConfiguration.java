@@ -61,12 +61,6 @@ public class MongoConfiguration {
     }
 
     @Bean
-    public CustomConversions customConversions() {
-        List<Converter<?, ?>> converters = new ArrayList<>();
-        return new CustomConversions(converters);
-    }
-
-    @Bean
     public MongoMappingContext mongoMappingContext() {
         MongoMappingContext mappingContext = new MongoMappingContext();
         mappingContext.setApplicationContext(applicationContext);
@@ -78,7 +72,6 @@ public class MongoConfiguration {
         DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
         MappingMongoConverter mongoConverter = new MappingMongoConverter(dbRefResolver, mongoMappingContext());
 
-        mongoConverter.setCustomConversions(customConversions());
         mongoConverter.afterPropertiesSet();
 
         // TODO jmmut: see if this works if we want to exclude the _class
