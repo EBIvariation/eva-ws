@@ -49,22 +49,6 @@ public class EvaWSServer {
 
     @Autowired
     protected DBAdaptorConnector dbAdaptorConnector;
-
-//    @Bean
-//    public Jackson2ObjectMapperBuilder jacksonBuilder() {
-//        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
-//                       .mixIn(VariantSourceEntry.class, VariantSourceEntryJsonMixin.class)
-//                       .mixIn(Genotype.class, GenotypeJsonMixin.class)
-//                       .mixIn(VariantStats.class, VariantStatsJsonMixin.class)
-//                       .mixIn(VariantSource.class, VariantSourceJsonMixin.class)
-//                       .serializationInclusion(Include.NON_NULL);
-//
-//        SimpleModule module = new SimpleModule();
-//        module.addSerializer(VariantStats.class, new VariantStatsJsonSerializer());
-//        builder.modules(module);
-//
-//        return builder;
-//    }
     
     public EvaWSServer() { }
 
