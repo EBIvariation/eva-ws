@@ -51,6 +51,11 @@ public class MongoConfiguration {
     private DbCollectionsProperties dbCollectionsProperties;
 
     @Bean
+    public String mongoCollectionsVariants() {
+        return dbCollectionsProperties.getVariants();
+    }
+
+    @Bean
     public String mongoCollectionsFiles() {
         return dbCollectionsProperties.getFiles();
     }
@@ -58,6 +63,16 @@ public class MongoConfiguration {
     @Bean
     public String mongoCollectionsAnnotationMetadata() {
         return dbCollectionsProperties.getAnnotationMetadata();
+    }
+
+    @Bean
+    public String mongoCollectionsAnnotations() {
+        return dbCollectionsProperties.getAnnotations();
+    }
+
+    @Bean
+    public String mongoCollectionsFeatures() {
+        return dbCollectionsProperties.getFeatures();
     }
 
     @Bean

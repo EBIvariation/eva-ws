@@ -35,6 +35,11 @@ public class DbCollectionsProperties {
     @Size(min = 1)
     private String annotationMetadata;
 
+    @Size(min = 1)
+    private String annotations;
+
+    @Size(min = 1)
+    private String features;
 
     public String getFiles() {
         return files;
@@ -56,8 +61,23 @@ public class DbCollectionsProperties {
         return annotationMetadata;
     }
 
-    public void setAnnotationMetadata(
-            String annotationMetadata) {
+    public void setAnnotationMetadata(String annotationMetadata) {
         this.annotationMetadata = annotationMetadata;
+    }
+
+    public String getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(String annotations) {
+        this.annotations = annotations;
+    }
+
+    public String getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(String features) {
+        this.features = features;
     }
 }
