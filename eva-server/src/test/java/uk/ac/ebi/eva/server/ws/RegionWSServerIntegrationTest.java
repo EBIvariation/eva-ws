@@ -37,6 +37,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.Profiles;
@@ -107,6 +108,9 @@ public class RegionWSServerIntegrationTest {
             assertFalse(variantEntity.getChromosome().isEmpty());
             assertFalse(variantEntity.getReference().isEmpty());
             assertFalse(variantEntity.getAlternate().isEmpty());
+            for (VariantSourceEntryWithSampleNames variantSourceEntry : variantEntity.getSourceEntries()) {
+                assertFalse(variantSourceEntry.getCohortStats().isEmpty());
+            }
             assertNotEquals(0, variantEntity.getStart());
             assertNotEquals(0, variantEntity.getEnd());
         }
