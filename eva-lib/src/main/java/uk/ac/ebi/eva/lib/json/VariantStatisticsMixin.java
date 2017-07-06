@@ -22,6 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
 
 @JsonIgnoreProperties({"passedFilters", "mendelianErrors", "casesPercentDominant", "controlsPercentDominant",
-        "casesPercentRecessive", "controlsPercentRecessive", "quality"})
+        "casesPercentRecessive", "controlsPercentRecessive", "quality", "hw"})
 public abstract class VariantStatisticsMixin {
 }
