@@ -52,6 +52,7 @@ import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -118,6 +119,33 @@ public class RegionWSServerIntegrationTest {
 
     private List<VariantWithSamplesAndAnnotations> regionWsHelper(String testRegion) {
         String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38";
+        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>>() {
+                });
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>> queryResponse = response.getBody();
+        assertEquals(1, queryResponse.getResponse().size());
+
+        return queryResponse.getResponse().get(0).getResult();
+    }
+
+    @Test
+    public void testExcludeSourceEntriesStatistics() {
+        String testRegion = "20:60099-60102";
+        String testExclusion = "sourceEntries.statistics";
+        List<VariantWithSamplesAndAnnotations> results = testExcludeHelper(testRegion, testExclusion);
+        for (VariantWithSamplesAndAnnotations variant : results) {
+            for (VariantSourceEntryWithSampleNames sourceEntry : variant.getSourceEntries()) {
+                assertTrue(sourceEntry.getCohortStats().isEmpty());
+            }
+        }
+    }
+
+    private List<VariantWithSamplesAndAnnotations> testExcludeHelper(String testRegion, String testExclusion) {
+        String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38&exclude=" + testExclusion;
+//        String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>>() {
