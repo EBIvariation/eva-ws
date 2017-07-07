@@ -20,10 +20,6 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
-import org.opencb.biodata.models.feature.Region;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +30,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.filter.FilterBuilder;
-import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
+import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
-import uk.ac.ebi.eva.lib.filter.VariantEntityRepositoryFilter;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -54,7 +52,7 @@ import java.util.List;
 public class RegionWSServer extends EvaWSServer {
 
     @Autowired
-    private VariantEntityRepository variantEntityRepository;
+    private VariantWithSamplesAndAnnotationsService service;
 
     protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
 
@@ -63,7 +61,6 @@ public class RegionWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/{regionId}/variants", method = RequestMethod.GET)
     @ResponseBody
-//    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants from region", response = QueryResponse.class)
     public QueryResponse getVariantsByRegion(@PathVariable("regionId") String regionId,
                                              @RequestParam(name = "species") String species,
                                              @RequestParam(name = "studies", required = false) List<String> studies,
@@ -73,7 +70,7 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "sift", required = false) String siftScore,
                                              @RequestParam(name = "exclude", required = false) List<String> exclude,
                                              HttpServletResponse response)
-            throws IllegalOpenCGACredentialsException, IOException {
+            throws IOException {
         initializeQuery();
 
         if (species.isEmpty()) {
@@ -83,7 +80,7 @@ public class RegionWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List<VariantEntityRepositoryFilter> filters = new FilterBuilder()
+        List<VariantRepositoryFilter> filters = new FilterBuilder()
                 .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
         List<Region> regions = Region.parseRegions(regionId);
         PageRequest pageRequest = Utils.getPageRequest(queryOptions);
@@ -100,12 +97,12 @@ public class RegionWSServer extends EvaWSServer {
             }
         }
 
-        List<VariantEntity> variantEntities =
-                variantEntityRepository.findByRegionsAndComplexFilters(regions, filters, excludeMapped, pageRequest);
+        List<VariantWithSamplesAndAnnotations> variantEntities =
+                service.findByRegionsAndComplexFilters(regions, filters, excludeMapped, pageRequest);
 
-        Long numTotalResults = variantEntityRepository.countByRegionsAndComplexFilters(regions, filters);
+        Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
-        QueryResult<VariantEntity> queryResult = buildQueryResult(variantEntities, numTotalResults);
+        QueryResult<VariantWithSamplesAndAnnotations> queryResult = buildQueryResult(variantEntities, numTotalResults);
         return setQueryResponse(queryResult);
     }
 
@@ -116,17 +113,16 @@ public class RegionWSServer extends EvaWSServer {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ResponseBody
-//    @ApiOperation(httpMethod = "GET", value = "Retrieves all the variants from region", response = QueryResponse.class)
     public QueryResponse getChromosomes(@RequestParam(name = "species") String species,
                                         HttpServletResponse response)
-            throws IllegalOpenCGACredentialsException, IOException {
+            throws IOException {
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse("Please specify a species");
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        List<String> chromosomeList = new ArrayList<>(variantEntityRepository.findDistinctChromosomes());
+        List<String> chromosomeList = new ArrayList<>(service.findDistinctChromosomes());
         QueryResult<String> queryResult = buildQueryResult(chromosomeList);
         return setQueryResponse(queryResult);
     }

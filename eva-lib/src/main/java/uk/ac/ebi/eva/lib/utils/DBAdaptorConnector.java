@@ -16,7 +16,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package uk.ac.ebi.eva.lib.utils;
 
 import com.mongodb.MongoClient;
@@ -24,22 +23,11 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
-import org.opencb.datastore.core.config.DataStoreServerAddress;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
-import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
-import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
-import org.opencb.opencga.storage.core.variant.adaptors.VariantSourceDBAdaptor;
-import org.opencb.opencga.storage.mongodb.utils.MongoCredentials;
-import org.opencb.opencga.storage.mongodb.variant.StudyMongoDBAdaptor;
-import org.opencb.opencga.storage.mongodb.variant.VariantMongoDBAdaptor;
-import org.opencb.opencga.storage.mongodb.variant.VariantSourceMongoDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import uk.ac.ebi.eva.lib.configuration.DbCollectionsProperties;
 import uk.ac.ebi.eva.lib.configuration.SpringDataMongoDbProperties;
 
-import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,29 +42,10 @@ public class DBAdaptorConnector {
     @Autowired
     private SpringDataMongoDbProperties springDataMongoDbProperties;
 
-    public VariantDBAdaptor getVariantDBAdaptor(String species)
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return new VariantMongoDBAdaptor(getCredentials(species, springDataMongoDbProperties),
-                                         dbCollectionsProperties.getVariants(),
-                                         dbCollectionsProperties.getFiles());
-    }
-    
-    public StudyDBAdaptor getStudyDBAdaptor(String species)
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return new StudyMongoDBAdaptor(getCredentials(species, springDataMongoDbProperties),
-                                       dbCollectionsProperties.getFiles());
-    }
-    
-    public VariantSourceDBAdaptor getVariantSourceDBAdaptor(String species)
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
-        return new VariantSourceMongoDBAdaptor(getCredentials(species, springDataMongoDbProperties),
-                                               dbCollectionsProperties.getFiles());
-    }
-
     /**
      * Get a MongoClient using the configuration (credentials) in a given Properties.
      *
-     * @param properties can have the next values:
+     * @param springDataMongoDbProperties can have the next values:
      *                   - eva.mongo.auth.db authentication database
      *                   - eva.mongo.host comma-separated strings of colon-separated host and port strings: host_1:port_1,host_2:port_2
      *                   - eva.mongo.user
@@ -118,47 +87,6 @@ public class DBAdaptorConnector {
                                                        .build();
 
         return new MongoClient(servers, mongoCredentialList, options);
-    }
-
-    /**
-     * Extract org.opencb.opencga.storage.mongodb.utils.MongoCredentials from a given Properties to a given species.
-     *
-     * @param properties can have the next values:
-     *                   - eva.mongo.auth.db authentication database
-     *                   - eva.mongo.host comma-separated strings of colon-separated host and port strings: host_1:port_1,host_2:port_2
-     *                   - eva.mongo.user
-     *                   - eva.mongo.passwd
-     * @return org.opencb.opencga.storage.mongodb.utils.MongoCredentials
-     * @throws UnknownHostException
-     */
-    private MongoCredentials getCredentials(String species, SpringDataMongoDbProperties springDataMongoDbProperties)
-            throws IllegalOpenCGACredentialsException, IOException {
-        if (species == null || species.isEmpty()) {
-            throw new IllegalArgumentException("Please specify a species");
-        }
-
-        String[] hosts = springDataMongoDbProperties.getHost().split(",");
-        List<DataStoreServerAddress> servers = new ArrayList();
-        
-        // Get the list of hosts (optionally including the port number)
-        for (String host : hosts) {
-            String[] params = host.split(":");
-            if (params.length > 1) {
-                servers.add(new DataStoreServerAddress(params[0], Integer.parseInt(params[1])));
-            } else {
-                servers.add(new DataStoreServerAddress(params[0], 27017));
-            }
-        }
-        
-        MongoCredentials credentials = new MongoCredentials(servers,
-                                                            getDBName(species),
-                                                            springDataMongoDbProperties.getUsername(),
-                                                            springDataMongoDbProperties.getPassword());
-        
-        // Set authentication database, if specified in the configuration
-        credentials.setAuthenticationDatabase(springDataMongoDbProperties.getAuthenticationDatabase());
-        
-        return credentials;
     }
 
     public static String getDBName(String species) {

@@ -17,7 +17,7 @@ package uk.ac.ebi.eva.lib.metadata;
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import uk.ac.ebi.eva.lib.entity.DgvaStudyBrowser;
+import uk.ac.ebi.eva.lib.entities.DgvaStudyBrowser;
 
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.HOMO_SAPIENS;
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.HUMAN;

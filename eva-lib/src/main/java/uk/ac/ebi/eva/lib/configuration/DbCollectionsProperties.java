@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @ConfigurationProperties(ignoreUnknownFields = false, prefix = "db.collection-names")
@@ -27,14 +28,24 @@ import javax.validation.constraints.Size;
 public class DbCollectionsProperties {
 
     @Size(min = 1)
+    @NotNull
     private String files;
 
     @Size(min = 1)
+    @NotNull
     private String variants;
 
     @Size(min = 1)
+    @NotNull
     private String annotationMetadata;
 
+    @Size(min = 1)
+    @NotNull
+    private String annotations;
+
+    @Size(min = 1)
+    @NotNull
+    private String features;
 
     public String getFiles() {
         return files;
@@ -56,8 +67,23 @@ public class DbCollectionsProperties {
         return annotationMetadata;
     }
 
-    public void setAnnotationMetadata(
-            String annotationMetadata) {
+    public void setAnnotationMetadata(String annotationMetadata) {
         this.annotationMetadata = annotationMetadata;
+    }
+
+    public String getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(String annotations) {
+        this.annotations = annotations;
+    }
+
+    public String getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(String features) {
+        this.features = features;
     }
 }

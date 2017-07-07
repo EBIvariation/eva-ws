@@ -16,16 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import io.swagger.annotations.Api;
-import org.apache.commons.lang.StringUtils;
-import org.opencb.biodata.ga4gh.GACallSet;
-import org.opencb.biodata.ga4gh.GASearchCallSetsRequest;
-import org.opencb.biodata.ga4gh.GASearchCallSetsResponse;
-import org.opencb.biodata.models.variant.ga4gh.GACallSetFactory;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +29,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
-import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
+import uk.ac.ebi.eva.commons.core.models.VariantSource;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
+import uk.ac.ebi.eva.lib.models.ga4gh.GACallSet;
+import uk.ac.ebi.eva.lib.models.ga4gh.GACallSetFactory;
+import uk.ac.ebi.eva.lib.models.ga4gh.GASearchCallSetsRequest;
+import uk.ac.ebi.eva.lib.models.ga4gh.GASearchCallSetsResponse;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
@@ -46,7 +42,6 @@ import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +53,7 @@ import java.util.stream.Collectors;
 public class GA4GHVariantCallSetWSServer extends EvaWSServer {
 
     @Autowired
-    private VariantSourceEntityRepository repository;
+    private VariantSourceService service;
 
     protected static Logger logger = LoggerFactory.getLogger(GA4GHVariantCallSetWSServer.class);
     
@@ -72,7 +67,7 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
     public GASearchCallSetsResponse getCallSets(@RequestParam("variantSetIds") List<String> files,
                                                 @RequestParam(name = "pageToken", required = false) String pageToken,
                                                 @RequestParam(name = "pageSize", defaultValue = "10") int limit)
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+            throws IOException {
         initializeQuery();
         
         if (files.isEmpty()) {
@@ -82,15 +77,15 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
 
         PageRequest pageRequest = Utils.getPageRequest(limit, pageToken);
-        List<VariantSourceEntity> variantSourceEntities = repository.findByFileIdIn(files, pageRequest);
-        long numTotalResults = repository.countByFileIdIn(files);
+        List<VariantSource> variantSourceEntities = service.findByFileIdIn(files, pageRequest);
+        long numTotalResults = service.countByFileIdIn(files);
 
         List<String> fileIds = variantSourceEntities.stream()
-                                                    .map(VariantSourceEntity::getFileId)
+                                                    .map(VariantSource::getFileId)
                                                     .collect(Collectors.toList());
 
         List<List<String>> samplesLists  = variantSourceEntities.stream()
-                                                                .map(VariantSourceEntity::getSamplesPosition)
+                                                                .map(VariantSource::getSamplesPosition)
                                                                 .map(Map::keySet)
                                                                 .map(ArrayList::new)
                                                                 .collect(Collectors.toList());
@@ -106,7 +101,7 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
     
     @RequestMapping(value = "/search", method = RequestMethod.POST, consumes = "application/json")
     public GASearchCallSetsResponse getCallSets(GASearchCallSetsRequest request)
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+            throws IOException {
         return getCallSets(request.getVariantSetIds(), request.getPageToken(), request.getPageSize());
     }
   

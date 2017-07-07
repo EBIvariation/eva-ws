@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.MongoDbFactory;
 
 import uk.ac.ebi.eva.lib.configuration.SpringDataMongoDbProperties;
@@ -41,6 +42,7 @@ public class MultiMongoFactoryConfiguration {
      * This factory will allow to use the Repositories with several databases.
      */
     @Bean
+    @Profile(Profiles.PRODUCTION_MONGO_FACTORY)
     public MongoDbFactory mongoDbFactory() throws IOException {
         assert(springDataMongoDbProperties != null);
         MongoClient mongoClient = DBAdaptorConnector.getMongoClient(springDataMongoDbProperties);

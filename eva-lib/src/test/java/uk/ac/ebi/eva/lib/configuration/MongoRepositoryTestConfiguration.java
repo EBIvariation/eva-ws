@@ -23,7 +23,6 @@ import com.mongodb.MongoClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
@@ -33,7 +32,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import uk.ac.ebi.eva.lib.MongoConfiguration;
 
 @Configuration
-@EnableMongoRepositories(basePackages = "uk.ac.ebi.eva.lib.repository")
+@EnableMongoRepositories(basePackages = "uk.ac.ebi.eva.lib.repositories")
 @Import({MongoConfiguration.class})
 public class MongoRepositoryTestConfiguration {
 

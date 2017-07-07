@@ -21,9 +21,6 @@ package uk.ac.ebi.eva.server.ws;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -33,9 +30,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import uk.ac.ebi.eva.commons.models.data.FeatureCoordinates;
-import uk.ac.ebi.eva.lib.repository.FeatureRepository;
+import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
+import uk.ac.ebi.eva.commons.mongodb.services.FeatureService;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -56,12 +54,12 @@ public class FeaturesWSServerTest {
     private TestRestTemplate restTemplate;
 
     @MockBean
-    private FeatureRepository featureRepository;
+    private FeatureService service;
 
     @Before
-    public void setup() throws URISyntaxException, IOException, IllegalOpenCGACredentialsException {
+    public void setup() throws URISyntaxException, IOException {
         FeatureCoordinates exampleFeature = new FeatureCoordinates("id", FEATURE_NAME, "feature", "chr", 0, 1);
-        given(featureRepository.findByIdOrName(FEATURE_NAME, FEATURE_NAME))
+        given(service.findByIdOrName(FEATURE_NAME, FEATURE_NAME))
                 .willReturn(Collections.singletonList(exampleFeature));
     }
 
@@ -104,7 +102,7 @@ public class FeaturesWSServerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
         QueryResponse<QueryResult<FeatureCoordinates>> queryResponse = response.getBody();
-        assertNull(queryResponse.getResponse());
+        assertEquals(0, queryResponse.getResponse().size());
     }
 
 }

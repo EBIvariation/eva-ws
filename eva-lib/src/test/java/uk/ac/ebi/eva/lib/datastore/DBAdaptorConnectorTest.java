@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import uk.ac.ebi.eva.lib.MongoConfiguration;
 import uk.ac.ebi.eva.lib.MultiMongoFactoryConfiguration;
+import uk.ac.ebi.eva.lib.configuration.MongoRepositoryTestConfiguration;
 import uk.ac.ebi.eva.lib.configuration.SpringDataMongoDbProperties;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
@@ -22,7 +23,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { MongoConfiguration.class, MultiMongoFactoryConfiguration.class})
+@ContextConfiguration(classes = { MongoConfiguration.class, MultiMongoFactoryConfiguration.class,
+        MongoRepositoryTestConfiguration.class})
 @SpringBootTest
 @EnableConfigurationProperties
 public class DBAdaptorConnectorTest {
@@ -47,7 +49,7 @@ public class DBAdaptorConnectorTest {
      */
     @Test
     public void testMongoDbFactoryAutowiring() {
-        String dbName = "DBAdaptorConnectorTest_testMongoDbFactoryAutowiring";
+        String dbName = "test-db";
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(dbName);
         DB db = factory.getDb();
         assertEquals(db.getName(), dbName);

@@ -18,8 +18,6 @@ package uk.ac.ebi.eva.server.ws;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,14 +27,16 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import uk.ac.ebi.eva.commons.models.metadata.AnnotationMetadata;
-import uk.ac.ebi.eva.lib.repository.AnnotationMetadataRepository;
+import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
+import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataService;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
@@ -49,15 +49,14 @@ public class AnnotationMetadataWSServerTest {
     private TestRestTemplate restTemplate;
 
     @MockBean
-    private AnnotationMetadataRepository annotationMetadataRepository;
+    private AnnotationMetadataService service;
 
     @Before
     public void setUp() throws Exception {
         annotationMetadataList = Arrays.asList(new AnnotationMetadata("75", "75"),
-                                               new AnnotationMetadata("74", "74"));
+                new AnnotationMetadata("74", "74"));
 
-        given(annotationMetadataRepository.findAllByOrderByCacheVersionDescVepVersionDesc())
-                .willReturn(annotationMetadataList);
+        given(service.findAllByOrderByCacheVersionDescVepVersionDesc()).willReturn(annotationMetadataList);
     }
 
     @Test
@@ -65,7 +64,8 @@ public class AnnotationMetadataWSServerTest {
         String url = "/v1/annotation?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<AnnotationMetadata>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<AnnotationMetadata>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<AnnotationMetadata>>>() {
+                });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         QueryResponse<QueryResult<AnnotationMetadata>> queryResponse = response.getBody();

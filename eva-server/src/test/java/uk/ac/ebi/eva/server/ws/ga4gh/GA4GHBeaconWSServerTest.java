@@ -28,9 +28,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,14 +51,14 @@ public class GA4GHBeaconWSServerTest {
     private TestRestTemplate restTemplate;
 
     @MockBean
-    private VariantEntityRepository variantEntityRepository;
+    private VariantWithSamplesAndAnnotationsService service;
 
     @Before
     public void setUp() throws Exception {
-        VariantEntity variant = new VariantEntity("1", 1000, 1005, "reference", "alternate");
-        List<VariantEntity> variantEntities = Collections.singletonList(variant);
+        VariantWithSamplesAndAnnotations variant = new VariantWithSamplesAndAnnotations("1", 1000, 1005, "reference", "alternate");
+        List<VariantWithSamplesAndAnnotations> variantEntities = Collections.singletonList(variant);
 
-        given(variantEntityRepository.findByChromosomeAndStartAndAltAndStudyIn(eq("1"), anyInt(), any(), any()))
+        given(service.findByChromosomeAndStartAndAltAndStudyIn(eq("1"), anyInt(), any(), any()))
                 .willReturn(variantEntities);
     }
 
@@ -75,10 +74,10 @@ public class GA4GHBeaconWSServerTest {
 
     private boolean testBeaconHelper(String chromosome, int start, String allele, List<String> datasetIds) {
         String url = String.format("/v1/ga4gh/beacon?referenceName=%s&start=%d&allele=%s&datasetIds=%s",
-                                   chromosome,
-                                   start,
-                                   allele,
-                                   String.join(",", datasetIds));
+                chromosome,
+                start,
+                allele,
+                String.join(",", datasetIds));
         ResponseEntity<GA4GHBeaconResponse> response = restTemplate.getForEntity(
                 url, GA4GHBeaconResponse.class);
 

@@ -20,27 +20,24 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import uk.ac.ebi.eva.commons.mongodb.projections.VariantStudySummary;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantStudySummaryService;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
-import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
-import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,20 +54,20 @@ public class StudyWSServer extends EvaWSServer {
     @Autowired
     private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
     @Autowired
-    private VariantStudySummaryRepository variantStudySummaryRepository;
+    private VariantStudySummaryService variantStudySummaryService;
     @Autowired
-    private VariantSourceEntityRepository variantSourceEntityRepository;
+    private VariantSourceService variantSourceService;
 
     @RequestMapping(value = "/{study}/files", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves all the files from a study", response = QueryResponse.class)
     public QueryResponse getFilesByStudy(@PathVariable("study") String study,
                                          @RequestParam("species") String species,
                                          HttpServletResponse response)
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+            throws IOException {
         initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        List variantSourceEntityList = variantSourceEntityRepository.findByStudyIdOrStudyName(study, study);
+        List variantSourceEntityList = variantSourceService.findByStudyIdOrStudyName(study, study);
         QueryResult queryResult;
 
         if (variantSourceEntityList.size() == 0) {
@@ -89,11 +86,11 @@ public class StudyWSServer extends EvaWSServer {
     public QueryResponse getStudy(@PathVariable("study") String study,
                                   @RequestParam(name = "species") String species,
                                   HttpServletResponse response)
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+            throws IOException {
         initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        VariantStudySummary variantStudySummary = variantStudySummaryRepository.findByStudyNameOrStudyId(study);
+        VariantStudySummary variantStudySummary = variantStudySummaryService.findByStudyNameOrStudyId(study);
 
         QueryResult<VariantStudySummary> queryResult;
         if (variantStudySummary == null) {

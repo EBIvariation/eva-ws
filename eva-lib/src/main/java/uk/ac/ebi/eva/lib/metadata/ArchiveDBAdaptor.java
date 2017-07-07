@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package uk.ac.ebi.eva.lib.metadata;
 
-import org.opencb.datastore.core.QueryOptions;
-import org.opencb.datastore.core.QueryResult;
+import uk.ac.ebi.eva.lib.utils.QueryOptions;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 public interface ArchiveDBAdaptor {
+
     QueryResult countStudies();
 
     QueryResult countStudiesPerSpecies(QueryOptions var1);

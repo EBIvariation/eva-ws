@@ -21,11 +21,6 @@ package uk.ac.ebi.eva.server.ws;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opencb.biodata.models.feature.Region;
-import org.opencb.biodata.models.variant.Variant;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.storage.core.variant.adaptors.VariantDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -35,10 +30,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import uk.ac.ebi.eva.commons.models.metadata.VariantEntity;
-import uk.ac.ebi.eva.lib.repository.VariantEntityRepository;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import java.net.URISyntaxException;
 import java.util.Collections;
@@ -67,20 +63,17 @@ public class VariantWSServerTest {
 
     private static final String NON_EXISTING_CHROMOSOME = "notARealChromosome";
 
-    private static final VariantEntity VARIANT = new VariantEntity("1", 1000, 1005, "reference", "alternate");
+    private static final VariantWithSamplesAndAnnotations VARIANT = new VariantWithSamplesAndAnnotations("1", 1000, 1005, "A", "T");
 
     @Autowired
     private TestRestTemplate restTemplate;
 
     @MockBean
-    private VariantEntityRepository variantEntityRepository;
-
-    @MockBean
-    private VariantDBAdaptor variantMongoDbAdaptor;
+    private VariantWithSamplesAndAnnotationsService variantEntityRepository;
 
     @Before
     public void setUp() throws Exception {
-        List<VariantEntity> variantEntities = Collections.singletonList(VARIANT);
+        List<VariantWithSamplesAndAnnotations> variantEntities = Collections.singletonList(VARIANT);
 
         given(variantEntityRepository
                 .findByChromosomeAndStartAndReferenceAndAlternate(eq(CHROMOSOME), anyInt(), any(), any()))
@@ -89,13 +82,6 @@ public class VariantWSServerTest {
         given(variantEntityRepository.findByIdsAndComplexFilters(eq(VARIANT_ID), any(), any(), any()))
                 .willReturn(variantEntities);
 
-        Region region = new Region(CHROMOSOME, 1, 1);
-        Region badRegion = new Region(NON_EXISTING_CHROMOSOME, 1, 1);
-
-        QueryResult<Variant> queryResult = new QueryResult<>();
-        queryResult.setNumResults(1);
-        given(variantMongoDbAdaptor.getAllVariantsByRegion(eq(region), any())).willReturn(queryResult);
-        given(variantMongoDbAdaptor.getAllVariantsByRegion(eq(badRegion), any())).willReturn(new QueryResult<>());
     }
 
     @Test
@@ -110,15 +96,16 @@ public class VariantWSServerTest {
 
     private void testGetVariantByIdRegionHelper(String testString) {
         String url = "/v1/variants/" + testString + "/info?species=mmusculus_grcm38";
-        ResponseEntity<QueryResponse<QueryResult<VariantEntity>>> response = restTemplate.exchange(
+        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantEntity>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>>() {
+                });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        QueryResponse<QueryResult<VariantEntity>> queryResponse = response.getBody();
+        QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>> queryResponse = response.getBody();
         assertEquals(1, queryResponse.getResponse().size());
 
-        List<VariantEntity> results = queryResponse.getResponse().get(0).getResult();
+        List<VariantWithSamplesAndAnnotations> results = queryResponse.getResponse().get(0).getResult();
         assertEquals(1, results.size());
 
         assertEquals(VARIANT, results.get(0));
@@ -136,15 +123,16 @@ public class VariantWSServerTest {
 
     private void testGetVariantByIdRegionDoesntExistHelper(String testString) throws URISyntaxException {
         String url = "/v1/variants/" + testString + "/info?species=mmusculus_grcm38";
-        ResponseEntity<QueryResponse<QueryResult<VariantEntity>>> response = restTemplate.exchange(
+        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantEntity>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>>() {
+                });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        QueryResponse<QueryResult<VariantEntity>> queryResponse = response.getBody();
+        QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>> queryResponse = response.getBody();
         assertEquals(1, queryResponse.getResponse().size());
 
-        List<VariantEntity> results = queryResponse.getResponse().get(0).getResult();
+        List<VariantWithSamplesAndAnnotations> results = queryResponse.getResponse().get(0).getResult();
         assertEquals(0, results.size());
     }
 
@@ -172,7 +160,8 @@ public class VariantWSServerTest {
         String url = "/v1/variants/" + testIdRegion + "/exists?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<Boolean>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Boolean>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<Boolean>>>() {
+                });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         QueryResponse<QueryResult<Boolean>> queryResponse = response.getBody();
