@@ -145,7 +145,6 @@ public class RegionWSServerIntegrationTest {
 
     private List<VariantWithSamplesAndAnnotations> testExcludeHelper(String testRegion, String testExclusion) {
         String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38&exclude=" + testExclusion;
-//        String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>>() {
