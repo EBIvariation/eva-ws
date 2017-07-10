@@ -69,6 +69,8 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                              @RequestParam(name = "sift", required = false) String siftScore,
                                              @RequestParam(name = "exclude", required = false) List<String> exclude,
+                                             @RequestParam(name = "annotationVepVersion", required = false) String annotationVepVersion,
+                                             @RequestParam(name = "annotationVepCacheversion", required = false) String annotationVepCacheversion,
                                              HttpServletResponse response)
             throws IOException {
         initializeQuery();
@@ -81,7 +83,8 @@ public class RegionWSServer extends EvaWSServer {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
         List<VariantRepositoryFilter> filters = new FilterBuilder()
-                .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
+                .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType,
+                                                   annotationVepVersion, annotationVepCacheversion);
         List<Region> regions = Region.parseRegions(regionId);
         PageRequest pageRequest = Utils.getPageRequest(queryOptions);
 

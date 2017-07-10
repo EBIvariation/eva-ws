@@ -64,6 +64,8 @@ public class VariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                         @RequestParam(name = "sift", required = false) String siftScore,
                                         @RequestParam(name = "exclude", required = false) List<String> exclude,
+                                        @RequestParam(name = "annotationVepVersion", required = false) String annotationVepVersion,
+                                        @RequestParam(name = "annotationVepCacheversion", required = false) String annotationVepCacheversion,
                                         HttpServletResponse response)
             throws IOException {
         initializeQuery();
@@ -86,7 +88,8 @@ public class VariantWSServer extends EvaWSServer {
             numTotalResults = (long) variantEntities.size();
         } else {
             List<VariantRepositoryFilter> filters = new FilterBuilder()
-                    .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
+                    .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType,
+                                                       annotationVepVersion, annotationVepCacheversion);
 
             List<String> excludeMapped = new ArrayList<>();
             if (exclude != null && !exclude.isEmpty()) {
