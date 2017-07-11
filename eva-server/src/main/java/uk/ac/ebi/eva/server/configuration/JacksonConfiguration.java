@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import uk.ac.ebi.eva.commons.core.models.VariantStatistics;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.lib.json.QueryResponseMixin;
 import uk.ac.ebi.eva.lib.json.VariantMixin;
 import uk.ac.ebi.eva.lib.json.VariantStatisticsMixin;
@@ -38,7 +38,7 @@ public class JacksonConfiguration {
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        objectMapper.addMixIn(VariantWithSamplesAndAnnotations.class, VariantMixin.class);
+        objectMapper.addMixIn(VariantWithSamplesAndAnnotation.class, VariantMixin.class);
         objectMapper.addMixIn(QueryResponse.class, QueryResponseMixin.class);
         objectMapper.addMixIn(VariantStudy.class, VariantStudyMixin.class);
         objectMapper.addMixIn(VariantStatistics.class, VariantStatisticsMixin.class);

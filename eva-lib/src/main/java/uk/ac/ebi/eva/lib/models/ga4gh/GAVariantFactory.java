@@ -16,7 +16,7 @@
 package uk.ac.ebi.eva.lib.models.ga4gh;
 
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,11 +34,11 @@ public class GAVariantFactory {
      * @param variants List of variants to transform
      * @return GA4GH variants representing the same data as the internal API ones
      */
-    public static List<GAVariant> create(List<VariantWithSamplesAndAnnotations> variants){//, Map<String, List<String>>
+    public static List<GAVariant> create(List<VariantWithSamplesAndAnnotation> variants){//, Map<String, List<String>>
         // samplesPerSource) {
         Set<GAVariant> gaVariants = new LinkedHashSet<>();
 
-        for (VariantWithSamplesAndAnnotations variant : variants) {
+        for (VariantWithSamplesAndAnnotation variant : variants) {
             String id = String.format("%s_%d_%s_%s", variant.getChromosome(), variant.getStart(), variant.getReference(), variant.getAlternate());
 
             Set<String> variantIds = variant.getIds();

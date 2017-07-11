@@ -30,8 +30,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.Region;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
@@ -83,8 +85,7 @@ public class RegionWSServer extends EvaWSServer {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
         List<VariantRepositoryFilter> filters = new FilterBuilder()
-                .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType,
-                                                   annotationVepVersion, annotationVepCacheversion);
+                .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
         List<Region> regions = Region.parseRegions(regionId);
         PageRequest pageRequest = Utils.getPageRequest(queryOptions);
 
@@ -100,12 +101,14 @@ public class RegionWSServer extends EvaWSServer {
             }
         }
 
-        List<VariantWithSamplesAndAnnotations> variantEntities =
-                service.findByRegionsAndComplexFilters(regions, filters, excludeMapped, pageRequest);
+        List<VariantWithSamplesAndAnnotation> variantEntities =
+                service.findByRegionsAndComplexFilters(regions, filters,
+                                                       new AnnotationMetadata(annotationVepVersion, annotationVepCacheversion),
+                                                       excludeMapped, pageRequest);
 
         Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
-        QueryResult<VariantWithSamplesAndAnnotations> queryResult = buildQueryResult(variantEntities, numTotalResults);
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
         return setQueryResponse(queryResult);
     }
 

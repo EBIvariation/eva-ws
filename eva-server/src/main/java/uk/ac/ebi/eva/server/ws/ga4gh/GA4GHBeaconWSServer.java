@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
@@ -67,13 +67,12 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
 
-        List<VariantWithSamplesAndAnnotations> variantEntities;
+        List<VariantWithSamplesAndAnnotation> variantEntities;
         if (allele.equalsIgnoreCase("INDEL")) {
             variantEntities = service.findByChromosomeAndStartAndTypeAndStudyIn(chromosome, start, VariantType.INDEL,
-                                                                                                studies);
+                                                                                studies, null);
         } else {
-            variantEntities = service.findByChromosomeAndStartAndAltAndStudyIn(chromosome, start,
-                                                                                               allele, studies);
+            variantEntities = service.findByChromosomeAndStartAndAltAndStudyIn(chromosome, start, allele, studies, null);
         }
 
         return new GA4GHBeaconResponse(chromosome, start, allele, String.join(",", studies),

@@ -26,7 +26,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+
+import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
@@ -60,6 +62,8 @@ public class GeneWSServer extends EvaWSServer {
                                            @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                            @RequestParam(name = "sift", required = false) String siftScore,
                                            @RequestParam(name = "exclude", required = false) List<String> exclude,
+                                           @RequestParam(name = "annotationVepVersion", required = false) String annotationVepVersion,
+                                           @RequestParam(name = "annotationVepCacheversion", required = false) String annotationVepCacheversion,
                                            HttpServletResponse response) {
         initializeQuery();
 
@@ -70,16 +74,17 @@ public class GeneWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List<VariantRepositoryFilter> filters =
-                new FilterBuilder().getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies,
-                        consequenceType);
+        List<VariantRepositoryFilter> filters = new FilterBuilder()
+                .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
-        List<VariantWithSamplesAndAnnotations> variantEntities =
-                service.findByGenesAndComplexFilters(geneIds, filters, exclude,
-                        Utils.getPageRequest(queryOptions));
+        List<VariantWithSamplesAndAnnotation> variantEntities =
+                service.findByGenesAndComplexFilters(geneIds, filters,
+                                                     new AnnotationMetadata(annotationVepVersion, annotationVepCacheversion),
+                                                     exclude, Utils.getPageRequest(queryOptions));
+
         Long numTotalResults = service.countByGenesAndComplexFilters(geneIds, filters);
 
-        QueryResult<VariantWithSamplesAndAnnotations> queryResult = buildQueryResult(variantEntities, numTotalResults);
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
         return setQueryResponse(queryResult);
     }
 
@@ -92,9 +97,11 @@ public class GeneWSServer extends EvaWSServer {
                                                @RequestParam(name = "polyphen", defaultValue = "") String polyphenScore,
                                                @RequestParam(name = "sift", defaultValue = "") String siftScore,
                                                @RequestParam(name = "exclude", required = false) List<String> exclude,
+                                               @RequestParam(name = "annotationVepVersion", required = false) String annotationVepVersion,
+                                               @RequestParam(name = "annotationVepCacheversion", required = false) String annotationVepCacheversion,
                                                HttpServletResponse response) {
         return getVariantsByGene(geneIds, species, studies, consequenceType, maf, polyphenScore, siftScore, exclude,
-                response);
+                                 annotationVepVersion, annotationVepCacheversion, response);
     }
 
 }

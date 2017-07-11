@@ -28,7 +28,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 
 import java.util.ArrayList;
@@ -55,10 +55,10 @@ public class GA4GHBeaconWSServerTest {
 
     @Before
     public void setUp() throws Exception {
-        VariantWithSamplesAndAnnotations variant = new VariantWithSamplesAndAnnotations("1", 1000, 1005, "reference", "alternate");
-        List<VariantWithSamplesAndAnnotations> variantEntities = Collections.singletonList(variant);
+        VariantWithSamplesAndAnnotation variant = new VariantWithSamplesAndAnnotation("1", 1000, 1005, "reference", "alternate");
+        List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(variant);
 
-        given(service.findByChromosomeAndStartAndAltAndStudyIn(eq("1"), anyInt(), any(), any()))
+        given(service.findByChromosomeAndStartAndAltAndStudyIn(eq("1"), anyInt(), any(), any(), any()))
                 .willReturn(variantEntities);
     }
 

@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.core.models.Region;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
@@ -93,9 +93,10 @@ public class GA4GHVariantWSServer extends EvaWSServer {
         List<Region> regions = new ArrayList<>();
         regions.add(region);
 
-        List<VariantWithSamplesAndAnnotations> variantEntities = service.findByRegionsAndComplexFilters(regions, filters,
-                null, pageRequest);
-        List<VariantWithSamplesAndAnnotations> variants = Collections.unmodifiableList(variantEntities);
+        List<VariantWithSamplesAndAnnotation> variantEntities = service.findByRegionsAndComplexFilters(regions, filters,
+                                                                                                       null, null,
+                                                                                                       pageRequest);
+        List<VariantWithSamplesAndAnnotation> variants = Collections.unmodifiableList(variantEntities);
 
         Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
