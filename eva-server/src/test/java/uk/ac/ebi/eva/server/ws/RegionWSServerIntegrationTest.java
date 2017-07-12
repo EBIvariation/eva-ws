@@ -143,20 +143,21 @@ public class RegionWSServerIntegrationTest {
         return testRestTemplateHelper(url);
     }
 
-//    @Test
-//    public void testVepVersionAndVepCacheVersionFilter() {
-//        String testRegion = "20:60000-62000";
-//        String annotationVepVersion = "78";
-//        String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38&annotationVepVersion=" + annotationVepVersion;
-//        List<VariantWithSamplesAndAnnotation> variants = testRestTemplateHelper(url);
-//        for (VariantWithSamplesAndAnnotation variant : variants) {
-//            Set<Annotation> annotations = variant.getAnnotation();
-//            assertEquals(2, annotations.size());
-//            for (Annotation annotation : annotations) {
-//                assertEquals(annotationVepVersion, annotation.getVepVersion());
-//            }
-//        }
-//    }
+    @Test
+    public void testVepVersionAndVepCacheVersionFilter() {
+        String testRegion = "20:60000-62000";
+        String annotationVepVersion = "78";
+        String annotationVepCacheversion = "78";
+        String url = "/v1/segments/" + testRegion +
+                "/variants?species=mmusculus_grcm38&annotationVepVersion=" + annotationVepVersion +
+                "&annotationVepCacheversion=" + annotationVepCacheversion;
+        List<VariantWithSamplesAndAnnotation> variants = testRestTemplateHelper(url);
+        for (VariantWithSamplesAndAnnotation variant : variants) {
+            Annotation annotation = variant.getAnnotation();
+            assertEquals(annotationVepVersion, annotation.getVepVersion());
+            assertEquals(annotationVepCacheversion, annotation.getVepCacheVersion());
+        }
+    }
 
     private List<VariantWithSamplesAndAnnotation> testRestTemplateHelper(String url) {
         ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
