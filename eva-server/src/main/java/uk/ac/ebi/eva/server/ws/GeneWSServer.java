@@ -77,10 +77,13 @@ public class GeneWSServer extends EvaWSServer {
         List<VariantRepositoryFilter> filters = new FilterBuilder()
                 .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
+        AnnotationMetadata annotationMetadata = null;
+        if (annotationVepVersion != null && annotationVepCacheversion != null) {
+            annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheversion);
+        }
+
         List<VariantWithSamplesAndAnnotation> variantEntities =
-                service.findByGenesAndComplexFilters(geneIds, filters,
-                                                     new AnnotationMetadata(annotationVepVersion, annotationVepCacheversion),
-                                                     exclude, Utils.getPageRequest(queryOptions));
+                service.findByGenesAndComplexFilters(geneIds, filters, annotationMetadata, exclude, Utils.getPageRequest(queryOptions));
 
         Long numTotalResults = service.countByGenesAndComplexFilters(geneIds, filters);
 

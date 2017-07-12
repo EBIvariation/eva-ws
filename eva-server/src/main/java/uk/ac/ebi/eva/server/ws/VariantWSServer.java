@@ -104,9 +104,13 @@ public class VariantWSServer extends EvaWSServer {
                 }
             }
 
-            variantEntities = service.findByIdsAndComplexFilters(variantId, filters,
-                                                                 new AnnotationMetadata(annotationVepVersion, annotationVepCacheversion),
-                                                                 excludeMapped, Utils.getPageRequest(queryOptions));
+            AnnotationMetadata annotationMetadata = null;
+            if (annotationVepVersion != null && annotationVepCacheversion != null) {
+                annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheversion);
+            }
+
+            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, annotationMetadata, excludeMapped,
+                                                                 Utils.getPageRequest(queryOptions));
 
             numTotalResults = service.countByIdsAndComplexFilters(variantId, filters);
         }

@@ -61,7 +61,9 @@ import static org.junit.Assert.assertTrue;
 @Import(MongoRepositoryTestConfiguration.class)
 @UsingDataSet(locations = {
         "/test-data/variants.json",
-        "/test-data/files.json"
+        "/test-data/files.json",
+        "/test-data/annotations.json",
+        "/test-data/annotation_metadata.json"
 })
 @ActiveProfiles(Profiles.TEST_MONGO_FACTORY)
 public class RegionWSServerIntegrationTest {

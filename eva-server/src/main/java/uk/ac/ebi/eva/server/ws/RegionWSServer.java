@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
@@ -101,10 +102,13 @@ public class RegionWSServer extends EvaWSServer {
             }
         }
 
+        AnnotationMetadata annotationMetadata = null;
+        if (annotationVepVersion != null && annotationVepCacheversion != null) {
+            annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheversion);
+        }
+
         List<VariantWithSamplesAndAnnotation> variantEntities =
-                service.findByRegionsAndComplexFilters(regions, filters,
-                                                       new AnnotationMetadata(annotationVepVersion, annotationVepCacheversion),
-                                                       excludeMapped, pageRequest);
+                service.findByRegionsAndComplexFilters(regions, filters, annotationMetadata, excludeMapped, pageRequest);
 
         Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
