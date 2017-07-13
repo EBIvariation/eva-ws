@@ -20,6 +20,8 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,7 @@ import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

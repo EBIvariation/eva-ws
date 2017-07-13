@@ -22,10 +22,9 @@ package uk.ac.ebi.eva.server.ws;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.annotations.Api;
-import org.opencb.datastore.core.QueryOptions;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,8 +36,6 @@ import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
-import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
@@ -101,7 +98,7 @@ public class ArchiveWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/studies/list", method = RequestMethod.GET)
     public QueryResponse getBrowsableStudies(@RequestParam("species") String species)
-            throws IllegalOpenCGACredentialsException, IOException {
+            throws IOException {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List<VariantStudySummary> uniqueStudies = variantStudySummaryService.findAll();
         QueryResult<VariantStudySummary> result = buildQueryResult(uniqueStudies);

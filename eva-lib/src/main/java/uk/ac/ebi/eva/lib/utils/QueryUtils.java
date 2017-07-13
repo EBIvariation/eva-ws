@@ -17,9 +17,6 @@
 package uk.ac.ebi.eva.lib.utils;
 
 import com.google.common.base.Splitter;
-import org.opencb.datastore.core.QueryOptions;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +67,6 @@ public class QueryUtils {
         queryOptions.put("limit", (limit > 0) ? limit : -1);
         queryOptions.put("skip", (skip > 0) ? skip : -1);
         queryOptions.put("count", count);
-        logger.debug(queryOptions.toJson());
     }
 
     public <T> QueryResponse<T> setQueryResponse(List<T> coll, String version) {
