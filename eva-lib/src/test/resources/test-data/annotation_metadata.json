@@ -1,0 +1,8 @@
+{
+"annotation_metadata":[
+  { "_id" : "74_74", "_class" : "uk.ac.ebi.eva.commons.models.metadata.AnnotationMetadata", "vepVersion" : "74", "cacheVersion" : "74" },
+  { "_id" : "86_86", "_class" : "uk.ac.ebi.eva.commons.models.metadata.AnnotationMetadata", "vepVersion" : "86", "cacheVersion" : "86" },
+  { "_id" : "85_76", "_class" : "uk.ac.ebi.eva.commons.models.metadata.AnnotationMetadata", "vepVersion" : "75", "cacheVersion" : "76" },
+  { "_id" : "78_77", "_class" : "uk.ac.ebi.eva.commons.models.metadata.AnnotationMetadata", "vepVersion" : "78", "cacheVersion" : "77" }
+]
+}

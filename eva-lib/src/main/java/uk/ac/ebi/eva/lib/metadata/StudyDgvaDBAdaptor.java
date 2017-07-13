@@ -15,15 +15,14 @@
  */
 package uk.ac.ebi.eva.lib.metadata;
 
-import org.opencb.datastore.core.QueryOptions;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import uk.ac.ebi.eva.lib.entities.DgvaStudyBrowser;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
-import uk.ac.ebi.eva.lib.entity.DgvaStudyBrowser;
-import uk.ac.ebi.eva.lib.repository.DgvaStudyBrowserRepository;
+import uk.ac.ebi.eva.lib.utils.QueryOptions;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.repositories.DgvaStudyBrowserRepository;
 import uk.ac.ebi.eva.lib.utils.DgvaDBUtils;
 
 import java.util.ArrayList;

@@ -17,9 +17,6 @@ package uk.ac.ebi.eva.server.ws;
 
 
 import io.swagger.annotations.Api;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +25,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import uk.ac.ebi.eva.commons.models.data.FeatureCoordinates;
-import uk.ac.ebi.eva.lib.repository.FeatureRepository;
+import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
+import uk.ac.ebi.eva.commons.mongodb.services.FeatureService;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -44,11 +42,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/v1/features", produces = "application/json")
-@Api(tags = { "features" })
+@Api(tags = {"features"})
 public class FeatureWSServer extends EvaWSServer {
 
     @Autowired
-    private FeatureRepository featureRepository;
+    private FeatureService service;
 
     protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
 
@@ -56,7 +54,7 @@ public class FeatureWSServer extends EvaWSServer {
     public QueryResponse getFeatureByIdOrName(@PathVariable("featureIdOrName") String featureIdOrName,
                                               @RequestParam("species") String species,
                                               HttpServletResponse response)
-            throws IllegalOpenCGACredentialsException, IOException {
+            throws IOException {
         initializeQuery();
 
         if (species.isEmpty()) {
@@ -66,7 +64,7 @@ public class FeatureWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List<FeatureCoordinates> features = featureRepository.findByIdOrName(featureIdOrName, featureIdOrName);
+        List<FeatureCoordinates> features = service.findByIdOrName(featureIdOrName, featureIdOrName);
 
         QueryResult<FeatureCoordinates> queryResult = buildQueryResult(features);
         return setQueryResponse(queryResult);

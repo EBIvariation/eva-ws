@@ -22,21 +22,19 @@ package uk.ac.ebi.eva.server.ws;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.annotations.Api;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import uk.ac.ebi.eva.commons.mongodb.projections.VariantStudySummary;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantStudySummaryService;
 import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.repository.VariantStudySummaryRepository;
-import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
@@ -44,7 +42,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
@@ -64,14 +61,7 @@ public class ArchiveWSServer extends EvaWSServer {
     @Autowired
     private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
     @Autowired
-    private VariantStudySummaryRepository variantStudySummaryRepository;
-
-    private Properties properties;
-    
-    public ArchiveWSServer() throws IOException {
-        properties = new Properties();
-        properties.load(DBAdaptorConnector.class.getResourceAsStream("/eva.properties"));
-    }
+    private VariantStudySummaryService variantStudySummaryService;
 
     @RequestMapping(value = "/files/count", method = RequestMethod.GET)
     public QueryResponse countFiles() {
@@ -85,7 +75,7 @@ public class ArchiveWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/species/list", method = RequestMethod.GET)
     public QueryResponse getSpecies() {
-        return setQueryResponse(archiveEvaproDbAdaptor.getSpecies(properties.getProperty("eva.version"), true));
+        return setQueryResponse(archiveEvaproDbAdaptor.getSpecies());
     }
 
     @RequestMapping(value = "/studies/count", method = RequestMethod.GET)
@@ -114,9 +104,9 @@ public class ArchiveWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/studies/list", method = RequestMethod.GET)
     public QueryResponse getBrowsableStudies(@RequestParam("species") String species)
-            throws IllegalOpenCGACredentialsException, IOException {
+            throws IOException {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        List<VariantStudySummary> uniqueStudies = variantStudySummaryRepository.findBy();
+        List<VariantStudySummary> uniqueStudies = variantStudySummaryService.findAll();
         QueryResult<VariantStudySummary> result = buildQueryResult(uniqueStudies);
         return setQueryResponse(result);
     }

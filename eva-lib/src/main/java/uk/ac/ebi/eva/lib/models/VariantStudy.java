@@ -19,94 +19,55 @@
 
 package uk.ac.ebi.eva.lib.models;
 
+import uk.ac.ebi.eva.commons.core.models.StudyType;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
+
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import org.opencb.biodata.models.variant.VariantSource;
 
 public class VariantStudy {
-    
-    public enum StudyType { 
-        
-        COLLECTION("Collection"),
-        FAMILY("Family"), 
-        TRIO("Trio"), 
-        CONTROL("Control Set"), 
-        CASE("Case Set"), 
-        CASE_CONTROL("Case-Control"), 
-        PAIRED("Paired"),
-        PAIRED_TUMOR("Tumor vs. Matched-Normal"), 
-        TIME_SERIES("Time Series"),
-        AGGREGATE("Aggregate"); 
-    
-        private final String symbol;
-        
-        private StudyType(String symbol) {
-            this.symbol = symbol;
-        }
 
-        @Override
-        public String toString() {
-            return symbol;
-        }
-        
-        
-        // Returns Operation for string, or null if string is invalid
-        private static final Map<String, StudyType> stringToEnum = new HashMap<>();
-        static { // Initialize map from constant name to enum constant
-            for (StudyType op : values()) {
-                stringToEnum.put(op.toString(), op);
-            }
-        }
-
-        public static StudyType fromString(String symbol) {
-            return stringToEnum.get(symbol);
-        }
-    };
-    
-    
     private String name;
-    
-    private String id;
-    
-    private String description;
-    
-    private int[] taxonomyId;
-    
-    private String speciesCommonName;
-    
-    private String speciesScientificName;
-    
-    private String sourceType;
-    
-    private String center;
-    
-    private String material;
-    
-    private String scope;
-    
-    private StudyType type;
-    
-    private String experimentType;
-    
-    private String experimentTypeAbbreviation;
-    
-    private String assembly;
-    
-    private String platform;
-    
-    private URI url;
-    
-    private String[] publications;
-            
-    private int numVariants;
-    
-    private int numSamples;
-    
-    private List<VariantSource> sources;
 
-    
+    private String id;
+
+    private String description;
+
+    private int[] taxonomyId;
+
+    private String speciesCommonName;
+
+    private String speciesScientificName;
+
+    private String sourceType;
+
+    private String center;
+
+    private String material;
+
+    private String scope;
+
+    private StudyType type;
+
+    private String experimentType;
+
+    private String experimentTypeAbbreviation;
+
+    private String assembly;
+
+    private String platform;
+
+    private URI url;
+
+    private String[] publications;
+
+    private int numVariants;
+
+    private int numSamples;
+
+    private List<VariantSourceEntryWithSampleNames> sources;
+
+
     public VariantStudy() {
         this(null, null);
     }
@@ -115,15 +76,15 @@ public class VariantStudy {
         this(studyName, studyId, null);
     }
 
-    public VariantStudy(String studyName, String studyId, List<VariantSource> sources) {
-        this(studyName, studyId, sources, null, new int[0], null, null, null, null, null, null, StudyType.COLLECTION, 
-             null, null, null, null, null, new String[0], -1, -1);
+    public VariantStudy(String studyName, String studyId, List<VariantSourceEntryWithSampleNames> sources) {
+        this(studyName, studyId, sources, null, new int[0], null, null, null, null, null, null, StudyType.COLLECTION,
+                null, null, null, null, null, new String[0], -1, -1);
     }
 
-    public VariantStudy(String studyName, String studyId, List<VariantSource> sources, String description, int[] taxonomyId, 
-            String speciesCommonName, String speciesScientificName, String sourceType, String center, String material, 
-            String scope, StudyType type, String experimentType, String experimentTypeAbbreviation, String referenceAssembly, 
-            String platform, URI projectUrl, String[] publications, int numVariants, int numSamples) {
+    public VariantStudy(String studyName, String studyId, List<VariantSourceEntryWithSampleNames> sources, String description, int[] taxonomyId,
+                        String speciesCommonName, String speciesScientificName, String sourceType, String center, String material,
+                        String scope, StudyType type, String experimentType, String experimentTypeAbbreviation, String referenceAssembly,
+                        String platform, URI projectUrl, String[] publications, int numVariants, int numSamples) {
         this.name = studyName;
         this.id = studyId;
         this.description = description;
@@ -145,7 +106,7 @@ public class VariantStudy {
         this.numSamples = numSamples;
         this.sources = sources;
     }
-    
+
     public String getName() {
         return name;
     }
@@ -235,9 +196,9 @@ public class VariantStudy {
     }
 
     public String getTypeName() {
-        return type != null ? type.symbol : null;
+        return type != null ? type.toString() : null;
     }
-    
+
     public String getExperimentType() {
         return experimentType;
     }
@@ -302,15 +263,15 @@ public class VariantStudy {
         this.numSamples = numSamples;
     }
 
-    public List<VariantSource> getSources() {
+    public List<VariantSourceEntryWithSampleNames> getSources() {
         return sources;
     }
 
-    public void setSources(List<VariantSource> sources) {
+    public void setSources(List<VariantSourceEntryWithSampleNames> sources) {
         this.sources = sources;
     }
-    
-    public boolean addSource(VariantSource source) {
+
+    public boolean addSource(VariantSourceEntryWithSampleNames source) {
         return this.sources.add(source);
     }
 }

@@ -17,28 +17,35 @@
 package uk.ac.ebi.eva.lib;
 
 import com.mongodb.MongoClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.MongoDbFactory;
 
+import uk.ac.ebi.eva.lib.configuration.SpringDataMongoDbProperties;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
 
 import java.io.IOException;
-import java.util.Properties;
 
 @Configuration
+@Import(SpringDataMongoDbProperties.class)
 public class MultiMongoFactoryConfiguration {
+
+    @Autowired
+    private SpringDataMongoDbProperties springDataMongoDbProperties;
 
     /**
      * Inject into the spring context a MultiMongoDbFactory as the implementation of MongoDbFactory.
      * This factory will allow to use the Repositories with several databases.
      */
     @Bean
+    @Profile(Profiles.PRODUCTION_MONGO_FACTORY)
     public MongoDbFactory mongoDbFactory() throws IOException {
-        Properties properties = new Properties();
-        properties.load(MongoConfiguration.class.getResourceAsStream("/eva.properties"));
-        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(properties);
+        assert(springDataMongoDbProperties != null);
+        MongoClient mongoClient = DBAdaptorConnector.getMongoClient(springDataMongoDbProperties);
         return new MultiMongoDbFactory(mongoClient, "unusedDefaultDB");
     }
 }

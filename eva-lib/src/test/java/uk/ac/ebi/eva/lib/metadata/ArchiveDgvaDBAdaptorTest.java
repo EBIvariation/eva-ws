@@ -18,13 +18,13 @@ package uk.ac.ebi.eva.lib.metadata;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opencb.datastore.core.QueryOptions;
-import org.opencb.datastore.core.QueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import uk.ac.ebi.eva.lib.utils.QueryOptions;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.QueryOptionsConstants;
 
 import java.util.List;
@@ -151,6 +151,6 @@ public class ArchiveDgvaDBAdaptorTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void getSpecies() throws Exception {
-        archiveDgvaDBAdaptor.getSpecies(HUMAN, true);
+        archiveDgvaDBAdaptor.getSpecies();
     }
 }

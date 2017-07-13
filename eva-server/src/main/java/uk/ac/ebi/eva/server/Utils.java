@@ -18,15 +18,11 @@
  */
 package uk.ac.ebi.eva.server;
 
-import org.apache.commons.lang.StringUtils;
-import org.opencb.biodata.models.variant.VariantSource;
-import org.opencb.datastore.core.QueryOptions;
-import org.opencb.datastore.core.QueryResult;
+import com.google.common.primitives.Ints;
 import org.springframework.data.domain.PageRequest;
+import uk.ac.ebi.eva.lib.utils.QueryOptions;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 
-import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +49,7 @@ public class Utils {
 
     public static PageRequest getPageRequest(int limit, String pageToken) {
         int idxCurrentPage = 0;
-        if (pageToken != null && !pageToken.isEmpty() && StringUtils.isNumeric(pageToken)) {
+        if (pageToken != null && !pageToken.isEmpty() && Ints.tryParse(pageToken) != null) {
             idxCurrentPage = Integer.parseInt(pageToken);
         }
         return getPageRequest(limit, idxCurrentPage * limit);
@@ -72,7 +68,7 @@ public class Utils {
 
     public static String createExclusionFieldString(List<String> excludeList) {
         List<String> formattedList = excludeList.stream().map(field -> String.format("'%s' : 0", field))
-                                                .collect(Collectors.toList());
+                .collect(Collectors.toList());
         return "{ " + String.join(", ", formattedList) + " }";
     }
 
@@ -95,33 +91,6 @@ public class Utils {
         queryResult.setNumResults(results.size());
         queryResult.setNumTotalResults(numTotalResults);
         return queryResult;
-    }
-
-    public static List<VariantSource> convertVariantSourceEntitiesToVariantSources(List<VariantSourceEntity>
-                                                                                          variantSourceEntities) {
-
-        List<VariantSource> variantSources = new ArrayList<>();
-
-        for (VariantSourceEntity variantSourceEntity: variantSourceEntities) {
-            VariantSource variantSource = new VariantSource(variantSourceEntity.getFileName(),
-                                                            variantSourceEntity.getFileId(),
-                                                            variantSourceEntity.getStudyId(),
-                                                            variantSourceEntity.getStudyName(),
-                                                            variantSourceEntity.getType(),
-                                                            variantSourceEntity.getAggregation());
-            if (variantSourceEntity.getSamplesPosition() != null) {
-                variantSource.setSamplesPosition(variantSourceEntity.getSamplesPosition());
-            }
-            if (variantSourceEntity.getMetadata() != null) {
-                variantSource.setMetadata(variantSourceEntity.getMetadata());
-            }
-            if (variantSourceEntity.getStats() != null) {
-                variantSource.setStats(variantSourceEntity.getStats());
-            }
-            variantSources.add(variantSource);
-        }
-
-        return variantSources;
     }
 
 }

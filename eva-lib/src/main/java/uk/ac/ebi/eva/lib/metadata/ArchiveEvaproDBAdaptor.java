@@ -1,18 +1,32 @@
+/*
+ * Copyright 2017 EMBL - European Bioinformatics Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package uk.ac.ebi.eva.lib.metadata;
 
-import org.opencb.datastore.core.QueryOptions;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.eva.lib.models.Assembly;
 import uk.ac.ebi.eva.lib.extension.GenericSpecifications;
-import uk.ac.ebi.eva.lib.repository.FileRepository;
-import uk.ac.ebi.eva.lib.repository.ProjectRepository;
-import uk.ac.ebi.eva.lib.repository.EvaStudyBrowserRepository;
-import uk.ac.ebi.eva.lib.repository.TaxonomyRepository;
+import uk.ac.ebi.eva.lib.utils.QueryOptions;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.repositories.FileRepository;
+import uk.ac.ebi.eva.lib.repositories.ProjectRepository;
+import uk.ac.ebi.eva.lib.repositories.EvaStudyBrowserRepository;
+import uk.ac.ebi.eva.lib.repositories.TaxonomyRepository;
 import uk.ac.ebi.eva.lib.utils.QueryOptionsConstants;
 
 import javax.persistence.Tuple;
@@ -20,9 +34,6 @@ import java.util.*;
 
 import static org.springframework.data.jpa.domain.Specifications.where;
 
-/**
- * Created by jorizci on 03/10/16.
- */
 @Component
 public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
 
@@ -93,7 +104,7 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
     }
 
     @Override
-    public QueryResult getSpecies(String s, boolean b) {
+    public QueryResult getSpecies() {
         long start = System.currentTimeMillis();
         List<Assembly> result = taxonomyRepository.getSpecies();
         long end = System.currentTimeMillis();

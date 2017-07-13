@@ -1,0 +1,26 @@
+{
+  "testFiles": [
+    {
+      "sname": "Genome of the Netherlands Release 5",
+      "fid": "ERZ019958",
+      "_id": {
+        "$oid": "55ca9d00403e0494527dd41b"
+      },
+      "stype": "CASE_CONTROL",
+      "fname": "gonl.chr9.snps_indels.r5.vcf.gz",
+      "samp": {},
+      "sid": "PRJEB5829"
+    },
+    {
+      "sname": "Human Variation Data From dbSNP build 144",
+      "fid": "ERZX00072",
+      "_id": {
+        "$oid": "5607140f403e0494527dd4a5"
+      },
+      "stype": "COLLECTION",
+      "fname": "dbsnp_chr9_20150715_1700.vcf.gz",
+      "samp": {},
+      "sid": "PRJX00001"
+    }
+  ]
+}

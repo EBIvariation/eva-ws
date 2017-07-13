@@ -21,9 +21,6 @@ package uk.ac.ebi.eva.server.ws.ga4gh;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opencb.biodata.ga4gh.GASearchCallSetsResponse;
-import org.opencb.biodata.models.variant.VariantSource;
-import org.opencb.biodata.models.variant.VariantStudy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,9 +28,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import uk.ac.ebi.eva.commons.models.data.VariantSourceEntity;
-import uk.ac.ebi.eva.lib.repository.VariantSourceEntityRepository;
+import uk.ac.ebi.eva.commons.core.models.Aggregation;
+import uk.ac.ebi.eva.commons.core.models.StudyType;
+import uk.ac.ebi.eva.commons.core.models.VariantSource;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
+import uk.ac.ebi.eva.lib.models.ga4gh.GASearchCallSetsResponse;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,25 +52,23 @@ public class GA4GHVariantCallSetWSServerTest {
     private TestRestTemplate restTemplate;
 
     @MockBean
-    private VariantSourceEntityRepository variantSourceEntityRepository;
+    private VariantSourceService service;
 
     @Before
     public void setUp() throws Exception {
-        VariantSourceEntity variantSourceEntity = new VariantSourceEntity("fileId", "fileName", "studyId", "studyName",
-                                                                          VariantStudy.StudyType.CASE,
-                                                                          VariantSource.Aggregation.NONE, null, null,
-                                                                          null);
-
         Map<String, Integer> samplesPosition = new HashMap<>();
         samplesPosition.put("sample1", 123);
-        variantSourceEntity.setSamplesPosition(samplesPosition);
 
-        List<VariantSourceEntity> variantSourceEntities = Collections.singletonList(variantSourceEntity);
+        VariantSource variantSourceEntity = new VariantSource("fileId", "fileName", "studyId",
+                "studyName", StudyType.CASE, Aggregation.NONE, null, samplesPosition, null, null);
 
-        given(variantSourceEntityRepository.findByFileIdIn(eq(Collections.singletonList("fileId")), any()))
+
+        List<VariantSource> variantSourceEntities = Collections.singletonList(variantSourceEntity);
+
+        given(service.findByFileIdIn(eq(Collections.singletonList("fileId")), any()))
                 .willReturn(variantSourceEntities);
 
-        given(variantSourceEntityRepository.countByFileIdIn(eq(Collections.singletonList("fileId"))))
+        given(service.countByFileIdIn(eq(Collections.singletonList("fileId"))))
                 .willReturn(Long.valueOf(variantSourceEntities.size()));
     }
 

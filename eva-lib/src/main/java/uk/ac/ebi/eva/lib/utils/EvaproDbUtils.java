@@ -1,37 +1,48 @@
+/*
+ * Copyright 2017 EMBL - European Bioinformatics Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package uk.ac.ebi.eva.lib.utils;
 
-import org.opencb.datastore.core.QueryOptions;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
+import uk.ac.ebi.eva.commons.core.models.StudyType;
 import uk.ac.ebi.eva.lib.extension.GenericSpecifications;
-import uk.ac.ebi.eva.lib.models.VariantStudy;
-import uk.ac.ebi.eva.lib.repository.EvaStudyBrowserRepository;
+import uk.ac.ebi.eva.lib.repositories.EvaStudyBrowserRepository;
 
 import static org.springframework.data.jpa.domain.Specifications.where;
 
-/**
- * Created by jorizci on 04/10/16.
- */
 public class EvaproDbUtils {
 
-    public static VariantStudy.StudyType stringToStudyType(String studyType) {
+    public static StudyType stringToStudyType(String studyType) {
         switch (studyType) {
             case "Collection":
             case "Curated Collection":
-                return VariantStudy.StudyType.COLLECTION;
+                return StudyType.COLLECTION;
             case "Control Set":
             case "Control-Set":
-                return VariantStudy.StudyType.CONTROL;
+                return StudyType.CONTROL;
             case "Case Control":
             case "Case-Control":
-                return VariantStudy.StudyType.CASE_CONTROL;
+                return StudyType.CASE_CONTROL;
             case "Case Set":
             case "Case-Set":
-                return VariantStudy.StudyType.CASE;
+                return StudyType.CASE;
             case "Tumor vs. Matched-Normal":
-                return VariantStudy.StudyType.PAIRED_TUMOR;
+                return StudyType.PAIRED_TUMOR;
             case "Aggregate":
-                return VariantStudy.StudyType.AGGREGATE;
+                return StudyType.AGGREGATE;
             default:
                 throw new IllegalArgumentException("Study type " + studyType + " is not valid");
         }
