@@ -66,8 +66,8 @@ public class VariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                         @RequestParam(name = "sift", required = false) String siftScore,
                                         @RequestParam(name = "exclude", required = false) List<String> exclude,
-                                        @RequestParam(name = "annotationVepVersion", required = false) String annotationVepVersion,
-                                        @RequestParam(name = "annotationVepCacheversion", required = false) String annotationVepCacheversion,
+                                        @RequestParam(name = "annotation-vep-version", required = false) String annotationVepVersion,
+                                        @RequestParam(name = "annotation-vep-cache-version", required = false) String annotationVepCacheVersion,
                                         HttpServletResponse response)
             throws IOException {
         initializeQuery();
@@ -86,7 +86,7 @@ public class VariantWSServer extends EvaWSServer {
             String[] regionId = variantId.split(":");
             String alternate = (regionId.length > 3) ? regionId[3] : null;
             variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
-                                                           alternate, annotationVepVersion, annotationVepCacheversion);
+                                                           alternate, annotationVepVersion, annotationVepCacheVersion);
             numTotalResults = (long) variantEntities.size();
         } else {
             List<VariantRepositoryFilter> filters = new FilterBuilder()
@@ -105,8 +105,8 @@ public class VariantWSServer extends EvaWSServer {
             }
 
             AnnotationMetadata annotationMetadata = null;
-            if (annotationVepVersion != null && annotationVepCacheversion != null) {
-                annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheversion);
+            if (annotationVepVersion != null && annotationVepCacheVersion != null) {
+                annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
             }
 
             variantEntities = service.findByIdsAndComplexFilters(variantId, filters, annotationMetadata, excludeMapped,

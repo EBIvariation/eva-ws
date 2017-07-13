@@ -62,8 +62,8 @@ public class GeneWSServer extends EvaWSServer {
                                            @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                            @RequestParam(name = "sift", required = false) String siftScore,
                                            @RequestParam(name = "exclude", required = false) List<String> exclude,
-                                           @RequestParam(name = "annotationVepVersion", required = false) String annotationVepVersion,
-                                           @RequestParam(name = "annotationVepCacheversion", required = false) String annotationVepCacheversion,
+                                           @RequestParam(name = "annotation-vep-version", required = false) String annotationVepVersion,
+                                           @RequestParam(name = "annotation-vep-cache-version", required = false) String annotationVepCacheVersion,
                                            HttpServletResponse response) {
         initializeQuery();
 
@@ -78,8 +78,8 @@ public class GeneWSServer extends EvaWSServer {
                 .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
         AnnotationMetadata annotationMetadata = null;
-        if (annotationVepVersion != null && annotationVepCacheversion != null) {
-            annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheversion);
+        if (annotationVepVersion != null && annotationVepCacheVersion != null) {
+            annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
         }
 
         List<VariantWithSamplesAndAnnotation> variantEntities =
