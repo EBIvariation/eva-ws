@@ -24,9 +24,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 
-/**
- * Created by jorizci on 28/09/16.
- */
 @Entity
 @Table(name = "dgva_study_browser")
 public class DgvaStudyBrowser {
@@ -35,17 +32,28 @@ public class DgvaStudyBrowser {
     @Column(name = "study_accession")
     private String studyAccession;
 
-    @Column(name = "taxonomy_ids")
+    @Column(name = "call_count")
+    private Integer callCount;
+
+    @Column(name = "region_count")
+    private Integer regionCount;
+
+    @Column(name = "variant_count")
+    private Integer variantCount;
+
+    @Column(name = "tax_id")
     private String taxId;
 
-    @Column(name = "common_names")
+    @Column(name = "common_name")
     private String commonName;
 
-    @Column(name = "scientific_names")
+    @Column(name = "scientific_name")
     private String scientificName;
 
-    @Column(name = "pubmed_ids")
+    @Column(name = "pubmed_id")
     private String pubmedId;
+
+    private String alias;
 
     @Column(name = "display_name")
     private String displayName;
@@ -53,38 +61,47 @@ public class DgvaStudyBrowser {
     @Column(name = "study_type")
     private String studyType;
 
+    @Column(name = "project_id")
+    private String projectId;
+
     @Column(name = "study_url")
     private String studyUrl;
 
     @Column(name = "study_description")
     private String studyDescription;
 
-    @Column(length = 100, name = "analysis_types")
+    @Column(length = 100, name = "analysis_type")
     private String analysisType;
 
-    @Column(name = "detection_methods")
+    @Column(name = "detection_method")
     private String detectionMethod;
 
-    @Column(name = "method_types")
+    @Column(name = "method_type")
     private String methodType;
 
-    @Column(name = "platform_names")
+    @Column(name = "platform_name")
     private String platformName;
 
-    @Column(name = "assembly_names")
+    @Column(name = "assembly_name")
     private String assemblyName;
 
-    public DgvaStudyBrowser(String studyAccession, String taxId, String commonName, String scientificName,
-                            String pubmedId, String displayName, String studyType, String projectId, String studyUrl,
-                            String studyDescription, String analysisType, String detectionMethod, String methodType,
-                            String platformName, String assemblyName) {
+    public DgvaStudyBrowser(String studyAccession, Integer callCount, Integer regionCount, Integer variantCount,
+                            String taxId, String commonName, String scientificName, String pubmedId, String alias,
+                            String displayName, String studyType, String projectId, String studyUrl,
+                            String studyDescription, String analysisType, String detectionMethod,
+                            String methodType, String platformName, String assemblyName) {
         this.studyAccession = studyAccession;
+        this.callCount = callCount;
+        this.regionCount = regionCount;
+        this.variantCount = variantCount;
         this.taxId = taxId;
         this.commonName = commonName;
         this.scientificName = scientificName;
         this.pubmedId = pubmedId;
+        this.alias = alias;
         this.displayName = displayName;
         this.studyType = studyType;
+        this.projectId = projectId;
         this.studyUrl = studyUrl;
         this.studyDescription = studyDescription;
         this.analysisType = analysisType;
@@ -98,23 +115,23 @@ public class DgvaStudyBrowser {
 
     public VariantStudy generateVariantStudy() {
         // Convert the list of tax ids to integer values
-        int[] taxIds = Arrays.stream(taxId.split(",")).map(String::trim).mapToInt(Integer::parseInt).toArray();
+        int[] taxIds = Arrays.stream(taxId.split(", ")).map(String::trim).mapToInt(Integer::parseInt).toArray();
 
         // Build the variant study object
         URI uri = null;
         String[] publications = null;
         try {
             uri = new URI(studyUrl);
-            publications = (pubmedId == null) ? null : pubmedId.split(",");
+            publications = (pubmedId == null) ? null : pubmedId.split(", ");
         } catch (URISyntaxException | NullPointerException ex) {
             // Ignore, default value null.
         }
 
         VariantStudy study = new VariantStudy(displayName, studyAccession, null,
-                studyDescription, taxIds, commonName, scientificName,
-                null, null, null, null, EvaproDbUtils.stringToStudyType(studyType), analysisType,
-                null, assemblyName, platformName, uri, publications,
-                                              -1);
+                                              studyDescription, taxIds, commonName, scientificName,
+                                              null, null, null, null, EvaproDbUtils.stringToStudyType(studyType), analysisType,
+                                              null, assemblyName, platformName, uri, publications,
+                                              variantCount, -1);
         return study;
     }
 }

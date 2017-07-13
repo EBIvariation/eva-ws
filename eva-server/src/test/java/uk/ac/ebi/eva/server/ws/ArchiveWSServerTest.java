@@ -89,7 +89,7 @@ public class ArchiveWSServerTest {
     private VariantStudySummaryService service;
 
     @Before
-    public void setup() throws URISyntaxException, IOException, IllegalOpenCGACredentialsException {
+    public void setup() throws URISyntaxException, IOException {
         // species test data
         Assembly grch37 = new Assembly("GCA_000001405.1", "GCA_000001405", "1", "GRCh37", "grc3h7", 9606, "Human", "Homo Sapiens", "hsapiens", "human");
 
