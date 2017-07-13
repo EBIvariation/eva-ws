@@ -31,6 +31,7 @@ import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
+import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
@@ -64,7 +65,7 @@ public class GeneWSServer extends EvaWSServer {
                                            @RequestParam(name = "exclude", required = false) List<String> exclude,
                                            @RequestParam(name = "annotation-vep-version", required = false) String annotationVepVersion,
                                            @RequestParam(name = "annotation-vep-cache-version", required = false) String annotationVepCacheVersion,
-                                           HttpServletResponse response) {
+                                           HttpServletResponse response) throws AnnotationMetadataNotFoundException {
         initializeQuery();
 
         if (species.isEmpty()) {
@@ -102,7 +103,7 @@ public class GeneWSServer extends EvaWSServer {
                                                @RequestParam(name = "exclude", required = false) List<String> exclude,
                                                @RequestParam(name = "annotationVepVersion", required = false) String annotationVepVersion,
                                                @RequestParam(name = "annotationVepCacheversion", required = false) String annotationVepCacheversion,
-                                               HttpServletResponse response) {
+                                               HttpServletResponse response) throws AnnotationMetadataNotFoundException {
         return getVariantsByGene(geneIds, species, studies, consequenceType, maf, polyphenScore, siftScore, exclude,
                                  annotationVepVersion, annotationVepCacheversion, response);
     }

@@ -37,6 +37,7 @@ import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
+import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
@@ -75,7 +76,7 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "annotation-vep-version", required = false) String annotationVepVersion,
                                              @RequestParam(name = "annotation-vep-cache-version", required = false) String annotationVepCacheVersion,
                                              HttpServletResponse response)
-            throws IOException {
+            throws IOException, AnnotationMetadataNotFoundException {
         initializeQuery();
 
         if (species.isEmpty()) {

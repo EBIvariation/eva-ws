@@ -33,6 +33,7 @@ import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
+import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
@@ -69,7 +70,7 @@ public class VariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "annotation-vep-version", required = false) String annotationVepVersion,
                                         @RequestParam(name = "annotation-vep-cache-version", required = false) String annotationVepCacheVersion,
                                         HttpServletResponse response)
-            throws IOException {
+            throws IOException, AnnotationMetadataNotFoundException {
         initializeQuery();
 
         if (species.isEmpty()) {
@@ -122,7 +123,7 @@ public class VariantWSServer extends EvaWSServer {
     private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAlleles(String chromosome, int start,
                                                                                String reference, String alternate,
                                                                                String annotationVepVersion,
-                                                                               String annotationVepCacheversion) {
+                                                                               String annotationVepCacheversion) throws AnnotationMetadataNotFoundException {
         AnnotationMetadata annotationMetadata = null;
         if (annotationVepVersion != null && annotationVepCacheversion != null) {
             annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheversion);
@@ -141,7 +142,7 @@ public class VariantWSServer extends EvaWSServer {
                                             @RequestParam(name = "studies", required = false) List<String> studies,
                                             @RequestParam("species") String species,
                                             HttpServletResponse response)
-            throws IOException {
+            throws IOException, AnnotationMetadataNotFoundException {
         initializeQuery();
 
         if (species.isEmpty()) {
@@ -189,7 +190,7 @@ public class VariantWSServer extends EvaWSServer {
     private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAllelesAndStudyIds(String chromosome, int start,
                                                                                            String reference,
                                                                                            String alternate,
-                                                                                           List<String> studyIds) {
+                                                                                           List<String> studyIds) throws AnnotationMetadataNotFoundException {
         if (alternate != null) {
             return service.findByChromosomeAndStartAndReferenceAndAlternateAndStudyIn(chromosome, start, reference,
                                                                                       alternate, studyIds, null);
