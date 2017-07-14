@@ -17,7 +17,7 @@ package uk.ac.ebi.eva.lib.entities;
 
 
 import uk.ac.ebi.eva.lib.models.VariantStudy;
-import uk.ac.ebi.eva.lib.utils.EvaproDbUtils;
+import uk.ac.ebi.eva.lib.eva_utils.EvaproDbUtils;
 
 import javax.persistence.*;
 import java.net.URI;

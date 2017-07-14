@@ -16,8 +16,8 @@ import uk.ac.ebi.eva.lib.MongoConfiguration;
 import uk.ac.ebi.eva.lib.MultiMongoFactoryConfiguration;
 import uk.ac.ebi.eva.lib.configuration.MongoRepositoryTestConfiguration;
 import uk.ac.ebi.eva.lib.configuration.SpringDataMongoDbProperties;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

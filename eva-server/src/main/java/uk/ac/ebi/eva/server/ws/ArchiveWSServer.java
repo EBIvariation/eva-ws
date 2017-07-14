@@ -32,12 +32,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.mongodb.projections.VariantStudySummary;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantStudySummaryService;
-import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.metadata.dgva.ArchiveDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.eva.ArchiveEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.eva.StudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 
 import java.io.IOException;
 import java.util.Arrays;

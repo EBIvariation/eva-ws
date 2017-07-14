@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.lib.metadata;
+package uk.ac.ebi.eva.lib.metadata.eva;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Component;
+
+import uk.ac.ebi.eva.lib.metadata.ArchiveDBAdaptor;
 import uk.ac.ebi.eva.lib.models.Assembly;
 import uk.ac.ebi.eva.lib.extension.GenericSpecifications;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
