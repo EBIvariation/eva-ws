@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package uk.ac.ebi.eva.lib.metadata;
+package uk.ac.ebi.eva.lib.metadata.shared;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import uk.ac.ebi.eva.lib.metadata.ArchiveDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.StudyDBAdaptor;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
@@ -29,14 +31,8 @@ import java.util.Map;
 
 public class ArchiveWSServerHelper {
 
-    private String version;
-
-    public ArchiveWSServerHelper(String version) {
-        this.version = version;
-    }
-
     public QueryResponse getStudies(List<String> species, List<String> types, QueryUtils queryUtils,
-                                    StudyDBAdaptor studyDBAdaptor) {
+                                    StudyDBAdaptor studyDBAdaptor, String version) {
         queryUtils.initializeQuery();
         if (species != null && !species.isEmpty()) {
             queryUtils.getQueryOptions().put("species", species);
@@ -49,7 +45,7 @@ public class ArchiveWSServerHelper {
     }
 
     public QueryResponse getStudiesStats(List<String> species, List<String> types, QueryUtils queryUtils,
-                                         ArchiveDBAdaptor archiveDBAdaptor) {
+                                         ArchiveDBAdaptor archiveDBAdaptor, String version) {
 
         queryUtils.initializeQuery();
         if (species != null && !species.isEmpty()) {
