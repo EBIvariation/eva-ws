@@ -19,8 +19,6 @@
 
 package uk.ac.ebi.dgva.server.ws;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,14 +28,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.lib.metadata.dgva.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.ArchiveWSServerHelper;
-import uk.ac.ebi.eva.lib.utils.QueryOptions;
+import uk.ac.ebi.eva.lib.metadata.shared.ArchiveWSServerHelper;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 @RestController
@@ -65,12 +61,12 @@ public class ArchiveWSServer extends DgvaWSServer {
     @RequestMapping(value = "/studies/all", method = RequestMethod.GET)
     public QueryResponse getStudies(@RequestParam(name = "species", required = false) List<String> species,
                                     @RequestParam(name = "type", required = false) List<String> types) {
-        return archiveWSServerHelper.getStudies(species, types, queryUtils, studyDgvaDbAdaptor);
+        return archiveWSServerHelper.getStudies(species, types, queryUtils, studyDgvaDbAdaptor, this.version);
     }
 
     @RequestMapping(value = "/studies/stats", method = RequestMethod.GET)
     public QueryResponse getStudiesStats(@RequestParam(name = "species", required = false) List<String> species,
                                          @RequestParam(name = "type", required = false) List<String> types) {
-        return archiveWSServerHelper.getStudiesStats(species, types, queryUtils, archiveDgvaDbAdaptor);
+        return archiveWSServerHelper.getStudiesStats(species, types, queryUtils, archiveDgvaDbAdaptor, this.version);
     }
 }

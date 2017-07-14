@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package uk.ac.ebi.eva.lib.metadata;
+package uk.ac.ebi.eva.lib.metadata.shared;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.opencb.datastore.core.QueryOptions;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.storage.core.adaptors.ArchiveDBAdaptor;
-import org.opencb.opencga.storage.core.adaptors.StudyDBAdaptor;
 import org.springframework.stereotype.Service;
 
+import uk.ac.ebi.eva.lib.metadata.ArchiveDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.StudyDBAdaptor;
+import uk.ac.ebi.eva.lib.utils.QueryOptions;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
 import java.util.List;
@@ -34,7 +34,7 @@ import java.util.Map;
 public class ArchiveWSServerHelper {
 
     public QueryResponse getStudies(List<String> species, List<String> types, QueryUtils queryUtils,
-                                    StudyDBAdaptor studyDBAdaptor) {
+                                    StudyDBAdaptor studyDBAdaptor, String version) {
 
         queryUtils.initializeQuery();
         if (species != null && !species.isEmpty()) {
@@ -44,11 +44,11 @@ public class ArchiveWSServerHelper {
             queryUtils.getQueryOptions().put("type", types);
         }
 
-        return queryUtils.setQueryResponse(studyDBAdaptor.getAllStudies(queryUtils.getQueryOptions()));
+        return queryUtils.setQueryResponse(studyDBAdaptor.getAllStudies(queryUtils.getQueryOptions()), version);
     }
 
     public QueryResponse getStudiesStats(List<String> species, List<String> types, QueryUtils queryUtils,
-                                         ArchiveDBAdaptor archiveDBAdaptor) {
+                                         ArchiveDBAdaptor archiveDBAdaptor, String version) {
 
         queryUtils.initializeQuery();
         if (species != null && !species.isEmpty()) {
@@ -87,7 +87,7 @@ public class ArchiveWSServerHelper {
         }
         root.put("type", typesNode);
 
-        return queryUtils.setQueryResponse(combinedQueryResult);
+        return queryUtils.setQueryResponse(combinedQueryResult, version);
     }
 
 }
