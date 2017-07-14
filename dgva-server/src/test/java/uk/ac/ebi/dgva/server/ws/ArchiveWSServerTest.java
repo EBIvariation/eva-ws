@@ -21,9 +21,6 @@ package uk.ac.ebi.dgva.server.ws;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opencb.datastore.core.QueryResponse;
-import org.opencb.datastore.core.QueryResult;
-import org.opencb.opencga.lib.auth.IllegalOpenCGACredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -34,10 +31,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import uk.ac.ebi.eva.commons.core.models.StudyType;
+import uk.ac.ebi.eva.commons.mongodb.projections.VariantStudySummary;
 import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
-import uk.ac.ebi.eva.lib.repository.projections.VariantStudySummary;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import java.io.IOException;
 import java.net.URI;
@@ -72,28 +72,28 @@ public class ArchiveWSServerTest {
     private StudyDgvaDBAdaptor studyDgvaDBAdaptor;
 
     @Before
-    public void setup() throws URISyntaxException, IOException, IllegalOpenCGACredentialsException {
+    public void setup() throws URISyntaxException, IOException {
         VariantStudy svStudy1 = new VariantStudy("Human SV Test study 1", "svS1", null, "SV study 1 description",
                                                  new int[]{9606},
                                                  "Human", "Homo Sapiens", "Germline", "EBI", "DNA", "multi-isolate",
-                                                 VariantStudy.StudyType.CASE_CONTROL, "Exome Sequencing", "ES",
+                                                 StudyType.CASE_CONTROL, "Exome Sequencing", "ES",
                                                  "GRCh37", "Illumina", new URI("http://www.s1.org"), new String[]{"10"},
-                                                 10);
+                                                 1000, 10);
         VariantStudy svStudy2 = new VariantStudy("Human SVV Test study 2", "svS2", null, "SV study 2 description",
                                                  new int[]{9606}, "Human", "Homo Sapiens", "Germline", "EBI", "DNA",
-                                                 "multi-isolate", VariantStudy.StudyType.AGGREGATE, "Exome Sequencing",
+                                                 "multi-isolate", StudyType.AGGREGATE, "Exome Sequencing",
                                                  "ES", "GRCh38", "Illumina", new URI("http://www.s2.org"),
-                                                 new String[]{"13"}, 4);
+                                                 new String[]{"13"}, 5000, 4);
         VariantStudy svStudy3 = new VariantStudy("Cow SV Test study 1", "svCS1", null, "SV cow study 1 description",
                                                  new int[]{9913}, "Cow", "Bos taurus", "Germline", "EBI", "DNA",
-                                                 "multi-isolate", VariantStudy.StudyType.AGGREGATE,
+                                                 "multi-isolate", StudyType.AGGREGATE,
                                                  "Whole Genome Sequencing", "WGSS", "Bos_taurus_UMD_3.1", "Illumina",
-                                                 new URI("http://www.cs1.org"), new String[]{"1", "2"}, 12);
+                                                 new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12);
         given(studyDgvaDBAdaptor.getAllStudies(anyObject()))
-                  .willReturn(encapsulateInQueryResult(svStudy1, svStudy2, svStudy3));
+                .willReturn(encapsulateInQueryResult(svStudy1, svStudy2, svStudy3));
 
         Map<String, Long> svStudiesGroupedBySpeciesName = Stream.of(svStudy1, svStudy2, svStudy3)
-                .collect(Collectors.groupingBy(VariantStudy::getSpeciesCommonName, Collectors.counting()));
+                                                                .collect(Collectors.groupingBy(VariantStudy::getSpeciesCommonName, Collectors.counting()));
         given(archiveDgvaDBAdaptor.countStudiesPerSpecies(anyObject()))
                 .willReturn(encapsulateInQueryResult(svStudiesGroupedBySpeciesName.entrySet().toArray()));
 
