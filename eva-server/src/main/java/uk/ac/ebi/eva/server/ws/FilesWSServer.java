@@ -60,14 +60,16 @@ public class FilesWSServer extends EvaWSServer {
         queryUtils.initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        return queryUtils.setQueryResponse(queryUtils.buildQueryResult(service.findAll()));
+        return queryUtils.setQueryResponse(queryUtils.buildQueryResult(service.findAll()),
+                                           this.version);
     }
 
     @RequestMapping(value = "/{files}/url", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Gets the URL of a file")
     public QueryResponse getFileUrl(@PathVariable("files") String filenames) {
-        initializeQuery();
-        return setQueryResponse(variantSourceEvaproDbAdaptor.getSourceDownloadUrlByName(Arrays.asList(filenames.split(","))));
+        queryUtils.initializeQuery();
+        return queryUtils.setQueryResponse(variantSourceEvaproDbAdaptor.getSourceDownloadUrlByName(Arrays.asList(filenames.split(","))),
+                                           this.version);
     }
 
 }

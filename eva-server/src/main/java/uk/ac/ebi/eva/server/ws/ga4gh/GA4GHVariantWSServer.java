@@ -82,7 +82,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
                                                         @RequestParam(name = "pageToken", required = false) String pageToken,
                                                         @RequestParam(name = "pageSize", defaultValue = "10") int limit)
             throws UnknownHostException, IOException, AnnotationMetadataNotFoundException {
-        initializeQuery();
+        queryUtils.initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
 

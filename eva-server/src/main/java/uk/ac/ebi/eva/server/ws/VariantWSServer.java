@@ -85,7 +85,7 @@ public class VariantWSServer extends EvaWSServer {
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return queryUtils.setQueryResponse("Please specify a species");
+            return queryUtils.setQueryResponse("Please specify a species", this.version);
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
@@ -109,7 +109,7 @@ public class VariantWSServer extends EvaWSServer {
                     String docPath = Utils.getApiToMongoDocNameMap().get(e);
                     if (docPath == null) {
                         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        return queryUtils.setQueryResponse("Unrecognised exclude field: " + e);
+                        return queryUtils.setQueryResponse("Unrecognised exclude field: " + e, this.version);
                     }
                     excludeMapped.add(docPath);
                 }
@@ -127,7 +127,7 @@ public class VariantWSServer extends EvaWSServer {
         }
 
         QueryResult<VariantWithSamplesAndAnnotation> queryResult = queryUtils.buildQueryResult(variantEntities, numTotalResults);
-        return queryUtils.setQueryResponse(queryResult);
+        return queryUtils.setQueryResponse(queryResult, this.version);
     }
 
     private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAlleles(String chromosome, int start,
@@ -157,7 +157,7 @@ public class VariantWSServer extends EvaWSServer {
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return queryUtils.setQueryResponse("Please specify a species");
+            return queryUtils.setQueryResponse("Please specify a species", this.version);
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
@@ -172,7 +172,7 @@ public class VariantWSServer extends EvaWSServer {
             String[] regionId = variantId.split(":", -1);
             if (regionId.length < 3) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return queryUtils.setErrorQueryResponse(invalidCoordinatesMessage);
+                return queryUtils.setErrorQueryResponse(invalidCoordinatesMessage, this.version);
             }
 
             String alternate = (regionId.length > 3) ? regionId[3] : null;
@@ -195,7 +195,7 @@ public class VariantWSServer extends EvaWSServer {
         QueryResult queryResult = new QueryResult();
         queryResult.setResult(Arrays.asList(numTotalResults > 0));
         queryResult.setResultType(Boolean.class.getCanonicalName());
-        return queryUtils.setQueryResponse(queryResult);
+        return queryUtils.setQueryResponse(queryResult, this.version);
     }
 
     private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAllelesAndStudyIds(String chromosome, int start,

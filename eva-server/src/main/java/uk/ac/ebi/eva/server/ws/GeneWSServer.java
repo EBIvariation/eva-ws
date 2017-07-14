@@ -37,6 +37,7 @@ import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundExceptio
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.QueryUtils;
 import uk.ac.ebi.eva.server.Utils;
 
@@ -78,7 +79,7 @@ public class GeneWSServer extends EvaWSServer {
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return queryUtils.setQueryResponse("Please specify a species");
+            return queryUtils.setQueryResponse("Please specify a species", this.version);
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
@@ -92,12 +93,12 @@ public class GeneWSServer extends EvaWSServer {
         }
 
         List<VariantWithSamplesAndAnnotation> variantEntities =
-                service.findByGenesAndComplexFilters(geneIds, filters, annotationMetadata, exclude, Utils.getPageRequest(getQueryOptions()));
+                service.findByGenesAndComplexFilters(geneIds, filters, annotationMetadata, exclude, Utils.getPageRequest(queryUtils.getQueryOptions()));
 
         Long numTotalResults = service.countByGenesAndComplexFilters(geneIds, filters);
 
         QueryResult<VariantWithSamplesAndAnnotation> queryResult = queryUtils.buildQueryResult(variantEntities, numTotalResults);
-        return queryUtils.setQueryResponse(queryResult);
+        return queryUtils.setQueryResponse(queryResult, this.version);
     }
 
     @RequestMapping(value = "/{geneIds}/variants", method = RequestMethod.POST)

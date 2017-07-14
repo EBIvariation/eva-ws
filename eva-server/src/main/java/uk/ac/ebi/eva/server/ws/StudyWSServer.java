@@ -76,11 +76,11 @@ public class StudyWSServer extends EvaWSServer {
             queryResult = queryUtils.buildQueryResult(Collections.emptyList());
             queryResult.setErrorMsg("Study identifier not found");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return queryUtils.setQueryResponse(queryResult);
+            return queryUtils.setQueryResponse(queryResult, this.version);
         }
 
         queryResult = queryUtils.buildQueryResult(variantSourceEntityList);
-        return queryUtils.setQueryResponse(queryResult);
+        return queryUtils.setQueryResponse(queryResult, this.version);
     }
 
     @RequestMapping(value = "/{study}/view", method = RequestMethod.GET)
@@ -88,7 +88,7 @@ public class StudyWSServer extends EvaWSServer {
     public QueryResponse getStudy(@PathVariable("study") String study,
                                   @RequestParam(name = "species") String species,
                                   HttpServletResponse response)
-            throws UnknownHostException, IllegalOpenCGACredentialsException, IOException {
+            throws UnknownHostException, IOException {
         queryUtils.initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
@@ -102,16 +102,18 @@ public class StudyWSServer extends EvaWSServer {
         } else {
             queryResult = queryUtils.buildQueryResult(Collections.singletonList(variantStudySummary));
         }
-        return queryUtils.setQueryResponse(queryResult);
+        return queryUtils.setQueryResponse(queryResult, this.version);
     }
 
     @RequestMapping(value = "/{study}/summary", method = RequestMethod.GET)
     public QueryResponse getStudySummary(@PathVariable("study") String study,
                                          @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
         if (structural) {
-            return queryUtils.setQueryResponse(studyDgvaDbAdaptor.getStudyById(study, queryUtils.getQueryOptions()));
+            return queryUtils.setQueryResponse(studyDgvaDbAdaptor.getStudyById(study, queryUtils.getQueryOptions()),
+                                               this.version);
         } else {
-            return queryUtils.setQueryResponse(studyEvaproDbAdaptor.getStudyById(study, queryUtils.getQueryOptions()));
+            return queryUtils.setQueryResponse(studyEvaproDbAdaptor.getStudyById(study, queryUtils.getQueryOptions()),
+                                               this.version);
         }
     }
 }

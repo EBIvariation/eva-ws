@@ -23,12 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import uk.ac.ebi.eva.lib.utils.QueryOptions;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.QueryUtils;
-
-import java.util.List;
 
 public class EvaWSServer {
 

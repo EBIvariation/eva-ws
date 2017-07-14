@@ -105,7 +105,7 @@ public class RegionWSServer extends EvaWSServer {
                 String docPath = Utils.getApiToMongoDocNameMap().get(e);
                 if (docPath == null) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    return queryUtils.setQueryResponse("Unrecognised exclude field: " + e);
+                    return queryUtils.setQueryResponse("Unrecognised exclude field: " + e, this.version);
                 }
                 excludeMapped.add(docPath);
             }
@@ -122,12 +122,12 @@ public class RegionWSServer extends EvaWSServer {
         Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
         QueryResult<VariantWithSamplesAndAnnotation> queryResult = queryUtils.buildQueryResult(variantEntities, numTotalResults);
-        return queryUtils.setQueryResponse(queryResult);
+        return queryUtils.setQueryResponse(queryResult, this.version);
     }
 
     @RequestMapping(value = "/{regionId}/variants", method = RequestMethod.OPTIONS)
     public QueryResponse getVariantsByRegion() {
-        return queryUtils.setQueryResponse("");
+        return queryUtils.setQueryResponse("", this.version);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -137,12 +137,12 @@ public class RegionWSServer extends EvaWSServer {
             throws IOException {
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return queryUtils.setQueryResponse("Please specify a species");
+            return queryUtils.setQueryResponse("Please specify a species", this.version);
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List<String> chromosomeList = new ArrayList<>(service.findDistinctChromosomes());
         QueryResult<String> queryResult = queryUtils.buildQueryResult(chromosomeList);
-        return queryUtils.setQueryResponse(queryResult);
+        return queryUtils.setQueryResponse(queryResult, this.version);
     }
 }
