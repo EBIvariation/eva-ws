@@ -26,6 +26,6 @@ import uk.ac.ebi.eva.lib.extension.ExtendedJpaRepositoryFunctionsImpl;
 @EnableJpaRepositories(basePackages = {"uk.ac.ebi.eva.lib.repository"},
         repositoryBaseClass = ExtendedJpaRepositoryFunctionsImpl.class)
 @EntityScan(basePackages = {"uk.ac.ebi.eva.lib.entity"})
-@ComponentScan(basePackages = {"uk.ac.ebi.eva.lib.metadata"})
+@ComponentScan(basePackages = {"uk.ac.ebi.eva.lib.metadata.dgva"})
 public class JpaRepositoryConfiguration {
 }

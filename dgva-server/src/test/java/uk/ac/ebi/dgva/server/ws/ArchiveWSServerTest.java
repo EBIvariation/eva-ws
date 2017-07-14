@@ -33,8 +33,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.commons.core.models.StudyType;
 import uk.ac.ebi.eva.commons.mongodb.projections.VariantStudySummary;
-import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.dgva.ArchiveDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;

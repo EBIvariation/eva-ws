@@ -13,43 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.lib.metadata;
+package uk.ac.ebi.eva.lib.metadata.dgva;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import uk.ac.ebi.eva.lib.entities.DgvaStudyBrowser;
+import uk.ac.ebi.eva.lib.metadata.StudyDBAdaptor;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
-import uk.ac.ebi.eva.lib.entities.EvaStudyBrowser;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
-import uk.ac.ebi.eva.lib.repositories.EvaStudyBrowserRepository;
+import uk.ac.ebi.eva.lib.repositories.DgvaStudyBrowserRepository;
+import uk.ac.ebi.eva.lib.dgva_utils.DgvaDBUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static uk.ac.ebi.eva.lib.utils.EvaproDbUtils.getSpeciesAndTypeFilters;
-
-
+/**
+ * Created by jorizci on 03/10/16.
+ */
 @Component
-public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
+public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
 
     @Autowired
-    private EvaStudyBrowserRepository evaStudyBrowserRepository;
+    private DgvaStudyBrowserRepository dgvaStudyBrowserRepository;
 
     @Override
     public QueryResult getAllStudies(QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
-        Specification filterSpecification = getSpeciesAndTypeFilters(queryOptions);
-        List<EvaStudyBrowser> dgvaStudies = evaStudyBrowserRepository.findAll(filterSpecification);
+        Specification filterSpecification = DgvaDBUtils.getSpeciesAndTypeFilters(queryOptions);
+        List<DgvaStudyBrowser> dgvaStudies = dgvaStudyBrowserRepository.findAll(filterSpecification);
         List<VariantStudy> variantstudies = new ArrayList<>();
-        for (EvaStudyBrowser dgvaStudy : dgvaStudies) {
-            if (dgvaStudy != null) {
-                variantstudies.add(dgvaStudy.generateVariantStudy());
-            }
+        for (DgvaStudyBrowser dgvaStudy : dgvaStudies) {
+            variantstudies.add(dgvaStudy.generateVariantStudy());
         }
         long end = System.currentTimeMillis();
         return new QueryResult(null, ((Long) (end - start)).intValue(), variantstudies.size(), variantstudies.size(), null, null, variantstudies);
     }
+
 
     @Override
     public QueryResult listStudies() {
@@ -62,12 +63,12 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
     }
 
     @Override
-    public QueryResult getStudyById(String s, QueryOptions queryOptions) {
+    public QueryResult getStudyById(String studyId, QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
-        EvaStudyBrowser study = evaStudyBrowserRepository.findOne(s);
+        DgvaStudyBrowser dgvaStudy = dgvaStudyBrowserRepository.getOne(studyId);
         List<VariantStudy> variantStudy = new ArrayList<>();
-        if (study != null) {
-            variantStudy.add(study.generateVariantStudy());
+        if (dgvaStudy != null) {
+            variantStudy.add(dgvaStudy.generateVariantStudy());
         }
         long end = System.currentTimeMillis();
         return new QueryResult(null, ((Long) (end - start)).intValue(), variantStudy.size(), variantStudy.size(), null, null, variantStudy);

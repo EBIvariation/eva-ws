@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.lib.metadata;
+package uk.ac.ebi.eva.lib.metadata.dgva;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+
+import uk.ac.ebi.eva.lib.metadata.ArchiveDBAdaptor;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.repositories.DgvaStudyBrowserRepository;
@@ -25,7 +27,7 @@ import uk.ac.ebi.eva.lib.repositories.DgvaStudyBrowserRepository;
 import javax.persistence.Tuple;
 import java.util.*;
 
-import static uk.ac.ebi.eva.lib.utils.DgvaDBUtils.getSpeciesAndTypeFilters;
+import static uk.ac.ebi.eva.lib.dgva_utils.DgvaDBUtils.getSpeciesAndTypeFilters;
 
 @Component
 public class ArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {

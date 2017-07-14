@@ -37,10 +37,8 @@ import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -119,7 +117,7 @@ public class VariantWSServer extends EvaWSServer {
             }
 
             variantEntities = service.findByIdsAndComplexFilters(variantId, filters, annotationMetadata, excludeMapped,
-                                                                 Utils.getPageRequest(queryOptions));
+                                                                 Utils.getPageRequest(getQueryOptions()));
 
             numTotalResults = service.countByIdsAndComplexFilters(variantId, filters);
         }
@@ -185,7 +183,8 @@ public class VariantWSServer extends EvaWSServer {
 
         } else {
             List<VariantRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
-            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null, null, Utils.getPageRequest(queryOptions));
+            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null,
+                    Utils.getPageRequest(getQueryOptions()));
         }
 
         numTotalResults = (long) variantEntities.size();

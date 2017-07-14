@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.lib.utils;
+package uk.ac.ebi.eva.lib.dgva_utils;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import uk.ac.ebi.eva.lib.repositories.DgvaStudyBrowserRepository;
+import uk.ac.ebi.eva.lib.utils.QueryOptions;
+import uk.ac.ebi.eva.lib.utils.QueryOptionsConstants;
 
 import static org.springframework.data.jpa.domain.Specifications.where;
 import static uk.ac.ebi.eva.lib.extension.GenericSpecifications.in;

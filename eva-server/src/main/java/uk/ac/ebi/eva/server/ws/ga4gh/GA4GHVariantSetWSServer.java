@@ -35,8 +35,8 @@ import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantSetsRequest;
 import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantSetsResponse;
 import uk.ac.ebi.eva.lib.models.ga4gh.GAVariantSet;
 import uk.ac.ebi.eva.lib.models.ga4gh.GAVariantSetFactory;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
