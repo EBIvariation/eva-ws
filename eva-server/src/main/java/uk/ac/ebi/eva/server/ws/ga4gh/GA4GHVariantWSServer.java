@@ -33,6 +33,7 @@ import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
+import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantRequest;
 import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantsResponse;
@@ -77,7 +78,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
 //                                        @RequestParam(name = "callSetIds", required = false) String samples,
                                                         @RequestParam(name = "pageToken", required = false) String pageToken,
                                                         @RequestParam(name = "pageSize", defaultValue = "10") int limit)
-            throws UnknownHostException, IOException {
+            throws UnknownHostException, IOException, AnnotationMetadataNotFoundException {
         initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
@@ -111,7 +112,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, consumes = "application/json")
     public GASearchVariantsResponse getVariantsByRegion(GASearchVariantRequest request)
-            throws UnknownHostException, IOException {
+            throws UnknownHostException, IOException, AnnotationMetadataNotFoundException {
         request.validate();
         return getVariantsByRegion(request.getReferenceName(), (int) request.getStart(), (int) request.getEnd(),
                 request.getVariantSetIds(), request.getPageToken(), request.getPageSize());

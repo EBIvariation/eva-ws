@@ -4,13 +4,13 @@
       "vepv": "77",
       "_id": "77_77",
       "cachev": "77",
-      "default_version": false
+      "is_default": false
     },
     {
       "vepv": "78",
       "_id": "78_78",
       "cachev": "78",
-      "default_version": true
+      "is_default": true
     }
   ]
 }
