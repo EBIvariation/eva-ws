@@ -70,7 +70,7 @@ public class GeneWSServer extends EvaWSServer {
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify either both annotation vep version and annotation vep cache version, or neither");
+            return setQueryResponse("Please specify either both annotation VEP version and annotation VEP cache version, or neither");
         }
 
         if (species.isEmpty()) {
@@ -106,8 +106,8 @@ public class GeneWSServer extends EvaWSServer {
                                                @RequestParam(name = "polyphen", defaultValue = "") String polyphenScore,
                                                @RequestParam(name = "sift", defaultValue = "") String siftScore,
                                                @RequestParam(name = "exclude", required = false) List<String> exclude,
-                                               @RequestParam(name = "annotationVepVersion", required = false) String annotationVepVersion,
-                                               @RequestParam(name = "annotationVepCacheversion", required = false) String annotationVepCacheversion,
+                                               @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
+                                               @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheversion,
                                                HttpServletResponse response) throws AnnotationMetadataNotFoundException {
         return getVariantsByGene(geneIds, species, studies, consequenceType, maf, polyphenScore, siftScore, exclude,
                                  annotationVepVersion, annotationVepCacheversion, response);

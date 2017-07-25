@@ -75,7 +75,7 @@ public class VariantWSServer extends EvaWSServer {
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify either both annotation vep version and annotation vep cache version, or neither");
+            return setQueryResponse("Please specify either both annotation VEP version and annotation VEP cache version, or neither");
         }
 
         if (species.isEmpty()) {
