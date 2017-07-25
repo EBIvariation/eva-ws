@@ -135,7 +135,7 @@ public class ArchiveWSServerTest {
         assertEquals(1, queryResponse.getResponse().size());
 
         List<VariantStudy> results = queryResponse.getResponse().get(0).getResult();
-        assertTrue(results.size() >= 1);
+        assertEquals(3, results.size());
 
         assertVariantStudiesAreNotEmpty(results);
     }

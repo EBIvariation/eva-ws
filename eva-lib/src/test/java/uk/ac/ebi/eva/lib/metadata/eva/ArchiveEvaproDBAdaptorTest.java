@@ -1,11 +1,11 @@
 /*
- * Copyright 2014-2017 EMBL - European Bioinformatics Institute
+ * Copyright 2017 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.lib.metadata;
+package uk.ac.ebi.eva.lib.metadata.eva;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +25,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.lib.entities.Project;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
-import uk.ac.ebi.eva.lib.metadata.eva.ArchiveEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.FileTestData;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.QueryOptionsConstants;

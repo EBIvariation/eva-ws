@@ -20,6 +20,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = {"uk.ac.ebi.eva.lib.utils", "uk.ac.ebi.eva.lib.dgva_utils"})
+@ComponentScan(basePackages = {"uk.ac.ebi.eva.lib.utils"})
 public class UtilsConfiguration {
 }
