@@ -149,8 +149,8 @@ public class RegionWSServerIntegrationTest {
         String annotationVepVersion = "78";
         String annotationVepCacheversion = "78";
         String url = "/v1/segments/" + testRegion +
-                "/variants?species=mmusculus_grcm38&annotation-vep-version=" + annotationVepVersion +
-                "&annotation-vep-cache-version=" + annotationVepCacheversion;
+                "/variants?species=mmusculus_grcm38&annot-vep-version=" + annotationVepVersion +
+                "&annot-vep-cache-version=" + annotationVepCacheversion;
         List<VariantWithSamplesAndAnnotation> variants = testRestTemplateHelper(url);
         for (VariantWithSamplesAndAnnotation variant : variants) {
             Annotation annotation = variant.getAnnotation();

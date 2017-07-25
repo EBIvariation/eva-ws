@@ -73,8 +73,8 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                              @RequestParam(name = "sift", required = false) String siftScore,
                                              @RequestParam(name = "exclude", required = false) List<String> exclude,
-                                             @RequestParam(name = "annotation-vep-version", required = false) String annotationVepVersion,
-                                             @RequestParam(name = "annotation-vep-cache-version", required = false) String annotationVepCacheVersion,
+                                             @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
+                                             @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
                                              HttpServletResponse response)
             throws IOException, AnnotationMetadataNotFoundException {
         initializeQuery();
