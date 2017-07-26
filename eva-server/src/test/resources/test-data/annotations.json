@@ -1,0 +1,415 @@
+{
+  "testAnnotations": [
+    {
+      "xrefs": [
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000481932"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000468321"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000356150"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000405430"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000463865"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000488044"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000415006"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000473104"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000471948"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000403712"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000479739"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000431160"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000403658"
+        },
+        {
+          "src": "HGNC",
+          "id": "SH3YL1"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000403657"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000451005"
+        },
+        {
+          "src": "ensemblGene",
+          "id": "ENSG00000035115"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000472012"
+        }
+      ],
+      "end": 60100,
+      "start": 60100,
+      "chr": "20",
+      "cachev": "78",
+      "_id": "20_60100_A_T_78_78",
+      "vepv": "78",
+      "ct": [
+        {
+          "enst": "ENST00000479739",
+          "codon": "-",
+          "bt": "nonsense_mediated_decay",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1627,
+            1621
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000471948",
+          "codon": "-",
+          "bt": "retained_intron",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1632
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000431160",
+          "codon": "-",
+          "bt": "protein_coding",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1632
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000451005",
+          "codon": "-",
+          "bt": "protein_coding",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1627
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000356150",
+          "codon": "-",
+          "bt": "protein_coding",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1627
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000463865",
+          "codon": "-",
+          "bt": "processed_transcript",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1627,
+            1619
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000488044",
+          "codon": "-",
+          "bt": "processed_transcript",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1632
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000403712",
+          "codon": "-",
+          "bt": "protein_coding",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1627
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000403657",
+          "codon": "-",
+          "bt": "protein_coding",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1627
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000473104",
+          "codon": "-",
+          "bt": "processed_transcript",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1627,
+            1619
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000415006",
+          "codon": "-",
+          "bt": "protein_coding",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1627
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000405430",
+          "codon": "-",
+          "bt": "protein_coding",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1627
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000481932",
+          "codon": "-",
+          "bt": "protein_coding",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1632
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000472012",
+          "codon": "-",
+          "bt": "processed_transcript",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1627,
+            1619
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000468321",
+          "codon": "-",
+          "bt": "processed_transcript",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1627,
+            1619
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000403658",
+          "codon": "-",
+          "bt": "protein_coding",
+          "ensg": "ENSG00000035115",
+          "so": [
+            1627
+          ],
+          "aaChange": "-",
+          "gn": "SH3YL1",
+          "strand": "-"
+        }
+      ]
+    },
+    {
+      "xrefs": [
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000421620"
+        },
+        {
+          "src": "HGNC",
+          "id": "XXyac-YRM2039.2"
+        },
+        {
+          "src": "ensemblGene",
+          "id": "ENSG00000181404"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000426146"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000442926"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000330546"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000442898"
+        },
+        {
+          "src": "ensemblGene",
+          "id": "ENSG00000236875"
+        },
+        {
+          "src": "HGNC",
+          "id": "DDX11L5"
+        },
+        {
+          "src": "ensemblTranscript",
+          "id": "ENST00000399972"
+        }
+      ],
+      "end": 62300,
+      "start": 62300,
+      "chr": "20",
+      "cachev": "78",
+      "_id": "20_62300_C_G_78_78",
+      "vepv": "78",
+      "ct": [
+        {
+          "enst": "ENST00000399972",
+          "codon": "-",
+          "bt": "unprocessed_pseudogene",
+          "ensg": "ENSG00000181404",
+          "so": [
+            1632
+          ],
+          "aaChange": "-",
+          "gn": "XXyac-YRM2039.2",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000421620",
+          "codon": "-",
+          "bt": "unprocessed_pseudogene",
+          "ensg": "ENSG00000236875",
+          "so": [
+            1631
+          ],
+          "aaChange": "-",
+          "gn": "DDX11L5",
+          "strand": "+"
+        },
+        {
+          "enst": "ENST00000330546",
+          "codon": "-",
+          "bt": "unprocessed_pseudogene",
+          "ensg": "ENSG00000181404",
+          "so": [
+            1632
+          ],
+          "aaChange": "-",
+          "gn": "XXyac-YRM2039.2",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000442898",
+          "codon": "-",
+          "bt": "unprocessed_pseudogene",
+          "ensg": "ENSG00000181404",
+          "so": [
+            1632
+          ],
+          "aaChange": "-",
+          "gn": "XXyac-YRM2039.2",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000442926",
+          "codon": "-",
+          "bt": "unprocessed_pseudogene",
+          "ensg": "ENSG00000181404",
+          "so": [
+            1632
+          ],
+          "aaChange": "-",
+          "gn": "XXyac-YRM2039.2",
+          "strand": "-"
+        },
+        {
+          "enst": "ENST00000426146",
+          "codon": "-",
+          "bt": "unprocessed_pseudogene",
+          "ensg": "ENSG00000236875",
+          "so": [
+            1631
+          ],
+          "aaChange": "-",
+          "gn": "DDX11L5",
+          "strand": "+"
+        },
+        {
+          "bt": "regulatory_region",
+          "so": [
+            1566
+          ]
+        }
+      ]
+    }
+  ]
+}

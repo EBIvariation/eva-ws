@@ -31,7 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantsResponse;
 import uk.ac.ebi.eva.lib.models.ga4gh.GAVariantFactory;
@@ -49,7 +49,7 @@ import static org.mockito.Matchers.eq;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GA4GHVariantWSServerTest {
 
-    private VariantWithSamplesAndAnnotations variant;
+    private VariantWithSamplesAndAnnotation variant;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -59,18 +59,19 @@ public class GA4GHVariantWSServerTest {
 
     @Before
     public void setUp() throws Exception {
-        variant = new VariantWithSamplesAndAnnotations("1", 1000, 1005, "A", "C");
+        variant = new VariantWithSamplesAndAnnotation("1", 1000, 1005, "A", "C");
         variant.setIds(Collections.singleton("1_1000_A_C"));
         variant.addSourceEntry(new VariantSourceEntryWithSampleNames("FILE_ID", "STUDY_ID", null, null, null, null,
                 null));
-        List<VariantWithSamplesAndAnnotations> variantEntities = Collections.singletonList(variant);
+        List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(variant);
 
         Region region = new Region("1", 500, 2000);
 
         given(variantEntityRepository.findByRegionsAndComplexFilters(eq(Collections.singletonList(region)),
-                any(),
-                any(),
-                any()))
+                                                                     any(),
+                                                                     any(),
+                                                                     any(),
+                                                                     any()))
                 .willReturn(variantEntities);
         given(variantEntityRepository.countByRegionsAndComplexFilters(eq(Collections.singletonList(region)),
                 any()))

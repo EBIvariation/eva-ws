@@ -31,7 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.Region;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
@@ -63,7 +63,7 @@ public class VariantWSServerTest {
 
     private static final String NON_EXISTING_CHROMOSOME = "notARealChromosome";
 
-    private static final VariantWithSamplesAndAnnotations VARIANT = new VariantWithSamplesAndAnnotations("1", 1000, 1005, "A", "T");
+    private static final VariantWithSamplesAndAnnotation VARIANT = new VariantWithSamplesAndAnnotation("1", 1000, 1005, "A", "T");
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -73,13 +73,13 @@ public class VariantWSServerTest {
 
     @Before
     public void setUp() throws Exception {
-        List<VariantWithSamplesAndAnnotations> variantEntities = Collections.singletonList(VARIANT);
+        List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(VARIANT);
 
         given(variantEntityRepository
-                .findByChromosomeAndStartAndReferenceAndAlternate(eq(CHROMOSOME), anyInt(), any(), any()))
+                .findByChromosomeAndStartAndReferenceAndAlternate(eq(CHROMOSOME), anyInt(), any(), any(), any()))
                 .willReturn(variantEntities);
 
-        given(variantEntityRepository.findByIdsAndComplexFilters(eq(VARIANT_ID), any(), any(), any()))
+        given(variantEntityRepository.findByIdsAndComplexFilters(eq(VARIANT_ID), any(), any(), any(), any()))
                 .willReturn(variantEntities);
 
     }
@@ -96,16 +96,16 @@ public class VariantWSServerTest {
 
     private void testGetVariantByIdRegionHelper(String testString) {
         String url = "/v1/variants/" + testString + "/info?species=mmusculus_grcm38";
-        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>> response = restTemplate.exchange(
+        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>>() {
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>>() {
                 });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>> queryResponse = response.getBody();
+        QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>> queryResponse = response.getBody();
         assertEquals(1, queryResponse.getResponse().size());
 
-        List<VariantWithSamplesAndAnnotations> results = queryResponse.getResponse().get(0).getResult();
+        List<VariantWithSamplesAndAnnotation> results = queryResponse.getResponse().get(0).getResult();
         assertEquals(1, results.size());
 
         assertEquals(VARIANT, results.get(0));
@@ -123,16 +123,16 @@ public class VariantWSServerTest {
 
     private void testGetVariantByIdRegionDoesntExistHelper(String testString) throws URISyntaxException {
         String url = "/v1/variants/" + testString + "/info?species=mmusculus_grcm38";
-        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>> response = restTemplate.exchange(
+        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>>() {
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>>() {
                 });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>> queryResponse = response.getBody();
+        QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>> queryResponse = response.getBody();
         assertEquals(1, queryResponse.getResponse().size());
 
-        List<VariantWithSamplesAndAnnotations> results = queryResponse.getResponse().get(0).getResult();
+        List<VariantWithSamplesAndAnnotation> results = queryResponse.getResponse().get(0).getResult();
         assertEquals(0, results.size());
     }
 

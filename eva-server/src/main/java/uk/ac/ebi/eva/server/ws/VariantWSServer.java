@@ -28,9 +28,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+
+import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
+import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
@@ -64,9 +67,16 @@ public class VariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                         @RequestParam(name = "sift", required = false) String siftScore,
                                         @RequestParam(name = "exclude", required = false) List<String> exclude,
+                                        @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
+                                        @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
                                         HttpServletResponse response)
-            throws IOException {
+            throws IOException, AnnotationMetadataNotFoundException {
         initializeQuery();
+
+        if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse("Please specify either both annotation VEP version and annotation VEP cache version, or neither");
+        }
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -75,14 +85,14 @@ public class VariantWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List<VariantWithSamplesAndAnnotations> variantEntities;
+        List<VariantWithSamplesAndAnnotation> variantEntities;
         Long numTotalResults;
 
         if (variantId.contains(":")) {
             String[] regionId = variantId.split(":");
             String alternate = (regionId.length > 3) ? regionId[3] : null;
             variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
-                    alternate);
+                                                           alternate, annotationVepVersion, annotationVepCacheVersion);
             numTotalResults = (long) variantEntities.size();
         } else {
             List<VariantRepositoryFilter> filters = new FilterBuilder()
@@ -100,23 +110,34 @@ public class VariantWSServer extends EvaWSServer {
                 }
             }
 
-            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, excludeMapped,
-                    Utils.getPageRequest(queryOptions));
+            AnnotationMetadata annotationMetadata = null;
+            if (annotationVepVersion != null && annotationVepCacheVersion != null) {
+                annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
+            }
+
+            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, annotationMetadata, excludeMapped,
+                                                                 Utils.getPageRequest(queryOptions));
 
             numTotalResults = service.countByIdsAndComplexFilters(variantId, filters);
         }
 
-        QueryResult<VariantWithSamplesAndAnnotations> queryResult = buildQueryResult(variantEntities, numTotalResults);
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
         return setQueryResponse(queryResult);
     }
 
-    private List<VariantWithSamplesAndAnnotations> queryByCoordinatesAndAlleles(String chromosome, int start,
-                                                                                String reference, String alternate) {
+    private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAlleles(String chromosome, int start,
+                                                                               String reference, String alternate,
+                                                                               String annotationVepVersion,
+                                                                               String annotationVepCacheversion) throws AnnotationMetadataNotFoundException {
+        AnnotationMetadata annotationMetadata = null;
+        if (annotationVepVersion != null && annotationVepCacheversion != null) {
+            annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheversion);
+        }
         if (alternate != null) {
-            return service.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start, reference,
-                    alternate);
+            return service.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start, reference, alternate,
+                                                                            annotationMetadata);
         } else {
-            return service.findByChromosomeAndStartAndReference(chromosome, start, reference);
+            return service.findByChromosomeAndStartAndReference(chromosome, start, reference, annotationMetadata);
         }
     }
 
@@ -126,7 +147,7 @@ public class VariantWSServer extends EvaWSServer {
                                             @RequestParam(name = "studies", required = false) List<String> studies,
                                             @RequestParam("species") String species,
                                             HttpServletResponse response)
-            throws IOException {
+            throws IOException, AnnotationMetadataNotFoundException {
         initializeQuery();
 
         if (species.isEmpty()) {
@@ -136,7 +157,7 @@ public class VariantWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List<VariantWithSamplesAndAnnotations> variantEntities;
+        List<VariantWithSamplesAndAnnotation> variantEntities;
         Long numTotalResults;
 
         String invalidCoordinatesMessage =
@@ -155,14 +176,13 @@ public class VariantWSServer extends EvaWSServer {
                 variantEntities = queryByCoordinatesAndAllelesAndStudyIds(regionId[0], Integer.parseInt(regionId[1]),
                         regionId[2], alternate, studies);
             } else {
-                variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]),
-                        regionId[2], alternate);
+                variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
+                                                               alternate, null, null);
             }
 
         } else {
             List<VariantRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
-            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null,
-                    Utils.getPageRequest(queryOptions));
+            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null, null, Utils.getPageRequest(queryOptions));
         }
 
         numTotalResults = (long) variantEntities.size();
@@ -172,18 +192,15 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    private List<VariantWithSamplesAndAnnotations> queryByCoordinatesAndAllelesAndStudyIds(String chromosome, int start,
+    private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAllelesAndStudyIds(String chromosome, int start,
                                                                                            String reference,
                                                                                            String alternate,
-                                                                                           List<String> studyIds) {
+                                                                                           List<String> studyIds) throws AnnotationMetadataNotFoundException {
         if (alternate != null) {
-            return service.findByChromosomeAndStartAndReferenceAndAlternateAndStudyIn(chromosome, start,
-                    reference,
-                    alternate,
-                    studyIds);
+            return service.findByChromosomeAndStartAndReferenceAndAlternateAndStudyIn(chromosome, start, reference,
+                                                                                      alternate, studyIds, null);
         } else {
-            return service.findByChromosomeAndStartAndReferenceAndStudyIn(chromosome, start, reference,
-                    studyIds);
+            return service.findByChromosomeAndStartAndReferenceAndStudyIn(chromosome, start, reference, studyIds, null);
         }
     }
 

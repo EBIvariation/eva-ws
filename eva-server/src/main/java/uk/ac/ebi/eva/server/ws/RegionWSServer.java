@@ -30,10 +30,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import uk.ac.ebi.eva.commons.core.models.Annotation;
+import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.Region;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
+import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
@@ -69,9 +73,16 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                              @RequestParam(name = "sift", required = false) String siftScore,
                                              @RequestParam(name = "exclude", required = false) List<String> exclude,
+                                             @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
+                                             @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
                                              HttpServletResponse response)
-            throws IOException {
+            throws IOException, AnnotationMetadataNotFoundException {
         initializeQuery();
+
+        if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse("Please specify either both annotation VEP version and annotation VEP cache version, or neither");
+        }
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -97,12 +108,17 @@ public class RegionWSServer extends EvaWSServer {
             }
         }
 
-        List<VariantWithSamplesAndAnnotations> variantEntities =
-                service.findByRegionsAndComplexFilters(regions, filters, excludeMapped, pageRequest);
+        AnnotationMetadata annotationMetadata = null;
+        if (annotationVepVersion != null && annotationVepCacheVersion != null) {
+            annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
+        }
+
+        List<VariantWithSamplesAndAnnotation> variantEntities =
+                service.findByRegionsAndComplexFilters(regions, filters, annotationMetadata, excludeMapped, pageRequest);
 
         Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
-        QueryResult<VariantWithSamplesAndAnnotations> queryResult = buildQueryResult(variantEntities, numTotalResults);
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
         return setQueryResponse(queryResult);
     }
 

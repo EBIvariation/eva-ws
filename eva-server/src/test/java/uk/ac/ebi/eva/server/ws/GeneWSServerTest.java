@@ -30,7 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.Xref;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
@@ -55,7 +55,7 @@ public class GeneWSServerTest {
     private VariantWithSamplesAndAnnotationsService service;
 
     private String GENE_ID = "GeneId";
-    private VariantWithSamplesAndAnnotations testVariantEntity;
+    private VariantWithSamplesAndAnnotation testVariantEntity;
 
     @Before
     public void setUp() throws Exception {
@@ -66,27 +66,26 @@ public class GeneWSServerTest {
         String alternate = "T";
         String vepVersion = "88";
         String vepCacheVersion = "89";
-        testVariantEntity = new VariantWithSamplesAndAnnotations(chromosome, start, end, reference, alternate);
+        testVariantEntity = new VariantWithSamplesAndAnnotation(chromosome, start, end, reference, alternate);
         Annotation variantAnnotation = new Annotation(chromosome, start, end, vepVersion, vepCacheVersion, Collections
                 .singleton(new Xref(GENE_ID, "HGNC")), null);
-        testVariantEntity.addAnnotation(variantAnnotation);
-        List<VariantWithSamplesAndAnnotations> variantEntities = Collections.singletonList(testVariantEntity);
+        testVariantEntity.setAnnotation(variantAnnotation);
+        List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(testVariantEntity);
 
         List<String> geneIds = new ArrayList<>();
         geneIds.add(GENE_ID);
 
-        given(service.findByGenesAndComplexFilters(eq(geneIds), any(), any(), any()
-        )).willReturn(variantEntities);
+        given(service.findByGenesAndComplexFilters(eq(geneIds), any(), any(), any(), any())).willReturn(variantEntities);
         given(service.countByGenesAndComplexFilters(eq(geneIds), any())).willReturn(1L);
     }
 
     @Test
     public void testGetVariantByGeneExisting() {
-        QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>> queryResponse =
+        QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>> queryResponse =
                 testGetVariantByGeneHelper(Collections.singletonList(GENE_ID));
         assertEquals(1, queryResponse.getResponse().size());
 
-        List<VariantWithSamplesAndAnnotations> results = queryResponse.getResponse().get(0).getResult();
+        List<VariantWithSamplesAndAnnotation> results = queryResponse.getResponse().get(0).getResult();
 
         assertEquals(1, results.size());
         assertEquals(testVariantEntity, results.get(0));
@@ -94,21 +93,21 @@ public class GeneWSServerTest {
 
     @Test
     public void testGetVariantByGeneNotExisting() {
-        QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>> queryResponse =
+        QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>> queryResponse =
                 testGetVariantByGeneHelper(Collections.singletonList("not_a_real_id"));
         assertEquals(1, queryResponse.getResponse().size());
 
-        List<VariantWithSamplesAndAnnotations> results = queryResponse.getResponse().get(0).getResult();
+        List<VariantWithSamplesAndAnnotation> results = queryResponse.getResponse().get(0).getResult();
 
         assertEquals(0, results.size());
     }
 
-    private QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>> testGetVariantByGeneHelper(List<String> geneIds) {
+    private QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>> testGetVariantByGeneHelper(List<String> geneIds) {
         String url = "/v1/genes/" + String.join(",", geneIds) + "/variants?species=mmusculus_grcm38";
         String responseStr = restTemplate.getForObject(url,String.class);
-        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>> response = restTemplate.exchange(
+        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>>() {
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>>() {
                 });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 

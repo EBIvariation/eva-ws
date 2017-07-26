@@ -31,7 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.Region;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
@@ -62,21 +62,21 @@ public class RegionWSServerTest {
 
     @Before
     public void setUp() throws Exception {
-        VariantWithSamplesAndAnnotations variantEntity = new VariantWithSamplesAndAnnotations("chr1", 1000, 1005, "reference", "alternate");
+        VariantWithSamplesAndAnnotation variantEntity = new VariantWithSamplesAndAnnotation("chr1", 1000, 1005, "reference", "alternate");
 
         List<Region> oneRegion = Arrays.asList(
                 new Region("20", 60000, 62000));
-        given(service.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any()))
+        given(service.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any(), any()))
                 .willReturn(Collections.singletonList(variantEntity));
 
         List<Region> twoRegions = Arrays.asList(
                 new Region("20", 60000, 61000),
                 new Region("20", 61500, 62500));
-        given(service.findByRegionsAndComplexFilters(eq(twoRegions), any(), any(), any()))
+        given(service.findByRegionsAndComplexFilters(eq(twoRegions), any(), any(), any(), any()))
                 .willReturn(Arrays.asList(variantEntity, variantEntity));
 
         given(service
-                .findByRegionsAndComplexFilters(not(or(eq(oneRegion), eq(twoRegions))), any(), any(), any()))
+                .findByRegionsAndComplexFilters(not(or(eq(oneRegion), eq(twoRegions))), any(), any(), any(), any()))
                 .willReturn(Collections.emptyList());
     }
 
@@ -96,10 +96,10 @@ public class RegionWSServerTest {
     }
 
     private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants) throws URISyntaxException {
-        List<VariantWithSamplesAndAnnotations> results = regionWsHelper(testRegion);
+        List<VariantWithSamplesAndAnnotation> results = regionWsHelper(testRegion);
         assertEquals(expectedVariants, results.size());
 
-        for (VariantWithSamplesAndAnnotations variantEntity : results) {
+        for (VariantWithSamplesAndAnnotation variantEntity : results) {
             assertFalse(variantEntity.getChromosome().isEmpty());
             assertFalse(variantEntity.getReference().isEmpty());
             assertFalse(variantEntity.getAlternate().isEmpty());
@@ -108,15 +108,15 @@ public class RegionWSServerTest {
         }
     }
 
-    private List<VariantWithSamplesAndAnnotations> regionWsHelper(String testRegion) {
+    private List<VariantWithSamplesAndAnnotation> regionWsHelper(String testRegion) {
         String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38";
-        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>> response = restTemplate.exchange(
+        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>>() {
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>>() {
                 });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>> queryResponse = response.getBody();
+        QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>> queryResponse = response.getBody();
         assertEquals(1, queryResponse.getResponse().size());
 
         return queryResponse.getResponse().get(0).getResult();

@@ -37,8 +37,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.Profiles;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
@@ -47,11 +48,12 @@ import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Set;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -59,7 +61,9 @@ import static org.junit.Assert.assertTrue;
 @Import(MongoRepositoryTestConfiguration.class)
 @UsingDataSet(locations = {
         "/test-data/variants.json",
-        "/test-data/files.json"
+        "/test-data/files.json",
+        "/test-data/annotations.json",
+        "/test-data/annotation_metadata.json"
 })
 @ActiveProfiles(Profiles.TEST_MONGO_FACTORY)
 public class RegionWSServerIntegrationTest {
@@ -102,10 +106,10 @@ public class RegionWSServerIntegrationTest {
     }
 
     private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants) throws URISyntaxException {
-        List<VariantWithSamplesAndAnnotations> results = regionWsHelper(testRegion);
+        List<VariantWithSamplesAndAnnotation> results = regionWsHelper(testRegion);
         assertEquals(expectedVariants, results.size());
 
-        for (VariantWithSamplesAndAnnotations variantEntity : results) {
+        for (VariantWithSamplesAndAnnotation variantEntity : results) {
             assertFalse(variantEntity.getChromosome().isEmpty());
             assertFalse(variantEntity.getReference().isEmpty());
             assertFalse(variantEntity.getAlternate().isEmpty());
@@ -117,41 +121,52 @@ public class RegionWSServerIntegrationTest {
         }
     }
 
-    private List<VariantWithSamplesAndAnnotations> regionWsHelper(String testRegion) {
+    private List<VariantWithSamplesAndAnnotation> regionWsHelper(String testRegion) {
         String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38";
-        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>>() {
-                });
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>> queryResponse = response.getBody();
-        assertEquals(1, queryResponse.getResponse().size());
-
-        return queryResponse.getResponse().get(0).getResult();
+        return testRestTemplateHelper(url);
     }
 
     @Test
     public void testExcludeSourceEntriesStatistics() {
         String testRegion = "20:60099-60102";
         String testExclusion = "sourceEntries.statistics";
-        List<VariantWithSamplesAndAnnotations> results = testExcludeHelper(testRegion, testExclusion);
-        for (VariantWithSamplesAndAnnotations variant : results) {
+        List<VariantWithSamplesAndAnnotation> results = testExcludeHelper(testRegion, testExclusion);
+        for (VariantWithSamplesAndAnnotation variant : results) {
             for (VariantSourceEntryWithSampleNames sourceEntry : variant.getSourceEntries()) {
                 assertTrue(sourceEntry.getCohortStats().isEmpty());
             }
         }
     }
 
-    private List<VariantWithSamplesAndAnnotations> testExcludeHelper(String testRegion, String testExclusion) {
+    private List<VariantWithSamplesAndAnnotation> testExcludeHelper(String testRegion, String testExclusion) {
         String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38&exclude=" + testExclusion;
-        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>> response = restTemplate.exchange(
+        return testRestTemplateHelper(url);
+    }
+
+    @Test
+    public void testVepVersionAndVepCacheVersionFilter() {
+        String testRegion = "20:60000-62000";
+        String annotationVepVersion = "78";
+        String annotationVepCacheversion = "78";
+        String url = "/v1/segments/" + testRegion +
+                "/variants?species=mmusculus_grcm38&annot-vep-version=" + annotationVepVersion +
+                "&annot-vep-cache-version=" + annotationVepCacheversion;
+        List<VariantWithSamplesAndAnnotation> variants = testRestTemplateHelper(url);
+        for (VariantWithSamplesAndAnnotation variant : variants) {
+            Annotation annotation = variant.getAnnotation();
+            assertEquals(annotationVepVersion, annotation.getVepVersion());
+            assertEquals(annotationVepCacheversion, annotation.getVepCacheVersion());
+        }
+    }
+
+    private List<VariantWithSamplesAndAnnotation> testRestTemplateHelper(String url) {
+        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>>>() {
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>>() {
                 });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        QueryResponse<QueryResult<VariantWithSamplesAndAnnotations>> queryResponse = response.getBody();
+        QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>> queryResponse = response.getBody();
         assertEquals(1, queryResponse.getResponse().size());
 
         return queryResponse.getResponse().get(0).getResult();

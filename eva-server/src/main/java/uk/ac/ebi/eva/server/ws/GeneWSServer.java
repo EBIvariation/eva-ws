@@ -26,9 +26,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotations;
+
+import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
+import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
@@ -60,8 +63,15 @@ public class GeneWSServer extends EvaWSServer {
                                            @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                            @RequestParam(name = "sift", required = false) String siftScore,
                                            @RequestParam(name = "exclude", required = false) List<String> exclude,
-                                           HttpServletResponse response) {
+                                           @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
+                                           @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
+                                           HttpServletResponse response) throws AnnotationMetadataNotFoundException {
         initializeQuery();
+
+        if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse("Please specify either both annotation VEP version and annotation VEP cache version, or neither");
+        }
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -70,16 +80,20 @@ public class GeneWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List<VariantRepositoryFilter> filters =
-                new FilterBuilder().getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies,
-                        consequenceType);
+        List<VariantRepositoryFilter> filters = new FilterBuilder()
+                .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
-        List<VariantWithSamplesAndAnnotations> variantEntities =
-                service.findByGenesAndComplexFilters(geneIds, filters, exclude,
-                        Utils.getPageRequest(queryOptions));
+        AnnotationMetadata annotationMetadata = null;
+        if (annotationVepVersion != null && annotationVepCacheVersion != null) {
+            annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
+        }
+
+        List<VariantWithSamplesAndAnnotation> variantEntities =
+                service.findByGenesAndComplexFilters(geneIds, filters, annotationMetadata, exclude, Utils.getPageRequest(queryOptions));
+
         Long numTotalResults = service.countByGenesAndComplexFilters(geneIds, filters);
 
-        QueryResult<VariantWithSamplesAndAnnotations> queryResult = buildQueryResult(variantEntities, numTotalResults);
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
         return setQueryResponse(queryResult);
     }
 
@@ -92,9 +106,11 @@ public class GeneWSServer extends EvaWSServer {
                                                @RequestParam(name = "polyphen", defaultValue = "") String polyphenScore,
                                                @RequestParam(name = "sift", defaultValue = "") String siftScore,
                                                @RequestParam(name = "exclude", required = false) List<String> exclude,
-                                               HttpServletResponse response) {
+                                               @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
+                                               @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheversion,
+                                               HttpServletResponse response) throws AnnotationMetadataNotFoundException {
         return getVariantsByGene(geneIds, species, studies, consequenceType, maf, polyphenScore, siftScore, exclude,
-                response);
+                                 annotationVepVersion, annotationVepCacheversion, response);
     }
 
 }
