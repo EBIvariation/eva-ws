@@ -102,7 +102,7 @@ public class GeneWSServer extends EvaWSServer {
         }
 
         List<VariantWithSamplesAndAnnotation> variantEntities =
-                service.findByGenesAndComplexFilters(geneIds, filters, annotationMetadata, excludeMapped, Utils.getPageRequest(queryOptions));
+                service.findByGenesAndComplexFilters(geneIds, filters, annotationMetadata, excludeMapped, Utils.getPageRequest(getQueryOptions()));
 
         Long numTotalResults = service.countByGenesAndComplexFilters(geneIds, filters);
 

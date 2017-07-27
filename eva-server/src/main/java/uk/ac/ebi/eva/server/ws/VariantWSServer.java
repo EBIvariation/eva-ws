@@ -183,7 +183,7 @@ public class VariantWSServer extends EvaWSServer {
 
         } else {
             List<VariantRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
-            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null,
+            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null, null,
                     Utils.getPageRequest(getQueryOptions()));
         }
 
