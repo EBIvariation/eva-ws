@@ -80,7 +80,8 @@ public class VariantWSServer extends EvaWSServer {
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify either both annotation VEP version and annotation VEP cache version, or neither");
+            return queryUtils.setQueryResponse("Please specify either both annotation VEP version and annotation VEP cache version, or neither",
+                                               this.version);
         }
 
         if (species.isEmpty()) {
@@ -187,7 +188,7 @@ public class VariantWSServer extends EvaWSServer {
 
         } else {
             List<VariantRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
-            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null,
+            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null, null,
                     Utils.getPageRequest(queryUtils.getQueryOptions()));
         }
 

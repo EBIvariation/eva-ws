@@ -84,12 +84,13 @@ public class RegionWSServer extends EvaWSServer {
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify either both annotation VEP version and annotation VEP cache version, or neither");
+            return queryUtils.setQueryResponse("Please specify either both annotation VEP version and annotation VEP cache version, or neither",
+                                               this.version);
         }
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return queryUtils.setQueryResponse("Please specify a species");
+            return queryUtils.setQueryResponse("Please specify a species", this.version);
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
