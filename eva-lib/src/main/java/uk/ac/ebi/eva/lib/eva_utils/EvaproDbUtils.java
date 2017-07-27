@@ -45,6 +45,8 @@ public class EvaproDbUtils {
                 return StudyType.PAIRED_TUMOR;
             case "Aggregate":
                 return StudyType.AGGREGATE;
+            case "Somatic":
+                return StudyType.SOMATIC;
             default:
                 throw new IllegalArgumentException("Study type " + studyType + " is not valid");
         }
