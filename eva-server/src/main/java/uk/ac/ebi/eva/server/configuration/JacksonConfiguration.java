@@ -22,8 +22,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import uk.ac.ebi.eva.commons.core.models.ConsequenceType;
 import uk.ac.ebi.eva.commons.core.models.VariantStatistics;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
+import uk.ac.ebi.eva.lib.json.ConsequenceTypeMixin;
 import uk.ac.ebi.eva.lib.json.QueryResponseMixin;
 import uk.ac.ebi.eva.lib.json.VariantMixin;
 import uk.ac.ebi.eva.lib.json.VariantStatisticsMixin;
@@ -42,6 +44,7 @@ public class JacksonConfiguration {
         objectMapper.addMixIn(QueryResponse.class, QueryResponseMixin.class);
         objectMapper.addMixIn(VariantStudy.class, VariantStudyMixin.class);
         objectMapper.addMixIn(VariantStatistics.class, VariantStatisticsMixin.class);
+        objectMapper.addMixIn(ConsequenceType.class, ConsequenceTypeMixin.class);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.setVisibility(objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
                 .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
