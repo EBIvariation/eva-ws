@@ -30,5 +30,5 @@ public abstract class ConsequenceTypeMixin {
 
     @JsonDeserialize(using = SoTermsDeserializer.class)
     @JsonProperty("soTerms")
-    abstract public void setSoAccessions();
+    private Set<Integer> soAccessions;
 }

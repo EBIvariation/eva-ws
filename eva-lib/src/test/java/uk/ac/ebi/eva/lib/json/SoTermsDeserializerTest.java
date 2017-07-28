@@ -52,7 +52,7 @@ public class SoTermsDeserializerTest {
         // when
         ConsequenceType ct = objectMapper.readValue(
                 "{\"cDnaPosition\":0,\"cdsPosition\":0,\"aaPosition\":0,\"relativePosition\":0," +
-                        "\"soAccessions\":[{\"soName\":\"miRNA\",\"soAccession\":\"SO:0000276\"}," +
+                        "\"soTerms\":[{\"soName\":\"miRNA\",\"soAccession\":\"SO:0000276\"}," +
                         "{\"soName\":\"stop_lost\",\"soAccession\":\"SO:0001578\"}]}", ConsequenceType.class);
 
         //then
