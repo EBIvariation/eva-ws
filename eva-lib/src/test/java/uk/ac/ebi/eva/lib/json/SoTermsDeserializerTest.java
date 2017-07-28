@@ -16,30 +16,29 @@
 
 package uk.ac.ebi.eva.lib.json;
 
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.Test;
 
 import uk.ac.ebi.eva.commons.core.models.ConsequenceType;
 
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashSet;
 
 import static org.junit.Assert.assertEquals;
 
-public class SoTermsSerializerTest {
+/**
+ * Created by jmmut on 2017-07-28.
+ *
+ * @author Jose Miguel Mut Lopez &lt;jmmut@ebi.ac.uk&gt;
+ */
+public class SoTermsDeserializerTest {
     @Test
-    public void serialize() throws Exception {
+    public void deserialize() throws Exception {
         // given
-        HashSet<Integer> soAccessions = new HashSet<>(Arrays.asList(1578, 276));
-        ConsequenceType consequenceType = new ConsequenceType("", "", "", "", "", 0, 0, 0, "", "", null, null,
-                                                              soAccessions, 0);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         objectMapper.addMixIn(ConsequenceType.class, ConsequenceTypeMixin.class);
@@ -50,19 +49,14 @@ public class SoTermsSerializerTest {
                                                .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
                                                .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
 
-        StringWriter stringWriter = new StringWriter();
-        JsonGenerator generator = objectMapper.getFactory().createGenerator(stringWriter);
-
         // when
-        objectMapper.writeValue(generator, consequenceType);
+        ConsequenceType ct = objectMapper.readValue(
+                "{\"cDnaPosition\":0,\"cdsPosition\":0,\"aaPosition\":0,\"relativePosition\":0," +
+                        "\"soAccessions\":[{\"soName\":\"miRNA\",\"soAccession\":\"SO:0000276\"}," +
+                        "{\"soName\":\"stop_lost\",\"soAccession\":\"SO:0001578\"}]}", ConsequenceType.class);
 
         //then
-        JSONObject jsonObject = new JSONObject(stringWriter.getBuffer().toString());
-        JSONArray actual = jsonObject.getJSONArray("soTerms");
-
-        String expectedString = "[{\"soName\":\"miRNA\",\"soAccession\":\"SO:0000276\"},"
-                + "{\"soName\":\"stop_lost\",\"soAccession\":\"SO:0001578\"}]";
-        assertEquals(expectedString, actual.toString());
+        HashSet<Integer> expectedSoAccessions = new HashSet<>(Arrays.asList(1578, 276));
+        assertEquals(expectedSoAccessions, ct.getSoAccessions());
     }
-
 }
