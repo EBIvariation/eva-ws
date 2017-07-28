@@ -16,7 +16,6 @@
 
 package uk.ac.ebi.eva.lib.json;
 
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -30,11 +29,6 @@ import java.util.HashSet;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by jmmut on 2017-07-28.
- *
- * @author Jose Miguel Mut Lopez &lt;jmmut@ebi.ac.uk&gt;
- */
 public class SoTermsDeserializerTest {
     @Test
     public void deserialize() throws Exception {
