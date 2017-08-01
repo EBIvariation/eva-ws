@@ -39,8 +39,8 @@ import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.server.Utils;
@@ -94,7 +94,7 @@ public class RegionWSServer extends EvaWSServer {
         List<VariantRepositoryFilter> filters = new FilterBuilder()
                 .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
         List<Region> regions = Region.parseRegions(regionId);
-        PageRequest pageRequest = Utils.getPageRequest(queryOptions);
+        PageRequest pageRequest = Utils.getPageRequest(getQueryOptions());
 
         List<String> excludeMapped = new ArrayList<>();
         if (exclude != null && !exclude.isEmpty()){

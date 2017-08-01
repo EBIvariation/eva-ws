@@ -17,15 +17,15 @@ package uk.ac.ebi.eva.lib.metadata;
 
 public class MetadataTestData {
 
-    static final String HOMO_SAPIENS = "Homo sapiens";
+    public static final String HOMO_SAPIENS = "Homo sapiens";
 
-    static final String M_MUSCULUS = "MMusculus";
+    public static final String M_MUSCULUS = "MMusculus";
 
-    static final String BOS_TAURUS = "Bos taurus";
+    public static final String BOS_TAURUS = "Bos taurus";
 
-    static final String HUMAN = "Human";
+    public static final String HUMAN = "Human";
 
-    static final String MOUSE = "Mouse";
+    public static final String MOUSE = "Mouse";
 
-    static final String CATTLE = "Cattle";
+    public static final String CATTLE = "Cattle";
 }
