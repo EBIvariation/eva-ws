@@ -22,6 +22,9 @@ package uk.ac.ebi.eva.server.ws;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.annotations.Api;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,23 +32,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.mongodb.projections.VariantStudySummary;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantStudySummaryService;
-import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.metadata.dgva.ArchiveDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.eva.ArchiveEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.eva.StudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
- */
 @RestController
 @RequestMapping(value = "/v1/meta", produces = "application/json")
 @Api(tags = {"archive"})
@@ -85,9 +83,9 @@ public class ArchiveWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/studies/all", method = RequestMethod.GET)
     public QueryResponse getStudies(@RequestParam(name = "species", required = false) String species,
-                                    @RequestParam(name = "type", required = false) String types,
-                                    @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
+                                    @RequestParam(name = "type", required = false) String types) {
         initializeQuery();
+        QueryOptions queryOptions = getQueryOptions();
         if (species != null && !species.isEmpty()) {
             queryOptions.put("species", Arrays.asList(species.split(",")));
         }
@@ -95,11 +93,7 @@ public class ArchiveWSServer extends EvaWSServer {
             queryOptions.put("type", Arrays.asList(types.split(",")));
         }
 
-        if (structural) {
-            return setQueryResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
-        } else {
-            return setQueryResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
-        }
+        return setQueryResponse(studyEvaproDbAdaptor.getAllStudies(queryOptions));
     }
 
     @RequestMapping(value = "/studies/list", method = RequestMethod.GET)
@@ -116,6 +110,7 @@ public class ArchiveWSServer extends EvaWSServer {
                                          @RequestParam(name = "type", required = false) List<String> types,
                                          @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
         initializeQuery();
+        QueryOptions queryOptions = getQueryOptions();
         if (species != null && !species.isEmpty()) {
             queryOptions.put("species", species);
         }
