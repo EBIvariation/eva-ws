@@ -13,6 +13,7 @@
     <packaging>war</packaging>
 
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -52,10 +53,16 @@
         <dependency>
             <groupId>uk.ac.ebi.eva</groupId>
             <artifactId>eva-lib</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-data-mongodb</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.eva</groupId>
-            <artifactId>variation-commons</artifactId>
+            <artifactId>core</artifactId>
         </dependency>
 
         <dependency>
