@@ -62,7 +62,7 @@
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.eva</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>variation-commons-core</artifactId>
         </dependency>
 
         <dependency>

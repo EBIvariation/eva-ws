@@ -17,6 +17,7 @@ package uk.ac.ebi.eva.lib.eva_utils;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
+
 import uk.ac.ebi.eva.commons.core.models.StudyType;
 import uk.ac.ebi.eva.lib.extension.GenericSpecifications;
 import uk.ac.ebi.eva.lib.repositories.EvaStudyBrowserRepository;
