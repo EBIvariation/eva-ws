@@ -49,8 +49,11 @@
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.eva</groupId>
-            <artifactId>variation-commons</artifactId>
-            <version>0.4-SNAPSHOT</version>
+            <artifactId>variation-commons-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.eva</groupId>
+            <artifactId>variation-commons-core</artifactId>
         </dependency>
 
         <dependency>
