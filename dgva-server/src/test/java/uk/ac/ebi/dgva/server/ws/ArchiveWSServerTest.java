@@ -32,7 +32,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.commons.core.models.StudyType;
-import uk.ac.ebi.eva.commons.mongodb.projections.VariantStudySummary;
 import uk.ac.ebi.eva.lib.metadata.dgva.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
@@ -103,16 +102,6 @@ public class ArchiveWSServerTest {
                                                                                              Collectors.counting()));
         given(archiveDgvaDBAdaptor.countStudiesPerType(anyObject()))
                 .willReturn(encapsulateInQueryResult(svStudiesGroupedByStudyType.entrySet().toArray()));
-    }
-
-    private List<VariantStudySummary> buildVariantStudySummaries() {
-        List<VariantStudySummary> studies = new ArrayList<>();
-        VariantStudySummary study = new VariantStudySummary();
-        study.setFilesCount(1);
-        study.setStudyId("studyId");
-        study.setStudyName("studyName");
-        studies.add(study);
-        return studies;
     }
 
     private <T> QueryResult<T> encapsulateInQueryResult(T... results) {

@@ -49,7 +49,11 @@
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.eva</groupId>
-            <artifactId>variation-commons</artifactId>
+            <artifactId>variation-commons-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.eva</groupId>
+            <artifactId>variation-commons-core</artifactId>
         </dependency>
 
         <dependency>
