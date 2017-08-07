@@ -50,7 +50,7 @@
         <dependency>
             <groupId>uk.ac.ebi.eva</groupId>
             <artifactId>variation-commons</artifactId>
-            <version>0.4</version>
+            <version>0.4.1</version>
         </dependency>
 
         <dependency>
