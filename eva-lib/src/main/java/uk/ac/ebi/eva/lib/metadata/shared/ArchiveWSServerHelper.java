@@ -30,7 +30,6 @@ import uk.ac.ebi.eva.lib.utils.QueryUtils;
 import java.util.List;
 import java.util.Map;
 
-@Service
 public class ArchiveWSServerHelper {
 
     public QueryResponse getStudies(List<String> species, List<String> types, QueryUtils queryUtils,

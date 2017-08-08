@@ -52,8 +52,7 @@ public class ArchiveWSServer extends EvaWSServer {
     @Autowired
     private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
 
-    @Autowired
-    private ArchiveWSServerHelper archiveWSServerHelper;
+    private ArchiveWSServerHelper archiveWSServerHelper = new ArchiveWSServerHelper();
 
     @Autowired
     private QueryUtils queryUtils;

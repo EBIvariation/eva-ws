@@ -47,8 +47,7 @@ public class ArchiveWSServer extends DgvaWSServer {
     @Autowired
     private StudyDgvaDBAdaptor studyDgvaDbAdaptor;
 
-    @Autowired
-    private ArchiveWSServerHelper archiveWSServerHelper;
+    private ArchiveWSServerHelper archiveWSServerHelper = new ArchiveWSServerHelper();
 
     @Autowired
     private QueryUtils queryUtils;
