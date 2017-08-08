@@ -31,6 +31,7 @@ import uk.ac.ebi.eva.lib.metadata.eva.VariantSourceEvaProDBAdaptor;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -49,21 +50,26 @@ public class FilesWSServer extends EvaWSServer {
     @Autowired
     private VariantSourceService service;
 
+    @Autowired
+    private QueryUtils queryUtils;
+
     @RequestMapping(value = "/all", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Gets the files of a species")
     public QueryResponse getFiles(@RequestParam("species") String species)
             throws IOException {
-        initializeQuery();
+        queryUtils.initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        return setQueryResponse(buildQueryResult(service.findAll()));
+        return queryUtils.setQueryResponse(queryUtils.buildQueryResult(service.findAll()),
+                                           this.version);
     }
 
     @RequestMapping(value = "/{files}/url", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Gets the URL of a file")
     public QueryResponse getFileUrl(@PathVariable("files") String filenames) {
-        initializeQuery();
-        return setQueryResponse(variantSourceEvaproDbAdaptor.getSourceDownloadUrlByName(Arrays.asList(filenames.split(","))));
+        queryUtils.initializeQuery();
+        return queryUtils.setQueryResponse(variantSourceEvaproDbAdaptor.getSourceDownloadUrlByName(Arrays.asList(filenames.split(","))),
+                                           this.version);
     }
 
 }

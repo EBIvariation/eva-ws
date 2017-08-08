@@ -23,12 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import uk.ac.ebi.eva.lib.utils.QueryOptions;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.QueryUtils;
-
-import java.util.List;
 
 public class EvaWSServer {
 
@@ -40,28 +35,4 @@ public class EvaWSServer {
     protected static Logger logger = LoggerFactory.getLogger(EvaWSServer.class);
     
     public EvaWSServer() { }
-
-    protected QueryOptions getQueryOptions() {
-        return queryUtils.getQueryOptions();
-    }
-
-    protected void initializeQuery() {
-        queryUtils.initializeQuery();
-    }
-
-    protected <T> QueryResponse<T> setQueryResponse(T obj) {
-        return queryUtils.setQueryResponse(obj, version);
-    }
-
-    protected <T> QueryResponse<T> setErrorQueryResponse(String message) {
-        return queryUtils.setErrorQueryResponse(message, version);
-    }
-
-    protected <T> QueryResult<T> buildQueryResult(List<T> results) {
-        return buildQueryResult(results, results.size());
-    }
-
-    protected <T> QueryResult<T> buildQueryResult(List<T> results, long numTotalResults) {
-        return queryUtils.buildQueryResult(results, numTotalResults);
-    }
 }

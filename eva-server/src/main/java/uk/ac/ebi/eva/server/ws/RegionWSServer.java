@@ -42,6 +42,7 @@ import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -56,6 +57,9 @@ public class RegionWSServer extends EvaWSServer {
 
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
+
+    @Autowired
+    private QueryUtils queryUtils;
 
     protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
 
@@ -76,16 +80,17 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
                                              HttpServletResponse response)
             throws IOException, AnnotationMetadataNotFoundException {
-        initializeQuery();
+        queryUtils.initializeQuery();
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify either both annotation VEP version and annotation VEP cache version, or neither");
+            return queryUtils.setQueryResponse("Please specify either both annotation VEP version and annotation VEP cache version, or neither",
+                                               this.version);
         }
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify a species");
+            return queryUtils.setQueryResponse("Please specify a species", this.version);
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
@@ -93,7 +98,7 @@ public class RegionWSServer extends EvaWSServer {
         List<VariantRepositoryFilter> filters = new FilterBuilder()
                 .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
         List<Region> regions = Region.parseRegions(regionId);
-        PageRequest pageRequest = Utils.getPageRequest(getQueryOptions());
+        PageRequest pageRequest = Utils.getPageRequest(queryUtils.getQueryOptions());
 
         List<String> excludeMapped = new ArrayList<>();
         if (exclude != null && !exclude.isEmpty()){
@@ -101,7 +106,7 @@ public class RegionWSServer extends EvaWSServer {
                 String docPath = Utils.getApiToMongoDocNameMap().get(e);
                 if (docPath == null) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    return setQueryResponse("Unrecognised exclude field: " + e);
+                    return queryUtils.setQueryResponse("Unrecognised exclude field: " + e, this.version);
                 }
                 excludeMapped.add(docPath);
             }
@@ -117,13 +122,13 @@ public class RegionWSServer extends EvaWSServer {
 
         Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
-        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
-        return setQueryResponse(queryResult);
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = queryUtils.buildQueryResult(variantEntities, numTotalResults);
+        return queryUtils.setQueryResponse(queryResult, this.version);
     }
 
     @RequestMapping(value = "/{regionId}/variants", method = RequestMethod.OPTIONS)
     public QueryResponse getVariantsByRegion() {
-        return setQueryResponse("");
+        return queryUtils.setQueryResponse("", this.version);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -133,12 +138,12 @@ public class RegionWSServer extends EvaWSServer {
             throws IOException {
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify a species");
+            return queryUtils.setQueryResponse("Please specify a species", this.version);
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List<String> chromosomeList = new ArrayList<>(service.findDistinctChromosomes());
-        QueryResult<String> queryResult = buildQueryResult(chromosomeList);
-        return setQueryResponse(queryResult);
+        QueryResult<String> queryResult = queryUtils.buildQueryResult(chromosomeList);
+        return queryUtils.setQueryResponse(queryResult, this.version);
     }
 }

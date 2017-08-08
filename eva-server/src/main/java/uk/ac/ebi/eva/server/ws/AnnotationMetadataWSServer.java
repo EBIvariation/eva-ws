@@ -29,6 +29,7 @@ import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -41,19 +42,22 @@ public class AnnotationMetadataWSServer extends EvaWSServer {
     @Autowired
     private AnnotationMetadataService service;
 
+    @Autowired
+    private QueryUtils queryUtils;
+
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ResponseBody
     public QueryResponse getAnnotationMetadata(@RequestParam(name = "species") String species,
                                                HttpServletResponse response) {
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify a species");
+            return queryUtils.setQueryResponse("Please specify a species", this.version);
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List<AnnotationMetadata> annotationMetadataList = service.findAllByOrderByCacheVersionDescVepVersionDesc();
-        QueryResult<AnnotationMetadata> queryResult = buildQueryResult(annotationMetadataList);
-        return setQueryResponse(queryResult);
+        QueryResult<AnnotationMetadata> queryResult = queryUtils.buildQueryResult(annotationMetadataList);
+        return queryUtils.setQueryResponse(queryResult, this.version);
     }
 
 }

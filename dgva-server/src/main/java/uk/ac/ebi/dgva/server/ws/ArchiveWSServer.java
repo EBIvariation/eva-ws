@@ -26,9 +26,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import uk.ac.ebi.eva.lib.metadata.dgva.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.utils.QueryOptions;
+import uk.ac.ebi.eva.lib.metadata.shared.ArchiveWSServerHelper;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,8 +40,17 @@ import java.util.Properties;
 @RequestMapping(value = "/v1/meta", produces = "application/json")
 @Api(tags = {"archive"})
 public class ArchiveWSServer extends DgvaWSServer {
+
+    @Autowired
+    private ArchiveDgvaDBAdaptor archiveDgvaDbAdaptor;
+
     @Autowired
     private StudyDgvaDBAdaptor studyDgvaDbAdaptor;
+
+    private ArchiveWSServerHelper archiveWSServerHelper = new ArchiveWSServerHelper();
+
+    @Autowired
+    private QueryUtils queryUtils;
 
     private Properties properties;
     
@@ -49,15 +60,12 @@ public class ArchiveWSServer extends DgvaWSServer {
     @RequestMapping(value = "/studies/all", method = RequestMethod.GET)
     public QueryResponse getStudies(@RequestParam(name = "species", required = false) List<String> species,
                                     @RequestParam(name = "type", required = false) List<String> types) {
-        initializeQuery();
-        QueryOptions queryOptions = getQueryOptions();
-        if (species != null && !species.isEmpty()) {
-            queryOptions.put("species", species);
-        }
-        if (types != null && !types.isEmpty()) {
-            queryOptions.put("type", types);
-        }
+        return archiveWSServerHelper.getStudies(species, types, queryUtils, studyDgvaDbAdaptor, this.version);
+    }
 
-        return setQueryResponse(studyDgvaDbAdaptor.getAllStudies(queryOptions));
+    @RequestMapping(value = "/studies/stats", method = RequestMethod.GET)
+    public QueryResponse getStudiesStats(@RequestParam(name = "species", required = false) List<String> species,
+                                         @RequestParam(name = "type", required = false) List<String> types) {
+        return archiveWSServerHelper.getStudiesStats(species, types, queryUtils, archiveDgvaDbAdaptor, this.version);
     }
 }

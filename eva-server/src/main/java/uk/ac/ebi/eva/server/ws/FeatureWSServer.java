@@ -31,22 +31,22 @@ import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * @author Jose Miguel Mut Lopez &lt;jmmut@ebi.ac.uk&gt;
- */
-
 @RestController
 @RequestMapping(value = "/v1/features", produces = "application/json")
-@Api(tags = {"features"})
+@Api(tags = { "features" })
 public class FeatureWSServer extends EvaWSServer {
 
     @Autowired
     private FeatureService service;
+
+    @Autowired
+    private QueryUtils queryUtils;
 
     protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
 
@@ -55,19 +55,19 @@ public class FeatureWSServer extends EvaWSServer {
                                               @RequestParam("species") String species,
                                               HttpServletResponse response)
             throws IOException {
-        initializeQuery();
+        queryUtils.initializeQuery();
 
         if (species.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setErrorQueryResponse("Please specify a species");
+            return queryUtils.setErrorQueryResponse("Please specify a species", this.version);
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
         List<FeatureCoordinates> features = service.findByIdOrName(featureIdOrName, featureIdOrName);
 
-        QueryResult<FeatureCoordinates> queryResult = buildQueryResult(features);
-        return setQueryResponse(queryResult);
+        QueryResult<FeatureCoordinates> queryResult = queryUtils.buildQueryResult(features);
+        return queryUtils.setQueryResponse(queryResult, this.version);
     }
 
 }

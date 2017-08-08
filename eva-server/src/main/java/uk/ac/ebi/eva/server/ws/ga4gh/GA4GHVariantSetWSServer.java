@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import io.swagger.annotations.Api;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import uk.ac.ebi.eva.commons.core.models.VariantSource;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
 import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantSetsRequest;
@@ -37,11 +39,13 @@ import uk.ac.ebi.eva.lib.models.ga4gh.GAVariantSet;
 import uk.ac.ebi.eva.lib.models.ga4gh.GAVariantSetFactory;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 @RestController
@@ -51,6 +55,9 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
 
     @Autowired
     private VariantSourceService service;
+
+    @Autowired
+    private QueryUtils queryUtils;
 
     protected static Logger logger = LoggerFactory.getLogger(GA4GHVariantSetWSServer.class);
     
@@ -65,7 +72,7 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
                                                       @RequestParam(name = "pageToken", required = false) String pageToken,
                                                       @RequestParam(name = "pageSize", defaultValue = "10") int limit)
             throws IOException {
-        initializeQuery();
+        queryUtils.initializeQuery();
 
         if (studies.isEmpty()) {
             throw new IllegalArgumentException("The 'datasetIds' argument must not be empty");

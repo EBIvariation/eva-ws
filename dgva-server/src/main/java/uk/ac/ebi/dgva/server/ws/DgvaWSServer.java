@@ -20,8 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import uk.ac.ebi.eva.lib.utils.QueryOptions;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
 public class DgvaWSServer {
@@ -34,16 +32,4 @@ public class DgvaWSServer {
     protected static Logger logger = LoggerFactory.getLogger(DgvaWSServer.class);
     
     public DgvaWSServer() { }
-
-    protected QueryOptions getQueryOptions() {
-        return queryUtils.getQueryOptions();
-    }
-
-    protected void initializeQuery() {
-        queryUtils.initializeQuery();
-    }
-
-    protected <T> QueryResponse<T> setQueryResponse(T obj) {
-        return queryUtils.setQueryResponse(obj, version);
-    }
 }

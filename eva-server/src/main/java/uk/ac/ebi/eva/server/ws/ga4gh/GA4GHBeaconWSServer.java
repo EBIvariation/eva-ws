@@ -33,6 +33,7 @@ import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundExceptio
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
 import javax.servlet.http.HttpServletResponse;
@@ -47,6 +48,9 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
+    @Autowired
+    private QueryUtils queryUtils;
+
     protected static Logger logger = LoggerFactory.getLogger(GA4GHBeaconWSServer.class);
 
     public GA4GHBeaconWSServer() { }
@@ -58,7 +62,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
                                       @RequestParam("datasetIds") List<String> studies,
                                       HttpServletResponse response)
             throws IOException, AnnotationMetadataNotFoundException {
-        initializeQuery();
+        queryUtils.initializeQuery();
 
         if (start < 0) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
