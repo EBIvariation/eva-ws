@@ -30,6 +30,7 @@ import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,12 @@ public class EvaWSServer {
         queryOptions.put("limit", (limit > 0) ? limit : -1);
         queryOptions.put("skip", (skip > 0) ? skip : -1);
         queryOptions.put("count", count);
+    }
+
+    protected <T> QueryResponse<T> setQueryResponse(List<T> collection) {
+        QueryResponse<T> queryResponse = buildQueryResponse();
+        queryResponse.setResponse(collection);
+        return queryResponse;
     }
 
     protected <T> QueryResponse<T> setQueryResponse(T obj) {
