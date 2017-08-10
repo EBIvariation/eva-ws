@@ -331,6 +331,7 @@ public class ArchiveWSServerTest {
             assertFalse(variantStudy.getCenter().isEmpty());
             assertFalse(variantStudy.getMaterial().isEmpty());
             assertFalse(variantStudy.getScope().isEmpty());
+            assertFalse(variantStudy.getTypeName().isEmpty());
             assertFalse(variantStudy.getExperimentType().isEmpty());
             assertFalse(variantStudy.getExperimentTypeAbbreviation().isEmpty());
             assertFalse(variantStudy.getAssembly().isEmpty());

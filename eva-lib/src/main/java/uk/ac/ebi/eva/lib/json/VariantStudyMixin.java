@@ -16,8 +16,11 @@
 
 package uk.ac.ebi.eva.lib.json;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties({"typeName"})
 public abstract class VariantStudyMixin {
+
+    @JsonProperty
+    public abstract String getTypeName();
+
 }
