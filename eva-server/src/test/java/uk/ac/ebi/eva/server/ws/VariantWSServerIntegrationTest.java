@@ -62,7 +62,7 @@ import static org.junit.Assert.assertTrue;
         "/test-data/annotation_metadata.json"
 })
 @ActiveProfiles(Profiles.TEST_MONGO_FACTORY)
-public class GeneWSServerIntegrationTest {
+public class VariantWSServerIntegrationTest {
 
     private static final String TEST_DB = "test-db";
 
@@ -87,22 +87,17 @@ public class GeneWSServerIntegrationTest {
     }
 
     @Test
-    public void testGetVariantsByGene() throws URISyntaxException {
-        testGetVariantsByGeneHelper("SH3YL1", 1);
+    public void testGetVariantsByVariantId() throws URISyntaxException {
+        testGetVariantsByVariantIdHelper("rs199692280", 1);
     }
 
     @Test
-    public void testGetVariantsByGenes() throws URISyntaxException {
-        testGetVariantsByGeneHelper("SH3YL1,DDX11L5", 2);
+    public void testGetVariantsByNonExistingVariantId() throws URISyntaxException {
+        testGetVariantsByVariantIdHelper("rs1", 0);
     }
 
-    @Test
-    public void testGetVariantsByNonExistingGene() throws URISyntaxException {
-        testGetVariantsByGeneHelper("ABC", 0);
-    }
-
-    private void testGetVariantsByGeneHelper(String testGene, int expectedVariants) throws URISyntaxException {
-        List<VariantWithSamplesAndAnnotation> results = geneWsHelper(testGene);
+    private void testGetVariantsByVariantIdHelper(String testVariantId, int expectedVariants) throws URISyntaxException {
+        List<VariantWithSamplesAndAnnotation> results = variantWsHelper(testVariantId);
         assertEquals(expectedVariants, results.size());
 
         for (VariantWithSamplesAndAnnotation variantEntity : results) {
@@ -117,16 +112,16 @@ public class GeneWSServerIntegrationTest {
         }
     }
 
-    private List<VariantWithSamplesAndAnnotation> geneWsHelper(String testGene) {
-        String url = "/v1/genes/" + testGene + "/variants?species=mmusculus_grcm38";
+    private List<VariantWithSamplesAndAnnotation> variantWsHelper(String testVariantId) {
+        String url = "/v1/variants/" + testVariantId + "/info?species=mmusculus_grcm38";
         return testRestTemplateHelper(url);
     }
 
     @Test
-    public void testExcludeSourceEntries() {
-        String testGene = "SH3YL1";
-        String testExclusion = "sourceEntries";
-        List<VariantWithSamplesAndAnnotation> results = testExcludeHelper(testGene, testExclusion);
+    public void testExcludeSourceEntriesStatistics() {
+        String testVariantId = "rs199692280";
+        String testExclusion = "sourceEntries.statistics";
+        List<VariantWithSamplesAndAnnotation> results = testExcludeHelper(testVariantId, testExclusion);
         for (VariantWithSamplesAndAnnotation variant : results) {
             for (VariantSourceEntryWithSampleNames sourceEntry : variant.getSourceEntries()) {
                 assertTrue(sourceEntry.getCohortStats().isEmpty());
@@ -134,17 +129,17 @@ public class GeneWSServerIntegrationTest {
         }
     }
 
-    private List<VariantWithSamplesAndAnnotation> testExcludeHelper(String testGene, String testExclusion) {
-        String url = "/v1/genes/" + testGene + "/variants?species=mmusculus_grcm38&exclude=" + testExclusion;
+    private List<VariantWithSamplesAndAnnotation> testExcludeHelper(String testVariantId, String testExclusion) {
+        String url = "/v1/variants/" + testVariantId + "/info?species=mmusculus_grcm38&exclude=" + testExclusion;
         return testRestTemplateHelper(url);
     }
 
     @Test
     public void testVepVersionAndVepCacheVersionFilter() {
-        String testGene = "DDX11L5";
+        String testVariantId = "rs199692280";
         String annotationVepVersion = "78";
         String annotationVepCacheversion = "78";
-        String url = "/v1/genes/" + testGene +
+        String url = "/v1/segments/" + testVariantId +
                 "/variants?species=mmusculus_grcm38&annot-vep-version=" + annotationVepVersion +
                 "&annot-vep-cache-version=" + annotationVepCacheversion;
         List<VariantWithSamplesAndAnnotation> variants = testRestTemplateHelper(url);
