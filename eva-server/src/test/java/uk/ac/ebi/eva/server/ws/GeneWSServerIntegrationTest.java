@@ -103,18 +103,7 @@ public class GeneWSServerIntegrationTest {
 
     private void testGetVariantsByGeneHelper(String testGene, int expectedVariants) throws URISyntaxException {
         List<VariantWithSamplesAndAnnotation> results = geneWsHelper(testGene);
-        assertEquals(expectedVariants, results.size());
-
-        for (VariantWithSamplesAndAnnotation variantEntity : results) {
-            assertFalse(variantEntity.getChromosome().isEmpty());
-            assertFalse(variantEntity.getReference().isEmpty());
-            assertFalse(variantEntity.getAlternate().isEmpty());
-            for (VariantSourceEntryWithSampleNames variantSourceEntry : variantEntity.getSourceEntries()) {
-                assertFalse(variantSourceEntry.getCohortStats().isEmpty());
-            }
-            assertNotEquals(0, variantEntity.getStart());
-            assertNotEquals(0, variantEntity.getEnd());
-        }
+        WSTestHelpers.checkVariantsInFullResults(results, expectedVariants);
     }
 
     private List<VariantWithSamplesAndAnnotation> geneWsHelper(String testGene) {

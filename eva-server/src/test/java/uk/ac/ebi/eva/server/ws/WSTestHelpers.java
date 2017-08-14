@@ -22,6 +22,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
@@ -29,6 +30,8 @@ import uk.ac.ebi.eva.lib.utils.QueryResult;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 
 public class WSTestHelpers {
 
@@ -44,6 +47,22 @@ public class WSTestHelpers {
         assertEquals(1, queryResponse.getResponse().size());
 
         return queryResponse.getResponse().get(0).getResult();
+    }
+
+    public static void checkVariantsInFullResults(List<VariantWithSamplesAndAnnotation> results,
+                                                  int expectedVariants) {
+        assertEquals(expectedVariants, results.size());
+
+        for (VariantWithSamplesAndAnnotation variantEntity : results) {
+            assertFalse(variantEntity.getChromosome().isEmpty());
+            assertFalse(variantEntity.getReference().isEmpty());
+            assertFalse(variantEntity.getAlternate().isEmpty());
+            for (VariantSourceEntryWithSampleNames variantSourceEntry : variantEntity.getSourceEntries()) {
+                assertFalse(variantSourceEntry.getCohortStats().isEmpty());
+            }
+            assertNotEquals(0, variantEntity.getStart());
+            assertNotEquals(0, variantEntity.getEnd());
+        }
     }
 
 }
