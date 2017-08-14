@@ -40,6 +40,7 @@ import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -83,13 +84,25 @@ public class GeneWSServer extends EvaWSServer {
         List<VariantRepositoryFilter> filters = new FilterBuilder()
                 .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
+        List<String> excludeMapped = new ArrayList<>();
+        if (exclude != null && !exclude.isEmpty()){
+            for (String e : exclude) {
+                String docPath = Utils.getApiToMongoDocNameMap().get(e);
+                if (docPath == null) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    return setQueryResponse("Unrecognised exclude field: " + e);
+                }
+                excludeMapped.add(docPath);
+            }
+        }
+
         AnnotationMetadata annotationMetadata = null;
         if (annotationVepVersion != null && annotationVepCacheVersion != null) {
             annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
         }
 
         List<VariantWithSamplesAndAnnotation> variantEntities =
-                service.findByGenesAndComplexFilters(geneIds, filters, annotationMetadata, exclude, Utils.getPageRequest(queryOptions));
+                service.findByGenesAndComplexFilters(geneIds, filters, annotationMetadata, excludeMapped, Utils.getPageRequest(queryOptions));
 
         Long numTotalResults = service.countByGenesAndComplexFilters(geneIds, filters);
 
