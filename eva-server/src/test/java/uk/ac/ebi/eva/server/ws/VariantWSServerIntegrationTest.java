@@ -114,7 +114,7 @@ public class VariantWSServerIntegrationTest {
 
     private List<VariantWithSamplesAndAnnotation> variantWsHelper(String testVariantId) {
         String url = "/v1/variants/" + testVariantId + "/info?species=mmusculus_grcm38";
-        return testRestTemplateHelper(url);
+        return WSTestHelpers.testRestTemplateHelper(url, restTemplate);
     }
 
     @Test
@@ -131,7 +131,7 @@ public class VariantWSServerIntegrationTest {
 
     private List<VariantWithSamplesAndAnnotation> testExcludeHelper(String testVariantId, String testExclusion) {
         String url = "/v1/variants/" + testVariantId + "/info?species=mmusculus_grcm38&exclude=" + testExclusion;
-        return testRestTemplateHelper(url);
+        return WSTestHelpers.testRestTemplateHelper(url, restTemplate);
     }
 
     @Test
@@ -142,25 +142,12 @@ public class VariantWSServerIntegrationTest {
         String url = "/v1/segments/" + testVariantId +
                 "/variants?species=mmusculus_grcm38&annot-vep-version=" + annotationVepVersion +
                 "&annot-vep-cache-version=" + annotationVepCacheversion;
-        List<VariantWithSamplesAndAnnotation> variants = testRestTemplateHelper(url);
+        List<VariantWithSamplesAndAnnotation> variants = WSTestHelpers.testRestTemplateHelper(url, restTemplate);
         for (VariantWithSamplesAndAnnotation variant : variants) {
             Annotation annotation = variant.getAnnotation();
             assertEquals(annotationVepVersion, annotation.getVepVersion());
             assertEquals(annotationVepCacheversion, annotation.getVepCacheVersion());
         }
-    }
-
-    private List<VariantWithSamplesAndAnnotation> testRestTemplateHelper(String url) {
-        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>>() {
-                });
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>> queryResponse = response.getBody();
-        assertEquals(1, queryResponse.getResponse().size());
-
-        return queryResponse.getResponse().get(0).getResult();
     }
 
 }

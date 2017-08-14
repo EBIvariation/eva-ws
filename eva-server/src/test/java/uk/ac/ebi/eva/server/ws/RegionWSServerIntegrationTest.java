@@ -123,7 +123,7 @@ public class RegionWSServerIntegrationTest {
 
     private List<VariantWithSamplesAndAnnotation> regionWsHelper(String testRegion) {
         String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38";
-        return testRestTemplateHelper(url);
+        return WSTestHelpers.testRestTemplateHelper(url, restTemplate);
     }
 
     @Test
@@ -140,7 +140,7 @@ public class RegionWSServerIntegrationTest {
 
     private List<VariantWithSamplesAndAnnotation> testExcludeHelper(String testRegion, String testExclusion) {
         String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38&exclude=" + testExclusion;
-        return testRestTemplateHelper(url);
+        return WSTestHelpers.testRestTemplateHelper(url, restTemplate);
     }
 
     @Test
@@ -151,25 +151,12 @@ public class RegionWSServerIntegrationTest {
         String url = "/v1/segments/" + testRegion +
                 "/variants?species=mmusculus_grcm38&annot-vep-version=" + annotationVepVersion +
                 "&annot-vep-cache-version=" + annotationVepCacheversion;
-        List<VariantWithSamplesAndAnnotation> variants = testRestTemplateHelper(url);
+        List<VariantWithSamplesAndAnnotation> variants = WSTestHelpers.testRestTemplateHelper(url, restTemplate);
         for (VariantWithSamplesAndAnnotation variant : variants) {
             Annotation annotation = variant.getAnnotation();
             assertEquals(annotationVepVersion, annotation.getVepVersion());
             assertEquals(annotationVepCacheversion, annotation.getVepCacheVersion());
         }
-    }
-
-    private List<VariantWithSamplesAndAnnotation> testRestTemplateHelper(String url) {
-        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>>() {
-                });
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>> queryResponse = response.getBody();
-        assertEquals(1, queryResponse.getResponse().size());
-
-        return queryResponse.getResponse().get(0).getResult();
     }
 
 }
