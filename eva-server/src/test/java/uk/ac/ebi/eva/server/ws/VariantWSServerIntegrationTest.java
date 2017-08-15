@@ -1,14 +1,11 @@
 /*
- * European Variation Archive (EVA) - Open-access database of all types of genetic
- * variation data from all species
- *
- * Copyright 2016 EMBL - European Bioinformatics Institute
+ * Copyright 2017 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -57,7 +54,7 @@ import static org.junit.Assert.assertTrue;
         "/test-data/annotation_metadata.json"
 })
 @ActiveProfiles(Profiles.TEST_MONGO_FACTORY)
-public class RegionWSServerIntegrationTest {
+public class VariantWSServerIntegrationTest {
 
     private static final String TEST_DB = "test-db";
 
@@ -82,35 +79,30 @@ public class RegionWSServerIntegrationTest {
     }
 
     @Test
-    public void testGetVariantsByRegion() throws URISyntaxException {
-        testGetVariantsByRegionHelper("20:60000-62000", 1);
+    public void testGetVariantsByVariantId() throws URISyntaxException {
+        testGetVariantsByVariantIdHelper("rs199692280", 1);
     }
 
     @Test
-    public void testGetVariantsByRegions() throws URISyntaxException {
-        testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 2);
+    public void testGetVariantsByNonExistingVariantId() throws URISyntaxException {
+        testGetVariantsByVariantIdHelper("rs1", 0);
     }
 
-    @Test
-    public void testGetVariantsByNonExistingRegion() throws URISyntaxException {
-        testGetVariantsByRegionHelper("21:8000-9000", 0);
-    }
-
-    private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants) throws URISyntaxException {
-        List<VariantWithSamplesAndAnnotation> results = regionWsHelper(testRegion);
+    private void testGetVariantsByVariantIdHelper(String testVariantId, int expectedVariants) throws URISyntaxException {
+        List<VariantWithSamplesAndAnnotation> results = variantWsHelper(testVariantId);
         WSTestHelpers.checkVariantsInFullResults(results, expectedVariants);
     }
 
-    private List<VariantWithSamplesAndAnnotation> regionWsHelper(String testRegion) {
-        String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38";
+    private List<VariantWithSamplesAndAnnotation> variantWsHelper(String testVariantId) {
+        String url = "/v1/variants/" + testVariantId + "/info?species=mmusculus_grcm38";
         return WSTestHelpers.testRestTemplateHelper(url, restTemplate);
     }
 
     @Test
     public void testExcludeSourceEntriesStatistics() {
-        String testRegion = "20:60099-60102";
+        String testVariantId = "rs199692280";
         String testExclusion = "sourceEntries.statistics";
-        List<VariantWithSamplesAndAnnotation> results = testExcludeHelper(testRegion, testExclusion);
+        List<VariantWithSamplesAndAnnotation> results = testExcludeHelper(testVariantId, testExclusion);
         for (VariantWithSamplesAndAnnotation variant : results) {
             for (VariantSourceEntryWithSampleNames sourceEntry : variant.getSourceEntries()) {
                 assertTrue(sourceEntry.getCohortStats().isEmpty());
@@ -118,17 +110,17 @@ public class RegionWSServerIntegrationTest {
         }
     }
 
-    private List<VariantWithSamplesAndAnnotation> testExcludeHelper(String testRegion, String testExclusion) {
-        String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38&exclude=" + testExclusion;
+    private List<VariantWithSamplesAndAnnotation> testExcludeHelper(String testVariantId, String testExclusion) {
+        String url = "/v1/variants/" + testVariantId + "/info?species=mmusculus_grcm38&exclude=" + testExclusion;
         return WSTestHelpers.testRestTemplateHelper(url, restTemplate);
     }
 
     @Test
     public void testVepVersionAndVepCacheVersionFilter() {
-        String testRegion = "20:60000-62000";
+        String testVariantId = "rs199692280";
         String annotationVepVersion = "78";
         String annotationVepCacheversion = "78";
-        String url = "/v1/segments/" + testRegion +
+        String url = "/v1/segments/" + testVariantId +
                 "/variants?species=mmusculus_grcm38&annot-vep-version=" + annotationVepVersion +
                 "&annot-vep-cache-version=" + annotationVepCacheversion;
         List<VariantWithSamplesAndAnnotation> variants = WSTestHelpers.testRestTemplateHelper(url, restTemplate);
