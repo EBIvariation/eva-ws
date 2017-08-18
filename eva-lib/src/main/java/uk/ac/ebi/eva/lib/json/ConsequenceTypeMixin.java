@@ -16,14 +16,14 @@
 
 package uk.ac.ebi.eva.lib.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import uk.ac.ebi.eva.commons.core.models.Score;
-
 import java.util.Set;
 
+@JsonIgnoreProperties({"sift", "polyphen"})
 public abstract class ConsequenceTypeMixin {
 
     @JsonSerialize(using = SoTermsSerializer.class)
@@ -34,11 +34,4 @@ public abstract class ConsequenceTypeMixin {
     @JsonProperty("soTerms")
     private Set<Integer> soAccessions;
 
-    @JsonSerialize(using = SiftSerializer.class)
-    @JsonProperty("proteinSubstitutionScores")
-    abstract public Score getSift();
-
-    @JsonDeserialize(using = SiftDeserializer.class)
-    @JsonProperty("proteinSubstitutionScores")
-    private Score sift;
 }
