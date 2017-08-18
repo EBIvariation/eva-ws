@@ -20,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import uk.ac.ebi.eva.commons.core.models.Score;
+
 import java.util.Set;
 
 public abstract class ConsequenceTypeMixin {
@@ -31,4 +33,12 @@ public abstract class ConsequenceTypeMixin {
     @JsonDeserialize(using = SoTermsDeserializer.class)
     @JsonProperty("soTerms")
     private Set<Integer> soAccessions;
+
+    @JsonSerialize(using = SiftSerializer.class)
+    @JsonProperty("proteinSubstitutionScores")
+    abstract public Score getSift();
+
+    @JsonDeserialize(using = SiftDeserializer.class)
+    @JsonProperty("proteinSubstitutionScores")
+    private Score sift;
 }
