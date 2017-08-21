@@ -16,6 +16,8 @@
 
 package uk.ac.ebi.eva.server.ws;
 
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -36,17 +38,13 @@ import static org.junit.Assert.assertNotEquals;
 
 public class WSTestHelpers {
 
-    public static List<Map> testRestTemplateHelperString(String url, TestRestTemplate restTemplate) {
-        ResponseEntity<QueryResponse<QueryResult<Map>>> response = restTemplate.exchange(
+    public static JSONObject testRestTemplateHelperJsonObject(String url, TestRestTemplate restTemplate) {
+        ResponseEntity<String> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Map>>>() {
+                new ParameterizedTypeReference<String>() {
                 });
         assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        QueryResponse<QueryResult<Map>> queryResponse = response.getBody();
-        assertEquals(1, queryResponse.getResponse().size());
-
-        return queryResponse.getResponse().get(0).getResult();
+        return new JSONObject(new JSONTokener(response.getBody()));
     }
 
     public static List<VariantWithSamplesAndAnnotation> testRestTemplateHelper(String url,

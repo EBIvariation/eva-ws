@@ -17,6 +17,8 @@ package uk.ac.ebi.eva.server.ws;
 
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,7 +33,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.commons.core.models.Annotation;
-import uk.ac.ebi.eva.commons.core.models.ConsequenceType;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
@@ -43,7 +44,6 @@ import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -137,12 +137,22 @@ public class VariantWSServerIntegrationTest {
     public void testProteinSubstitutionScoresModel() {
         String testVariantId = "rs370478";
         String url = "/v1/variants/" + testVariantId + "/info?species=mmusculus_grcm38";
-        List<VariantWithSamplesAndAnnotation> variants = WSTestHelpers.testRestTemplateHelper(url, restTemplate);
-        for (VariantWithSamplesAndAnnotation variant : variants) {
-            for (ConsequenceType consequenceType : variant.getAnnotation().getConsequenceTypes()) {
-                if (consequenceType.getProteinSubstitutionScores().size() > 0) {
-                    assertNotNull(consequenceType.getSift());
-                    assertNotNull(consequenceType.getPolyphen());
+        JSONObject jsonObject = WSTestHelpers.testRestTemplateHelperJsonObject(url, restTemplate);
+        JSONArray responseArray = jsonObject.getJSONArray("response");
+        for (int i = 0; i < responseArray.length(); ++i) {
+            JSONObject response = responseArray.getJSONObject(i);
+            JSONArray resultArray = response.getJSONArray("result");
+            for (int j = 0; j < resultArray.length(); ++j) {
+                JSONObject result = resultArray.getJSONObject(j);
+                JSONArray consequenceTypes = result.getJSONObject("annotation").getJSONArray("consequenceTypes");
+                for (int k = 0; k < consequenceTypes.length(); ++k) {
+                    JSONObject consequenceType = consequenceTypes.getJSONObject(k);
+                    if (!consequenceType.has("ensemblTranscriptId")){
+                        continue;
+                    }
+                    if (consequenceType.getString("ensemblTranscriptId").equals("ENST00000426146")) {
+                        assertTrue(consequenceType.has("proteinSubstitutionScores"));
+                    }
                 }
             }
         }
