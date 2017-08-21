@@ -28,12 +28,26 @@ import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
 public class WSTestHelpers {
+
+    public static List<Map> testRestTemplateHelperString(String url, TestRestTemplate restTemplate) {
+        ResponseEntity<QueryResponse<QueryResult<Map>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<Map>>>() {
+                });
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        QueryResponse<QueryResult<Map>> queryResponse = response.getBody();
+        assertEquals(1, queryResponse.getResponse().size());
+
+        return queryResponse.getResponse().get(0).getResult();
+    }
 
     public static List<VariantWithSamplesAndAnnotation> testRestTemplateHelper(String url,
                                                                                TestRestTemplate restTemplate) {

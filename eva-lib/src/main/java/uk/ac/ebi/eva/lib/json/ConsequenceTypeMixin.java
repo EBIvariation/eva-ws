@@ -21,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import uk.ac.ebi.eva.commons.core.models.ws.ScoreWithSource;
+
 import java.util.Set;
 
 @JsonIgnoreProperties({"sift", "polyphen"})
@@ -34,4 +36,9 @@ public abstract class ConsequenceTypeMixin {
     @JsonProperty("soTerms")
     private Set<Integer> soAccessions;
 
+    @JsonProperty
+    abstract public Set<ScoreWithSource> getProteinSubstitutionScores();
+
+    @JsonProperty
+    abstract public void setProteinSubstitutionScores(Set<ScoreWithSource> proteinSubstitutionScores);
 }

@@ -43,7 +43,7 @@ import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -141,8 +141,8 @@ public class VariantWSServerIntegrationTest {
         for (VariantWithSamplesAndAnnotation variant : variants) {
             for (ConsequenceType consequenceType : variant.getAnnotation().getConsequenceTypes()) {
                 if (consequenceType.getProteinSubstitutionScores().size() > 0) {
-                    assertNull(consequenceType.getSift());
-                    assertNull(consequenceType.getPolyphen());
+                    assertNotNull(consequenceType.getSift());
+                    assertNotNull(consequenceType.getPolyphen());
                 }
             }
         }
