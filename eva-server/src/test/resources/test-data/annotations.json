@@ -401,7 +401,15 @@
           ],
           "aaChange": "-",
           "gn": "DDX11L5",
-          "strand": "+"
+          "strand": "+",
+          "sift": {
+            "sc": 0.2,
+            "desc": "unknown"
+          },
+          "polyphen": {
+            "sc": 0.3,
+            "desc": "unknown"
+          }
         },
         {
           "bt": "regulatory_region",
