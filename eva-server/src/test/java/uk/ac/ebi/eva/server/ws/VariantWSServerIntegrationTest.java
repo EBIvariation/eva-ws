@@ -44,6 +44,7 @@ import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -152,6 +153,8 @@ public class VariantWSServerIntegrationTest {
                     }
                     if (consequenceType.getString("ensemblTranscriptId").equals("ENST00000426146")) {
                         assertTrue(consequenceType.has("proteinSubstitutionScores"));
+                        assertFalse(consequenceType.has("sift"));
+                        assertFalse(consequenceType.has("polyphen"));
                     }
                 }
             }
