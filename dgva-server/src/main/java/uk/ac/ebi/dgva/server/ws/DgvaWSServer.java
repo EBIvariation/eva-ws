@@ -24,12 +24,13 @@ import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
+
 public class DgvaWSServer {
 
     protected final String version = "v1";
 
     @Autowired
-    private QueryUtils queryUtils;
+    protected QueryUtils queryUtils;
 
     protected static Logger logger = LoggerFactory.getLogger(DgvaWSServer.class);
     
