@@ -29,9 +29,6 @@ import uk.ac.ebi.eva.lib.dgva_utils.DgvaDBUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by jorizci on 03/10/16.
- */
 @Component
 public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
 
