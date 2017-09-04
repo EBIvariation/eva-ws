@@ -30,9 +30,6 @@ import java.util.List;
 import static uk.ac.ebi.eva.lib.utils.EvaproDbUtils.getSpeciesAndTypeFilters;
 
 
-/**
- * Created by jorizci on 04/10/16.
- */
 @Component
 public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
 
