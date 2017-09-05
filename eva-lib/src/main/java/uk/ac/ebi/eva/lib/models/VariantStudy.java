@@ -55,6 +55,8 @@ public class VariantStudy {
 
     private String assembly;
 
+    private String assemblyAccession;
+
     private String platform;
 
     private URI url;
@@ -78,13 +80,15 @@ public class VariantStudy {
 
     public VariantStudy(String studyName, String studyId, List<VariantSourceEntryWithSampleNames> sources) {
         this(studyName, studyId, sources, null, new int[0], null, null, null, null, null, null, StudyType.COLLECTION,
-                null, null, null, null, null, new String[0], -1, -1);
+             null, null, null, null, null, null, new String[0], -1, -1);
     }
 
-    public VariantStudy(String studyName, String studyId, List<VariantSourceEntryWithSampleNames> sources, String description, int[] taxonomyId,
-                        String speciesCommonName, String speciesScientificName, String sourceType, String center, String material,
-                        String scope, StudyType type, String experimentType, String experimentTypeAbbreviation, String referenceAssembly,
-                        String platform, URI projectUrl, String[] publications, int numVariants, int numSamples) {
+    public VariantStudy(String studyName, String studyId, List<VariantSourceEntryWithSampleNames> sources,
+                        String description, int[] taxonomyId, String speciesCommonName, String speciesScientificName,
+                        String sourceType, String center, String material, String scope, StudyType type,
+                        String experimentType, String experimentTypeAbbreviation, String referenceAssembly,
+                        String referenceAssemblyAccession, String platform, URI projectUrl, String[] publications,
+                        int numVariants, int numSamples) {
         this.name = studyName;
         this.id = studyId;
         this.description = description;
@@ -99,6 +103,7 @@ public class VariantStudy {
         this.experimentType = experimentType;
         this.experimentTypeAbbreviation = experimentTypeAbbreviation;
         this.assembly = referenceAssembly;
+        this.assemblyAccession = referenceAssemblyAccession;
         this.platform = platform;
         this.url = projectUrl;
         this.publications = (publications == null) ? new String[0] : publications;
@@ -221,6 +226,14 @@ public class VariantStudy {
 
     public void setAssembly(String assembly) {
         this.assembly = assembly;
+    }
+
+    public String getAssemblyAccession() {
+        return assemblyAccession;
+    }
+
+    public void setAssemblyAccession(String assemblyAccession) {
+        this.assemblyAccession = assemblyAccession;
     }
 
     public String getPlatform() {

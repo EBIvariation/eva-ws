@@ -24,9 +24,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 
-/**
- * Created by jorizci on 03/10/16.
- */
 @Entity
 @Table(name = "study_browser")
 public class EvaStudyBrowser {
@@ -141,7 +138,7 @@ public class EvaStudyBrowser {
                 description, taxIds, commonName, scientificName,
                 sourceType, center, material, scope,
                 StudyType.fromString(studyType), experimentType,
-                experimentTypeAbbreviation, assemblyName, platform,
+                experimentTypeAbbreviation, assemblyName, assemblyAccession, platform,
                 uri, publications.split(", "), notNullVariantCount, samples);
     }
 }
