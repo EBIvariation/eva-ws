@@ -65,7 +65,7 @@ public class GA4GHVariantWSServerTest {
                 null));
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(variant);
 
-        Region region = new Region("1", 500, 2000);
+        Region region = new Region("1", 500L, 2000L);
 
         given(variantEntityRepository.findByRegionsAndComplexFilters(eq(Collections.singletonList(region)),
                                                                      any(),

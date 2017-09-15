@@ -71,8 +71,8 @@ public class GA4GHVariantWSServer extends EvaWSServer {
      */
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public GASearchVariantsResponse getVariantsByRegion(@RequestParam("referenceName") String chromosome,
-                                                        @RequestParam("start") int start,
-                                                        @RequestParam("end") int end,
+                                                        @RequestParam("start") Long start,
+                                                        @RequestParam("end") Long end,
 //                                        @RequestParam("variantName") String id,
                                                         @RequestParam(name = "variantSetIds", required = false) List<String> files,
 //                                        @RequestParam(name = "callSetIds", required = false) String samples,
@@ -114,7 +114,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
     public GASearchVariantsResponse getVariantsByRegion(GASearchVariantRequest request)
             throws UnknownHostException, IOException, AnnotationMetadataNotFoundException {
         request.validate();
-        return getVariantsByRegion(request.getReferenceName(), (int) request.getStart(), (int) request.getEnd(),
+        return getVariantsByRegion(request.getReferenceName(), request.getStart(), request.getEnd(),
                 request.getVariantSetIds(), request.getPageToken(), request.getPageSize());
     }
 
