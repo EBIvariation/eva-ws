@@ -65,13 +65,13 @@ public class RegionWSServerTest {
         VariantWithSamplesAndAnnotation variantEntity = new VariantWithSamplesAndAnnotation("chr1", 1000, 1005, "reference", "alternate");
 
         List<Region> oneRegion = Arrays.asList(
-                new Region("20", 60000, 62000));
+                new Region("20", 60000L, 62000L));
         given(service.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any(), any()))
                 .willReturn(Collections.singletonList(variantEntity));
 
         List<Region> twoRegions = Arrays.asList(
-                new Region("20", 60000, 61000),
-                new Region("20", 61500, 62500));
+                new Region("20", 60000L, 61000L),
+                new Region("20", 61500L, 62500L));
         given(service.findByRegionsAndComplexFilters(eq(twoRegions), any(), any(), any(), any()))
                 .willReturn(Arrays.asList(variantEntity, variantEntity));
 
