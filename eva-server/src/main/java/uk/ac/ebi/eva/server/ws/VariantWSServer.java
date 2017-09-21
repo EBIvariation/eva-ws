@@ -126,7 +126,7 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAlleles(String chromosome, int start,
+    private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAlleles(String chromosome, long start,
                                                                                String reference, String alternate,
                                                                                String annotationVepVersion,
                                                                                String annotationVepCacheversion) throws AnnotationMetadataNotFoundException {
@@ -194,7 +194,7 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAllelesAndStudyIds(String chromosome, int start,
+    private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAllelesAndStudyIds(String chromosome, long start,
                                                                                            String reference,
                                                                                            String alternate,
                                                                                            List<String> studyIds) throws AnnotationMetadataNotFoundException {

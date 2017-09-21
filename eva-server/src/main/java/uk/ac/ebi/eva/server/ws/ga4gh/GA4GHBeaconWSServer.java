@@ -53,7 +53,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
     
     @RequestMapping(value = "/beacon", method = RequestMethod.GET)
     public GA4GHBeaconResponse beacon(@RequestParam("referenceName") String chromosome,
-                                      @RequestParam("start") int start,
+                                      @RequestParam("start") long start,
                                       @RequestParam("allele") String allele,
                                       @RequestParam("datasetIds") List<String> studies,
                                       HttpServletResponse response)

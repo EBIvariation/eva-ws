@@ -72,7 +72,7 @@ public class GA4GHBeaconWSServerTest {
         assertFalse(testBeaconHelper("2", 2000, "alternateOther", new ArrayList<>()));
     }
 
-    private boolean testBeaconHelper(String chromosome, int start, String allele, List<String> datasetIds) {
+    private boolean testBeaconHelper(String chromosome, long start, String allele, List<String> datasetIds) {
         String url = String.format("/v1/ga4gh/beacon?referenceName=%s&start=%d&allele=%s&datasetIds=%s",
                 chromosome,
                 start,
