@@ -94,7 +94,7 @@ public class GA4GHVariantWSServerTest {
         assertEquals(0, gaSearchVariantsResponse.getVariants().size());
     }
 
-    private GASearchVariantsResponse testVariantWsHelper(String chromosome, int start, int end,
+    private GASearchVariantsResponse testVariantWsHelper(String chromosome, long start, long end,
                                                          List<String> variantSetIds, String pageToken, int pageSize) {
 
         String url = String.format("/v1/ga4gh/variants/search?" +
