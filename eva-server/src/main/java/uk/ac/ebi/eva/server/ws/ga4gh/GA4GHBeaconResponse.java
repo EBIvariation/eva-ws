@@ -19,7 +19,7 @@ public class GA4GHBeaconResponse {
 
     private String chromosome;
 
-    private Integer start;
+    private Long start;
 
     private String allele;
 
@@ -32,7 +32,7 @@ public class GA4GHBeaconResponse {
     GA4GHBeaconResponse() {
     }
 
-    public GA4GHBeaconResponse(String chromosome, Integer start, String allele, String datasetIds, boolean exists) {
+    public GA4GHBeaconResponse(String chromosome, Long start, String allele, String datasetIds, boolean exists) {
         this.chromosome = chromosome;
         this.start = start;
         this.allele = allele;
@@ -40,7 +40,7 @@ public class GA4GHBeaconResponse {
         this.exists = exists;
     }
 
-    public GA4GHBeaconResponse(String chromosome, Integer start, String allele, String datasetIds, String errorMessage) {
+    public GA4GHBeaconResponse(String chromosome, Long start, String allele, String datasetIds, String errorMessage) {
         this.chromosome = chromosome;
         this.start = start;
         this.allele = allele;
