@@ -15,9 +15,7 @@
  */
 package uk.ac.ebi.eva.server;
 
-import javax.persistence.Column;
 import javax.persistence.Convert;
-import javax.persistence.Converter;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
