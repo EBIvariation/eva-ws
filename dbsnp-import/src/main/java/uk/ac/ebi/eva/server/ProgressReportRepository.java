@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package uk.ac.ebi.eva.server;
-import java.util.List;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;

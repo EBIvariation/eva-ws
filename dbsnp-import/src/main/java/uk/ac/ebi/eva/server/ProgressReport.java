@@ -58,6 +58,28 @@ public class ProgressReport {
 
     private Date rsSynonymsImportedDate;
 
+    ProgressReport() {
+
+    }
+
+    ProgressReport(String databaseName, int taxId, String scientificName, String genbankAssemblyAccession,
+                   int lastDbsnpBuild, boolean inEnsembl, boolean toVariantWarehouse, boolean assemblyFullyMatches,
+                   Status variantsImported, Status rsSynonymsImported, Date variantsImportedDate,
+                   Date rsSynonymsImportedDate) {
+        this.databaseName = databaseName;
+        this.taxId = taxId;
+        this.scientificName = scientificName;
+        this.genbankAssemblyAccession = genbankAssemblyAccession;
+        this.lastDbsnpBuild = lastDbsnpBuild;
+        this.inEnsembl = inEnsembl;
+        this.toVariantWarehouse = toVariantWarehouse;
+        this.assemblyFullyMatches = assemblyFullyMatches;
+        this.variantsImported = variantsImported;
+        this.rsSynonymsImported = rsSynonymsImported;
+        this.variantsImportedDate = variantsImportedDate;
+        this.rsSynonymsImportedDate = rsSynonymsImportedDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -81,5 +103,53 @@ public class ProgressReport {
         result = 31 * result + (genbankAssemblyAccession != null ? genbankAssemblyAccession.hashCode() : 0);
         result = 31 * result + lastDbsnpBuild;
         return result;
+    }
+
+    public String getDatabaseName() {
+        return databaseName;
+    }
+
+    public int getTaxId() {
+        return taxId;
+    }
+
+    public String getScientificName() {
+        return scientificName;
+    }
+
+    public String getGenbankAssemblyAccession() {
+        return genbankAssemblyAccession;
+    }
+
+    public int getLastDbsnpBuild() {
+        return lastDbsnpBuild;
+    }
+
+    public boolean isInEnsembl() {
+        return inEnsembl;
+    }
+
+    public boolean isToVariantWarehouse() {
+        return toVariantWarehouse;
+    }
+
+    public boolean isAssemblyFullyMatches() {
+        return assemblyFullyMatches;
+    }
+
+    public Status getVariantsImported() {
+        return variantsImported;
+    }
+
+    public Status getRsSynonymsImported() {
+        return rsSynonymsImported;
+    }
+
+    public Date getVariantsImportedDate() {
+        return variantsImportedDate;
+    }
+
+    public Date getRsSynonymsImportedDate() {
+        return rsSynonymsImportedDate;
     }
 }
