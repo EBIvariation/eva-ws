@@ -17,8 +17,19 @@ package uk.ac.ebi.eva.server;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 @RepositoryRestResource(path = "progress")
 public interface ProgressReportRepository extends PagingAndSortingRepository<ProgressReport, String> {
+
+    // Prevents POST, PUT and PATCH
+    @Override
+    @RestResource(exported = false)
+    ProgressReport save(ProgressReport s);
+
+    // Prevents DELETE
+    @Override
+    @RestResource(exported = false)
+    void delete(ProgressReport t);
 
 }
