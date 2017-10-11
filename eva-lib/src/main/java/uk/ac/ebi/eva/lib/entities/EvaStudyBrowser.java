@@ -88,12 +88,14 @@ public class EvaStudyBrowser {
 
     private String resource;
 
+    private boolean browsable;
+
     public EvaStudyBrowser(String projectAccession, long studyId, String projectTitle, String description,
                            String taxId, String commonName, String scientificName, String sourceType,
                            String studyType, Long variantCount, Integer samples, String center, String scope,
                            String material, String publications, String associatedProjects, String experimentType,
                            String experimentTypeAbbreviation, String assemblyAccession, String assemblyName,
-                           String platform, String resource) {
+                           String platform, String resource, boolean browsable) {
         this.projectAccession = projectAccession;
         this.studyId = studyId;
         this.projectTitle = projectTitle;
@@ -116,6 +118,7 @@ public class EvaStudyBrowser {
         this.assemblyName = assemblyName;
         this.platform = platform;
         this.resource = resource;
+        this.browsable = browsable;
     }
 
     EvaStudyBrowser() { }
@@ -139,6 +142,6 @@ public class EvaStudyBrowser {
                                 sourceType, center, material, scope,
                                 StudyType.fromString(studyType), experimentType,
                                 experimentTypeAbbreviation, assemblyName, platform,
-                                uri, publications.split(", "), notNullVariantCount, samples);
+                                uri, publications.split(", "), notNullVariantCount, samples, browsable);
     }
 }

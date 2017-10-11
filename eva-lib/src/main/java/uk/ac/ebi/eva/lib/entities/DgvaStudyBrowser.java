@@ -112,7 +112,7 @@ public class DgvaStudyBrowser {
                                               studyDescription, taxIds, commonName, scientificName,
                                               null, null, null, null, EvaproDbUtils.stringToStudyType(studyType), analysisType,
                                               null, assemblyName, platformName, uri, publications,
-                                              -1, -1);
+                                              -1, -1, false);
         return study;
     }
 }
