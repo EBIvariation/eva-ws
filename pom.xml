@@ -13,6 +13,7 @@
         <module>eva-lib</module>
         <module>eva-server</module>
         <module>dgva-server</module>
+        <module>dbsnp-import</module>
     </modules>
 
     <parent>
