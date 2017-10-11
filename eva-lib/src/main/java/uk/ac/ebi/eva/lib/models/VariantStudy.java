@@ -69,6 +69,7 @@ public class VariantStudy {
 
     private List<VariantSourceEntryWithSampleNames> sources;
 
+    private boolean browsable;
 
     public VariantStudy() {
         this(null, null);
@@ -80,7 +81,7 @@ public class VariantStudy {
 
     public VariantStudy(String studyName, String studyId, List<VariantSourceEntryWithSampleNames> sources) {
         this(studyName, studyId, sources, null, new int[0], null, null, null, null, null, null, StudyType.COLLECTION,
-             null, null, null, null, null, null, new String[0], -1, -1);
+             null, null, null, null, null, null, new String[0], -1, -1, false);
     }
 
     public VariantStudy(String studyName, String studyId, List<VariantSourceEntryWithSampleNames> sources,
@@ -88,7 +89,7 @@ public class VariantStudy {
                         String sourceType, String center, String material, String scope, StudyType type,
                         String experimentType, String experimentTypeAbbreviation, String referenceAssembly,
                         String referenceAssemblyAccession, String platform, URI projectUrl, String[] publications,
-                        int numVariants, int numSamples) {
+                        int numVariants, int numSamples, boolean browsable) {
         this.name = studyName;
         this.id = studyId;
         this.description = description;
@@ -110,6 +111,7 @@ public class VariantStudy {
         this.numVariants = numVariants;
         this.numSamples = numSamples;
         this.sources = sources;
+        this.browsable = browsable;
     }
 
     public String getName() {
@@ -286,5 +288,13 @@ public class VariantStudy {
 
     public boolean addSource(VariantSourceEntryWithSampleNames source) {
         return this.sources.add(source);
+    }
+
+    public boolean isBrowsable() {
+        return browsable;
+    }
+
+    public void setBrowsable(boolean browsable) {
+        this.browsable = browsable;
     }
 }
