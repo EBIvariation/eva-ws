@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.server;
+package uk.ac.ebi.eva.server.models;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -60,10 +60,11 @@ public class ProgressReport {
 
     }
 
-    ProgressReport(String databaseName, int taxId, String scientificName, String genbankAssemblyAccession,
-                   int lastDbsnpBuild, boolean inEnsembl, boolean toVariantWarehouse, boolean assemblyFullyMatches,
-                   Status variantsImported, Status rsSynonymsImported, Date variantsImportedDate,
-                   Date rsSynonymsImportedDate) {
+    public ProgressReport(String databaseName, int taxId, String scientificName, String genbankAssemblyAccession,
+                          int lastDbsnpBuild, boolean inEnsembl, boolean toVariantWarehouse,
+                          boolean assemblyFullyMatches,
+                          Status variantsImported, Status rsSynonymsImported, Date variantsImportedDate,
+                          Date rsSynonymsImportedDate) {
         this.databaseName = databaseName;
         this.taxId = taxId;
         this.scientificName = scientificName;

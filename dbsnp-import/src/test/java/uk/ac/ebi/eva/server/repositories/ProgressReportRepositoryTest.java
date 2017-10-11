@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.server;
+package uk.ac.ebi.eva.server.repositories;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import uk.ac.ebi.eva.server.models.ProgressReport;
+import uk.ac.ebi.eva.server.models.Status;
 
 import static org.junit.Assert.assertEquals;
 

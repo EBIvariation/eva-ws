@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.server;
+package uk.ac.ebi.eva.server.repositories;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
+
+import uk.ac.ebi.eva.server.models.ProgressReport;
 
 @RepositoryRestResource(path = "progress")
 public interface ProgressReportRepository extends PagingAndSortingRepository<ProgressReport, String> {
