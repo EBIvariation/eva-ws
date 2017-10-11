@@ -10,8 +10,7 @@
     </parent>
 
     <artifactId>dbsnp-import</artifactId>
-    <!--<packaging>war</packaging>-->
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <dependencies>
         <dependency>
