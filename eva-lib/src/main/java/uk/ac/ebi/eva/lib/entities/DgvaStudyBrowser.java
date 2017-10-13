@@ -111,7 +111,7 @@ public class DgvaStudyBrowser {
         VariantStudy study = new VariantStudy(displayName, studyAccession, null,
                                               studyDescription, taxIds, commonName, scientificName,
                                               null, null, null, null, EvaproDbUtils.stringToStudyType(studyType), analysisType,
-                                              null, assemblyName, null, platformName, uri, publications, -1);
+                                              null, assemblyName, null, platformName, uri, publications, -1, -1);
         return study;
     }
 }

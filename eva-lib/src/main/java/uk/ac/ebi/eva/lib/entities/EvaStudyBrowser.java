@@ -139,6 +139,6 @@ public class EvaStudyBrowser {
                                 sourceType, center, material, scope,
                                 StudyType.fromString(studyType), experimentType,
                                 experimentTypeAbbreviation, assemblyName, assemblyAccession, platform,
-                                uri, publications.split(", "), samples);
+                                uri, publications.split(", "), notNullVariantCount, samples);
     }
 }
