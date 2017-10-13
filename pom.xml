@@ -13,6 +13,7 @@
         <module>eva-lib</module>
         <module>eva-server</module>
         <module>dgva-server</module>
+        <module>dbsnp-import</module>
     </modules>
 
     <parent>
@@ -63,7 +64,7 @@
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>9.3-1102-jdbc41</version>
+                <version>9.4.1212</version>
             </dependency>
             <dependency>
                 <groupId>asm</groupId>
