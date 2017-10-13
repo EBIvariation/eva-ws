@@ -123,8 +123,8 @@ public class VariantWSServerIntegrationTest {
         String testVariantId = "rs199692280";
         String annotationVepVersion = "78";
         String annotationVepCacheversion = "78";
-        String url = "/v1/segments/" + testVariantId +
-                "/variants?species=mmusculus_grcm38&annot-vep-version=" + annotationVepVersion +
+        String url = "/v1/variants/" + testVariantId +
+                "/info?species=mmusculus_grcm38&annot-vep-version=" + annotationVepVersion +
                 "&annot-vep-cache-version=" + annotationVepCacheversion;
         List<VariantWithSamplesAndAnnotation> variants = WSTestHelpers.testRestTemplateHelper(url, restTemplate);
         for (VariantWithSamplesAndAnnotation variant : variants) {
@@ -132,6 +132,7 @@ public class VariantWSServerIntegrationTest {
             assertEquals(annotationVepVersion, annotation.getVepVersion());
             assertEquals(annotationVepCacheversion, annotation.getVepCacheVersion());
         }
+        assertTrue(variants.size() > 0);
     }
 
     @Test

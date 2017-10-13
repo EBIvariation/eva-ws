@@ -65,7 +65,7 @@ public class GA4GHVariantWSServerTest {
                 null));
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(variant);
 
-        Region region = new Region("1", 500, 2000);
+        Region region = new Region("1", 500L, 2000L);
 
         given(variantEntityRepository.findByRegionsAndComplexFilters(eq(Collections.singletonList(region)),
                                                                      any(),
@@ -94,7 +94,7 @@ public class GA4GHVariantWSServerTest {
         assertEquals(0, gaSearchVariantsResponse.getVariants().size());
     }
 
-    private GASearchVariantsResponse testVariantWsHelper(String chromosome, int start, int end,
+    private GASearchVariantsResponse testVariantWsHelper(String chromosome, long start, long end,
                                                          List<String> variantSetIds, String pageToken, int pageSize) {
 
         String url = String.format("/v1/ga4gh/variants/search?" +

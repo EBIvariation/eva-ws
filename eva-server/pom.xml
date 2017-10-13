@@ -5,7 +5,7 @@
     <parent>
         <artifactId>eva</artifactId>
         <groupId>uk.ac.ebi.eva</groupId>
-        <version>1.5.1</version>
+        <version>1.6-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
 
@@ -49,7 +49,11 @@
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.eva</groupId>
-            <artifactId>variation-commons</artifactId>
+            <artifactId>variation-commons-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.eva</groupId>
+            <artifactId>variation-commons-core</artifactId>
         </dependency>
 
         <dependency>
@@ -64,7 +68,6 @@
         <dependency>
             <groupId>com.github.fakemongo</groupId>
             <artifactId>fongo</artifactId>
-            <version>2.0.12</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -27,10 +27,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
-import uk.ac.ebi.eva.lib.metadata.VariantSourceEvaProDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.eva.VariantSourceEvaProDBAdaptor;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 
 import java.io.IOException;
 import java.util.Arrays;

@@ -20,6 +20,8 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +37,13 @@ import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -116,7 +117,7 @@ public class VariantWSServer extends EvaWSServer {
             }
 
             variantEntities = service.findByIdsAndComplexFilters(variantId, filters, annotationMetadata, excludeMapped,
-                                                                 Utils.getPageRequest(queryOptions));
+                                                                 Utils.getPageRequest(getQueryOptions()));
 
             numTotalResults = service.countByIdsAndComplexFilters(variantId, filters);
         }
@@ -125,7 +126,7 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAlleles(String chromosome, int start,
+    private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAlleles(String chromosome, long start,
                                                                                String reference, String alternate,
                                                                                String annotationVepVersion,
                                                                                String annotationVepCacheversion) throws AnnotationMetadataNotFoundException {
@@ -182,7 +183,8 @@ public class VariantWSServer extends EvaWSServer {
 
         } else {
             List<VariantRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
-            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null, null, Utils.getPageRequest(queryOptions));
+            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null, null,
+                    Utils.getPageRequest(getQueryOptions()));
         }
 
         numTotalResults = (long) variantEntities.size();
@@ -192,7 +194,7 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAllelesAndStudyIds(String chromosome, int start,
+    private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAllelesAndStudyIds(String chromosome, long start,
                                                                                            String reference,
                                                                                            String alternate,
                                                                                            List<String> studyIds) throws AnnotationMetadataNotFoundException {

@@ -33,12 +33,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.StudyType;
-import uk.ac.ebi.eva.commons.mongodb.projections.VariantStudySummary;
+import uk.ac.ebi.eva.commons.mongodb.entities.projections.VariantStudySummary;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantStudySummaryService;
-import uk.ac.ebi.eva.lib.metadata.ArchiveDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.ArchiveEvaproDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.dgva.ArchiveDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.eva.ArchiveEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.eva.StudyEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.models.Assembly;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
@@ -347,12 +347,6 @@ public class ArchiveWSServerTest {
     @Test
     public void testGetStudiesStats() throws URISyntaxException {
         String url = "/v1/meta/studies/stats";
-        assertGetStudiesStats(url);
-    }
-
-    @Test
-    public void testGetStudiesStatsStructural() throws URISyntaxException {
-        String url = "/v1/meta/studies/stats?structural=true";
         assertGetStudiesStats(url);
     }
 

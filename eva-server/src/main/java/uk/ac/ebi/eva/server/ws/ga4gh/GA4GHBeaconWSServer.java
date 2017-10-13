@@ -31,8 +31,8 @@ import uk.ac.ebi.eva.commons.core.models.VariantType;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
 import javax.servlet.http.HttpServletResponse;
@@ -53,7 +53,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
     
     @RequestMapping(value = "/beacon", method = RequestMethod.GET)
     public GA4GHBeaconResponse beacon(@RequestParam("referenceName") String chromosome,
-                                      @RequestParam("start") int start,
+                                      @RequestParam("start") long start,
                                       @RequestParam("allele") String allele,
                                       @RequestParam("datasetIds") List<String> studies,
                                       HttpServletResponse response)

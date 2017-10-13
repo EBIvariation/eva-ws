@@ -26,24 +26,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import uk.ac.ebi.eva.commons.mongodb.projections.VariantStudySummary;
+
+import uk.ac.ebi.eva.commons.mongodb.entities.projections.VariantStudySummary;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantStudySummaryService;
-import uk.ac.ebi.eva.lib.metadata.StudyDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.StudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.eva.StudyEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
- */
 @RestController
 @RequestMapping(value = "/v1/studies", produces = "application/json")
 @Api(tags = {"studies"})
@@ -107,9 +105,9 @@ public class StudyWSServer extends EvaWSServer {
     public QueryResponse getStudySummary(@PathVariable("study") String study,
                                          @RequestParam(name = "structural", defaultValue = "false") boolean structural) {
         if (structural) {
-            return setQueryResponse(studyDgvaDbAdaptor.getStudyById(study, queryOptions));
+            return setQueryResponse(studyDgvaDbAdaptor.getStudyById(study, getQueryOptions()));
         } else {
-            return setQueryResponse(studyEvaproDbAdaptor.getStudyById(study, queryOptions));
+            return setQueryResponse(studyEvaproDbAdaptor.getStudyById(study, getQueryOptions()));
         }
     }
 }

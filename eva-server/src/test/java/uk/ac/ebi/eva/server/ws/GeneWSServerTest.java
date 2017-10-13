@@ -60,8 +60,8 @@ public class GeneWSServerTest {
     @Before
     public void setUp() throws Exception {
         String chromosome = "1";
-        int start = 1000;
-        int end = 1005;
+        long start = 10000000000L;
+        long end = 10000000005L;
         String reference = "A";
         String alternate = "T";
         String vepVersion = "88";

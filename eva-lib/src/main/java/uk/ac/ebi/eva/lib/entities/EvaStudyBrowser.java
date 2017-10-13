@@ -135,10 +135,10 @@ public class EvaStudyBrowser {
         int notNullVariantCount = (variantCount == null) ? 0 : variantCount.intValue();
 
         return new VariantStudy(projectTitle, projectAccession, null,
-                description, taxIds, commonName, scientificName,
-                sourceType, center, material, scope,
-                StudyType.fromString(studyType), experimentType,
-                experimentTypeAbbreviation, assemblyName, assemblyAccession, platform,
-                uri, publications.split(", "), notNullVariantCount, samples);
+                                description, taxIds, commonName, scientificName,
+                                sourceType, center, material, scope,
+                                StudyType.fromString(studyType), experimentType,
+                                experimentTypeAbbreviation, assemblyName, assemblyAccession, platform,
+                                uri, publications.split(", "), notNullVariantCount, samples);
     }
 }

@@ -39,8 +39,8 @@ import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantRequest;
 import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantsResponse;
 import uk.ac.ebi.eva.lib.models.ga4gh.GAVariant;
 import uk.ac.ebi.eva.lib.models.ga4gh.GAVariantFactory;
-import uk.ac.ebi.eva.lib.utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
@@ -71,8 +71,8 @@ public class GA4GHVariantWSServer extends EvaWSServer {
      */
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public GASearchVariantsResponse getVariantsByRegion(@RequestParam("referenceName") String chromosome,
-                                                        @RequestParam("start") int start,
-                                                        @RequestParam("end") int end,
+                                                        @RequestParam("start") Long start,
+                                                        @RequestParam("end") Long end,
 //                                        @RequestParam("variantName") String id,
                                                         @RequestParam(name = "variantSetIds", required = false) List<String> files,
 //                                        @RequestParam(name = "callSetIds", required = false) String samples,
@@ -84,7 +84,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
 
         if (files != null && !files.isEmpty()) {
-            queryOptions.put("files", files);
+            getQueryOptions().put("files", files);
         }
         List<VariantRepositoryFilter> filters = new FilterBuilder().withFiles(files).build();
 
@@ -114,7 +114,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
     public GASearchVariantsResponse getVariantsByRegion(GASearchVariantRequest request)
             throws UnknownHostException, IOException, AnnotationMetadataNotFoundException {
         request.validate();
-        return getVariantsByRegion(request.getReferenceName(), (int) request.getStart(), (int) request.getEnd(),
+        return getVariantsByRegion(request.getReferenceName(), request.getStart(), request.getEnd(),
                 request.getVariantSetIds(), request.getPageToken(), request.getPageSize());
     }
 
