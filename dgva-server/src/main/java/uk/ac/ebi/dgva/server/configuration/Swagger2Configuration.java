@@ -42,8 +42,9 @@ public class Swagger2Configuration {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("European Variation Archive REST Web Services API")
-                .contact(new Contact("the European Variation Archive team", "www.ebi.ac.uk/eva", "eva-helpdesk@ebi.ac.uk"))
+                .title("Database of Genomic Variants Archive REST Web Services API")
+                .contact(new Contact("the Database of Genomic Variants Archive team", "www.ebi.ac.uk/dgva",
+                                     "dgva-helpdesk@ebi.ac.uk"))
                 .license("Apache License Version 2.0")
                 .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")
                 .version("1.0")
