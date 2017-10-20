@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.eva.server.models;
 
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -30,19 +31,26 @@ public class ProgressReport {
     @Id
     private String databaseName;
 
+    @Column(nullable = false)
     private int taxId;
 
+    @Column(nullable = false)
     private String scientificName;
+
+    @Column(nullable = false)
+    private String commonName;
 
     private String genbankAssemblyAccession;
 
+    @Column(nullable = false)
     private int lastDbsnpBuild;
 
+    @Column(nullable = false)
     private boolean inEnsembl;
 
-    private boolean toVariantWarehouse;
+    private Boolean toVariantWarehouse;
 
-    private boolean assemblyFullyMatches;
+    private Boolean assemblyFullyMatches;
 
     @Enumerated(EnumType.STRING)
     @Convert(converter = StatusConverter.class)
@@ -60,14 +68,14 @@ public class ProgressReport {
 
     }
 
-    public ProgressReport(String databaseName, int taxId, String scientificName, String genbankAssemblyAccession,
-                          int lastDbsnpBuild, boolean inEnsembl, boolean toVariantWarehouse,
-                          boolean assemblyFullyMatches,
-                          Status variantsImported, Status rsSynonymsImported, Date variantsImportedDate,
-                          Date rsSynonymsImportedDate) {
+    public ProgressReport(String databaseName, int taxId, String scientificName, String commonName,
+                          String genbankAssemblyAccession, int lastDbsnpBuild, boolean inEnsembl,
+                          Boolean toVariantWarehouse, Boolean assemblyFullyMatches, Status variantsImported,
+                          Status rsSynonymsImported, Date variantsImportedDate, Date rsSynonymsImportedDate) {
         this.databaseName = databaseName;
         this.taxId = taxId;
         this.scientificName = scientificName;
+        this.commonName = commonName;
         this.genbankAssemblyAccession = genbankAssemblyAccession;
         this.lastDbsnpBuild = lastDbsnpBuild;
         this.inEnsembl = inEnsembl;
@@ -116,6 +124,8 @@ public class ProgressReport {
         return scientificName;
     }
 
+    public String getCommonName() { return commonName; }
+
     public String getGenbankAssemblyAccession() {
         return genbankAssemblyAccession;
     }
@@ -128,11 +138,11 @@ public class ProgressReport {
         return inEnsembl;
     }
 
-    public boolean isToVariantWarehouse() {
+    public Boolean isToVariantWarehouse() {
         return toVariantWarehouse;
     }
 
-    public boolean isAssemblyFullyMatches() {
+    public Boolean isAssemblyFullyMatches() {
         return assemblyFullyMatches;
     }
 
