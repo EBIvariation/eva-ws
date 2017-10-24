@@ -41,7 +41,7 @@ public class ProgressReportRepositoryTest {
     @Test
     public void testFindById() {
         ProgressReport report = progressReportRepository.findOne("fruitfly_7227");
-        ProgressReport expected = new ProgressReport("fruitfly_7227", 7227, "Drosophila melanogaster",
+        ProgressReport expected = new ProgressReport("fruitfly_7227", 7227, "Drosophila melanogaster", "Fruit fly",
                                                      "GCA_000001215.4", 149, true, false, false, Status.pending,
                                                      Status.pending, null, null);
         assertEquals(expected, report);
