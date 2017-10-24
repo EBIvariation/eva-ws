@@ -110,17 +110,17 @@ public class ArchiveWSServerTest {
                                                "Human", "Homo Sapiens", "Germline", "EBI", "DNA", "multi-isolate",
                                                StudyType.CASE_CONTROL, "Exome Sequencing", "ES", "GRCh37",
                                                "GCA_000001405.3", "Illumina", new URI("http://www.s1.org"),
-                                               new String[]{"10"}, 1000, 10);
+                                               new String[]{"10"}, 1000, 10, false);
         VariantStudy study2 = new VariantStudy("Human Test study 2", "S2", null, "Study 2 description", new int[]{9606},
                                                "Human", "Homo Sapiens", "Germline", "EBI", "DNA", "multi-isolate",
                                                StudyType.AGGREGATE, "Exome Sequencing", "ES", "GRCh38",
                                                "GCA_000001405.14", "Illumina", new URI("http://www.s2.org"),
-                                               new String[]{"13"}, 5000, 4);
+                                               new String[]{"13"}, 5000, 4, false);
         VariantStudy study3 = new VariantStudy("Cow Test study 1", "CS1", null, "Cow study 1 description",
                                                new int[]{9913}, "Cow", "Bos taurus", "Germline", "EBI", "DNA",
                                                "multi-isolate", StudyType.AGGREGATE, "Whole Genome Sequencing",
                                                "WGSS", "Bos_taurus_UMD_3.1", "GCA_000003055.3", "Illumina",
-                                               new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12);
+                                               new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12, false);
         given(studyEvaproDBAdaptor.getAllStudies(anyObject()))
                 .willReturn(encapsulateInQueryResult(study1, study2, study3));
         Map<String, Long> studiesGroupedBySpeciesName = Stream.of(study1, study2, study3).collect(
@@ -139,17 +139,17 @@ public class ArchiveWSServerTest {
                                                  new int[]{9606}, "Human", "Homo Sapiens", "Germline", "EBI", "DNA",
                                                  "multi-isolate", StudyType.CASE_CONTROL, "Exome Sequencing", "ES",
                                                  "GRCh37", "GCA_000001405.3", "Illumina", new URI("http://www.s1.org"),
-                                                 new String[]{"10"}, 1000, 10);
+                                                 new String[]{"10"}, 1000, 10, false);
         VariantStudy svStudy2 = new VariantStudy("Human SVV Test study 2", "svS2", null, "SV study 2 description",
                                                  new int[]{9606}, "Human", "Homo Sapiens", "Germline", "EBI", "DNA",
                                                  "multi-isolate", StudyType.AGGREGATE, "Exome Sequencing", "ES",
                                                  "GRCh38", "GCA_000001405.14", "Illumina", new URI("http://www.s2.org"),
-                                                 new String[]{"13"}, 5000, 4);
+                                                 new String[]{"13"}, 5000, 4, false);
         VariantStudy svStudy3 = new VariantStudy("Cow SV Test study 1", "svCS1", null, "SV cow study 1 description",
                                                  new int[]{9913}, "Cow", "Bos taurus", "Germline", "EBI", "DNA",
                                                  "multi-isolate", StudyType.AGGREGATE, "Whole Genome Sequencing", "WGS",
                                                  "Bos_taurus_UMD_3.1", "GCA_000003055.3", "Illumina",
-                                                 new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12);
+                                                 new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12, false);
         given(studyDgvaDBAdaptor.getAllStudies(anyObject()))
                   .willReturn(encapsulateInQueryResult(svStudy1, svStudy2, svStudy3));
 
