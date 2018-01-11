@@ -48,9 +48,10 @@ import javax.persistence.*;
         @NamedNativeQuery(
                 name = "Taxonomy.getSpecies",
                 query = "select distinct(assembly.*), taxonomy.* " +
-                        "from assembly join browsable_file bf on assembly.assembly_set_id=bf.assembly_set_id " +
+                        "from assembly left join browsable_file bf on assembly.assembly_set_id=bf.assembly_set_id " +
+                        "left join dbsnp_assemblies dbs on assembly.assembly_set_id = dbs.assembly_set_id " +
                         "join taxonomy on assembly.taxonomy_id=taxonomy.taxonomy_id " +
-                        "where bf.loaded = true and bf.deleted = false",
+                        "where (bf.loaded = true and bf.deleted = false) or (dbs.loaded = true)",
                 resultSetMapping = "assembly"
         )
 })

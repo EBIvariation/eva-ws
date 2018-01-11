@@ -25,12 +25,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.lib.entities.Project;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
+import uk.ac.ebi.eva.lib.models.Assembly;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.QueryOptionsConstants;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.BOS_TAURUS;
@@ -63,9 +68,19 @@ public class ArchiveEvaproDBAdaptorTest {
 
         Taxonomy humanTaxonomy = new Taxonomy(9606L, HUMAN, HOMO_SAPIENS, "hsapiens", "human");
         Taxonomy cowTaxonomy = new Taxonomy(9913L, CATTLE, BOS_TAURUS, "btaurus", "cow");
+        Taxonomy chickenTaxonomy = new Taxonomy(9031L, "Chicken", "Gallus gallus", "ggallus", "chicken");
+        Taxonomy sheepTaxonomy = new Taxonomy(9940L, "Sheep", "Ovis aries", "oaries", "sheep");
+        Taxonomy goatTaxonomy = new Taxonomy(9925L, "Goat", "Capra hircus", "chircus", "goat");
+        Taxonomy pigTaxonomy = new Taxonomy(9823L, "Pig", "Sus scrofa", "sscrofa", "pig");
+        Taxonomy zebrafishTaxonomy = new Taxonomy(7955L, "Zebrafish", "Dario rerio", null, "zebrafish");
 
         entityManager.persist(humanTaxonomy);
         entityManager.persist(cowTaxonomy);
+        entityManager.persist(chickenTaxonomy);
+        entityManager.persist(sheepTaxonomy);
+        entityManager.persist(goatTaxonomy);
+        entityManager.persist(pigTaxonomy);
+        entityManager.persist(zebrafishTaxonomy);
 
         EvaStudyBrowserTestData.persistTestData(entityManager);
 
@@ -182,12 +197,22 @@ public class ArchiveEvaproDBAdaptorTest {
         QueryResult<Long> queryResult = archiveEvaproDBAdaptor.countSpecies();
 
         assertEquals(1, queryResult.getNumTotalResults());
-        assertEquals(2, queryResult.first().longValue());
+        assertEquals(7, queryResult.first().longValue());
     }
 
     @Test
     public void getSpecies() throws Exception {
-        // TODO: assemblies model needs to be reviewed
+        QueryResult<Assembly> queryResult = archiveEvaproDBAdaptor.getSpecies();
+
+        assertEquals(4, queryResult.getNumTotalResults());
+        // Those assemblies should not be returned by getSpecies:
+        // - Cow ones, because there are no 'loaded but not deleted' files
+        // - Goat, because is not loaded
+        // - Pig, because the assembly code is emtpy
+        // - Zebrafish, because the taxonomy code is empty
+        Set<String> assemblyCodes =
+                queryResult.getResult().stream().map(Assembly::getAssemblyCode).collect(Collectors.toSet());
+        assertEquals(new HashSet(Arrays.asList("galgal5", "grch38", "oarv31", "oarv40")), assemblyCodes);
     }
 
 }
