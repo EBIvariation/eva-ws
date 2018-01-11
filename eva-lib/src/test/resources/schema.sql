@@ -10,3 +10,23 @@ CREATE TABLE browsable_file (
 	loaded_assembly varchar(500),
 	assembly_set_id int4
 );
+
+CREATE TABLE assembly (
+  assembly_accession varchar(25),
+  assembly_chain varchar(25),
+  assembly_version int4,
+  assembly_set_id int4,
+  assembly_name varchar(250),
+  assembly_code varchar(25),
+  taxonomy_id int4,
+  assembly_location varchar(250),
+  assembly_filename varchar(250)
+);
+
+create table dbsnp_assemblies
+(
+ database_name varchar(50),
+ assembly_set_id int4,
+ loaded boolean,
+ unique (database_name, assembly_set_id)
+)

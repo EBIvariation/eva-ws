@@ -33,6 +33,7 @@ import uk.ac.ebi.eva.lib.utils.QueryOptionsConstants;
 
 import javax.persistence.Tuple;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.springframework.data.jpa.domain.Specifications.where;
 
@@ -109,6 +110,9 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
     public QueryResult getSpecies() {
         long start = System.currentTimeMillis();
         List<Assembly> result = taxonomyRepository.getSpecies();
+        result = result.stream()
+                       .filter(assembly -> assembly.getTaxonomyCode() != null && assembly.getAssemblyCode() != null)
+                       .collect(Collectors.toList());
         long end = System.currentTimeMillis();
         return new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
     }
