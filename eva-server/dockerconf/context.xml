@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Context>
+
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+
+    <Resource name="jdbc/@eva.evapro.datasource@" auth="Container" type="javax.sql.DataSource"
+              maxActive="100" maxIdle="30" maxWaitMillis="10000"
+              username="@eva.evapro.user@" password="@eva.evapro.password@" driverClassName="org.postgresql.Driver"
+              url="@eva.evapro.jdbc.url@" />
+
+</Context>
