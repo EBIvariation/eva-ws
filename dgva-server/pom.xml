@@ -74,6 +74,8 @@
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>
+
+
     </dependencies>
 
     <profiles>
@@ -81,7 +83,7 @@
             <id>Non-Travis</id>
             <dependencies>
                 <dependency>
-                    <groupId>com.oracle.jdbc</groupId>
+                    <groupId>com.github.noraui</groupId>
                     <artifactId>ojdbc8</artifactId>
                     <version>12.2.0.1</version>
                 </dependency>
