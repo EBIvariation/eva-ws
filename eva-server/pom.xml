@@ -99,7 +99,7 @@
                 <filtering>true</filtering>
             </resource>
             <resource>
-                <directory>dockerconf</directory>
+                <directory>docker</directory>
                 <filtering>true</filtering>
                 <targetPath>${project.build.directory}</targetPath>
             </resource>
