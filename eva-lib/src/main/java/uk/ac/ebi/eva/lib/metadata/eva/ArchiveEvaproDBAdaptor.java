@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.eva.lib.metadata.ArchiveDBAdaptor;
 import uk.ac.ebi.eva.lib.models.Assembly;
+import uk.ac.ebi.eva.lib.models.VariantStudy;
 import uk.ac.ebi.eva.lib.extension.GenericSpecifications;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
@@ -115,6 +116,19 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
                        .collect(Collectors.toList());
         long end = System.currentTimeMillis();
         return new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
+    }
+
+    @Override
+    public QueryResult countVariants(List<VariantStudy> variantStudies) {
+        long start = System.currentTimeMillis();
+
+        long count = 0;
+	for(VariantStudy study : variantStudies) {
+		count += study.getNumVariants();	
+	}
+
+        long end = System.currentTimeMillis();
+        return new QueryResult(null, ((Long) (end - start)).intValue(), 1, 1, null, null, Arrays.asList(count));
     }
 
     private Specification getSpeciesAndTypeFilters(QueryOptions queryOptions) {
