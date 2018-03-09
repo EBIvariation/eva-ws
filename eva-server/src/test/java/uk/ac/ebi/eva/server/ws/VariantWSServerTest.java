@@ -183,7 +183,7 @@ public class VariantWSServerTest {
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<Long>>>() {
                 });
-        
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         QueryResponse<QueryResult<Long>> queryResponse = response.getBody();
