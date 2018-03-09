@@ -28,7 +28,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -37,6 +41,8 @@ import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.Profiles;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
 
 import java.net.URISyntaxException;
@@ -160,6 +166,24 @@ public class VariantWSServerIntegrationTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void testCountTotalNumberOfVariantsService() throws URISyntaxException {
+        testCountTotalNumberOfVariantsServiceHelper(new Long(2));
+    }
+
+    private void testCountTotalNumberOfVariantsServiceHelper(Long expectedVariantsCount) throws URISyntaxException {
+        String url = "/v1/variants/count";
+        ResponseEntity<QueryResponse<QueryResult<Long>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<Long>>>() {
+                });
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        QueryResponse<QueryResult<Long>> queryResponse = response.getBody();
+        assertEquals(expectedVariantsCount, queryResponse.getResponse().get(0).getResult().get(0));
     }
 
 }
