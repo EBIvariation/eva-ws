@@ -173,12 +173,10 @@ public class VariantWSServerTest {
     }
 
     @Test
-    public void testCountTotalNumberOfVariantsService() throws URISyntaxException {
-        testCountTotalNumberOfVariantsServiceHelper(new Long(0));
-    }
+    public void testCountTotalNumberOfVariants() throws URISyntaxException {
+        Long expectedNumberOfVariants = new Long(0);
 
-    private void testCountTotalNumberOfVariantsServiceHelper(Long expectedVariantsCount) throws URISyntaxException {
-        String url = "/v1/variants/count";
+        String url = "/v1/variants/countVariants";
         ResponseEntity<QueryResponse<QueryResult<Long>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<Long>>>() {
@@ -187,7 +185,7 @@ public class VariantWSServerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         QueryResponse<QueryResult<Long>> queryResponse = response.getBody();
-        assertEquals(expectedVariantsCount, queryResponse.getResponse().get(0).getResult().get(0));
+        assertEquals(expectedNumberOfVariants, queryResponse.getResponse().get(0).getResult().get(0));
     }
 
 }
