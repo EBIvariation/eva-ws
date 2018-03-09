@@ -15,9 +15,6 @@
  */
 package uk.ac.ebi.eva.lib.metadata;
 
-import java.util.List;
-import uk.ac.ebi.eva.lib.models.VariantStudy;
-
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 
@@ -34,7 +31,5 @@ public interface ArchiveDBAdaptor {
     QueryResult countSpecies();
 
     QueryResult getSpecies();
-
-    QueryResult countVariants(List<VariantStudy> variantStudies);
 }
 

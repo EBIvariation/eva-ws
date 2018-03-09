@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.commons.mongodb.entities.projections.VariantStudySummary;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantStudySummaryService;
-import uk.ac.ebi.eva.lib.models.VariantStudy;
 
 import uk.ac.ebi.eva.lib.metadata.eva.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.eva.StudyEvaproDBAdaptor;
@@ -71,14 +70,6 @@ public class ArchiveWSServer extends EvaWSServer {
     @RequestMapping(value = "/species/count", method = RequestMethod.GET)
     public QueryResponse countSpecies() {
         return setQueryResponse(archiveEvaproDbAdaptor.countSpecies());
-    }
-
-    @RequestMapping(value = "/variants/count", method = RequestMethod.GET)
-    public QueryResponse countVariants(@RequestParam(name = "species", required = false) List<String> species,
-                                       @RequestParam(name = "type", required = false) List<String> types) {
-	QueryResponse allStudiesQuery = archiveWSServerHelper.getStudies(species, types, queryUtils, studyEvaproDbAdaptor, version);
-	List<VariantStudy> studiesList = allStudiesQuery.getResponse();
-        return setQueryResponse(archiveEvaproDbAdaptor.countVariants(studiesList));
     }
 
     @RequestMapping(value = "/species/list", method = RequestMethod.GET)

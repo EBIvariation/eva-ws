@@ -19,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import uk.ac.ebi.eva.lib.models.VariantStudy;
-
 import uk.ac.ebi.eva.lib.metadata.ArchiveDBAdaptor;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
@@ -82,11 +80,6 @@ public class ArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
 
     @Override
     public QueryResult countSpecies() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public QueryResult countVariants(List<VariantStudy> variantStudies) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

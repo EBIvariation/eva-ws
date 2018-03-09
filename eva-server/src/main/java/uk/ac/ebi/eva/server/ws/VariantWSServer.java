@@ -206,4 +206,16 @@ public class VariantWSServer extends EvaWSServer {
         }
     }
 
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    public QueryResponse countTotalNumberOfVariants() {
+        long totalNumberOfvariants = service.countTotalNumberOfVariants();
+
+        QueryResult queryResult = new QueryResult();
+        queryResult.setResult(Arrays.asList(totalNumberOfvariants));
+        queryResult.setResultType(Long.class.getCanonicalName());
+        return setQueryResponse(queryResult);
+    }
+
+
+
 }
