@@ -71,7 +71,7 @@ public class VariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
                                         @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
                                         HttpServletResponse response)
-            throws IOException, AnnotationMetadataNotFoundException {
+            throws IOException {
         initializeQuery();
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
@@ -89,37 +89,42 @@ public class VariantWSServer extends EvaWSServer {
         List<VariantWithSamplesAndAnnotation> variantEntities;
         Long numTotalResults;
 
-        if (variantId.contains(":")) {
-            String[] regionId = variantId.split(":");
-            String alternate = (regionId.length > 3) ? regionId[3] : null;
-            variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
-                                                           alternate, annotationVepVersion, annotationVepCacheVersion);
-            numTotalResults = (long) variantEntities.size();
-        } else {
-            List<VariantRepositoryFilter> filters = new FilterBuilder()
-                    .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
+        try {
+            if (variantId.contains(":")) {
+                String[] regionId = variantId.split(":");
+                String alternate = (regionId.length > 3) ? regionId[3] : null;
+                variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
+                        alternate, annotationVepVersion, annotationVepCacheVersion);
+                numTotalResults = (long) variantEntities.size();
+            } else {
+                List<VariantRepositoryFilter> filters = new FilterBuilder()
+                        .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
-            List<String> excludeMapped = new ArrayList<>();
-            if (exclude != null && !exclude.isEmpty()) {
-                for (String e : exclude) {
-                    String docPath = Utils.getApiToMongoDocNameMap().get(e);
-                    if (docPath == null) {
-                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        return setQueryResponse("Unrecognised exclude field: " + e);
+                List<String> excludeMapped = new ArrayList<>();
+                if (exclude != null && !exclude.isEmpty()) {
+                    for (String e : exclude) {
+                        String docPath = Utils.getApiToMongoDocNameMap().get(e);
+                        if (docPath == null) {
+                            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                            return setQueryResponse("Unrecognised exclude field: " + e);
+                        }
+                        excludeMapped.add(docPath);
                     }
-                    excludeMapped.add(docPath);
                 }
+
+                AnnotationMetadata annotationMetadata = null;
+                if (annotationVepVersion != null && annotationVepCacheVersion != null) {
+                    annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
+                }
+
+                variantEntities = service.findByIdsAndComplexFilters(variantId, filters, annotationMetadata, excludeMapped,
+                        Utils.getPageRequest(getQueryOptions()));
+
+                numTotalResults = service.countByIdsAndComplexFilters(variantId, filters);
             }
-
-            AnnotationMetadata annotationMetadata = null;
-            if (annotationVepVersion != null && annotationVepCacheVersion != null) {
-                annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
-            }
-
-            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, annotationMetadata, excludeMapped,
-                                                                 Utils.getPageRequest(getQueryOptions()));
-
-            numTotalResults = service.countByIdsAndComplexFilters(variantId, filters);
+        } catch (AnnotationMetadataNotFoundException ex) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(ex.getMessage());
         }
 
         QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
@@ -148,7 +153,7 @@ public class VariantWSServer extends EvaWSServer {
                                             @RequestParam(name = "studies", required = false) List<String> studies,
                                             @RequestParam("species") String species,
                                             HttpServletResponse response)
-            throws IOException, AnnotationMetadataNotFoundException {
+            throws IOException {
         initializeQuery();
 
         if (species.isEmpty()) {
@@ -164,27 +169,34 @@ public class VariantWSServer extends EvaWSServer {
         String invalidCoordinatesMessage =
                 "Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt";
 
-        if (variantId.contains(":")) {
-            String[] regionId = variantId.split(":", -1);
-            if (regionId.length < 3) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return setErrorQueryResponse(invalidCoordinatesMessage);
-            }
+        try {
+            if (variantId.contains(":")) {
+                String[] regionId = variantId.split(":", -1);
+                if (regionId.length < 3) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    return setErrorQueryResponse(invalidCoordinatesMessage);
+                }
 
-            String alternate = (regionId.length > 3) ? regionId[3] : null;
+                String alternate = (regionId.length > 3) ? regionId[3] : null;
 
-            if (studies != null && !studies.isEmpty()) {
-                variantEntities = queryByCoordinatesAndAllelesAndStudyIds(regionId[0], Integer.parseInt(regionId[1]),
+
+                if (studies != null && !studies.isEmpty()) {
+                    variantEntities = queryByCoordinatesAndAllelesAndStudyIds(regionId[0], Integer.parseInt(regionId[1]),
                         regionId[2], alternate, studies);
-            } else {
-                variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
+                } else {
+                    variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
                                                                alternate, null, null);
-            }
+                }
 
-        } else {
-            List<VariantRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
-            variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null, null,
+            } else {
+                List<VariantRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
+                variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null, null,
                     Utils.getPageRequest(getQueryOptions()));
+            }
+        }
+        catch (AnnotationMetadataNotFoundException ex) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(ex.getMessage());
         }
 
         numTotalResults = (long) variantEntities.size();
