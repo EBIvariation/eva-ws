@@ -66,7 +66,7 @@ public class GeneWSServer extends EvaWSServer {
                                            @RequestParam(name = "exclude", required = false) List<String> exclude,
                                            @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
                                            @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
-                                           HttpServletResponse response) throws AnnotationMetadataNotFoundException {
+                                           HttpServletResponse response) {
         initializeQuery();
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
@@ -101,8 +101,15 @@ public class GeneWSServer extends EvaWSServer {
             annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
         }
 
-        List<VariantWithSamplesAndAnnotation> variantEntities =
-                service.findByGenesAndComplexFilters(geneIds, filters, annotationMetadata, excludeMapped, Utils.getPageRequest(getQueryOptions()));
+        List<VariantWithSamplesAndAnnotation> variantEntities;
+
+        try {
+            variantEntities = service.findByGenesAndComplexFilters(geneIds,
+                    filters, annotationMetadata, excludeMapped, Utils.getPageRequest(getQueryOptions()));
+        } catch (AnnotationMetadataNotFoundException ex) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(ex.getMessage());
+        }
 
         Long numTotalResults = service.countByGenesAndComplexFilters(geneIds, filters);
 

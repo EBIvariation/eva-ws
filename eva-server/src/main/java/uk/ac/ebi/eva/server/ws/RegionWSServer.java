@@ -75,7 +75,7 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
                                              @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
                                              HttpServletResponse response)
-            throws IOException, AnnotationMetadataNotFoundException {
+            throws IOException {
         initializeQuery();
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
@@ -112,8 +112,18 @@ public class RegionWSServer extends EvaWSServer {
             annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
         }
 
-        List<VariantWithSamplesAndAnnotation> variantEntities =
-                service.findByRegionsAndComplexFilters(regions, filters, annotationMetadata, excludeMapped, pageRequest);
+        List<VariantWithSamplesAndAnnotation> variantEntities;
+
+        try {
+            variantEntities = service.findByRegionsAndComplexFilters(regions,
+                                                                     filters,
+                                                                     annotationMetadata,
+                                                                     excludeMapped,
+                                                                     pageRequest);
+        } catch (AnnotationMetadataNotFoundException ex) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(ex.getMessage());
+        }
 
         Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
