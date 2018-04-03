@@ -131,7 +131,7 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    @RequestMapping(value = "/{variantIds}/infoByList", method = RequestMethod.GET)
+    @RequestMapping(value = "/{variantIds}", method = RequestMethod.GET)
     public QueryResponse getVariantByIdList(@PathVariable("variantIds") String variantIds,
                                         @RequestParam(name = "studies", required = false) List<String> studies,
                                         @RequestParam(name = "species") String species,
