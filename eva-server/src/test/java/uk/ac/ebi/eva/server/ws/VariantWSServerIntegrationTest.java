@@ -144,7 +144,7 @@ public class VariantWSServerIntegrationTest {
     @Test
     public void testVariantSearchByList() {
         String testVariantIds = "rs370478,rs199692280";
-        String url = "/v1/variants/" + testVariantIds + "/infoByList?species=mmusculus_grcm38";
+        String url = "/v1/variants/" + testVariantIds + "/?species=mmusculus_grcm38";
         JSONObject jsonObject = WSTestHelpers.testRestTemplateHelperJsonObject(url, restTemplate);
         JSONArray responseArray = jsonObject.getJSONArray("response");
         for (int i = 0; i < responseArray.length(); ++i) {
