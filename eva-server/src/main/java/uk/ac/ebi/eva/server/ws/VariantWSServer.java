@@ -131,9 +131,8 @@ public class VariantWSServer extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    @RequestMapping(value = "/{variantId}/infoByList", method = RequestMethod.GET)
-//    @ApiOperation(httpMethod = "GET", value = "Retrieves the information about a variant", response = QueryResponse.class)
-    public QueryResponse getVariantByIdList(@PathVariable("variantId") String variantId,
+    @RequestMapping(value = "/{variantIds}/infoByList", method = RequestMethod.GET)
+    public QueryResponse getVariantByIdList(@PathVariable("variantIds") String variantIds,
                                         @RequestParam(name = "studies", required = false) List<String> studies,
                                         @RequestParam(name = "species") String species,
                                         @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
@@ -158,7 +157,7 @@ public class VariantWSServer extends EvaWSServer {
         }
 
         // Split the variants ids by ','
-        List<String> variantIds = Arrays.asList(variantId.split(","));
+        List<String> variantIdsAsList = Arrays.asList(variantIds.split(","));
 
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
@@ -187,10 +186,10 @@ public class VariantWSServer extends EvaWSServer {
                 annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
             }
 
-            variantEntities = service.findByIdsAndComplexFilters(variantIds, filters, annotationMetadata, excludeMapped,
+            variantEntities = service.findByIdsAndComplexFilters(variantIdsAsList, filters, annotationMetadata, excludeMapped,
                     Utils.getPageRequest(getQueryOptions()));
 
-            numTotalResults = service.countByIdsAndComplexFilters(variantIds, filters);
+            numTotalResults = service.countByIdsAndComplexFilters(variantIdsAsList, filters);
 
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
