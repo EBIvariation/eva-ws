@@ -117,11 +117,81 @@ public class VariantWSServer extends EvaWSServer {
                     annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
                 }
 
-                variantEntities = service.findByIdsAndComplexFilters(variantId, filters, annotationMetadata, excludeMapped,
+                variantEntities = service.findByIdsAndComplexFilters(Arrays.asList(variantId), filters, annotationMetadata, excludeMapped,
                         Utils.getPageRequest(getQueryOptions()));
 
-                numTotalResults = service.countByIdsAndComplexFilters(variantId, filters);
+                numTotalResults = service.countByIdsAndComplexFilters(Arrays.asList(variantId), filters);
             }
+        } catch (AnnotationMetadataNotFoundException ex) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(ex.getMessage());
+        }
+
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
+        return setQueryResponse(queryResult);
+    }
+
+    @RequestMapping(value = "/{variantId}/infoByList", method = RequestMethod.GET)
+//    @ApiOperation(httpMethod = "GET", value = "Retrieves the information about a variant", response = QueryResponse.class)
+    public QueryResponse getVariantByIdList(@PathVariable("variantId") String variantId,
+                                        @RequestParam(name = "studies", required = false) List<String> studies,
+                                        @RequestParam(name = "species") String species,
+                                        @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
+                                        @RequestParam(name = "maf", required = false) String maf,
+                                        @RequestParam(name = "polyphen", required = false) String polyphenScore,
+                                        @RequestParam(name = "sift", required = false) String siftScore,
+                                        @RequestParam(name = "exclude", required = false) List<String> exclude,
+                                        @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
+                                        @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
+                                        HttpServletResponse response)
+            throws IOException {
+        initializeQuery();
+
+        if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse("Please specify either both annotation VEP version and annotation VEP cache version, or neither");
+        }
+
+        if (species.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse("Please specify a species");
+        }
+
+        // Split the variants ids by ','
+        List<String> variantIds = Arrays.asList(variantId.split(","));
+
+
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+
+        List<VariantWithSamplesAndAnnotation> variantEntities;
+        Long numTotalResults;
+
+        try {
+            List<VariantRepositoryFilter> filters = new FilterBuilder()
+                    .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
+
+            List<String> excludeMapped = new ArrayList<>();
+            if (exclude != null && !exclude.isEmpty()) {
+                for (String e : exclude) {
+                    String docPath = Utils.getApiToMongoDocNameMap().get(e);
+                    if (docPath == null) {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        return setQueryResponse("Unrecognised exclude field: " + e);
+                    }
+                    excludeMapped.add(docPath);
+                }
+            }
+
+            AnnotationMetadata annotationMetadata = null;
+            if (annotationVepVersion != null && annotationVepCacheVersion != null) {
+                annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
+            }
+
+            variantEntities = service.findByIdsAndComplexFilters(variantIds, filters, annotationMetadata, excludeMapped,
+                    Utils.getPageRequest(getQueryOptions()));
+
+            numTotalResults = service.countByIdsAndComplexFilters(variantIds, filters);
+
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
@@ -190,7 +260,7 @@ public class VariantWSServer extends EvaWSServer {
 
             } else {
                 List<VariantRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
-                variantEntities = service.findByIdsAndComplexFilters(variantId, filters, null, null,
+                variantEntities = service.findByIdsAndComplexFilters(Arrays.asList(variantId), filters, null, null,
                     Utils.getPageRequest(getQueryOptions()));
             }
         }
