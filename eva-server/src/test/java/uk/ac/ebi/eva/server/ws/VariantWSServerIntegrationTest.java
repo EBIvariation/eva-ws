@@ -142,6 +142,33 @@ public class VariantWSServerIntegrationTest {
     }
 
     @Test
+    public void testVariantSearchByList() {
+        String testVariantIds = "rs370478,rs199692280";
+        String url = "/v1/variants/" + testVariantIds + "/?species=mmusculus_grcm38";
+        JSONObject jsonObject = WSTestHelpers.testRestTemplateHelperJsonObject(url, restTemplate);
+        JSONArray responseArray = jsonObject.getJSONArray("response");
+        for (int i = 0; i < responseArray.length(); ++i) {
+            JSONObject response = responseArray.getJSONObject(i);
+            JSONArray resultArray = response.getJSONArray("result");
+            for (int j = 0; j < resultArray.length(); ++j) {
+                JSONObject result = resultArray.getJSONObject(j);
+                JSONArray consequenceTypes = result.getJSONObject("annotation").getJSONArray("consequenceTypes");
+                for (int k = 0; k < consequenceTypes.length(); ++k) {
+                    JSONObject consequenceType = consequenceTypes.getJSONObject(k);
+                    if (!consequenceType.has("ensemblTranscriptId")){
+                        continue;
+                    }
+                    if (consequenceType.getString("ensemblTranscriptId").equals("ENST00000426146")) {
+                        assertTrue(consequenceType.has("proteinSubstitutionScores"));
+                        assertFalse(consequenceType.has("sift"));
+                        assertFalse(consequenceType.has("polyphen"));
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
     public void testProteinSubstitutionScoresModel() {
         String testVariantId = "rs370478";
         String url = "/v1/variants/" + testVariantId + "/info?species=mmusculus_grcm38";

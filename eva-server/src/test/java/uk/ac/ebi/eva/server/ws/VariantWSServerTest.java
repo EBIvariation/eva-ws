@@ -37,6 +37,7 @@ import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -79,7 +80,7 @@ public class VariantWSServerTest {
                 .findByChromosomeAndStartAndReferenceAndAlternate(eq(CHROMOSOME), anyInt(), any(), any(), any()))
                 .willReturn(variantEntities);
 
-        given(variantEntityRepository.findByIdsAndComplexFilters(eq(VARIANT_ID), any(), any(), any(), any()))
+        given(variantEntityRepository.findByIdsAndComplexFilters(eq(Arrays.asList(VARIANT_ID)), any(), any(), any(), any()))
                 .willReturn(variantEntities);
 
     }
