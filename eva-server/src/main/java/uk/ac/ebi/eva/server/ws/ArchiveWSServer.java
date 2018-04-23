@@ -22,6 +22,7 @@ package uk.ac.ebi.eva.server.ws;
 import io.swagger.annotations.Api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +40,7 @@ import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -89,10 +91,17 @@ public class ArchiveWSServer extends EvaWSServer {
     }
 
     @RequestMapping(value = "/studies/list", method = RequestMethod.GET)
-    public QueryResponse getBrowsableStudies(@RequestParam("species") String species)
+    public QueryResponse getBrowsableStudies(@RequestParam(name = "species") String species,
+                                             @RequestParam(name = "fromDate", required = false)
+                                                    @DateTimeFormat(pattern="yyyy-MM-dd") Date date)
             throws IOException {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        List<VariantStudySummary> uniqueStudies = variantStudySummaryService.findAll();
+        List<VariantStudySummary> uniqueStudies;
+        if (date == null) {
+            uniqueStudies = variantStudySummaryService.findAll();
+        } else {
+            uniqueStudies = variantStudySummaryService.findByFromDate(date);
+        }
         QueryResult<VariantStudySummary> result = buildQueryResult(uniqueStudies);
         return setQueryResponse(result);
     }
