@@ -285,7 +285,6 @@ public class ArchiveWSServerTest {
         assertEquals(1, queryResponse.getResponse().size());
 
         List<VariantStudySummary> results = queryResponse.getResponse().get(0).getResult();
-        System.out.println(results);
         assertEquals(3, results.size());
 
         for (VariantStudySummary variantStudySummary : results) {
