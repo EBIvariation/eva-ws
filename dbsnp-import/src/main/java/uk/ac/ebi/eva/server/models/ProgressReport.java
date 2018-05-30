@@ -54,19 +54,19 @@ public class ProgressReport {
 
     @Enumerated(EnumType.STRING)
     @Convert(converter = StatusConverter.class)
-    private Status variantsImported;
+    private Status variantsWithEvidenceImported;
 
     @Enumerated(EnumType.STRING)
     @Convert(converter = StatusConverter.class)
-    private Status variantsWithoutEvidenceImported;
+    private Status variantsImported;
 
     @Enumerated(EnumType.STRING)
     @Convert(converter = StatusConverter.class)
     private Status rsSynonymsImported;
 
-    private Date variantsImportedDate;
+    private Date variantsWithEvidenceImportedDate;
 
-    private Date variantsWithoutEvidenceImportedDate;
+    private Date variantsImportedDate;
 
     private Date rsSynonymsImportedDate;
 
@@ -76,9 +76,9 @@ public class ProgressReport {
 
     public ProgressReport(String databaseName, int taxId, String scientificName, String commonName,
                           String genbankAssemblyAccession, int lastDbsnpBuild, boolean inEnsembl,
-                          Boolean toVariantWarehouse, Boolean assemblyFullyMatches, Status variantsImported,
-                          Status variantsWithoutEvidenceImported, Status rsSynonymsImported, Date variantsImportedDate,
-                          Date variantsWithoutEvidenceImportedDate, Date rsSynonymsImportedDate) {
+                          Boolean toVariantWarehouse, Boolean assemblyFullyMatches, Status variantsWithEvidenceImported,
+                          Status variantsImported, Status rsSynonymsImported, Date variantsWithEvidenceImportedDate,
+                          Date variantsImportedDate, Date rsSynonymsImportedDate) {
         this.databaseName = databaseName;
         this.taxId = taxId;
         this.scientificName = scientificName;
@@ -88,11 +88,11 @@ public class ProgressReport {
         this.inEnsembl = inEnsembl;
         this.toVariantWarehouse = toVariantWarehouse;
         this.assemblyFullyMatches = assemblyFullyMatches;
+        this.variantsWithEvidenceImported = variantsWithEvidenceImported;
         this.variantsImported = variantsImported;
-        this.variantsWithoutEvidenceImported = variantsWithoutEvidenceImported;
         this.rsSynonymsImported = rsSynonymsImported;
+        this.variantsWithEvidenceImportedDate = variantsWithEvidenceImportedDate;
         this.variantsImportedDate = variantsImportedDate;
-        this.variantsWithoutEvidenceImportedDate = variantsWithoutEvidenceImportedDate;
         this.rsSynonymsImportedDate = rsSynonymsImportedDate;
     }
 
@@ -157,24 +157,24 @@ public class ProgressReport {
         return assemblyFullyMatches;
     }
 
-    public Status getVariantsImported() {
-        return variantsImported;
+    public Status getVariantsWithEvidenceImported() {
+        return variantsWithEvidenceImported;
     }
 
-    public Status getVariantsWithoutEvidenceImported() {
-        return variantsWithoutEvidenceImported;
+    public Status getVariantsImported() {
+        return variantsImported;
     }
 
     public Status getRsSynonymsImported() {
         return rsSynonymsImported;
     }
 
-    public Date getVariantsImportedDate() {
-        return variantsImportedDate;
+    public Date getVariantsWithEvidenceImportedDate() {
+        return variantsWithEvidenceImportedDate;
     }
 
-    public Date getVariantsWithoutEvidenceImportedDate() {
-        return variantsWithoutEvidenceImportedDate;
+    public Date getVariantsImportedDate() {
+        return variantsImportedDate;
     }
 
     public Date getRsSynonymsImportedDate() {

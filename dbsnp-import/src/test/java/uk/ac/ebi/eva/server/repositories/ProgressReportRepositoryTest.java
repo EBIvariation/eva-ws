@@ -24,6 +24,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.server.models.ProgressReport;
 import uk.ac.ebi.eva.server.models.Status;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
@@ -45,5 +48,16 @@ public class ProgressReportRepositoryTest {
                                                      "GCA_000001215.4", 149, true, false, false, Status.pending,
                                                      Status.pending, Status.pending, null, null, null);
         assertEquals(expected, report);
+    }
+
+    @Test
+    public void testVariantWithEvidenceImportFields() {
+        ProgressReport report = progressReportRepository.findOne("arabidopsis_3702");
+        assertEquals(Status.done, report.getVariantsWithEvidenceImported());
+        Calendar cal = Calendar.getInstance();
+        cal.set(2018, Calendar.MAY, 30, 0, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date date = cal.getTime();
+        assertEquals(date.getTime(), report.getVariantsWithEvidenceImportedDate().getTime());
     }
 }
