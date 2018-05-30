@@ -54,11 +54,17 @@ public class ProgressReport {
 
     @Enumerated(EnumType.STRING)
     @Convert(converter = StatusConverter.class)
+    private Status variantsWithEvidenceImported;
+
+    @Enumerated(EnumType.STRING)
+    @Convert(converter = StatusConverter.class)
     private Status variantsImported;
 
     @Enumerated(EnumType.STRING)
     @Convert(converter = StatusConverter.class)
     private Status rsSynonymsImported;
+
+    private Date variantsWithEvidenceImportedDate;
 
     private Date variantsImportedDate;
 
@@ -70,8 +76,9 @@ public class ProgressReport {
 
     public ProgressReport(String databaseName, int taxId, String scientificName, String commonName,
                           String genbankAssemblyAccession, int lastDbsnpBuild, boolean inEnsembl,
-                          Boolean toVariantWarehouse, Boolean assemblyFullyMatches, Status variantsImported,
-                          Status rsSynonymsImported, Date variantsImportedDate, Date rsSynonymsImportedDate) {
+                          Boolean toVariantWarehouse, Boolean assemblyFullyMatches, Status variantsWithEvidenceImported,
+                          Status variantsImported, Status rsSynonymsImported, Date variantsWithEvidenceImportedDate,
+                          Date variantsImportedDate, Date rsSynonymsImportedDate) {
         this.databaseName = databaseName;
         this.taxId = taxId;
         this.scientificName = scientificName;
@@ -81,8 +88,10 @@ public class ProgressReport {
         this.inEnsembl = inEnsembl;
         this.toVariantWarehouse = toVariantWarehouse;
         this.assemblyFullyMatches = assemblyFullyMatches;
+        this.variantsWithEvidenceImported = variantsWithEvidenceImported;
         this.variantsImported = variantsImported;
         this.rsSynonymsImported = rsSynonymsImported;
+        this.variantsWithEvidenceImportedDate = variantsWithEvidenceImportedDate;
         this.variantsImportedDate = variantsImportedDate;
         this.rsSynonymsImportedDate = rsSynonymsImportedDate;
     }
@@ -124,7 +133,9 @@ public class ProgressReport {
         return scientificName;
     }
 
-    public String getCommonName() { return commonName; }
+    public String getCommonName() {
+        return commonName;
+    }
 
     public String getGenbankAssemblyAccession() {
         return genbankAssemblyAccession;
@@ -146,12 +157,20 @@ public class ProgressReport {
         return assemblyFullyMatches;
     }
 
+    public Status getVariantsWithEvidenceImported() {
+        return variantsWithEvidenceImported;
+    }
+
     public Status getVariantsImported() {
         return variantsImported;
     }
 
     public Status getRsSynonymsImported() {
         return rsSynonymsImported;
+    }
+
+    public Date getVariantsWithEvidenceImportedDate() {
+        return variantsWithEvidenceImportedDate;
     }
 
     public Date getVariantsImportedDate() {
