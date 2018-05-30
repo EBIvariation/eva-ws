@@ -58,9 +58,15 @@ public class ProgressReport {
 
     @Enumerated(EnumType.STRING)
     @Convert(converter = StatusConverter.class)
+    private Status variantsWithoutEvidenceImported;
+
+    @Enumerated(EnumType.STRING)
+    @Convert(converter = StatusConverter.class)
     private Status rsSynonymsImported;
 
     private Date variantsImportedDate;
+
+    private Date variantsWithoutEvidenceImportedDate;
 
     private Date rsSynonymsImportedDate;
 
@@ -71,7 +77,8 @@ public class ProgressReport {
     public ProgressReport(String databaseName, int taxId, String scientificName, String commonName,
                           String genbankAssemblyAccession, int lastDbsnpBuild, boolean inEnsembl,
                           Boolean toVariantWarehouse, Boolean assemblyFullyMatches, Status variantsImported,
-                          Status rsSynonymsImported, Date variantsImportedDate, Date rsSynonymsImportedDate) {
+                          Status variantsWithoutEvidenceImported, Status rsSynonymsImported, Date variantsImportedDate,
+                          Date variantsWithoutEvidenceImportedDate, Date rsSynonymsImportedDate) {
         this.databaseName = databaseName;
         this.taxId = taxId;
         this.scientificName = scientificName;
@@ -82,8 +89,10 @@ public class ProgressReport {
         this.toVariantWarehouse = toVariantWarehouse;
         this.assemblyFullyMatches = assemblyFullyMatches;
         this.variantsImported = variantsImported;
+        this.variantsWithoutEvidenceImported = variantsWithoutEvidenceImported;
         this.rsSynonymsImported = rsSynonymsImported;
         this.variantsImportedDate = variantsImportedDate;
+        this.variantsWithoutEvidenceImportedDate = variantsWithoutEvidenceImportedDate;
         this.rsSynonymsImportedDate = rsSynonymsImportedDate;
     }
 
@@ -124,7 +133,9 @@ public class ProgressReport {
         return scientificName;
     }
 
-    public String getCommonName() { return commonName; }
+    public String getCommonName() {
+        return commonName;
+    }
 
     public String getGenbankAssemblyAccession() {
         return genbankAssemblyAccession;
@@ -150,12 +161,20 @@ public class ProgressReport {
         return variantsImported;
     }
 
+    public Status getVariantsWithoutEvidenceImported() {
+        return variantsWithoutEvidenceImported;
+    }
+
     public Status getRsSynonymsImported() {
         return rsSynonymsImported;
     }
 
     public Date getVariantsImportedDate() {
         return variantsImportedDate;
+    }
+
+    public Date getVariantsWithoutEvidenceImportedDate() {
+        return variantsWithoutEvidenceImportedDate;
     }
 
     public Date getRsSynonymsImportedDate() {
