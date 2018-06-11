@@ -74,9 +74,9 @@ public class ProgressReport {
 
     private Long totalIdsDbsnp;
 
-    private Long importedSynIds;
+    private Long importedSynonymousIds;
 
-    private Long totalSynIdsDbsnp;
+    private Long totalSynonymousIdsDbsnp;
 
     ProgressReport() {
 
@@ -87,7 +87,7 @@ public class ProgressReport {
                           Boolean toVariantWarehouse, Boolean assemblyFullyMatches, Status variantsWithEvidenceImported,
                           Status variantsImported, Status rsSynonymsImported, Date variantsWithEvidenceImportedDate,
                           Date variantsImportedDate, Date rsSynonymsImportedDate, Long importedIds,
-                          Long totalIdsDbsnp, Long importedSynIds, Long totalSynIdsDbsnp) {
+                          Long totalIdsDbsnp, Long importedSynonymousIds, Long totalSynonymousIdsDbsnp) {
         this.databaseName = databaseName;
         this.taxId = taxId;
         this.scientificName = scientificName;
@@ -105,8 +105,8 @@ public class ProgressReport {
         this.rsSynonymsImportedDate = rsSynonymsImportedDate;
         this.importedIds = importedIds;
         this.totalIdsDbsnp = totalIdsDbsnp;
-        this.importedSynIds = importedSynIds;
-        this.totalSynIdsDbsnp = totalSynIdsDbsnp;
+        this.importedSynonymousIds = importedSynonymousIds;
+        this.totalSynonymousIdsDbsnp = totalSynonymousIdsDbsnp;
     }
 
     @Override
@@ -198,7 +198,7 @@ public class ProgressReport {
 
     public Long getTotalIdsDbsnp() { return  totalIdsDbsnp; }
 
-    public Long getImportedSynIds() { return importedSynIds; }
+    public Long getImportedSynonymousIds() { return importedSynonymousIds; }
 
-    public Long getTotalSynIdsDbsnp() { return totalSynIdsDbsnp; }
+    public Long getTotalSynonymousIdsDbsnp() { return totalSynonymousIdsDbsnp; }
 }
