@@ -70,6 +70,14 @@ public class ProgressReport {
 
     private Date rsSynonymsImportedDate;
 
+    private Long importedIds;
+
+    private Long totalIdsDbsnp;
+
+    private Long importedSynIds;
+
+    private Long totalSynIdsDbsnp;
+
     ProgressReport() {
 
     }
@@ -78,7 +86,8 @@ public class ProgressReport {
                           String genbankAssemblyAccession, int lastDbsnpBuild, boolean inEnsembl,
                           Boolean toVariantWarehouse, Boolean assemblyFullyMatches, Status variantsWithEvidenceImported,
                           Status variantsImported, Status rsSynonymsImported, Date variantsWithEvidenceImportedDate,
-                          Date variantsImportedDate, Date rsSynonymsImportedDate) {
+                          Date variantsImportedDate, Date rsSynonymsImportedDate, Long importedIds,
+                          Long totalIdsDbsnp, Long importedSynIds, Long totalSynIdsDbsnp) {
         this.databaseName = databaseName;
         this.taxId = taxId;
         this.scientificName = scientificName;
@@ -94,6 +103,10 @@ public class ProgressReport {
         this.variantsWithEvidenceImportedDate = variantsWithEvidenceImportedDate;
         this.variantsImportedDate = variantsImportedDate;
         this.rsSynonymsImportedDate = rsSynonymsImportedDate;
+        this.importedIds = importedIds;
+        this.totalIdsDbsnp = totalIdsDbsnp;
+        this.importedSynIds = importedSynIds;
+        this.totalSynIdsDbsnp = totalSynIdsDbsnp;
     }
 
     @Override
@@ -180,4 +193,12 @@ public class ProgressReport {
     public Date getRsSynonymsImportedDate() {
         return rsSynonymsImportedDate;
     }
+
+    public Long getImportedIds() { return  importedIds; }
+
+    public Long getTotalIdsDbsnp() { return  totalIdsDbsnp; }
+
+    public Long getImportedSynIds() { return importedSynIds; }
+
+    public Long getTotalSynIdsDbsnp() { return totalSynIdsDbsnp; }
 }
