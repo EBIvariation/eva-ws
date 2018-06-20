@@ -34,8 +34,15 @@ public class DgvaDBUtils {
 
         Specifications speciesSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.SPECIES)) {
-            Object[] species = queryOptions.getAsStringList(QueryOptionsConstants.SPECIES).toArray(new String[]{});
-            speciesSpecifications = where(in(DgvaStudyBrowserRepository.COMMON_NAME, species)).or(in(DgvaStudyBrowserRepository.SCIENTIFIC_NAME, species));
+            String[] species = queryOptions.getAsStringList(QueryOptionsConstants.SPECIES).toArray(new String[]{});
+            speciesSpecifications = where(in(DgvaStudyBrowserRepository.COMMON_NAME, (Object[])species))
+                    .or(in(DgvaStudyBrowserRepository.SCIENTIFIC_NAME, (Object[])species));
+
+            for (String speciesName : species) {
+                speciesSpecifications = speciesSpecifications
+                        .or(like(DgvaStudyBrowserRepository.COMMON_NAME, "%" + speciesName + "%"))
+                        .or(like(DgvaStudyBrowserRepository.SCIENTIFIC_NAME, "%" + speciesName + "%"));
+            }
         }
 
         Specifications typeSpecifications = null;
