@@ -22,8 +22,8 @@ import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryOptionsConstants;
 
 import static org.springframework.data.jpa.domain.Specifications.where;
+import static uk.ac.ebi.eva.lib.extension.GenericSpecifications.ilike;
 import static uk.ac.ebi.eva.lib.extension.GenericSpecifications.in;
-import static uk.ac.ebi.eva.lib.extension.GenericSpecifications.like;
 
 public class DgvaDBUtils {
 
@@ -34,8 +34,15 @@ public class DgvaDBUtils {
 
         Specifications speciesSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.SPECIES)) {
-            Object[] species = queryOptions.getAsStringList(QueryOptionsConstants.SPECIES).toArray(new String[]{});
-            speciesSpecifications = where(in(DgvaStudyBrowserRepository.COMMON_NAME, species)).or(in(DgvaStudyBrowserRepository.SCIENTIFIC_NAME, species));
+            String[] species = queryOptions.getAsStringList(QueryOptionsConstants.SPECIES).toArray(new String[]{});
+            speciesSpecifications = where(in(DgvaStudyBrowserRepository.COMMON_NAME, (Object[])species))
+                    .or(in(DgvaStudyBrowserRepository.SCIENTIFIC_NAME, (Object[])species));
+
+            for (String speciesName : species) {
+                speciesSpecifications = speciesSpecifications
+                        .or(ilike(DgvaStudyBrowserRepository.COMMON_NAME, "%" + speciesName + "%"))
+                        .or(ilike(DgvaStudyBrowserRepository.SCIENTIFIC_NAME, "%" + speciesName + "%"));
+            }
         }
 
         Specifications typeSpecifications = null;
@@ -43,7 +50,7 @@ public class DgvaDBUtils {
             String[] types = queryOptions.getAsStringList(QueryOptionsConstants.TYPE).toArray(new String[]{});
             typeSpecifications = where(in(DgvaStudyBrowserRepository.STUDY_TYPE, (Object[])types));
             for (String type : types) {
-                typeSpecifications = typeSpecifications.or(like(DgvaStudyBrowserRepository.STUDY_TYPE, "%" + type + "%"));
+                typeSpecifications = typeSpecifications.or(ilike(DgvaStudyBrowserRepository.STUDY_TYPE, "%" + type + "%"));
             }
         }
 
