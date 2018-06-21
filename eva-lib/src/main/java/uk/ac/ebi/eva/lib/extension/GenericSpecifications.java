@@ -35,7 +35,18 @@ public class GenericSpecifications<T> {
         return new Specification<T>() {
             @Override
             public Predicate toPredicate(Root<T> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                return criteriaBuilder.like(root.get(attributeName),pattern);
+                return criteriaBuilder.like(root.get(attributeName), pattern);
+            }
+        };
+    }
+
+
+    public static <T> Specification<T> ilike(String attributeName, String pattern) {
+        return new Specification<T>() {
+            @Override
+            public Predicate toPredicate(Root<T> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                return criteriaBuilder.like(criteriaBuilder.lower(root.get(attributeName)),
+                                            criteriaBuilder.lower(criteriaBuilder.literal(pattern)));
             }
         };
     }
