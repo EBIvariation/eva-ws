@@ -24,7 +24,6 @@ import uk.ac.ebi.eva.lib.utils.QueryOptionsConstants;
 import static org.springframework.data.jpa.domain.Specifications.where;
 import static uk.ac.ebi.eva.lib.extension.GenericSpecifications.ilike;
 import static uk.ac.ebi.eva.lib.extension.GenericSpecifications.in;
-import static uk.ac.ebi.eva.lib.extension.GenericSpecifications.like;
 
 public class DgvaDBUtils {
 
