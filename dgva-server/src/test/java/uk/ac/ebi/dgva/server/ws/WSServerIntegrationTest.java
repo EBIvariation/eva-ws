@@ -40,7 +40,7 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application.properties")
 @Sql({ "classpath:init-data.sql" })
-public class ArchiveWSServerIntegrationTest {
+public class WSServerIntegrationTest {
 
     private static final String EXISTING_STUDY = "nstd49";
 
