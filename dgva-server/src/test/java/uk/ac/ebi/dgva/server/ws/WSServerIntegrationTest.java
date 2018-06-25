@@ -40,25 +40,55 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application.properties")
 @Sql({ "classpath:init-data.sql" })
-public class ArchiveWSServerIntegrationTest {
+public class WSServerIntegrationTest {
+
+    private static final String EXISTING_STUDY = "nstd49";
+
+    private static final String NOT_EXISTING_STUDY = "nstd499";
 
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private static final String url = "/v1/meta/studies/all";
+    private static final String allStudiesUrl = "/v1/meta/studies/all";
 
     @Test
     public void testGetStudies() {
-        ResponseEntity<QueryResponse<QueryResult<VariantStudy>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantStudy>>>() {});
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-
-        QueryResponse<QueryResult<VariantStudy>> queryResponse = response.getBody();
+        QueryResponse<QueryResult<VariantStudy>> queryResponse = executeGetCall(allStudiesUrl);
         assertEquals(1, queryResponse.getResponse().size());
 
         List<VariantStudy> results = queryResponse.getResponse().get(0).getResult();
         assertEquals(175, results.size());
+    }
+
+    @Test
+    public void testGetExistingStudySummary() {
+        QueryResponse<QueryResult<VariantStudy>> queryResponse = executeGetCall(
+                "/v1/studies/" + EXISTING_STUDY + "/summary");
+        assertEquals(1, queryResponse.getResponse().size());
+
+        List<VariantStudy> results = queryResponse.getResponse().get(0).getResult();
+        assertEquals(1, results.size());
+    }
+
+
+    @Test
+    public void testGetNotExistingStudySummary() {
+        QueryResponse<QueryResult<VariantStudy>> queryResponse = executeGetCall(
+                "/v1/studies/" + NOT_EXISTING_STUDY + "/summary");
+        assertEquals(1, queryResponse.getResponse().size());
+
+        List<VariantStudy> results = queryResponse.getResponse().get(0).getResult();
+        assertEquals(0, results.size());
+    }
+
+    private QueryResponse<QueryResult<VariantStudy>> executeGetCall(String allStudiesUrl) {
+        ResponseEntity<QueryResponse<QueryResult<VariantStudy>>> response = restTemplate.exchange(
+                allStudiesUrl, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantStudy>>>() {
+                });
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        return response.getBody();
     }
 
 }

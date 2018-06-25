@@ -62,7 +62,7 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
     @Override
     public QueryResult getStudyById(String studyId, QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
-        DgvaStudyBrowser dgvaStudy = dgvaStudyBrowserRepository.getOne(studyId);
+        DgvaStudyBrowser dgvaStudy = dgvaStudyBrowserRepository.findOne(studyId);
         List<VariantStudy> variantStudy = new ArrayList<>();
         if (dgvaStudy != null) {
             variantStudy.add(dgvaStudy.generateVariantStudy());
