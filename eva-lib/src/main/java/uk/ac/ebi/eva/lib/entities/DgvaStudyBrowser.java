@@ -16,6 +16,8 @@
 package uk.ac.ebi.eva.lib.entities;
 
 
+import org.apache.commons.lang3.StringUtils;
+
 import uk.ac.ebi.eva.lib.models.VariantStudy;
 import uk.ac.ebi.eva.lib.eva_utils.EvaproDbUtils;
 
@@ -23,6 +25,8 @@ import javax.persistence.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "dgva_study_browser")
@@ -97,6 +101,15 @@ public class DgvaStudyBrowser {
     public VariantStudy generateVariantStudy() {
         // Convert the list of tax ids to integer values
         int[] taxIds = Arrays.stream(taxId.split(",")).map(String::trim).mapToInt(Integer::parseInt).toArray();
+        Arrays.sort(taxIds);
+
+        // De-duplicate and concatenate fields. Couldn't be done using the Oracle-native listagg function due to error
+        // "ORA-01489: result of string concatenation is too long"
+        commonName = deduplicateAndJoin(commonName);
+        scientificName = deduplicateAndJoin(scientificName);
+        analysisType = deduplicateAndJoin(analysisType);
+        assemblyName = deduplicateAndJoin(assemblyName);
+        platformName = deduplicateAndJoin(platformName);
 
         // Build the variant study object
         URI uri = null;
@@ -113,5 +126,13 @@ public class DgvaStudyBrowser {
                                               null, null, null, null, EvaproDbUtils.stringToStudyType(studyType), analysisType,
                                               null, assemblyName, null, platformName, uri, publications, -1, -1, false);
         return study;
+    }
+
+    private String deduplicateAndJoin(String commaSeparatedValues) {
+        if (commaSeparatedValues == null) {
+            return commaSeparatedValues;
+        }
+
+        return Arrays.stream(commaSeparatedValues.split(",")).distinct().collect(Collectors.joining(", "));
     }
 }
