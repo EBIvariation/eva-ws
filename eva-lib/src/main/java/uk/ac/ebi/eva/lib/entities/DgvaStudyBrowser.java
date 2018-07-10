@@ -16,8 +16,6 @@
 package uk.ac.ebi.eva.lib.entities;
 
 
-import org.apache.commons.lang3.StringUtils;
-
 import uk.ac.ebi.eva.lib.models.VariantStudy;
 import uk.ac.ebi.eva.lib.eva_utils.EvaproDbUtils;
 
