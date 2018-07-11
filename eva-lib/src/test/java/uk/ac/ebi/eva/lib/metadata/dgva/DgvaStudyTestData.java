@@ -39,15 +39,15 @@ final class DgvaStudyTestData {
         DgvaStudyBrowser study1 = new DgvaStudyBrowser(STUDY_1_ID, 1000, 10, 100, "9606", HUMAN, HOMO_SAPIENS, "1111",
                                                        "alias1", "Study 1", CONTROL_SET, "PRJ1", "www.study1.com",
                                                        "This is study 1", "Sequence alignment", "HMM", "Sequencing",
-                                                       "Illumina", "GRCh38");
+                                                       "Illumina", "GRCh38", "GCA_000001405.16");
         DgvaStudyBrowser study2= new DgvaStudyBrowser("estd2", 2000, 20, 200, "9606", HUMAN, HOMO_SAPIENS, "2222",
                                                       "alias2", "Study 2", COLLECTION, "PRJ2", "www.study2.com",
                                                       "This is study 2", "Sequence alignment", "HMM", "Sequencing",
-                                                      "Illumina", "GRCh38");
+                                                      "Illumina", "GRCh38", "GCA_000001405.16");
         DgvaStudyBrowser study3 = new DgvaStudyBrowser("estd3", 3000, 30, 300, "9606", MOUSE, M_MUSCULUS, "3333",
                                                        "alias3", "Study 3", CONTROL_SET, "PRJ3", "www.study3.com",
                                                        "This is study 3", "Sequence alignment", "HMM", "Sequencing",
-                                                       "Illumina", "MGSCv37");
+                                                       "Illumina", "MGSCv37", "GCA_000001635.1");
 
         entityManager.persist(study1);
         entityManager.persist(study2);

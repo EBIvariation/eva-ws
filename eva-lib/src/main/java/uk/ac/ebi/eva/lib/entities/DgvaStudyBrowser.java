@@ -23,7 +23,6 @@ import javax.persistence.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Entity
@@ -73,11 +72,15 @@ public class DgvaStudyBrowser {
     @Column(name = "assembly_names")
     private String assemblyName;
 
+    @Column(name = "assembly_accessions")
+    private String assemblyAccession;
+
+
     public DgvaStudyBrowser(String studyAccession, Integer callCount, Integer regionCount, Integer variantCount,
                             String taxId, String commonName, String scientificName, String pubmedId, String alias,
                             String displayName, String studyType, String projectId, String studyUrl,
                             String studyDescription, String analysisType, String detectionMethod,
-                            String methodType, String platformName, String assemblyName) {
+                            String methodType, String platformName, String assemblyName, String assemblyAccession) {
         this.studyAccession = studyAccession;
         this.taxId = taxId;
         this.commonName = commonName;
@@ -92,6 +95,7 @@ public class DgvaStudyBrowser {
         this.methodType = methodType;
         this.platformName = platformName;
         this.assemblyName = assemblyName;
+        this.assemblyAccession = assemblyAccession;
     }
 
     DgvaStudyBrowser() { }
@@ -103,11 +107,12 @@ public class DgvaStudyBrowser {
 
         // De-duplicate and concatenate fields. Couldn't be done using the Oracle-native listagg function due to error
         // "ORA-01489: result of string concatenation is too long"
-        commonName = deduplicateAndJoin(commonName);
-        scientificName = deduplicateAndJoin(scientificName);
-        analysisType = deduplicateAndJoin(analysisType);
-        assemblyName = deduplicateAndJoin(assemblyName);
-        platformName = deduplicateAndJoin(platformName);
+        commonName = deduplicateAndSortAndJoin(commonName);
+        scientificName = deduplicateAndSortAndJoin(scientificName);
+        analysisType = deduplicateAndSortAndJoin(analysisType);
+        platformName = deduplicateAndSortAndJoin(platformName);
+        assemblyName = deduplicateAndSortAndJoin(assemblyName);
+        assemblyAccession = deduplicateAndSortAndJoin(assemblyAccession);
 
         // Build the variant study object
         URI uri = null;
@@ -121,16 +126,17 @@ public class DgvaStudyBrowser {
 
         VariantStudy study = new VariantStudy(displayName, studyAccession, null,
                                               studyDescription, taxIds, commonName, scientificName,
-                                              null, null, null, null, EvaproDbUtils.stringToStudyType(studyType), analysisType,
-                                              null, assemblyName, null, platformName, uri, publications, -1, -1, false);
+                                              null, null, null, null, EvaproDbUtils.stringToStudyType(studyType),
+                                              analysisType, null, assemblyName, assemblyAccession, platformName, uri,
+                                              publications, -1, -1, false);
         return study;
     }
 
-    private String deduplicateAndJoin(String commaSeparatedValues) {
+    private String deduplicateAndSortAndJoin(String commaSeparatedValues) {
         if (commaSeparatedValues == null) {
             return commaSeparatedValues;
         }
 
-        return Arrays.stream(commaSeparatedValues.split(",")).distinct().collect(Collectors.joining(", "));
+        return Arrays.stream(commaSeparatedValues.split(",")).distinct().sorted().collect(Collectors.joining(", "));
     }
 }
