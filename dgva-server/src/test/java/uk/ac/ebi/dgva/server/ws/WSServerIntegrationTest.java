@@ -57,7 +57,7 @@ public class WSServerIntegrationTest {
         assertEquals(1, queryResponse.getResponse().size());
 
         List<VariantStudy> results = queryResponse.getResponse().get(0).getResult();
-        assertEquals(175, results.size());
+        assertEquals(205, results.size());
     }
 
     @Test
