@@ -53,8 +53,8 @@ public class ArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
         for (Tuple tuple : countGroupBy) {
             // Some studies are associated with multiple species, return as comma-separated values
             String[] species = tuple.get(0) != null ? ((String) tuple.get(0)).split(",") : new String[]{ "Others" };
-            long count = (long) tuple.get(1);
             for (String s : species) {
+                long count = (long) tuple.get(1);
                 if (result.containsKey(s)) {
                     count += result.get(s);
                 }

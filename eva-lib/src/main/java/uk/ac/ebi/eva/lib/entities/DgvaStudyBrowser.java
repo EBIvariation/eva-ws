@@ -33,16 +33,16 @@ public class DgvaStudyBrowser {
     @Column(name = "study_accession")
     private String studyAccession;
 
-    @Column(name = "taxonomy_ids")
+    @Column(name = "taxonomy_ids", length = 4000)
     private String taxId;
 
-    @Column(name = "common_names")
+    @Column(name = "common_names", length = 4000)
     private String commonName;
 
-    @Column(name = "scientific_names")
+    @Column(name = "scientific_names", length = 4000)
     private String scientificName;
 
-    @Column(name = "pubmed_ids")
+    @Column(name = "pubmed_ids", length = 4000)
     private String pubmedId;
 
     @Column(name = "display_name")
@@ -57,22 +57,22 @@ public class DgvaStudyBrowser {
     @Column(name = "study_description")
     private String studyDescription;
 
-    @Column(length = 100, name = "analysis_types")
+    @Column(name = "analysis_types", length = 4000)
     private String analysisType;
 
-    @Column(name = "detection_methods")
+    @Column(name = "detection_methods", length = 4000)
     private String detectionMethod;
 
-    @Column(name = "method_types")
+    @Column(name = "method_types", length = 4000)
     private String methodType;
 
-    @Column(name = "platform_names")
+    @Column(name = "platform_names", length = 4000)
     private String platformName;
 
-    @Column(name = "assembly_names")
+    @Column(name = "assembly_names", length = 4000)
     private String assemblyName;
 
-    @Column(name = "assembly_accessions")
+    @Column(name = "assembly_accessions", length = 4000)
     private String assemblyAccession;
 
 

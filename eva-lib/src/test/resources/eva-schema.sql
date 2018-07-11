@@ -1,3 +1,7 @@
+DROP TABLE IF EXISTS browsable_file;
+DROP TABLE IF EXISTS assembly;
+DROP TABLE IF EXISTS dbsnp_assemblies;
+
 CREATE TABLE browsable_file (
 	file_id int4,
 	ena_submission_file_id varchar(45),
@@ -23,7 +27,7 @@ CREATE TABLE assembly (
   assembly_filename varchar(250)
 );
 
-create table dbsnp_assemblies
+CREATE TABLE dbsnp_assemblies
 (
  database_name varchar(50),
  assembly_set_id int4,

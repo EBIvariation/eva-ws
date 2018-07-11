@@ -27,5 +27,9 @@ public class MetadataTestData {
 
     public static final String MOUSE = "Mouse";
 
+    public static final String CHICKEN = "Chicken";
+
+    public static final String CHIMPANZEE = "Chimpanzee";
+
     public static final String CATTLE = "Cattle";
 }
