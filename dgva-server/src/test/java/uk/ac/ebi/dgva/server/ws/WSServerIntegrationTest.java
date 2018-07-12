@@ -39,7 +39,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application.properties")
-@Sql({ "classpath:init-data.sql" })
+@Sql({"classpath:schema.sql", "classpath:data.sql"})
 public class WSServerIntegrationTest {
 
     private static final String EXISTING_STUDY = "nstd49";
@@ -57,7 +57,7 @@ public class WSServerIntegrationTest {
         assertEquals(1, queryResponse.getResponse().size());
 
         List<VariantStudy> results = queryResponse.getResponse().get(0).getResult();
-        assertEquals(175, results.size());
+        assertEquals(205, results.size());
     }
 
     @Test

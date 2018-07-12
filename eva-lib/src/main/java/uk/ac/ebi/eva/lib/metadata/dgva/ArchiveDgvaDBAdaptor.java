@@ -48,14 +48,22 @@ public class ArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
         long start = System.currentTimeMillis();
         Specification filterSpecification = getSpeciesAndTypeFilters(queryOptions);
         List<Tuple> countGroupBy = dgvaStudyBrowserRepository.groupCount(DgvaStudyBrowserRepository.COMMON_NAME, filterSpecification, false);
-        List<Map.Entry<String, Long>> result = new ArrayList<>();
+        Map<String, Long> result = new HashMap<>();
+
         for (Tuple tuple : countGroupBy) {
-            String species = tuple.get(0) != null ? (String) tuple.get(0) : "Others";
-            long count = (long) tuple.get(1);
-            result.add(new AbstractMap.SimpleEntry<>(species, count));
+            // Some studies are associated with multiple species, return as comma-separated values
+            String[] species = tuple.get(0) != null ? ((String) tuple.get(0)).split(",") : new String[]{ "Others" };
+            for (String s : species) {
+                long count = (long) tuple.get(1);
+                if (result.containsKey(s)) {
+                    count += result.get(s);
+                }
+                result.put(s, count);
+            }
         }
+
         long end = System.currentTimeMillis();
-        return new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
+        return new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, new LinkedList(result.entrySet()));
     }
 
     @Override
@@ -75,17 +83,17 @@ public class ArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
 
     @Override
     public QueryResult countFiles() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public QueryResult countSpecies() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public QueryResult getSpecies() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

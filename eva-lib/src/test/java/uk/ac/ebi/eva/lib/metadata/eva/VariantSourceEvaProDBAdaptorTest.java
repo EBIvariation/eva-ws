@@ -21,10 +21,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.stats.VariantSourceStats;
 import uk.ac.ebi.eva.lib.metadata.FileTestData;
-import uk.ac.ebi.eva.lib.metadata.eva.VariantSourceEvaProDBAdaptor;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 
@@ -38,6 +38,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
+@Sql({"classpath:eva-schema.sql", "classpath:eva-data.sql"})
 public class VariantSourceEvaProDBAdaptorTest {
 
 

@@ -15,12 +15,11 @@
  */
 package uk.ac.ebi.eva.lib.metadata.dgva;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
@@ -31,30 +30,25 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.CHICKEN;
+import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.CHIMPANZEE;
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.HUMAN;
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.MOUSE;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
+@Sql({"classpath:dgva-schema.sql", "classpath:dgva-data.sql"})
 public class ArchiveDgvaDBAdaptorTest {
 
     @Autowired
-    private TestEntityManager entityManager;
-
-    @Autowired
     private ArchiveDgvaDBAdaptor archiveDgvaDBAdaptor;
-
-    @Before
-    public void setUp() throws Exception {
-        DgvaStudyTestData.persistTestData(entityManager);
-    }
 
     @Test
     public void countStudies() throws Exception {
         QueryResult<Long> queryResult = archiveDgvaDBAdaptor.countStudies();
 
         assertEquals(1, queryResult.getNumTotalResults());
-        assertEquals(3, queryResult.first().longValue());
+        assertEquals(205, queryResult.first().longValue());
     }
 
     @Test
@@ -62,10 +56,10 @@ public class ArchiveDgvaDBAdaptorTest {
         QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor
                 .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.SPECIES, HUMAN));
 
-        assertEquals(1, queryResult.getNumTotalResults());
+        assertEquals(7, queryResult.getNumTotalResults());
         Map.Entry<String, Long> result = queryResult.first();
         assertEquals(HUMAN, result.getKey());
-        assertEquals(2, result.getValue().longValue());
+        assertEquals(155, result.getValue().longValue());
     }
 
     @Test
@@ -75,25 +69,31 @@ public class ArchiveDgvaDBAdaptorTest {
         queryOptions.put(QueryOptionsConstants.TYPE, DgvaStudyTestData.CONTROL_SET);
         QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor.countStudiesPerSpecies(queryOptions);
 
-        assertEquals(1, queryResult.getNumTotalResults());
+        assertEquals(7, queryResult.getNumTotalResults());
         Map.Entry<String, Long> result = queryResult.first();
         assertEquals(HUMAN, result.getKey());
-        assertEquals(1, result.getValue().longValue());
+        assertEquals(84, result.getValue().longValue());
     }
 
     @Test
     public void countStudiesPerSpeciesUnfiltered() throws Exception {
-        QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor
-                .countStudiesPerSpecies(new QueryOptions());
+        QueryResult<Map.Entry<String, Long>> queryResult =
+                archiveDgvaDBAdaptor.countStudiesPerSpecies(new QueryOptions());
 
-        assertEquals(2, queryResult.getNumTotalResults());
+        assertEquals(23, queryResult.getNumTotalResults());
         List<Map.Entry<String, Long>> results =  queryResult.getResult();
+        long chickenStudiesCount = results.stream().filter(e -> e.getKey().equals(CHICKEN))
+                                        .mapToLong(Map.Entry::getValue).findAny().getAsLong();
+        long chimpanzeeStudiesCount = results.stream().filter(e -> e.getKey().equals(CHIMPANZEE))
+                                          .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         long humanStudiesCount = results.stream().filter(e -> e.getKey().equals(HUMAN))
                                         .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         long mouseStudiesCount = results.stream().filter(e -> e.getKey().equals(MOUSE))
                                       .mapToLong(Map.Entry::getValue).findAny().getAsLong();
-        assertEquals(2, humanStudiesCount);
-        assertEquals(1, mouseStudiesCount);
+        assertEquals(3, chickenStudiesCount);
+        assertEquals(4, chimpanzeeStudiesCount);
+        assertEquals(155, humanStudiesCount);
+        assertEquals(13, mouseStudiesCount);
     }
 
     @Test
@@ -113,7 +113,7 @@ public class ArchiveDgvaDBAdaptorTest {
         assertEquals(1, queryResult.getNumTotalResults());
         Map.Entry<String, Long> result = queryResult.first();
         assertEquals(DgvaStudyTestData.CONTROL_SET, result.getKey());
-        assertEquals(2, result.getValue().longValue());
+        assertEquals(117, result.getValue().longValue());
     }
 
     @Test
@@ -129,14 +129,14 @@ public class ArchiveDgvaDBAdaptorTest {
         QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor
                 .countStudiesPerType(new QueryOptions());
 
-        assertEquals(2, queryResult.getNumTotalResults());
+        assertEquals(6, queryResult.getNumTotalResults());
         List<Map.Entry<String, Long>> results =  queryResult.getResult();
         long controlSetStudiesCount = results.stream().filter(e -> e.getKey().equals(DgvaStudyTestData.CONTROL_SET))
                                         .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         long collectionStudiesCount = results.stream().filter(e -> e.getKey().equals(DgvaStudyTestData.COLLECTION))
                                         .mapToLong(Map.Entry::getValue).findAny().getAsLong();
-        assertEquals(2, controlSetStudiesCount);
-        assertEquals(1, collectionStudiesCount);
+        assertEquals(117, controlSetStudiesCount);
+        assertEquals(26, collectionStudiesCount);
     }
 
     @Test(expected = UnsupportedOperationException.class)
