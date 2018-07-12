@@ -15,12 +15,10 @@
  */
 package uk.ac.ebi.eva.lib.metadata.dgva;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -43,15 +41,7 @@ import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.MOUSE;
 public class ArchiveDgvaDBAdaptorTest {
 
     @Autowired
-    private TestEntityManager entityManager;
-
-    @Autowired
     private ArchiveDgvaDBAdaptor archiveDgvaDBAdaptor;
-
-    @Before
-    public void setUp() throws Exception {
-        //DgvaStudyTestData.persistTestData(entityManager);
-    }
 
     @Test
     public void countStudies() throws Exception {
