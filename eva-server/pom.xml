@@ -101,6 +101,11 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
+            <resource>
+                <directory>docker</directory>
+                <filtering>true</filtering>
+                <targetPath>${project.build.directory}</targetPath>
+            </resource>
         </resources>
     </build>
     
