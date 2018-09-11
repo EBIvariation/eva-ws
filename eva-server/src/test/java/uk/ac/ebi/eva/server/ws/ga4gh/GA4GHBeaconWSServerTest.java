@@ -55,7 +55,8 @@ public class GA4GHBeaconWSServerTest {
 
     @Before
     public void setUp() throws Exception {
-        VariantWithSamplesAndAnnotation variant = new VariantWithSamplesAndAnnotation("1", 1000, 1005, "reference", "alternate");
+        VariantWithSamplesAndAnnotation variant = new VariantWithSamplesAndAnnotation("1", 1000, 1005, "reference",
+                                                                                      "alternate", "rs1");
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(variant);
 
         given(service.findByChromosomeAndStartAndAltAndStudyIn(eq("1"), anyInt(), any(), any(), any()))

@@ -66,7 +66,8 @@ public class GeneWSServerTest {
         String alternate = "T";
         String vepVersion = "88";
         String vepCacheVersion = "89";
-        testVariantEntity = new VariantWithSamplesAndAnnotation(chromosome, start, end, reference, alternate);
+        String mainId = "rs1";
+        testVariantEntity = new VariantWithSamplesAndAnnotation(chromosome, start, end, reference, alternate, mainId);
         Annotation variantAnnotation = new Annotation(chromosome, start, end, vepVersion, vepCacheVersion, Collections
                 .singleton(new Xref(GENE_ID, "HGNC")), null);
         testVariantEntity.setAnnotation(variantAnnotation);

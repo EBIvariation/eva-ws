@@ -59,7 +59,7 @@ public class GA4GHVariantWSServerTest {
 
     @Before
     public void setUp() throws Exception {
-        variant = new VariantWithSamplesAndAnnotation("1", 1000, 1005, "A", "C");
+        variant = new VariantWithSamplesAndAnnotation("1", 1000, 1005, "A", "C", "rs1");
         variant.setIds(Collections.singleton("1_1000_A_C"));
         variant.addSourceEntry(new VariantSourceEntryWithSampleNames("FILE_ID", "STUDY_ID", null, null, null, null,
                 null));

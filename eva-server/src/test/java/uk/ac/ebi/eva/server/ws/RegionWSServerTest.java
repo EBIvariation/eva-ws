@@ -62,7 +62,9 @@ public class RegionWSServerTest {
 
     @Before
     public void setUp() throws Exception {
-        VariantWithSamplesAndAnnotation variantEntity = new VariantWithSamplesAndAnnotation("chr1", 1000, 1005, "reference", "alternate");
+        VariantWithSamplesAndAnnotation variantEntity = new VariantWithSamplesAndAnnotation("chr1", 1000, 1005,
+                                                                                            "reference", "alternate",
+                                                                                            "rs1");
 
         List<Region> oneRegion = Arrays.asList(
                 new Region("20", 60000L, 62000L));
