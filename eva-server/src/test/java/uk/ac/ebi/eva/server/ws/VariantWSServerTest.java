@@ -64,8 +64,11 @@ public class VariantWSServerTest {
 
     private static final String NON_EXISTING_CHROMOSOME = "notARealChromosome";
 
+    private static final String MAIN_ID = "rs1";
+
     private static final VariantWithSamplesAndAnnotation VARIANT = new VariantWithSamplesAndAnnotation("1", 1000, 1005,
-                                                                                                       "A", "T", "rs1");
+                                                                                                       "A", "T",
+                                                                                                       MAIN_ID);
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -111,6 +114,7 @@ public class VariantWSServerTest {
         assertEquals(1, results.size());
 
         assertEquals(VARIANT, results.get(0));
+        assertEquals(MAIN_ID, results.get(0).getMainId());
     }
 
     @Test

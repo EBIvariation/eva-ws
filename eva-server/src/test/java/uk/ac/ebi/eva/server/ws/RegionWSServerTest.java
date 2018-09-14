@@ -54,6 +54,8 @@ import static org.mockito.Matchers.eq;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class RegionWSServerTest {
 
+    private static final String MAIN_ID = "rs1";
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -64,10 +66,9 @@ public class RegionWSServerTest {
     public void setUp() throws Exception {
         VariantWithSamplesAndAnnotation variantEntity = new VariantWithSamplesAndAnnotation("chr1", 1000, 1005,
                                                                                             "reference", "alternate",
-                                                                                            "rs1");
+                                                                                            MAIN_ID);
 
-        List<Region> oneRegion = Arrays.asList(
-                new Region("20", 60000L, 62000L));
+        List<Region> oneRegion = Collections.singletonList(new Region("20", 60000L, 62000L));
         given(service.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any(), any()))
                 .willReturn(Collections.singletonList(variantEntity));
 
@@ -107,6 +108,7 @@ public class RegionWSServerTest {
             assertFalse(variantEntity.getAlternate().isEmpty());
             assertNotEquals(0, variantEntity.getStart());
             assertNotEquals(0, variantEntity.getEnd());
+            assertEquals(MAIN_ID, variantEntity.getMainId());
         }
     }
 
