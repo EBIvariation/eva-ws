@@ -48,6 +48,8 @@ import static org.mockito.Matchers.eq;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GeneWSServerTest {
 
+    private static final String MAIN_ID = "rs1";
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -66,7 +68,7 @@ public class GeneWSServerTest {
         String alternate = "T";
         String vepVersion = "88";
         String vepCacheVersion = "89";
-        testVariantEntity = new VariantWithSamplesAndAnnotation(chromosome, start, end, reference, alternate);
+        testVariantEntity = new VariantWithSamplesAndAnnotation(chromosome, start, end, reference, alternate, MAIN_ID);
         Annotation variantAnnotation = new Annotation(chromosome, start, end, vepVersion, vepCacheVersion, Collections
                 .singleton(new Xref(GENE_ID, "HGNC")), null);
         testVariantEntity.setAnnotation(variantAnnotation);
@@ -89,6 +91,7 @@ public class GeneWSServerTest {
 
         assertEquals(1, results.size());
         assertEquals(testVariantEntity, results.get(0));
+        assertEquals(MAIN_ID, results.get(0).getMainId());
     }
 
     @Test
