@@ -4,7 +4,8 @@ stages:
 maven-build:
     image: maven:3-jdk-8
     stage: build
-    script: "mvn install"
+    script: 
+        - "mvn install --settings .gitlab.settings.xml -Dmaven.test.skip"
     artifacts:
         paths:
             - eva-server/target/*war
