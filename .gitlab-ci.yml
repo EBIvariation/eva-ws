@@ -1,0 +1,10 @@
+stages:
+    - build
+
+maven-build:
+    image: maven:3-jdk-8
+    stage: build
+    script: "mvn install"
+    artifacts:
+        paths:
+            - eva-server/target/*war
