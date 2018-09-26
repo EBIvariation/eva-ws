@@ -1,5 +1,6 @@
 stages:
     - build
+    - deploy
 
 maven-build-internal:
     image: maven:3.5.4-jdk-8
@@ -9,3 +10,8 @@ maven-build-internal:
     artifacts:
         paths:
             - eva-server/target/eva.war
+
+deploy-tomcat-internal:
+    stage: deploy
+    script:
+        - "curl -u ${env.TOMCAT_INTERNAL_USER}:${env.TOMCAT_INTERNAL_PASSWORD} -T \"eva-server/target/eva.war\" \"http://${env.TOMCAT_INTERNAL_HOST}/manager/text/deploy?path=/eva/EVA1288&update=true\""
