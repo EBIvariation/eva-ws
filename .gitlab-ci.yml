@@ -5,8 +5,8 @@ stages:
 
 cache:
     paths:
-        - .m2/repository/
-        - */target/
+        - ".m2/repository/"
+        - "*/target/"
 
 maven-compile:
     image: maven:3-jdk-8
