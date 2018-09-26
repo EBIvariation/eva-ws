@@ -1,4 +1,41 @@
 <settings>
+    <profiles>
+        <profile>
+            <id>internal</id>
+            <properties>
+                <eva.mongo.host>${env.MONGO_HOST_DEVELOPMENT}</eva.mongo.host>
+                <eva.mongo.auth.db>${env.MONGO_AUTH_DB}</eva.mongo.auth.db>
+                <eva.mongo.user>${env.MONGO_USER_DEVELOPMENT}</eva.mongo.user>
+                <eva.mongo.passwd>${env.MONGO_PASSWORD_DEVELOPMENT}</eva.mongo.passwd>
+                <eva.mongo.read-preference>${env.MONGO_READ_PREFERENCE}</eva.mongo.read-preference>
+                <eva.mongo.collections.files>${env.MONGO_COLLECTION_FILES}</eva.mongo.collections.files>
+                <eva.mongo.collections.varians>${env.MONGO_COLLECTION_VARIANTS}</eva.mongo.collections.varians>
+                <eva.mongo.collections.annotation-metadata>${env.MONGO_COLLECTION_ANNOTATION_METADATA}</eva.mongo.collections.annotation-metadata>
+                <eva.mongo.collections.features>${env.MONGO_COLLECTION_FEATURES}</eva.mongo.collections.features>
+                <eva.mongo.collections.annotations>${env.MONGO_COLLECTION_ANNOTATIONS}</eva.mongo.collections.annotations>
+                <eva.version>${env.EVA_VERSION}</eva.version>
+                <eva.context.root>${env.EVA_INTERNAL_CONTEXT_ROOT}</eva.context.root>
+            </properties>
+        </profile>
+        <profile>
+            <id>evadev</id>
+            <properties>
+                <eva.evapro.datasource>${env.EVADEV_DATASOURCE}</eva.evapro.datasource>
+                <eva.evapro.user>${env.EVADEV_USER}</eva.evapro.user>
+                <eva.evapro.password>${env.EVADEV_PASSWORD}</eva.evapro.password>
+                <eva.evapro.jdbc.url>${env.EVADEV_JDBC_URL}</eva.evapro.jdbc.url>
+                <eva.evapro.dbsnp-progress.schema>${env.DBSNP_PROGRESS_SCHEMA}</eva.evapro.dbsnp-progress.schema>
+            </properties>
+        </profile>
+        <profile>
+            <id>dgvadev</id>
+            <properties>
+                <dgvapro.host>${env.DGVADEV_JDBC_URL}</dgvapro.host>
+                <dgvapro.user>${env.DGVADEV_USER}</dgvapro.user>
+                <dgvapro.passwd>${env.DGVADEV_PASSWORD}</dgvapro.passwd>
+            </properties>
+        </profile>
+    </profiles>
     <servers>
         <server>
             <id>maven.oracle.com</id>
