@@ -1,12 +1,8 @@
 stages:
     - build
 
-cache:
-    paths:
-        - ".m2/repository/"
-
 maven-build-internal:
-    image: maven:3-jdk-8
+    image: maven:3.5.4-jdk-8
     stage: build
     script:
         - "mvn package --settings .gitlab.settings.xml -P internal,evadev,dgvadev"
