@@ -70,13 +70,17 @@ public class ProgressReport {
 
     private Date rsSynonymsImportedDate;
 
-    private Long importedIds;
+    private Long importedRs;
 
-    private Long totalIdsDbsnp;
+    private Long totalRsDbsnp;
 
-    private Long importedSynonymousIds;
+    private Long importedSynonymousRs;
 
-    private Long totalSynonymousIdsDbsnp;
+    private Long totalSynonymousRsDbsnp;
+
+    private Long importedSs;
+
+    private Long totalSsDbsnp;
 
     ProgressReport() {
 
@@ -86,8 +90,8 @@ public class ProgressReport {
                           String genbankAssemblyAccession, int lastDbsnpBuild, boolean inEnsembl,
                           Boolean toVariantWarehouse, Boolean assemblyFullyMatches, Status variantsWithEvidenceImported,
                           Status variantsImported, Status rsSynonymsImported, Date variantsWithEvidenceImportedDate,
-                          Date variantsImportedDate, Date rsSynonymsImportedDate, Long importedIds,
-                          Long totalIdsDbsnp, Long importedSynonymousIds, Long totalSynonymousIdsDbsnp) {
+                          Date variantsImportedDate, Date rsSynonymsImportedDate, Long importedRs, Long totalRsDbsnp,
+                          Long importedSynonymousRs, Long totalSynonymousRsDbsnp, Long importedSs, Long totalSsDbsnp) {
         this.databaseName = databaseName;
         this.taxId = taxId;
         this.scientificName = scientificName;
@@ -103,10 +107,12 @@ public class ProgressReport {
         this.variantsWithEvidenceImportedDate = variantsWithEvidenceImportedDate;
         this.variantsImportedDate = variantsImportedDate;
         this.rsSynonymsImportedDate = rsSynonymsImportedDate;
-        this.importedIds = importedIds;
-        this.totalIdsDbsnp = totalIdsDbsnp;
-        this.importedSynonymousIds = importedSynonymousIds;
-        this.totalSynonymousIdsDbsnp = totalSynonymousIdsDbsnp;
+        this.importedRs = importedRs;
+        this.totalRsDbsnp = totalRsDbsnp;
+        this.importedSynonymousRs = importedSynonymousRs;
+        this.totalSynonymousRsDbsnp = totalSynonymousRsDbsnp;
+        this.importedSs = importedSs;
+        this.totalSsDbsnp = totalSsDbsnp;
     }
 
     @Override
@@ -194,11 +200,15 @@ public class ProgressReport {
         return rsSynonymsImportedDate;
     }
 
-    public Long getImportedIds() { return  importedIds; }
+    public Long getImportedRs() { return importedRs; }
 
-    public Long getTotalIdsDbsnp() { return  totalIdsDbsnp; }
+    public Long getTotalRsDbsnp() { return totalRsDbsnp; }
 
-    public Long getImportedSynonymousIds() { return importedSynonymousIds; }
+    public Long getImportedSynonymousRs() { return importedSynonymousRs; }
 
-    public Long getTotalSynonymousIdsDbsnp() { return totalSynonymousIdsDbsnp; }
+    public Long getTotalSynonymousRsDbsnp() { return totalSynonymousRsDbsnp; }
+
+    public Long getImportedSs() { return importedSs; }
+
+    public Long getTotalSsDbsnp() { return totalSsDbsnp; }
 }
