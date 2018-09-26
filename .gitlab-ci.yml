@@ -3,6 +3,10 @@ stages:
     - test
     - build
 
+cache:
+    paths:
+        - */target
+
 maven-compile:
     image: maven:3-jdk-8
     stage: compile
