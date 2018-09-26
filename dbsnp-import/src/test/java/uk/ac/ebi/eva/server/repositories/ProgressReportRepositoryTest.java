@@ -46,7 +46,8 @@ public class ProgressReportRepositoryTest {
         ProgressReport report = progressReportRepository.findOne("fruitfly_7227");
         ProgressReport expected = new ProgressReport("fruitfly_7227", 7227, "Drosophila melanogaster", "Fruit fly",
                                                      "GCA_000001215.4", 149, true, false, false, Status.pending,
-                                                     Status.pending, Status.pending, null, null, null, 0L, 0L, 0L, 0L);
+                                                     Status.pending, Status.pending, null, null, null, 0L, 0L, 0L, 0L,
+                                                     0L, 0L);
         assertEquals(expected, report);
     }
 
