@@ -9,7 +9,7 @@
                 <eva.mongo.passwd>${env.MONGO_PASSWORD_DEVELOPMENT}</eva.mongo.passwd>
                 <eva.mongo.read-preference>${env.MONGO_READ_PREFERENCE}</eva.mongo.read-preference>
                 <eva.mongo.collections.files>${env.MONGO_COLLECTION_FILES}</eva.mongo.collections.files>
-                <eva.mongo.collections.varians>${env.MONGO_COLLECTION_VARIANTS}</eva.mongo.collections.varians>
+                <eva.mongo.collections.variants>${env.MONGO_COLLECTION_VARIANTS}</eva.mongo.collections.variants>
                 <eva.mongo.collections.annotation-metadata>${env.MONGO_COLLECTION_ANNOTATION_METADATA}</eva.mongo.collections.annotation-metadata>
                 <eva.mongo.collections.features>${env.MONGO_COLLECTION_FEATURES}</eva.mongo.collections.features>
                 <eva.mongo.collections.annotations>${env.MONGO_COLLECTION_ANNOTATIONS}</eva.mongo.collections.annotations>

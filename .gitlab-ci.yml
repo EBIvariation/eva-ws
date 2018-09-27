@@ -2,16 +2,27 @@ stages:
     - build
     - deploy
 
+variables:
+    TOMCAT_USER: "$TOMCAT_INTERNAL_USER"
+    TOMCAT_PASSWORD: "$TOMCAT_INTERNAL_PASSWORD"
+    TOMCAT_HOST: "$TOMCAT_INTERNAL_HOST"
+    MAVEN_PROFILE: "internal,evadev,dgvadev"
+
 maven-build-internal:
     image: maven:3.5.4-jdk-8
     stage: build
     script:
-        - "mvn package --settings .gitlab.settings.xml -P internal,evadev,dgvadev"
+        - "mvn package --settings .gitlab.settings.xml -P $MAVEN_PROFILE"
     artifacts:
         paths:
             - eva-server/target/eva.war
 
 deploy-tomcat-internal:
+    image: alpine:3.8
     stage: deploy
+    environment:
+        name: internal
+        url: http://wwwint.ebi.ac.uk/eva/EVA1288/eva/webservices/api/
     script:
-        - "curl -u ${env.TOMCAT_INTERNAL_USER}:${env.TOMCAT_INTERNAL_PASSWORD} -T \"eva-server/target/eva.war\" \"http://${env.TOMCAT_INTERNAL_HOST}/manager/text/deploy?path=/eva/EVA1288&update=true\""
+        - "apk add --update curl"
+        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"eva-server/target/eva.war\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva/EVA1288&update=true\""
