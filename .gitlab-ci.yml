@@ -8,7 +8,7 @@ variables:
     TOMCAT_HOST: "$TOMCAT_INTERNAL_HOST"
     MAVEN_PROFILE: "internal,evadev,dgvadev"
 
-maven-build-internal:
+.maven-build:
     image: maven:3.5.4-jdk-8
     stage: build
     script:
@@ -17,7 +17,7 @@ maven-build-internal:
         paths:
             - eva-server/target/eva.war
 
-deploy-tomcat-internal:
+.deploy-tomcat:
     image: alpine:3.8
     stage: deploy
     environment:
@@ -26,3 +26,28 @@ deploy-tomcat-internal:
     script:
         - "apk add --update curl"
         - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"eva-server/target/eva.war\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva/EVA1288&update=true\""
+
+maven-build-internal:
+    extends: .maven-build
+    variables:
+        MAVEN_PROFILE: "internal,evadev,dgvadev"
+
+maven-build-development:
+    extends: .maven-build
+    variables:
+        MAVEN_PROFILE: "development,evadev,dgvadev"
+
+deploy-tomcat-internal:
+    extends: .deploy-tomcat
+    variables:
+        TOMCAT_USER: "$TOMCAT_INTERNAL_USER"
+        TOMCAT_PASSWORD: "$TOMCAT_INTERNAL_PASSWORD"
+        TOMCAT_HOST: "$TOMCAT_INTERNAL_HOST"
+
+deploy-tomcat-development:
+    extends: .deploy-tomcat
+    when: manual
+    variables:
+        TOMCAT_USER: "$TOMCAT_DEVELOPMENT_USER"
+        TOMCAT_PASSWORD: "$TOMCAT_DEVELOPMENT_PASSWORD"
+        TOMCAT_HOST: "$TOMCAT_DEVELOPMENT_HOST"
