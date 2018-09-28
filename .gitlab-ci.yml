@@ -11,31 +11,38 @@ variables:
 .maven-build:
     image: maven:3.5.4-jdk-8
     stage: build
+    variables:
+        ARTIFACT_PATH: "eva-server/target/eva-$ENVIRONMENT_NAME.war"
     script:
         - "mvn package --settings .gitlab.settings.xml -P $MAVEN_PROFILE"
+        - "cp eva-server/target/eva.war $ARTIFACT_PATH"
     artifacts:
         paths:
-            - eva-server/target/eva.war
+            - "$ARTIFACT_PATH"
 
 .deploy-tomcat:
     image: alpine:3.8
     stage: deploy
     environment:
-        name: internal
-        url: http://ves-ebi-f8:8080/eva/EVA1288/webservices/rest/swagger-ui.html
+        name: $ENVIRONMENT_NAME
+        url: "http://$TOMCAT_HOST/eva/EVA1288/webservices/rest/swagger-ui.html"
+    variables:
+        ARTIFACT_PATH: "eva-server/target/eva-$ENVIRONMENT_NAME.war"
     script:
         - "apk add --update curl"
-        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"eva-server/target/eva.war\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva/EVA1288&update=true\" | grep \"OK - Deployed application\""
+        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva/EVA1288&update=true\" | grep \"OK - Deployed application\""
 
 maven-build-internal:
     extends: .maven-build
     variables:
         MAVEN_PROFILE: "internal,evadev,dgvadev"
+        ENVIRONMENT_NAME: "internal"
 
 maven-build-development:
     extends: .maven-build
     variables:
         MAVEN_PROFILE: "development,evadev,dgvadev"
+        ENVIRONMENT_NAME: "development"
 
 deploy-tomcat-internal:
     extends: .deploy-tomcat
@@ -43,6 +50,7 @@ deploy-tomcat-internal:
         TOMCAT_USER: "$TOMCAT_INTERNAL_USER"
         TOMCAT_PASSWORD: "$TOMCAT_INTERNAL_PASSWORD"
         TOMCAT_HOST: "$TOMCAT_INTERNAL_HOST"
+        ENVIRONMENT_NAME: "internal"
 
 deploy-tomcat-development:
     extends: .deploy-tomcat
@@ -51,3 +59,4 @@ deploy-tomcat-development:
         TOMCAT_USER: "$TOMCAT_DEVELOPMENT_USER"
         TOMCAT_PASSWORD: "$TOMCAT_DEVELOPMENT_PASSWORD"
         TOMCAT_HOST: "$TOMCAT_DEVELOPMENT_HOST"
+        ENVIRONMENT_NAME: "development"
