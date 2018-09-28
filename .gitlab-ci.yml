@@ -2,12 +2,6 @@ stages:
     - build
     - deploy
 
-variables:
-    TOMCAT_USER: "$TOMCAT_INTERNAL_USER"
-    TOMCAT_PASSWORD: "$TOMCAT_INTERNAL_PASSWORD"
-    TOMCAT_HOST: "$TOMCAT_INTERNAL_HOST"
-    MAVEN_PROFILE: "internal,evadev,dgvadev"
-
 .maven-build:
     image: maven:3.5.4-jdk-8
     stage: build
