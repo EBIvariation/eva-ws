@@ -25,7 +25,7 @@ variables:
         url: http://ves-ebi-f8:8080/eva/EVA1288/webservices/rest/swagger-ui.html
     script:
         - "apk add --update curl"
-        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"eva-server/target/eva.war\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva/EVA1288&update=true\""
+        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"eva-server/target/eva.war\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva/EVA1288&update=true\" | grep \"OK - Deployed application\""
 
 maven-build-internal:
     extends: .maven-build
