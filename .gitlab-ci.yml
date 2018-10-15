@@ -26,18 +26,21 @@ stages:
         - "apk add --update curl"
         - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva/EVA1288&update=true\" | grep \"OK - Deployed application\""
 
-
 maven-build-internal:
     extends: .maven-build
     variables:
         MAVEN_PROFILE: "internal,evadev,dgvadev"
         ENVIRONMENT_NAME: "internal"
+    only:
+        - feature/gitlabCI
 
 maven-build-development:
     extends: .maven-build
     variables:
         MAVEN_PROFILE: "development,evadev,dgvadev"
         ENVIRONMENT_NAME: "development"
+    only:
+        - feature/gitlabCImaster
 
 deploy-tomcat-internal:
     extends: .deploy-tomcat
