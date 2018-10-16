@@ -26,6 +26,7 @@ stages:
         - "apk add --update curl"
         - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva/EVA1288&update=true\" | grep \"OK - Deployed application\""
 
+
 maven-build-internal:
     extends: .maven-build
     variables:
