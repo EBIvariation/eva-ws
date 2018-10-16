@@ -45,7 +45,7 @@ maven-build-development:
 maven-build-production:
     extends: .maven-build
     variables:
-        MAVEN_PROFILE: "production,evadev,dgvadev"
+        MAVEN_PROFILE: "production,evapro,dgvapro"
         ENVIRONMENT_NAME: "production"
     only:
         - tags
@@ -75,9 +75,20 @@ deploy-tomcat-production:
     extends: .deploy-tomcat
     when: manual
     variables:
-        TOMCAT_USER: "$TOMCAT_DEVELOPMENT_USER"
-        TOMCAT_PASSWORD: "$TOMCAT_DEVELOPMENT_PASSWORD"
-        TOMCAT_HOST: "$TOMCAT_DEVELOPMENT_HOST"
+        TOMCAT_USER: "$TOMCAT_PRODUCTION_USER"
+        TOMCAT_PASSWORD: "$TOMCAT_PRODUCTION_PASSWORD"
+        TOMCAT_HOST: "$TOMCAT_PRODUCTION_HOST"
+        ENVIRONMENT_NAME: "production"
+    only:
+        - tags
+
+deploy-tomcat-production-fallback:
+    extends: .deploy-tomcat
+    when: manual
+    variables:
+        TOMCAT_USER: "$TOMCAT_PRODUCTION_FALLBACK_USER"
+        TOMCAT_PASSWORD: "$TOMCAT_PRODUCTION_FALLBACK_PASSWORD"
+        TOMCAT_HOST: "$TOMCAT_PRODUCTION_FALLBACK_HOST"
         ENVIRONMENT_NAME: "production"
     only:
         - tags
