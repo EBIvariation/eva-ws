@@ -19,12 +19,12 @@ stages:
     stage: deploy
     environment:
         name: $ENVIRONMENT_NAME
-        url: "http://$TOMCAT_HOST/eva/EVA1288/webservices/rest/swagger-ui.html"
+        url: "http://$TOMCAT_HOST/eva/webservices/rest/swagger-ui.html"
     variables:
         ARTIFACT_PATH: "eva-server/target/eva-$ENVIRONMENT_NAME.war"
     script:
         - "apk add --update curl"
-        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva/EVA1288&update=true\" | grep \"OK - Deployed application\""
+        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva&update=true\" | grep \"OK - Deployed application\""
 
 maven-build-internal:
     extends: .maven-build
@@ -32,7 +32,7 @@ maven-build-internal:
         MAVEN_PROFILE: "internal,evadev,dgvadev"
         ENVIRONMENT_NAME: "internal"
     only:
-        - master
+        - feature/gitlabCI
 
 maven-build-development:
     extends: .maven-build
@@ -58,7 +58,7 @@ deploy-tomcat-internal:
         TOMCAT_HOST: "$TOMCAT_INTERNAL_HOST"
         ENVIRONMENT_NAME: "internal"
     only:
-        - master
+        - feature/gitlabCI
 
 deploy-tomcat-development:
     extends: .deploy-tomcat
