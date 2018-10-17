@@ -30,9 +30,9 @@ maven-build-internal:
     extends: .maven-build
     variables:
         MAVEN_PROFILE: "internal,evadev,dgvadev"
-        ENVIRONMENT_NAME: internal
+        ENVIRONMENT_NAME: "internal"
     only:
-        - feature/gitlabCI
+        - master
 
 maven-build-development:
     extends: .maven-build
@@ -40,7 +40,7 @@ maven-build-development:
         MAVEN_PROFILE: "development,evadev,dgvadev"
         ENVIRONMENT_NAME: "development"
     only:
-        - feature/gitlabCImaster
+        - master
 
 maven-build-production:
     extends: .maven-build
@@ -56,9 +56,9 @@ deploy-tomcat-internal:
         TOMCAT_USER: "$TOMCAT_INTERNAL_USER"
         TOMCAT_PASSWORD: "$TOMCAT_INTERNAL_PASSWORD"
         TOMCAT_HOST: "$TOMCAT_INTERNAL_HOST"
-        ENVIRONMENT_NAME: internal
+        ENVIRONMENT_NAME: "internal"
     only:
-        - feature/gitlabCI
+        - master
 
 deploy-tomcat-development:
     extends: .deploy-tomcat
@@ -69,7 +69,7 @@ deploy-tomcat-development:
         TOMCAT_HOST: "$TOMCAT_DEVELOPMENT_HOST"
         ENVIRONMENT_NAME: "development"
     only:
-        - feature/gitlabCImaster
+        - master
 
 deploy-tomcat-production:
     extends: .deploy-tomcat
