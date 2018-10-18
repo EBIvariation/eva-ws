@@ -62,12 +62,22 @@
             </properties>
         </profile>
         <profile>
-            <id>evapro</id>
+            <id>evapro-a</id>
             <properties>
-                <eva.evapro.datasource>${env.EVAPRO_DATASOURCE}</eva.evapro.datasource>
+                <eva.evapro.datasource>${env.EVAPRO_A_DATASOURCE}</eva.evapro.datasource>
                 <eva.evapro.user>${env.EVAPRO_USER}</eva.evapro.user>
                 <eva.evapro.password>${env.EVAPRO_PASSWORD}</eva.evapro.password>
-                <eva.evapro.jdbc.url>${env.EVAPRO_JDBC_URL}</eva.evapro.jdbc.url>
+                <eva.evapro.jdbc.url>${env.EVAPRO_A_JDBC_URL}</eva.evapro.jdbc.url>
+                <eva.evapro.dbsnp-progress.schema>${env.DBSNP_PROGRESS_SCHEMA}</eva.evapro.dbsnp-progress.schema>
+            </properties>
+        </profile>
+        <profile>
+            <id>evapro-b</id>
+            <properties>
+                <eva.evapro.datasource>${env.EVAPRO_B_DATASOURCE}</eva.evapro.datasource>
+                <eva.evapro.user>${env.EVAPRO_USER}</eva.evapro.user>
+                <eva.evapro.password>${env.EVAPRO_PASSWORD}</eva.evapro.password>
+                <eva.evapro.jdbc.url>${env.EVAPRO_B_JDBC_URL}</eva.evapro.jdbc.url>
                 <eva.evapro.dbsnp-progress.schema>${env.DBSNP_PROGRESS_SCHEMA}</eva.evapro.dbsnp-progress.schema>
             </properties>
         </profile>

@@ -24,7 +24,7 @@ stages:
         ARTIFACT_PATH: "eva-server/target/eva-$ENVIRONMENT_NAME.war"
     script:
         - "apk add --update curl"
-        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva&update=true\" | grep \"OK - Deployed application\""
+        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva/EVA1288&update=true\" | grep \"OK - Deployed application\""
 
 maven-build-internal:
     extends: .maven-build
@@ -45,7 +45,7 @@ maven-build-development:
 maven-build-production:
     extends: .maven-build
     variables:
-        MAVEN_PROFILE: "production,evapro,dgvapro"
+        MAVEN_PROFILE: "production,$ACTIVE_EVAPRO,dgvapro"
         ENVIRONMENT_NAME: "production"
     only:
         - tags
