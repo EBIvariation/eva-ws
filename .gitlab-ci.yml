@@ -62,7 +62,6 @@ deploy-tomcat-internal:
 
 deploy-tomcat-development:
     extends: .deploy-tomcat
-    when: manual
     variables:
         TOMCAT_USER: "$TOMCAT_DEVELOPMENT_USER"
         TOMCAT_PASSWORD: "$TOMCAT_DEVELOPMENT_PASSWORD"
