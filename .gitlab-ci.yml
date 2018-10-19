@@ -17,8 +17,7 @@ stages:
             - "$ARTIFACT_PATH"
         expire_in: 2 weeks
 
-# Not executed, parent job definition for Maven tests
-.maven-test:
+maven-test:
     image: maven:3.5.4-jdk-8
     stage: test
     script:
@@ -26,8 +25,8 @@ stages:
     artifacts:
         reports:
             junit:
-                - eva_server/target/surefire-reports/test-$ENVIRONMENT_NAME.xml
-                - eva_server/target/failsafe-reports/test-$ENVIRONMENT_NAME.xml
+                - eva_server/target/surefire-reports/TEST-*.xml
+                - eva_server/target/failsafe-reports/TEST-*.xml
 
 # Not executed, parent job definition for Tomcat deployments
 .deploy-tomcat:
@@ -65,21 +64,6 @@ maven-build-production:
         ENVIRONMENT_NAME: "production"
     only:
         - tags
-
-maven-test-internal:
-    extends: .maven-test
-    variables:
-        ENVIRONMENT_NAME: "internal"
-
-maven-test-development:
-    extends: .maven-test
-    variables:
-        ENVIRONMENT_NAME: "development"
-
-maven-test-production:
-    extends: .maven-test
-    variables:
-        ENVIRONMENT_NAME: "production"
 
 deploy-tomcat-internal:
     extends: .deploy-tomcat
