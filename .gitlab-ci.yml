@@ -21,7 +21,7 @@ maven-test:
     image: maven:3.5.4-jdk-8
     stage: test
     script:
-        - mvn verify
+        - mvn verify --settings .gitlab.settings.xml
     artifacts:
         reports:
             junit:
