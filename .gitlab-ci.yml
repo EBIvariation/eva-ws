@@ -2,6 +2,7 @@ stages:
     - build
     - deploy
 
+# Not executed, parent job definition for Maven builds
 .maven-build:
     image: maven:3.5.4-jdk-8
     stage: build
@@ -13,7 +14,9 @@ stages:
     artifacts:
         paths:
             - "$ARTIFACT_PATH"
+        expire_in: 2 weeks
 
+# Not executed, parent job definition for Maven builds
 .deploy-tomcat:
     image: alpine:3.8
     stage: deploy
