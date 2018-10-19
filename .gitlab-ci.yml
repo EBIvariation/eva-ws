@@ -67,17 +67,17 @@ maven-build-production:
         - tags
 
 maven-test-internal:
-    extends: maven-test
+    extends: .maven-test
     variables:
         ENVIRONMENT_NAME: "internal"
 
 maven-test-development:
-    extends: maven-test
+    extends: .maven-test
     variables:
         ENVIRONMENT_NAME: "development"
 
 maven-test-production:
-    extends: maven-test
+    extends: .maven-test
     variables:
         ENVIRONMENT_NAME: "production"
 
