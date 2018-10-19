@@ -1,0 +1,110 @@
+stages:
+    - build
+    - test
+    - deploy
+
+# Not executed, parent job definition for Maven builds
+.maven-build:
+    image: maven:3.5.4-jdk-8
+    stage: build
+    variables:
+        ARTIFACT_PATH: "eva-server/target/eva-$ENVIRONMENT_NAME.war"
+    script:
+        - "mvn package --settings .gitlab.settings.xml -P $MAVEN_PROFILE"
+        - "cp eva-server/target/eva.war $ARTIFACT_PATH"
+    artifacts:
+        paths:
+            - "$ARTIFACT_PATH"
+        expire_in: 2 weeks
+
+maven-test:
+    image: maven:3.5.4-jdk-8
+    stage: test
+    script:
+        - mvn verify --settings .gitlab.settings.xml
+    artifacts:
+        reports:
+            junit:
+                - eva-server/target/surefire-reports/TEST-*.xml
+    only:
+        - master
+        - tags
+
+# Not executed, parent job definition for Tomcat deployments
+.deploy-tomcat:
+    image: alpine:3.8
+    stage: deploy
+    environment:
+        name: $ENVIRONMENT_NAME
+        url: "http://$TOMCAT_HOST/eva/webservices/rest/swagger-ui.html"
+    variables:
+        ARTIFACT_PATH: "eva-server/target/eva-$ENVIRONMENT_NAME.war"
+    script:
+        - "apk add --update curl"
+        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva/EVA1288&update=true\" | grep \"OK - Deployed application\""
+
+maven-build-internal:
+    extends: .maven-build
+    variables:
+        MAVEN_PROFILE: "internal,evadev,dgvadev"
+        ENVIRONMENT_NAME: "internal"
+    only:
+        - master
+
+maven-build-development:
+    extends: .maven-build
+    variables:
+        MAVEN_PROFILE: "development,evadev,dgvadev"
+        ENVIRONMENT_NAME: "development"
+    only:
+        - master
+
+maven-build-production:
+    extends: .maven-build
+    variables:
+        MAVEN_PROFILE: "production,$ACTIVE_EVAPRO,dgvapro"
+        ENVIRONMENT_NAME: "production"
+    only:
+        - tags
+
+deploy-tomcat-internal:
+    extends: .deploy-tomcat
+    variables:
+        TOMCAT_USER: "$TOMCAT_INTERNAL_USER"
+        TOMCAT_PASSWORD: "$TOMCAT_INTERNAL_PASSWORD"
+        TOMCAT_HOST: "$TOMCAT_INTERNAL_HOST"
+        ENVIRONMENT_NAME: "internal"
+    only:
+        - master
+
+deploy-tomcat-development:
+    extends: .deploy-tomcat
+    variables:
+        TOMCAT_USER: "$TOMCAT_DEVELOPMENT_USER"
+        TOMCAT_PASSWORD: "$TOMCAT_DEVELOPMENT_PASSWORD"
+        TOMCAT_HOST: "$TOMCAT_DEVELOPMENT_HOST"
+        ENVIRONMENT_NAME: "development"
+    only:
+        - master
+
+deploy-tomcat-production:
+    extends: .deploy-tomcat
+    when: manual
+    variables:
+        TOMCAT_USER: "$TOMCAT_PRODUCTION_USER"
+        TOMCAT_PASSWORD: "$TOMCAT_PRODUCTION_PASSWORD"
+        TOMCAT_HOST: "$TOMCAT_PRODUCTION_HOST"
+        ENVIRONMENT_NAME: "production"
+    only:
+        - tags
+
+deploy-tomcat-production-fallback:
+    extends: .deploy-tomcat
+    when: manual
+    variables:
+        TOMCAT_USER: "$TOMCAT_PRODUCTION_FALLBACK_USER"
+        TOMCAT_PASSWORD: "$TOMCAT_PRODUCTION_FALLBACK_PASSWORD"
+        TOMCAT_HOST: "$TOMCAT_PRODUCTION_FALLBACK_HOST"
+        ENVIRONMENT_NAME: "production"
+    only:
+        - tags
