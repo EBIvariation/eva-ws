@@ -25,8 +25,8 @@ maven-test:
     artifacts:
         reports:
             junit:
-                - eva_server/target/surefire-reports/TEST-*.xml
-                - eva_server/target/failsafe-reports/TEST-*.xml
+                - eva-server/target/surefire-reports/TEST-*.xml
+                - eva-server/target/failsafe-reports/TEST-*.xml
 
 # Not executed, parent job definition for Tomcat deployments
 .deploy-tomcat:
