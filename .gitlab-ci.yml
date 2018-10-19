@@ -17,7 +17,7 @@ stages:
             - "$ARTIFACT_PATH"
         expire_in: 2 weeks
 
-# Not executed, parent job definition for Maven builds
+# Not executed, parent job definition for Maven tests
 .maven-test:
     image: maven:3.5.4-jdk-8
     stage: test
@@ -29,7 +29,7 @@ stages:
                 - eva_server/target/surefire-reports/test-$ENVIRONMENT_NAME.xml
                 - eva_server/target/failsafe-reports/test-$ENVIRONMENT_NAME.xml
 
-# Not executed, parent job definition for Maven builds
+# Not executed, parent job definition for Tomcat deployments
 .deploy-tomcat:
     image: alpine:3.8
     stage: deploy
