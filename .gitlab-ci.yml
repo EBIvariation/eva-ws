@@ -26,6 +26,9 @@ maven-test:
         reports:
             junit:
                 - eva-server/target/surefire-reports/TEST-*.xml
+    only:
+        - master
+        - tags
 
 # Not executed, parent job definition for Tomcat deployments
 .deploy-tomcat:
