@@ -97,7 +97,7 @@
     </profiles>
 
     <build>
-        <finalName>dgva</finalName>
+        <finalName>dgva-${project.version}-${git.commit.id.abbrev}</finalName>
 
         <plugins>
 

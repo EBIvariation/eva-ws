@@ -70,11 +70,15 @@
             <artifactId>fongo</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
     </dependencies>
     
     <build>
-        <finalName>eva</finalName>
-        
+        <finalName>eva-${project.version}-${git.commit.id.abbrev}</finalName>
+
         <plugins>
         
             <plugin>
