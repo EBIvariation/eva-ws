@@ -36,6 +36,10 @@
             <artifactId>spring-boot-starter-data-rest</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
@@ -69,7 +73,7 @@
     </dependencies>
     
     <build>
-        <finalName>dbsnp</finalName>
+        <finalName>dbsnp-${project.version}-${git.commit.id.abbrev}</finalName>
 
         <plugins>
             <plugin>
