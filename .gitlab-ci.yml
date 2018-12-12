@@ -12,7 +12,7 @@ stages:
         _JAVA_OPTIONS: "-Djdk.net.URLClassPath.disableClassPathURLCheck=true"
     script:
         - "mvn package --settings .gitlab.settings.xml -P $MAVEN_PROFILE"
-        - "cp eva-server/target/eva.war $ARTIFACT_PATH"
+        - "cp eva-server/target/eva-*.war $ARTIFACT_PATH"
     artifacts:
         paths:
             - "$ARTIFACT_PATH"
