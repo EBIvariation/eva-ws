@@ -45,10 +45,9 @@ maven-test:
     script:
         - "apk add --update curl"
         - "export VERSION=$(mvn --non-recursive help:evaluate -Dexpression=project.version | grep -v '\\[.*')"
-        #- "export TOMCAT_PATH=eva%23%23$VERSION"
-        #- "echo http://$TOMCAT_HOST/manager/text/deploy?path=/eva##$VERSION^&update=true"
-        #- "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?update=true&path=/eva##$VERSION\" | grep \"OK - Deployed application\""
-        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva#/EVA1119\" | grep \"OK - Deployed application\""
+        - "echo curl -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva&version=$VERSION&update=true\" "
+        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva&version=$VERSION&update=true\" 
+        #| grep \"OK - Deployed application\""
 
 maven-build-internal:
     extends: .maven-build
