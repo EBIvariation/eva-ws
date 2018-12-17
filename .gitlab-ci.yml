@@ -35,7 +35,7 @@ maven-test:
 
 # Not executed, parent job definition for Tomcat deployments
 .deploy-tomcat:
-    image: alpine:3.8
+    image: maven:3.5.4-jdk-8-alpine
     stage: deploy
     environment:
         name: $ENVIRONMENT_NAME
