@@ -44,7 +44,8 @@ maven-test:
         ARTIFACT_PATH: "eva-server/target/eva-$ENVIRONMENT_NAME.war"
     script:
         - "apk add --update curl"
-        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva/EVA1288&update=true\" | grep \"OK - Deployed application\""
+        - "export VERSION=$(mvn --non-recursive help:evaluate -Dexpression=project.version | grep -v '[.*')"
+        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?path=/eva##$VERSION&update=true\" | grep \"OK - Deployed application\""
 
 maven-build-internal:
     extends: .maven-build
@@ -60,6 +61,7 @@ maven-build-development:
         MAVEN_PROFILE: "development,evadev,dgvadev"
         ENVIRONMENT_NAME: "development"
     only:
+        - hotfix/gitlabci-artifact
         - master
 
 maven-build-production:
@@ -88,6 +90,7 @@ deploy-tomcat-development:
         TOMCAT_HOST: "$TOMCAT_DEVELOPMENT_HOST"
         ENVIRONMENT_NAME: "development"
     only:
+        - hotfix/gitlabci-artifact
         - master
 
 deploy-tomcat-production:
