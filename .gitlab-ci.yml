@@ -42,7 +42,7 @@ maven-test:
         url: "http://$TOMCAT_HOST/eva/webservices/rest/swagger-ui.html"
     variables:
         ARTIFACT_PATH: "eva-server/target/eva-$ENVIRONMENT_NAME.war"
-        VERSION: "$(mvn --non-recursive help:evaluate -Dexpression=project.version | grep -v '\\[.*')"
+        VERSION: $(mvn --non-recursive help:evaluate -Dexpression=project.version | grep -v '\\[.*')
     script:
         - "apk add --update curl"
         # TODO The first command replaces $VERSION correctly, but not the cURL command (which works with an explicitly defined version)
