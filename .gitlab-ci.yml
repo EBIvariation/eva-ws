@@ -47,7 +47,7 @@ maven-test:
         - "export VERSION=$(mvn --non-recursive help:evaluate -Dexpression=project.version | grep -v '\\[.*')"
         # TODO The first command replaces $VERSION correctly, but not the cURL command (which works with an explicitly defined version)
         - "echo curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?update=true&path=/eva&version=$VERSION\""
-        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" -w %{url_effective} \"http://$TOMCAT_HOST/manager/text/deploy?update=true&path=/eva&version=$VERSION\""
+        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" -w %{url_effective} \"http://$TOMCAT_HOST/manager/text/deploy?update=true&path=/eva\""
 
 maven-build-internal:
     extends: .maven-build
