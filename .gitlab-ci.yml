@@ -60,7 +60,6 @@ maven-build-development:
         MAVEN_PROFILE: "development,evadev,dgvadev"
         ENVIRONMENT_NAME: "development"
     only:
-        - hotfix/gitlabci-artifact
         - master
 
 maven-build-production:
@@ -89,7 +88,6 @@ deploy-tomcat-development:
         TOMCAT_HOST: "$TOMCAT_DEVELOPMENT_HOST"
         ENVIRONMENT_NAME: "development"
     only:
-        - hotfix/gitlabci-artifact
         - master
 
 deploy-tomcat-production:
