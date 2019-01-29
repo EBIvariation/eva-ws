@@ -20,10 +20,10 @@
         <profile>
             <id>development</id>
             <properties>
-                <eva.mongo.host>${env.MONGO_HOST_DEVELOPMENT}</eva.mongo.host>
+                <eva.mongo.host>${env.MONGO_HOST_PRODUCTION}</eva.mongo.host>
                 <eva.mongo.auth.db>${env.MONGO_AUTH_DB}</eva.mongo.auth.db>
-                <eva.mongo.user>${env.MONGO_USER_DEVELOPMENT}</eva.mongo.user>
-                <eva.mongo.passwd>${env.MONGO_PASSWORD_DEVELOPMENT}</eva.mongo.passwd>
+                <eva.mongo.user>${env.MONGO_USER_PRODUCTION}</eva.mongo.user>
+                <eva.mongo.passwd>${env.MONGO_PASSWORD_PRODUCTION}</eva.mongo.passwd>
                 <eva.mongo.read-preference>${env.MONGO_READ_PREFERENCE}</eva.mongo.read-preference>
                 <eva.mongo.collections.files>${env.MONGO_COLLECTION_FILES}</eva.mongo.collections.files>
                 <eva.mongo.collections.variants>${env.MONGO_COLLECTION_VARIANTS}</eva.mongo.collections.variants>
