@@ -14,7 +14,7 @@ All the dependencies will be downloaded by Maven.
 
 If you want to build all the modules, including dgva-server, you will need to [register with Oracle](https://login.oracle.com/mysso/signon.jsp) and [set up your maven security](https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9016) to be able to download from the Oracle Maven Repository the Oracle drivers used in dgva-server. See https://github.com/EBIvariation/eva-ws/issues/81#issuecomment-369212870 for more information.
 
-There are some properties that you have to provide. You can use a Maven profile. Save the next snippet in your ~/.m2/settings.xml and fill all the properties (fill empty values when needed and change everything starting with "your_"):
+There are some properties that you have to provide. If you can access https://github.com/EBIvariation/configuration/, use those configuration files. If not, save the next snippet in your ~/.m2/settings.xml to use a Maven profile and fill all the properties (fill empty values when needed and change everything starting with "your_"):
 
 ```xml
 <settings>
