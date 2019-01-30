@@ -8,25 +8,81 @@ This repository contains the core of the application and the web services.
 Build
 -----
 
-In order to build EVA, you need to install the Java Development Kit 7 and Maven.
+In order to build EVA, you need to install the Java Development Kit 8 and Maven.
 
-The project dependencies are OpenCGA and Variation-Commons
+All the dependencies will be downloaded by Maven.
 
-You can get OpenCGA 0.5.2 from https://github.com/opencb/opencga, branch `hotfix/0.5`. Please follow the download/compilation instructions there.
+If you want to build all the modules, including dgva-server, you will need to [register with Oracle](https://login.oracle.com/mysso/signon.jsp) and [set up your maven security](https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9016) to be able to download from the Oracle Maven Repository the Oracle drivers used in dgva-server. See https://github.com/EBIvariation/eva-ws/issues/81#issuecomment-369212870 for more information.
 
-You can get Variation-Commons from https://github.com/EBIvariation/variation-commons. This project can be installed with just `mvn clean install`.
+There are some properties that you have to provide. You can use a Maven profile. Save the next snippet in your ~/.m2/settings.xml and fill all the properties (fill empty values when needed and change everything starting with "your_"):
 
-After it has been compiled, if you just want to build the WAR, run `mvn package -DskipTests` and you should obtain a file to deploy in Tomcat or other Java container.
+```xml
+<settings>
+    <profiles>
+        <profile>
+            <id>production</id>
+            <properties>
+                <dgvapro.host>jdbc:oracle:thin:@your_host:your_port:your_dgva_db</dgvapro.host>
+                <dgvapro.user></dgvapro.user>
+                <dgvapro.passwd></dgvapro.passwd>
+                <eva.evapro.datasource></eva.evapro.datasource>
+                <eva.evapro.jdbc.url>jdbc:postgresql://your_host:your_port/your_eva_db</eva.evapro.jdbc.url>
+                <eva.evapro.user></eva.evapro.user>
+                <eva.evapro.password></eva.evapro.password>
+                <eva.mongo.host></eva.mongo.host>
+                <eva.mongo.user></eva.mongo.user>
+                <eva.mongo.passwd></eva.mongo.passwd>
+                <eva.mongo.auth.db></eva.mongo.auth.db>
+                <eva.mongo.read-preference></eva.mongo.read-preference>
+                <eva.mongo.collections.annotation-metadata></eva.mongo.collections.annotation-metadata>
+                <eva.mongo.collections.annotations></eva.mongo.collections.annotations>
+                <eva.mongo.collections.features></eva.mongo.collections.features>
+                <eva.mongo.collections.files></eva.mongo.collections.files>
+                <eva.mongo.collections.variants></eva.mongo.collections.variants>
+            </properties>
+        </profile>
+    </profiles>
+
+    <servers>
+        <server>
+            <id>maven.oracle.com</id>
+            <username>your_oracle_user</username>
+            <password>your_oracle_encrypted_password</password>
+            <configuration>
+              <basicAuthScope>
+                <host>ANY</host>
+                <port>ANY</port>
+                <realm>OAM 11g</realm>
+              </basicAuthScope>
+              <httpConfiguration>
+                <all>
+                  <params>
+                    <property>
+                      <name>http.protocol.allow-circular-redirects</name>
+                      <value>%b,true</value>
+                    </property>
+                  </params>
+                </all>
+              </httpConfiguration>
+            </configuration>
+      </server>
+   </servers>
+</settings>
+```
+
+After setting up your maven security and maven settings, you can install the whole project and run the tests using the above "production" profile with `mvn clean install -Pproduction`. This will generate the ".war" files that you can deploy in Tomcat or other Java container. You have to set up the JNDI credentials in Tomcat (conf/context.xml), matching the "eva.evapro.datasource" and "eva.evapro.jdbc.url" properties.
+
+If you don't need to build dgva-server, you can do `mvn clean install -pl '!dgva-server'` to build the ".war" files of all the other modules only.
+
 
 Testing
 -------
 
-The tests implemented so far are integration (not unit) tests, so a working WAR file needs to be created first. The Jetty plugin for Maven has been included to ease the testing process.
+The tests implemented are both unit and integration tests. You can run them with `mvn test` from the root folder.
 
-1. Fill the datasource information in the file `eva-server/src/main/webapp/WEB-INF/jetty-env.xml`
-2. Build the WAR file as described in the section above
-3. Run `mvn jetty:run` from the eva-server subfolder
-4. Run `mvn test` from the root folder
+If you are compiling and want to skip the tests, you can do `mvn clean install -Pproduction -DskipTests`.
+
+For manual testing, you can deploy the ".war" files and go to the "swagger-ui.html" page to get an overview of the endpoints and run them manually.
 
 Enabling OAuth2 Security
 ------------------------
