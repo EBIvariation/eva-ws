@@ -82,7 +82,7 @@ The tests implemented are both unit and integration tests. You can run them with
 
 If you are compiling and want to skip the tests, you can do `mvn clean install -Pproduction -DskipTests`.
 
-For manual testing, you can deploy the ".war" files and go to the "swagger-ui.html" page to get an overview of the endpoints and run them manually.
+For manual testing, you can deploy the ".war" files and go to the Swagger page to get an overview of the endpoints and run them manually. If you name the artifact "eva.war" and deploy it locally, the Swagger URL is "localhost:8080/eva/swagger-ui.html".
 
 Enabling OAuth2 Security
 ------------------------
