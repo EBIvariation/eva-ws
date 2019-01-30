@@ -12,7 +12,7 @@ In order to build EVA, you need to install the Java Development Kit 8 and Maven.
 
 All the dependencies will be downloaded by Maven.
 
-If you want to build all the modules, including dgva-server, you will need to [register with Oracle](https://login.oracle.com/mysso/signon.jsp) and [set up your maven security](https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9016) to be able to download from the Oracle Maven Repository the Oracle drivers used in dgva-server. See https://github.com/EBIvariation/eva-ws/issues/81#issuecomment-369212870 for more information.
+If you want to build all the modules, including dgva-server, you will need to download the Oracle drivers used in dgva-server from the Oracle Maven Repository. In order to do so, [register with Oracle](https://login.oracle.com/mysso/signon.jsp) and [set up your Maven security](https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9016). See https://github.com/EBIvariation/eva-ws/issues/81#issuecomment-369212870 for more information.
 
 There are some properties that you have to provide. If you can access https://github.com/EBIvariation/configuration/, use those configuration files. If not, save the next snippet in your ~/.m2/settings.xml to use a Maven profile and fill all the properties (fill empty values when needed and change everything starting with "your_"):
 
@@ -70,9 +70,9 @@ There are some properties that you have to provide. If you can access https://gi
 </settings>
 ```
 
-After setting up your maven security and maven settings, you can install the whole project and run the tests using the above "production" profile with `mvn clean install -Pproduction`. This will generate the ".war" files that you can deploy in Tomcat or other Java container. You have to set up the JNDI credentials in Tomcat (conf/context.xml), matching the "eva.evapro.datasource" and "eva.evapro.jdbc.url" properties.
+After setting up your Maven security and Maven settings, you can install the whole project and run the tests using the above "production" profile with `mvn clean install -Pproduction`. This will generate the ".war" files that you can deploy in Tomcat or other Java container. You have to set up the JNDI credentials in Tomcat (conf/context.xml), matching the "eva.evapro.datasource" and "eva.evapro.jdbc.url" properties.
 
-If you don't need to build dgva-server, you can do `mvn clean install -pl '!dgva-server'` to build the ".war" files of all the other modules only.
+If you don't need to build dgva-server, you can build the ".war" files for the rest of the modules running `mvn clean install -pl '!dgva-server'`.
 
 
 Testing
