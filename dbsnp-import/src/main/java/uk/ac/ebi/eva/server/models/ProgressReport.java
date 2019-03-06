@@ -17,19 +17,25 @@ package uk.ac.ebi.eva.server.models;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
+@IdClass(ProgressReportPK.class)
 @Table(name = "import_progress")
 public class ProgressReport {
 
     @Id
     private String databaseName;
+
+    @Id
+    private String genbankAssemblyAccession;
 
     @Column(nullable = false)
     private int taxId;
@@ -39,8 +45,6 @@ public class ProgressReport {
 
     @Column(nullable = false)
     private String commonName;
-
-    private String genbankAssemblyAccession;
 
     @Column(nullable = false)
     private int lastDbsnpBuild;
@@ -125,23 +129,26 @@ public class ProgressReport {
         if (taxId != that.taxId) return false;
         if (lastDbsnpBuild != that.lastDbsnpBuild) return false;
         if (!databaseName.equals(that.databaseName)) return false;
-        if (!scientificName.equals(that.scientificName)) return false;
-        return genbankAssemblyAccession != null ? genbankAssemblyAccession
-                .equals(that.genbankAssemblyAccession) : that.genbankAssemblyAccession == null;
+        if (!genbankAssemblyAccession.equals(that.genbankAssemblyAccession)) return false;
+        return scientificName.equals(that.scientificName);
     }
 
     @Override
     public int hashCode() {
         int result = databaseName.hashCode();
+        result = 31 * result + genbankAssemblyAccession.hashCode();
         result = 31 * result + taxId;
         result = 31 * result + scientificName.hashCode();
-        result = 31 * result + (genbankAssemblyAccession != null ? genbankAssemblyAccession.hashCode() : 0);
         result = 31 * result + lastDbsnpBuild;
         return result;
     }
 
     public String getDatabaseName() {
         return databaseName;
+    }
+
+    public String getGenbankAssemblyAccession() {
+        return genbankAssemblyAccession;
     }
 
     public int getTaxId() {
@@ -154,10 +161,6 @@ public class ProgressReport {
 
     public String getCommonName() {
         return commonName;
-    }
-
-    public String getGenbankAssemblyAccession() {
-        return genbankAssemblyAccession;
     }
 
     public int getLastDbsnpBuild() {

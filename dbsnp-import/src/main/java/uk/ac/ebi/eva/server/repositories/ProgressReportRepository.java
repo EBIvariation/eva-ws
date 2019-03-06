@@ -20,9 +20,10 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import uk.ac.ebi.eva.server.models.ProgressReport;
+import uk.ac.ebi.eva.server.models.ProgressReportPK;
 
 @RepositoryRestResource(collectionResourceRel = "importStatus", itemResourceRel = "speciesImportStatus", path = "import-status")
-public interface ProgressReportRepository extends PagingAndSortingRepository<ProgressReport, String> {
+public interface ProgressReportRepository extends PagingAndSortingRepository<ProgressReport, ProgressReportPK> {
 
     // Prevents POST, PUT and PATCH
     @Override
