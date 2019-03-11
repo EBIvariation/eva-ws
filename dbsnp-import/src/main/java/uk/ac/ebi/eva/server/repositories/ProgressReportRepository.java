@@ -15,24 +15,11 @@
  */
 package uk.ac.ebi.eva.server.repositories;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.data.repository.CrudRepository;
 
 import uk.ac.ebi.eva.server.models.ProgressReport;
 import uk.ac.ebi.eva.server.models.ProgressReportPK;
 
-@RepositoryRestResource(collectionResourceRel = "importStatus", itemResourceRel = "speciesImportStatus", path = "import-status")
-public interface ProgressReportRepository extends PagingAndSortingRepository<ProgressReport, ProgressReportPK> {
-
-    // Prevents POST, PUT and PATCH
-    @Override
-    @RestResource(exported = false)
-    ProgressReport save(ProgressReport s);
-
-    // Prevents DELETE
-    @Override
-    @RestResource(exported = false)
-    void delete(ProgressReport t);
+public interface ProgressReportRepository extends CrudRepository<ProgressReport, ProgressReportPK> {
 
 }

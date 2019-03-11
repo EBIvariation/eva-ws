@@ -27,6 +27,8 @@ import uk.ac.ebi.eva.server.models.Status;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -51,6 +53,18 @@ public class ProgressReportRepositoryTest {
                                                      Status.pending, Status.pending, null, null, null, 0L, 0L, 0L, 0L,
                                                      0L, 0L);
         assertEquals(expected, report);
+    }
+
+    @Test
+    public void testFindMultipleAssemblies() {
+        Iterable<ProgressReport> allReports = progressReportRepository.findAll();
+        Set<String> ratAssemblies = new HashSet<>();
+        for (ProgressReport r : allReports) {
+            if (r.getCommonName().toLowerCase().equals("rat")) {
+                ratAssemblies.add(r.getGenbankAssemblyAccession());
+            }
+        }
+        assertEquals(3, ratAssemblies.size());
     }
 
     @Test
