@@ -208,7 +208,7 @@ public class ArchiveEvaproDBAdaptorTest {
         QueryResult<Assembly> queryResult = archiveEvaproDBAdaptor.getBrowsableSpecies();
 
         assertEquals(2, queryResult.getNumTotalResults());
-        // Those assemblies should not be returned by getSpecies:
+        // Those assemblies should not be returned by getBrowsableSpecies:
         // - Cow ones, because there are no 'loaded but not deleted' files
         // - Goat, because is not loaded
         // - Pig, because the assembly code is emtpy
@@ -221,7 +221,7 @@ public class ArchiveEvaproDBAdaptorTest {
     @Test
     public void getAccessionedSpecies() throws Exception {
         QueryResult<Assembly> queryResult = archiveEvaproDBAdaptor.getAccessionedSpecies();
-        // Those assemblies should not be returned by getSpecies:
+        // Those assemblies should not be returned by getAccessionedSpecies:
         // - Chicken - galgal4, Sheep - Oar_v3.1 - assembly_in_accessioning_store is false
         // - Zebrafish - zv9, GRCz10 - Taxonomy code is empty
         // - Sscrofa11.1 - Pig - because the assembly code is emtpy
