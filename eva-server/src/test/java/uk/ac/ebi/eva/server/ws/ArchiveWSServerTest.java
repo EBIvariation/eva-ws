@@ -97,7 +97,9 @@ public class ArchiveWSServerTest {
                               "Homo Sapiens", "hsapiens", "human");
         Assembly umd31 = new Assembly("GCA_000003055.3", "GCA_000003055", "3", "Bos_taurus_UMD_3.1", "umd31", 9913, "Cattle",
                              "Bos taurus", "btaurus", "cow");
-        given(this.archiveEvaproDBAdaptor.getSpecies())
+        given(this.archiveEvaproDBAdaptor.getBrowsableSpecies())
+                .willReturn(encapsulateInQueryResult(grch37, grch38, umd31));
+        given(this.archiveEvaproDBAdaptor.getAccessionedSpecies())
                 .willReturn(encapsulateInQueryResult(grch37, grch38, umd31));
         given(this.archiveEvaproDBAdaptor.countSpecies()).willReturn(encapsulateInQueryResult(3L));
 
@@ -201,8 +203,38 @@ public class ArchiveWSServerTest {
     }
 
     @Test
-    public void testGetSpecies() throws URISyntaxException {
+    public void testGetBrowsableSpecies() throws URISyntaxException {
         String url = "/v1/meta/species/list";
+        ResponseEntity<QueryResponse<QueryResult<Assembly>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<Assembly>>>() {});
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        QueryResponse<QueryResult<Assembly>> queryResponse = response.getBody();
+        assertEquals(1, queryResponse.getResponse().size());
+
+        List<Assembly> results = queryResponse.getResponse().get(0).getResult();
+        assertTrue(results.size() >= 1);
+
+        for (Assembly assembly : results) {
+            assertFalse(assembly.getAssemblyCode().isEmpty());
+            assertFalse(assembly.getAssemblyName().isEmpty());
+            if (assembly.getAssemblyChain() != null) { // Accessioned assembly
+                assertFalse(assembly.getAssemblyAccession().isEmpty());
+                assertFalse(assembly.getAssemblyChain().isEmpty());
+                assertFalse(assembly.getAssemblyVersion().isEmpty());
+            }
+
+            assertNotEquals(0, assembly.getTaxonomyId());
+            assertFalse(assembly.getTaxonomyCode().isEmpty());
+            assertFalse(assembly.getTaxonomyEvaName().isEmpty());
+            assertFalse(assembly.getTaxonomyScientificName().isEmpty());
+        }
+    }
+
+    @Test
+    public void testGetAccessionedSpecies() throws URISyntaxException {
+        String url = "/v1/meta/species/accessioned";
         ResponseEntity<QueryResponse<QueryResult<Assembly>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<Assembly>>>() {});

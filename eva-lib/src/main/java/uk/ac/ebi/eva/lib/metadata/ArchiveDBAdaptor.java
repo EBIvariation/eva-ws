@@ -30,6 +30,8 @@ public interface ArchiveDBAdaptor {
 
     QueryResult countSpecies();
 
-    QueryResult getSpecies();
+    QueryResult getBrowsableSpecies();
+
+    QueryResult getAccessionedSpecies();
 }
 
