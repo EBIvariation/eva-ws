@@ -210,9 +210,10 @@ public class ArchiveEvaproDBAdaptorTest {
         assertEquals(2, queryResult.getNumTotalResults());
         // Those assemblies should not be returned by getBrowsableSpecies:
         // - Cow ones, because there are no 'loaded but not deleted' files
-        // - Goat, because is not loaded
+        // - Goat, Oarv40 for sheep because they are not loaded
         // - Pig, because the assembly code is emtpy
         // - Zebrafish, because the taxonomy code is empty
+        // - Human, grch38 because the "loaded_assembly" field in browsable_file is null
         Set<String> assemblyCodes =
                 queryResult.getResult().stream().map(Assembly::getAssemblyCode).collect(Collectors.toSet());
         assertEquals(new HashSet(Arrays.asList("galgal5", "oarv31")), assemblyCodes);
