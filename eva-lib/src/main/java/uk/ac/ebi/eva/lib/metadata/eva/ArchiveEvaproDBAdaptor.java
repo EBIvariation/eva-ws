@@ -107,9 +107,20 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
     }
 
     @Override
-    public QueryResult getSpecies() {
+    public QueryResult getBrowsableSpecies() {
         long start = System.currentTimeMillis();
-        List<Assembly> result = taxonomyRepository.getSpecies();
+        List<Assembly> result = taxonomyRepository.getBrowsableSpecies();
+        result = result.stream()
+                       .filter(assembly -> assembly.getTaxonomyCode() != null && assembly.getAssemblyCode() != null)
+                       .collect(Collectors.toList());
+        long end = System.currentTimeMillis();
+        return new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
+    }
+
+    @Override
+    public QueryResult getAccessionedSpecies() {
+        long start = System.currentTimeMillis();
+        List<Assembly> result = taxonomyRepository.getAccessionedSpecies();
         result = result.stream()
                        .filter(assembly -> assembly.getTaxonomyCode() != null && assembly.getAssemblyCode() != null)
                        .collect(Collectors.toList());

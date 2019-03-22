@@ -92,7 +92,12 @@ public class ArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
     }
 
     @Override
-    public QueryResult getSpecies() {
+    public QueryResult getBrowsableSpecies() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public QueryResult getAccessionedSpecies() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

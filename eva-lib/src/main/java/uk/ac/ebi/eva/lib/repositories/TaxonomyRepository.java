@@ -23,6 +23,7 @@ import java.util.List;
 
 public interface TaxonomyRepository extends JpaRepository<Taxonomy, Long> {
 
-    List<Assembly> getSpecies();
+    List<Assembly> getBrowsableSpecies();
+    List<Assembly> getAccessionedSpecies();
 
 }

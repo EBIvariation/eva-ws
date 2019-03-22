@@ -204,18 +204,32 @@ public class ArchiveEvaproDBAdaptorTest {
     }
 
     @Test
-    public void getSpecies() throws Exception {
-        QueryResult<Assembly> queryResult = archiveEvaproDBAdaptor.getSpecies();
+    public void getBrowsableSpecies() throws Exception {
+        QueryResult<Assembly> queryResult = archiveEvaproDBAdaptor.getBrowsableSpecies();
 
-        assertEquals(4, queryResult.getNumTotalResults());
-        // Those assemblies should not be returned by getSpecies:
+        assertEquals(2, queryResult.getNumTotalResults());
+        // Those assemblies should not be returned by getBrowsableSpecies:
         // - Cow ones, because there are no 'loaded but not deleted' files
-        // - Goat, because is not loaded
+        // - Goat, Oarv40 for sheep because they are not loaded
         // - Pig, because the assembly code is emtpy
         // - Zebrafish, because the taxonomy code is empty
+        // - Human, grch38 because the "loaded_assembly" field in browsable_file is null
         Set<String> assemblyCodes =
                 queryResult.getResult().stream().map(Assembly::getAssemblyCode).collect(Collectors.toSet());
-        assertEquals(new HashSet(Arrays.asList("galgal5", "grch38", "oarv31", "oarv40")), assemblyCodes);
+        assertEquals(new HashSet(Arrays.asList("galgal5", "oarv31")), assemblyCodes);
+    }
+
+    @Test
+    public void getAccessionedSpecies() throws Exception {
+        QueryResult<Assembly> queryResult = archiveEvaproDBAdaptor.getAccessionedSpecies();
+        // Those assemblies should not be returned by getAccessionedSpecies:
+        // - Chicken - galgal4, Sheep - Oar_v3.1 - assembly_in_accessioning_store is false
+        // - Zebrafish - zv9, GRCz10 - Taxonomy code is empty
+        // - Sscrofa11.1 - Pig - because the assembly code is emtpy
+        assertEquals(4, queryResult.getNumTotalResults());
+        Set<String> assemblyCodes =
+                queryResult.getResult().stream().map(Assembly::getAssemblyCode).collect(Collectors.toSet());
+        assertEquals(new HashSet<String>(Arrays.asList("galgal5", "oarv40", "grch38", "umd31")), assemblyCodes);
     }
 
 }

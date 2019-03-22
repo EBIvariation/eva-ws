@@ -24,13 +24,15 @@ CREATE TABLE assembly (
   assembly_code varchar(25),
   taxonomy_id int4,
   assembly_location varchar(250),
-  assembly_filename varchar(250)
+  assembly_filename varchar(250),
+  assembly_in_accessioning_store bool
 );
 
 CREATE TABLE dbsnp_assemblies
 (
- database_name varchar(50),
- assembly_set_id int4,
- loaded boolean,
- unique (database_name, assembly_set_id)
-)
+    database_name varchar(50) NOT NULL,
+    assembly_set_id int4 NULL,
+    assembly_accession varchar(25) NULL,
+    loaded bool NULL DEFAULT false,
+    UNIQUE (database_name, assembly_set_id, assembly_accession)
+);
