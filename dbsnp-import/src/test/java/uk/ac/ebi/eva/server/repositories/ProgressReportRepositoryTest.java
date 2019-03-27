@@ -22,12 +22,16 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.server.models.ProgressReport;
+import uk.ac.ebi.eva.server.models.ProgressReportPK;
 import uk.ac.ebi.eva.server.models.Status;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -38,12 +42,13 @@ public class ProgressReportRepositoryTest {
 
     @Test
     public void testCountRecords() {
-        assertEquals(80, progressReportRepository.count());
+        assertEquals(81, progressReportRepository.count());
     }
 
     @Test
     public void testFindById() {
-        ProgressReport report = progressReportRepository.findOne("fruitfly_7227");
+        ProgressReport report = progressReportRepository.findOne(new ProgressReportPK("fruitfly_7227",
+                                                                                      "GCA_000001215.4"));
         ProgressReport expected = new ProgressReport("fruitfly_7227", 7227, "Drosophila melanogaster", "Fruit fly",
                                                      "GCA_000001215.4", 149, true, false, false, Status.pending,
                                                      Status.pending, Status.pending, null, null, null, 0L, 0L, 0L, 0L,
@@ -52,13 +57,37 @@ public class ProgressReportRepositoryTest {
     }
 
     @Test
+    public void testFindMultipleAssemblies() {
+        Iterable<ProgressReport> allReports = progressReportRepository.findAll();
+        Set<String> ratAssemblies = new HashSet<>();
+        for (ProgressReport r : allReports) {
+            if (r.getCommonName().toLowerCase().equals("rat")) {
+                ratAssemblies.add(r.getGenbankAssemblyAccession());
+            }
+        }
+        assertEquals(3, ratAssemblies.size());
+    }
+
+    @Test
     public void testVariantWithEvidenceImportFields() {
-        ProgressReport report = progressReportRepository.findOne("arabidopsis_3702");
+        ProgressReport report = progressReportRepository.findOne(new ProgressReportPK("arabidopsis_3702",
+                                                                                      "GCA_000001735.1"));
         assertEquals(Status.done, report.getVariantsWithEvidenceImported());
         Calendar cal = Calendar.getInstance();
         cal.set(2018, Calendar.MAY, 30, 0, 0, 0);
         cal.set(Calendar.MILLISECOND, 0);
         Date date = cal.getTime();
         assertEquals(date.getTime(), report.getVariantsWithEvidenceImportedDate().getTime());
+    }
+
+    @Test
+    public void testVariantWithoutGenbankAccession() {
+        String databaseName = "orangutan_9600";
+        String genbankAssemblyAccession = "";
+        ProgressReport report = progressReportRepository.findOne(new ProgressReportPK(databaseName,
+                                                                                      genbankAssemblyAccession));
+        assertNotNull(report);
+        assertEquals(genbankAssemblyAccession, report.getGenbankAssemblyAccession());
+        assertEquals(databaseName, report.getDatabaseName());
     }
 }
