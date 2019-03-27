@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -77,5 +78,16 @@ public class ProgressReportRepositoryTest {
         cal.set(Calendar.MILLISECOND, 0);
         Date date = cal.getTime();
         assertEquals(date.getTime(), report.getVariantsWithEvidenceImportedDate().getTime());
+    }
+
+    @Test
+    public void testVariantWithoutGenbankAccession() {
+        String databaseName = "orangutan_9600";
+        String genbankAssemblyAccession = "";
+        ProgressReport report = progressReportRepository.findOne(new ProgressReportPK(databaseName,
+                                                                                      genbankAssemblyAccession));
+        assertNotNull(report);
+        assertEquals(genbankAssemblyAccession, report.getGenbankAssemblyAccession());
+        assertEquals(databaseName, report.getDatabaseName());
     }
 }
