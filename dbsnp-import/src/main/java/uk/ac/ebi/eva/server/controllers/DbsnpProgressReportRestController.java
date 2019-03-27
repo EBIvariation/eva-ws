@@ -24,11 +24,11 @@ import uk.ac.ebi.eva.server.repositories.ProgressReportRepository;
 
 @RestController
 @RequestMapping(value = "/v1/import-status", produces = "application/json")
-public class DbsnpRestController {
+public class DbsnpProgressReportRestController {
 
     private ProgressReportRepository repository;
 
-    public DbsnpRestController(ProgressReportRepository repository) {
+    public DbsnpProgressReportRestController(ProgressReportRepository repository) {
         this.repository = repository;
     }
 
