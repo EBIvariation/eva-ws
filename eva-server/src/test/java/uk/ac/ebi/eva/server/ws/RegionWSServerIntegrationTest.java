@@ -30,6 +30,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -75,7 +77,6 @@ public class RegionWSServerIntegrationTest {
 
     @Rule
     public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
-
 
     @Before
     public void setUp() throws Exception {
@@ -139,4 +140,16 @@ public class RegionWSServerIntegrationTest {
         }
     }
 
+    @Test
+    public void testIllegalLimitParameter() {
+        String testRegion = "20:60000-80000";
+        String annotationVepVersion = "78";
+        String annotationVepCacheversion = "78";
+        int limit = 100000;
+        String url = "/v1/segments/" + testRegion +
+                "/variants?species=mmusculus_grcm38&annot-vep-version=" + annotationVepVersion +
+                "&annot-vep-cache-version=" + annotationVepCacheversion + "&limit=" + limit;
+        ResponseEntity response = WSTestHelpers.getRestResponse(url, restTemplate);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
 }
