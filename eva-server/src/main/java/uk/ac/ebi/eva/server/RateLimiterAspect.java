@@ -46,7 +46,7 @@ public class RateLimiterAspect {
 
     @Before("@annotation(limit)")
     public void rateLimit(JoinPoint jp, RateLimit limit) throws RateLimitException {
-        RateLimiter limiter = limiters.computeIfAbsent(createKey(jp), createLimiter(limit));
+        RateLimiter limiter = limiters.computeIfAbsent(getIPAddress(jp), createLimiter(limit));
         boolean acquired = limiter.tryAcquire(RATE_LIMIT_ACQUIRE_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
         if (acquired) {
             logger.debug("Acquired rate limit permission");
@@ -61,7 +61,7 @@ public class RateLimiterAspect {
         return name -> RateLimiter.create(limit.value());
     }
 
-    private String createKey(JoinPoint jp) {
+    private String getIPAddress(JoinPoint jp) {
         Object[] args = jp.getArgs();
         if (args.length <= 0) {
             throw new IllegalArgumentException(RATE_LIMIT_PRECONDITION_FAIL);

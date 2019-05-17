@@ -149,7 +149,7 @@ public class RegionWSServerIntegrationTest {
         String url = "/v1/segments/" + testRegion +
                 "/variants?species=mmusculus_grcm38&annot-vep-version=" + annotationVepVersion +
                 "&annot-vep-cache-version=" + annotationVepCacheversion + "&limit=" + limit;
-        ResponseEntity response = WSTestHelpers.getRestResponse(url, restTemplate);
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }

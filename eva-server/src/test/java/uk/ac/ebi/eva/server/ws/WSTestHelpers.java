@@ -61,13 +61,6 @@ public class WSTestHelpers {
         return queryResponse.getResponse().get(0).getResult();
     }
 
-    public static ResponseEntity getRestResponse(String url, TestRestTemplate restTemplate) {
-        return restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<String>() {
-                });
-    }
-
     public static void checkVariantsInFullResults(List<VariantWithSamplesAndAnnotation> results,
                                                   int expectedVariants) {
         assertEquals(expectedVariants, results.size());
