@@ -56,15 +56,17 @@ def failure_use_case(url):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         print("Usage: python3 test_web_service_rate_limiting.py <WEB_SERVICE_HOST_URL> "
-              "(ex: python3 test_web_service_rate_limiting.py http://www.ebi.ac.uk)")
+              "(ex: python3 test_web_service_rate_limiting.py http://www.ebi.ac.uk) [nosleep]")
         sys.exit(1)
     urlString = "{0}/eva/webservices/rest/v1/segments/1:105000001-105500000/variants?species=mmusculus_grcm38&limit=5"\
         .format(sys.argv[1])
     print("To test parallel requests from multiple IP addresses, "
-          "please run this script within 1 minute from other machines ...")
-    time.sleep(60)  # Allow some time for the script to be invoked in multiple machines
+          "please run this script with the nosleep argument within 1 minute from other machines...")
+
+    if len(sys.argv) == 2:
+        time.sleep(60)  # Allow some time for the script to be invoked in multiple machines
 
     print("****************************************************")
     print("All the service requests below should be successful!")
