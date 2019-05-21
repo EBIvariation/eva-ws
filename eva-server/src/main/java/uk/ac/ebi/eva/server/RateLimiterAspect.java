@@ -48,13 +48,12 @@ public class RateLimiterAspect {
     public void rateLimit(JoinPoint jp, RateLimit limit) throws RateLimitException {
         RateLimiter limiter = limiters.computeIfAbsent(getIPAddress(jp), createLimiter(limit));
         boolean acquired = limiter.tryAcquire(RATE_LIMIT_ACQUIRE_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
-        if (acquired) {
-            logger.debug("Acquired rate limit permission");
-        } else {
+        if (!acquired) {
             logger.error("Could not acquire rate limit permission");
-            throw new RateLimitException(String.format("Rate limit exceeded. Please limit rate to %s requests/second.",
+            throw new RateLimitException(String.format("Rate limit exceeded. Please limit rate to %d requests/second.",
                                                        limit.value()));
         }
+        logger.debug("Acquired rate limit permission");
     }
 
     private Function<String, RateLimiter> createLimiter(RateLimit limit) {
@@ -67,14 +66,13 @@ public class RateLimiterAspect {
             throw new IllegalArgumentException(RATE_LIMIT_PRECONDITION_FAIL);
         }
         Object lastParam = args[args.length - 1];
-        // Get client IP address - see https://www.mkyong.com/java/how-to-get-client-ip-address-in-java/
+        // Get client IP address
+        // To account for clients which are behind a proxy server or a load balancer,
+        // use the client IP address via the HTTP request header X-Forwarded-For (XFF).
         if (lastParam instanceof HttpServletRequest) {
             HttpServletRequest request = (HttpServletRequest) lastParam;
             String ipAddress = request.getHeader("X-FORWARDED-FOR");
-            if (ipAddress == null) {
-                ipAddress = request.getRemoteAddr();
-            }
-            return ipAddress;
+            return ipAddress == null ? request.getRemoteAddr() : ipAddress;
         } else {
             throw new IllegalArgumentException(RATE_LIMIT_PRECONDITION_FAIL);
         }

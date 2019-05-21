@@ -33,7 +33,7 @@ public class Utils {
 
     private static Map<String, String> apiToMongoDocNameMap;
 
-    public static final int LIMIT_PARAMETER_THRESHOLD = 10000;
+    private static final int LIMIT_PARAMETER_THRESHOLD = 10000;
 
     static {
         apiToMongoDocNameMap = initApiToMongoDocNameMap();

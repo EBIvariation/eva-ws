@@ -34,6 +34,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
@@ -146,9 +147,15 @@ public class RegionWSServerIntegrationTest {
         String annotationVepVersion = "78";
         String annotationVepCacheversion = "78";
         int limit = 100000;
-        String url = "/v1/segments/" + testRegion +
-                "/variants?species=mmusculus_grcm38&annot-vep-version=" + annotationVepVersion +
-                "&annot-vep-cache-version=" + annotationVepCacheversion + "&limit=" + limit;
+        String url = UriComponentsBuilder.fromUriString("")
+                                         .path("/v1/segments/")
+                                         .path(testRegion)
+                                         .path("/variants")
+                                         .queryParam("species", "mmusculus_grcm38")
+                                         .queryParam("annot-vep-version", annotationVepVersion)
+                                         .queryParam("annot-vep-cache-version", annotationVepCacheversion)
+                                         .queryParam("limit", limit)
+                                         .build().toString();
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
