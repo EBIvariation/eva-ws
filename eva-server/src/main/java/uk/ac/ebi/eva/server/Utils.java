@@ -33,6 +33,8 @@ public class Utils {
 
     private static Map<String, String> apiToMongoDocNameMap;
 
+    private static final int LIMIT_PARAMETER_THRESHOLD = 10000;
+
     static {
         apiToMongoDocNameMap = initApiToMongoDocNameMap();
     }
@@ -43,6 +45,9 @@ public class Utils {
 
     public static PageRequest getPageRequest(QueryOptions queryOptions) {
         int limit = (queryOptions.get("limit") == null) ? 10 : (int) queryOptions.get("limit");
+        if (limit > LIMIT_PARAMETER_THRESHOLD) {
+            throw new IllegalArgumentException("Limit parameter must not exceed " + LIMIT_PARAMETER_THRESHOLD);
+        }
         int skip = (queryOptions.get("skip") == null) ? 0 : (int) queryOptions.get("skip");
         return getPageRequest(limit, skip);
     }
