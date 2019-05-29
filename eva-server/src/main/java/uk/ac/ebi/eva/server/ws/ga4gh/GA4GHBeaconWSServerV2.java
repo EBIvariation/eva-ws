@@ -39,11 +39,6 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     public GA4GHBeaconWSServerV2() {
     }
 
-   /* @PostMapping("/query")
-    public GA4GHBeaconQueryResponseV2 postRequest(@Valid @RequestBody BeaconAlleleRequestBody request, HttpServletResponse response) throws AnnotationMetadataNotFoundException,IOException{
-        return query(request.getReferenceName(),request.getStart(),request.getStartMin(),request.getEndMax(),request.getEnd(),request.getEndMin(),request.getEndMax(),request.getReferenceBases(),request.getAlternateBases(),request.getVariantType(),request.getAssemblyId(),request.getDatasetIds(),request.getIncludeDatasetResponses(),response);
-    }*/
-
     @RequestMapping(value = "/query", method = RequestMethod.GET)
     public GA4GHBeaconQueryResponseV2 query(@RequestParam("referenceName") String chromosome,
                                             @RequestParam(value = "start", required = false) Long start,
@@ -84,34 +79,29 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             variantType1 = null;
         }
 
-        System.out.println(variantType1);
         List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(start, startMin, startMax, end, endMin, endMax, referenceBases, alternateBases, variantType1, studies);
-
-        //List<VariantMongo> variantMongoList = service.findByChromosomeAndOtherBeaconFilters(request);
-
         List<VariantMongo> variantMongoList = service.findbyChromosomeAndOtherBeaconFilters(chromosome, filters);
 
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
 
-        if (variantMongoList.size() > 0)
+        if (variantMongoList.size() > 0) {
             return new GA4GHBeaconQueryResponseV2("beaconId", "apiversion", true, request, null, datasetAlleleResponses);
-
-        else
+        } else{
             return new GA4GHBeaconQueryResponseV2("beaconId", "apiversion", false, request, null, datasetAlleleResponses);
-
+        }
     }
 
     public String checkErrorHelper(BeaconAlleleRequestBody request) {
 
-        if (request.getStart() != null && request.getStart() < 0)
+        if (request.getStart() != null && request.getStart() < 0) {
             return "please provide a positive start number";
-
-        if (request.getEnd() != null && request.getEnd() < 0)
+        }
+        if (request.getEnd() != null && request.getEnd() < 0) {
             return "pleaseprovide a positive end number";
-
-        if (request.getAlternateBases() == null && request.getVariantType() == null)
+        }
+        if (request.getAlternateBases() == null && request.getVariantType() == null){
             return "Either alternateBases ot variantType is required";
-
+        }
         return null;
     }
 
@@ -119,8 +109,9 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
         List<DatasetAlleleResponse> datasetAllelResponses = new ArrayList<DatasetAlleleResponse>();
 
-        if (request.getIncludeDatasetResponses() == null || request.getIncludeDatasetResponses().equalsIgnoreCase("NONE"))
+        if (request.getIncludeDatasetResponses() == null || request.getIncludeDatasetResponses().equalsIgnoreCase("NONE")) {
             return null;
+        }
 
         HashSet<String> studiesPresent = new HashSet<String>();
         variantMongoList.forEach(variantMongo -> variantMongo.getSourceEntries().forEach(variantSourceEntryMongo -> studiesPresent.add(variantSourceEntryMongo.getStudyId())));
@@ -142,7 +133,6 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         } else if (request.getIncludeDatasetResponses().equalsIgnoreCase("ALL")) {
             if (request.getDatasetIds() != null) {
                 request.getDatasetIds().forEach(study -> {
-                    System.out.println(study);
                     if (!studiesPresent.contains(study)) {
                         datasetAllelResponses.add(new DatasetAlleleResponse(study, false));
                     } else {
@@ -154,6 +144,4 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
         return datasetAllelResponses;
     }
-
-
 }
