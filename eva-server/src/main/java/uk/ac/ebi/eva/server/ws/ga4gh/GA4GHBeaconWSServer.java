@@ -75,7 +75,6 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
         } else {
             variantEntities = service.findByChromosomeAndStartAndAltAndStudyIn(chromosome, start, allele, studies, null);
         }
-        System.out.println(variantEntities);
 
         return new GA4GHBeaconResponse(chromosome, start, allele, String.join(",", studies),
                                        variantEntities.size() > 0);
