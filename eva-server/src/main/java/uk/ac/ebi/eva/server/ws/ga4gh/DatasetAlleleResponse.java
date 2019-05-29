@@ -2,7 +2,7 @@ package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import java.util.HashMap;
 
-public class DatasetAllelResponse {
+public class DatasetAlleleResponse {
     String datasetId;
     boolean exists;
     BeaconError error;
@@ -14,12 +14,12 @@ public class DatasetAllelResponse {
     String externalUrl;
     HashMap<String,String> info;
 
-    public DatasetAllelResponse(String datasetId, boolean exists) {
+    public DatasetAlleleResponse(String datasetId, boolean exists) {
         this.datasetId = datasetId;
         this.exists = exists;
     }
 
-    public DatasetAllelResponse(String datasetId, boolean exists, BeaconError error, Long frequency, Long variantCount, Long callCount, Long sampleCount, String note, String externalUrl, HashMap<String, String> info) {
+    public DatasetAlleleResponse(String datasetId, boolean exists, BeaconError error, Long frequency, Long variantCount, Long callCount, Long sampleCount, String note, String externalUrl, HashMap<String, String> info) {
         this.datasetId = datasetId;
         this.exists = exists;
         this.error = error;

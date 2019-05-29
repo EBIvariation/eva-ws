@@ -5,6 +5,7 @@ public class GA4GHBeaconResponseV2 {
   private String id;
   private String name;
   private String apiVersion;
+  private BeaconOrganization organization;
   private String description;
   private String version;
   private String welcomeUrl;

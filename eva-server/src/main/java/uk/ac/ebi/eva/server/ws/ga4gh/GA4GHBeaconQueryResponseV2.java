@@ -1,6 +1,6 @@
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
-import uk.ac.ebi.eva.commons.core.utils.BeaconAllelRequest;
+import uk.ac.ebi.eva.commons.core.utils.BeaconAlleleRequest;
 
 import java.util.List;
 
@@ -9,17 +9,17 @@ public class GA4GHBeaconQueryResponseV2 {
     private String beaconId;
     String apiVersion;
     Boolean exists;
-    BeaconAllelRequest allelRequest;
+    BeaconAlleleRequestBody alleleRequest;
     BeaconError error;
-    List<DatasetAllelResponse> datasetAllelResponses;
+    List<DatasetAlleleResponse> datasetAlleleResponses;
 
-    public GA4GHBeaconQueryResponseV2(String beaconId, String apiVersion, Boolean exists, BeaconAllelRequest allelRequest, BeaconError error,List<DatasetAllelResponse> datasetAllelResponses) {
+    public GA4GHBeaconQueryResponseV2(String beaconId, String apiVersion, Boolean exists, BeaconAlleleRequestBody alleleRequest, BeaconError error, List<DatasetAlleleResponse> datasetAlleleResponses) {
         this.beaconId = beaconId;
         this.apiVersion = apiVersion;
         this.exists = exists;
-        this.allelRequest = allelRequest;
+        this.alleleRequest = alleleRequest;
         this.error = error;
-        this.datasetAllelResponses=datasetAllelResponses;
+        this.datasetAlleleResponses = datasetAlleleResponses;
     }
 
     public String getBeaconId() {
@@ -38,7 +38,7 @@ public class GA4GHBeaconQueryResponseV2 {
         this.apiVersion = apiVersion;
     }
 
-    public Boolean isExists() {
+    public Boolean getExists() {
         return exists;
     }
 
@@ -46,12 +46,12 @@ public class GA4GHBeaconQueryResponseV2 {
         this.exists = exists;
     }
 
-    public BeaconAllelRequest getAllelRequest() {
-        return allelRequest;
+    public BeaconAlleleRequestBody getAlleleRequest() {
+        return alleleRequest;
     }
 
-    public void setAllelRequest(BeaconAllelRequest allelRequest) {
-        this.allelRequest = allelRequest;
+    public void setAlleleRequest(BeaconAlleleRequestBody alleleRequest) {
+        this.alleleRequest = alleleRequest;
     }
 
     public BeaconError getError() {
@@ -60,5 +60,13 @@ public class GA4GHBeaconQueryResponseV2 {
 
     public void setError(BeaconError error) {
         this.error = error;
+    }
+
+    public List<DatasetAlleleResponse> getDatasetAlleleResponses() {
+        return datasetAlleleResponses;
+    }
+
+    public void setDatasetAlleleResponses(List<DatasetAlleleResponse> datasetAlleleResponses) {
+        this.datasetAlleleResponses = datasetAlleleResponses;
     }
 }
