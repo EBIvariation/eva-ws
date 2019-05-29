@@ -1,7 +1,5 @@
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
-import uk.ac.ebi.eva.commons.core.utils.BeaconAlleleRequest;
-
 import java.util.List;
 
 public class GA4GHBeaconQueryResponseV2 {
