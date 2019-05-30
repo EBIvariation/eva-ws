@@ -1,3 +1,22 @@
+/*
+ * European Variation Archive (EVA) - Open-access database of all types of genetic
+ * variation data from all species
+ *
+ * Copyright 2019 EMBL - European Bioinformatics Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import io.swagger.annotations.Api;
@@ -46,28 +65,37 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
                                             @RequestParam(value = "endMin", required = false) Long endMin,
                                             @RequestParam(value = "endMax", required = false) Long endMax,
                                             @RequestParam(value = "referenceBases") String referenceBases,
-                                            @RequestParam(value = "alternateBases", required = false) String alternateBases,
+                                            @RequestParam(value = "alternateBases", required = false)
+                                                        String alternateBases,
                                             @RequestParam(value = "variantType", required = false) String variantType,
                                             @RequestParam(value = "assemblyId") String assemblyId,
                                             @RequestParam(value = "datasetIds", required = false) List<String> studies,
-                                            @RequestParam(value = "includeDatasetResponses", required = false) String includeDatasetResponses,
-                                            HttpServletResponse response) throws IOException, AnnotationMetadataNotFoundException {
+                                            @RequestParam(value = "includeDatasetResponses", required = false)
+                                                        String includeDatasetResponses,
+                                            HttpServletResponse response)
+            throws IOException, AnnotationMetadataNotFoundException {
 
         initializeQuery();
-        BeaconAlleleRequestBody request = new BeaconAlleleRequestBody(chromosome, start, startMin, startMax, end, endMin, endMax, referenceBases, alternateBases, variantType, assemblyId, studies, includeDatasetResponses);
+        BeaconAlleleRequestBody request = new BeaconAlleleRequestBody(chromosome, start, startMin, startMax, end,
+                endMin, endMax, referenceBases, alternateBases, variantType, assemblyId, studies,
+                includeDatasetResponses);
+
         if (assemblyId.equalsIgnoreCase("grch37")) {
             MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
         } else if (assemblyId.equalsIgnoreCase("grch38")) {
             MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
 
         } else {
-            return new GA4GHBeaconQueryResponseV2("beaconId", "apiVersion", null, request, new BeaconError("Please enter a valid assemblyId", HttpServletResponse.SC_BAD_REQUEST), null);
+            return new GA4GHBeaconQueryResponseV2("beaconId", "apiVersion", null, request,
+                    new BeaconError("Please enter a valid assemblyId", HttpServletResponse.SC_BAD_REQUEST), null);
         }
+
         String errorMessage = checkErrorHelper(request);
 
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return new GA4GHBeaconQueryResponseV2("beaconId", "apiVersion", null, request, new BeaconError(errorMessage, HttpServletResponse.SC_BAD_REQUEST), null);
+            return new GA4GHBeaconQueryResponseV2("beaconId", "apiVersion", null, request,
+                    new BeaconError(errorMessage, HttpServletResponse.SC_BAD_REQUEST), null);
         }
 
         VariantType variantType1;
@@ -77,15 +105,18 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             variantType1 = null;
         }
 
-        List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(start, startMin, startMax, end, endMin, endMax, referenceBases, alternateBases, variantType1, studies);
+        List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(start, startMin, startMax, end,
+                endMin, endMax, referenceBases, alternateBases, variantType1, studies);
         List<VariantMongo> variantMongoList = service.findbyChromosomeAndOtherBeaconFilters(chromosome, filters);
 
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
 
         if (variantMongoList.size() > 0) {
-            return new GA4GHBeaconQueryResponseV2("beaconId", "apiversion", true, request, null, datasetAlleleResponses);
+            return new GA4GHBeaconQueryResponseV2("beaconId", "apiversion", true, request, null,
+                    datasetAlleleResponses);
         } else{
-            return new GA4GHBeaconQueryResponseV2("beaconId", "apiversion", false, request, null, datasetAlleleResponses);
+            return new GA4GHBeaconQueryResponseV2("beaconId", "apiversion", false, request, null,
+                    datasetAlleleResponses);
         }
     }
 
@@ -94,16 +125,20 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         if (request.getStart() != null && request.getStart() < 0) {
             return "please provide a positive start number";
         }
+
         if (request.getEnd() != null && request.getEnd() < 0) {
             return "pleaseprovide a positive end number";
         }
+
         if (request.getAlternateBases() == null && request.getVariantType() == null){
             return "Either alternateBases ot variantType is required";
         }
+
         return null;
     }
 
-    public List<DatasetAlleleResponse> getDatasetAlleleResponsesHelper(List<VariantMongo> variantMongoList, BeaconAlleleRequestBody request) {
+    public List<DatasetAlleleResponse> getDatasetAlleleResponsesHelper(List<VariantMongo> variantMongoList,
+                                                                       BeaconAlleleRequestBody request) {
 
         List<DatasetAlleleResponse> datasetAllelResponses = new ArrayList<DatasetAlleleResponse>();
 
@@ -112,7 +147,8 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         }
 
         HashSet<String> studiesPresent = new HashSet<String>();
-        variantMongoList.forEach(variantMongo -> variantMongo.getSourceEntries().forEach(variantSourceEntryMongo -> studiesPresent.add(variantSourceEntryMongo.getStudyId())));
+        variantMongoList.forEach(variantMongo -> variantMongo.getSourceEntries()
+                .forEach(variantSourceEntryMongo -> studiesPresent.add(variantSourceEntryMongo.getStudyId())));
 
         if (request.getIncludeDatasetResponses().equalsIgnoreCase("HIT")) {
             Iterator<String> i = studiesPresent.iterator();
