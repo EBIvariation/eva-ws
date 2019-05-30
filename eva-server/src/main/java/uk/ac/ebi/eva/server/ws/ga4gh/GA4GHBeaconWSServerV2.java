@@ -10,7 +10,6 @@ import uk.ac.ebi.eva.commons.mongodb.entities.VariantMongo;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
-import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -33,8 +32,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     protected static Logger logger = LoggerFactory.getLogger(GA4GHBeaconWSServer.class);
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
-    @Autowired
-    private VariantSourceService sourceService;
+
 
     public GA4GHBeaconWSServerV2() {
     }
