@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
 import uk.ac.ebi.eva.commons.mongodb.entities.VariantMongo;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
@@ -105,8 +106,21 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             variantType1 = null;
         }
 
-        List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(start, startMin, startMax, end,
-                endMin, endMax, referenceBases, alternateBases, variantType1, studies);
+        Region startRange, endRange;
+
+        if (start != null) {
+            startRange = new Region(null, start, start);
+        } else {
+            startRange = new Region(null, startMin, startMax);
+        }
+
+        if (end != null) {
+            endRange = new Region(chromosome, end, end);
+        } else {
+            endRange = new Region(chromosome, endMin, endMax);
+        }
+
+        List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(startRange, endRange, referenceBases, alternateBases, variantType1, studies);
         List<VariantMongo> variantMongoList = service.findbyChromosomeAndOtherBeaconFilters(chromosome, filters);
 
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
