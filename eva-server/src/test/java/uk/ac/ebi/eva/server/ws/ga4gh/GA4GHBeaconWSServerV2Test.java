@@ -37,13 +37,13 @@ public class GA4GHBeaconWSServerV2Test {
 
     @Before
     public void setup() throws Exception {
-        VariantMongo variantMongo = new VariantMongo(null,"X",100470026,100470026,1,"G","A");
+        VariantMongo variantMongo = new VariantMongo(null, "X", 100470026, 100470026, 1, "G", "A");
         List<VariantMongo> variantMongoList = Collections.singletonList(variantMongo);
-        Region startRange=new Region("X",new Long(100470026),new Long(100470026));
-        Region endRange = new Region("X",new Long(100470026),new Long(100470026));
-        List<VariantRepositoryFilter> variantRepositoryFilters = new FilterBuilder().getBeaconFilters("G","A", VariantType.SNV, Arrays.asList("PRJEB7218"));
+        Region startRange = new Region("X", new Long(100470026), new Long(100470026));
+        Region endRange = new Region("X", new Long(100470026), new Long(100470026));
+        List<VariantRepositoryFilter> variantRepositoryFilters = new FilterBuilder().getBeaconFilters("G", "A", VariantType.SNV, Arrays.asList("PRJEB7218"));
 
-        given(service.findbyRegionAndOtherBeaconFilters(eq(startRange), eq(endRange),eq(variantRepositoryFilters))).willReturn(variantMongoList);
+        given(service.findbyRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters))).willReturn(variantMongoList);
     }
 
     @Test
@@ -57,7 +57,8 @@ public class GA4GHBeaconWSServerV2Test {
         request.setAlternateBases("A");
         request.setVariantType("SNV");
         request.setDatasetIds(Arrays.asList("PRJEB7218"));
-        String url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&alternateBases=%s&start=%s&end=%s&variantType=%s&datasetIds=%s",
+        String url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&alternateBases=" +
+                        "%s&start=%s&end=%s&variantType=%s&datasetIds=%s",
                 request.getReferenceName(),
                 request.getReferenceBases(),
                 request.getAssemblyId(),
@@ -65,15 +66,17 @@ public class GA4GHBeaconWSServerV2Test {
                 request.getStart(),
                 request.getEnd(),
                 request.getVariantType(),
-                String.join(",",request.getDatasetIds()));
+                String.join(",", request.getDatasetIds()));
 
-        assertEquals(true,testBeaconHelper(url).getBody().getExists());
+        assertEquals(true, testBeaconHelper(url).getBody().getExists());
 
         request.setStartMin(new Long(1));
         request.setStartMax(new Long(1));
         request.setEndMin(new Long(1));
         request.setEndMax(new Long(1));
-        url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&alternateBases=%s&start=%s&end=%s&startMin=%s&endMin=%s&startMax=%s&endMax=%s&variantType=%s&datasetIds=%s",
+        url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&" +
+                        "alternateBases=%s&start=%s&end=%s&startMin=%s&endMin=%s&startMax=%s&endMax=%s&variantType=%s" +
+                        "&datasetIds=%s",
                 request.getReferenceName(),
                 request.getReferenceBases(),
                 request.getAssemblyId(),
@@ -86,7 +89,7 @@ public class GA4GHBeaconWSServerV2Test {
                 request.getEndMax(),
                 request.getVariantType(),
                 String.join(",", request.getDatasetIds()));
-        assertEquals(true,testBeaconHelper(url).getBody().getExists());
+        assertEquals(true, testBeaconHelper(url).getBody().getExists());
     }
 
     @Test
@@ -96,27 +99,28 @@ public class GA4GHBeaconWSServerV2Test {
         request.setAssemblyId("GRCh37");
         request.setReferenceBases("G");
         request.setAlternateBases("A");
-        String url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&alternateBases=%s",
+        String url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&" +
+                        "alternateBases=%s",
                 request.getReferenceName(),
                 request.getReferenceBases(),
                 request.getAssemblyId(),
                 request.getAlternateBases());
 
-        assertEquals(false,testBeaconHelper(url).getBody().getExists());
+        assertEquals(false, testBeaconHelper(url).getBody().getExists());
     }
 
     @Test
     public void testForError() {
-        BeaconAlleleRequestBody request=new BeaconAlleleRequestBody();
+        BeaconAlleleRequestBody request = new BeaconAlleleRequestBody();
         String url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s",
                 "X",
                 "G",
                 "GRch37");
-        assertEquals(400,testBeaconHelper(url).getBody().getError().getErrorCode());
+        assertEquals(400, testBeaconHelper(url).getBody().getError().getErrorCode());
 
     }
 
-    private ResponseEntity<GA4GHBeaconQueryResponseV2>  testBeaconHelper(String url){
+    private ResponseEntity<GA4GHBeaconQueryResponseV2> testBeaconHelper(String url) {
 
         ResponseEntity<GA4GHBeaconQueryResponseV2> response = restTemplate.getForEntity(
                 url, GA4GHBeaconQueryResponseV2.class);
