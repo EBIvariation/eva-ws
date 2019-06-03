@@ -23,6 +23,7 @@ import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
@@ -58,7 +59,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     }
 
     @RequestMapping(value = "/query", method = RequestMethod.GET)
-    public GA4GHBeaconQueryResponseV2 query(@RequestParam("referenceName") String chromosome,
+    public GA4GHBeaconQueryResponseV2 queryGet(@RequestParam("referenceName") String chromosome,
                                             @RequestParam(value = "start", required = false) Long start,
                                             @RequestParam(value = "startMin", required = false) Long startMin,
                                             @RequestParam(value = "startMax", required = false) Long startMax,
@@ -134,6 +135,27 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             return new GA4GHBeaconQueryResponseV2("beaconId", "apiversion", false, request, null,
                     datasetAlleleResponses);
         }
+    }
+
+    @RequestMapping(value = "/query", method = RequestMethod.POST)
+    public GA4GHBeaconQueryResponseV2 queryPost(@Validated @RequestBody BeaconAlleleRequestBody requestBody,
+                                                HttpServletResponse response) throws IOException,
+            AnnotationMetadataNotFoundException {
+
+        return queryGet(requestBody.getReferenceName(),
+                requestBody.getStart(),
+                requestBody.getStartMin(),
+                requestBody.getStartMax(),
+                requestBody.getEnd(),
+                requestBody.getEndMin(),
+                requestBody.getEndMax(),
+                requestBody.getReferenceBases(),
+                requestBody.getAlternateBases(),
+                requestBody.getVariantType(),
+                requestBody.getAssemblyId(),
+                requestBody.getDatasetIds(),
+                requestBody.getIncludeDatasetResponses(),
+                response);
     }
 
     public String checkErrorHelper(BeaconAlleleRequestBody request) {
