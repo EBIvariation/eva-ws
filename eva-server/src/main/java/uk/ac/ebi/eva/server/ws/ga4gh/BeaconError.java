@@ -20,27 +20,31 @@
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 public class BeaconError {
-    String errorCode;
-    int errorMessage;
+    int errorCode;
+    String errorMessage;
 
-    public BeaconError(String errorCode, int errorMessage) {
+    public BeaconError() {
+
+    }
+
+    public BeaconError(int errorCode, String errorMessage) {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }
 
-    public String getErrorCode() {
+    public int getErrorCode() {
         return errorCode;
     }
 
-    public void setErrorCode(String errorCode) {
+    public void setErrorCode(int errorCode) {
         this.errorCode = errorCode;
     }
 
-    public int getErrorMessage() {
+    public String getErrorMessage() {
         return errorMessage;
     }
 
-    public void setErrorMessage(int errorMessage) {
+    public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 }

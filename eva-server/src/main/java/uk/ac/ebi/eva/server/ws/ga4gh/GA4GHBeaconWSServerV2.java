@@ -88,7 +88,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
         } else {
             return new GA4GHBeaconQueryResponseV2("beaconId", "apiVersion", null, request,
-                    new BeaconError("Please enter a valid assemblyId", HttpServletResponse.SC_BAD_REQUEST), null);
+                    new BeaconError( HttpServletResponse.SC_BAD_REQUEST,"Please enter a valid assemblyId"), null);
         }
 
         String errorMessage = checkErrorHelper(request);
@@ -96,7 +96,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new GA4GHBeaconQueryResponseV2("beaconId", "apiVersion", null, request,
-                    new BeaconError(errorMessage, HttpServletResponse.SC_BAD_REQUEST), null);
+                    new BeaconError( HttpServletResponse.SC_BAD_REQUEST, errorMessage), null);
         }
 
         VariantType variantType1;
@@ -120,7 +120,8 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             endRange = new Region(chromosome, endMin, endMax);
         }
 
-        List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(startRange, endRange, referenceBases, alternateBases, variantType1, studies);
+        List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(startRange, endRange,
+                referenceBases, alternateBases, variantType1, studies);
         List<VariantMongo> variantMongoList = service.findbyChromosomeAndOtherBeaconFilters(chromosome, filters);
 
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);

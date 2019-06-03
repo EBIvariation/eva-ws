@@ -30,7 +30,12 @@ public class GA4GHBeaconQueryResponseV2 {
     BeaconError error;
     List<DatasetAlleleResponse> datasetAlleleResponses;
 
-    public GA4GHBeaconQueryResponseV2(String beaconId, String apiVersion, Boolean exists, BeaconAlleleRequestBody alleleRequest, BeaconError error, List<DatasetAlleleResponse> datasetAlleleResponses) {
+    public GA4GHBeaconQueryResponseV2() {
+    }
+
+    public GA4GHBeaconQueryResponseV2(String beaconId, String apiVersion, Boolean exists,
+                                      BeaconAlleleRequestBody alleleRequest, BeaconError error,
+                                      List<DatasetAlleleResponse> datasetAlleleResponses) {
         this.beaconId = beaconId;
         this.apiVersion = apiVersion;
         this.exists = exists;

@@ -33,6 +33,10 @@ public class DatasetAlleleResponse {
     String externalUrl;
     HashMap<String,String> info;
 
+    public DatasetAlleleResponse() {
+
+    }
+
     public DatasetAlleleResponse(String datasetId, boolean exists) {
         this.datasetId = datasetId;
         this.exists = exists;
