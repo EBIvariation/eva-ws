@@ -35,7 +35,7 @@ public class GA4GHBeaconWSServerV2Test {
     @MockBean
     private VariantWithSamplesAndAnnotationsService service;
 
-    @Before
+    /*@Before
     public void setup() throws Exception {
         VariantMongo variantMongo = new VariantMongo(null,"X",100470026,100470026,1,"G","A");
         List<VariantMongo> variantMongoList = Collections.singletonList(variantMongo);
@@ -45,7 +45,7 @@ public class GA4GHBeaconWSServerV2Test {
                 "G","A", VariantType.SNV, Arrays.asList("PRJEB7218"));
 
         given(service.findbyChromosomeAndOtherBeaconFilters(eq("X"), eq(variantRepositoryFilters))).willReturn(variantMongoList);
-    }
+    }*/
 
     @Test
     public void testForExisting() throws Exception {

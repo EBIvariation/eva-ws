@@ -109,9 +109,9 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         Region startRange, endRange;
 
         if (start != null) {
-            startRange = new Region(null, start, start);
+            startRange = new Region(chromosome, start, start);
         } else {
-            startRange = new Region(null, startMin, startMax);
+            startRange = new Region(chromosome, startMin, startMax);
         }
 
         if (end != null) {
@@ -120,9 +120,10 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             endRange = new Region(chromosome, endMin, endMax);
         }
 
-        List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(startRange, endRange,
-                referenceBases, alternateBases, variantType1, studies);
-        List<VariantMongo> variantMongoList = service.findbyChromosomeAndOtherBeaconFilters(chromosome, filters);
+        List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(referenceBases, alternateBases,
+                variantType1, studies);
+
+        List<VariantMongo> variantMongoList = service.findbyRegionAndOtherBeaconFilters(startRange, endRange, filters);
 
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
 
