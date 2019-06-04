@@ -22,12 +22,47 @@ package uk.ac.ebi.eva.server.ws.ga4gh;
 import java.util.Map;
 
 public class BeaconOrganization {
-    String id;
-    String name;
-    String description;
-    String address;
-    String welcomeUrl;
-    String contactUrl;
-    String logoUrl;
-    Map<String,String> info;
+    private  String id = "EMBL-EBI-EVA";
+    private  String name = "European Variation Archive (EMBL-EBI)";
+    private  String description = "EMBL-EBI makes the world's public biological data freely available to the " +
+            "scientific community via a range of services and tools, performs basic research and provides " +
+            "professional training in bioinformatics.The European Variation Archive is an open-access database of " +
+            "all types of genetic variation data from all species.";
+    private  String address="Wellcome Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, United Kingdom";
+    private  String welcomeUrl="www.ebi.ac.uk/eva";
+    private  String contactUrl="contactUrlString";
+    private  String logoUrl="www.ebi.ac.uk/eva/img/eva_logo.png";
+    private  Map<String,String> info=null;
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getWelcomeUrl() {
+        return welcomeUrl;
+    }
+
+    public String getContactUrl() {
+        return contactUrl;
+    }
+
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
+    public Map<String, String> getInfo() {
+        return info;
+    }
 }

@@ -58,6 +58,11 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     public GA4GHBeaconWSServerV2() {
     }
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public GA4GHBeaconResponseV2 rootGet() {
+        return new GA4GHBeaconResponseV2();
+    }
+
     @RequestMapping(value = "/query", method = RequestMethod.GET)
     public GA4GHBeaconQueryResponseV2 queryGet(@RequestParam("referenceName") String chromosome,
                                             @RequestParam(value = "start", required = false) Long start,

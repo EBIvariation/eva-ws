@@ -21,16 +21,54 @@ package uk.ac.ebi.eva.server.ws.ga4gh;
 
 public class GA4GHBeaconResponseV2 {
 
-  private String id;
-  private String name;
-  private String apiVersion;
-  private BeaconOrganization organization;
-  private String description;
-  private String version;
-  private String welcomeUrl;
-  private String alternativeUrl;
-  private String createDateTime;
-  private String updateDateTime;
+    private  String id = "uk.ac.ebi.eva";
+    private  String name = "European Variation Archive Beacon";
+    private  String apiVersion = "v1.0";
+    private  BeaconOrganization organization = new BeaconOrganization();
+    private  String description = "descriptionString";
+    private  String version = "v2";
+    private  String welcomeUrl = "welcomeUrlString";
+    private  String alternativeUrl = "alternativeUrlString";
+    private  String createDateTime = "date1";
+    private  String updateDateTime = "date2";
 
+    public String getId() {
+        return id;
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
+    public BeaconOrganization getOrganization() {
+        return organization;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getWelcomeUrl() {
+        return welcomeUrl;
+    }
+
+    public String getAlternativeUrl() {
+        return alternativeUrl;
+    }
+
+    public String getCreateDateTime() {
+        return createDateTime;
+    }
+
+    public String getUpdateDateTime() {
+        return updateDateTime;
+    }
 }
