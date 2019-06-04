@@ -65,21 +65,21 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
     @RequestMapping(value = "/query", method = RequestMethod.GET)
     public GA4GHBeaconQueryResponseV2 queryGet(@RequestParam("referenceName") String chromosome,
-                                            @RequestParam(value = "start", required = false) Long start,
-                                            @RequestParam(value = "startMin", required = false) Long startMin,
-                                            @RequestParam(value = "startMax", required = false) Long startMax,
-                                            @RequestParam(value = "end", required = false) Long end,
-                                            @RequestParam(value = "endMin", required = false) Long endMin,
-                                            @RequestParam(value = "endMax", required = false) Long endMax,
-                                            @RequestParam(value = "referenceBases") String referenceBases,
-                                            @RequestParam(value = "alternateBases", required = false)
-                                                        String alternateBases,
-                                            @RequestParam(value = "variantType", required = false) String variantType,
-                                            @RequestParam(value = "assemblyId") String assemblyId,
-                                            @RequestParam(value = "datasetIds", required = false) List<String> studies,
-                                            @RequestParam(value = "includeDatasetResponses", required = false)
-                                                        String includeDatasetResponses,
-                                            HttpServletResponse response)
+                                               @RequestParam(value = "start", required = false) Long start,
+                                               @RequestParam(value = "startMin", required = false) Long startMin,
+                                               @RequestParam(value = "startMax", required = false) Long startMax,
+                                               @RequestParam(value = "end", required = false) Long end,
+                                               @RequestParam(value = "endMin", required = false) Long endMin,
+                                               @RequestParam(value = "endMax", required = false) Long endMax,
+                                               @RequestParam(value = "referenceBases") String referenceBases,
+                                               @RequestParam(value = "alternateBases", required = false)
+                                                       String alternateBases,
+                                               @RequestParam(value = "variantType", required = false) String variantType,
+                                               @RequestParam(value = "assemblyId") String assemblyId,
+                                               @RequestParam(value = "datasetIds", required = false) List<String> studies,
+                                               @RequestParam(value = "includeDatasetResponses", required = false)
+                                                       String includeDatasetResponses,
+                                               HttpServletResponse response)
             throws IOException, AnnotationMetadataNotFoundException {
 
         initializeQuery();
@@ -94,15 +94,15 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
         } else {
             return new GA4GHBeaconQueryResponseV2("beaconId", "apiVersion", null, request,
-                    new BeaconError( HttpServletResponse.SC_BAD_REQUEST,"Please enter a valid assemblyId"), null);
+                    new BeaconError(HttpServletResponse.SC_BAD_REQUEST, "Please enter a valid assemblyId"), null);
         }
 
         String errorMessage = checkErrorHelper(request);
 
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return new GA4GHBeaconQueryResponseV2("beaconId", "apiVersion", null, request,
-                    new BeaconError( HttpServletResponse.SC_BAD_REQUEST, errorMessage), null);
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val, GA4GHBeaconResponseV2.apiVersion_val, null, request,
+                    new BeaconError(HttpServletResponse.SC_BAD_REQUEST, errorMessage), null);
         }
 
         VariantType variantType1;
@@ -134,10 +134,10 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
 
         if (variantMongoList.size() > 0) {
-            return new GA4GHBeaconQueryResponseV2("beaconId", "apiversion", true, request, null,
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val, GA4GHBeaconResponseV2.apiVersion_val, true, request, null,
                     datasetAlleleResponses);
-        } else{
-            return new GA4GHBeaconQueryResponseV2("beaconId", "apiversion", false, request, null,
+        } else {
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val, GA4GHBeaconResponseV2.apiVersion_val, false, request, null,
                     datasetAlleleResponses);
         }
     }
@@ -173,7 +173,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             return "pleaseprovide a positive end number";
         }
 
-        if (request.getAlternateBases() == null && request.getVariantType() == null){
+        if (request.getAlternateBases() == null && request.getVariantType() == null) {
             return "Either alternateBases ot variantType is required";
         }
 

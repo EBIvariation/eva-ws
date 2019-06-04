@@ -22,17 +22,37 @@ package uk.ac.ebi.eva.server.ws.ga4gh;
 import java.util.Map;
 
 public class BeaconOrganization {
-    private  String id = "EMBL-EBI-EVA";
-    private  String name = "European Variation Archive (EMBL-EBI)";
-    private  String description = "EMBL-EBI makes the world's public biological data freely available to the " +
+    public static   String id_val = "EMBL-EBI-EVA";
+    public static   String name_val = "European Variation Archive (EMBL-EBI)";
+    public static   String description_val = "EMBL-EBI makes the world's public biological data freely available to the " +
             "scientific community via a range of services and tools, performs basic research and provides " +
             "professional training in bioinformatics.The European Variation Archive is an open-access database of " +
             "all types of genetic variation data from all species.";
-    private  String address="Wellcome Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, United Kingdom";
-    private  String welcomeUrl="www.ebi.ac.uk/eva";
-    private  String contactUrl="contactUrlString";
-    private  String logoUrl="www.ebi.ac.uk/eva/img/eva_logo.png";
-    private  Map<String,String> info=null;
+    public static  String address_val="Wellcome Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, United Kingdom";
+    public static   String welcomeUrl_val="www.ebi.ac.uk/eva";
+    public static   String contactUrl_val="contactUrlString";
+    public static   String logoUrl_val="www.ebi.ac.uk/eva/img/eva_logo.png";
+    public static   Map<String,String> info_val=null;
+
+    private  String id;
+    private  String name;
+    private  String description;
+    private  String address;
+    private  String welcomeUrl;
+    private  String contactUrl;
+    private  String logoUrl;
+    private  Map<String,String> info;
+
+    public BeaconOrganization() {
+        this.id = id_val;
+        this.name = name_val;
+        this.description = description_val;
+        this.address = address_val;
+        this.welcomeUrl = welcomeUrl_val;
+        this.contactUrl = contactUrl_val;
+        this.logoUrl = logoUrl_val;
+        this.info = info_val;
+    }
 
     public String getId() {
         return id;
