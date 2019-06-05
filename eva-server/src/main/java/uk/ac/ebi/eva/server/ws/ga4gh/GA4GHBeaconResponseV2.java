@@ -98,4 +98,11 @@ public class GA4GHBeaconResponseV2 {
         return updateDateTime;
     }
 
+    public List<BeaconDataset> getBeaconDatasetList() {
+        return beaconDatasetList;
+    }
+
+    public void setBeaconDatasetList(List<BeaconDataset> beaconDatasetList) {
+        this.beaconDatasetList = beaconDatasetList;
+    }
 }

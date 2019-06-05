@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
 import uk.ac.ebi.eva.commons.mongodb.entities.VariantMongo;
+import uk.ac.ebi.eva.commons.mongodb.entities.VariantSourceMongo;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
@@ -35,10 +36,7 @@ import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsSe
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
@@ -60,7 +58,38 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public GA4GHBeaconResponseV2 rootGet() {
-        return new GA4GHBeaconResponseV2();
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
+        GA4GHBeaconResponseV2 response = new GA4GHBeaconResponseV2();
+        List<BeaconDataset> beaconDatasets = new ArrayList<>();
+
+        List<VariantSourceMongo> variantSourceMongos = service.findAllForBeacon();
+        variantSourceMongos.forEach(variantSourceMongo -> {
+            beaconDatasets.add(new BeaconDataset(
+                    variantSourceMongo.getStudyId(),
+                    variantSourceMongo.getStudyName(),
+                    "randomdescription",
+                    "GRCh37",
+                    variantSourceMongo.getDate().toString(),
+                    "updatedate"
+            ));
+        });
+
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
+        variantSourceMongos = service.findAllForBeacon();
+        variantSourceMongos.forEach(variantSourceMongo -> {
+            beaconDatasets.add(new BeaconDataset(
+                    variantSourceMongo.getStudyId(),
+                    variantSourceMongo.getStudyName(),
+                    "randomdescription",
+                    "GRCh38",
+                    variantSourceMongo.getDate().toString(),
+                    "updatedate"
+            ));
+        });
+
+
+        response.setBeaconDatasetList(beaconDatasets);
+        return response;
     }
 
     @RequestMapping(value = "/query", method = RequestMethod.GET)
@@ -101,7 +130,8 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val, GA4GHBeaconResponseV2.apiVersion_val, null, request,
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val,
+                    GA4GHBeaconResponseV2.apiVersion_val, null, request,
                     new BeaconError(HttpServletResponse.SC_BAD_REQUEST, errorMessage), null);
         }
 
@@ -134,10 +164,12 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
 
         if (variantMongoList.size() > 0) {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val, GA4GHBeaconResponseV2.apiVersion_val, true, request, null,
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val,
+                    GA4GHBeaconResponseV2.apiVersion_val, true, request, null,
                     datasetAlleleResponses);
         } else {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val, GA4GHBeaconResponseV2.apiVersion_val, false, request, null,
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val,
+                    GA4GHBeaconResponseV2.apiVersion_val, false, request, null,
                     datasetAlleleResponses);
         }
     }
@@ -185,31 +217,33 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
         List<DatasetAlleleResponse> datasetAllelResponses = new ArrayList<DatasetAlleleResponse>();
 
-        if (request.getIncludeDatasetResponses() == null || request.getIncludeDatasetResponses().equalsIgnoreCase("NONE")) {
+        if (request.getIncludeDatasetResponses() == null ||
+                request.getIncludeDatasetResponses().equalsIgnoreCase("NONE")) {
             return null;
         }
+
+        Set<String> allDistinctDatasetIds = service.findAllDistinctDatasetIds();
 
         HashSet<String> studiesPresent = new HashSet<String>();
         variantMongoList.forEach(variantMongo -> variantMongo.getSourceEntries()
                 .forEach(variantSourceEntryMongo -> studiesPresent.add(variantSourceEntryMongo.getStudyId())));
 
         if (request.getIncludeDatasetResponses().equalsIgnoreCase("HIT")) {
-            Iterator<String> i = studiesPresent.iterator();
-            while (i.hasNext()) {
-                datasetAllelResponses.add(new DatasetAlleleResponse(i.next(), true));
-            }
+            studiesPresent.forEach(study -> {
+                datasetAllelResponses.add(new DatasetAlleleResponse(study, true));
+            });
 
         } else if (request.getIncludeDatasetResponses().equalsIgnoreCase("Miss")) {
-            if (request.getDatasetIds() != null) {
-                request.getDatasetIds().forEach(study -> {
+            if (allDistinctDatasetIds != null) {
+                allDistinctDatasetIds.forEach(study -> {
                     if (!studiesPresent.contains(study)) {
                         datasetAllelResponses.add(new DatasetAlleleResponse(study, false));
                     }
                 });
             }
         } else if (request.getIncludeDatasetResponses().equalsIgnoreCase("ALL")) {
-            if (request.getDatasetIds() != null) {
-                request.getDatasetIds().forEach(study -> {
+            if (allDistinctDatasetIds != null) {
+                allDistinctDatasetIds.forEach(study -> {
                     if (!studiesPresent.contains(study)) {
                         datasetAllelResponses.add(new DatasetAlleleResponse(study, false));
                     } else {
