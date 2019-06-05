@@ -122,8 +122,9 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
 
         } else {
-            return new GA4GHBeaconQueryResponseV2("beaconId", "apiVersion", null, request,
-                    new BeaconError(HttpServletResponse.SC_BAD_REQUEST, "Please enter a valid assemblyId"), null);
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val, GA4GHBeaconResponseV2.apiVersion_val,
+                    null, request, new BeaconError(HttpServletResponse.SC_BAD_REQUEST,
+                    "Please enter a valid assemblyId"), null);
         }
 
         String errorMessage = checkErrorHelper(request);
