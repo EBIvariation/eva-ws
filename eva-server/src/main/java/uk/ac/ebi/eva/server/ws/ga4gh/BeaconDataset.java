@@ -7,14 +7,26 @@ public class BeaconDataset {
     private String assemblyId;
     private String createDateTime;
     private String updateDateTime;
+    private Integer sampleCount;
+    private Integer variantCount;
+    private Integer callCount;
+    private String externalUrl;
+    private String dataUsageConditions;
 
-    public BeaconDataset(String id, String name, String description, String assemblyId, String createDateTime, String updateDateTime) {
+    public BeaconDataset(String id, String name, String description, String assemblyId, String createDateTime,
+                         String updateDateTime, Integer sampleCount, Integer variantCount, Integer callCount, String externalUrl,
+                         String dataUsageConditions) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.assemblyId = assemblyId;
         this.createDateTime = createDateTime;
         this.updateDateTime = updateDateTime;
+        this.sampleCount = sampleCount;
+        this.variantCount = variantCount;
+        this.callCount = callCount;
+        this.externalUrl = externalUrl;
+        this.dataUsageConditions = dataUsageConditions;
     }
 
     public String getId() {
@@ -63,5 +75,45 @@ public class BeaconDataset {
 
     public void setUpdateDateTime(String updateDateTime) {
         this.updateDateTime = updateDateTime;
+    }
+
+    public Integer getSampleCount() {
+        return sampleCount;
+    }
+
+    public void setSampleCount(Integer sampleCount) {
+        this.sampleCount = sampleCount;
+    }
+
+    public Integer getVariantCount() {
+        return variantCount;
+    }
+
+    public void setVariantCount(Integer variantCount) {
+        this.variantCount = variantCount;
+    }
+
+    public Integer getCallCount() {
+        return callCount;
+    }
+
+    public void setCallCount(Integer callCount) {
+        this.callCount = callCount;
+    }
+
+    public String getExternalUrl() {
+        return externalUrl;
+    }
+
+    public void setExternalUrl(String externalUrl) {
+        this.externalUrl = externalUrl;
+    }
+
+    public String getDataUsageConditions() {
+        return dataUsageConditions;
+    }
+
+    public void setDataUsageConditions(String dataUsageConditions) {
+        this.dataUsageConditions = dataUsageConditions;
     }
 }

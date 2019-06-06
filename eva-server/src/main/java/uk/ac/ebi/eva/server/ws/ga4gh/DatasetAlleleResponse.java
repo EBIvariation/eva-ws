@@ -25,7 +25,7 @@ public class DatasetAlleleResponse {
     String datasetId;
     boolean exists;
     BeaconError error;
-    Long frequency;
+    Float frequency;
     Long variantCount;
     Long callCount;
     Long sampleCount;
@@ -42,7 +42,9 @@ public class DatasetAlleleResponse {
         this.exists = exists;
     }
 
-    public DatasetAlleleResponse(String datasetId, boolean exists, BeaconError error, Long frequency, Long variantCount, Long callCount, Long sampleCount, String note, String externalUrl, HashMap<String, String> info) {
+    public DatasetAlleleResponse(String datasetId, boolean exists, BeaconError error, Float frequency,
+                                 Long variantCount, Long callCount, Long sampleCount, String note,
+                                 String externalUrl, HashMap<String, String> info) {
         this.datasetId = datasetId;
         this.exists = exists;
         this.error = error;
@@ -79,11 +81,11 @@ public class DatasetAlleleResponse {
         this.error = error;
     }
 
-    public Long getFrequency() {
+    public Float getFrequency() {
         return frequency;
     }
 
-    public void setFrequency(Long frequency) {
+    public void setFrequency(Float frequency) {
         this.frequency = frequency;
     }
 

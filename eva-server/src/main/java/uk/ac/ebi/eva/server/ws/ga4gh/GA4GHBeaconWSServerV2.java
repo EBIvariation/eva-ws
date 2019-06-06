@@ -61,7 +61,6 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
         GA4GHBeaconResponseV2 response = new GA4GHBeaconResponseV2();
         List<BeaconDataset> beaconDatasets = new ArrayList<>();
-
         List<VariantSourceMongo> variantSourceMongos = service.findAllForBeacon();
         variantSourceMongos.forEach(variantSourceMongo -> {
             beaconDatasets.add(new BeaconDataset(
@@ -69,8 +68,13 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
                     variantSourceMongo.getStudyName(),
                     "randomdescription",
                     "GRCh37",
-                    variantSourceMongo.getDate().toString(),
-                    "updatedate"
+                    variantSourceMongo.getDate() == null ? null : variantSourceMongo.getDate().toString(),
+                    "updatedate",
+                    variantSourceMongo.getStats() == null ? null : variantSourceMongo.getStats().getSamplesCount(),
+                    variantSourceMongo.getStats() == null ? null : variantSourceMongo.getStats().getSamplesCount(),
+                    null,
+                    "externalurl",
+                    "datausageconditions"
             ));
         });
 
@@ -81,12 +85,16 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
                     variantSourceMongo.getStudyId(),
                     variantSourceMongo.getStudyName(),
                     "randomdescription",
-                    "GRCh38",
-                    variantSourceMongo.getDate().toString(),
-                    "updatedate"
+                    "GRCh37",
+                    variantSourceMongo.getDate() == null ? null : variantSourceMongo.getDate().toString(),
+                    "updatedate",
+                    variantSourceMongo.getStats() == null ? null : variantSourceMongo.getStats().getSamplesCount(),
+                    variantSourceMongo.getStats() == null ? null : variantSourceMongo.getStats().getSamplesCount(),
+                    null,
+                    "externalurl",
+                    "datausageconditions"
             ));
         });
-
 
         response.setBeaconDatasetList(beaconDatasets);
         return response;
@@ -223,37 +231,95 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             return null;
         }
 
-        Set<String> allDistinctDatasetIds = service.findAllDistinctDatasetIds();
+        List<VariantSourceMongo> variantSourceMongoList = service.findAllForBeacon();
 
         HashSet<String> studiesPresent = new HashSet<String>();
-        variantMongoList.forEach(variantMongo -> variantMongo.getSourceEntries()
-                .forEach(variantSourceEntryMongo -> studiesPresent.add(variantSourceEntryMongo.getStudyId())));
+        HashMap<String, Float> studyIdToFrequencyMapper = new HashMap<>();
+        variantMongoList.forEach(variantMongo -> {
+            variantMongo.getSourceEntries().forEach(variantSourceEntryMongo -> {
+                studiesPresent.add(variantSourceEntryMongo.getStudyId());
+            });
+            variantMongo.getVariantStatsMongo().forEach(variantStatisticsMongo -> {
+                if(variantMongo.getAlternate().equalsIgnoreCase(variantStatisticsMongo.getMafAllele())) {
+                    studyIdToFrequencyMapper.put(variantStatisticsMongo.getStudyId(), variantStatisticsMongo.getMaf());
+                }
+            });
+        });
 
-        if (request.getIncludeDatasetResponses().equalsIgnoreCase("HIT")) {
-            studiesPresent.forEach(study -> {
-                datasetAllelResponses.add(new DatasetAlleleResponse(study, true));
+        HashMap<String, VariantSourceMongo> allStudies = new HashMap<>();
+        variantSourceMongoList.forEach(variantSourceMongo -> {
+            allStudies.put(variantSourceMongo.getStudyId(), variantSourceMongo);
+        });
+
+        if (request.getIncludeDatasetResponses().equalsIgnoreCase("ALL")) {
+            allStudies.forEach((studyId, variantSourceMongo) -> {
+                if (studiesPresent != null && studiesPresent.contains(studyId)) {
+                    datasetAllelResponses.add(new DatasetAlleleResponse(variantSourceMongo.getStudyId(),
+                            true,
+                            null,
+                            studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId())==null?new Float(0):
+                                    new Float(studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId())),
+                            variantSourceMongo.getStats() == null ? null :
+                                    new Long(variantSourceMongo.getStats().getVariantsCount()),
+                            null,
+                            variantSourceMongo.getStats() == null ? null :
+                                    new Long(variantSourceMongo.getStats().getSamplesCount()),
+                            "noteString",
+                            "externalUrl",
+                            null));
+                } else {
+                    datasetAllelResponses.add(new DatasetAlleleResponse(variantSourceMongo.getStudyId(),
+                            false,
+                            null,
+                            new Float(0),
+                            variantSourceMongo.getStats() == null ? null :
+                                    new Long(variantSourceMongo.getStats().getVariantsCount()),
+                            null,
+                            variantSourceMongo.getStats() == null ? null :
+                                    new Long(variantSourceMongo.getStats().getSamplesCount()),
+                            "noteString",
+                            "externalUrl",
+                            null));
+
+                }
             });
 
-        } else if (request.getIncludeDatasetResponses().equalsIgnoreCase("Miss")) {
-            if (allDistinctDatasetIds != null) {
-                allDistinctDatasetIds.forEach(study -> {
-                    if (!studiesPresent.contains(study)) {
-                        datasetAllelResponses.add(new DatasetAlleleResponse(study, false));
-                    }
-                });
-            }
-        } else if (request.getIncludeDatasetResponses().equalsIgnoreCase("ALL")) {
-            if (allDistinctDatasetIds != null) {
-                allDistinctDatasetIds.forEach(study -> {
-                    if (!studiesPresent.contains(study)) {
-                        datasetAllelResponses.add(new DatasetAlleleResponse(study, false));
-                    } else {
-                        datasetAllelResponses.add(new DatasetAlleleResponse(study, true));
-                    }
-                });
-            }
+        } else if (request.getIncludeDatasetResponses().equalsIgnoreCase("HIT")) {
+            allStudies.forEach((studyId, variantSourceMongo) -> {
+                if (studiesPresent != null && studiesPresent.contains(studyId)) {
+                    datasetAllelResponses.add(new DatasetAlleleResponse(variantSourceMongo.getStudyId(),
+                            true,
+                            null,
+                            studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId())==null?new Float(0):
+                                    new Float(studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId())),
+                            variantSourceMongo.getStats() == null ? null :
+                                    new Long(variantSourceMongo.getStats().getVariantsCount()),
+                            null,
+                            variantSourceMongo.getStats() == null ? null :
+                                    new Long(variantSourceMongo.getStats().getSamplesCount()),
+                            "noteString",
+                            "externalUrl",
+                            null));
+                }
+            });
+        } else if (request.getIncludeDatasetResponses().equalsIgnoreCase("MISS")) {
+            allStudies.forEach((studyId, variantSourceMongo) -> {
+                if (studiesPresent != null && !studiesPresent.contains(studyId)) {
+                    datasetAllelResponses.add(new DatasetAlleleResponse(variantSourceMongo.getStudyId(),
+                            false,
+                            null,
+                            new Float(0),
+                            variantSourceMongo.getStats() == null ? null :
+                                    new Long(variantSourceMongo.getStats().getVariantsCount()),
+                            null,
+                            variantSourceMongo.getStats() == null ? null :
+                                    new Long(variantSourceMongo.getStats().getSamplesCount()),
+                            "noteString",
+                            "externalUrl",
+                            null));
+                }
+            });
         }
-
         return datasetAllelResponses;
     }
 }
