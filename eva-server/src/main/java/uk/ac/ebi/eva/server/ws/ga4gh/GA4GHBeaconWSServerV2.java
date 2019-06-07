@@ -61,7 +61,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
         GA4GHBeaconResponseV2 response = new GA4GHBeaconResponseV2();
         List<BeaconDataset> beaconDatasets = new ArrayList<>();
-        List<VariantSourceMongo> variantSourceMongos = service.findAllForBeacon();
+        List<VariantSourceMongo> variantSourceMongos = service.findAllVariantSourcesForBeacon();
         variantSourceMongos.forEach(variantSourceMongo -> {
             beaconDatasets.add(new BeaconDataset(
                     variantSourceMongo.getStudyId(),
@@ -79,7 +79,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         });
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
-        variantSourceMongos = service.findAllForBeacon();
+        variantSourceMongos = service.findAllVariantSourcesForBeacon();
         variantSourceMongos.forEach(variantSourceMongo -> {
             beaconDatasets.add(new BeaconDataset(
                     variantSourceMongo.getStudyId(),
@@ -231,7 +231,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             return null;
         }
 
-        List<VariantSourceMongo> variantSourceMongoList = service.findAllForBeacon();
+        List<VariantSourceMongo> variantSourceMongoList = service.findAllVariantSourcesForBeacon();
 
         HashSet<String> studiesPresent = new HashSet<String>();
         HashMap<String, Float> studyIdToFrequencyMapper = new HashMap<>();
