@@ -19,7 +19,10 @@
 
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
+import uk.ac.ebi.eva.commons.mongodb.entities.VariantSourceMongo;
+
 import java.util.HashMap;
+import java.util.Map;
 
 public class DatasetAlleleResponse {
     String datasetId;
@@ -32,6 +35,21 @@ public class DatasetAlleleResponse {
     String note;
     String externalUrl;
     HashMap<String,String> info;
+
+    public static DatasetAlleleResponse buildDatasetAlleleResponse(boolean exists, VariantSourceMongo variantSourceMongo, Map<String,Float> studyIdToFrequencyMapper) {
+        return new DatasetAlleleResponse(variantSourceMongo.getStudyId(),
+                exists,
+                null,
+                exists==false?new Float(0):new Float(studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId())),
+                variantSourceMongo.getStats() == null ? null :
+                        new Long(variantSourceMongo.getStats().getVariantsCount()),
+                null,
+                variantSourceMongo.getStats() == null ? null :
+                        new Long(variantSourceMongo.getStats().getSamplesCount()),
+                "noteString",
+                "externalUrl",
+                null);
+    }
 
     public DatasetAlleleResponse() {
 

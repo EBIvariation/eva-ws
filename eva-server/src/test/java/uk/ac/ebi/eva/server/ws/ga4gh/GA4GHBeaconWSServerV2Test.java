@@ -129,6 +129,9 @@ public class GA4GHBeaconWSServerV2Test {
         assertEquals(false, testBeaconHelper(url).getBody().getExists());
     }
 
+    /*
+        This test should fail because either alternateBases ot variantType is required
+     */
     @Test
     public void testForError() {
         BeaconAlleleRequestBody request = new BeaconAlleleRequestBody();
@@ -137,7 +140,8 @@ public class GA4GHBeaconWSServerV2Test {
                 "G",
                 "GRch37");
         assertEquals(400, testBeaconHelper(url).getBody().getError().getErrorCode());
-
+        assertEquals("Either alternateBases ot variantType is required",
+                testBeaconHelper(url).getBody().getError().getErrorMessage());
     }
 
     private ResponseEntity<GA4GHBeaconQueryResponseV2> testBeaconHelper(String url) {
