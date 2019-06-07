@@ -223,10 +223,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
                 VariantType variantType = VariantType.valueOf(request.getVariantType());
             } catch (Exception e) {
                 String errorMessage = "Please provide a valid variant type from ";
-                for (VariantType vt : VariantType.values()) {
-                    errorMessage = errorMessage + vt + ", ";
-                }
-                return errorMessage.substring(0, errorMessage.length() - 2);
+                return errorMessage + String.join(", ", Arrays.asList(VariantType.values()).toString());
             }
         }
 
@@ -263,14 +260,14 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             allStudies.put(variantSourceMongo.getStudyId(), variantSourceMongo);
         });
 
-
         allStudies.forEach((studyId, variantSourceMongo) -> {
             if (studiesPresent.contains(studyId)) {
                 if (request.getIncludeDatasetResponses().equalsIgnoreCase("ALL") ||
                         request.getIncludeDatasetResponses().equalsIgnoreCase("HIT")) {
                     datasetAllelResponses.add(buildDatasetAlleleResponseHelper(true,
                             variantSourceMongo,
-                            new Float(studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId()))));
+                            studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId())==null?
+                                    null:new Float(studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId()))));
                 }
             } else {
                 if (request.getIncludeDatasetResponses().equalsIgnoreCase("ALL") ||
