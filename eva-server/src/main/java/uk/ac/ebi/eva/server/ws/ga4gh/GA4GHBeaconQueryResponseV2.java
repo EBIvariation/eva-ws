@@ -24,11 +24,16 @@ import java.util.List;
 public class GA4GHBeaconQueryResponseV2 {
 
     private String beaconId;
-    String apiVersion;
-    Boolean exists;
-    BeaconAlleleRequestBody alleleRequest;
-    BeaconError error;
-    List<DatasetAlleleResponse> datasetAlleleResponses;
+
+    private String apiVersion;
+
+    private Boolean exists;
+
+    private BeaconAlleleRequestBody alleleRequest;
+
+    private BeaconError error;
+
+    private List<DatasetAlleleResponse> datasetAlleleResponses;
 
     public GA4GHBeaconQueryResponseV2() {
     }

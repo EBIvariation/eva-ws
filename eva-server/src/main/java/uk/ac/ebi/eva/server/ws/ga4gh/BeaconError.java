@@ -20,8 +20,10 @@
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 public class BeaconError {
-    int errorCode;
-    String errorMessage;
+
+    private int errorCode;
+
+    private String errorMessage;
 
     public BeaconError() {
 

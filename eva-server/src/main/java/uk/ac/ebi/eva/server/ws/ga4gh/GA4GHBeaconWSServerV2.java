@@ -24,7 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
 import uk.ac.ebi.eva.commons.mongodb.entities.VariantMongo;
@@ -36,7 +41,11 @@ import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsSe
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.ArrayList;
 
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
@@ -153,17 +162,9 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
         Region startRange, endRange;
 
-        if (start != null) {
-            startRange = new Region(chromosome, start, start);
-        } else {
-            startRange = new Region(chromosome, startMin, startMax);
-        }
+        startRange = start != null ? new Region(chromosome, start, start) : new Region(chromosome, startMin, startMax);
 
-        if (end != null) {
-            endRange = new Region(chromosome, end, end);
-        } else {
-            endRange = new Region(chromosome, endMin, endMax);
-        }
+        endRange = end != null ? new Region(chromosome, end, end) : new Region(chromosome, endMin, endMax);
 
         List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(referenceBases, alternateBases,
                 variantType1, studies);
@@ -173,13 +174,9 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
 
         if (variantMongoList.size() > 0) {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val,
-                    GA4GHBeaconResponseV2.apiVersion_val, true, request, null,
-                    datasetAlleleResponses);
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val, GA4GHBeaconResponseV2.apiVersion_val, true, request, null, datasetAlleleResponses);
         } else {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val,
-                    GA4GHBeaconResponseV2.apiVersion_val, false, request, null,
-                    datasetAlleleResponses);
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val, GA4GHBeaconResponseV2.apiVersion_val, false, request, null, datasetAlleleResponses);
         }
     }
 
@@ -281,18 +278,13 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         return datasetAllelResponses;
     }
 
-    public  DatasetAlleleResponse buildDatasetAlleleResponseHelper(boolean exists, VariantSourceMongo variantSourceMongo, Float frequency) {
+    public  DatasetAlleleResponse buildDatasetAlleleResponseHelper(boolean exists, VariantSourceMongo variantSourceMongo,
+                                                                   Float frequency) {
         return new DatasetAlleleResponse(variantSourceMongo.getStudyId(),
-                exists,
+                exists, null, frequency,
+                variantSourceMongo.getStats() == null ? null : (long)variantSourceMongo.getStats().getVariantsCount(),
                 null,
-                frequency,
-                variantSourceMongo.getStats() == null ? null :
-                        new Long(variantSourceMongo.getStats().getVariantsCount()),
-                null,
-                variantSourceMongo.getStats() == null ? null :
-                        new Long(variantSourceMongo.getStats().getSamplesCount()),
-                "noteString",
-                "externalUrl",
-                null);
+                variantSourceMongo.getStats() == null ? null : (long)variantSourceMongo.getStats().getSamplesCount(),
+                "noteString", "externalUrl", null);
     }
 }

@@ -1,21 +1,32 @@
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 public class BeaconDataset {
+
     private String id;
+
     private String name;
+
     private String description;
+
     private String assemblyId;
+
     private String createDateTime;
+
     private String updateDateTime;
+
     private Integer sampleCount;
+
     private Integer variantCount;
+
     private Integer callCount;
+
     private String externalUrl;
+
     private String dataUsageConditions;
 
     public BeaconDataset(String id, String name, String description, String assemblyId, String createDateTime,
-                         String updateDateTime, Integer sampleCount, Integer variantCount, Integer callCount, String externalUrl,
-                         String dataUsageConditions) {
+                         String updateDateTime, Integer sampleCount, Integer variantCount, Integer callCount,
+                         String externalUrl, String dataUsageConditions) {
         this.id = id;
         this.name = name;
         this.description = description;

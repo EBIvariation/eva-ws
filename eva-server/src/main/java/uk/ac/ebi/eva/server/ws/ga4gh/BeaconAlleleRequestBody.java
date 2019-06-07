@@ -22,27 +22,43 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class BeaconAlleleRequestBody {
+
     @NotNull(message = "referenceName should not be null")
-    String referenceName;
-    Long start;
-    Long startMin;
-    Long startMax;
-    Long end;
-    Long endMin;
-    Long endMax;
+    private String referenceName;
+
+    private Long start;
+
+    private Long startMin;
+
+    private Long startMax;
+
+    private Long end;
+
+    private Long endMin;
+
+    private Long endMax;
+
     @NotNull(message = "referenceBases should not be null")
-    String referenceBases;
-    String alternateBases;
-    String variantType;
+    private String referenceBases;
+
+    private String alternateBases;
+
+    private String variantType;
+
     @NotNull(message = "assemblyId should not be null")
-    String assemblyId;
-    List<String> datasetIds;
-    String includeDatasetResponses;
+    private String assemblyId;
+
+    private List<String> datasetIds;
+
+    private String includeDatasetResponses;
 
     public BeaconAlleleRequestBody() {
     }
 
-    public BeaconAlleleRequestBody(String referenceName, Long start, Long startMin, Long startMax, Long end, Long endMin, Long endMax, String referenceBases, String alternateBases, String variantType, String assemblyId, List<String> datasetIds, String includeDatasetResponses) {
+    public BeaconAlleleRequestBody(String referenceName, Long start, Long startMin, Long startMax, Long end,
+                                   Long endMin, Long endMax, String referenceBases, String alternateBases,
+                                   String variantType, String assemblyId, List<String> datasetIds,
+                                   String includeDatasetResponses) {
         this.referenceName = referenceName;
         this.start = start;
         this.startMin = startMin;

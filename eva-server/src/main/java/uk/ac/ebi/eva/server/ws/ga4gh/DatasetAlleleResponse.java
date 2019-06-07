@@ -19,22 +19,30 @@
 
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
-import uk.ac.ebi.eva.commons.mongodb.entities.VariantSourceMongo;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class DatasetAlleleResponse {
-    String datasetId;
-    boolean exists;
-    BeaconError error;
-    Float frequency;
-    Long variantCount;
-    Long callCount;
-    Long sampleCount;
-    String note;
-    String externalUrl;
-    HashMap<String,String> info;
+
+    private String datasetId;
+
+    private boolean exists;
+
+    private BeaconError error;
+
+    private Float frequency;
+
+    private Long variantCount;
+
+    private Long callCount;
+
+    private Long sampleCount;
+
+    private String note;
+
+    private String externalUrl;
+
+    private HashMap<String,String> info;
 
     public DatasetAlleleResponse() {
 
