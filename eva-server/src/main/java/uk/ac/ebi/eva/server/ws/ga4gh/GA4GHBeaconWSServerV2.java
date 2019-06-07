@@ -215,7 +215,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         }
 
         if (request.getAlternateBases() == null && request.getVariantType() == null) {
-            return "Either alternateBases ot variantType is required";
+            return "Either alternateBases or variantType is required";
         }
 
         if (request.getVariantType() != null) {
@@ -268,18 +268,34 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             if (studiesPresent.contains(studyId)) {
                 if (request.getIncludeDatasetResponses().equalsIgnoreCase("ALL") ||
                         request.getIncludeDatasetResponses().equalsIgnoreCase("HIT")) {
-                    datasetAllelResponses.add(DatasetAlleleResponse.buildDatasetAlleleResponse(true,
-                            variantSourceMongo, studyIdToFrequencyMapper));
+                    datasetAllelResponses.add(buildDatasetAlleleResponseHelper(true,
+                            variantSourceMongo,
+                            new Float(studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId()))));
                 }
             } else {
                 if (request.getIncludeDatasetResponses().equalsIgnoreCase("ALL") ||
                         request.getIncludeDatasetResponses().equalsIgnoreCase("MISS")) {
-                    datasetAllelResponses.add(DatasetAlleleResponse.buildDatasetAlleleResponse(false,
-                            variantSourceMongo, studyIdToFrequencyMapper));
+                    datasetAllelResponses.add(buildDatasetAlleleResponseHelper(false,
+                            variantSourceMongo, null));
                 }
             }
         });
 
         return datasetAllelResponses;
+    }
+
+    public  DatasetAlleleResponse buildDatasetAlleleResponseHelper(boolean exists, VariantSourceMongo variantSourceMongo, Float frequency) {
+        return new DatasetAlleleResponse(variantSourceMongo.getStudyId(),
+                exists,
+                null,
+                frequency,
+                variantSourceMongo.getStats() == null ? null :
+                        new Long(variantSourceMongo.getStats().getVariantsCount()),
+                null,
+                variantSourceMongo.getStats() == null ? null :
+                        new Long(variantSourceMongo.getStats().getSamplesCount()),
+                "noteString",
+                "externalUrl",
+                null);
     }
 }
