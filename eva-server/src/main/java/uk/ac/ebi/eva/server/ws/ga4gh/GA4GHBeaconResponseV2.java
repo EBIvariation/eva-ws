@@ -23,15 +23,15 @@ import java.util.List;
 
 public class GA4GHBeaconResponseV2 {
 
-    public static String id_val = "uk.ac.ebi.eva";
-    public static String name_val = "European Variation Archive Beacon";
-    public static String apiVersion_val = "v1.0";
-    public static String description_val = "descriptionString";
-    public static String version_val = "v2";
-    public static String welcomeUrl_val = "welcomeUrlString";
-    public static String alternativeUrl_val = "alternativeUrlString";
-    public static String createDateTime_val = "date1";
-    public static String updateDateTime_val = "date2";
+    static String ID = "uk.ac.ebi.eva";
+    static String NAME = "European Variation Archive Beacon";
+    static String APIVERSION = "v1.0";
+    static String DESCRIPTION = "descriptionString";
+    static String VERSION = "v2";
+    static String WELCOME_URL = "welcomeUrlString";
+    static String ALTERNATIVE_URL = "alternativeUrlString";
+    static String CREATED_DATE_TIME = "date1";
+    static String UPDATE_DATE_TIME = "date2";
 
     private String id;
     private String name;
@@ -46,16 +46,16 @@ public class GA4GHBeaconResponseV2 {
     private List<BeaconDataset> beaconDatasetList;
 
     public GA4GHBeaconResponseV2() {
-        this.id = id_val;
-        this.name = name_val;
-        this.apiVersion = apiVersion_val;
+        this.id = ID;
+        this.name = NAME;
+        this.apiVersion = APIVERSION;
         this.organization = new BeaconOrganization();
-        this.description = description_val;
-        this.version = version_val;
-        this.welcomeUrl = welcomeUrl_val;
-        this.alternativeUrl = alternativeUrl_val;
-        this.createDateTime = createDateTime_val;
-        this.updateDateTime = updateDateTime_val;
+        this.description = DESCRIPTION;
+        this.version = VERSION;
+        this.welcomeUrl = WELCOME_URL;
+        this.alternativeUrl = ALTERNATIVE_URL;
+        this.createDateTime = CREATED_DATE_TIME;
+        this.updateDateTime = UPDATE_DATE_TIME;
     }
 
     public String getId() {

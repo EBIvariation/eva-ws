@@ -45,7 +45,6 @@ public class DatasetAlleleResponse {
     private HashMap<String,String> info;
 
     public DatasetAlleleResponse() {
-
     }
 
     public DatasetAlleleResponse(String datasetId, boolean exists) {

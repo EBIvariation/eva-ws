@@ -20,15 +20,9 @@
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import io.swagger.annotations.Api;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
@@ -57,7 +51,6 @@ import uk.ac.ebi.eva.server.ws.EvaWSServer;
 @Api(tags = {"ga4gh"})
 public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
-    protected static Logger logger = LoggerFactory.getLogger(GA4GHBeaconWSServer.class);
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
@@ -65,7 +58,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     public GA4GHBeaconWSServerV2() {
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @GetMapping(value = "/")
     public GA4GHBeaconResponseV2 rootGet() {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
         GA4GHBeaconResponseV2 response = new GA4GHBeaconResponseV2();
@@ -109,7 +102,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         return response;
     }
 
-    @RequestMapping(value = "/query", method = RequestMethod.GET)
+    @GetMapping(value = "/query")
     public GA4GHBeaconQueryResponseV2 queryGet(@RequestParam("referenceName") String chromosome,
                                                @RequestParam(value = "start", required = false) Long start,
                                                @RequestParam(value = "startMin", required = false) Long startMin,
@@ -139,7 +132,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
 
         } else {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val, GA4GHBeaconResponseV2.apiVersion_val,
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID, GA4GHBeaconResponseV2.APIVERSION,
                     null, request, new BeaconError(HttpServletResponse.SC_BAD_REQUEST,
                     "Please enter a valid assemblyId from grch37,grch38"), null);
         }
@@ -148,17 +141,13 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val,
-                    GA4GHBeaconResponseV2.apiVersion_val, null, request,
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID,
+                    GA4GHBeaconResponseV2.APIVERSION, null, request,
                     new BeaconError(HttpServletResponse.SC_BAD_REQUEST, errorMessage), null);
         }
 
-        VariantType variantType1;
-        if (variantType != null) {
-            variantType1 = VariantType.valueOf(variantType);
-        } else {
-            variantType1 = null;
-        }
+
+        VariantType type = variantType != null ? VariantType.valueOf(variantType) : null;
 
         Region startRange, endRange;
 
@@ -167,21 +156,21 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         endRange = end != null ? new Region(chromosome, end, end) : new Region(chromosome, endMin, endMax);
 
         List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(referenceBases, alternateBases,
-                variantType1, studies);
+                type, studies);
 
         List<VariantMongo> variantMongoList = service.findbyRegionAndOtherBeaconFilters(startRange, endRange, filters);
 
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
 
         if (variantMongoList.size() > 0) {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val, GA4GHBeaconResponseV2.apiVersion_val, true, request, null, datasetAlleleResponses);
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID, GA4GHBeaconResponseV2.APIVERSION, true, request, null, datasetAlleleResponses);
         } else {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.id_val, GA4GHBeaconResponseV2.apiVersion_val, false, request, null, datasetAlleleResponses);
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID, GA4GHBeaconResponseV2.APIVERSION, false, request, null, datasetAlleleResponses);
         }
     }
 
-    @RequestMapping(value = "/query", method = RequestMethod.POST)
-    public GA4GHBeaconQueryResponseV2 queryPost(@Validated @RequestBody BeaconAlleleRequestBody requestBody,
+    @PostMapping(value = "/query")
+    private GA4GHBeaconQueryResponseV2 queryPost(@Validated @RequestBody BeaconAlleleRequestBody requestBody,
                                                 HttpServletResponse response) throws IOException,
             AnnotationMetadataNotFoundException {
 
@@ -201,7 +190,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
                 response);
     }
 
-    public String checkErrorHelper(BeaconAlleleRequestBody request) {
+    private String checkErrorHelper(BeaconAlleleRequestBody request) {
 
         if (request.getStart() != null && request.getStart() < 0) {
             return "please provide a positive start number";

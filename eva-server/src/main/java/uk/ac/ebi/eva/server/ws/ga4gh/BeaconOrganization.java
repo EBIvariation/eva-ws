@@ -22,36 +22,51 @@ package uk.ac.ebi.eva.server.ws.ga4gh;
 import java.util.Map;
 
 public class BeaconOrganization {
-    public static   String id_val = "EMBL-EBI-EVA";
-    public static   String name_val = "European Variation Archive (EMBL-EBI)";
-    public static   String description_val = "EMBL-EBI makes the world's public biological data freely available to the " +
-            "scientific community via a range of services and tools, performs basic research and provides " +
-            "professional training in bioinformatics.The European Variation Archive is an open-access database of " +
-            "all types of genetic variation data from all species.";
-    public static  String address_val="Wellcome Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, United Kingdom";
-    public static   String welcomeUrl_val="www.ebi.ac.uk/eva";
-    public static   String contactUrl_val="contactUrlString";
-    public static   String logoUrl_val="www.ebi.ac.uk/eva/img/eva_logo.png";
-    public static   Map<String,String> info_val=null;
 
-    private  String id;
-    private  String name;
-    private  String description;
-    private  String address;
-    private  String welcomeUrl;
-    private  String contactUrl;
-    private  String logoUrl;
-    private  Map<String,String> info;
+    private static String ID = "EMBL-EBI-EVA";
+
+    private static String NAME = "European Variation Archive (EMBL-EBI)";
+
+    private static String DESCRIPTION = "EMBL-EBI makes the world's public biological data freely available " +
+            "to the " + "scientific community via a range of services and tools, performs basic research and " +
+            "provides " + "professional training in bioinformatics.The European Variation Archive is an open-access" +
+            " database of " + "all types of genetic variation data from all species.";
+
+    private static String ADDRESS = "Wellcome Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, United Kingdom";
+
+    private static String WELCOME_URL = "www.ebi.ac.uk/eva";
+
+    private static String CONTACT_URL = "contactUrlString";
+
+    private static String LOGO_URL = "www.ebi.ac.uk/eva/img/eva_logo.png";
+
+    private static Map<String, String> INFO = null;
+
+    private String id;
+
+    private String name;
+
+    private String description;
+
+    private String address;
+
+    private String welcomeUrl;
+
+    private String contactUrl;
+
+    private String logoUrl;
+
+    private Map<String, String> info;
 
     public BeaconOrganization() {
-        this.id = id_val;
-        this.name = name_val;
-        this.description = description_val;
-        this.address = address_val;
-        this.welcomeUrl = welcomeUrl_val;
-        this.contactUrl = contactUrl_val;
-        this.logoUrl = logoUrl_val;
-        this.info = info_val;
+        this.id = ID;
+        this.name = NAME;
+        this.description = DESCRIPTION;
+        this.address = ADDRESS;
+        this.welcomeUrl = WELCOME_URL;
+        this.contactUrl = CONTACT_URL;
+        this.logoUrl = LOGO_URL;
+        this.info = INFO;
     }
 
     public String getId() {
