@@ -23,24 +23,24 @@ import java.util.Map;
 
 public class BeaconOrganization {
 
-    private static String ID = "EMBL-EBI-EVA";
+    private static final String ID = "EMBL-EBI-EVA";
 
-    private static String NAME = "European Variation Archive (EMBL-EBI)";
+    private static final String NAME = "European Variation Archive (EMBL-EBI)";
 
-    private static String DESCRIPTION = "EMBL-EBI makes the world's public biological data freely available " +
+    private static final String DESCRIPTION = "EMBL-EBI makes the world's public biological data freely available " +
             "to the " + "scientific community via a range of services and tools, performs basic research and " +
             "provides " + "professional training in bioinformatics.The European Variation Archive is an open-access" +
             " database of " + "all types of genetic variation data from all species.";
 
-    private static String ADDRESS = "Wellcome Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, United Kingdom";
+    private static final String ADDRESS = "Wellcome Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, United Kingdom";
 
-    private static String WELCOME_URL = "www.ebi.ac.uk/eva";
+    private static final String WELCOME_URL = "www.ebi.ac.uk/eva";
 
-    private static String CONTACT_URL = "contactUrlString";
+    private static final String CONTACT_URL = "contactUrlString";
 
-    private static String LOGO_URL = "www.ebi.ac.uk/eva/img/eva_logo.png";
+    private static final String LOGO_URL = "www.ebi.ac.uk/eva/img/eva_logo.png";
 
-    private static Map<String, String> INFO = null;
+    private static  Map<String, String> INFO = null;
 
     private String id;
 

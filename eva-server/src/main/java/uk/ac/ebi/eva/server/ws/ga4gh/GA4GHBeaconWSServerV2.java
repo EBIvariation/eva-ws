@@ -141,9 +141,8 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID,
-                    GA4GHBeaconResponseV2.APIVERSION, null, request,
-                    new BeaconError(HttpServletResponse.SC_BAD_REQUEST, errorMessage), null);
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID, GA4GHBeaconResponseV2.APIVERSION,
+                    null, request, new BeaconError(HttpServletResponse.SC_BAD_REQUEST, errorMessage), null);
         }
 
 
@@ -163,9 +162,11 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
 
         if (variantMongoList.size() > 0) {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID, GA4GHBeaconResponseV2.APIVERSION, true, request, null, datasetAlleleResponses);
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID, GA4GHBeaconResponseV2.APIVERSION,
+                    true, request, null, datasetAlleleResponses);
         } else {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID, GA4GHBeaconResponseV2.APIVERSION, false, request, null, datasetAlleleResponses);
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID, GA4GHBeaconResponseV2.APIVERSION,
+                    false, request, null, datasetAlleleResponses);
         }
     }
 
@@ -269,8 +270,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
     public  DatasetAlleleResponse buildDatasetAlleleResponseHelper(boolean exists, VariantSourceMongo variantSourceMongo,
                                                                    Float frequency) {
-        return new DatasetAlleleResponse(variantSourceMongo.getStudyId(),
-                exists, null, frequency,
+        return new DatasetAlleleResponse(variantSourceMongo.getStudyId(), exists, null, frequency,
                 variantSourceMongo.getStats() == null ? null : (long)variantSourceMongo.getStats().getVariantsCount(),
                 null,
                 variantSourceMongo.getStats() == null ? null : (long)variantSourceMongo.getStats().getSamplesCount(),

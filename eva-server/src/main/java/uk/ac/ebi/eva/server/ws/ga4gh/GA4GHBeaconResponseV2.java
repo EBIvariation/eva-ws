@@ -23,15 +23,15 @@ import java.util.List;
 
 public class GA4GHBeaconResponseV2 {
 
-    static String ID = "uk.ac.ebi.eva";
-    static String NAME = "European Variation Archive Beacon";
-    static String APIVERSION = "v1.0";
-    static String DESCRIPTION = "descriptionString";
-    static String VERSION = "v2";
-    static String WELCOME_URL = "welcomeUrlString";
-    static String ALTERNATIVE_URL = "alternativeUrlString";
-    static String CREATED_DATE_TIME = "date1";
-    static String UPDATE_DATE_TIME = "date2";
+    static final String ID = "uk.ac.ebi.eva";
+    static final String NAME = "European Variation Archive Beacon";
+    static final String APIVERSION = "v1.0";
+    static final String DESCRIPTION = "descriptionString";
+    static final String VERSION = "v2";
+    static final String WELCOME_URL = "welcomeUrlString";
+    static final String ALTERNATIVE_URL = "alternativeUrlString";
+    static final String CREATED_DATE_TIME = "date1";
+    static final String UPDATE_DATE_TIME = "date2";
 
     private String id;
     private String name;
