@@ -217,7 +217,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         return null;
     }
 
-    public List<DatasetAlleleResponse> getDatasetAlleleResponsesHelper(List<VariantMongo> variantMongoList,
+    private List<DatasetAlleleResponse> getDatasetAlleleResponsesHelper(List<VariantMongo> variantMongoList,
                                                                        BeaconAlleleRequestBody request) {
 
         List<DatasetAlleleResponse> datasetAllelResponses = new ArrayList<DatasetAlleleResponse>();
@@ -268,7 +268,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         return datasetAllelResponses;
     }
 
-    public  DatasetAlleleResponse buildDatasetAlleleResponseHelper(boolean exists, VariantSourceMongo variantSourceMongo,
+    private   DatasetAlleleResponse buildDatasetAlleleResponseHelper(boolean exists, VariantSourceMongo variantSourceMongo,
                                                                    Float frequency) {
         return new DatasetAlleleResponse(variantSourceMongo.getStudyId(), exists, null, frequency,
                 variantSourceMongo.getStats() == null ? null : (long)variantSourceMongo.getStats().getVariantsCount(),
