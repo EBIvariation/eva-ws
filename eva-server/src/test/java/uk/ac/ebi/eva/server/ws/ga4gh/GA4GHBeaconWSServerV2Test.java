@@ -27,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequestBody;
@@ -64,7 +66,9 @@ public class GA4GHBeaconWSServerV2Test {
         Region endRange = new Region("X", new Long(100470026), new Long(100470026));
         List<VariantRepositoryFilter> variantRepositoryFilters = new FilterBuilder().getBeaconFilters("G", "A", VariantType.SNV, Arrays.asList("PRJEB7218"));
 
-        given(service.findbyRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters))).willReturn(variantMongoList);
+        Pageable pageable = new PageRequest(0, 1000);
+        given(service.findByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters),
+                eq(pageable))).willReturn(variantMongoList);
     }
 
     @Test

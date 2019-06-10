@@ -21,6 +21,8 @@ package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -157,7 +159,17 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(referenceBases, alternateBases,
                 type, studies);
 
-        List<VariantMongo> variantMongoList = service.findbyRegionAndOtherBeaconFilters(startRange, endRange, filters);
+        Integer page_size = service.countByRegionAndOtherBeaconFilters(startRange, endRange, filters).intValue();
+        Pageable pageable;
+        if(page_size > 0) {
+            pageable = new PageRequest(0, page_size);
+        }
+
+        else {
+            pageable = null;
+        }
+
+        List<VariantMongo> variantMongoList = service.findByRegionAndOtherBeaconFilters(startRange, endRange, filters, pageable);
 
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
 
