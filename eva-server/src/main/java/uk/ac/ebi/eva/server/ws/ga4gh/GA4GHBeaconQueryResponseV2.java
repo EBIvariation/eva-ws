@@ -39,8 +39,7 @@ public class GA4GHBeaconQueryResponseV2 {
 
     private List<DatasetAlleleResponse> datasetAlleleResponses;
 
-    public GA4GHBeaconQueryResponseV2() {
-    }
+    public GA4GHBeaconQueryResponseV2() { }
 
     public GA4GHBeaconQueryResponseV2(String beaconId, String apiVersion, Boolean exists,
                                       BeaconAlleleRequestBody alleleRequest, BeaconError error,
