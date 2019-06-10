@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import uk.ac.ebi.eva.commons.beacon.models.*;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
 import uk.ac.ebi.eva.commons.mongodb.entities.VariantMongo;
@@ -32,7 +33,6 @@ import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -44,7 +44,6 @@ import java.util.ArrayList;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
-
 
 @RestController
 @RequestMapping(value = "/v2/beacon", produces = "application/json")
@@ -98,7 +97,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             ));
         });
 
-        response.setBeaconDatasetList(beaconDatasets);
+        response.setDatasets(beaconDatasets);
         return response;
     }
 
@@ -122,6 +121,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             throws IOException, AnnotationMetadataNotFoundException {
 
         initializeQuery();
+
         BeaconAlleleRequestBody request = new BeaconAlleleRequestBody(chromosome, start, startMin, startMax, end,
                 endMin, endMax, referenceBases, alternateBases, variantType, assemblyId, studies,
                 includeDatasetResponses);

@@ -19,19 +19,22 @@
 
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
+import uk.ac.ebi.eva.commons.beacon.models.BeaconDataset;
+import uk.ac.ebi.eva.commons.beacon.models.BeaconOrganization;
+
 import java.util.List;
 
 public class GA4GHBeaconResponseV2 {
 
-    static final String ID = "uk.ac.ebi.eva";
-    static final String NAME = "European Variation Archive Beacon";
-    static final String APIVERSION = "v1.0";
-    static final String DESCRIPTION = "descriptionString";
-    static final String VERSION = "v2";
-    static final String WELCOME_URL = "welcomeUrlString";
-    static final String ALTERNATIVE_URL = "alternativeUrlString";
-    static final String CREATED_DATE_TIME = "date1";
-    static final String UPDATE_DATE_TIME = "date2";
+    public static final String ID = "uk.ac.ebi.eva";
+    public static final String NAME = "European Variation Archive Beacon";
+    public static final String APIVERSION = "v1.0";
+    public static final String DESCRIPTION = "descriptionString";
+    public static final String VERSION = "v2";
+    public static final String WELCOME_URL = "welcomeUrlString";
+    public static final String ALTERNATIVE_URL = "alternativeUrlString";
+    public static final String CREATED_DATE_TIME = "date1";
+    public static final String UPDATE_DATE_TIME = "date2";
 
     private String id;
     private String name;
@@ -43,7 +46,7 @@ public class GA4GHBeaconResponseV2 {
     private String alternativeUrl;
     private String createDateTime;
     private String updateDateTime;
-    private List<BeaconDataset> beaconDatasetList;
+    private List<BeaconDataset> datasets;
 
     public GA4GHBeaconResponseV2() {
         this.id = ID;
@@ -98,11 +101,9 @@ public class GA4GHBeaconResponseV2 {
         return updateDateTime;
     }
 
-    public List<BeaconDataset> getBeaconDatasetList() {
-        return beaconDatasetList;
-    }
+    public List<BeaconDataset> getDatasets() { return datasets; }
 
-    public void setBeaconDatasetList(List<BeaconDataset> beaconDatasetList) {
-        this.beaconDatasetList = beaconDatasetList;
+    public void setDatasets(List<BeaconDataset> datasets) {
+        this.datasets = datasets;
     }
 }

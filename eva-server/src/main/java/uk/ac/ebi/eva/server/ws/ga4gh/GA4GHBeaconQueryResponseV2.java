@@ -19,6 +19,10 @@
 
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
+import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequestBody;
+import uk.ac.ebi.eva.commons.beacon.models.BeaconError;
+import uk.ac.ebi.eva.commons.beacon.models.DatasetAlleleResponse;
+
 import java.util.List;
 
 public class GA4GHBeaconQueryResponseV2 {
