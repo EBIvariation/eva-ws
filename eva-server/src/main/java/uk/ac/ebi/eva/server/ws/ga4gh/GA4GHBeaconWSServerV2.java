@@ -22,7 +22,6 @@ package uk.ac.ebi.eva.server.ws.ga4gh;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequestBody;
@@ -123,7 +122,6 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
                                                        String includeDatasetResponses,
                                                HttpServletResponse response)
             throws IOException, AnnotationMetadataNotFoundException {
-
         initializeQuery();
 
         BeaconAlleleRequestBody request = new BeaconAlleleRequestBody(chromosome, start, startMin, startMax, end,
@@ -153,24 +151,19 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         VariantType type = variantType != null ? VariantType.valueOf(variantType) : null;
 
         Region startRange, endRange;
-
         startRange = start != null ? new Region(chromosome, start, start) : new Region(chromosome, startMin, startMax);
-
         endRange = end != null ? new Region(chromosome, end, end) : new Region(chromosome, endMin, endMax);
 
         List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(referenceBases, alternateBases,
                 type, studies);
 
         Integer page_size = service.countByRegionAndOtherBeaconFilters(startRange, endRange, filters).intValue();
-        Pageable pageable;
         List<VariantMongo> variantMongoList;
 
         if (page_size > 0) {
-            pageable = new PageRequest(0, page_size);
-            variantMongoList = service.findByRegionAndOtherBeaconFilters(startRange, endRange, filters, pageable);
-
+            variantMongoList = service.findByRegionAndOtherBeaconFilters(startRange, endRange, filters,
+                    new PageRequest(0, page_size));
         } else {
-            pageable = null;
             variantMongoList = Collections.emptyList();
         }
 
@@ -275,7 +268,6 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     private GA4GHBeaconQueryResponseV2 queryPost(@Validated @RequestBody BeaconAlleleRequestBody requestBody,
                                                  HttpServletResponse response) throws IOException,
             AnnotationMetadataNotFoundException {
-
         return queryGet(requestBody.getReferenceName(),
                 requestBody.getStart(),
                 requestBody.getStartMin(),
