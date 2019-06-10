@@ -56,8 +56,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
-
-
+    
     public GA4GHBeaconWSServerV2() { }
 
     @GetMapping(value = "/")

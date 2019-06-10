@@ -26,23 +26,23 @@ import java.util.List;
 
 public class GA4GHBeaconResponseV2 {
 
-    public static final String ID = "uk.ac.ebi.eva";
+    static final String ID = "uk.ac.ebi.eva";
 
-    public static final String NAME = "European Variation Archive Beacon";
+    static final String NAME = "European Variation Archive Beacon";
 
-    public static final String APIVERSION = "v1.0";
+    static final String APIVERSION = "v1.0";
 
-    public static final String DESCRIPTION = "descriptionString";
+    static final String DESCRIPTION = "descriptionString";
 
-    public static final String VERSION = "v2";
+    static final String VERSION = "v2";
 
-    public static final String WELCOME_URL = "welcomeUrlString";
+    static final String WELCOME_URL = "welcomeUrlString";
 
-    public static final String ALTERNATIVE_URL = "alternativeUrlString";
+    static final String ALTERNATIVE_URL = "alternativeUrlString";
 
-    public static final String CREATED_DATE_TIME = "date1";
+    static final String CREATED_DATE_TIME = "date1";
 
-    public static final String UPDATE_DATE_TIME = "date2";
+    static final String UPDATE_DATE_TIME = "date2";
 
     private String id;
 
