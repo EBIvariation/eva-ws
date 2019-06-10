@@ -25,8 +25,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import uk.ac.ebi.eva.commons.beacon.models.*;
+import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequestBody;
+import uk.ac.ebi.eva.commons.beacon.models.BeaconDataset;
+import uk.ac.ebi.eva.commons.beacon.models.BeaconError;
+import uk.ac.ebi.eva.commons.beacon.models.DatasetAlleleResponse;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
 import uk.ac.ebi.eva.commons.mongodb.entities.VariantMongo;
@@ -35,17 +37,13 @@ import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.ArrayList;
-
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/v2/beacon", produces = "application/json")
@@ -161,16 +159,17 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
         Integer page_size = service.countByRegionAndOtherBeaconFilters(startRange, endRange, filters).intValue();
         Pageable pageable;
-        if(page_size > 0) {
+        List<VariantMongo> variantMongoList;
+
+        if (page_size > 0) {
             pageable = new PageRequest(0, page_size);
-        }
+            variantMongoList = service.findByRegionAndOtherBeaconFilters(startRange, endRange, filters, pageable);
 
-        else {
+        } else {
             pageable = null;
+            variantMongoList = Collections.emptyList();
         }
-
-        List<VariantMongo> variantMongoList = service.findByRegionAndOtherBeaconFilters(startRange, endRange, filters, pageable);
-
+        
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
 
         if (variantMongoList.size() > 0) {
@@ -184,7 +183,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
     @PostMapping(value = "/query")
     private GA4GHBeaconQueryResponseV2 queryPost(@Validated @RequestBody BeaconAlleleRequestBody requestBody,
-                                                HttpServletResponse response) throws IOException,
+                                                 HttpServletResponse response) throws IOException,
             AnnotationMetadataNotFoundException {
 
         return queryGet(requestBody.getReferenceName(),
@@ -230,7 +229,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     }
 
     private List<DatasetAlleleResponse> getDatasetAlleleResponsesHelper(List<VariantMongo> variantMongoList,
-                                                                       BeaconAlleleRequestBody request) {
+                                                                        BeaconAlleleRequestBody request) {
 
         List<DatasetAlleleResponse> datasetAllelResponses = new ArrayList<DatasetAlleleResponse>();
 
@@ -265,8 +264,8 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
                         request.getIncludeDatasetResponses().equalsIgnoreCase("HIT")) {
                     datasetAllelResponses.add(buildDatasetAlleleResponseHelper(true,
                             variantSourceMongo,
-                            studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId())==null?
-                                    null:new Float(studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId()))));
+                            studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId()) == null ?
+                                    null : new Float(studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId()))));
                 }
             } else {
                 if (request.getIncludeDatasetResponses().equalsIgnoreCase("ALL") ||
@@ -280,12 +279,12 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         return datasetAllelResponses;
     }
 
-    private   DatasetAlleleResponse buildDatasetAlleleResponseHelper(boolean exists, VariantSourceMongo variantSourceMongo,
+    private DatasetAlleleResponse buildDatasetAlleleResponseHelper(boolean exists, VariantSourceMongo variantSourceMongo,
                                                                    Float frequency) {
         return new DatasetAlleleResponse(variantSourceMongo.getStudyId(), exists, null, frequency,
-                variantSourceMongo.getStats() == null ? null : (long)variantSourceMongo.getStats().getVariantsCount(),
+                variantSourceMongo.getStats() == null ? null : (long) variantSourceMongo.getStats().getVariantsCount(),
                 null,
-                variantSourceMongo.getStats() == null ? null : (long)variantSourceMongo.getStats().getSamplesCount(),
+                variantSourceMongo.getStats() == null ? null : (long) variantSourceMongo.getStats().getSamplesCount(),
                 "noteString", "externalUrl", null);
     }
 }
