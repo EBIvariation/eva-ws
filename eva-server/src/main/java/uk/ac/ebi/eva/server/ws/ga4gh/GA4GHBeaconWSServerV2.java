@@ -43,7 +43,12 @@ import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Arrays;
+import java.util.Collections;
 
 @RestController
 @RequestMapping(value = "/v2/beacon", produces = "application/json")
@@ -54,8 +59,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     private VariantWithSamplesAndAnnotationsService service;
 
 
-    public GA4GHBeaconWSServerV2() {
-    }
+    public GA4GHBeaconWSServerV2() { }
 
     @GetMapping(value = "/")
     public GA4GHBeaconResponseV2 rootGet() {
@@ -169,7 +173,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             pageable = null;
             variantMongoList = Collections.emptyList();
         }
-        
+
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
 
         if (variantMongoList.size() > 0) {
@@ -179,27 +183,6 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID, GA4GHBeaconResponseV2.APIVERSION,
                     false, request, null, datasetAlleleResponses);
         }
-    }
-
-    @PostMapping(value = "/query")
-    private GA4GHBeaconQueryResponseV2 queryPost(@Validated @RequestBody BeaconAlleleRequestBody requestBody,
-                                                 HttpServletResponse response) throws IOException,
-            AnnotationMetadataNotFoundException {
-
-        return queryGet(requestBody.getReferenceName(),
-                requestBody.getStart(),
-                requestBody.getStartMin(),
-                requestBody.getStartMax(),
-                requestBody.getEnd(),
-                requestBody.getEndMin(),
-                requestBody.getEndMax(),
-                requestBody.getReferenceBases(),
-                requestBody.getAlternateBases(),
-                requestBody.getVariantType(),
-                requestBody.getAssemblyId(),
-                requestBody.getDatasetIds(),
-                requestBody.getIncludeDatasetResponses(),
-                response);
     }
 
     private String checkErrorHelper(BeaconAlleleRequestBody request) {
@@ -286,5 +269,26 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
                 null,
                 variantSourceMongo.getStats() == null ? null : (long) variantSourceMongo.getStats().getSamplesCount(),
                 "noteString", "externalUrl", null);
+    }
+
+    @PostMapping(value = "/query")
+    private GA4GHBeaconQueryResponseV2 queryPost(@Validated @RequestBody BeaconAlleleRequestBody requestBody,
+                                                 HttpServletResponse response) throws IOException,
+            AnnotationMetadataNotFoundException {
+
+        return queryGet(requestBody.getReferenceName(),
+                requestBody.getStart(),
+                requestBody.getStartMin(),
+                requestBody.getStartMax(),
+                requestBody.getEnd(),
+                requestBody.getEndMin(),
+                requestBody.getEndMax(),
+                requestBody.getReferenceBases(),
+                requestBody.getAlternateBases(),
+                requestBody.getVariantType(),
+                requestBody.getAssemblyId(),
+                requestBody.getDatasetIds(),
+                requestBody.getIncludeDatasetResponses(),
+                response);
     }
 }
