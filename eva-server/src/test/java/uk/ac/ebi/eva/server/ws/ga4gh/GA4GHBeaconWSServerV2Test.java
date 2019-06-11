@@ -66,9 +66,11 @@ public class GA4GHBeaconWSServerV2Test {
         Region endRange = new Region("X", new Long(100470026), new Long(100470026));
         List<VariantRepositoryFilter> variantRepositoryFilters = new FilterBuilder().getBeaconFilters("G", "A", VariantType.SNV, Arrays.asList("PRJEB7218"));
 
-        Pageable pageable = new PageRequest(0, 1000);
+        Pageable pageable = new PageRequest(0, 1);
         given(service.findByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters),
                 eq(pageable))).willReturn(variantMongoList);
+        given(service.countByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters)))
+                .willReturn(new Long(1));
     }
 
     @Test
@@ -94,7 +96,6 @@ public class GA4GHBeaconWSServerV2Test {
                 String.join(",", request.getDatasetIds()));
 
         assertEquals(true, testBeaconHelper(url).getBody().getExists());
-
         request.setStartMin(new Long(1));
         request.setStartMax(new Long(1));
         request.setEndMin(new Long(1));
