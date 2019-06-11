@@ -50,7 +50,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
     protected static Logger logger = LoggerFactory.getLogger(GA4GHBeaconWSServer.class);
 
     public GA4GHBeaconWSServer() { }
-
+    
     @RequestMapping(value = "/beacon", method = RequestMethod.GET)
     public GA4GHBeaconResponse beacon(@RequestParam("referenceName") String chromosome,
                                       @RequestParam("start") long start,
@@ -75,7 +75,6 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
         } else {
             variantEntities = service.findByChromosomeAndStartAndAltAndStudyIn(chromosome, start, allele, studies, null);
         }
-        System.out.println(variantEntities);
 
         return new GA4GHBeaconResponse(chromosome, start, allele, String.join(",", studies),
                                        variantEntities.size() > 0);
