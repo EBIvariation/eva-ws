@@ -29,9 +29,9 @@ import uk.ac.ebi.eva.commons.beacon.models.BeaconDataset;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconError;
 import uk.ac.ebi.eva.commons.beacon.models.DatasetAlleleResponse;
 import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.VariantSource;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
 import uk.ac.ebi.eva.commons.mongodb.entities.VariantMongo;
-import uk.ac.ebi.eva.commons.mongodb.entities.VariantSourceMongo;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
@@ -68,7 +68,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
         GA4GHBeaconResponseV2 response = new GA4GHBeaconResponseV2();
         List<BeaconDataset> beaconDatasets = new ArrayList<>();
-        List<VariantSourceMongo> variantSourceMongos = variantSourceService.findAllVariantSourcesForBeacon();
+        List<VariantSource> variantSourceMongos = variantSourceService.findAllVariantSourcesForBeacon();
         variantSourceMongos.forEach(variantSourceMongo -> {
             beaconDatasets.add(new BeaconDataset(
                     variantSourceMongo.getStudyId(),
@@ -217,7 +217,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             return null;
         }
 
-        List<VariantSourceMongo> variantSourceMongoList = variantSourceService.findAllVariantSourcesForBeacon();
+        List<VariantSource> variantSourceList = variantSourceService.findAllVariantSourcesForBeacon();
 
         HashSet<String> studiesPresent = new HashSet<String>();
         HashMap<String, Float> studyIdToFrequencyMapper = new HashMap<>();
@@ -232,25 +232,25 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             });
         });
 
-        HashMap<String, VariantSourceMongo> allStudies = new HashMap<>();
-        variantSourceMongoList.forEach(variantSourceMongo -> {
-            allStudies.put(variantSourceMongo.getStudyId(), variantSourceMongo);
+        HashMap<String, VariantSource> allStudies = new HashMap<>();
+        variantSourceList.forEach(variantSource -> {
+            allStudies.put(variantSource.getStudyId(), variantSource);
         });
 
-        allStudies.forEach((studyId, variantSourceMongo) -> {
+        allStudies.forEach((studyId, variantSource) -> {
             if (studiesPresent.contains(studyId)) {
                 if (request.getIncludeDatasetResponses().equalsIgnoreCase("ALL") ||
                         request.getIncludeDatasetResponses().equalsIgnoreCase("HIT")) {
                     datasetAllelResponses.add(buildDatasetAlleleResponseHelper(true,
-                            variantSourceMongo,
-                            studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId()) == null ?
-                                    null : new Float(studyIdToFrequencyMapper.get(variantSourceMongo.getStudyId()))));
+                            variantSource,
+                            studyIdToFrequencyMapper.get(variantSource.getStudyId()) == null ?
+                                    null : new Float(studyIdToFrequencyMapper.get(variantSource.getStudyId()))));
                 }
             } else {
                 if (request.getIncludeDatasetResponses().equalsIgnoreCase("ALL") ||
                         request.getIncludeDatasetResponses().equalsIgnoreCase("MISS")) {
                     datasetAllelResponses.add(buildDatasetAlleleResponseHelper(false,
-                            variantSourceMongo, null));
+                            variantSource, null));
                 }
             }
         });
@@ -258,12 +258,11 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         return datasetAllelResponses;
     }
 
-    private DatasetAlleleResponse buildDatasetAlleleResponseHelper(boolean exists, VariantSourceMongo variantSourceMongo,
+    private DatasetAlleleResponse buildDatasetAlleleResponseHelper(boolean exists, VariantSource variantSource,
                                                                    Float frequency) {
-        return new DatasetAlleleResponse(variantSourceMongo.getStudyId(), exists, null, frequency,
-                variantSourceMongo.getStats() == null ? null : (long) variantSourceMongo.getStats().getVariantsCount(),
-                null,
-                variantSourceMongo.getStats() == null ? null : (long) variantSourceMongo.getStats().getSamplesCount(),
+        return new DatasetAlleleResponse(variantSource.getStudyId(), exists, null, frequency,
+                variantSource.getStats() == null ? null : (long) variantSource.getStats().getVariantsCount(), null,
+                variantSource.getStats() == null ? null : (long) variantSource.getStats().getSamplesCount(),
                 "noteString", "externalUrl", null);
     }
 
