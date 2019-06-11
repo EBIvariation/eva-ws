@@ -24,12 +24,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.Region;
@@ -42,8 +45,10 @@ import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.server.RateLimit;
 import uk.ac.ebi.eva.server.Utils;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,11 +64,14 @@ public class RegionWSServer extends EvaWSServer {
 
     protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
 
+    private static final int REGION_REQUEST_RATE_LIMIT = 5;
+
     public RegionWSServer() {
     }
 
     @RequestMapping(value = "/{regionId}/variants", method = RequestMethod.GET)
     @ResponseBody
+    @RateLimit(value=REGION_REQUEST_RATE_LIMIT)
     public QueryResponse getVariantsByRegion(@PathVariable("regionId") String regionId,
                                              @RequestParam(name = "species") String species,
                                              @RequestParam(name = "studies", required = false) List<String> studies,
@@ -74,7 +82,8 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "exclude", required = false) List<String> exclude,
                                              @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
                                              @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
-                                             HttpServletResponse response)
+                                             HttpServletResponse response,
+                                             @ApiIgnore HttpServletRequest request)
             throws IOException {
         initializeQuery();
 
@@ -150,5 +159,11 @@ public class RegionWSServer extends EvaWSServer {
         List<String> chromosomeList = new ArrayList<>(service.findDistinctChromosomes());
         QueryResult<String> queryResult = buildQueryResult(chromosomeList);
         return setQueryResponse(queryResult);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public void handleIllegalArgumentException(IllegalArgumentException ex, HttpServletResponse response)
+            throws IOException {
+        response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getLocalizedMessage());
     }
 }

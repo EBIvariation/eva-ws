@@ -30,8 +30,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
@@ -75,7 +78,6 @@ public class RegionWSServerIntegrationTest {
 
     @Rule
     public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
-
 
     @Before
     public void setUp() throws Exception {
@@ -139,4 +141,22 @@ public class RegionWSServerIntegrationTest {
         }
     }
 
+    @Test
+    public void testIllegalLimitParameter() {
+        String testRegion = "20:60000-80000";
+        String annotationVepVersion = "78";
+        String annotationVepCacheversion = "78";
+        int limit = 100000;
+        String url = UriComponentsBuilder.fromUriString("")
+                                         .path("/v1/segments/")
+                                         .path(testRegion)
+                                         .path("/variants")
+                                         .queryParam("species", "mmusculus_grcm38")
+                                         .queryParam("annot-vep-version", annotationVepVersion)
+                                         .queryParam("annot-vep-cache-version", annotationVepCacheversion)
+                                         .queryParam("limit", limit)
+                                         .build().toString();
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
 }
