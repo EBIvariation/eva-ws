@@ -70,7 +70,7 @@ public class GA4GHBeaconResponseV2 {
         this.id = ID;
         this.name = NAME;
         this.apiVersion = APIVERSION;
-        this.organization = new BeaconOrganization();
+        this.organization = new BeaconOrganizationImpl();
         this.description = DESCRIPTION;
         this.version = VERSION;
         this.welcomeUrl = WELCOME_URL;

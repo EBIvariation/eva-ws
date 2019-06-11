@@ -35,6 +35,7 @@ import uk.ac.ebi.eva.commons.mongodb.entities.VariantSourceMongo;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
@@ -56,7 +57,10 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
-    
+
+    @Autowired
+    private VariantSourceService variantSourceService;
+
     public GA4GHBeaconWSServerV2() { }
 
     @GetMapping(value = "/")
@@ -64,7 +68,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
         GA4GHBeaconResponseV2 response = new GA4GHBeaconResponseV2();
         List<BeaconDataset> beaconDatasets = new ArrayList<>();
-        List<VariantSourceMongo> variantSourceMongos = service.findAllVariantSourcesForBeacon();
+        List<VariantSourceMongo> variantSourceMongos = variantSourceService.findAllVariantSourcesForBeacon();
         variantSourceMongos.forEach(variantSourceMongo -> {
             beaconDatasets.add(new BeaconDataset(
                     variantSourceMongo.getStudyId(),
@@ -82,7 +86,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         });
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
-        variantSourceMongos = service.findAllVariantSourcesForBeacon();
+        variantSourceMongos = variantSourceService.findAllVariantSourcesForBeacon();
         variantSourceMongos.forEach(variantSourceMongo -> {
             beaconDatasets.add(new BeaconDataset(
                     variantSourceMongo.getStudyId(),
@@ -213,7 +217,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             return null;
         }
 
-        List<VariantSourceMongo> variantSourceMongoList = service.findAllVariantSourcesForBeacon();
+        List<VariantSourceMongo> variantSourceMongoList = variantSourceService.findAllVariantSourcesForBeacon();
 
         HashSet<String> studiesPresent = new HashSet<String>();
         HashMap<String, Float> studyIdToFrequencyMapper = new HashMap<>();
