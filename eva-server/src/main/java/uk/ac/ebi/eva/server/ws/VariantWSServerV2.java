@@ -84,31 +84,15 @@ public class VariantWSServerV2 extends EvaWSServer {
 
         try {
             if (variantId.contains(":")) {
-                String[] regionId = variantId.split(":");
-                String alternate = (regionId.length > 3) ? regionId[3] : null;
-                variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
-                        alternate, annotationVepVersion, annotationVepCacheVersion);
+                variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion,
+                        annotationVepCacheVersion);
                 numTotalResults = (long) variantEntities.size();
             } else {
+
                 List<VariantRepositoryFilter> filters = new FilterBuilder()
                         .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
-
-                List<String> excludeMapped = new ArrayList<>();
-                if (exclude != null && !exclude.isEmpty()) {
-                    for (String e : exclude) {
-                        String docPath = Utils.getApiToMongoDocNameMap().get(e);
-                        excludeMapped.add(docPath);
-                    }
-                }
-
-                AnnotationMetadata annotationMetadata = null;
-                if (annotationVepVersion != null && annotationVepCacheVersion != null) {
-                    annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
-                }
-
-                variantEntities = service.findByIdsAndComplexFilters(Arrays.asList(variantId), filters, annotationMetadata, excludeMapped,
-                        Utils.getPageRequest(getQueryOptions()));
-
+                variantEntities = getVariantEntitiesByVariantId(exclude, annotationVepVersion, annotationVepCacheVersion,
+                        variantId, filters);
                 numTotalResults = service.countByIdsAndComplexFilters(Arrays.asList(variantId), filters);
             }
         } catch (AnnotationMetadataNotFoundException ex) {
@@ -116,163 +100,63 @@ public class VariantWSServerV2 extends EvaWSServer {
             return setQueryResponse(ex.getMessage());
         }
 
-        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
+        List<VariantWithSamplesAndAnnotation> rootVariantEntities = new ArrayList<>();
+        variantEntities.forEach(variantEntity -> {
+            rootVariantEntities.add(new VariantWithSamplesAndAnnotation(variantEntity.getChromosome(),
+                    variantEntity.getStart(), variantEntity.getEnd(), variantEntity.getReference(),
+                    variantEntity.getReference(), variantEntity.getMainId()));
+        });
+
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(rootVariantEntities, numTotalResults);
+
         return setQueryResponse(queryResult);
     }
 
-    @RequestMapping(value = "/{variantIds}", method = RequestMethod.GET)
-    public QueryResponse getVariantByIdList(@PathVariable("variantIds") String variantIds,
-                                            @RequestParam(name = "studies", required = false) List<String> studies,
-                                            @RequestParam(name = "species") String species,
-                                            @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
-                                            @RequestParam(name = "maf", required = false) String maf,
-                                            @RequestParam(name = "polyphen", required = false) String polyphenScore,
-                                            @RequestParam(name = "sift", required = false) String siftScore,
-                                            @RequestParam(name = "exclude", required = false) List<String> exclude,
-                                            @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
-                                            @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
-                                            HttpServletResponse response)
-            throws IOException {
-        initializeQuery();
+    private List<VariantWithSamplesAndAnnotation> getVariantEntitiesByParams(String variantId,
+                                                                             String annotationVepVersion,
+                                                                             String annotationVepCacheVersion) throws
+            AnnotationMetadataNotFoundException {
+        String[] regionId = variantId.split(":");
+        String alternate = (regionId.length > 3) ? regionId[3] : null;
+        return queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2], alternate,
+                annotationVepVersion, annotationVepCacheVersion);
+    }
 
-        if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify either both annotation VEP version and annotation VEP cache version, or neither");
-        }
-
-        if (species.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify a species");
-        }
-
-        // Split the variants ids by ','
-        List<String> variantIdsAsList = Arrays.asList(variantIds.split(","));
+    private List<VariantWithSamplesAndAnnotation> getVariantEntitiesByVariantId(List<String> exclude,
+                                                                                String annotationVepVersion,
+                                                                                String annotationVepCacheVersion,
+                                                                                String variantId,
+                                                                                List<VariantRepositoryFilter> filters)
+            throws AnnotationMetadataNotFoundException {
 
 
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-
-        List<VariantWithSamplesAndAnnotation> variantEntities;
-        Long numTotalResults;
-
-        try {
-            List<VariantRepositoryFilter> filters = new FilterBuilder()
-                    .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
-
-            List<String> excludeMapped = new ArrayList<>();
-            if (exclude != null && !exclude.isEmpty()) {
-                for (String e : exclude) {
-                    String docPath = Utils.getApiToMongoDocNameMap().get(e);
-                    if (docPath == null) {
-                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        return setQueryResponse("Unrecognised exclude field: " + e);
-                    }
-                    excludeMapped.add(docPath);
-                }
+        List<String> excludeMapped = new ArrayList<>();
+        if (exclude != null && !exclude.isEmpty()) {
+            for (String e : exclude) {
+                String docPath = Utils.getApiToMongoDocNameMap().get(e);
+                excludeMapped.add(docPath);
             }
-
-            AnnotationMetadata annotationMetadata = null;
-            if (annotationVepVersion != null && annotationVepCacheVersion != null) {
-                annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
-            }
-
-            variantEntities = service.findByIdsAndComplexFilters(variantIdsAsList, filters, annotationMetadata, excludeMapped,
-                    Utils.getPageRequest(getQueryOptions()));
-
-            numTotalResults = service.countByIdsAndComplexFilters(variantIdsAsList, filters);
-
-        } catch (AnnotationMetadataNotFoundException ex) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse(ex.getMessage());
         }
 
-        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
-        return setQueryResponse(queryResult);
+        AnnotationMetadata annotationMetadata = getAnnotationMetadataHelper(annotationVepVersion,
+                annotationVepCacheVersion);
+
+        return service.findByIdsAndComplexFilters(Arrays.asList(variantId), filters, annotationMetadata, excludeMapped,
+                Utils.getPageRequest(getQueryOptions()));
     }
 
     private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAlleles(String chromosome, long start,
                                                                                String reference, String alternate,
                                                                                String annotationVepVersion,
                                                                                String annotationVepCacheversion) throws AnnotationMetadataNotFoundException {
-        AnnotationMetadata annotationMetadata = null;
-        if (annotationVepVersion != null && annotationVepCacheversion != null) {
-            annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheversion);
-        }
+        AnnotationMetadata annotationMetadata = getAnnotationMetadataHelper(annotationVepVersion,
+                annotationVepCacheversion);
+
         if (alternate != null) {
             return service.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start, reference, alternate,
                     annotationMetadata);
         } else {
             return service.findByChromosomeAndStartAndReference(chromosome, start, reference, annotationMetadata);
-        }
-    }
-
-    @RequestMapping(value = "/{variantId}/exists", method = RequestMethod.GET)
-//    @ApiOperation(httpMethod = "GET", value = "Checks if a variants exist", response = QueryResponse.class)
-    public QueryResponse checkVariantExists(@PathVariable("variantId") String variantId,
-                                            @RequestParam(name = "studies", required = false) List<String> studies,
-                                            @RequestParam("species") String species,
-                                            HttpServletResponse response)
-            throws IOException {
-        initializeQuery();
-
-        if (species.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify a species");
-        }
-        System.out.println("hello");
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-
-        List<VariantWithSamplesAndAnnotation> variantEntities;
-        Long numTotalResults;
-
-        String invalidCoordinatesMessage =
-                "Invalid position and alleles combination, please use chr:pos:ref or chr:pos:ref:alt";
-
-        try {
-            if (variantId.contains(":")) {
-                String[] regionId = variantId.split(":", -1);
-                if (regionId.length < 3) {
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    return setErrorQueryResponse(invalidCoordinatesMessage);
-                }
-
-                String alternate = (regionId.length > 3) ? regionId[3] : null;
-
-
-                if (studies != null && !studies.isEmpty()) {
-                    variantEntities = queryByCoordinatesAndAllelesAndStudyIds(regionId[0], Integer.parseInt(regionId[1]),
-                            regionId[2], alternate, studies);
-                } else {
-                    variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
-                            alternate, null, null);
-                }
-
-            } else {
-                List<VariantRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
-                variantEntities = service.findByIdsAndComplexFilters(Arrays.asList(variantId), filters, null, null,
-                        Utils.getPageRequest(getQueryOptions()));
-            }
-        }
-        catch (AnnotationMetadataNotFoundException ex) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse(ex.getMessage());
-        }
-
-        numTotalResults = (long) variantEntities.size();
-        QueryResult queryResult = new QueryResult();
-        queryResult.setResult(Arrays.asList(numTotalResults > 0));
-        queryResult.setResultType(Boolean.class.getCanonicalName());
-        return setQueryResponse(queryResult);
-    }
-
-    private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAllelesAndStudyIds(String chromosome, long start,
-                                                                                          String reference,
-                                                                                          String alternate,
-                                                                                          List<String> studyIds) throws AnnotationMetadataNotFoundException {
-        if (alternate != null) {
-            return service.findByChromosomeAndStartAndReferenceAndAlternateAndStudyIn(chromosome, start, reference,
-                    alternate, studyIds, null);
-        } else {
-            return service.findByChromosomeAndStartAndReferenceAndStudyIn(chromosome, start, reference, studyIds, null);
         }
     }
 
@@ -294,7 +178,6 @@ public class VariantWSServerV2 extends EvaWSServer {
                 }
             }
         }
-
         return null;
     }
 
@@ -305,16 +188,4 @@ public class VariantWSServerV2 extends EvaWSServer {
         }
         return null;
     }
-
-    @RequestMapping(value = "/count", method = RequestMethod.GET)
-    public QueryResponse countVariants() {
-        long totalNumberOfvariants = service.countTotalNumberOfVariants();
-        System.out.println(totalNumberOfvariants);
-
-        QueryResult queryResult = new QueryResult();
-        queryResult.setResult(Arrays.asList(totalNumberOfvariants));
-        queryResult.setResultType(Long.class.getCanonicalName());
-        return setQueryResponse(queryResult);
-    }
-
 }
