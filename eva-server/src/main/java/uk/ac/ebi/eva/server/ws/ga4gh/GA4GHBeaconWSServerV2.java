@@ -97,7 +97,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
                     variantSourceMongo.getStudyId(),
                     variantSourceMongo.getStudyName(),
                     "randomdescription",
-                    "GRCh37",
+                    "GRCh38",
                     variantSourceMongo.getDate() == null ? null : variantSourceMongo.getDate().toString(),
                     "updatedate",
                     variantSourceMongo.getStats() == null ? null : variantSourceMongo.getStats().getSamplesCount(),
@@ -189,11 +189,11 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     private String checkErrorHelper(BeaconAlleleRequestBody request) {
 
         if (request.getStart() != null && request.getStart() < 0) {
-            return "please provide a positive start number";
+            return "Please provide a positive start number";
         }
 
         if (request.getEnd() != null && request.getEnd() < 0) {
-            return "pleaseprovide a positive end number";
+            return "Please provide a positive end number";
         }
 
         if (request.getAlternateBases() == null && request.getVariantType() == null) {
