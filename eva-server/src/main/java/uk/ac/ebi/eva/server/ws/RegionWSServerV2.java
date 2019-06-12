@@ -24,8 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -56,44 +54,42 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/v2/segments", produces = "application/json")
-@Api(tags = { "segments" })
+@Api(tags = {"segments"})
 public class RegionWSServerV2 extends EvaWSServer {
 
+    private static final int REGION_REQUEST_RATE_LIMIT = 5;
+    protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
-    protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
-
-    private static final int REGION_REQUEST_RATE_LIMIT = 5;
-
-    public RegionWSServerV2() { }
+    public RegionWSServerV2() {
+    }
 
     @RequestMapping(value = "/{regionId}/variants", method = RequestMethod.GET)
     @ResponseBody
-    @RateLimit(value=REGION_REQUEST_RATE_LIMIT)
+    @RateLimit(value = REGION_REQUEST_RATE_LIMIT)
     public QueryResponse getVariantsByRegion(@PathVariable("regionId") String regionId,
                                              @RequestParam(name = "species") String species,
                                              @RequestParam(name = "studies", required = false) List<String> studies,
-                                             @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
+                                             @RequestParam(name = "annot-ct", required = false)
+                                                         List<String> consequenceType,
                                              @RequestParam(name = "maf", required = false) String maf,
                                              @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                              @RequestParam(name = "sift", required = false) String siftScore,
                                              @RequestParam(name = "exclude", required = false) List<String> exclude,
-                                             @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
-                                             @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
+                                             @RequestParam(name = "annot-vep-version", required = false)
+                                                         String annotationVepVersion,
+                                             @RequestParam(name = "annot-vep-cache-version", required = false)
+                                                         String annotationVepCacheVersion,
                                              HttpServletResponse response,
                                              @ApiIgnore HttpServletRequest request)
             throws IOException {
         initializeQuery();
 
-        if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
+        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species, exclude);
+        if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify either both annotation VEP version and annotation VEP cache version, or neither");
-        }
-
-        if (species.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify a species");
+            return setQueryResponse(errorMessage);
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
@@ -103,23 +99,10 @@ public class RegionWSServerV2 extends EvaWSServer {
         List<Region> regions = Region.parseRegions(regionId);
         PageRequest pageRequest = Utils.getPageRequest(getQueryOptions());
 
-        List<String> excludeMapped = new ArrayList<>();
-        if (exclude != null && !exclude.isEmpty()){
-            for (String e : exclude) {
-                String docPath = Utils.getApiToMongoDocNameMap().get(e);
-                if (docPath == null) {
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    return setQueryResponse("Unrecognised exclude field: " + e);
-                }
-                excludeMapped.add(docPath);
-            }
-        }
-        excludeMapped.add("ids");
+        List<String> excludeMapped = getExcludeMapped(exclude);
 
-        AnnotationMetadata annotationMetadata = null;
-        if (annotationVepVersion != null && annotationVepCacheVersion != null) {
-            annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
-        }
+        AnnotationMetadata annotationMetadata = getAnnotationMetadataHelper(annotationVepVersion,
+                annotationVepCacheVersion);
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
 
@@ -136,42 +119,59 @@ public class RegionWSServerV2 extends EvaWSServer {
 
         Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
-        List<VariantWithSamplesAndAnnotation> rootVariantEntities = new ArrayList<>();
+        List<VariantWithSamplesAndAnnotation> requiredVariantEntities = new ArrayList<>();
 
         variantEntities.forEach(variantEntity -> {
-            rootVariantEntities.add(new VariantWithSamplesAndAnnotation(variantEntity.getChromosome(),
-                    variantEntity.getStart(),variantEntity.getEnd(),variantEntity.getReference(),variantEntity.getAlternate(),
+            requiredVariantEntities.add(new VariantWithSamplesAndAnnotation(variantEntity.getChromosome(),
+                    variantEntity.getStart(), variantEntity.getEnd(), variantEntity.getReference(),
+                    variantEntity.getAlternate(),
                     null));
         });
 
-        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(rootVariantEntities, numTotalResults);
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(requiredVariantEntities,
+                numTotalResults);
         return setQueryResponse(queryResult);
     }
 
-    @RequestMapping(value = "/{regionId}/variants", method = RequestMethod.OPTIONS)
-    public QueryResponse getVariantsByRegion() {
-        return setQueryResponse("");
-    }
-
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    @ResponseBody
-    public QueryResponse getChromosomes(@RequestParam(name = "species") String species,
-                                        HttpServletResponse response)
-            throws IOException {
-        if (species.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse("Please specify a species");
+    public String checkErrorHelper(String annotationVepVersion, String annotationVepCacheVersion, String species,
+                                   List<String> exclude) {
+        if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
+            return "Please specify either both annotation VEP version and annotation VEP cache version, or neither";
         }
 
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
-        List<String> chromosomeList = new ArrayList<>(service.findDistinctChromosomes());
-        QueryResult<String> queryResult = buildQueryResult(chromosomeList);
-        return setQueryResponse(queryResult);
+        if (species.isEmpty()) {
+            return "Please specify a species";
+        }
+
+        if (exclude != null && !exclude.isEmpty()) {
+            for (String e : exclude) {
+                String docPath = Utils.getApiToMongoDocNameMap().get(e);
+                if (docPath == null) {
+                    return "Unrecognised exclude field: " + e;
+                }
+            }
+        }
+
+        return null;
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public void handleIllegalArgumentException(IllegalArgumentException ex, HttpServletResponse response)
-            throws IOException {
-        response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getLocalizedMessage());
+    public List<String> getExcludeMapped(List<String> exclude) {
+        List<String> excludeMapped = new ArrayList<>();
+        if (exclude != null && !exclude.isEmpty()) {
+            for (String e : exclude) {
+                String docPath = Utils.getApiToMongoDocNameMap().get(e);
+                excludeMapped.add(docPath);
+            }
+        }
+        return excludeMapped;
     }
+
+    public AnnotationMetadata getAnnotationMetadataHelper(String annotationVepVersion,
+                                                          String annotationVepCacheVersion) {
+        if (annotationVepVersion != null && annotationVepCacheVersion != null) {
+            return new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
+        }
+        return null;
+    }
+
 }
