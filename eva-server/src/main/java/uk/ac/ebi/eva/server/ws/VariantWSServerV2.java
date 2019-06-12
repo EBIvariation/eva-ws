@@ -20,16 +20,13 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
+import org.springframework.web.bind.annotation.*;
+import uk.ac.ebi.eva.commons.core.models.Annotation;
+import uk.ac.ebi.eva.commons.core.models.VariantSource;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
@@ -43,11 +40,7 @@ import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/v2/variants", produces = "application/json")
@@ -57,18 +50,18 @@ public class VariantWSServerV2 extends EvaWSServer {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
-    @RequestMapping(value = "/{variantId}/info", method = RequestMethod.GET)
-    public QueryResponse getVariantById(@PathVariable("variantId") String variantId,
-                                        @RequestParam(name = "studies", required = false) List<String> studies,
-                                        @RequestParam(name = "species") String species,
-                                        @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
-                                        @RequestParam(name = "maf", required = false) String maf,
-                                        @RequestParam(name = "polyphen", required = false) String polyphenScore,
-                                        @RequestParam(name = "sift", required = false) String siftScore,
-                                        @RequestParam(name = "exclude", required = false) List<String> exclude,
-                                        @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
-                                        @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
-                                        HttpServletResponse response)
+    @GetMapping(value = "/{variantId}/info")
+    public QueryResponse getCoreInfo(@PathVariable("variantId") String variantId,
+                                     @RequestParam(name = "studies", required = false) List<String> studies,
+                                     @RequestParam(name = "species") String species,
+                                     @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
+                                     @RequestParam(name = "maf", required = false) String maf,
+                                     @RequestParam(name = "polyphen", required = false) String polyphenScore,
+                                     @RequestParam(name = "sift", required = false) String siftScore,
+                                     @RequestParam(name = "exclude", required = false) List<String> exclude,
+                                     @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
+                                     @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
+                                     HttpServletResponse response)
             throws IOException {
         initializeQuery();
 
@@ -159,7 +152,6 @@ public class VariantWSServerV2 extends EvaWSServer {
     }
 
 
-
     private String checkErrorHelper(String annotationVepVersion, String annotationVepCacheVersion, String species,
                                     List<String> exclude) {
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
@@ -179,5 +171,112 @@ public class VariantWSServerV2 extends EvaWSServer {
             }
         }
         return null;
+    }
+
+    @GetMapping(value = "/{variantId}/info/annotations")
+    public QueryResponse getAnnotations(@PathVariable("variantId") String variantId,
+                                        @RequestParam(name = "studies", required = false) List<String> studies,
+                                        @RequestParam(name = "species") String species,
+                                        @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
+                                        @RequestParam(name = "maf", required = false) String maf,
+                                        @RequestParam(name = "polyphen", required = false) String polyphenScore,
+                                        @RequestParam(name = "sift", required = false) String siftScore,
+                                        @RequestParam(name = "exclude", required = false) List<String> exclude,
+                                        @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
+                                        @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
+                                        HttpServletResponse response)
+            throws IOException {
+        initializeQuery();
+
+        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species, exclude);
+        if (errorMessage != null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(errorMessage);
+        }
+
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+
+        List<VariantWithSamplesAndAnnotation> variantEntities;
+        try {
+            if (variantId.contains(":")) {
+                variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion,
+                        annotationVepCacheVersion);
+            } else {
+
+                List<VariantRepositoryFilter> filters = new FilterBuilder()
+                        .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
+                variantEntities = getVariantEntitiesByVariantId(exclude, annotationVepVersion, annotationVepCacheVersion,
+                        variantId, filters);
+            }
+        } catch (AnnotationMetadataNotFoundException ex) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(ex.getMessage());
+        }
+
+        List<Annotation> annotations = new ArrayList<>();
+        variantEntities.forEach(variantEntity -> {
+            annotations.add(variantEntity.getAnnotation());
+        });
+
+        QueryResult<Annotation> queryResult = buildQueryResult(annotations, annotations.size());
+
+        return setQueryResponse(queryResult);
+    }
+
+    @GetMapping(value = "/{variantId}/info/source-Entries")
+    public QueryResponse getSourceEntries(@PathVariable("variantId") String variantId,
+                                        @RequestParam(name = "studies", required = false) List<String> studies,
+                                        @RequestParam(name = "species") String species,
+                                        @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
+                                        @RequestParam(name = "maf", required = false) String maf,
+                                        @RequestParam(name = "polyphen", required = false) String polyphenScore,
+                                        @RequestParam(name = "sift", required = false) String siftScore,
+                                        @RequestParam(name = "exclude", required = false) List<String> exclude,
+                                        @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
+                                        @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
+                                        HttpServletResponse response)
+            throws IOException {
+        initializeQuery();
+
+        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species, exclude);
+        if (errorMessage != null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(errorMessage);
+        }
+
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+
+        List<VariantWithSamplesAndAnnotation> variantEntities;
+        try {
+            if (variantId.contains(":")) {
+                variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion,
+                        annotationVepCacheVersion);
+            } else {
+
+                List<VariantRepositoryFilter> filters = new FilterBuilder()
+                        .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
+                variantEntities = getVariantEntitiesByVariantId(exclude, annotationVepVersion, annotationVepCacheVersion,
+                        variantId, filters);
+            }
+        } catch (AnnotationMetadataNotFoundException ex) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(ex.getMessage());
+        }
+
+        //List<VariantSourceEntryWithSampleNames> variantSources = new ArrayList<>();
+        Map<String,VariantSourceEntryWithSampleNames> temp = new HashMap<>();
+        variantEntities.forEach(variantEntity -> {
+            variantEntity.getSourceEntries().forEach(sourceEntry ->{
+                //variantSources.add(sourceEntry);
+                temp.put(sourceEntry.getStudyId()+"_"+sourceEntry.getFileId(), sourceEntry);
+            });
+        });
+        List<Map<String,VariantSourceEntryWithSampleNames>> returnList = new ArrayList();
+        returnList.add(temp);
+        //QueryResult<VariantSourceEntryWithSampleNames> queryResult = buildQueryResult(variantSources,variantSources.size());
+        QueryResult<Map<String,VariantSourceEntryWithSampleNames>> queryResult = buildQueryResult(returnList,
+                returnList.get(0).size());
+
+        return setQueryResponse(queryResult);
     }
 }
