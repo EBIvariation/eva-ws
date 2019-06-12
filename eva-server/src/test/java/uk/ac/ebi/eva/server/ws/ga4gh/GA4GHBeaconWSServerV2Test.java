@@ -17,7 +17,6 @@
  * limitations under the License.
  */
 
-
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import org.junit.Before;
@@ -43,7 +42,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.eq;
@@ -62,8 +60,8 @@ public class GA4GHBeaconWSServerV2Test {
     public void setup() throws Exception {
         VariantMongo variantMongo = new VariantMongo(null, "X", 100470026, 100470026, 1, "G", "A");
         List<VariantMongo> variantMongoList = Collections.singletonList(variantMongo);
-        Region startRange = new Region("X", new Long(100470026), new Long(100470026));
-        Region endRange = new Region("X", new Long(100470026), new Long(100470026));
+        Region startRange = new Region("X", 100470026L, 100470026L);
+        Region endRange = new Region("X", 100470026L, 100470026L);
         List<VariantRepositoryFilter> variantRepositoryFilters = new FilterBuilder().getBeaconFilters("G", "A", VariantType.SNV, Arrays.asList("PRJEB7218"));
 
         Pageable pageable = new PageRequest(0, 1);
@@ -137,7 +135,6 @@ public class GA4GHBeaconWSServerV2Test {
 
     @Test
     public void testForError() {
-        BeaconAlleleRequestBody request = new BeaconAlleleRequestBody();
         String url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s",
                 "X",
                 "G",
