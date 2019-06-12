@@ -43,6 +43,7 @@ import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -118,8 +119,19 @@ public class VariantWSServerV2 extends EvaWSServer {
             AnnotationMetadataNotFoundException {
         String[] regionId = variantId.split(":");
         String alternate = (regionId.length > 3) ? regionId[3] : null;
-        return queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2], alternate,
-                annotationVepVersion, annotationVepCacheVersion);
+
+        AnnotationMetadata annotationMetadata = null;
+        if (annotationVepVersion != null && annotationVepCacheVersion != null) {
+            annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
+        }
+
+        if (alternate != null) {
+            return service.findByChromosomeAndStartAndReferenceAndAlternate(regionId[0], Integer.parseInt(regionId[1]),
+                    regionId[2], alternate, annotationMetadata);
+        } else {
+            return service.findByChromosomeAndStartAndReference(regionId[0], Integer.parseInt(regionId[1]),
+                    regionId[2], annotationMetadata);
+        }
     }
 
     private List<VariantWithSamplesAndAnnotation> getVariantEntitiesByVariantId(List<String> exclude,
@@ -129,7 +141,6 @@ public class VariantWSServerV2 extends EvaWSServer {
                                                                                 List<VariantRepositoryFilter> filters)
             throws AnnotationMetadataNotFoundException {
 
-
         List<String> excludeMapped = new ArrayList<>();
         if (exclude != null && !exclude.isEmpty()) {
             for (String e : exclude) {
@@ -138,27 +149,16 @@ public class VariantWSServerV2 extends EvaWSServer {
             }
         }
 
-        AnnotationMetadata annotationMetadata = getAnnotationMetadataHelper(annotationVepVersion,
-                annotationVepCacheVersion);
+        AnnotationMetadata annotationMetadata = null;
+        if (annotationVepVersion != null && annotationVepCacheVersion != null) {
+            annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
+        }
 
         return service.findByIdsAndComplexFilters(Arrays.asList(variantId), filters, annotationMetadata, excludeMapped,
                 Utils.getPageRequest(getQueryOptions()));
     }
 
-    private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAlleles(String chromosome, long start,
-                                                                               String reference, String alternate,
-                                                                               String annotationVepVersion,
-                                                                               String annotationVepCacheversion) throws AnnotationMetadataNotFoundException {
-        AnnotationMetadata annotationMetadata = getAnnotationMetadataHelper(annotationVepVersion,
-                annotationVepCacheversion);
 
-        if (alternate != null) {
-            return service.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start, reference, alternate,
-                    annotationMetadata);
-        } else {
-            return service.findByChromosomeAndStartAndReference(chromosome, start, reference, annotationMetadata);
-        }
-    }
 
     private String checkErrorHelper(String annotationVepVersion, String annotationVepCacheVersion, String species,
                                     List<String> exclude) {
@@ -177,14 +177,6 @@ public class VariantWSServerV2 extends EvaWSServer {
                     return "Unrecognised exclude field: " + e;
                 }
             }
-        }
-        return null;
-    }
-
-    private AnnotationMetadata getAnnotationMetadataHelper(String annotationVepVersion,
-                                                           String annotationVepCacheVersion) {
-        if (annotationVepVersion != null && annotationVepCacheVersion != null) {
-            return new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
         }
         return null;
     }

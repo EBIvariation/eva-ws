@@ -1,0 +1,106 @@
+/*
+ * Copyright 2017 EMBL - European Bioinformatics Institute
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package uk.ac.ebi.eva.server.ws;
+
+import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
+import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import uk.ac.ebi.eva.commons.core.models.Annotation;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
+import uk.ac.ebi.eva.lib.Profiles;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
+
+import java.net.URISyntaxException;
+import java.util.List;
+
+import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
+import static org.junit.Assert.*;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(MongoRepositoryTestConfiguration.class)
+@UsingDataSet(locations = {
+        "/test-data/variants.json",
+        "/test-data/files.json",
+        "/test-data/annotations.json",
+        "/test-data/annotation_metadata.json"
+})
+@ActiveProfiles(Profiles.TEST_MONGO_FACTORY)
+public class VariantWSServerV2IntegrationTest {
+
+    private static final String TEST_DB = "test-db";
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Autowired
+    private VariantWithSamplesAndAnnotationsService service;
+
+    @Autowired
+    MongoDbFactory mongoDbFactory;
+
+    @Rule
+    public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
+
+
+    @Before
+    public void setUp() throws Exception { }
+
+    @Test
+    public void testGetVariantsByVariantId() throws URISyntaxException {
+        List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotations = variantWsHelper("rs199692280");
+        assertTrue(variantWithSamplesAndAnnotations.size()>0);
+        assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().size()==0);
+        assertNull(variantWithSamplesAndAnnotations.get(0).getAnnotation());
+        assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size()==0);
+    }
+
+    @Test
+    public void testGetVariantsByNonExistingVariantId() throws URISyntaxException {
+        assertEquals(0,variantWsHelper("rs1").size());
+    }
+
+    private List<VariantWithSamplesAndAnnotation> variantWsHelper(String testVariantId) {
+        String url = "/v2/variants/" + testVariantId + "/info?species=mmusculus_grcm38";
+        return WSTestHelpers.testRestTemplateHelper(url, restTemplate);
+    }
+
+}
