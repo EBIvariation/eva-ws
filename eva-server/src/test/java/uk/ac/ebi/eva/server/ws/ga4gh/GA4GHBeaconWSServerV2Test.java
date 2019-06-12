@@ -62,7 +62,8 @@ public class GA4GHBeaconWSServerV2Test {
         List<VariantMongo> variantMongoList = Collections.singletonList(variantMongo);
         Region startRange = new Region("X", 100470026L, 100470026L);
         Region endRange = new Region("X", 100470026L, 100470026L);
-        List<VariantRepositoryFilter> variantRepositoryFilters = new FilterBuilder().getBeaconFilters("G", "A", VariantType.SNV, Arrays.asList("PRJEB7218"));
+        List<VariantRepositoryFilter> variantRepositoryFilters = new FilterBuilder().getBeaconFilters("G", "A",
+                VariantType.SNV, Arrays.asList("PRJEB7218"));
 
         Pageable pageable = new PageRequest(0, 1);
         given(service.findByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters),
