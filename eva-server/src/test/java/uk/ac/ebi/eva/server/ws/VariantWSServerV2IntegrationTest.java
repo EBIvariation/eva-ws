@@ -1,11 +1,14 @@
 /*
- * Copyright 2017 EMBL - European Bioinformatics Institute
+ * European Variation Archive (EVA) - Open-access database of all types of genetic
+ * variation data from all species
+ *
+ * Copyright 2019 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.ac.ebi.eva.server.ws;
 
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
@@ -64,38 +68,33 @@ import static org.junit.Assert.*;
 public class VariantWSServerV2IntegrationTest {
 
     private static final String TEST_DB = "test-db";
-
+    @Rule
+    public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
+    @Autowired
+    MongoDbFactory mongoDbFactory;
     @Autowired
     private ApplicationContext applicationContext;
-
     @Autowired
     private TestRestTemplate restTemplate;
-
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
-    @Autowired
-    MongoDbFactory mongoDbFactory;
-
-    @Rule
-    public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
-
-
     @Before
-    public void setUp() throws Exception { }
+    public void setUp() throws Exception {
+    }
 
     @Test
     public void testGetVariantsByVariantId() throws URISyntaxException {
         List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotations = variantWsHelper("rs199692280");
-        assertTrue(variantWithSamplesAndAnnotations.size()>0);
-        assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().size()==0);
+        assertTrue(variantWithSamplesAndAnnotations.size() > 0);
+        assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().size() == 0);
         assertNull(variantWithSamplesAndAnnotations.get(0).getAnnotation());
-        assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size()==0);
+        assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size() == 0);
     }
 
     @Test
     public void testGetVariantsByNonExistingVariantId() throws URISyntaxException {
-        assertEquals(0,variantWsHelper("rs1").size());
+        assertEquals(0, variantWsHelper("rs1").size());
     }
 
     private List<VariantWithSamplesAndAnnotation> variantWsHelper(String testVariantId) {
