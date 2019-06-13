@@ -69,7 +69,7 @@ public class GA4GHBeaconWSServerV2Test {
         given(service.findByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters),
                 eq(pageable))).willReturn(variantMongoList);
         given(service.countByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters)))
-                .willReturn(new Long(1));
+                .willReturn(1L);
     }
 
     @Test
@@ -78,8 +78,8 @@ public class GA4GHBeaconWSServerV2Test {
         request.setReferenceName("X");
         request.setAssemblyId("GRCh37");
         request.setReferenceBases("G");
-        request.setStart(new Long(100470026));
-        request.setEnd(new Long(100470026));
+        request.setStart(100470026L);
+        request.setEnd(100470026l);
         request.setAlternateBases("A");
         request.setVariantType("SNV");
         request.setDatasetIds(Arrays.asList("PRJEB7218"));
@@ -95,10 +95,10 @@ public class GA4GHBeaconWSServerV2Test {
                 String.join(",", request.getDatasetIds()));
 
         assertEquals(true, testBeaconHelper(url).getBody().getExists());
-        request.setStartMin(new Long(1));
-        request.setStartMax(new Long(1));
-        request.setEndMin(new Long(1));
-        request.setEndMax(new Long(1));
+        request.setStartMin(1L);
+        request.setStartMax(1L);
+        request.setEndMin(1L);
+        request.setEndMax(1L);
         url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&" +
                         "alternateBases=%s&start=%s&end=%s&startMin=%s&endMin=%s&startMax=%s&endMax=%s&variantType=%s" +
                         "&datasetIds=%s",
