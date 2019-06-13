@@ -266,21 +266,77 @@ public class VariantWSServerV2 extends EvaWSServer {
             return setQueryResponse(ex.getMessage());
         }
 
-        //List<VariantSourceEntryWithSampleNames> variantSources = new ArrayList<>();
-        Map<String, VariantSourceEntryWithSampleNames> temp = new HashMap<>();
+        List<VariantSourceEntryWithSampleNames> variantSources = new ArrayList<>();
         variantEntities.forEach(variantEntity -> {
             variantEntity.getSourceEntries().forEach(sourceEntry -> {
-                //variantSources.add(sourceEntry);
-                temp.put(sourceEntry.getStudyId() + "_" + sourceEntry.getFileId(), sourceEntry);
+                variantSources.add(sourceEntry);
             });
         });
-        List<Map<String, VariantSourceEntryWithSampleNames>> returnList = new ArrayList();
-        returnList.add(temp);
-        //QueryResult<VariantSourceEntryWithSampleNames> queryResult = buildQueryResult(variantSources,
-        // variantSources.size());
-        QueryResult<Map<String, VariantSourceEntryWithSampleNames>> queryResult = buildQueryResult(returnList,
-                returnList.get(0).size());
+        QueryResult<VariantSourceEntryWithSampleNames> queryResult = buildQueryResult(variantSources,
+                variantSources.size());
+        return setQueryResponse(queryResult);
+    }
 
+    @GetMapping(value = "/{variantId}/info/source-Entries/{sourceEntryId}")
+    public QueryResponse getSourceEntry(@PathVariable("variantId") String variantId,
+                                          @PathVariable("sourceEntryId") String sourceEntryId,
+                                          @RequestParam(name = "studies", required = false) List<String> studies,
+                                          @RequestParam(name = "species") String species,
+                                          @RequestParam(name = "annot-ct", required = false)
+                                                  List<String> consequenceType,
+                                          @RequestParam(name = "maf", required = false) String maf,
+                                          @RequestParam(name = "polyphen", required = false) String polyphenScore,
+                                          @RequestParam(name = "sift", required = false) String siftScore,
+                                          @RequestParam(name = "exclude", required = false) List<String> exclude,
+                                          @RequestParam(name = "annot-vep-version", required = false)
+                                                  String annotationVepVersion,
+                                          @RequestParam(name = "annot-vep-cache-version", required = false)
+                                                  String annotationVepCacheVersion,
+                                          HttpServletResponse response)
+            throws IOException {
+        initializeQuery();
+
+        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species, exclude);
+        if (errorMessage != null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setErrorQueryResponse(errorMessage);
+        }
+
+        String fileId;
+        String studyId;
+        if(sourceEntryId.contains("_")) {
+            String[] split = sourceEntryId.split("_");
+            studyId = split[0];
+            fileId = split[1];
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setErrorQueryResponse("{sourceEntryId} should contain '_'");
+        }
+
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+
+        List<VariantWithSamplesAndAnnotation> variantEntities;
+        try {
+            if (variantId.contains(":")) {
+                variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion,
+                        annotationVepCacheVersion);
+            } else {
+                List<VariantRepositoryFilter> filters = new FilterBuilder()
+                        .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
+                variantEntities = getVariantEntitiesByVariantId(exclude, annotationVepVersion,
+                        annotationVepCacheVersion, variantId, filters);
+            }
+        } catch (AnnotationMetadataNotFoundException ex) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(ex.getMessage());
+        }
+
+        List<VariantSourceEntryWithSampleNames> variantSources = new ArrayList<>();
+        variantEntities.forEach(variantEntity -> {
+          variantSources.add(variantEntity.getSourceEntry(fileId,studyId));
+        });
+        QueryResult<VariantSourceEntryWithSampleNames> queryResult = buildQueryResult(variantSources,
+                variantSources.size());
         return setQueryResponse(queryResult);
     }
 }
