@@ -58,7 +58,6 @@ public class VariantWSServerV2 extends EvaWSServer {
                                      @RequestParam(name = "maf", required = false) String maf,
                                      @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                      @RequestParam(name = "sift", required = false) String siftScore,
-                                     @RequestParam(name = "exclude", required = false) List<String> exclude,
                                      @RequestParam(name = "annot-vep-version", required = false)
                                              String annotationVepVersion,
                                      @RequestParam(name = "annot-vep-cache-version", required = false) String
@@ -67,7 +66,7 @@ public class VariantWSServerV2 extends EvaWSServer {
             throws IOException {
         initializeQuery();
 
-        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species, exclude);
+        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setErrorQueryResponse(errorMessage);
@@ -86,8 +85,8 @@ public class VariantWSServerV2 extends EvaWSServer {
             } else {
                 List<VariantRepositoryFilter> filters = new FilterBuilder()
                         .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
-                variantEntities = getVariantEntitiesByVariantId(exclude, annotationVepVersion,
-                        annotationVepCacheVersion, variantId, filters);
+                variantEntities = getVariantEntitiesByVariantId(annotationVepVersion, annotationVepCacheVersion,
+                        variantId, filters);
                 numTotalResults = service.countByIdsAndComplexFilters(Arrays.asList(variantId), filters);
             }
         } catch (AnnotationMetadataNotFoundException ex) {
@@ -97,9 +96,13 @@ public class VariantWSServerV2 extends EvaWSServer {
 
         List<VariantWithSamplesAndAnnotation> rootVariantEntities = new ArrayList<>();
         variantEntities.forEach(variantEntity -> {
-            rootVariantEntities.add(new VariantWithSamplesAndAnnotation(variantEntity.getChromosome(),
+
+            VariantWithSamplesAndAnnotation temp = new VariantWithSamplesAndAnnotation(variantEntity.getChromosome(),
                     variantEntity.getStart(), variantEntity.getEnd(), variantEntity.getReference(),
-                    variantEntity.getReference(), variantEntity.getMainId()));
+                    variantEntity.getReference(), variantEntity.getMainId());
+
+            variantEntity.getIds().forEach(id -> temp.addId(id));
+            rootVariantEntities.add(temp);
         });
 
         QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(rootVariantEntities,
@@ -108,8 +111,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    private String checkErrorHelper(String annotationVepVersion, String annotationVepCacheVersion, String species,
-                                    List<String> exclude) {
+    private String checkErrorHelper(String annotationVepVersion, String annotationVepCacheVersion, String species) {
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
             return "Please specify either both annotation VEP version and annotation VEP cache version, or neither";
         }
@@ -118,14 +120,6 @@ public class VariantWSServerV2 extends EvaWSServer {
             return "Please specify a species";
         }
 
-        if (exclude != null && !exclude.isEmpty()) {
-            for (String e : exclude) {
-                String docPath = Utils.getApiToMongoDocNameMap().get(e);
-                if (docPath == null) {
-                    return "Unrecognised exclude field: " + e;
-                }
-            }
-        }
         return null;
     }
 
@@ -150,26 +144,18 @@ public class VariantWSServerV2 extends EvaWSServer {
         }
     }
 
-    private List<VariantWithSamplesAndAnnotation> getVariantEntitiesByVariantId(List<String> exclude,
-                                                                                String annotationVepVersion,
+    private List<VariantWithSamplesAndAnnotation> getVariantEntitiesByVariantId(String annotationVepVersion,
                                                                                 String annotationVepCacheVersion,
                                                                                 String variantId,
                                                                                 List<VariantRepositoryFilter> filters)
             throws AnnotationMetadataNotFoundException {
-        List<String> excludeMapped = new ArrayList<>();
-        if (exclude != null && !exclude.isEmpty()) {
-            for (String e : exclude) {
-                String docPath = Utils.getApiToMongoDocNameMap().get(e);
-                excludeMapped.add(docPath);
-            }
-        }
 
         AnnotationMetadata annotationMetadata = null;
         if (annotationVepVersion != null && annotationVepCacheVersion != null) {
             annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
         }
 
-        return service.findByIdsAndComplexFilters(Arrays.asList(variantId), filters, annotationMetadata, excludeMapped,
+        return service.findByIdsAndComplexFilters(Arrays.asList(variantId), filters, annotationMetadata, null,
                 Utils.getPageRequest(getQueryOptions()));
     }
 
@@ -181,7 +167,6 @@ public class VariantWSServerV2 extends EvaWSServer {
                                         @RequestParam(name = "maf", required = false) String maf,
                                         @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                         @RequestParam(name = "sift", required = false) String siftScore,
-                                        @RequestParam(name = "exclude", required = false) List<String> exclude,
                                         @RequestParam(name = "annot-vep-version", required = false)
                                                 String annotationVepVersion,
                                         @RequestParam(name = "annot-vep-cache-version", required = false)
@@ -190,7 +175,7 @@ public class VariantWSServerV2 extends EvaWSServer {
             throws IOException {
         initializeQuery();
 
-        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species, exclude);
+        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setErrorQueryResponse(errorMessage);
@@ -206,8 +191,8 @@ public class VariantWSServerV2 extends EvaWSServer {
             } else {
                 List<VariantRepositoryFilter> filters = new FilterBuilder()
                         .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
-                variantEntities = getVariantEntitiesByVariantId(exclude, annotationVepVersion,
-                        annotationVepCacheVersion, variantId, filters);
+                variantEntities = getVariantEntitiesByVariantId(annotationVepVersion, annotationVepCacheVersion,
+                        variantId, filters);
             }
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -233,7 +218,6 @@ public class VariantWSServerV2 extends EvaWSServer {
                                           @RequestParam(name = "maf", required = false) String maf,
                                           @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                           @RequestParam(name = "sift", required = false) String siftScore,
-                                          @RequestParam(name = "exclude", required = false) List<String> exclude,
                                           @RequestParam(name = "annot-vep-version", required = false)
                                                   String annotationVepVersion,
                                           @RequestParam(name = "annot-vep-cache-version", required = false)
@@ -242,7 +226,7 @@ public class VariantWSServerV2 extends EvaWSServer {
             throws IOException {
         initializeQuery();
 
-        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species, exclude);
+        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setErrorQueryResponse(errorMessage);
@@ -258,8 +242,8 @@ public class VariantWSServerV2 extends EvaWSServer {
             } else {
                 List<VariantRepositoryFilter> filters = new FilterBuilder()
                         .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
-                variantEntities = getVariantEntitiesByVariantId(exclude, annotationVepVersion,
-                        annotationVepCacheVersion, variantId, filters);
+                variantEntities = getVariantEntitiesByVariantId(annotationVepVersion, annotationVepCacheVersion,
+                        variantId, filters);
             }
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -287,7 +271,6 @@ public class VariantWSServerV2 extends EvaWSServer {
                                         @RequestParam(name = "maf", required = false) String maf,
                                         @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                         @RequestParam(name = "sift", required = false) String siftScore,
-                                        @RequestParam(name = "exclude", required = false) List<String> exclude,
                                         @RequestParam(name = "annot-vep-version", required = false)
                                                 String annotationVepVersion,
                                         @RequestParam(name = "annot-vep-cache-version", required = false)
@@ -296,7 +279,7 @@ public class VariantWSServerV2 extends EvaWSServer {
             throws IOException {
         initializeQuery();
 
-        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species, exclude);
+        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setErrorQueryResponse(errorMessage);
@@ -323,7 +306,7 @@ public class VariantWSServerV2 extends EvaWSServer {
             } else {
                 List<VariantRepositoryFilter> filters = new FilterBuilder()
                         .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
-                variantEntities = getVariantEntitiesByVariantId(exclude, annotationVepVersion,
+                variantEntities = getVariantEntitiesByVariantId(annotationVepVersion,
                         annotationVepCacheVersion, variantId, filters);
             }
         } catch (AnnotationMetadataNotFoundException ex) {

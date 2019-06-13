@@ -87,7 +87,7 @@ public class VariantWSServerV2IntegrationTest {
         assertTrue(variantWithSamplesAndAnnotations.size() > 0);
         assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().size() == 0);
         assertNull(variantWithSamplesAndAnnotations.get(0).getAnnotation());
-        assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size() == 0);
+        assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size() > 0);
     }
 
     private List<VariantWithSamplesAndAnnotation> variantWsHelper(String testVariantId) {
@@ -105,8 +105,6 @@ public class VariantWSServerV2IntegrationTest {
         String url;
         url = "/v2/variants/13:32889669:C:T/info?species=";
         assertEquals("Please specify a species", testForErrorHelper(url));
-        url = url + "mmusculus_grcm38&exclude=abc";
-        assertEquals("Unrecognised exclude field: abc", testForErrorHelper(url));
         url = "/v2/variants/13:32889669:C:T/info?species=mmusculus_grcm38&annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));
@@ -143,8 +141,6 @@ public class VariantWSServerV2IntegrationTest {
         String url;
         url = "/v2/variants/13:32889669:C:T/info/annotations?species=";
         assertEquals("Please specify a species", testForErrorHelper(url));
-        url = url + "mmusculus_grcm38&exclude=abc";
-        assertEquals("Unrecognised exclude field: abc", testForErrorHelper(url));
         url = "/v2/variants/13:32889669:C:T/info/annotations?species=mmusculus_grcm38&" +
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
@@ -178,8 +174,6 @@ public class VariantWSServerV2IntegrationTest {
         String url;
         url = "/v2/variants/13:32889669:C:T/info/source-Entries?species=";
         assertEquals("Please specify a species", testForErrorHelper(url));
-        url = url + "mmusculus_grcm38&exclude=abc";
-        assertEquals("Unrecognised exclude field: abc", testForErrorHelper(url));
         url = "/v2/variants/13:32889669:C:T/info/source-Entries?species=mmusculus_grcm38&" +
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
@@ -213,8 +207,6 @@ public class VariantWSServerV2IntegrationTest {
         String url;
         url = "/v2/variants/13:32889669:C:T/info/source-Entries/PRJEB5829_ERZ019958?species=";
         assertEquals("Please specify a species", testForErrorHelper(url));
-        url = url + "mmusculus_grcm38&exclude=abc";
-        assertEquals("Unrecognised exclude field: abc", testForErrorHelper(url));
         url = "/v2/variants/13:32889669:C:T/info/source-Entries?species=mmusculus_grcm38&" +
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
