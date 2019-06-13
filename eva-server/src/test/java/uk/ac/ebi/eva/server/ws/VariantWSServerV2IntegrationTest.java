@@ -21,8 +21,6 @@ package uk.ac.ebi.eva.server.ws;
 
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,7 +39,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.commons.core.models.Annotation;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.Profiles;
@@ -102,7 +99,7 @@ public class VariantWSServerV2IntegrationTest {
         assertEquals(0, variantWsHelper("rs1").size());
     }
 
-    @Test
+    /*@Test
     public void rootTestForError() throws URISyntaxException {
         String url;
         url = "http://localhost:8080/v2/variants/13:32889669:C:T/info?species=";
@@ -112,9 +109,9 @@ public class VariantWSServerV2IntegrationTest {
         url = "http://localhost:8080/v2/variants/13:32889669:C:T/info?species=mmusculus_grcm38&annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));
-    }
+    }*/
 
-    private String testForErrorHelper(String url) {
+    /*private String testForErrorHelper(String url) {
         return WSTestHelpers.testRestTemplateHelperForError(url, restTemplate);
     }
 
@@ -151,5 +148,5 @@ public class VariantWSServerV2IntegrationTest {
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));
-    }
+    }*/
 }
