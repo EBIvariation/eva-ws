@@ -80,11 +80,10 @@ public class VariantWSServerV2IntegrationTest {
     private VariantWithSamplesAndAnnotationsService service;
 
     @Before
-    public void setUp() throws Exception {
-    }
+    public void setUp() throws Exception { }
 
     @Test
-    public void testGetVariantsByVariantId() throws URISyntaxException {
+    public void rootTestGetVariantsByVariantId() throws URISyntaxException {
         List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotations = variantWsHelper("rs199692280");
         assertTrue(variantWithSamplesAndAnnotations.size() > 0);
         assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().size() == 0);
@@ -92,14 +91,63 @@ public class VariantWSServerV2IntegrationTest {
         assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size() == 0);
     }
 
-    @Test
-    public void testGetVariantsByNonExistingVariantId() throws URISyntaxException {
-        assertEquals(0, variantWsHelper("rs1").size());
-    }
-
     private List<VariantWithSamplesAndAnnotation> variantWsHelper(String testVariantId) {
         String url = "/v2/variants/" + testVariantId + "/info?species=mmusculus_grcm38";
         return WSTestHelpers.testRestTemplateHelper(url, restTemplate);
     }
 
+    @Test
+    public void rootTestGetVariantsByNonExistingVariantId() throws URISyntaxException {
+        assertEquals(0, variantWsHelper("rs1").size());
+    }
+
+    @Test
+    public void rootTestForError() throws URISyntaxException {
+        String url;
+        url = "http://localhost:8080/v2/variants/13:32889669:C:T/info?species=";
+        assertEquals("Please specify a species",testForErrorHelper(url));
+        url= url + "mmusculus_grcm38&exclude=abc";
+        assertEquals("Unrecognised exclude field: abc", testForErrorHelper(url));
+        url = "http://localhost:8080/v2/variants/13:32889669:C:T/info?species=mmusculus_grcm38&annot-vep-version=1";
+        assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
+                "or neither", testForErrorHelper(url));
+    }
+
+    private String testForErrorHelper(String url) {
+        return WSTestHelpers.testRestTemplateHelperForError(url, restTemplate);
+    }
+
+    @Test
+    public void annotationEndPointTestExisting() throws URISyntaxException {
+        String url = "http://localhost:8080/v2/variants/13:32889669:C:T/info/annotations?species=hsapiens_grch37";
+        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
+                });
+        assertEquals(HttpStatus.OK,annotations.getStatusCode());
+        assertTrue(annotations.getBody().getResponse().get(0).getResult().get(0).getChromosome().isEmpty()==false);
+    }
+
+    @Test
+    public void annotationEndPointTestNonExisting() throws URISyntaxException {
+        String url = "http://localhost:8080/v2/variants/100:0:C:T/info/annotations?species=hsapiens_grch37";
+        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
+                });
+        assertEquals(HttpStatus.OK,annotations.getStatusCode());
+        assertTrue(annotations.getBody().getResponse().get(0).getResult().size()==0);
+    }
+
+    @Test
+    public void annotationEndpointTestForError() throws URISyntaxException {
+        String url;
+        url = "http://localhost:8080/v2/variants/13:32889669:C:T/info/annotations?species=";
+        assertEquals("Please specify a species",testForErrorHelper(url));
+        url= url + "mmusculus_grcm38&exclude=abc";
+        assertEquals("Unrecognised exclude field: abc", testForErrorHelper(url));
+        url = "http://localhost:8080/v2/variants/13:32889669:C:T/info/annotations?species=mmusculus_grcm38&annot-vep-version=1";
+        assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
+                "or neither", testForErrorHelper(url));
+    }
 }

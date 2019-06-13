@@ -70,7 +70,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species, exclude);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse(errorMessage);
+            return setErrorQueryResponse(errorMessage);
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
@@ -84,7 +84,6 @@ public class VariantWSServerV2 extends EvaWSServer {
                         annotationVepCacheVersion);
                 numTotalResults = (long) variantEntities.size();
             } else {
-
                 List<VariantRepositoryFilter> filters = new FilterBuilder()
                         .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
                 variantEntities = getVariantEntitiesByVariantId(exclude, annotationVepVersion,
@@ -107,6 +106,27 @@ public class VariantWSServerV2 extends EvaWSServer {
                 numTotalResults);
 
         return setQueryResponse(queryResult);
+    }
+
+    private String checkErrorHelper(String annotationVepVersion, String annotationVepCacheVersion, String species,
+                                    List<String> exclude) {
+        if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
+            return "Please specify either both annotation VEP version and annotation VEP cache version, or neither";
+        }
+
+        if (species.isEmpty()) {
+            return "Please specify a species";
+        }
+
+        if (exclude != null && !exclude.isEmpty()) {
+            for (String e : exclude) {
+                String docPath = Utils.getApiToMongoDocNameMap().get(e);
+                if (docPath == null) {
+                    return "Unrecognised exclude field: " + e;
+                }
+            }
+        }
+        return null;
     }
 
     private List<VariantWithSamplesAndAnnotation> getVariantEntitiesByParams(String variantId,
@@ -136,7 +156,6 @@ public class VariantWSServerV2 extends EvaWSServer {
                                                                                 String variantId,
                                                                                 List<VariantRepositoryFilter> filters)
             throws AnnotationMetadataNotFoundException {
-
         List<String> excludeMapped = new ArrayList<>();
         if (exclude != null && !exclude.isEmpty()) {
             for (String e : exclude) {
@@ -152,28 +171,6 @@ public class VariantWSServerV2 extends EvaWSServer {
 
         return service.findByIdsAndComplexFilters(Arrays.asList(variantId), filters, annotationMetadata, excludeMapped,
                 Utils.getPageRequest(getQueryOptions()));
-    }
-
-
-    private String checkErrorHelper(String annotationVepVersion, String annotationVepCacheVersion, String species,
-                                    List<String> exclude) {
-        if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
-            return "Please specify either both annotation VEP version and annotation VEP cache version, or neither";
-        }
-
-        if (species.isEmpty()) {
-            return "Please specify a species";
-        }
-
-        if (exclude != null && !exclude.isEmpty()) {
-            for (String e : exclude) {
-                String docPath = Utils.getApiToMongoDocNameMap().get(e);
-                if (docPath == null) {
-                    return "Unrecognised exclude field: " + e;
-                }
-            }
-        }
-        return null;
     }
 
     @GetMapping(value = "/{variantId}/info/annotations")
@@ -196,7 +193,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species, exclude);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse(errorMessage);
+            return setErrorQueryResponse(errorMessage);
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
@@ -207,7 +204,6 @@ public class VariantWSServerV2 extends EvaWSServer {
                 variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion,
                         annotationVepCacheVersion);
             } else {
-
                 List<VariantRepositoryFilter> filters = new FilterBuilder()
                         .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
                 variantEntities = getVariantEntitiesByVariantId(exclude, annotationVepVersion,
@@ -249,7 +245,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species, exclude);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse(errorMessage);
+            return setErrorQueryResponse(errorMessage);
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
@@ -260,7 +256,6 @@ public class VariantWSServerV2 extends EvaWSServer {
                 variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion,
                         annotationVepCacheVersion);
             } else {
-
                 List<VariantRepositoryFilter> filters = new FilterBuilder()
                         .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
                 variantEntities = getVariantEntitiesByVariantId(exclude, annotationVepVersion,
