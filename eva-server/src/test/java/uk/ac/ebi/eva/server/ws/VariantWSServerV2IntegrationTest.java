@@ -39,6 +39,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.commons.core.models.Annotation;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.Profiles;
@@ -123,8 +124,7 @@ public class VariantWSServerV2IntegrationTest {
                 new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
                 });
         assertEquals(HttpStatus.OK, annotations.getStatusCode());
-        System.out.println(annotations.getBody().getResponse());
-        //assertTrue(annotations.getBody().getResponse().get(0).getResult().get(0).getChromosome().isEmpty() == false);
+        assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getChromosome().isEmpty());
     }
 
     @Test
@@ -146,6 +146,76 @@ public class VariantWSServerV2IntegrationTest {
         url = url + "mmusculus_grcm38&exclude=abc";
         assertEquals("Unrecognised exclude field: abc", testForErrorHelper(url));
         url = "/v2/variants/13:32889669:C:T/info/annotations?species=mmusculus_grcm38&" +
+                "annot-vep-version=1";
+        assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
+                "or neither", testForErrorHelper(url));
+    }
+
+    @Test
+    public void sourceEntriesEndPointTestExisting() throws URISyntaxException {
+        String url = "/v2/variants/rs199692280/info/source-Entries?species=hsapiens_grch37";
+        ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> annotations = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>>() {
+                });
+        assertEquals(HttpStatus.OK, annotations.getStatusCode());
+        assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getFileId().isEmpty());
+    }
+
+    @Test
+    public void sourceEntriesEndPointTestNonExisting() throws URISyntaxException {
+        String url = "/v2/variants/100:0:C:T/info/source-Entries?species=hsapiens_grch37";
+        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
+                });
+        assertEquals(HttpStatus.OK, annotations.getStatusCode());
+        assertTrue(annotations.getBody().getResponse().get(0).getResult().size() == 0);
+    }
+
+    @Test
+    public void sourceEntriesEndpointTestForError() throws URISyntaxException {
+        String url;
+        url = "/v2/variants/13:32889669:C:T/info/source-Entries?species=";
+        assertEquals("Please specify a species", testForErrorHelper(url));
+        url = url + "mmusculus_grcm38&exclude=abc";
+        assertEquals("Unrecognised exclude field: abc", testForErrorHelper(url));
+        url = "/v2/variants/13:32889669:C:T/info/source-Entries?species=mmusculus_grcm38&" +
+                "annot-vep-version=1";
+        assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
+                "or neither", testForErrorHelper(url));
+    }
+
+    @Test
+    public void sourceEntryEndPointTestExisting() throws URISyntaxException {
+        String url = "/v2/variants/rs199692280/info/source-Entries/PRJEB5829_ERZ019958?species=hsapiens_grch37";
+        ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> annotations = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>>() {
+                });
+        assertEquals(HttpStatus.OK, annotations.getStatusCode());
+        assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getFileId().isEmpty());
+    }
+
+    @Test
+    public void sourceEntryEndPointTestNonExisting() throws URISyntaxException {
+        String url = "/v2/variants/100:0:C:T/info/source-Entries/PRJEB5829_ERZ019958?species=hsapiens_grch37";
+        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
+                });
+        assertEquals(HttpStatus.OK, annotations.getStatusCode());
+        assertTrue(annotations.getBody().getResponse().get(0).getResult().size() == 0);
+    }
+
+    @Test
+    public void sourceEntryEndpointTestForError() throws URISyntaxException {
+        String url;
+        url = "/v2/variants/13:32889669:C:T/info/source-Entries/PRJEB5829_ERZ019958?species=";
+        assertEquals("Please specify a species", testForErrorHelper(url));
+        url = url + "mmusculus_grcm38&exclude=abc";
+        assertEquals("Unrecognised exclude field: abc", testForErrorHelper(url));
+        url = "/v2/variants/13:32889669:C:T/info/source-Entries?species=mmusculus_grcm38&" +
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));

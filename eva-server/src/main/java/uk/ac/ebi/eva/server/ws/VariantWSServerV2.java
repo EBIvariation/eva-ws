@@ -279,20 +279,20 @@ public class VariantWSServerV2 extends EvaWSServer {
 
     @GetMapping(value = "/{variantId}/info/source-Entries/{sourceEntryId}")
     public QueryResponse getSourceEntry(@PathVariable("variantId") String variantId,
-                                          @PathVariable("sourceEntryId") String sourceEntryId,
-                                          @RequestParam(name = "studies", required = false) List<String> studies,
-                                          @RequestParam(name = "species") String species,
-                                          @RequestParam(name = "annot-ct", required = false)
-                                                  List<String> consequenceType,
-                                          @RequestParam(name = "maf", required = false) String maf,
-                                          @RequestParam(name = "polyphen", required = false) String polyphenScore,
-                                          @RequestParam(name = "sift", required = false) String siftScore,
-                                          @RequestParam(name = "exclude", required = false) List<String> exclude,
-                                          @RequestParam(name = "annot-vep-version", required = false)
-                                                  String annotationVepVersion,
-                                          @RequestParam(name = "annot-vep-cache-version", required = false)
-                                                  String annotationVepCacheVersion,
-                                          HttpServletResponse response)
+                                        @PathVariable("sourceEntryId") String sourceEntryId,
+                                        @RequestParam(name = "studies", required = false) List<String> studies,
+                                        @RequestParam(name = "species") String species,
+                                        @RequestParam(name = "annot-ct", required = false)
+                                                List<String> consequenceType,
+                                        @RequestParam(name = "maf", required = false) String maf,
+                                        @RequestParam(name = "polyphen", required = false) String polyphenScore,
+                                        @RequestParam(name = "sift", required = false) String siftScore,
+                                        @RequestParam(name = "exclude", required = false) List<String> exclude,
+                                        @RequestParam(name = "annot-vep-version", required = false)
+                                                String annotationVepVersion,
+                                        @RequestParam(name = "annot-vep-cache-version", required = false)
+                                                String annotationVepCacheVersion,
+                                        HttpServletResponse response)
             throws IOException {
         initializeQuery();
 
@@ -304,7 +304,7 @@ public class VariantWSServerV2 extends EvaWSServer {
 
         String fileId;
         String studyId;
-        if(sourceEntryId.contains("_")) {
+        if (sourceEntryId.contains("_")) {
             String[] split = sourceEntryId.split("_");
             studyId = split[0];
             fileId = split[1];
@@ -333,7 +333,7 @@ public class VariantWSServerV2 extends EvaWSServer {
 
         List<VariantSourceEntryWithSampleNames> variantSources = new ArrayList<>();
         variantEntities.forEach(variantEntity -> {
-          variantSources.add(variantEntity.getSourceEntry(fileId,studyId));
+            variantSources.add(variantEntity.getSourceEntry(fileId, studyId));
         });
         QueryResult<VariantSourceEntryWithSampleNames> queryResult = buildQueryResult(variantSources,
                 variantSources.size());
