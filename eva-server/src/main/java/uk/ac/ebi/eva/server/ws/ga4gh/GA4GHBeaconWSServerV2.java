@@ -30,9 +30,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequestBody;
-import uk.ac.ebi.eva.commons.beacon.models.BeaconDataset;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconError;
+import uk.ac.ebi.eva.commons.beacon.models.GA4GHBeaconQueryResponseV2;
 import uk.ac.ebi.eva.commons.beacon.models.DatasetAlleleResponse;
+import uk.ac.ebi.eva.commons.beacon.models.BeaconDataset;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantSource;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
@@ -69,9 +70,9 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     public GA4GHBeaconWSServerV2() { }
 
     @GetMapping(value = "/")
-    public GA4GHBeaconResponseV2 rootGet() {
+    public GA4GHBeaconResponseV2Impl rootGet() {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
-        GA4GHBeaconResponseV2 response = new GA4GHBeaconResponseV2();
+        GA4GHBeaconResponseV2Impl response = new GA4GHBeaconResponseV2Impl();
         List<BeaconDataset> beaconDatasets = new ArrayList<>();
         List<VariantSource> variantSourceMongos = variantSourceService.findAllVariantSourcesForBeacon();
         variantSourceMongos.forEach(variantSourceMongo -> {
@@ -142,7 +143,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
 
         } else {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID, GA4GHBeaconResponseV2.APIVERSION,
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2Impl.ID, GA4GHBeaconResponseV2Impl.APIVERSION,
                     null, request, new BeaconError(HttpServletResponse.SC_BAD_REQUEST,
                     "Please enter a valid assemblyId from grch37,grch38"), null);
         }
@@ -151,7 +152,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID, GA4GHBeaconResponseV2.APIVERSION,
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2Impl.ID, GA4GHBeaconResponseV2Impl.APIVERSION,
                     null, request, new BeaconError(HttpServletResponse.SC_BAD_REQUEST, errorMessage), null);
         }
 
@@ -178,10 +179,10 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
 
         if (variantMongoList.size() > 0) {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID, GA4GHBeaconResponseV2.APIVERSION,
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2Impl.ID, GA4GHBeaconResponseV2Impl.APIVERSION,
                     true, request, null, datasetAlleleResponses);
         } else {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2.ID, GA4GHBeaconResponseV2.APIVERSION,
+            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2Impl.ID, GA4GHBeaconResponseV2Impl.APIVERSION,
                     false, request, null, datasetAlleleResponses);
         }
     }

@@ -21,10 +21,11 @@ package uk.ac.ebi.eva.server.ws.ga4gh;
 
 import uk.ac.ebi.eva.commons.beacon.models.BeaconDataset;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconOrganization;
+import uk.ac.ebi.eva.commons.beacon.models.GA4GHBeaconResponseV2;
 
 import java.util.List;
 
-public class GA4GHBeaconResponseV2 {
+public class GA4GHBeaconResponseV2Impl implements GA4GHBeaconResponseV2 {
 
     static final String ID = "uk.ac.ebi.eva";
 
@@ -66,7 +67,7 @@ public class GA4GHBeaconResponseV2 {
 
     private List<BeaconDataset> datasets;
 
-    public GA4GHBeaconResponseV2() {
+    public GA4GHBeaconResponseV2Impl() {
         this.id = ID;
         this.name = NAME;
         this.apiVersion = APIVERSION;
@@ -79,47 +80,100 @@ public class GA4GHBeaconResponseV2 {
         this.updateDateTime = UPDATE_DATE_TIME;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Override
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
     public String getApiVersion() {
         return apiVersion;
     }
 
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
+    }
+
+    @Override
     public BeaconOrganization getOrganization() {
         return organization;
     }
 
+    public void setOrganization(BeaconOrganization organization) {
+        this.organization = organization;
+    }
+
+    @Override
     public String getDescription() {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
     public String getVersion() {
         return version;
     }
 
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    @Override
     public String getWelcomeUrl() {
         return welcomeUrl;
     }
 
+    public void setWelcomeUrl(String welcomeUrl) {
+        this.welcomeUrl = welcomeUrl;
+    }
+
+    @Override
     public String getAlternativeUrl() {
         return alternativeUrl;
     }
 
+    public void setAlternativeUrl(String alternativeUrl) {
+        this.alternativeUrl = alternativeUrl;
+    }
+
+    @Override
     public String getCreateDateTime() {
         return createDateTime;
     }
 
+    public void setCreateDateTime(String createDateTime) {
+        this.createDateTime = createDateTime;
+    }
+
+    @Override
     public String getUpdateDateTime() {
         return updateDateTime;
     }
 
-    public List<BeaconDataset> getDatasets() { return datasets; }
+    public void setUpdateDateTime(String updateDateTime) {
+        this.updateDateTime = updateDateTime;
+    }
+
+    @Override
+    public List<BeaconDataset> getDatasets() {
+        return datasets;
+    }
 
     public void setDatasets(List<BeaconDataset> datasets) {
         this.datasets = datasets;

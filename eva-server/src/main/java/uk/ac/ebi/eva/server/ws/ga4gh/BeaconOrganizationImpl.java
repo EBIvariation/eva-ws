@@ -71,34 +71,42 @@ public class BeaconOrganizationImpl implements BeaconOrganization {
         this.info = INFO;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public String getAddress() {
         return address;
     }
 
+    @Override
     public String getWelcomeUrl() {
         return welcomeUrl;
     }
 
+    @Override
     public String getContactUrl() {
         return contactUrl;
     }
 
+    @Override
     public String getLogoUrl() {
         return logoUrl;
     }
 
+    @Override
     public Map<String, String> getInfo() {
         return info;
     }
