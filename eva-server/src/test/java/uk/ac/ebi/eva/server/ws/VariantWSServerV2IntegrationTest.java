@@ -80,7 +80,8 @@ public class VariantWSServerV2IntegrationTest {
     private VariantWithSamplesAndAnnotationsService service;
 
     @Before
-    public void setUp() throws Exception { }
+    public void setUp() throws Exception {
+    }
 
     @Test
     public void rootTestGetVariantsByVariantId() throws URISyntaxException {
@@ -105,8 +106,8 @@ public class VariantWSServerV2IntegrationTest {
     public void rootTestForError() throws URISyntaxException {
         String url;
         url = "http://localhost:8080/v2/variants/13:32889669:C:T/info?species=";
-        assertEquals("Please specify a species",testForErrorHelper(url));
-        url= url + "mmusculus_grcm38&exclude=abc";
+        assertEquals("Please specify a species", testForErrorHelper(url));
+        url = url + "mmusculus_grcm38&exclude=abc";
         assertEquals("Unrecognised exclude field: abc", testForErrorHelper(url));
         url = "http://localhost:8080/v2/variants/13:32889669:C:T/info?species=mmusculus_grcm38&annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
@@ -124,8 +125,8 @@ public class VariantWSServerV2IntegrationTest {
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
                 });
-        assertEquals(HttpStatus.OK,annotations.getStatusCode());
-        assertTrue(annotations.getBody().getResponse().get(0).getResult().get(0).getChromosome().isEmpty()==false);
+        assertEquals(HttpStatus.OK, annotations.getStatusCode());
+        assertTrue(annotations.getBody().getResponse().get(0).getResult().get(0).getChromosome().isEmpty() == false);
     }
 
     @Test
@@ -135,18 +136,19 @@ public class VariantWSServerV2IntegrationTest {
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
                 });
-        assertEquals(HttpStatus.OK,annotations.getStatusCode());
-        assertTrue(annotations.getBody().getResponse().get(0).getResult().size()==0);
+        assertEquals(HttpStatus.OK, annotations.getStatusCode());
+        assertTrue(annotations.getBody().getResponse().get(0).getResult().size() == 0);
     }
 
     @Test
     public void annotationEndpointTestForError() throws URISyntaxException {
         String url;
         url = "http://localhost:8080/v2/variants/13:32889669:C:T/info/annotations?species=";
-        assertEquals("Please specify a species",testForErrorHelper(url));
-        url= url + "mmusculus_grcm38&exclude=abc";
+        assertEquals("Please specify a species", testForErrorHelper(url));
+        url = url + "mmusculus_grcm38&exclude=abc";
         assertEquals("Unrecognised exclude field: abc", testForErrorHelper(url));
-        url = "http://localhost:8080/v2/variants/13:32889669:C:T/info/annotations?species=mmusculus_grcm38&annot-vep-version=1";
+        url = "http://localhost:8080/v2/variants/13:32889669:C:T/info/annotations?species=mmusculus_grcm38&" +
+                "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));
     }

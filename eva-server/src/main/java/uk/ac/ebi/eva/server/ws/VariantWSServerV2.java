@@ -229,7 +229,7 @@ public class VariantWSServerV2 extends EvaWSServer {
                                           @RequestParam(name = "studies", required = false) List<String> studies,
                                           @RequestParam(name = "species") String species,
                                           @RequestParam(name = "annot-ct", required = false)
-                                                      List<String> consequenceType,
+                                                  List<String> consequenceType,
                                           @RequestParam(name = "maf", required = false) String maf,
                                           @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                           @RequestParam(name = "sift", required = false) String siftScore,
