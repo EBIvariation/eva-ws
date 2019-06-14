@@ -30,7 +30,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequestBody;
+import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleResponse;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
@@ -75,7 +75,7 @@ public class GA4GHBeaconWSServerV2Test {
 
     @Test
     public void testForExisting() throws Exception {
-        BeaconAlleleRequestBody request = new BeaconAlleleRequestBody();
+        BeaconAlleleRequest request = new BeaconAlleleRequest();
         request.setReferenceName("X");
         request.setAssemblyId("GRCh37");
         request.setReferenceBases("G");
@@ -84,8 +84,8 @@ public class GA4GHBeaconWSServerV2Test {
         request.setAlternateBases("A");
         request.setVariantType("SNV");
         request.setDatasetIds(Arrays.asList("PRJEB7218"));
-        String url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&alternateBases=" +
-                        "%s&start=%s&end=%s&variantType=%s&datasetIds=%s",
+        String url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&alternateBases" +
+                        "=%s&start=%s&end=%s&variantType=%s&datasetIds=%s",
                 request.getReferenceName(),
                 request.getReferenceBases(),
                 request.getAssemblyId(),
@@ -100,8 +100,8 @@ public class GA4GHBeaconWSServerV2Test {
         request.setStartMax(1L);
         request.setEndMin(1L);
         request.setEndMax(1L);
-        url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&" +
-                        "alternateBases=%s&start=%s&end=%s&startMin=%s&endMin=%s&startMax=%s&endMax=%s&variantType=%s" +
+        url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&alternateBases=%s&" +
+                        "start=%s&end=%s&startMin=%s&endMin=%s&startMax=%s&endMax=%s&variantType=%s" +
                         "&datasetIds=%s",
                 request.getReferenceName(),
                 request.getReferenceBases(),
@@ -120,7 +120,7 @@ public class GA4GHBeaconWSServerV2Test {
 
     @Test
     public void testForNonExisting() {
-        BeaconAlleleRequestBody request = new BeaconAlleleRequestBody();
+        BeaconAlleleRequest request = new BeaconAlleleRequest();
         request.setReferenceName("Y");
         request.setAssemblyId("GRCh37");
         request.setReferenceBases("G");

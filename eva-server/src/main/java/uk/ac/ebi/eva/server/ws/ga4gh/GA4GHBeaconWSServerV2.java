@@ -29,10 +29,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
-import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequestBody;
+import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconError;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleResponse;
-import uk.ac.ebi.eva.commons.beacon.models.DatasetAlleleResponse;
+import uk.ac.ebi.eva.commons.beacon.models.BeaconDatasetAlleleResponse;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconDataset;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantSource;
@@ -67,7 +67,8 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     @Autowired
     private VariantSourceService variantSourceService;
 
-    public GA4GHBeaconWSServerV2() { }
+    public GA4GHBeaconWSServerV2() {
+    }
 
     @GetMapping(value = "/")
     public BeaconImpl rootGet() {
@@ -115,25 +116,27 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
     @GetMapping(value = "/query")
     public BeaconAlleleResponse queryGet(@RequestParam("referenceName") String chromosome,
-                                               @RequestParam(value = "start", required = false) Long start,
-                                               @RequestParam(value = "startMin", required = false) Long startMin,
-                                               @RequestParam(value = "startMax", required = false) Long startMax,
-                                               @RequestParam(value = "end", required = false) Long end,
-                                               @RequestParam(value = "endMin", required = false) Long endMin,
-                                               @RequestParam(value = "endMax", required = false) Long endMax,
-                                               @RequestParam(value = "referenceBases") String referenceBases,
-                                               @RequestParam(value = "alternateBases", required = false)
-                                                       String alternateBases,
-                                               @RequestParam(value = "variantType", required = false) String variantType,
-                                               @RequestParam(value = "assemblyId") String assemblyId,
-                                               @RequestParam(value = "datasetIds", required = false) List<String> studies,
-                                               @RequestParam(value = "includeDatasetResponses", required = false)
-                                                       String includeDatasetResponses,
-                                               HttpServletResponse response)
+                                         @RequestParam(value = "start", required = false) Long start,
+                                         @RequestParam(value = "startMin", required = false) Long startMin,
+                                         @RequestParam(value = "startMax", required = false) Long startMax,
+                                         @RequestParam(value = "end", required = false) Long end,
+                                         @RequestParam(value = "endMin", required = false) Long endMin,
+                                         @RequestParam(value = "endMax", required = false) Long endMax,
+                                         @RequestParam(value = "referenceBases") String referenceBases,
+                                         @RequestParam(value = "alternateBases", required = false)
+                                                 String alternateBases,
+                                         @RequestParam(value = "variantType", required = false)
+                                                 String variantType,
+                                         @RequestParam(value = "assemblyId") String assemblyId,
+                                         @RequestParam(value = "datasetIds", required = false)
+                                                 List<String> studies,
+                                         @RequestParam(value = "includeDatasetResponses", required = false)
+                                                 String includeDatasetResponses,
+                                         HttpServletResponse response)
             throws IOException, AnnotationMetadataNotFoundException {
         initializeQuery();
 
-        BeaconAlleleRequestBody request = new BeaconAlleleRequestBody(chromosome, start, startMin, startMax, end,
+        BeaconAlleleRequest request = new BeaconAlleleRequest(chromosome, start, startMin, startMax, end,
                 endMin, endMax, referenceBases, alternateBases, variantType, assemblyId, studies,
                 includeDatasetResponses);
 
@@ -176,7 +179,8 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             variantMongoList = Collections.emptyList();
         }
 
-        List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
+        List<BeaconDatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList,
+                request);
 
         if (variantMongoList.size() > 0) {
             return new BeaconAlleleResponse(BeaconImpl.ID, BeaconImpl.APIVERSION,
@@ -187,7 +191,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         }
     }
 
-    private String checkErrorHelper(BeaconAlleleRequestBody request) {
+    private String checkErrorHelper(BeaconAlleleRequest request) {
 
         if (request.getStart() != null && request.getStart() < 0) {
             return "Please provide a positive start number";
@@ -213,10 +217,10 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         return null;
     }
 
-    private List<DatasetAlleleResponse> getDatasetAlleleResponsesHelper(List<VariantMongo> variantMongoList,
-                                                                        BeaconAlleleRequestBody request) {
+    private List<BeaconDatasetAlleleResponse> getDatasetAlleleResponsesHelper(List<VariantMongo> variantMongoList,
+                                                                              BeaconAlleleRequest request) {
 
-        List<DatasetAlleleResponse> datasetAllelResponses = new ArrayList<DatasetAlleleResponse>();
+        List<BeaconDatasetAlleleResponse> datasetAllelResponses = new ArrayList<BeaconDatasetAlleleResponse>();
 
         if (request.getIncludeDatasetResponses() == null ||
                 request.getIncludeDatasetResponses().equalsIgnoreCase("NONE")) {
@@ -264,17 +268,17 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         return datasetAllelResponses;
     }
 
-    private DatasetAlleleResponse buildDatasetAlleleResponseHelper(boolean exists, VariantSource variantSource,
-                                                                   Float frequency) {
-        return new DatasetAlleleResponse(variantSource.getStudyId(), exists, null, frequency,
+    private BeaconDatasetAlleleResponse buildDatasetAlleleResponseHelper(boolean exists, VariantSource variantSource,
+                                                                         Float frequency) {
+        return new BeaconDatasetAlleleResponse(variantSource.getStudyId(), exists, null, frequency,
                 variantSource.getStats() == null ? null : (long) variantSource.getStats().getVariantsCount(), null,
                 variantSource.getStats() == null ? null : (long) variantSource.getStats().getSamplesCount(),
                 "noteString", "externalUrl", null);
     }
 
     @PostMapping(value = "/query")
-    private BeaconAlleleResponse queryPost(@Validated @RequestBody BeaconAlleleRequestBody requestBody,
-                                                 HttpServletResponse response) throws IOException,
+    private BeaconAlleleResponse queryPost(@Validated @RequestBody BeaconAlleleRequest requestBody,
+                                           HttpServletResponse response) throws IOException,
             AnnotationMetadataNotFoundException {
         return queryGet(requestBody.getReferenceName(),
                 requestBody.getStart(),
