@@ -88,6 +88,12 @@ public class VariantWSServerV2IntegrationTest {
         assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().size() == 0);
         assertNull(variantWithSamplesAndAnnotations.get(0).getAnnotation());
         assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size() > 0);
+
+        variantWithSamplesAndAnnotations = variantWsHelper("20:60100:A:T");
+        assertTrue(variantWithSamplesAndAnnotations.size() > 0);
+        assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().size() == 0);
+        assertNull(variantWithSamplesAndAnnotations.get(0).getAnnotation());
+        assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size() > 0);
     }
 
     private List<VariantWithSamplesAndAnnotation> variantWsHelper(String testVariantId) {
@@ -116,9 +122,16 @@ public class VariantWSServerV2IntegrationTest {
 
     @Test
     public void annotationEndPointTestExisting() throws URISyntaxException {
-        String url = "/v2/variants/rs199692280/info/annotations?species=hsapiens_grch37";
+        String url = "/v2/variants/rs199692280/info/annotations?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(
                 url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
+                });
+        assertEquals(HttpStatus.OK, annotations.getStatusCode());
+        assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getChromosome().isEmpty());
+
+        url = "/v2/variants/20:60100:A:T/info/annotations?species=mmusculus_grcm38";
+        annotations = restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
                 });
         assertEquals(HttpStatus.OK, annotations.getStatusCode());
@@ -127,7 +140,7 @@ public class VariantWSServerV2IntegrationTest {
 
     @Test
     public void annotationEndPointTestNonExisting() throws URISyntaxException {
-        String url = "/v2/variants/100:0:C:T/info/annotations?species=hsapiens_grch37";
+        String url = "/v2/variants/100:0:C:T/info/annotations?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
@@ -149,9 +162,17 @@ public class VariantWSServerV2IntegrationTest {
 
     @Test
     public void sourceEntriesEndPointTestExisting() throws URISyntaxException {
-        String url = "/v2/variants/rs199692280/info/source-Entries?species=hsapiens_grch37";
-        ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> annotations = restTemplate.exchange(
-                url, HttpMethod.GET, null,
+        String url = "/v2/variants/rs199692280/info/source-Entries?species=mmusculus_grcm38";
+        ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> annotations = restTemplate.
+                exchange(url, HttpMethod.GET, null,
+                        new ParameterizedTypeReference<QueryResponse<QueryResult
+                                <VariantSourceEntryWithSampleNames>>>() {
+                        });
+        assertEquals(HttpStatus.OK, annotations.getStatusCode());
+        assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getFileId().isEmpty());
+
+        url = "/v2/variants/20:60100:A:T/info/source-Entries?species=mmusculus_grcm38";
+        annotations = restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>>() {
                 });
         assertEquals(HttpStatus.OK, annotations.getStatusCode());
@@ -160,10 +181,9 @@ public class VariantWSServerV2IntegrationTest {
 
     @Test
     public void sourceEntriesEndPointTestNonExisting() throws URISyntaxException {
-        String url = "/v2/variants/100:0:C:T/info/source-Entries?species=hsapiens_grch37";
-        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
+        String url = "/v2/variants/100:0:C:T/info/source-Entries?species=mmusculus_grcm38";
+        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(url, HttpMethod.GET,
+                null, new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
                 });
         assertEquals(HttpStatus.OK, annotations.getStatusCode());
         assertTrue(annotations.getBody().getResponse().get(0).getResult().size() == 0);
@@ -182,9 +202,17 @@ public class VariantWSServerV2IntegrationTest {
 
     @Test
     public void sourceEntryEndPointTestExisting() throws URISyntaxException {
-        String url = "/v2/variants/rs199692280/info/source-Entries/PRJEB5829_ERZ019958?species=hsapiens_grch37";
-        ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> annotations = restTemplate.exchange(
-                url, HttpMethod.GET, null,
+        String url = "/v2/variants/rs199692280/info/source-Entries/PRJEB5829_ERZ019958?species=mmusculus_grcm38";
+        ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> annotations = restTemplate.
+                exchange(url, HttpMethod.GET, null,
+                        new ParameterizedTypeReference<QueryResponse<QueryResult
+                                <VariantSourceEntryWithSampleNames>>>() {
+                        });
+        assertEquals(HttpStatus.OK, annotations.getStatusCode());
+        assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getFileId().isEmpty());
+
+        url = "/v2/variants/20:60100:A:T/info/source-Entries/PRJEB5829_ERZ019958?species=mmusculus_grcm38";
+        annotations = restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>>() {
                 });
         assertEquals(HttpStatus.OK, annotations.getStatusCode());
@@ -193,10 +221,9 @@ public class VariantWSServerV2IntegrationTest {
 
     @Test
     public void sourceEntryEndPointTestNonExisting() throws URISyntaxException {
-        String url = "/v2/variants/100:0:C:T/info/source-Entries/PRJEB5829_ERZ019958?species=hsapiens_grch37";
-        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
+        String url = "/v2/variants/100:0:C:T/info/source-Entries/PRJEB5829_ERZ019958?species=mmusculus_grcm38";
+        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(url, HttpMethod.GET,
+                null, new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
                 });
         assertEquals(HttpStatus.OK, annotations.getStatusCode());
         assertTrue(annotations.getBody().getResponse().get(0).getResult().size() == 0);

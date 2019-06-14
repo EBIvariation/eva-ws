@@ -20,15 +20,15 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
-import org.springframework.web.bind.annotation.*;
-import uk.ac.ebi.eva.commons.core.models.Annotation;
-import uk.ac.ebi.eva.commons.core.models.VariantSource;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
@@ -36,11 +36,15 @@ import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundExceptio
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/v2/variants", produces = "application/json")
@@ -149,7 +153,6 @@ public class VariantWSServerV2 extends EvaWSServer {
                                                                                 String variantId,
                                                                                 List<VariantRepositoryFilter> filters)
             throws AnnotationMetadataNotFoundException {
-
         AnnotationMetadata annotationMetadata = null;
         if (annotationVepVersion != null && annotationVepCacheVersion != null) {
             annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
@@ -256,8 +259,10 @@ public class VariantWSServerV2 extends EvaWSServer {
                 variantSources.add(sourceEntry);
             });
         });
+
         QueryResult<VariantSourceEntryWithSampleNames> queryResult = buildQueryResult(variantSources,
                 variantSources.size());
+
         return setQueryResponse(queryResult);
     }
 
@@ -318,8 +323,10 @@ public class VariantWSServerV2 extends EvaWSServer {
         variantEntities.forEach(variantEntity -> {
             variantSources.add(variantEntity.getSourceEntry(fileId, studyId));
         });
+
         QueryResult<VariantSourceEntryWithSampleNames> queryResult = buildQueryResult(variantSources,
                 variantSources.size());
+
         return setQueryResponse(queryResult);
     }
 }
