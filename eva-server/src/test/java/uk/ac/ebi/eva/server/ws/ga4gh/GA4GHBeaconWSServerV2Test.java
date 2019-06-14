@@ -31,7 +31,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequestBody;
-import uk.ac.ebi.eva.commons.beacon.models.GA4GHBeaconQueryResponseV2;
+import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleResponse;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
 import uk.ac.ebi.eva.commons.mongodb.entities.VariantMongo;
@@ -146,10 +146,10 @@ public class GA4GHBeaconWSServerV2Test {
                 testBeaconHelper(url).getBody().getError().getErrorMessage());
     }
 
-    private ResponseEntity<GA4GHBeaconQueryResponseV2> testBeaconHelper(String url) {
+    private ResponseEntity<BeaconAlleleResponse> testBeaconHelper(String url) {
 
-        ResponseEntity<GA4GHBeaconQueryResponseV2> response = restTemplate.getForEntity(
-                url, GA4GHBeaconQueryResponseV2.class);
+        ResponseEntity<BeaconAlleleResponse> response = restTemplate.getForEntity(
+                url, BeaconAlleleResponse.class);
         return response;
     }
 }

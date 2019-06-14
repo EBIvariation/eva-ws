@@ -19,13 +19,13 @@
 
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
+import uk.ac.ebi.eva.commons.beacon.models.Beacon;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconDataset;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconOrganization;
-import uk.ac.ebi.eva.commons.beacon.models.GA4GHBeaconResponseV2;
 
 import java.util.List;
 
-public class GA4GHBeaconResponseV2Impl implements GA4GHBeaconResponseV2 {
+public class BeaconImpl implements Beacon {
 
     static final String ID = "uk.ac.ebi.eva";
 
@@ -67,7 +67,7 @@ public class GA4GHBeaconResponseV2Impl implements GA4GHBeaconResponseV2 {
 
     private List<BeaconDataset> datasets;
 
-    public GA4GHBeaconResponseV2Impl() {
+    public BeaconImpl() {
         this.id = ID;
         this.name = NAME;
         this.apiVersion = APIVERSION;

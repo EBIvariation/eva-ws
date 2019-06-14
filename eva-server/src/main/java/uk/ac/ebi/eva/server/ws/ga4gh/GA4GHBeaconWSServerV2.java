@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequestBody;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconError;
-import uk.ac.ebi.eva.commons.beacon.models.GA4GHBeaconQueryResponseV2;
+import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleResponse;
 import uk.ac.ebi.eva.commons.beacon.models.DatasetAlleleResponse;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconDataset;
 import uk.ac.ebi.eva.commons.core.models.Region;
@@ -70,9 +70,9 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     public GA4GHBeaconWSServerV2() { }
 
     @GetMapping(value = "/")
-    public GA4GHBeaconResponseV2Impl rootGet() {
+    public BeaconImpl rootGet() {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
-        GA4GHBeaconResponseV2Impl response = new GA4GHBeaconResponseV2Impl();
+        BeaconImpl response = new BeaconImpl();
         List<BeaconDataset> beaconDatasets = new ArrayList<>();
         List<VariantSource> variantSourceMongos = variantSourceService.findAllVariantSourcesForBeacon();
         variantSourceMongos.forEach(variantSourceMongo -> {
@@ -114,7 +114,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     }
 
     @GetMapping(value = "/query")
-    public GA4GHBeaconQueryResponseV2 queryGet(@RequestParam("referenceName") String chromosome,
+    public BeaconAlleleResponse queryGet(@RequestParam("referenceName") String chromosome,
                                                @RequestParam(value = "start", required = false) Long start,
                                                @RequestParam(value = "startMin", required = false) Long startMin,
                                                @RequestParam(value = "startMax", required = false) Long startMax,
@@ -143,7 +143,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
             MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
 
         } else {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2Impl.ID, GA4GHBeaconResponseV2Impl.APIVERSION,
+            return new BeaconAlleleResponse(BeaconImpl.ID, BeaconImpl.APIVERSION,
                     null, request, new BeaconError(HttpServletResponse.SC_BAD_REQUEST,
                     "Please enter a valid assemblyId from grch37,grch38"), null);
         }
@@ -152,7 +152,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
 
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2Impl.ID, GA4GHBeaconResponseV2Impl.APIVERSION,
+            return new BeaconAlleleResponse(BeaconImpl.ID, BeaconImpl.APIVERSION,
                     null, request, new BeaconError(HttpServletResponse.SC_BAD_REQUEST, errorMessage), null);
         }
 
@@ -179,10 +179,10 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
         List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList, request);
 
         if (variantMongoList.size() > 0) {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2Impl.ID, GA4GHBeaconResponseV2Impl.APIVERSION,
+            return new BeaconAlleleResponse(BeaconImpl.ID, BeaconImpl.APIVERSION,
                     true, request, null, datasetAlleleResponses);
         } else {
-            return new GA4GHBeaconQueryResponseV2(GA4GHBeaconResponseV2Impl.ID, GA4GHBeaconResponseV2Impl.APIVERSION,
+            return new BeaconAlleleResponse(BeaconImpl.ID, BeaconImpl.APIVERSION,
                     false, request, null, datasetAlleleResponses);
         }
     }
@@ -273,7 +273,7 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     }
 
     @PostMapping(value = "/query")
-    private GA4GHBeaconQueryResponseV2 queryPost(@Validated @RequestBody BeaconAlleleRequestBody requestBody,
+    private BeaconAlleleResponse queryPost(@Validated @RequestBody BeaconAlleleRequestBody requestBody,
                                                  HttpServletResponse response) throws IOException,
             AnnotationMetadataNotFoundException {
         return queryGet(requestBody.getReferenceName(),
