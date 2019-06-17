@@ -102,7 +102,7 @@ public class VariantWSServerV2Test {
 
     @Test
     public void rootTestGetVariantsByNonExistingVariantId() throws URISyntaxException {
-        assertEquals(0, variantWsHelper(NON_EXISTING_CHROMOSOME+":60100:A:T").size());
+        assertEquals(0, variantWsHelper(NON_EXISTING_CHROMOSOME + ":60100:A:T").size());
     }
 
     @Test
