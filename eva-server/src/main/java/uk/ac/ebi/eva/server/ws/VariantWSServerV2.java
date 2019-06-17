@@ -30,20 +30,16 @@ import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
-import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
-import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
-import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -70,7 +66,7 @@ public class VariantWSServerV2 extends EvaWSServer {
             throws IOException {
         initializeQuery();
 
-        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species);
+        String errorMessage = checkErrorHelper(variantId, annotationVepVersion, annotationVepCacheVersion, species);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setErrorQueryResponse(errorMessage);
@@ -82,17 +78,8 @@ public class VariantWSServerV2 extends EvaWSServer {
         Long numTotalResults;
 
         try {
-            if (variantId.contains(":")) {
-                variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion,
-                        annotationVepCacheVersion);
-                numTotalResults = (long) variantEntities.size();
-            } else {
-                List<VariantRepositoryFilter> filters = new FilterBuilder()
-                        .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
-                variantEntities = getVariantEntitiesByVariantId(annotationVepVersion, annotationVepCacheVersion,
-                        variantId, filters);
-                numTotalResults = service.countByIdsAndComplexFilters(Arrays.asList(variantId), filters);
-            }
+            variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion, annotationVepCacheVersion);
+            numTotalResults = (long) variantEntities.size();
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
@@ -115,7 +102,12 @@ public class VariantWSServerV2 extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    private String checkErrorHelper(String annotationVepVersion, String annotationVepCacheVersion, String species) {
+    private String checkErrorHelper(String variantId, String annotationVepVersion, String annotationVepCacheVersion,
+                                    String species) {
+        if (variantId.contains(":")) {
+            return "Invalid entry of variantId";
+        }
+
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
             return "Please specify either both annotation VEP version and annotation VEP cache version, or neither";
         }
@@ -148,20 +140,6 @@ public class VariantWSServerV2 extends EvaWSServer {
         }
     }
 
-    private List<VariantWithSamplesAndAnnotation> getVariantEntitiesByVariantId(String annotationVepVersion,
-                                                                                String annotationVepCacheVersion,
-                                                                                String variantId,
-                                                                                List<VariantRepositoryFilter> filters)
-            throws AnnotationMetadataNotFoundException {
-        AnnotationMetadata annotationMetadata = null;
-        if (annotationVepVersion != null && annotationVepCacheVersion != null) {
-            annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
-        }
-
-        return service.findByIdsAndComplexFilters(Arrays.asList(variantId), filters, annotationMetadata, null,
-                Utils.getPageRequest(getQueryOptions()));
-    }
-
     @GetMapping(value = "/{variantId}/info/annotations")
     public QueryResponse getAnnotations(@PathVariable("variantId") String variantId,
                                         @RequestParam(name = "studies", required = false) List<String> studies,
@@ -178,7 +156,7 @@ public class VariantWSServerV2 extends EvaWSServer {
             throws IOException {
         initializeQuery();
 
-        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species);
+        String errorMessage = checkErrorHelper(variantId, annotationVepVersion, annotationVepCacheVersion, species);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setErrorQueryResponse(errorMessage);
@@ -188,15 +166,7 @@ public class VariantWSServerV2 extends EvaWSServer {
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
         try {
-            if (variantId.contains(":")) {
-                variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion,
-                        annotationVepCacheVersion);
-            } else {
-                List<VariantRepositoryFilter> filters = new FilterBuilder()
-                        .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
-                variantEntities = getVariantEntitiesByVariantId(annotationVepVersion, annotationVepCacheVersion,
-                        variantId, filters);
-            }
+            variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion, annotationVepCacheVersion);
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
@@ -229,7 +199,7 @@ public class VariantWSServerV2 extends EvaWSServer {
             throws IOException {
         initializeQuery();
 
-        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species);
+        String errorMessage = checkErrorHelper(variantId, annotationVepVersion, annotationVepCacheVersion, species);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setErrorQueryResponse(errorMessage);
@@ -239,15 +209,7 @@ public class VariantWSServerV2 extends EvaWSServer {
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
         try {
-            if (variantId.contains(":")) {
-                variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion,
-                        annotationVepCacheVersion);
-            } else {
-                List<VariantRepositoryFilter> filters = new FilterBuilder()
-                        .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
-                variantEntities = getVariantEntitiesByVariantId(annotationVepVersion, annotationVepCacheVersion,
-                        variantId, filters);
-            }
+            variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion, annotationVepCacheVersion);
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
@@ -284,7 +246,7 @@ public class VariantWSServerV2 extends EvaWSServer {
             throws IOException {
         initializeQuery();
 
-        String errorMessage = checkErrorHelper(annotationVepVersion, annotationVepCacheVersion, species);
+        String errorMessage = checkErrorHelper(variantId, annotationVepVersion, annotationVepCacheVersion, species);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setErrorQueryResponse(errorMessage);
@@ -305,15 +267,7 @@ public class VariantWSServerV2 extends EvaWSServer {
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
         try {
-            if (variantId.contains(":")) {
-                variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion,
-                        annotationVepCacheVersion);
-            } else {
-                List<VariantRepositoryFilter> filters = new FilterBuilder()
-                        .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
-                variantEntities = getVariantEntitiesByVariantId(annotationVepVersion,
-                        annotationVepCacheVersion, variantId, filters);
-            }
+            variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion, annotationVepCacheVersion);
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
