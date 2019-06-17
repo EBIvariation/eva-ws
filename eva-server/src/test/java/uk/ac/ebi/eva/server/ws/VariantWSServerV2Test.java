@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2016 EMBL - European Bioinformatics Institute
+ * Copyright 2019 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
