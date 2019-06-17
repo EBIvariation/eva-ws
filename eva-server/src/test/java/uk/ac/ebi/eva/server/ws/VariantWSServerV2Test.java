@@ -59,10 +59,6 @@ public class VariantWSServerV2Test {
 
     private static final String CHROMOSOME = "existingChromosome";
 
-    private static final String VARIANT_ID = "existingId";
-
-    private static final String NON_EXISTING_VARIANT_ID = "notARealId";
-
     private static final String NON_EXISTING_CHROMOSOME = "notARealChromosome";
 
     private static final String MAIN_ID = "rs1";
@@ -87,21 +83,12 @@ public class VariantWSServerV2Test {
         given(variantEntityRepository
                 .findByChromosomeAndStartAndReferenceAndAlternate(eq(CHROMOSOME), anyInt(), any(), any(), any()))
                 .willReturn(variantEntities);
-
-        given(variantEntityRepository.findByIdsAndComplexFilters(eq(Arrays.asList(VARIANT_ID)), any(), any(), any(),
-                any())).willReturn(variantEntities);
-
     }
 
     @Test
     public void rootTestGetVariantsByVariantId() throws URISyntaxException {
-        List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotations = variantWsHelper(VARIANT_ID);
-        assertTrue(variantWithSamplesAndAnnotations.size() > 0);
-        assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().size() == 0);
-        assertNull(variantWithSamplesAndAnnotations.get(0).getAnnotation());
-        assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size() > 0);
-
-        variantWithSamplesAndAnnotations = variantWsHelper(CHROMOSOME + ":71822:C:G");
+        List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotations = variantWsHelper(CHROMOSOME
+                + ":71822:C:G");
         assertTrue(variantWithSamplesAndAnnotations.size() > 0);
         assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().size() == 0);
         assertNull(variantWithSamplesAndAnnotations.get(0).getAnnotation());
@@ -109,21 +96,21 @@ public class VariantWSServerV2Test {
     }
 
     private List<VariantWithSamplesAndAnnotation> variantWsHelper(String testVariantId) {
-        String url = "/v2/variants/" + testVariantId + "/info?species=mmusculus_grcm38";
+        String url = "/v2/variants/" + testVariantId + "?species=mmusculus_grcm38";
         return WSTestHelpers.testRestTemplateHelper(url, restTemplate);
     }
 
     @Test
     public void rootTestGetVariantsByNonExistingVariantId() throws URISyntaxException {
-        assertEquals(0, variantWsHelper(NON_EXISTING_VARIANT_ID).size());
+        assertEquals(0, variantWsHelper(NON_EXISTING_CHROMOSOME+":60100:A:T").size());
     }
 
     @Test
     public void rootTestForError() throws URISyntaxException {
         String url;
-        url = "/v2/variants/13:32889669:C:T/info?species=";
+        url = "/v2/variants/13:32889669:C:T?species=";
         assertEquals("Please specify a species", testForErrorHelper(url));
-        url = "/v2/variants/13:32889669:C:T/info?species=mmusculus_grcm38&annot-vep-version=1";
+        url = "/v2/variants/13:32889669:C:T?species=mmusculus_grcm38&annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));
     }
@@ -134,17 +121,9 @@ public class VariantWSServerV2Test {
 
     @Test
     public void annotationEndPointTestExisting() throws URISyntaxException {
-        String url = "/v2/variants/" + VARIANT_ID + "/info/annotations?species=mmusculus_grcm38";
-        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
-                });
-        assertEquals(HttpStatus.OK, annotations.getStatusCode());
-        assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getChromosome().isEmpty());
-
-        url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/info/annotations?species=mmusculus_grcm38";
-        annotations = restTemplate.exchange(url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
+        String url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/annotations?species=mmusculus_grcm38";
+        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(url, HttpMethod.GET,
+                null, new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
                 });
         assertEquals(HttpStatus.OK, annotations.getStatusCode());
         assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getChromosome().isEmpty());
@@ -152,7 +131,7 @@ public class VariantWSServerV2Test {
 
     @Test
     public void annotationEndPointTestNonExisting() throws URISyntaxException {
-        String url = "/v2/variants/100:0:C:T/info/annotations?species=mmusculus_grcm38";
+        String url = "/v2/variants/100:0:C:T/annotations?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
@@ -164,9 +143,9 @@ public class VariantWSServerV2Test {
     @Test
     public void annotationEndpointTestForError() throws URISyntaxException {
         String url;
-        url = "/v2/variants/13:32889669:C:T/info/annotations?species=";
+        url = "/v2/variants/13:32889669:C:T/annotations?species=";
         assertEquals("Please specify a species", testForErrorHelper(url));
-        url = "/v2/variants/13:32889669:C:T/info/annotations?species=mmusculus_grcm38&" +
+        url = "/v2/variants/13:32889669:C:T/annotations?species=mmusculus_grcm38&" +
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));
@@ -174,18 +153,10 @@ public class VariantWSServerV2Test {
 
     @Test
     public void sourceEntriesEndPointTestExisting() throws URISyntaxException {
-        String url = "/v2/variants/" + VARIANT_ID + "/info/source-Entries?species=mmusculus_grcm38";
+        String url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/source-Entries?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> annotations = restTemplate.
-                exchange(url, HttpMethod.GET, null,
-                        new ParameterizedTypeReference<QueryResponse<QueryResult
-                                <VariantSourceEntryWithSampleNames>>>() {
-                        });
-        assertEquals(HttpStatus.OK, annotations.getStatusCode());
-        assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getFileId().isEmpty());
-
-        url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/info/source-Entries?species=mmusculus_grcm38";
-        annotations = restTemplate.exchange(url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>>() {
+                exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference
+                        <QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>>() {
                 });
         assertEquals(HttpStatus.OK, annotations.getStatusCode());
         assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getFileId().isEmpty());
@@ -193,7 +164,7 @@ public class VariantWSServerV2Test {
 
     @Test
     public void sourceEntriesEndPointTestNonExisting() throws URISyntaxException {
-        String url = "/v2/variants/100:0:C:T/info/source-Entries?species=mmusculus_grcm38";
+        String url = "/v2/variants/100:0:C:T/source-Entries?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(url, HttpMethod.GET,
                 null, new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
                 });
@@ -204,9 +175,9 @@ public class VariantWSServerV2Test {
     @Test
     public void sourceEntriesEndpointTestForError() throws URISyntaxException {
         String url;
-        url = "/v2/variants/13:32889669:C:T/info/source-Entries?species=";
+        url = "/v2/variants/13:32889669:C:T/source-Entries?species=";
         assertEquals("Please specify a species", testForErrorHelper(url));
-        url = "/v2/variants/13:32889669:C:T/info/source-Entries?species=mmusculus_grcm38&" +
+        url = "/v2/variants/13:32889669:C:T/source-Entries?species=mmusculus_grcm38&" +
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));
@@ -214,18 +185,10 @@ public class VariantWSServerV2Test {
 
     @Test
     public void sourceEntryEndPointTestExisting() throws URISyntaxException {
-        String url = "/v2/variants/" + VARIANT_ID + "/info/source-Entries/sid_fid?species=mmusculus_grcm38";
+        String url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/source-Entries/sid_fid?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> annotations = restTemplate.
-                exchange(url, HttpMethod.GET, null,
-                        new ParameterizedTypeReference<QueryResponse<QueryResult
-                                <VariantSourceEntryWithSampleNames>>>() {
-                        });
-        assertEquals(HttpStatus.OK, annotations.getStatusCode());
-        assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getFileId().isEmpty());
-
-        url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/info/source-Entries/sid_fid?species=mmusculus_grcm38";
-        annotations = restTemplate.exchange(url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>>() {
+                exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference
+                        <QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>>() {
                 });
         assertEquals(HttpStatus.OK, annotations.getStatusCode());
         assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getFileId().isEmpty());
@@ -233,7 +196,7 @@ public class VariantWSServerV2Test {
 
     @Test
     public void sourceEntryEndPointTestNonExisting() throws URISyntaxException {
-        String url = "/v2/variants/100:0:C:T/info/source-Entries/sid_fid?species=mmusculus_grcm38";
+        String url = "/v2/variants/100:0:C:T/source-Entries/sid_fid?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(url, HttpMethod.GET,
                 null, new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
                 });
@@ -244,9 +207,9 @@ public class VariantWSServerV2Test {
     @Test
     public void sourceEntryEndpointTestForError() throws URISyntaxException {
         String url;
-        url = "/v2/variants/13:32889669:C:T/info/source-Entries/PRJEB5829_ERZ019958?species=";
+        url = "/v2/variants/13:32889669:C:T/source-Entries/PRJEB5829_ERZ019958?species=";
         assertEquals("Please specify a species", testForErrorHelper(url));
-        url = "/v2/variants/13:32889669:C:T/info/source-Entries?species=mmusculus_grcm38&" +
+        url = "/v2/variants/13:32889669:C:T/source-Entries?species=mmusculus_grcm38&" +
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));
