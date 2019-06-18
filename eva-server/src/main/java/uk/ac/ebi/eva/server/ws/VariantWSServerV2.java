@@ -109,12 +109,6 @@ public class VariantWSServerV2 extends EvaWSServer {
         QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>> sourceEntries = getSourceEntries(variantId,
                 species, annotationVepVersion, annotationVepCacheVersion, response);
 
-        sourceEntries.getResponse().get(0).getResult().forEach(sourceEntry -> {
-            links.add(new Link(linkTo(methodOn(VariantWSServerV2.class).getSourceEntry(variantId,
-                    sourceEntry.getStudyId() + "_" + sourceEntry.getFileId(), species, annotationVepVersion,
-                    annotationVepCacheVersion, response)).toUri().toString(), "sourceEntry"));
-        });
-
         return new Resource<>(setQueryResponse(queryResult), links);
     }
 
