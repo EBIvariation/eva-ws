@@ -116,19 +116,20 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     }
 
     @GetMapping(value = "/query")
-    public BeaconAlleleResponse queryGet(@RequestParam("referenceName") String chromosome,
+    public BeaconAlleleResponse queryGet(@RequestParam(value = "referenceName", required = false) String chromosome,
                                          @RequestParam(value = "start", required = false) Long start,
                                          @RequestParam(value = "startMin", required = false) Long startMin,
                                          @RequestParam(value = "startMax", required = false) Long startMax,
                                          @RequestParam(value = "end", required = false) Long end,
                                          @RequestParam(value = "endMin", required = false) Long endMin,
                                          @RequestParam(value = "endMax", required = false) Long endMax,
-                                         @RequestParam(value = "referenceBases") String referenceBases,
+                                         @RequestParam(value = "referenceBases", required = false)
+                                                 String referenceBases,
                                          @RequestParam(value = "alternateBases", required = false)
                                                  String alternateBases,
                                          @RequestParam(value = "variantType", required = false)
                                                  String variantType,
-                                         @RequestParam(value = "assemblyId") String assemblyId,
+                                         @RequestParam(value = "assemblyId", required = false) String assemblyId,
                                          @RequestParam(value = "datasetIds", required = false)
                                                  List<String> studies,
                                          @RequestParam(value = "includeDatasetResponses", required = false)
@@ -193,6 +194,17 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     }
 
     private String checkErrorHelper(BeaconAlleleRequest request) {
+        if (request.getReferenceName() == null || request.getReferenceName().length() == 0) {
+            return "A reference name must be provided";
+        }
+
+        if (request.getAssemblyId() == null || request.getAssemblyId().length() == 0) {
+            return "An assemblyId must be provided";
+        }
+
+        if (request.getReferenceBases() == null || request.getReferenceBases().length() == 0) {
+            return "ReferenceBases must be provided";
+        }
 
         if (request.getStart() != null && request.getStart() < 0) {
             return "Please provide a positive start number";
