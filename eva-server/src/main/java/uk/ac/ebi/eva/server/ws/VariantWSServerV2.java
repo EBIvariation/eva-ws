@@ -256,7 +256,7 @@ public class VariantWSServerV2 extends EvaWSServer {
             fileId = split[1];
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setErrorQueryResponse("{sourceEntryId} should contain '_'");
+            return setErrorQueryResponse("The sourceEntryId should contain a '_'");
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));

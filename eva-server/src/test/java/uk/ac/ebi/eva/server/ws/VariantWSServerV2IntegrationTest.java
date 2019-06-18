@@ -78,8 +78,7 @@ public class VariantWSServerV2IntegrationTest {
     private VariantWithSamplesAndAnnotationsService service;
 
     @Before
-    public void setUp() throws Exception {
-    }
+    public void setUp() throws Exception { }
 
     @Test
     public void rootTestGetVariantsByVariantId() throws URISyntaxException {
