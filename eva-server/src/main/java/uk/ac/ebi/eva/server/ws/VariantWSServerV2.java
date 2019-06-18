@@ -56,13 +56,7 @@ public class VariantWSServerV2 extends EvaWSServer {
 
     @GetMapping(value = "/{variantId}")
     public Resource<QueryResponse> getCoreInfo(@PathVariable("variantId") String variantId,
-                                               @RequestParam(name = "studies", required = false) List<String> studies,
                                                @RequestParam(name = "species") String species,
-                                               @RequestParam(name = "annot-ct", required = false) List<String>
-                                                           consequenceType,
-                                               @RequestParam(name = "maf", required = false) String maf,
-                                               @RequestParam(name = "polyphen", required = false) String polyphenScore,
-                                               @RequestParam(name = "sift", required = false) String siftScore,
                                                @RequestParam(name = "annot-vep-version", required = false)
                                                        String annotationVepVersion,
                                                @RequestParam(name = "annot-vep-cache-version", required = false) String
@@ -102,29 +96,25 @@ public class VariantWSServerV2 extends EvaWSServer {
         QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(rootVariantEntities,
                 numTotalResults);
 
-        Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantId, studies,
-                species, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
-                response)).toUri().toString(), "annotation");
+        Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantId, species,
+                annotationVepVersion, annotationVepCacheVersion, response)).toUri().toString(), "annotation");
 
-        Link sourceEntriesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getSourceEntries(variantId, studies,
-                species, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
-                response)).toUri().toString(), "sourceEntries");
-
+        Link sourceEntriesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getSourceEntries(variantId, species,
+                annotationVepVersion, annotationVepCacheVersion, response)).toUri().toString(), "sourceEntries");
 
         List<Link> links = new ArrayList<>();
+        links.add(sourceEntriesLink);
+        links.add(annotationLink);
+
         QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>> sourceEntries = getSourceEntries(variantId,
-                studies, species, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
-                annotationVepCacheVersion, response);
+                species, annotationVepVersion, annotationVepCacheVersion, response);
 
         sourceEntries.getResponse().get(0).getResult().forEach(sourceEntry -> {
             links.add(new Link(linkTo(methodOn(VariantWSServerV2.class).getSourceEntry(variantId,
-                    sourceEntry.getStudyId() + "_" + sourceEntry.getFileId(), studies, species, consequenceType,
-                    maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, response)).toUri()
-                    .toString(), "sourceEntry"));
+                    sourceEntry.getStudyId() + "_" + sourceEntry.getFileId(), species, annotationVepVersion,
+                    annotationVepCacheVersion, response)).toUri().toString(), "sourceEntry"));
         });
 
-        links.add(sourceEntriesLink);
-        links.add(annotationLink);
         return new Resource<>(setQueryResponse(queryResult), links);
     }
 
@@ -168,12 +158,7 @@ public class VariantWSServerV2 extends EvaWSServer {
 
     @GetMapping(value = "/{variantId}/annotations")
     public QueryResponse getAnnotations(@PathVariable("variantId") String variantId,
-                                        @RequestParam(name = "studies", required = false) List<String> studies,
                                         @RequestParam(name = "species") String species,
-                                        @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
-                                        @RequestParam(name = "maf", required = false) String maf,
-                                        @RequestParam(name = "polyphen", required = false) String polyphenScore,
-                                        @RequestParam(name = "sift", required = false) String siftScore,
                                         @RequestParam(name = "annot-vep-version", required = false)
                                                 String annotationVepVersion,
                                         @RequestParam(name = "annot-vep-cache-version", required = false)
@@ -209,13 +194,7 @@ public class VariantWSServerV2 extends EvaWSServer {
 
     @GetMapping(value = "/{variantId}/source-Entries")
     public QueryResponse getSourceEntries(@PathVariable("variantId") String variantId,
-                                          @RequestParam(name = "studies", required = false) List<String> studies,
                                           @RequestParam(name = "species") String species,
-                                          @RequestParam(name = "annot-ct", required = false)
-                                                  List<String> consequenceType,
-                                          @RequestParam(name = "maf", required = false) String maf,
-                                          @RequestParam(name = "polyphen", required = false) String polyphenScore,
-                                          @RequestParam(name = "sift", required = false) String siftScore,
                                           @RequestParam(name = "annot-vep-version", required = false)
                                                   String annotationVepVersion,
                                           @RequestParam(name = "annot-vep-cache-version", required = false)
@@ -255,13 +234,7 @@ public class VariantWSServerV2 extends EvaWSServer {
     @GetMapping(value = "/{variantId}/source-Entries/{sourceEntryId}")
     public QueryResponse getSourceEntry(@PathVariable("variantId") String variantId,
                                         @PathVariable("sourceEntryId") String sourceEntryId,
-                                        @RequestParam(name = "studies", required = false) List<String> studies,
                                         @RequestParam(name = "species") String species,
-                                        @RequestParam(name = "annot-ct", required = false)
-                                                List<String> consequenceType,
-                                        @RequestParam(name = "maf", required = false) String maf,
-                                        @RequestParam(name = "polyphen", required = false) String polyphenScore,
-                                        @RequestParam(name = "sift", required = false) String siftScore,
                                         @RequestParam(name = "annot-vep-version", required = false)
                                                 String annotationVepVersion,
                                         @RequestParam(name = "annot-vep-cache-version", required = false)
