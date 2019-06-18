@@ -85,12 +85,12 @@ public class VariantWSServerV2 extends EvaWSServer {
 
         List<VariantWithSamplesAndAnnotation> rootVariantEntities = new ArrayList<>();
         variantEntities.forEach(variantEntity -> {
-            VariantWithSamplesAndAnnotation temp = new VariantWithSamplesAndAnnotation(variantEntity.getChromosome(),
+            VariantWithSamplesAndAnnotation variant = new VariantWithSamplesAndAnnotation(variantEntity.getChromosome(),
                     variantEntity.getStart(), variantEntity.getEnd(), variantEntity.getReference(),
                     variantEntity.getReference(), variantEntity.getMainId());
 
-            variantEntity.getIds().forEach(id -> temp.addId(id));
-            rootVariantEntities.add(temp);
+            variantEntity.getIds().forEach(id -> variant.addId(id));
+            rootVariantEntities.add(variant);
         });
 
         QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(rootVariantEntities,
