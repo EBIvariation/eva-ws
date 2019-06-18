@@ -22,7 +22,7 @@ package uk.ac.ebi.eva.server.ws.ga4gh;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +48,7 @@ import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
@@ -277,9 +278,19 @@ public class GA4GHBeaconWSServerV2 extends EvaWSServer {
     }
 
     @PostMapping(value = "/query")
-    private BeaconAlleleResponse queryPost(@Validated @RequestBody BeaconAlleleRequest requestBody,
-                                           HttpServletResponse response) throws IOException,
-            AnnotationMetadataNotFoundException {
+    public BeaconAlleleResponse queryPost(@Valid @RequestBody BeaconAlleleRequest requestBody,
+                                          BindingResult bindingResult, HttpServletResponse response) throws
+            IOException, AnnotationMetadataNotFoundException {
+        if (bindingResult.hasErrors()) {
+            List<String> errorMessages = new ArrayList<>();
+            bindingResult.getFieldErrors().forEach(fieldError -> {
+                fieldError.getDefaultMessage();
+                errorMessages.add(fieldError.getDefaultMessage());
+            });
+            return new BeaconAlleleResponse(BeaconImpl.ID, BeaconImpl.APIVERSION, null, requestBody,
+                    new BeaconError(HttpServletResponse.SC_BAD_REQUEST, errorMessages.toString()), null);
+        }
+
         return queryGet(requestBody.getReferenceName(),
                 requestBody.getStart(),
                 requestBody.getStartMin(),
