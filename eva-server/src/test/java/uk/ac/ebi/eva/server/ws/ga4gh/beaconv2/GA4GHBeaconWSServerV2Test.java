@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package uk.ac.ebi.eva.server.ws.ga4gh;
+package uk.ac.ebi.eva.server.ws.ga4gh.beaconv2;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,12 +26,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleResponse;
+import uk.ac.ebi.eva.commons.beacon.models.Chromosome;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
 import uk.ac.ebi.eva.commons.mongodb.entities.VariantMongo;
@@ -76,11 +79,11 @@ public class GA4GHBeaconWSServerV2Test {
     @Test
     public void testForExisting() throws Exception {
         BeaconAlleleRequest request = new BeaconAlleleRequest();
-        request.setReferenceName("X");
+        request.setReferenceName(Chromosome.X);
         request.setAssemblyId("GRCh37");
         request.setReferenceBases("G");
         request.setStart(100470026L);
-        request.setEnd(100470026l);
+        request.setEnd(100470026);
         request.setAlternateBases("A");
         request.setVariantType("SNV");
         request.setDatasetIds(Arrays.asList("PRJEB7218"));
@@ -95,11 +98,11 @@ public class GA4GHBeaconWSServerV2Test {
                 request.getVariantType(),
                 String.join(",", request.getDatasetIds()));
 
-        assertEquals(true, testBeaconHelper(url).getBody().getExists());
-        request.setStartMin(1L);
-        request.setStartMax(1L);
-        request.setEndMin(1L);
-        request.setEndMax(1L);
+        assertEquals(true, testBeaconHelper(url).getBody().get(0).isExists());
+        request.setStartMin(1);
+        request.setStartMax(1);
+        request.setEndMin(1);
+        request.setEndMax(1);
         url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&alternateBases=%s&" +
                         "start=%s&end=%s&startMin=%s&endMin=%s&startMax=%s&endMax=%s&variantType=%s" +
                         "&datasetIds=%s",
@@ -115,13 +118,13 @@ public class GA4GHBeaconWSServerV2Test {
                 request.getEndMax(),
                 request.getVariantType(),
                 String.join(",", request.getDatasetIds()));
-        assertEquals(true, testBeaconHelper(url).getBody().getExists());
+        assertEquals(true, testBeaconHelper(url).getBody().get(0).isExists());
     }
 
     @Test
     public void testForNonExisting() {
         BeaconAlleleRequest request = new BeaconAlleleRequest();
-        request.setReferenceName("Y");
+        request.setReferenceName(Chromosome.Y);
         request.setAssemblyId("GRCh37");
         request.setReferenceBases("G");
         request.setAlternateBases("A");
@@ -132,7 +135,7 @@ public class GA4GHBeaconWSServerV2Test {
                 request.getAssemblyId(),
                 request.getAlternateBases());
 
-        assertEquals(false, testBeaconHelper(url).getBody().getExists());
+        assertEquals(false, testBeaconHelper(url).getBody().get(0).isExists());
     }
 
     @Test
@@ -141,15 +144,15 @@ public class GA4GHBeaconWSServerV2Test {
                 "X",
                 "G",
                 "GRch37");
-        assertEquals(400, testBeaconHelper(url).getBody().getError().getErrorCode());
-        assertEquals("Either alternateBases or variantType is required",
-                testBeaconHelper(url).getBody().getError().getErrorMessage());
+        assertEquals(400, testBeaconHelper(url).getBody().get(0).getError().getErrorCode().intValue());
+        assertEquals("Either alternateBases or variantType is required", testBeaconHelper(url).getBody().
+                get(0).getError().getErrorMessage());
     }
 
-    private ResponseEntity<BeaconAlleleResponse> testBeaconHelper(String url) {
-
-        ResponseEntity<BeaconAlleleResponse> response = restTemplate.getForEntity(
-                url, BeaconAlleleResponse.class);
+    private ResponseEntity<List<BeaconAlleleResponse>> testBeaconHelper(String url) {
+        ResponseEntity<List<BeaconAlleleResponse>> response = restTemplate.exchange(url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<BeaconAlleleResponse>>() {
+                });
         return response;
     }
 }

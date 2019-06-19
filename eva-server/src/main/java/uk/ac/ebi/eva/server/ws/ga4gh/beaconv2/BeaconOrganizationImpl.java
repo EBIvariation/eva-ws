@@ -17,13 +17,15 @@
  * limitations under the License.
  */
 
-package uk.ac.ebi.eva.server.ws.ga4gh;
+package uk.ac.ebi.eva.server.ws.ga4gh.beaconv2;
 
 import uk.ac.ebi.eva.commons.beacon.models.BeaconOrganization;
+import uk.ac.ebi.eva.commons.beacon.models.KeyValuePair;
 
+import java.util.List;
 import java.util.Map;
 
-public class BeaconOrganizationImpl implements BeaconOrganization {
+public class BeaconOrganizationImpl extends BeaconOrganization {
 
     private static final String ID = "EMBL-EBI-EVA";
 
@@ -42,72 +44,13 @@ public class BeaconOrganizationImpl implements BeaconOrganization {
 
     private static final String LOGO_URL = "www.ebi.ac.uk/eva/img/eva_logo.png";
 
-    private static  Map<String, String> INFO = null;
-
-    private String id;
-
-    private String name;
-
-    private String description;
-
-    private String address;
-
-    private String welcomeUrl;
-
-    private String contactUrl;
-
-    private String logoUrl;
-
-    private Map<String, String> info;
-
     public BeaconOrganizationImpl() {
-        this.id = ID;
-        this.name = NAME;
-        this.description = DESCRIPTION;
-        this.address = ADDRESS;
-        this.welcomeUrl = WELCOME_URL;
-        this.contactUrl = CONTACT_URL;
-        this.logoUrl = LOGO_URL;
-        this.info = INFO;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public String getAddress() {
-        return address;
-    }
-
-    @Override
-    public String getWelcomeUrl() {
-        return welcomeUrl;
-    }
-
-    @Override
-    public String getContactUrl() {
-        return contactUrl;
-    }
-
-    @Override
-    public String getLogoUrl() {
-        return logoUrl;
-    }
-
-    @Override
-    public Map<String, String> getInfo() {
-        return info;
+        this.setId(ID);
+        this.setName(NAME);
+        this.setDescription(DESCRIPTION);
+        this.setAddress(ADDRESS);
+        this.setWelcomeUrl(WELCOME_URL);
+        this.setContactUrl(CONTACT_URL);
+        this.setLogoUrl(LOGO_URL);
     }
 }

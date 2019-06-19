@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package uk.ac.ebi.eva.server.ws.ga4gh;
+package uk.ac.ebi.eva.server.ws.ga4gh.beaconv2;
 
 import uk.ac.ebi.eva.commons.beacon.models.Beacon;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconDataset;
@@ -25,7 +25,7 @@ import uk.ac.ebi.eva.commons.beacon.models.BeaconOrganization;
 
 import java.util.List;
 
-public class BeaconImpl implements Beacon {
+public class BeaconImpl extends Beacon {
 
     static final String ID = "uk.ac.ebi.eva";
 
