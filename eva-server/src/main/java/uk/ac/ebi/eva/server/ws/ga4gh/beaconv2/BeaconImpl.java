@@ -45,137 +45,16 @@ public class BeaconImpl extends Beacon {
 
     static final String UPDATE_DATE_TIME = "date2";
 
-    private String id;
-
-    private String name;
-
-    private String apiVersion;
-
-    private BeaconOrganization organization;
-
-    private String description;
-
-    private String version;
-
-    private String welcomeUrl;
-
-    private String alternativeUrl;
-
-    private String createDateTime;
-
-    private String updateDateTime;
-
-    private List<BeaconDataset> datasets;
-
     public BeaconImpl() {
-        this.id = ID;
-        this.name = NAME;
-        this.apiVersion = APIVERSION;
-        this.organization = new BeaconOrganizationImpl();
-        this.description = DESCRIPTION;
-        this.version = VERSION;
-        this.welcomeUrl = WELCOME_URL;
-        this.alternativeUrl = ALTERNATIVE_URL;
-        this.createDateTime = CREATED_DATE_TIME;
-        this.updateDateTime = UPDATE_DATE_TIME;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    public void setApiVersion(String apiVersion) {
-        this.apiVersion = apiVersion;
-    }
-
-    @Override
-    public BeaconOrganization getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(BeaconOrganization organization) {
-        this.organization = organization;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    @Override
-    public String getWelcomeUrl() {
-        return welcomeUrl;
-    }
-
-    public void setWelcomeUrl(String welcomeUrl) {
-        this.welcomeUrl = welcomeUrl;
-    }
-
-    @Override
-    public String getAlternativeUrl() {
-        return alternativeUrl;
-    }
-
-    public void setAlternativeUrl(String alternativeUrl) {
-        this.alternativeUrl = alternativeUrl;
-    }
-
-    @Override
-    public String getCreateDateTime() {
-        return createDateTime;
-    }
-
-    public void setCreateDateTime(String createDateTime) {
-        this.createDateTime = createDateTime;
-    }
-
-    @Override
-    public String getUpdateDateTime() {
-        return updateDateTime;
-    }
-
-    public void setUpdateDateTime(String updateDateTime) {
-        this.updateDateTime = updateDateTime;
-    }
-
-    @Override
-    public List<BeaconDataset> getDatasets() {
-        return datasets;
-    }
-
-    public void setDatasets(List<BeaconDataset> datasets) {
-        this.datasets = datasets;
+        this.id(ID);
+        this.name(NAME);
+        this.apiVersion(APIVERSION);
+        this.organization(new BeaconOrganizationImpl());
+        this.description(DESCRIPTION);
+        this.version(VERSION);
+        this.welcomeUrl(WELCOME_URL);
+        this.alternativeUrl(ALTERNATIVE_URL);
+        this.createDateTime(CREATED_DATE_TIME);
+        this.updateDateTime(UPDATE_DATE_TIME);
     }
 }
