@@ -109,9 +109,9 @@ public class BeaconFunctionsV2 extends EvaWSServer {
         return response;
     }
 
-    public ResponseEntity<List<BeaconAlleleResponse>> queryGet(String chromosome, Long start, Integer startMin,
-                                                               Integer startMax, Integer end, Integer endMin,
-                                                               Integer endMax, String referenceBases,
+    public ResponseEntity<List<BeaconAlleleResponse>> queryGet(String chromosome, Long start, Long startMin,
+                                                               Long startMax, Long end, Long endMin,
+                                                               Long endMax, String referenceBases,
                                                                String alternateBases, String variantType,
                                                                String assemblyId, List<String> studies,
                                                                String includeDatasetResponses) {
@@ -131,11 +131,11 @@ public class BeaconFunctionsV2 extends EvaWSServer {
         BeaconAlleleRequest request = new BeaconAlleleRequest()
                 .referenceName(Chromosome.valueOf(chromosome))
                 .start(start)
-                .startMin(startMin)
-                .startMax(startMax)
-                .end(end)
-                .endMin(endMin)
-                .endMax(endMax)
+                .startMin(startMin==null?null:startMin.intValue())
+                .startMax(startMax==null?null:startMax.intValue())
+                .end(end==null?null:end.intValue())
+                .endMin(endMin==null?null:endMin.intValue())
+                .endMax(endMax==null?null:endMax.intValue())
                 .referenceBases(referenceBases)
                 .alternateBases(alternateBases)
                 .variantType(variantType)
@@ -162,13 +162,9 @@ public class BeaconFunctionsV2 extends EvaWSServer {
         VariantType type = variantType != null ? VariantType.valueOf(variantType) : null;
 
         Region startRange, endRange;
-        startRange = start != null ? new Region(chromosome, start, start) : new Region(chromosome,
-                startMin == null ? null : startMin.longValue(),
-                startMax == null ? null : startMax.longValue());
+        startRange = start != null ? new Region(chromosome, start, start) : new Region(chromosome, startMin, startMax);
 
-        endRange = end != null ? new Region(chromosome, end == null ? null : end.longValue(),
-                end == null ? null : end.longValue()) : new Region(chromosome, endMin == null ? null :
-                endMin.longValue(), endMax == null ? null : endMax.longValue());
+        endRange = end != null ? new Region(chromosome, end, end)  : new Region(chromosome, endMin, endMax);
 
         List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(referenceBases, alternateBases,
                 type, studies);
@@ -203,7 +199,7 @@ public class BeaconFunctionsV2 extends EvaWSServer {
         }
     }
 
-    private String checkErrorHelper(String chromosome, String referenceBases, Long start, Integer end,
+    private String checkErrorHelper(String chromosome, String referenceBases, Long start, Long end,
                                     String alternateBases, String variantType, String assemblyId,
                                     String includeDatasetResponses) {
         if (chromosome == null || chromosome.length() == 0) {
@@ -329,12 +325,12 @@ public class BeaconFunctionsV2 extends EvaWSServer {
     public ResponseEntity<List<BeaconAlleleResponse> > queryPost(BeaconAlleleRequest requestBody) {
 
         return queryGet(requestBody.getReferenceName().toString(),
-                requestBody.getStart(),
-                requestBody.getStartMin(),
-                requestBody.getStartMax(),
-                requestBody.getEnd(),
-                requestBody.getEndMin(),
-                requestBody.getEndMax(),
+                requestBody.getStart()==null?null:requestBody.getStart().longValue(),
+                requestBody.getStartMin()==null?null:requestBody.getStartMin().longValue(),
+                requestBody.getStartMax()==null?null:requestBody.getStartMax().longValue(),
+                requestBody.getEnd()==null?null:requestBody.getEnd().longValue(),
+                requestBody.getEndMin()==null?null:requestBody.getEndMin().longValue(),
+                requestBody.getEndMax()==null?null:requestBody.getEndMax().longValue(),
                 requestBody.getReferenceBases(),
                 requestBody.getAlternateBases(),
                 requestBody.getVariantType(),
