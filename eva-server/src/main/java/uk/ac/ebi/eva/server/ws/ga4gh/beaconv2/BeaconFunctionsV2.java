@@ -187,7 +187,7 @@ public class BeaconFunctionsV2 extends EvaWSServer {
                     .apiVersion(BeaconImpl.APIVERSION)
                     .exists(true)
                     .alleleRequest(request)
-                    .datasetAlleleResponses(datasetAlleleResponses)), HttpStatus.BAD_REQUEST);
+                    .datasetAlleleResponses(datasetAlleleResponses)), HttpStatus.OK);
 
         } else {
             return new ResponseEntity<List<BeaconAlleleResponse>>(Arrays.asList(new BeaconAlleleResponse()
@@ -195,7 +195,7 @@ public class BeaconFunctionsV2 extends EvaWSServer {
                     .apiVersion(BeaconImpl.APIVERSION)
                     .exists(false)
                     .alleleRequest(request)
-                    .datasetAlleleResponses(datasetAlleleResponses)), HttpStatus.BAD_REQUEST);
+                    .datasetAlleleResponses(datasetAlleleResponses)), HttpStatus.OK);
         }
     }
 
