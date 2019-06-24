@@ -24,13 +24,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import uk.ac.ebi.eva.commons.beacon.models.Beacon;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconError;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleResponse;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconDatasetAlleleResponse;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconDataset;
-import uk.ac.ebi.eva.commons.beacon.models.BeaconOrganization;
 import uk.ac.ebi.eva.commons.beacon.models.Chromosome;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantSource;
@@ -75,24 +73,6 @@ public class BeaconServiceV2 {
 
     private static final String ORGANIZATION_LOGO_URL = "www.ebi.ac.uk/eva/img/eva_logo.png";
 
-    private static final String BEACON_ID = "uk.ac.ebi.eva";
-
-    private static final String BEACON_NAME = "European Variation Archive Beacon";
-
-    private static final String BEACON_APIVERSION = "v1.0";
-
-    private static final String BEACON_DESCRIPTION = "descriptionString";
-
-    private static final String BEACON_VERSION = "v2";
-
-    private static final String BEACON_WELCOME_URL = "welcomeUrlString";
-
-    private static final String BEACON_ALTERNATIVE_URL = "alternativeUrlString";
-
-    private static final String BEACON_CREATED_DATE_TIME = "date1";
-
-    private static final String BEACON_UPDATE_DATE_TIME = "date2";
-
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
@@ -102,35 +82,10 @@ public class BeaconServiceV2 {
     public BeaconServiceV2() {
     }
 
-    public Beacon getBeacon() {
-        Beacon beacon = new Beacon();
-        setBeaconInfoFields(beacon);
-        return beacon;
-    }
-
-    private void setBeaconInfoFields(Beacon beacon) {
-        beacon.id(BEACON_ID);
-        beacon.name(BEACON_NAME);
-        beacon.apiVersion(BEACON_APIVERSION);
-        beacon.organization(getBeaconOrganization());
-        beacon.description(BEACON_DESCRIPTION);
-        beacon.version(BEACON_VERSION);
-        beacon.welcomeUrl(BEACON_WELCOME_URL);
-        beacon.alternativeUrl(BEACON_ALTERNATIVE_URL);
-        beacon.createDateTime(BEACON_CREATED_DATE_TIME);
-        beacon.updateDateTime(BEACON_UPDATE_DATE_TIME);
+    public BeaconImpl getBeacon() {
+        BeaconImpl beacon = new BeaconImpl();
         beacon.setDatasets(getAllBeaconDatasets());
-    }
-
-    private BeaconOrganization getBeaconOrganization() {
-        return new BeaconOrganization()
-                .id(ORGANIZATION_ID)
-                .name(ORGANIZATION_NAME)
-                .description(ORGANIZATION_DESCRIPTION)
-                .address(ORGANIZATION_ADDRESS)
-                .welcomeUrl(ORGANIZATION_WELCOME_URL)
-                .contactUrl(ORGANIZATION_CONTACT_URL)
-                .logoUrl(ORGANIZATION_LOGO_URL);
+        return beacon;
     }
 
     private List<BeaconDataset> getAllBeaconDatasets() {
@@ -222,10 +177,12 @@ public class BeaconServiceV2 {
                                     String alternateBases, String variantType, String assemblyId,
                                     String includeDatasetResponses) {
         if (chromosome == null || chromosome.length() == 0) {
-            return "A reference name must be provided";
+            String errorMessage = "Please provide a valid referenceName type from ";
+            return errorMessage + String.join(", ", Arrays.asList(Chromosome.values()).toString());
         } else {
             try {
-                Chromosome.valueOf(chromosome);
+                System.out.println(chromosome);
+                Chromosome.fromValue(chromosome);
             } catch (Exception e) {
                 String errorMessage = "Please provide a valid referenceName type from ";
                 return errorMessage + String.join(", ", Arrays.asList(Chromosome.values()).toString());
@@ -280,14 +237,14 @@ public class BeaconServiceV2 {
                                                                               String errorMessage) {
         if (errorMessage != null) {
             return new ResponseEntity<>(Arrays.asList(new BeaconAlleleResponse()
-                    .beaconId(BEACON_ID)
-                    .apiVersion(BEACON_APIVERSION)
+                    .beaconId(BeaconImpl.ID)
+                    .apiVersion(BeaconImpl.APIVERSION)
                     .error(new BeaconError().errorCode(HttpServletResponse.SC_BAD_REQUEST)
                             .errorMessage(errorMessage))), HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(Arrays.asList(new BeaconAlleleResponse()
-                    .beaconId(BEACON_ID)
-                    .apiVersion(BEACON_APIVERSION)
+                    .beaconId(BeaconImpl.ID)
+                    .apiVersion(BeaconImpl.APIVERSION)
                     .exists(exists)
                     .alleleRequest(request)
                     .datasetAlleleResponses(datasetAlleleResponses)), HttpStatus.OK);
@@ -299,7 +256,7 @@ public class BeaconServiceV2 {
                                                        String alternateBases, String variantType, String assemblyId,
                                                        List<String> studies, String includeDatasetResponses) {
         return new BeaconAlleleRequest()
-                .referenceName(Chromosome.valueOf(chromosome))
+                .referenceName(Chromosome.fromValue(chromosome))
                 .start(start)
                 .startMin(startMin == null ? null : startMin.intValue())
                 .startMax(startMax == null ? null : startMax.intValue())
