@@ -32,6 +32,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleResponse;
 import uk.ac.ebi.eva.commons.beacon.models.Chromosome;
@@ -87,37 +88,40 @@ public class GA4GHBeaconWSServerV2Test {
         request.setAlternateBases("A");
         request.setVariantType("SNV");
         request.setDatasetIds(Arrays.asList("PRJEB7218"));
-        String url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&alternateBases" +
-                        "=%s&start=%s&end=%s&variantType=%s&datasetIds=%s",
-                request.getReferenceName(),
-                request.getReferenceBases(),
-                request.getAssemblyId(),
-                request.getAlternateBases(),
-                request.getStart(),
-                request.getEnd(),
-                request.getVariantType(),
-                String.join(",", request.getDatasetIds()));
+
+        String url = UriComponentsBuilder.fromUriString("")
+                .path("/v2/beacon/query")
+                .queryParam("referenceName", request.getReferenceName())
+                .queryParam("referenceBases", request.getReferenceBases())
+                .queryParam("assemblyId", request.getAssemblyId())
+                .queryParam("alternateBases", request.getAlternateBases())
+                .queryParam("start", request.getStart())
+                .queryParam("end", request.getEnd())
+                .queryParam("variantType", request.getVariantType())
+                .queryParam("datasetIds", String.join(",", request.getDatasetIds()))
+                .build().toString();
 
         assertEquals(true, testBeaconHelper(url).getBody().get(0).isExists());
         request.setStartMin(1);
         request.setStartMax(1);
         request.setEndMin(1);
         request.setEndMax(1);
-        url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&alternateBases=%s&" +
-                        "start=%s&end=%s&startMin=%s&endMin=%s&startMax=%s&endMax=%s&variantType=%s" +
-                        "&datasetIds=%s",
-                request.getReferenceName(),
-                request.getReferenceBases(),
-                request.getAssemblyId(),
-                request.getAlternateBases(),
-                request.getStart(),
-                request.getEnd(),
-                request.getStartMin(),
-                request.getEndMin(),
-                request.getStartMax(),
-                request.getEndMax(),
-                request.getVariantType(),
-                String.join(",", request.getDatasetIds()));
+
+        url = UriComponentsBuilder.fromUriString("")
+                .path("/v2/beacon/query")
+                .queryParam("referenceName", request.getReferenceName())
+                .queryParam("referenceBases", request.getReferenceBases())
+                .queryParam("assemblyId", request.getAssemblyId())
+                .queryParam("alternateBases", request.getAlternateBases())
+                .queryParam("start", request.getStart())
+                .queryParam("end", request.getEnd())
+                .queryParam("startMin",request.getStartMin())
+                .queryParam("startMax",request.getStartMax())
+                .queryParam("endMin",request.getEndMin())
+                .queryParam("endMax",request.getEndMax())
+                .queryParam("variantType", request.getVariantType())
+                .queryParam("datasetIds", String.join(",", request.getDatasetIds()))
+                .build().toString();
         assertEquals(true, testBeaconHelper(url).getBody().get(0).isExists());
     }
 
@@ -128,22 +132,25 @@ public class GA4GHBeaconWSServerV2Test {
         request.setAssemblyId("GRCh37");
         request.setReferenceBases("G");
         request.setAlternateBases("A");
-        String url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s&" +
-                        "alternateBases=%s",
-                request.getReferenceName(),
-                request.getReferenceBases(),
-                request.getAssemblyId(),
-                request.getAlternateBases());
 
+        String url = UriComponentsBuilder.fromUriString("")
+                .path("/v2/beacon/query")
+                .queryParam("referenceName", request.getReferenceName())
+                .queryParam("referenceBases", request.getReferenceBases())
+                .queryParam("assemblyId", request.getAssemblyId())
+                .queryParam("alternateBases", request.getAlternateBases())
+                .build().toString();
         assertEquals(false, testBeaconHelper(url).getBody().get(0).isExists());
     }
 
     @Test
     public void testForError() {
-        String url = String.format("/v2/beacon/query?referenceName=%s&referenceBases=%s&assemblyId=%s",
-                "X",
-                "G",
-                "GRch37");
+        String url = UriComponentsBuilder.fromUriString("")
+                .path("/v2/beacon/query")
+                .queryParam("referenceName", "X")
+                .queryParam("referenceBases", "G")
+                .queryParam("assemblyId", "GRch37")
+                .build().toString();
         assertEquals(400, testBeaconHelper(url).getBody().get(0).getError().getErrorCode().intValue());
         assertEquals("Either alternateBases or variantType is required", testBeaconHelper(url).getBody().
                 get(0).getError().getErrorMessage());

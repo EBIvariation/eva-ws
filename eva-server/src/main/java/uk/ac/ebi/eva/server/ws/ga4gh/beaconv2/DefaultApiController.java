@@ -54,7 +54,7 @@ public class DefaultApiController implements DefaultApi {
     private final HttpServletRequest request;
 
     @Autowired
-    private BeaconFunctionsV2 beaconFunctionsV2;
+    private BeaconServiceV2 beaconServiceV2;
 
     @org.springframework.beans.factory.annotation.Autowired
     public DefaultApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -63,7 +63,7 @@ public class DefaultApiController implements DefaultApi {
     }
 
     public ResponseEntity<Beacon> getBeacon() {
-        Beacon beacon = beaconFunctionsV2.rootGet();
+        Beacon beacon = beaconServiceV2.rootGet();
         return new ResponseEntity<Beacon>(beacon, HttpStatus.OK);
     }
 

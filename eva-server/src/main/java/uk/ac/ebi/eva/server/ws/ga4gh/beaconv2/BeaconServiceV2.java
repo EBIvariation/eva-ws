@@ -23,8 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.stereotype.Service;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconError;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleResponse;
@@ -41,11 +40,9 @@ import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
-import uk.ac.ebi.eva.server.ws.EvaWSServer;
+import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.ArrayList;
@@ -54,8 +51,10 @@ import java.util.HashSet;
 import java.util.Arrays;
 import java.util.Collections;
 
-@Component
-public class BeaconFunctionsV2 extends EvaWSServer {
+import static uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest.IncludeDatasetResponsesEnum;
+
+@Service
+public class BeaconServiceV2 {
 
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
@@ -63,7 +62,10 @@ public class BeaconFunctionsV2 extends EvaWSServer {
     @Autowired
     private VariantSourceService variantSourceService;
 
-    public BeaconFunctionsV2() {
+    @Autowired
+    private QueryUtils queryUtils;
+
+    public BeaconServiceV2() {
     }
 
     public BeaconImpl rootGet() {
@@ -115,36 +117,17 @@ public class BeaconFunctionsV2 extends EvaWSServer {
                                                                String alternateBases, String variantType,
                                                                String assemblyId, List<String> studies,
                                                                String includeDatasetResponses) {
-        initializeQuery();
+        queryUtils.initializeQuery();
 
         String errorMessage = checkErrorHelper(chromosome, referenceBases, start, end, alternateBases, variantType,
                 assemblyId, includeDatasetResponses);
 
         if (errorMessage != null) {
-            return new ResponseEntity<List<BeaconAlleleResponse>>(Arrays.asList(new BeaconAlleleResponse()
-                    .beaconId(BeaconImpl.ID)
-                    .apiVersion(BeaconImpl.APIVERSION)
-                    .error(new BeaconError().errorCode(HttpServletResponse.SC_BAD_REQUEST)
-                            .errorMessage(errorMessage))), HttpStatus.BAD_REQUEST);
+            return getQueryResponseEntity(null, null, null, errorMessage);
         }
 
-        BeaconAlleleRequest request = new BeaconAlleleRequest()
-                .referenceName(Chromosome.valueOf(chromosome))
-                .start(start)
-                .startMin(startMin == null ? null : startMin.intValue())
-                .startMax(startMax == null ? null : startMax.intValue())
-                .end(end == null ? null : end.intValue())
-                .endMin(endMin == null ? null : endMin.intValue())
-                .endMax(endMax == null ? null : endMax.intValue())
-                .referenceBases(referenceBases)
-                .alternateBases(alternateBases)
-                .variantType(variantType)
-                .assemblyId(assemblyId)
-                .datasetIds(studies);
-        if (includeDatasetResponses != null) {
-            request = request.includeDatasetResponses(BeaconAlleleRequest.IncludeDatasetResponsesEnum
-                    .valueOf(includeDatasetResponses));
-        }
+        BeaconAlleleRequest request = getBeaconAlleleRequest(chromosome, start, startMin, startMax, end, endMin, endMax,
+                referenceBases, alternateBases, variantType, assemblyId, studies, includeDatasetResponses);
 
         if (assemblyId.equalsIgnoreCase("grch37")) {
             MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
@@ -152,18 +135,14 @@ public class BeaconFunctionsV2 extends EvaWSServer {
             MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
 
         } else {
-            return new ResponseEntity<List<BeaconAlleleResponse>>(Arrays.asList(new BeaconAlleleResponse()
-                    .beaconId(BeaconImpl.ID)
-                    .apiVersion(BeaconImpl.APIVERSION)
-                    .error(new BeaconError().errorCode(HttpServletResponse.SC_BAD_REQUEST).errorMessage
-                            ("Please enter a valid assemblyId from grch37,grch38"))), HttpStatus.BAD_REQUEST);
+            errorMessage = "Please enter a valid assemblyId from grch37,grch38";
+            return getQueryResponseEntity(null, request, null, errorMessage);
         }
 
         VariantType type = variantType != null ? VariantType.valueOf(variantType) : null;
 
         Region startRange, endRange;
         startRange = start != null ? new Region(chromosome, start, start) : new Region(chromosome, startMin, startMax);
-
         endRange = end != null ? new Region(chromosome, end, end) : new Region(chromosome, endMin, endMax);
 
         List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(referenceBases, alternateBases,
@@ -171,6 +150,7 @@ public class BeaconFunctionsV2 extends EvaWSServer {
 
         Integer page_size = service.countByRegionAndOtherBeaconFilters(startRange, endRange, filters).intValue();
         List<VariantMongo> variantMongoList;
+
         if (page_size > 0) {
             variantMongoList = service.findByRegionAndOtherBeaconFilters(startRange, endRange, filters,
                     new PageRequest(0, page_size));
@@ -178,24 +158,12 @@ public class BeaconFunctionsV2 extends EvaWSServer {
             variantMongoList = Collections.emptyList();
         }
 
-        List<BeaconDatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponsesHelper(variantMongoList,
-                request);
-
         if (variantMongoList.size() > 0) {
-            return new ResponseEntity<List<BeaconAlleleResponse>>(Arrays.asList(new BeaconAlleleResponse()
-                    .beaconId(BeaconImpl.ID)
-                    .apiVersion(BeaconImpl.APIVERSION)
-                    .exists(true)
-                    .alleleRequest(request)
-                    .datasetAlleleResponses(datasetAlleleResponses)), HttpStatus.OK);
-
+            return getQueryResponseEntity(true, request, getDatasetAlleleResponsesHelper(variantMongoList, request),
+                    null);
         } else {
-            return new ResponseEntity<List<BeaconAlleleResponse>>(Arrays.asList(new BeaconAlleleResponse()
-                    .beaconId(BeaconImpl.ID)
-                    .apiVersion(BeaconImpl.APIVERSION)
-                    .exists(false)
-                    .alleleRequest(request)
-                    .datasetAlleleResponses(datasetAlleleResponses)), HttpStatus.OK);
+            return getQueryResponseEntity(false, request, getDatasetAlleleResponsesHelper(variantMongoList, request),
+                    null);
         }
     }
 
@@ -206,7 +174,7 @@ public class BeaconFunctionsV2 extends EvaWSServer {
             return "A reference name must be provided";
         } else {
             try {
-                Chromosome chromosome1 = Chromosome.valueOf(chromosome);
+                Chromosome.valueOf(chromosome);
             } catch (Exception e) {
                 String errorMessage = "Please provide a valid referenceName type from ";
                 return errorMessage + String.join(", ", Arrays.asList(Chromosome.values()).toString());
@@ -234,7 +202,7 @@ public class BeaconFunctionsV2 extends EvaWSServer {
 
         if (variantType != null) {
             try {
-                VariantType variantType1 = VariantType.valueOf(variantType);
+                VariantType.valueOf(variantType);
             } catch (Exception e) {
                 String errorMessage = "Please provide a valid variant type from ";
                 return errorMessage + String.join(", ", Arrays.asList(VariantType.values()).toString());
@@ -252,6 +220,48 @@ public class BeaconFunctionsV2 extends EvaWSServer {
             }
         }
         return null;
+    }
+
+    private ResponseEntity<List<BeaconAlleleResponse>> getQueryResponseEntity(Boolean exists,
+                                                                              BeaconAlleleRequest request,
+                                                                              List<BeaconDatasetAlleleResponse>
+                                                                                      datasetAlleleResponses,
+                                                                              String errorMessage) {
+        if (errorMessage != null) {
+            return new ResponseEntity<>(Arrays.asList(new BeaconAlleleResponse()
+                    .beaconId(BeaconImpl.ID)
+                    .apiVersion(BeaconImpl.APIVERSION)
+                    .error(new BeaconError().errorCode(HttpServletResponse.SC_BAD_REQUEST)
+                            .errorMessage(errorMessage))), HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(Arrays.asList(new BeaconAlleleResponse()
+                    .beaconId(BeaconImpl.ID)
+                    .apiVersion(BeaconImpl.APIVERSION)
+                    .exists(exists)
+                    .alleleRequest(request)
+                    .datasetAlleleResponses(datasetAlleleResponses)), HttpStatus.OK);
+        }
+    }
+
+    private BeaconAlleleRequest getBeaconAlleleRequest(String chromosome, Long start, Long startMin, Long startMax,
+                                                       Long end, Long endMin, Long endMax, String referenceBases,
+                                                       String alternateBases, String variantType, String assemblyId,
+                                                       List<String> studies, String includeDatasetResponses) {
+        return new BeaconAlleleRequest()
+                .referenceName(Chromosome.valueOf(chromosome))
+                .start(start)
+                .startMin(startMin == null ? null : startMin.intValue())
+                .startMax(startMax == null ? null : startMax.intValue())
+                .end(end == null ? null : end.intValue())
+                .endMin(endMin == null ? null : endMin.intValue())
+                .endMax(endMax == null ? null : endMax.intValue())
+                .referenceBases(referenceBases)
+                .alternateBases(alternateBases)
+                .variantType(variantType)
+                .assemblyId(assemblyId)
+                .datasetIds(studies)
+                .includeDatasetResponses(includeDatasetResponses == null ? null : IncludeDatasetResponsesEnum
+                        .valueOf(includeDatasetResponses));
     }
 
     private List<BeaconDatasetAlleleResponse> getDatasetAlleleResponsesHelper(List<VariantMongo> variantMongoList,
@@ -321,7 +331,6 @@ public class BeaconFunctionsV2 extends EvaWSServer {
                 .externalUrl("enternalUrl");
     }
 
-    @PostMapping(value = "/query")
     public ResponseEntity<List<BeaconAlleleResponse>> queryPost(BeaconAlleleRequest requestBody) {
 
         return queryGet(requestBody.getReferenceName().toString(),
