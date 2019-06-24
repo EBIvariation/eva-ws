@@ -181,7 +181,6 @@ public class BeaconServiceV2 {
             return errorMessage + String.join(", ", Arrays.asList(Chromosome.values()).toString());
         } else {
             try {
-                System.out.println(chromosome);
                 Chromosome.fromValue(chromosome);
             } catch (Exception e) {
                 String errorMessage = "Please provide a valid referenceName type from ";
