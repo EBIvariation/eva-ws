@@ -42,7 +42,6 @@ import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
-import uk.ac.ebi.eva.lib.utils.QueryUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
@@ -100,9 +99,6 @@ public class BeaconServiceV2 {
 
     @Autowired
     private VariantSourceService variantSourceService;
-
-    @Autowired
-    private QueryUtils queryUtils;
 
     public BeaconServiceV2() {
     }
@@ -175,8 +171,6 @@ public class BeaconServiceV2 {
                                                                String alternateBases, String variantType,
                                                                String assemblyId, List<String> studies,
                                                                String includeDatasetResponses) {
-        queryUtils.initializeQuery();
-
         String errorMessage = checkErrorHelper(chromosome, referenceBases, start, end, alternateBases, variantType,
                 assemblyId, includeDatasetResponses);
 
