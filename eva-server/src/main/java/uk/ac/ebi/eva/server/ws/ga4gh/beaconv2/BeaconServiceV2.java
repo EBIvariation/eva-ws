@@ -57,7 +57,6 @@ import static uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest.IncludeDat
 @Service
 public class BeaconServiceV2 {
 
-
     private static final String ORGANIZATION_ID = "EMBL-EBI-EVA";
 
     private static final String ORGANIZATION_NAME = "European Variation Archive (EMBL-EBI)";
