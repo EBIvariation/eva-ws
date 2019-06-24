@@ -24,11 +24,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import uk.ac.ebi.eva.commons.beacon.models.Beacon;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconError;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleResponse;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconDatasetAlleleResponse;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconDataset;
+import uk.ac.ebi.eva.commons.beacon.models.BeaconOrganization;
 import uk.ac.ebi.eva.commons.beacon.models.Chromosome;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantSource;
@@ -56,6 +58,43 @@ import static uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest.IncludeDat
 @Service
 public class BeaconServiceV2 {
 
+
+    private static final String ORGANIZATION_ID = "EMBL-EBI-EVA";
+
+    private static final String ORGANIZATION_NAME = "European Variation Archive (EMBL-EBI)";
+
+    private static final String ORGANIZATION_DESCRIPTION = "EMBL-EBI makes the world's public biological data freely" +
+            " available to the scientific community via a range of services and tools, performs basic research" +
+            " and provides professional training in bioinformatics. The European Variation Archive is an " +
+            "open-access" + " database of all types of genetic variation data from all species.";
+
+    private static final String ORGANIZATION_ADDRESS = "Wellcome Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, " +
+            "United Kingdom";
+
+    private static final String ORGANIZATION_WELCOME_URL = "www.ebi.ac.uk/eva";
+
+    private static final String ORGANIZATION_CONTACT_URL = "contactUrlString";
+
+    private static final String ORGANIZATION_LOGO_URL = "www.ebi.ac.uk/eva/img/eva_logo.png";
+
+    private static final String BEACON_ID = "uk.ac.ebi.eva";
+
+    private static final String BEACON_NAME = "European Variation Archive Beacon";
+
+    private static final String BEACON_APIVERSION = "v1.0";
+
+    private static final String BEACON_DESCRIPTION = "descriptionString";
+
+    private static final String BEACON_VERSION = "v2";
+
+    private static final String BEACON_WELCOME_URL = "welcomeUrlString";
+
+    private static final String BEACON_ALTERNATIVE_URL = "alternativeUrlString";
+
+    private static final String BEACON_CREATED_DATE_TIME = "date1";
+
+    private static final String BEACON_UPDATE_DATE_TIME = "date2";
+
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
@@ -68,47 +107,66 @@ public class BeaconServiceV2 {
     public BeaconServiceV2() {
     }
 
-    public BeaconImpl rootGet() {
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
-        BeaconImpl response = new BeaconImpl();
+    public Beacon getBeacon() {
+        Beacon beacon = new Beacon();
+        setBeaconInfoFields(beacon);
+        return beacon;
+    }
+
+    private void setBeaconInfoFields(Beacon beacon) {
+        beacon.id(BEACON_ID);
+        beacon.name(BEACON_NAME);
+        beacon.apiVersion(BEACON_APIVERSION);
+        beacon.organization(getBeaconOrganization());
+        beacon.description(BEACON_DESCRIPTION);
+        beacon.version(BEACON_VERSION);
+        beacon.welcomeUrl(BEACON_WELCOME_URL);
+        beacon.alternativeUrl(BEACON_ALTERNATIVE_URL);
+        beacon.createDateTime(BEACON_CREATED_DATE_TIME);
+        beacon.updateDateTime(BEACON_UPDATE_DATE_TIME);
+        beacon.setDatasets(getAllBeaconDatasets());
+    }
+
+    private BeaconOrganization getBeaconOrganization() {
+        return new BeaconOrganization()
+                .id(ORGANIZATION_ID)
+                .name(ORGANIZATION_NAME)
+                .description(ORGANIZATION_DESCRIPTION)
+                .address(ORGANIZATION_ADDRESS)
+                .welcomeUrl(ORGANIZATION_WELCOME_URL)
+                .contactUrl(ORGANIZATION_CONTACT_URL)
+                .logoUrl(ORGANIZATION_LOGO_URL);
+    }
+
+    private List<BeaconDataset> getAllBeaconDatasets() {
         List<BeaconDataset> beaconDatasets = new ArrayList<>();
-        List<VariantSource> variantSourceMongos = variantSourceService.findAllVariantSourcesForBeacon();
-        variantSourceMongos.forEach(variantSourceMongo -> {
-            beaconDatasets.add(new BeaconDataset()
-                    .id(variantSourceMongo.getStudyId())
-                    .name(variantSourceMongo.getStudyName())
-                    .description("randomDescription")
-                    .assemblyId("GRCh37")
-                    .createDateTime(variantSourceMongo.getDate() == null ? null : variantSourceMongo.getDate()
-                            .toString())
-                    .updateDateTime("updatedatetime")
-                    .sampleCount(variantSourceMongo.getStats() == null ? null : (long) variantSourceMongo.getStats()
-                            .getSamplesCount())
-                    .variantCount(variantSourceMongo.getStats() == null ? null :
-                            (long) variantSourceMongo.getStats().getVariantsCount())
-                    .externalUrl("externalurl"));
-        });
+        beaconDatasets.addAll(getBeaconDatasetsPerDatabase("hsapiens_grch37", "randomDescription", "GRCh37",
+                "updatedatetime", "externalurl"));
+        beaconDatasets.addAll(getBeaconDatasetsPerDatabase("hsapiens_grch38", "randomDescription", "GRCh38",
+                "updatedatetime", "externalurl"));
+        return beaconDatasets;
+    }
 
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
-        variantSourceMongos = variantSourceService.findAllVariantSourcesForBeacon();
-        variantSourceMongos.forEach(variantSourceMongo -> {
-            beaconDatasets.add(new BeaconDataset()
-                    .id(variantSourceMongo.getStudyId())
-                    .name(variantSourceMongo.getStudyName())
-                    .description("randomDescription")
-                    .assemblyId("GRCh38")
-                    .createDateTime(variantSourceMongo.getDate() == null ? null : variantSourceMongo.getDate()
-                            .toString())
-                    .updateDateTime("updatedatetime")
-                    .sampleCount(variantSourceMongo.getStats() == null ? null : (long) variantSourceMongo.getStats()
-                            .getSamplesCount())
-                    .variantCount(variantSourceMongo.getStats() == null ? null :
-                            (long) variantSourceMongo.getStats().getVariantsCount())
-                    .externalUrl("externalurl"));
-        });
-
-        response.setDatasets(beaconDatasets);
-        return response;
+    private List<BeaconDataset> getBeaconDatasetsPerDatabase(String db, String description, String assemblyId,
+                                                             String updateDateTime, String externalUrl) {
+        List<BeaconDataset> beaconDatasets = new ArrayList<>();
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(db));
+        List<VariantSource> variantSources = variantSourceService.findAllVariantSourcesForBeacon();
+        variantSources.forEach(
+                variantSource -> beaconDatasets.add(
+                        new BeaconDataset().id(variantSource.getStudyId())
+                                .name(variantSource.getStudyName())
+                                .description(description)
+                                .assemblyId(assemblyId)
+                                .createDateTime(variantSource.getDate() == null ? null :
+                                        variantSource.getDate().toString())
+                                .updateDateTime(updateDateTime)
+                                .sampleCount(variantSource.getStats() == null ? null :
+                                        (long) variantSource.getStats().getSamplesCount())
+                                .variantCount(variantSource.getStats() == null ? null :
+                                        (long) variantSource.getStats().getVariantsCount())
+                                .externalUrl(externalUrl)));
+        return beaconDatasets;
     }
 
     public ResponseEntity<List<BeaconAlleleResponse>> queryGet(String chromosome, Long start, Long startMin,
@@ -229,14 +287,14 @@ public class BeaconServiceV2 {
                                                                               String errorMessage) {
         if (errorMessage != null) {
             return new ResponseEntity<>(Arrays.asList(new BeaconAlleleResponse()
-                    .beaconId(BeaconImpl.ID)
-                    .apiVersion(BeaconImpl.APIVERSION)
+                    .beaconId(BEACON_ID)
+                    .apiVersion(BEACON_APIVERSION)
                     .error(new BeaconError().errorCode(HttpServletResponse.SC_BAD_REQUEST)
                             .errorMessage(errorMessage))), HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>(Arrays.asList(new BeaconAlleleResponse()
-                    .beaconId(BeaconImpl.ID)
-                    .apiVersion(BeaconImpl.APIVERSION)
+                    .beaconId(BEACON_ID)
+                    .apiVersion(BEACON_APIVERSION)
                     .exists(exists)
                     .alleleRequest(request)
                     .datasetAlleleResponses(datasetAlleleResponses)), HttpStatus.OK);
@@ -332,7 +390,6 @@ public class BeaconServiceV2 {
     }
 
     public ResponseEntity<List<BeaconAlleleResponse>> queryPost(BeaconAlleleRequest requestBody) {
-
         return queryGet(requestBody.getReferenceName().toString(),
                 requestBody.getStart() == null ? null : requestBody.getStart(),
                 requestBody.getStartMin() == null ? null : (long) requestBody.getStartMin(),
@@ -347,5 +404,4 @@ public class BeaconServiceV2 {
                 requestBody.getDatasetIds(),
                 requestBody.getIncludeDatasetResponses().toString());
     }
-
 }

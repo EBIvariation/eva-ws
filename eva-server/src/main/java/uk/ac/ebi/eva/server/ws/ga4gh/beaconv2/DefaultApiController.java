@@ -63,7 +63,7 @@ public class DefaultApiController implements DefaultApi {
     }
 
     public ResponseEntity<Beacon> getBeacon() {
-        Beacon beacon = beaconServiceV2.rootGet();
+        Beacon beacon = beaconServiceV2.getBeacon();
         return new ResponseEntity<Beacon>(beacon, HttpStatus.OK);
     }
 
