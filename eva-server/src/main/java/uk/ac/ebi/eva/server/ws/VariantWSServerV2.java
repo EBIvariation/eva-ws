@@ -186,7 +186,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    @GetMapping(value = "/{variantId}/source-Entries")
+    @GetMapping(value = "/{variantId}/source-entries")
     public QueryResponse getSourceEntries(@PathVariable("variantId") String variantId,
                                           @RequestParam(name = "species") String species,
                                           @RequestParam(name = "annot-vep-version", required = false)
@@ -225,7 +225,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    @GetMapping(value = "/{variantId}/source-Entries/{sourceEntryId}")
+    @GetMapping(value = "/{variantId}/source-entries/{sourceEntryId}")
     public QueryResponse getSourceEntry(@PathVariable("variantId") String variantId,
                                         @PathVariable("sourceEntryId") String sourceEntryId,
                                         @RequestParam(name = "species") String species,
