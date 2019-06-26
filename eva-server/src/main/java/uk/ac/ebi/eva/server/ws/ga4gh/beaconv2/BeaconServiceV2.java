@@ -317,7 +317,7 @@ public class BeaconServiceV2 {
 
     public ResponseEntity<List<BeaconAlleleResponse>> queryPost(BeaconAlleleRequest requestBody) {
         return queryGet(requestBody.getReferenceName().toString(),
-                requestBody.getStart() == null ? null : requestBody.getStart(),
+                requestBody.getStart(),
                 requestBody.getStartMin() == null ? null : (long) requestBody.getStartMin(),
                 requestBody.getStartMax() == null ? null : (long) requestBody.getStartMax(),
                 requestBody.getEnd() == null ? null : (long) requestBody.getEnd(),
