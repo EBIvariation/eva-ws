@@ -55,24 +55,6 @@ import static uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest.IncludeDat
 @Service
 public class BeaconServiceV2 {
 
-    private static final String ORGANIZATION_ID = "EMBL-EBI-EVA";
-
-    private static final String ORGANIZATION_NAME = "European Variation Archive (EMBL-EBI)";
-
-    private static final String ORGANIZATION_DESCRIPTION = "EMBL-EBI makes the world's public biological data freely" +
-            " available to the scientific community via a range of services and tools, performs basic research" +
-            " and provides professional training in bioinformatics. The European Variation Archive is an " +
-            "open-access" + " database of all types of genetic variation data from all species.";
-
-    private static final String ORGANIZATION_ADDRESS = "Wellcome Genome Campus, Hinxton, Cambridgeshire, CB10 1SD, " +
-            "United Kingdom";
-
-    private static final String ORGANIZATION_WELCOME_URL = "www.ebi.ac.uk/eva";
-
-    private static final String ORGANIZATION_CONTACT_URL = "contactUrlString";
-
-    private static final String ORGANIZATION_LOGO_URL = "www.ebi.ac.uk/eva/img/eva_logo.png";
-
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
@@ -90,32 +72,27 @@ public class BeaconServiceV2 {
 
     private List<BeaconDataset> getAllBeaconDatasets() {
         List<BeaconDataset> beaconDatasets = new ArrayList<>();
-        beaconDatasets.addAll(getBeaconDatasetsPerDatabase("hsapiens_grch37", "randomDescription", "GRCh37",
-                "updatedatetime", "externalurl"));
-        beaconDatasets.addAll(getBeaconDatasetsPerDatabase("hsapiens_grch38", "randomDescription", "GRCh38",
-                "updatedatetime", "externalurl"));
+        beaconDatasets.addAll(getBeaconDatasetsPerDatabase("hsapiens", "GRCh37"));
+        beaconDatasets.addAll(getBeaconDatasetsPerDatabase("hsapiens", "GRCh38"));
         return beaconDatasets;
     }
 
-    private List<BeaconDataset> getBeaconDatasetsPerDatabase(String db, String description, String assemblyId,
-                                                             String updateDateTime, String externalUrl) {
+    private List<BeaconDataset> getBeaconDatasetsPerDatabase(String species, String assemblyId) {
         List<BeaconDataset> beaconDatasets = new ArrayList<>();
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(db));
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" +
+                assemblyId.toLowerCase()));
         List<VariantSource> variantSources = variantSourceService.findAllVariantSourcesForBeacon();
         variantSources.forEach(
                 variantSource -> beaconDatasets.add(
                         new BeaconDataset().id(variantSource.getStudyId())
                                 .name(variantSource.getStudyName())
-                                .description(description)
                                 .assemblyId(assemblyId)
-                                .createDateTime(variantSource.getDate() == null ? null :
+                                .updateDateTime(variantSource.getDate() == null ? null :
                                         variantSource.getDate().toString())
-                                .updateDateTime(updateDateTime)
                                 .sampleCount(variantSource.getStats() == null ? null :
                                         (long) variantSource.getStats().getSamplesCount())
                                 .variantCount(variantSource.getStats() == null ? null :
-                                        (long) variantSource.getStats().getVariantsCount())
-                                .externalUrl(externalUrl)));
+                                        (long) variantSource.getStats().getVariantsCount())));
         return beaconDatasets;
     }
 
@@ -128,48 +105,49 @@ public class BeaconServiceV2 {
         String errorMessage = checkErrorHelper(chromosome, referenceBases, start, end, alternateBases, variantType,
                 assemblyId, includeDatasetResponses);
 
-        if (errorMessage != null) {
+        if (errorMessage == null) {
+            BeaconAlleleRequest request = getBeaconAlleleRequest(chromosome, start, startMin, startMax, end, endMin,
+                    endMax, referenceBases, alternateBases, variantType, assemblyId, studies, includeDatasetResponses);
+
+            if (assemblyId.equalsIgnoreCase("grch37")) {
+                MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
+            } else if (assemblyId.equalsIgnoreCase("grch38")) {
+                MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
+
+            } else {
+                errorMessage = "Please enter a valid assemblyId from grch37,grch38";
+                return getQueryResponseEntity(null, request, null, errorMessage);
+            }
+
+            VariantType type = variantType != null ? VariantType.valueOf(variantType) : null;
+
+            Region startRange, endRange;
+            startRange = start != null ? new Region(chromosome, start, start) : new Region(chromosome, startMin,
+                    startMax);
+            endRange = end != null ? new Region(chromosome, end, end) : new Region(chromosome, endMin, endMax);
+
+            List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(referenceBases, alternateBases,
+                    type, studies);
+
+            Integer page_size = service.countByRegionAndOtherBeaconFilters(startRange, endRange, filters).intValue();
+            List<VariantMongo> variantMongoList;
+
+            if (page_size > 0) {
+                variantMongoList = service.findByRegionAndOtherBeaconFilters(startRange, endRange, filters,
+                        new PageRequest(0, page_size));
+            } else {
+                variantMongoList = Collections.emptyList();
+            }
+
+            if (variantMongoList.size() > 0) {
+                return getQueryResponseEntity(true, request, getDatasetAlleleResponsesHelper(variantMongoList,
+                        request), null);
+            } else {
+                return getQueryResponseEntity(false, request, getDatasetAlleleResponsesHelper(variantMongoList,
+                        request), null);
+            }
+        } else {
             return getQueryResponseEntity(null, null, null, errorMessage);
-        }
-
-        BeaconAlleleRequest request = getBeaconAlleleRequest(chromosome, start, startMin, startMax, end, endMin, endMax,
-                referenceBases, alternateBases, variantType, assemblyId, studies, includeDatasetResponses);
-
-        if (assemblyId.equalsIgnoreCase("grch37")) {
-            MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
-        } else if (assemblyId.equalsIgnoreCase("grch38")) {
-            MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
-
-        } else {
-            errorMessage = "Please enter a valid assemblyId from grch37,grch38";
-            return getQueryResponseEntity(null, request, null, errorMessage);
-        }
-
-        VariantType type = variantType != null ? VariantType.valueOf(variantType) : null;
-
-        Region startRange, endRange;
-        startRange = start != null ? new Region(chromosome, start, start) : new Region(chromosome, startMin, startMax);
-        endRange = end != null ? new Region(chromosome, end, end) : new Region(chromosome, endMin, endMax);
-
-        List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(referenceBases, alternateBases,
-                type, studies);
-
-        Integer page_size = service.countByRegionAndOtherBeaconFilters(startRange, endRange, filters).intValue();
-        List<VariantMongo> variantMongoList;
-
-        if (page_size > 0) {
-            variantMongoList = service.findByRegionAndOtherBeaconFilters(startRange, endRange, filters,
-                    new PageRequest(0, page_size));
-        } else {
-            variantMongoList = Collections.emptyList();
-        }
-
-        if (variantMongoList.size() > 0) {
-            return getQueryResponseEntity(true, request, getDatasetAlleleResponsesHelper(variantMongoList, request),
-                    null);
-        } else {
-            return getQueryResponseEntity(false, request, getDatasetAlleleResponsesHelper(variantMongoList, request),
-                    null);
         }
     }
 
@@ -234,19 +212,19 @@ public class BeaconServiceV2 {
                                                                               List<BeaconDatasetAlleleResponse>
                                                                                       datasetAlleleResponses,
                                                                               String errorMessage) {
-        if (errorMessage != null) {
+        if (errorMessage == null) {
             return new ResponseEntity<>(Arrays.asList(new BeaconAlleleResponse()
                     .beaconId(BeaconImpl.ID)
-                    .apiVersion(BeaconImpl.APIVERSION)
-                    .error(new BeaconError().errorCode(HttpServletResponse.SC_BAD_REQUEST)
-                            .errorMessage(errorMessage))), HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<>(Arrays.asList(new BeaconAlleleResponse()
-                    .beaconId(BeaconImpl.ID)
-                    .apiVersion(BeaconImpl.APIVERSION)
+                    .apiVersion(BeaconImpl.API_VERSION)
                     .exists(exists)
                     .alleleRequest(request)
                     .datasetAlleleResponses(datasetAlleleResponses)), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(Arrays.asList(new BeaconAlleleResponse()
+                    .beaconId(BeaconImpl.ID)
+                    .apiVersion(BeaconImpl.API_VERSION)
+                    .error(new BeaconError().errorCode(HttpServletResponse.SC_BAD_REQUEST)
+                            .errorMessage(errorMessage))), HttpStatus.BAD_REQUEST);
         }
     }
 

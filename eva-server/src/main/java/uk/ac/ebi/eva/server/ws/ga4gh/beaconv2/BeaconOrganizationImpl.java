@@ -45,12 +45,12 @@ public class BeaconOrganizationImpl extends BeaconOrganization {
     private static final String LOGO_URL = "www.ebi.ac.uk/eva/img/eva_logo.png";
 
     public BeaconOrganizationImpl() {
-        this.setId(ID);
-        this.setName(NAME);
-        this.setDescription(DESCRIPTION);
-        this.setAddress(ADDRESS);
-        this.setWelcomeUrl(WELCOME_URL);
-        this.setContactUrl(CONTACT_URL);
-        this.setLogoUrl(LOGO_URL);
+        setId(ID);
+        setName(NAME);
+        setDescription(DESCRIPTION);
+        setAddress(ADDRESS);
+        setWelcomeUrl(WELCOME_URL);
+        setContactUrl(CONTACT_URL);
+        setLogoUrl(LOGO_URL);
     }
 }

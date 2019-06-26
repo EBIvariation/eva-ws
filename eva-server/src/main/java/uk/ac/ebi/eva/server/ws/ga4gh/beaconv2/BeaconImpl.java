@@ -31,7 +31,7 @@ public class BeaconImpl extends Beacon {
 
     static final String NAME = "European Variation Archive Beacon";
 
-    static final String APIVERSION = "v1.0";
+    static final String API_VERSION = "v1.0";
 
     static final String DESCRIPTION = "descriptionString";
 
@@ -39,22 +39,13 @@ public class BeaconImpl extends Beacon {
 
     static final String WELCOME_URL = "welcomeUrlString";
 
-    static final String ALTERNATIVE_URL = "alternativeUrlString";
-
-    static final String CREATED_DATE_TIME = "date1";
-
-    static final String UPDATE_DATE_TIME = "date2";
-
     public BeaconImpl() {
-        this.id(ID);
-        this.name(NAME);
-        this.apiVersion(APIVERSION);
-        this.organization(new BeaconOrganizationImpl());
-        this.description(DESCRIPTION);
-        this.version(VERSION);
-        this.welcomeUrl(WELCOME_URL);
-        this.alternativeUrl(ALTERNATIVE_URL);
-        this.createDateTime(CREATED_DATE_TIME);
-        this.updateDateTime(UPDATE_DATE_TIME);
+        setId(ID);
+        setName(NAME);
+        setApiVersion(API_VERSION);
+        setOrganization(new BeaconOrganizationImpl());
+        setDescription(DESCRIPTION);
+        setVersion(VERSION);
+        setWelcomeUrl(WELCOME_URL);
     }
 }
