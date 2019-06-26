@@ -113,7 +113,6 @@ public class BeaconServiceV2 {
                 MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
             } else if (assemblyId.equalsIgnoreCase("grch38")) {
                 MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
-
             } else {
                 errorMessage = "Please enter a valid assemblyId from grch37,grch38";
                 return getQueryResponseEntity(null, request, null, errorMessage);

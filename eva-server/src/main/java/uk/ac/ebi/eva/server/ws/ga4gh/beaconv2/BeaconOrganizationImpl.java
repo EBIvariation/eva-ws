@@ -40,7 +40,7 @@ public class BeaconOrganizationImpl extends BeaconOrganization {
 
     private static final String WELCOME_URL = "www.ebi.ac.uk/eva";
 
-    private static final String CONTACT_URL = "contactUrlString";
+    private static final String CONTACT_URL = "www.ebi.ac.uk/eva/?Feedback";
 
     private static final String LOGO_URL = "www.ebi.ac.uk/eva/img/eva_logo.png";
 
