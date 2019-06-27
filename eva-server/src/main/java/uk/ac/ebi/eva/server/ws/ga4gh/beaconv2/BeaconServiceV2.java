@@ -21,8 +21,6 @@ package uk.ac.ebi.eva.server.ws.ga4gh.beaconv2;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconError;
@@ -96,12 +94,12 @@ public class BeaconServiceV2 {
         return beaconDatasets;
     }
 
-    public ResponseEntity<List<BeaconAlleleResponse>> queryGet(String chromosome, Long start, Long startMin,
-                                                               Long startMax, Long end, Long endMin,
-                                                               Long endMax, String referenceBases,
-                                                               String alternateBases, String variantType,
-                                                               String assemblyId, List<String> studies,
-                                                               String includeDatasetResponses) {
+    public BeaconAlleleResponse queryGet(String chromosome, Long start, Long startMin,
+                                         Long startMax, Long end, Long endMin,
+                                         Long endMax, String referenceBases,
+                                         String alternateBases, String variantType,
+                                         String assemblyId, List<String> studies,
+                                         String includeDatasetResponses) {
         String errorMessage = checkErrorHelper(chromosome, referenceBases, start, end, alternateBases, variantType,
                 assemblyId, includeDatasetResponses);
 
@@ -206,24 +204,22 @@ public class BeaconServiceV2 {
         return null;
     }
 
-    private ResponseEntity<List<BeaconAlleleResponse>> getQueryResponseEntity(Boolean exists,
-                                                                              BeaconAlleleRequest request,
-                                                                              List<BeaconDatasetAlleleResponse>
-                                                                                      datasetAlleleResponses,
-                                                                              String errorMessage) {
+    private BeaconAlleleResponse getQueryResponseEntity(Boolean exists, BeaconAlleleRequest request,
+                                                        List<BeaconDatasetAlleleResponse> datasetAlleleResponses,
+                                                        String errorMessage) {
         if (errorMessage == null) {
-            return new ResponseEntity<>(Arrays.asList(new BeaconAlleleResponse()
+            return new BeaconAlleleResponse()
                     .beaconId(BeaconImpl.ID)
                     .apiVersion(BeaconImpl.API_VERSION)
                     .exists(exists)
                     .alleleRequest(request)
-                    .datasetAlleleResponses(datasetAlleleResponses)), HttpStatus.OK);
+                    .datasetAlleleResponses(datasetAlleleResponses);
         } else {
-            return new ResponseEntity<>(Arrays.asList(new BeaconAlleleResponse()
+            return new BeaconAlleleResponse()
                     .beaconId(BeaconImpl.ID)
                     .apiVersion(BeaconImpl.API_VERSION)
                     .error(new BeaconError().errorCode(HttpServletResponse.SC_BAD_REQUEST)
-                            .errorMessage(errorMessage))), HttpStatus.BAD_REQUEST);
+                            .errorMessage(errorMessage));
         }
     }
 
@@ -315,7 +311,7 @@ public class BeaconServiceV2 {
                 .externalUrl("enternalUrl");
     }
 
-    public ResponseEntity<List<BeaconAlleleResponse>> queryPost(BeaconAlleleRequest requestBody) {
+    public BeaconAlleleResponse queryPost(BeaconAlleleRequest requestBody) {
         return queryGet(requestBody.getReferenceName().toString(),
                 requestBody.getStart(),
                 requestBody.getStartMin() == null ? null : (long) requestBody.getStartMin(),
