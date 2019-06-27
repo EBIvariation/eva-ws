@@ -3,7 +3,7 @@ sudo: false
 language: java
 
 jdk:
-  - oraclejdk8
+  - openjdk8
 
 env:
   - OPENCGA_HOME=$TRAVIS_BUILD_DIR/opencga/opencga-app/build
