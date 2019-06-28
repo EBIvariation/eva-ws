@@ -108,7 +108,6 @@ public class GA4GHBeaconWSServerV2Test {
                 .queryParam("datasetIds", String.join(",", request.getDatasetIds()))
                 .build().toString();
 
-        System.out.println(testBeaconHelper(url).getBody().get(0));
         assertTrue(testBeaconHelper(url).getBody().get(0).isExists());
         request.setStartMin(1);
         request.setStartMax(1);
