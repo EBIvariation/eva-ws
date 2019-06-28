@@ -259,7 +259,8 @@ public class BeaconServiceV2 {
                 studiesPresent.add(variantSourceEntryMongo.getStudyId());
             });
             variantMongo.getVariantStatsMongo().forEach(variantStatisticsMongo -> {
-                if (variantMongo.getAlternate().equalsIgnoreCase(variantStatisticsMongo.getMafAllele())) {
+                if (variantMongo.getAlternate().equalsIgnoreCase(variantStatisticsMongo.getMafAllele()) ||
+                        variantMongo.getReference().equalsIgnoreCase(variantStatisticsMongo.getMafAllele())) {
                     studyIdToFrequencyMapper.put(variantStatisticsMongo.getStudyId(), variantStatisticsMongo.getMaf());
                 }
             });
