@@ -71,7 +71,6 @@ public class VariantWSServerV2Test {
 
     @Before
     public void setUp() throws Exception {
-
         VARIANT.addId("randomID");
         VARIANT.setAnnotation(new Annotation(CHROMOSOME, 0, 0, null, null, null, null));
         VARIANT.addSourceEntry(new VariantSourceEntryWithSampleNames("fid", "sid", null, null, null, null, null));

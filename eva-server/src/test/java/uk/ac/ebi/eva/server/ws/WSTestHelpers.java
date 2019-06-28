@@ -62,7 +62,7 @@ public class WSTestHelpers {
     }
 
     public static String testRestTemplateHelperForError(String url,
-                                                      TestRestTemplate restTemplate) {
+                                                        TestRestTemplate restTemplate) {
         ResponseEntity<QueryResponse<String> > response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<String>>() {

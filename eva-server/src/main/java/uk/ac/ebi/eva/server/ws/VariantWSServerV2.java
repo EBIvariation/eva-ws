@@ -115,7 +115,7 @@ public class VariantWSServerV2 extends EvaWSServer {
     private String checkErrorHelper(String variantId, String annotationVepVersion, String annotationVepCacheVersion,
                                     String species) {
         if (!variantId.contains(":")) {
-            return "Invalid entry of variantId";
+            return "Please describe a variant as 'sequence:location:reference:alternate'";
         }
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
