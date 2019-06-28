@@ -54,9 +54,10 @@ public class VariantWSServerV2 extends EvaWSServer {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
-    @GetMapping(value = "/{variantId}")
-    public Resource<QueryResponse> getCoreInfo(@PathVariable("variantId") String variantId,
+    @GetMapping(value = "/{variantCoreString}")
+    public Resource<QueryResponse> getCoreInfo(@PathVariable("variantCoreString") String variantCoreString,
                                                @RequestParam(name = "species") String species,
+                                               @RequestParam(name = "assembly") String assembly,
                                                @RequestParam(name = "annot-vep-version", required = false)
                                                        String annotationVepVersion,
                                                @RequestParam(name = "annot-vep-cache-version", required = false) String
@@ -64,7 +65,7 @@ public class VariantWSServerV2 extends EvaWSServer {
                                                HttpServletResponse response) {
         initializeQuery();
 
-        String errorMessage = checkErrorHelper(variantId, annotationVepVersion, annotationVepCacheVersion, species);
+        String errorMessage = checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion, species);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new Resource<>(setErrorQueryResponse(errorMessage));
@@ -76,7 +77,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         Long numTotalResults;
 
         try {
-            variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion, annotationVepCacheVersion);
+            variantEntities = getVariantEntitiesByParams(variantCoreString, annotationVepVersion, annotationVepCacheVersion);
             numTotalResults = (long) variantEntities.size();
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -96,25 +97,25 @@ public class VariantWSServerV2 extends EvaWSServer {
         QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(rootVariantEntities,
                 numTotalResults);
 
-        Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantId, species,
-                annotationVepVersion, annotationVepCacheVersion, response)).toUri().toString(), "annotation");
+        Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString, species,
+                assembly,annotationVepVersion, annotationVepCacheVersion, response)).toUri().toString(), "annotation");
 
-        Link sourceEntriesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getSourceEntries(variantId, species,
-                annotationVepVersion, annotationVepCacheVersion, response)).toUri().toString(), "sourceEntries");
+        Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getsources(variantCoreString, species,
+                assembly,annotationVepVersion, annotationVepCacheVersion, response)).toUri().toString(), "sources");
 
         List<Link> links = new ArrayList<>();
-        links.add(sourceEntriesLink);
+        links.add(sourcesLink);
         links.add(annotationLink);
 
-        QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>> sourceEntries = getSourceEntries(variantId,
-                species, annotationVepVersion, annotationVepCacheVersion, response);
+        QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>> sources = getsources(variantCoreString,
+                species,assembly, annotationVepVersion, annotationVepCacheVersion, response);
 
         return new Resource<>(setQueryResponse(queryResult), links);
     }
 
-    private String checkErrorHelper(String variantId, String annotationVepVersion, String annotationVepCacheVersion,
+    private String checkParameters(String variantCoreString, String annotationVepVersion, String annotationVepCacheVersion,
                                     String species) {
-        if (!variantId.contains(":")) {
+        if (!variantCoreString.contains(":")) {
             return "Please describe a variant as 'sequence:location:reference:alternate'";
         }
 
@@ -129,11 +130,11 @@ public class VariantWSServerV2 extends EvaWSServer {
         return null;
     }
 
-    private List<VariantWithSamplesAndAnnotation> getVariantEntitiesByParams(String variantId,
+    private List<VariantWithSamplesAndAnnotation> getVariantEntitiesByParams(String variantCoreString,
                                                                              String annotationVepVersion,
                                                                              String annotationVepCacheVersion) throws
             AnnotationMetadataNotFoundException {
-        String[] regionId = variantId.split(":");
+        String[] regionId = variantCoreString.split(":");
         String alternate = (regionId.length > 3) ? regionId[3] : null;
 
         AnnotationMetadata annotationMetadata = null;
@@ -150,9 +151,10 @@ public class VariantWSServerV2 extends EvaWSServer {
         }
     }
 
-    @GetMapping(value = "/{variantId}/annotations")
-    public QueryResponse getAnnotations(@PathVariable("variantId") String variantId,
+    @GetMapping(value = "/{variantCoreString}/annotations")
+    public QueryResponse getAnnotations(@PathVariable("variantCoreString") String variantCoreString,
                                         @RequestParam(name = "species") String species,
+                                        @RequestParam(name = "assembly") String assembly,
                                         @RequestParam(name = "annot-vep-version", required = false)
                                                 String annotationVepVersion,
                                         @RequestParam(name = "annot-vep-cache-version", required = false)
@@ -160,7 +162,7 @@ public class VariantWSServerV2 extends EvaWSServer {
                                         HttpServletResponse response) {
         initializeQuery();
 
-        String errorMessage = checkErrorHelper(variantId, annotationVepVersion, annotationVepCacheVersion, species);
+        String errorMessage = checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion, species);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setErrorQueryResponse(errorMessage);
@@ -170,7 +172,7 @@ public class VariantWSServerV2 extends EvaWSServer {
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
         try {
-            variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion, annotationVepCacheVersion);
+            variantEntities = getVariantEntitiesByParams(variantCoreString, annotationVepVersion, annotationVepCacheVersion);
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
@@ -186,17 +188,18 @@ public class VariantWSServerV2 extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    @GetMapping(value = "/{variantId}/source-entries")
-    public QueryResponse getSourceEntries(@PathVariable("variantId") String variantId,
+    @GetMapping(value = "/{variantCoreString}/source-entries")
+    public QueryResponse getsources(@PathVariable("variantCoreString") String variantCoreString,
                                           @RequestParam(name = "species") String species,
-                                          @RequestParam(name = "annot-vep-version", required = false)
+                                    @RequestParam(name = "assembly") String assembly,
+                                    @RequestParam(name = "annot-vep-version", required = false)
                                                   String annotationVepVersion,
                                           @RequestParam(name = "annot-vep-cache-version", required = false)
                                                   String annotationVepCacheVersion,
                                           HttpServletResponse response) {
         initializeQuery();
 
-        String errorMessage = checkErrorHelper(variantId, annotationVepVersion, annotationVepCacheVersion, species);
+        String errorMessage = checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion, species);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setErrorQueryResponse(errorMessage);
@@ -206,7 +209,7 @@ public class VariantWSServerV2 extends EvaWSServer {
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
         try {
-            variantEntities = getVariantEntitiesByParams(variantId, annotationVepVersion, annotationVepCacheVersion);
+            variantEntities = getVariantEntitiesByParams(variantCoreString, annotationVepVersion, annotationVepCacheVersion);
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
