@@ -65,19 +65,21 @@ public class VariantWSServerV2 extends EvaWSServer {
                                                HttpServletResponse response) {
         initializeQuery();
 
-        String errorMessage = checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion, species);
+        String errorMessage = checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
+                species,assembly);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new Resource<>(setErrorQueryResponse(errorMessage));
         }
 
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species+"_"+assembly));
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
         Long numTotalResults;
 
         try {
-            variantEntities = getVariantEntitiesByParams(variantCoreString, annotationVepVersion, annotationVepCacheVersion);
+            variantEntities = getVariantEntitiesByParams(variantCoreString, annotationVepVersion,
+                    annotationVepCacheVersion);
             numTotalResults = (long) variantEntities.size();
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -114,7 +116,7 @@ public class VariantWSServerV2 extends EvaWSServer {
     }
 
     private String checkParameters(String variantCoreString, String annotationVepVersion, String annotationVepCacheVersion,
-                                    String species) {
+                                    String species,String assembly) {
         if (!variantCoreString.contains(":")) {
             return "Please describe a variant as 'sequence:location:reference:alternate'";
         }
@@ -125,6 +127,10 @@ public class VariantWSServerV2 extends EvaWSServer {
 
         if (species.isEmpty()) {
             return "Please specify a species";
+        }
+
+        if (assembly.isEmpty()) {
+            return "Please specify an assembly";
         }
 
         return null;
@@ -162,13 +168,14 @@ public class VariantWSServerV2 extends EvaWSServer {
                                         HttpServletResponse response) {
         initializeQuery();
 
-        String errorMessage = checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion, species);
+        String errorMessage = checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
+                species,assembly);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setErrorQueryResponse(errorMessage);
         }
 
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species+"_"+assembly));
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
         try {
@@ -199,13 +206,14 @@ public class VariantWSServerV2 extends EvaWSServer {
                                           HttpServletResponse response) {
         initializeQuery();
 
-        String errorMessage = checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion, species);
+        String errorMessage = checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
+                species,assembly);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setErrorQueryResponse(errorMessage);
         }
 
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species+"_"+assembly));
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
         try {
