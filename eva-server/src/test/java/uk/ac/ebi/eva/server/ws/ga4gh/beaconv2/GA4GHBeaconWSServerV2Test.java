@@ -70,9 +70,15 @@ public class GA4GHBeaconWSServerV2Test {
         Region startRange = new Region("X", 100470026L, 100470026L);
         Region endRange = new Region("X", 100470026L, 100470026L);
         List<VariantRepositoryFilter> variantRepositoryFilters = new FilterBuilder().getBeaconFilters("G", "A",
-                VariantType.SNV, Arrays.asList("PRJEB7218"));
+               null, Arrays.asList("PRJEB7218"));
 
         Pageable pageable = new PageRequest(0, 1);
+        given(service.findByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters),
+                eq(pageable))).willReturn(variantMongoList);
+        given(service.countByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters)))
+                .willReturn(1L);
+        variantRepositoryFilters = new FilterBuilder().getBeaconFilters("G", null,
+                VariantType.SNV, Arrays.asList("PRJEB7218"));
         given(service.findByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters),
                 eq(pageable))).willReturn(variantMongoList);
         given(service.countByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters)))
@@ -99,10 +105,10 @@ public class GA4GHBeaconWSServerV2Test {
                 .queryParam("alternateBases", request.getAlternateBases())
                 .queryParam("start", request.getStart())
                 .queryParam("end", request.getEnd())
-                .queryParam("variantType", request.getVariantType())
                 .queryParam("datasetIds", String.join(",", request.getDatasetIds()))
                 .build().toString();
 
+        System.out.println(testBeaconHelper(url).getBody().get(0));
         assertTrue(testBeaconHelper(url).getBody().get(0).isExists());
         request.setStartMin(1);
         request.setStartMax(1);
@@ -114,7 +120,6 @@ public class GA4GHBeaconWSServerV2Test {
                 .queryParam("referenceName", request.getReferenceName())
                 .queryParam("referenceBases", request.getReferenceBases())
                 .queryParam("assemblyId", request.getAssemblyId())
-                .queryParam("alternateBases", request.getAlternateBases())
                 .queryParam("start", request.getStart())
                 .queryParam("end", request.getEnd())
                 .queryParam("startMin", request.getStartMin())
@@ -154,8 +159,8 @@ public class GA4GHBeaconWSServerV2Test {
                 .queryParam("assemblyId", "GRch37")
                 .build().toString();
         assertEquals(400, testBeaconHelper(url).getBody().get(0).getError().getErrorCode().intValue());
-        assertEquals("Either alternateBases or variantType is required", testBeaconHelper(url).getBody().
-                get(0).getError().getErrorMessage());
+        assertEquals("Either the alternate bases or the variant type is required", testBeaconHelper(url).
+                getBody().get(0).getError().getErrorMessage());
     }
 
     private ResponseEntity<List<BeaconAlleleResponse>> testBeaconHelper(String url) {
