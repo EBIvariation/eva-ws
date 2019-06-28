@@ -48,6 +48,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.eq;
 
@@ -101,7 +103,7 @@ public class GA4GHBeaconWSServerV2Test {
                 .queryParam("datasetIds", String.join(",", request.getDatasetIds()))
                 .build().toString();
 
-        assertEquals(true, testBeaconHelper(url).getBody().get(0).isExists());
+        assertTrue(testBeaconHelper(url).getBody().get(0).isExists());
         request.setStartMin(1);
         request.setStartMax(1);
         request.setEndMin(1);
@@ -122,7 +124,7 @@ public class GA4GHBeaconWSServerV2Test {
                 .queryParam("variantType", request.getVariantType())
                 .queryParam("datasetIds", String.join(",", request.getDatasetIds()))
                 .build().toString();
-        assertEquals(true, testBeaconHelper(url).getBody().get(0).isExists());
+        assertTrue(testBeaconHelper(url).getBody().get(0).isExists());
     }
 
     @Test
@@ -140,7 +142,7 @@ public class GA4GHBeaconWSServerV2Test {
                 .queryParam("assemblyId", request.getAssemblyId())
                 .queryParam("alternateBases", request.getAlternateBases())
                 .build().toString();
-        assertEquals(false, testBeaconHelper(url).getBody().get(0).isExists());
+        assertFalse(testBeaconHelper(url).getBody().get(0).isExists());
     }
 
     @Test

@@ -152,22 +152,22 @@ public class BeaconServiceV2 {
                                     String alternateBases, String variantType, String assemblyId,
                                     String includeDatasetResponses) {
         if (chromosome == null || chromosome.length() == 0) {
-            String errorMessage = "Please provide a valid referenceName type from ";
+            String errorMessage = "Please provide a valid reference name from ";
             return errorMessage + String.join(", ", Arrays.asList(Chromosome.values()).toString());
         } else {
             try {
                 Chromosome.fromValue(chromosome);
             } catch (Exception e) {
-                String errorMessage = "Please provide a valid referenceName type from ";
+                String errorMessage = "Please provide a valid reference name from ";
                 return errorMessage + String.join(", ", Arrays.asList(Chromosome.values()).toString());
             }
         }
         if (assemblyId == null || assemblyId.length() == 0) {
-            return "An assemblyId must be provided";
+            return "Please provide an assembly identifier";
         }
 
         if (referenceBases == null || referenceBases.length() == 0) {
-            return "ReferenceBases must be provided";
+            return "Please provide reference bases";
         }
 
         if (start != null && start < 0) {
@@ -179,7 +179,7 @@ public class BeaconServiceV2 {
         }
 
         if (alternateBases == null && variantType == null) {
-            return "Either alternateBases or variantType is required";
+            return "Either the alternate bases or the variant type is required";
         }
 
         if (variantType != null) {
@@ -196,7 +196,7 @@ public class BeaconServiceV2 {
                 BeaconAlleleRequest.IncludeDatasetResponsesEnum includeDatasetResponsesEnum =
                         BeaconAlleleRequest.IncludeDatasetResponsesEnum.valueOf(includeDatasetResponses);
             } catch (Exception e) {
-                String errorMessage = "Please provide a valid includeDatasetResponses from ";
+                String errorMessage = "Please provide a valid dataset inclusion flag from ";
                 return errorMessage + String.join(", ", Arrays.asList(BeaconAlleleRequest.
                         IncludeDatasetResponsesEnum.values()).toString());
             }
@@ -246,7 +246,6 @@ public class BeaconServiceV2 {
 
     private List<BeaconDatasetAlleleResponse> getDatasetAlleleResponsesHelper(List<VariantMongo> variantMongoList,
                                                                               BeaconAlleleRequest request) {
-
         List<BeaconDatasetAlleleResponse> datasetAllelResponses = new ArrayList<BeaconDatasetAlleleResponse>();
 
         if (request.getIncludeDatasetResponses() == null ||
