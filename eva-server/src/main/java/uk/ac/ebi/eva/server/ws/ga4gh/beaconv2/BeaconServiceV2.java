@@ -96,7 +96,8 @@ public class BeaconServiceV2 {
 
     public BeaconAlleleResponse find(String chromosome, Long start, Long startMin, Long startMax, Long end, Long endMin,
                                      Long endMax, String referenceBases, String alternateBases, String variantType,
-                                     String assemblyId, List<String> studies, String includeDatasetResponses) {
+                                     String assemblyId, List<String> studies, String includeDatasetResponses)
+            throws IllegalArgumentException {
         String errorMessage = checkParameters(chromosome, referenceBases, start, end, alternateBases, variantType,
                 assemblyId, includeDatasetResponses);
 
@@ -146,7 +147,7 @@ public class BeaconServiceV2 {
 
     private String checkParameters(String chromosome, String referenceBases, Long start, Long end,
                                    String alternateBases, String variantType, String assemblyId,
-                                   String includeDatasetResponses) {
+                                   String includeDatasetResponses) throws IllegalArgumentException {
         if (chromosome == null || chromosome.length() == 0) {
             String errorMessage = "Please provide a valid reference name from ";
             throw new IllegalArgumentException(errorMessage + String.join(", ",
@@ -307,7 +308,7 @@ public class BeaconServiceV2 {
                 .externalUrl("enternalUrl");
     }
 
-    public BeaconAlleleResponse find(BeaconAlleleRequest requestBody) {
+    public BeaconAlleleResponse find(BeaconAlleleRequest requestBody) throws IllegalArgumentException {
         return find(requestBody.getReferenceName().toString(),
                 requestBody.getStart(),
                 requestBody.getStartMin() == null ? null : (long) requestBody.getStartMin(),
