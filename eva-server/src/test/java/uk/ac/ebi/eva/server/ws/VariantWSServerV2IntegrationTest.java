@@ -82,29 +82,30 @@ public class VariantWSServerV2IntegrationTest {
 
     @Test
     public void rootTestGetVariantsByVariantId() throws URISyntaxException {
-        List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotations = variantWsHelper("20:60100:A:T");
+        String url = "/v2/variants/20:60100:A:T?species=mmusculus&assembly=grcm38";
+        List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotations = WSTestHelpers.testRestTemplateHelper(
+                url,restTemplate);
         assertTrue(variantWithSamplesAndAnnotations.size() > 0);
         assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().size() == 0);
         assertNull(variantWithSamplesAndAnnotations.get(0).getAnnotation());
         assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size() > 0);
     }
 
-    private List<VariantWithSamplesAndAnnotation> variantWsHelper(String testVariantId) {
-        String url = "/v2/variants/" + testVariantId + "?species=mmusculus&assembly=grcm38";
-        return WSTestHelpers.testRestTemplateHelper(url, restTemplate);
-    }
-
     @Test
     public void rootTestGetVariantsByNonExistingVariantId() throws URISyntaxException {
-        assertEquals(0, variantWsHelper("10:0:A:T").size());
+        String url = "/v2/variants/10:0:A:T?species=mmusculus&assembly=grcm38";
+
+        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>>() {
+                });
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(0, response.getBody().getResponse().size());
     }
 
     @Test
     public void rootTestForError() throws URISyntaxException {
-        String url;
-        url = "/v2/variants/13:32889669:C:T?species=&assembly=";
-        assertEquals("Please specify a species", testForErrorHelper(url));
-        url = "/v2/variants/13:32889669:C:T?species=mmusculus&assembly=grcm38&annot-vep-version=1";
+        String url = "/v2/variants/13:32889669:C:T?species=mmusculus&assembly=grcm38&annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));
     }
@@ -131,16 +132,13 @@ public class VariantWSServerV2IntegrationTest {
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
                 });
-        assertEquals(HttpStatus.OK, annotations.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, annotations.getStatusCode());
         assertTrue(annotations.getBody().getResponse().get(0).getResult().size() == 0);
     }
 
     @Test
     public void annotationEndpointTestForError() throws URISyntaxException {
-        String url;
-        url = "/v2/variants/13:32889669:C:T/annotations?species=&assembly=";
-        assertEquals("Please specify a species", testForErrorHelper(url));
-        url = "/v2/variants/13:32889669:C:T/annotations?species=mmusculus&assembly=grcm38&" +
+        String url = "/v2/variants/13:32889669:C:T/annotations?species=mmusculus&assembly=grcm38&" +
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));
@@ -164,16 +162,13 @@ public class VariantWSServerV2IntegrationTest {
         ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(url, HttpMethod.GET,
                 null, new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
                 });
-        assertEquals(HttpStatus.OK, annotations.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, annotations.getStatusCode());
         assertTrue(annotations.getBody().getResponse().get(0).getResult().size() == 0);
     }
 
     @Test
     public void sourceEntriesEndpointTestForError() throws URISyntaxException {
-        String url;
-        url = "/v2/variants/13:32889669:C:T/source-entries?species=&assembly=";
-        assertEquals("Please specify a species", testForErrorHelper(url));
-        url = "/v2/variants/13:32889669:C:T/source-entries?species=mmusculus&assembly=grcm38&" +
+        String url = "/v2/variants/13:32889669:C:T/source-entries?species=mmusculus&assembly=grcm38&" +
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));

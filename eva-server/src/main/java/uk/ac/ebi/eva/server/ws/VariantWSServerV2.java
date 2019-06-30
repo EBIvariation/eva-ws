@@ -62,17 +62,16 @@ public class VariantWSServerV2 extends EvaWSServer {
                                                        String annotationVepVersion,
                                                @RequestParam(name = "annot-vep-cache-version", required = false) String
                                                        annotationVepCacheVersion,
-                                               HttpServletResponse response) {
+                                               HttpServletResponse response) throws IllegalArgumentException {
         initializeQuery();
-
         String errorMessage = checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
-                species,assembly);
+                species, assembly);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new Resource<>(setErrorQueryResponse(errorMessage));
         }
 
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species+"_"+assembly));
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
         Long numTotalResults;
@@ -81,42 +80,47 @@ public class VariantWSServerV2 extends EvaWSServer {
             variantEntities = getVariantEntitiesByParams(variantCoreString, annotationVepVersion,
                     annotationVepCacheVersion);
             numTotalResults = (long) variantEntities.size();
+            if (variantEntities.size() == 0) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return new Resource<>(setQueryResponse(variantEntities));
+            }
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new Resource<>(setQueryResponse(ex.getMessage()));
         }
 
         List<VariantWithSamplesAndAnnotation> rootVariantEntities = new ArrayList<>();
+        List<VariantCoreInfo> variantCoreInfoList = new ArrayList<>();
         variantEntities.forEach(variantEntity -> {
-            VariantWithSamplesAndAnnotation variant = new VariantWithSamplesAndAnnotation(variantEntity.getChromosome(),
+            /*VariantWithSamplesAndAnnotation variant = new VariantWithSamplesAndAnnotation(variantEntity.getChromosome(),
                     variantEntity.getStart(), variantEntity.getEnd(), variantEntity.getReference(),
                     variantEntity.getReference(), variantEntity.getMainId());
-
-            variantEntity.getIds().forEach(id -> variant.addId(id));
-            rootVariantEntities.add(variant);
+            variantEntity.getIds().forEach(id -> variant.addId(id));*/
+            //rootVariantEntities.add(variant);
+            variantCoreInfoList.add(new VariantCoreInfo(variantEntity.getChromosome(),variantEntity.getStart(),
+                    variantEntity.getEnd(),variantEntity.getReference(),variantEntity.getAlternate(),
+                    variantEntity.getIds(),variantEntity.getType(),variantEntity.getLength(),variantEntity.getHgvs()));
         });
 
-        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(rootVariantEntities,
+        QueryResult<VariantCoreInfo> queryResult = buildQueryResult(variantCoreInfoList,
                 numTotalResults);
 
-        Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString, species,
-                assembly,annotationVepVersion, annotationVepCacheVersion, response)).toUri().toString(), "annotation");
+        Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
+                species, assembly, annotationVepVersion, annotationVepCacheVersion, response)).toUri().toString(),
+                "annotation");
 
         Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getsources(variantCoreString, species,
-                assembly,annotationVepVersion, annotationVepCacheVersion, response)).toUri().toString(), "sources");
+                assembly, annotationVepVersion, annotationVepCacheVersion, response)).toUri().toString(), "sources");
 
         List<Link> links = new ArrayList<>();
         links.add(sourcesLink);
         links.add(annotationLink);
 
-        QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>> sources = getsources(variantCoreString,
-                species,assembly, annotationVepVersion, annotationVepCacheVersion, response);
-
         return new Resource<>(setQueryResponse(queryResult), links);
     }
 
-    private String checkParameters(String variantCoreString, String annotationVepVersion, String annotationVepCacheVersion,
-                                    String species,String assembly) {
+    private String checkParameters(String variantCoreString, String annotationVepVersion,
+                                   String annotationVepCacheVersion, String species, String assembly) {
         if (!variantCoreString.contains(":")) {
             return "Please describe a variant as 'sequence:location:reference:alternate'";
         }
@@ -126,11 +130,11 @@ public class VariantWSServerV2 extends EvaWSServer {
         }
 
         if (species.isEmpty()) {
-            return "Please specify a species";
+            throw new IllegalArgumentException("Please specify a species");
         }
 
         if (assembly.isEmpty()) {
-            return "Please specify an assembly";
+            throw new IllegalArgumentException("Please specify an assembly");
         }
 
         return null;
@@ -165,21 +169,26 @@ public class VariantWSServerV2 extends EvaWSServer {
                                                 String annotationVepVersion,
                                         @RequestParam(name = "annot-vep-cache-version", required = false)
                                                 String annotationVepCacheVersion,
-                                        HttpServletResponse response) {
+                                        HttpServletResponse response) throws IllegalArgumentException {
         initializeQuery();
 
         String errorMessage = checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
-                species,assembly);
+                species, assembly);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setErrorQueryResponse(errorMessage);
         }
 
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species+"_"+assembly));
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
         try {
-            variantEntities = getVariantEntitiesByParams(variantCoreString, annotationVepVersion, annotationVepCacheVersion);
+            variantEntities = getVariantEntitiesByParams(variantCoreString, annotationVepVersion,
+                    annotationVepCacheVersion);
+            if (variantEntities.size() == 0) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return setQueryResponse(buildQueryResult(variantEntities, 0));
+            }
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
@@ -197,27 +206,32 @@ public class VariantWSServerV2 extends EvaWSServer {
 
     @GetMapping(value = "/{variantCoreString}/source-entries")
     public QueryResponse getsources(@PathVariable("variantCoreString") String variantCoreString,
-                                          @RequestParam(name = "species") String species,
+                                    @RequestParam(name = "species") String species,
                                     @RequestParam(name = "assembly") String assembly,
                                     @RequestParam(name = "annot-vep-version", required = false)
-                                                  String annotationVepVersion,
-                                          @RequestParam(name = "annot-vep-cache-version", required = false)
-                                                  String annotationVepCacheVersion,
-                                          HttpServletResponse response) {
+                                            String annotationVepVersion,
+                                    @RequestParam(name = "annot-vep-cache-version", required = false)
+                                            String annotationVepCacheVersion,
+                                    HttpServletResponse response) throws IllegalArgumentException {
         initializeQuery();
 
         String errorMessage = checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
-                species,assembly);
+                species, assembly);
         if (errorMessage != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setErrorQueryResponse(errorMessage);
         }
 
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species+"_"+assembly));
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
         try {
-            variantEntities = getVariantEntitiesByParams(variantCoreString, annotationVepVersion, annotationVepCacheVersion);
+            variantEntities = getVariantEntitiesByParams(variantCoreString, annotationVepVersion,
+                    annotationVepCacheVersion);
+            if (variantEntities.size() == 0) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return setQueryResponse(buildQueryResult(variantEntities, 0));
+            }
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
