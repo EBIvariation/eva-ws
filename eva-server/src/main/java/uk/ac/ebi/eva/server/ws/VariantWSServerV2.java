@@ -30,6 +30,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
+import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
@@ -55,7 +56,7 @@ public class VariantWSServerV2 extends EvaWSServer {
     private VariantWithSamplesAndAnnotationsService service;
 
     @GetMapping(value = "/{variantCoreString}")
-    public Resource<QueryResponse> getCoreInfo(@PathVariable("variantCoreString") String variantCoreString,
+    public Resource getCoreInfo(@PathVariable("variantCoreString") String variantCoreString,
                                                @RequestParam(name = "species") String species,
                                                @RequestParam(name = "assembly") String assembly,
                                                @RequestParam(name = "annot-vep-version", required = false)
@@ -89,6 +90,8 @@ public class VariantWSServerV2 extends EvaWSServer {
             return new Resource<>(setQueryResponse(ex.getMessage()));
         }
 
+        List<Variant> variantList = new ArrayList<>();
+
         List<VariantWithSamplesAndAnnotation> rootVariantEntities = new ArrayList<>();
         List<VariantCoreInfo> variantCoreInfoList = new ArrayList<>();
         variantEntities.forEach(variantEntity -> {
@@ -97,12 +100,18 @@ public class VariantWSServerV2 extends EvaWSServer {
                     variantEntity.getReference(), variantEntity.getMainId());
             variantEntity.getIds().forEach(id -> variant.addId(id));*/
             //rootVariantEntities.add(variant);
-            variantCoreInfoList.add(new VariantCoreInfo(variantEntity.getChromosome(),variantEntity.getStart(),
+            /*variantCoreInfoList.add(new VariantCoreInfo(variantEntity.getChromosome(),variantEntity.getStart(),
                     variantEntity.getEnd(),variantEntity.getReference(),variantEntity.getAlternate(),
-                    variantEntity.getIds(),variantEntity.getType(),variantEntity.getLength(),variantEntity.getHgvs()));
+                    variantEntity.getIds(),variantEntity.getType(),variantEntity.getLength(),variantEntity.getHgvs()));*/
+            Variant variant = new Variant(variantEntity.getChromosome(),variantEntity.getStart(),variantEntity.getEnd(),
+                    variantEntity.getReference(),variantEntity.getAlternate());
+            variant.setIds(variantEntity.getIds());
+            System.out.println(variant.getMainId());
+            System.out.println(variant.getType());
+            variantList.add(variant);
         });
 
-        QueryResult<VariantCoreInfo> queryResult = buildQueryResult(variantCoreInfoList,
+        QueryResult<Variant> queryResult = buildQueryResult(variantList,
                 numTotalResults);
 
         Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
@@ -115,7 +124,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         List<Link> links = new ArrayList<>();
         links.add(sourcesLink);
         links.add(annotationLink);
-
+        //Resource<> resource = new Resource<>(setQueryResponse(queryResult), links);
         return new Resource<>(setQueryResponse(queryResult), links);
     }
 
