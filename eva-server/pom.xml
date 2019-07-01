@@ -55,7 +55,10 @@
             <groupId>uk.ac.ebi.eva</groupId>
             <artifactId>variation-commons-core</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>uk.ac.ebi.eva</groupId>
+            <artifactId>variation-commons-beacon</artifactId>
+        </dependency>
         <dependency>
             <groupId>asm</groupId>
             <artifactId>asm</artifactId>
