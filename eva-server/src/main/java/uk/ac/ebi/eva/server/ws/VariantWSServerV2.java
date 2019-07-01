@@ -30,6 +30,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
+import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
@@ -58,15 +59,10 @@ public class VariantWSServerV2 extends EvaWSServer {
     public Resource getCoreInfo(@PathVariable("variantCoreString") String variantCoreString,
                                 @RequestParam(name = "species") String species,
                                 @RequestParam(name = "assembly") String assembly,
-                                @RequestParam(name = "annot-vep-version", required = false)
-                                        String annotationVepVersion,
-                                @RequestParam(name = "annot-vep-cache-version", required = false) String
-                                        annotationVepCacheVersion,
                                 HttpServletResponse response) {
         initializeQuery();
         try {
-            checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
-                    species, assembly);
+            checkParameters(variantCoreString, null, null, species, assembly);
         } catch (IllegalArgumentException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new Resource<>(setErrorQueryResponse(e.getMessage()));
@@ -78,8 +74,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         Long numTotalResults;
 
         try {
-            variantEntities = getVariantEntitiesByParams(variantCoreString, annotationVepVersion,
-                    annotationVepCacheVersion);
+            variantEntities = getVariantEntitiesByParams(variantCoreString, null, null);
             numTotalResults = (long) variantEntities.size();
             if (variantEntities.size() == 0) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -90,28 +85,25 @@ public class VariantWSServerV2 extends EvaWSServer {
             return new Resource<>(setQueryResponse(ex.getMessage()));
         }
 
-        List<VariantCoreInfo> variantCoreInfoList = new ArrayList<>();
-        variantEntities.forEach(variantEntity -> {
-            variantCoreInfoList.add(new VariantCoreInfo(variantEntity.getChromosome(),variantEntity.getStart(),
-                    variantEntity.getEnd(),variantEntity.getReference(),variantEntity.getAlternate(),
-                    variantEntity.getIds(),variantEntity.getType(),variantEntity.getLength()));
-
+        List<Variant> variantList = new ArrayList<>();
+        variantEntities.forEach(variantEntity->{
+            Variant variant = new Variant(variantEntity.getChromosome(), variantEntity.getStart(),
+                    variantEntity.getEnd(), variantEntity.getReference(),variantEntity.getAlternate());
+            variant.setIds(variantEntity.getIds());
+            variantList.add(variant);
         });
 
-        QueryResult<VariantCoreInfo> queryResult = buildQueryResult(variantCoreInfoList,
-                numTotalResults);
+        QueryResult<Variant> queryResult = buildQueryResult(variantList, numTotalResults);
 
         Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
-                species, assembly, annotationVepVersion, annotationVepCacheVersion, response)).toUri().toString(),
-                "annotation");
+                species, assembly, null, null, response)).toUri().toString(), "annotation");
 
         Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getsources(variantCoreString, species,
-                assembly, annotationVepVersion, annotationVepCacheVersion, response)).toUri().toString(), "sources");
+                assembly, null, null, response)).toUri().toString(), "sources");
 
         List<Link> links = new ArrayList<>();
         links.add(sourcesLink);
         links.add(annotationLink);
-        //Resource<> resource = new Resource<>(setQueryResponse(queryResult), links);
         return new Resource<>(setQueryResponse(queryResult), links);
     }
 

@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 
 import uk.ac.ebi.eva.commons.core.models.ConsequenceType;
 import uk.ac.ebi.eva.commons.core.models.VariantStatistics;
+import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.lib.json.ConsequenceTypeMixin;
 import uk.ac.ebi.eva.lib.json.QueryResponseMixin;
@@ -46,6 +47,7 @@ public class JacksonConfiguration {
         objectMapper.addMixIn(VariantStudy.class, VariantStudyMixin.class);
         objectMapper.addMixIn(VariantStatistics.class, VariantStatisticsMixin.class);
         objectMapper.addMixIn(ConsequenceType.class, ConsequenceTypeMixin.class);
+        objectMapper.addMixIn(Variant.class,VariantMixin.class);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         VisibilityChecker<?> vc = objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
                                               .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
