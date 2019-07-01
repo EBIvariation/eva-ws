@@ -108,15 +108,6 @@ public class BeaconServiceV2 {
         BeaconAlleleRequest request = buildBeaconAlleleRequest(chromosome, start, startMin, startMax, end, endMin,
                 endMax, referenceBases, alternateBases, variantType, assemblyId, studies, includeDatasetResponses);
 
-        if (assemblyId.equalsIgnoreCase("grch37")) {
-            MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
-        } else if (assemblyId.equalsIgnoreCase("grch38")) {
-            MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
-        } else {
-            String errorMessage = "Please enter a valid assembly name (GRCh37 or GRCh38)";
-            return buildBeaconAlleleResponse(null, request, null, errorMessage);
-        }
-
         VariantType type = variantType != null ? VariantType.valueOf(variantType) : null;
 
         Region startRange = start != null ? new Region(chromosome, start, start) : new Region(chromosome, startMin,
@@ -194,13 +185,21 @@ public class BeaconServiceV2 {
 
         if (includeDatasetResponses != null) {
             try {
-                BeaconAlleleRequest.IncludeDatasetResponsesEnum includeDatasetResponsesEnum =
-                        BeaconAlleleRequest.IncludeDatasetResponsesEnum.valueOf(includeDatasetResponses);
+                BeaconAlleleRequest.IncludeDatasetResponsesEnum.valueOf(includeDatasetResponses);
             } catch (Exception e) {
                 String errorMessage = "Please provide a valid dataset inclusion flag from ";
                 throw new IllegalArgumentException(errorMessage + String.join(", ", Arrays.asList(BeaconAlleleRequest.
                         IncludeDatasetResponsesEnum.values()).toString()));
             }
+        }
+
+        if (assemblyId.equalsIgnoreCase("grch37")) {
+            MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
+        } else if (assemblyId.equalsIgnoreCase("grch38")) {
+            MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
+        } else {
+            String errorMessage = "Please enter a valid assembly name (GRCh37 or GRCh38)";
+            throw new IllegalArgumentException(errorMessage);
         }
     }
 
