@@ -76,7 +76,7 @@ public class IdentifierWSServerV2Test {
 
     @Test
     public void testForExisting() {
-        String url = "http://localhost:8080/v2/identifiers/ss481155011?species=hsapiens&assembly=grch37";
+        String url = "/v2/identifiers/ss481155011?species=hsapiens&assembly=grch37";
         ResponseEntity<List<Variant>> response = restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<Variant>>() {
                 });
@@ -86,7 +86,7 @@ public class IdentifierWSServerV2Test {
 
     @Test
     public void testForNonExisting() {
-        String url = "http://localhost:8080/v2/identifiers/abcd?species=hsapiens&assembly=grch37";
+        String url = "/v2/identifiers/abcd?species=hsapiens&assembly=grch37";
         ResponseEntity<List<Variant>> response = restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<Variant>>() {
                 });
