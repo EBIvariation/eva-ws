@@ -99,8 +99,8 @@ public class BeaconServiceV2 {
                                      String assemblyId, List<String> studies, String includeDatasetResponses) {
 
         try {
-            checkParameters(chromosome, referenceBases, start, end, alternateBases, variantType,
-                    assemblyId, includeDatasetResponses);
+            checkParameters(chromosome, referenceBases, start, end, alternateBases, variantType, assemblyId,
+                    includeDatasetResponses);
         } catch (IllegalArgumentException e) {
             return buildBeaconAlleleResponse(null, null, null, e.getMessage());
         }
