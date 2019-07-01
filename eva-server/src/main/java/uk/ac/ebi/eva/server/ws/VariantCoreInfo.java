@@ -22,10 +22,8 @@ public class VariantCoreInfo {
 
     private int length;
 
-    private Map<String, Set<String>> hgvs;
-
     public VariantCoreInfo(String chromosome, long start, long end, String reference, String alternate, Set<String> ids,
-                           VariantType type, int length, Map<String, Set<String>> hgvs) {
+                           VariantType type, int length) {
         this.chromosome = chromosome;
         this.start = start;
         this.end = end;
@@ -34,6 +32,5 @@ public class VariantCoreInfo {
         this.ids = ids;
         this.type = type;
         this.length = length;
-        this.hgvs = hgvs;
     }
 }
