@@ -50,7 +50,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
     protected static Logger logger = LoggerFactory.getLogger(GA4GHBeaconWSServer.class);
 
     public GA4GHBeaconWSServer() { }
-    
+
     @RequestMapping(value = "/beacon", method = RequestMethod.GET)
     public GA4GHBeaconResponse beacon(@RequestParam("referenceName") String chromosome,
                                       @RequestParam("start") long start,
