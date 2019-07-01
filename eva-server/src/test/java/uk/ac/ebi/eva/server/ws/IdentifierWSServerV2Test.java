@@ -58,14 +58,12 @@ import static org.mockito.Matchers.eq;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class IdentifierWSServerV2Test {
 
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @MockBean
-    private VariantWithSamplesAndAnnotationsService variantEntityRepository;
-
     private static final VariantWithSamplesAndAnnotation VARIANT = new VariantWithSamplesAndAnnotation("1", 1000, 1005,
             "A", "T", "rs1");
+    @Autowired
+    private TestRestTemplate restTemplate;
+    @MockBean
+    private VariantWithSamplesAndAnnotationsService variantEntityRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -80,7 +78,7 @@ public class IdentifierWSServerV2Test {
         ResponseEntity<List<Variant>> response = restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<Variant>>() {
                 });
-        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals( HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().size() > 0);
     }
 
@@ -90,7 +88,7 @@ public class IdentifierWSServerV2Test {
         ResponseEntity<List<Variant>> response = restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<Variant>>() {
                 });
-        assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertTrue(response.getBody().size() == 0);
     }
 

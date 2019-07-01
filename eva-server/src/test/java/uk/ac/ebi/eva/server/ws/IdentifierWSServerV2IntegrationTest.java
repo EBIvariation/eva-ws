@@ -84,11 +84,11 @@ public class IdentifierWSServerV2IntegrationTest {
 
     @Test
     public void testForExisting() {
-        String url = "/v2/identifiers/ss481155011?species=hsapiens&assembly=grch37";
+        String url = "/v2/identifiers/rs199692280?species=mmusculus&assembly=grcm38";
         ResponseEntity<List<Variant>> response = restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<Variant>>() {
                 });
-        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().size() > 0);
     }
 
@@ -98,7 +98,7 @@ public class IdentifierWSServerV2IntegrationTest {
         ResponseEntity<List<Variant>> response = restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<Variant>>() {
                 });
-        assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertTrue(response.getBody().size() == 0);
     }
 }
