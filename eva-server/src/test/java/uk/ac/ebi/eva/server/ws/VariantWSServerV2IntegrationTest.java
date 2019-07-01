@@ -105,9 +105,8 @@ public class VariantWSServerV2IntegrationTest {
 
     @Test
     public void rootTestForError() throws URISyntaxException {
-        String url = "/v2/variants/13:32889669:C:T?species=mmusculus&assembly=grcm38&annot-vep-version=1";
-        assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
-                "or neither", testForErrorHelper(url));
+        String url = "/v2/variants/13:32889669:C:T?species=&assembly=grcm38";
+        assertEquals("Please specify a species", testForErrorHelper(url));
     }
 
     private String testForErrorHelper(String url) {

@@ -59,11 +59,12 @@ public class VariantWSServerV2 extends EvaWSServer {
     public Resource getCoreInfo(@PathVariable("variantCoreString") String variantCoreString,
                                 @RequestParam(name = "species") String species,
                                 @RequestParam(name = "assembly") String assembly,
-                                HttpServletResponse response) {
+                                HttpServletResponse response) throws IllegalArgumentException{
         initializeQuery();
         try {
             checkParameters(variantCoreString, null, null, species, assembly);
         } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new Resource<>(setErrorQueryResponse(e.getMessage()));
         }
@@ -108,8 +109,7 @@ public class VariantWSServerV2 extends EvaWSServer {
     }
 
     private void checkParameters(String variantCoreString, String annotationVepVersion,
-                                 String annotationVepCacheVersion, String species, String assembly) throws
-            IllegalArgumentException {
+                                 String annotationVepCacheVersion, String species, String assembly)  {
         if (!variantCoreString.contains(":")) {
             throw new IllegalArgumentException("Please describe a variant as 'sequence:location:reference:alternate'");
         }
