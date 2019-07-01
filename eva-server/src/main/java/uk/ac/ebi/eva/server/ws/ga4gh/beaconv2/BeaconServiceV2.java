@@ -96,58 +96,59 @@ public class BeaconServiceV2 {
 
     public BeaconAlleleResponse find(String chromosome, Long start, Long startMin, Long startMax, Long end, Long endMin,
                                      Long endMax, String referenceBases, String alternateBases, String variantType,
-                                     String assemblyId, List<String> studies, String includeDatasetResponses)
-            throws IllegalArgumentException {
-        String errorMessage = checkParameters(chromosome, referenceBases, start, end, alternateBases, variantType,
-                assemblyId, includeDatasetResponses);
+                                     String assemblyId, List<String> studies, String includeDatasetResponses) {
 
-        if (errorMessage == null) {
-            BeaconAlleleRequest request = buildBeaconAlleleRequest(chromosome, start, startMin, startMax, end, endMin,
-                    endMax, referenceBases, alternateBases, variantType, assemblyId, studies, includeDatasetResponses);
-
-            if (assemblyId.equalsIgnoreCase("grch37")) {
-                MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
-            } else if (assemblyId.equalsIgnoreCase("grch38")) {
-                MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
-            } else {
-                errorMessage = "Please enter a valid assembly name (GRCh37 or GRCh38)";
-                return buildBeaconAlleleResponse(null, request, null, errorMessage);
-            }
-
-            VariantType type = variantType != null ? VariantType.valueOf(variantType) : null;
-
-            Region startRange = start != null ? new Region(chromosome, start, start) : new Region(chromosome, startMin,
-                    startMax);
-            Region endRange = end != null ? new Region(chromosome, end, end) : new Region(chromosome, endMin, endMax);
-
-            List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(referenceBases, alternateBases,
-                    type, studies);
-
-            Integer pageSize = service.countByRegionAndOtherBeaconFilters(startRange, endRange, filters).intValue();
-            List<VariantMongo> variantMongoList;
-
-            if (pageSize > 0) {
-                variantMongoList = service.findByRegionAndOtherBeaconFilters(startRange, endRange, filters,
-                        new PageRequest(0, pageSize));
-            } else {
-                variantMongoList = Collections.emptyList();
-            }
-
-            if (variantMongoList.size() > 0) {
-                return buildBeaconAlleleResponse(true, request, buildDatasetAlleleResponses(variantMongoList,
-                        request), null);
-            } else {
-                return buildBeaconAlleleResponse(false, request, buildDatasetAlleleResponses(variantMongoList,
-                        request), null);
-            }
-        } else {
-            return buildBeaconAlleleResponse(null, null, null, errorMessage);
+        try {
+            checkParameters(chromosome, referenceBases, start, end, alternateBases, variantType,
+                    assemblyId, includeDatasetResponses);
+        } catch (IllegalArgumentException e) {
+            return buildBeaconAlleleResponse(null, null, null, e.getMessage());
         }
+
+        BeaconAlleleRequest request = buildBeaconAlleleRequest(chromosome, start, startMin, startMax, end, endMin,
+                endMax, referenceBases, alternateBases, variantType, assemblyId, studies, includeDatasetResponses);
+
+        if (assemblyId.equalsIgnoreCase("grch37")) {
+            MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
+        } else if (assemblyId.equalsIgnoreCase("grch38")) {
+            MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch38"));
+        } else {
+            String errorMessage = "Please enter a valid assembly name (GRCh37 or GRCh38)";
+            return buildBeaconAlleleResponse(null, request, null, errorMessage);
+        }
+
+        VariantType type = variantType != null ? VariantType.valueOf(variantType) : null;
+
+        Region startRange = start != null ? new Region(chromosome, start, start) : new Region(chromosome, startMin,
+                startMax);
+        Region endRange = end != null ? new Region(chromosome, end, end) : new Region(chromosome, endMin, endMax);
+
+        List<VariantRepositoryFilter> filters = new FilterBuilder().getBeaconFilters(referenceBases, alternateBases,
+                type, studies);
+
+        Integer pageSize = service.countByRegionAndOtherBeaconFilters(startRange, endRange, filters).intValue();
+        List<VariantMongo> variantMongoList;
+
+        if (pageSize > 0) {
+            variantMongoList = service.findByRegionAndOtherBeaconFilters(startRange, endRange, filters,
+                    new PageRequest(0, pageSize));
+        } else {
+            variantMongoList = Collections.emptyList();
+        }
+
+        if (variantMongoList.size() > 0) {
+            return buildBeaconAlleleResponse(true, request, buildDatasetAlleleResponses(variantMongoList,
+                    request), null);
+        } else {
+            return buildBeaconAlleleResponse(false, request, buildDatasetAlleleResponses(variantMongoList,
+                    request), null);
+        }
+
     }
 
-    private String checkParameters(String chromosome, String referenceBases, Long start, Long end,
-                                   String alternateBases, String variantType, String assemblyId,
-                                   String includeDatasetResponses) throws IllegalArgumentException {
+    private void checkParameters(String chromosome, String referenceBases, Long start, Long end,
+                                 String alternateBases, String variantType, String assemblyId,
+                                 String includeDatasetResponses) throws IllegalArgumentException {
         if (chromosome == null || chromosome.length() == 0) {
             String errorMessage = "Please provide a valid reference name from ";
             throw new IllegalArgumentException(errorMessage + String.join(", ",
@@ -157,27 +158,28 @@ public class BeaconServiceV2 {
                 Chromosome.fromValue(chromosome);
             } catch (Exception e) {
                 String errorMessage = "Please provide a valid reference name from ";
-                return errorMessage + String.join(", ", Arrays.asList(Chromosome.values()).toString());
+                throw new IllegalArgumentException(errorMessage + String.join(", ", Arrays.asList(Chromosome.values())
+                        .toString()));
             }
         }
         if (assemblyId == null || assemblyId.length() == 0) {
-            return "Please provide an assembly identifier";
+            throw new IllegalArgumentException("Please provide an assembly identifier");
         }
 
         if (referenceBases == null || referenceBases.length() == 0) {
-            return "Please provide reference bases";
+            throw new IllegalArgumentException("Please provide reference bases");
         }
 
         if (start != null && start < 0) {
-            return "Please provide a positive start number";
+            throw new IllegalArgumentException("Please provide a positive start number");
         }
 
         if (end != null && end < 0) {
-            return "Please provide a positive end number";
+            throw new IllegalArgumentException("Please provide a positive end number");
         }
 
         if (alternateBases == null && variantType == null) {
-            return "Either the alternate bases or the variant type is required";
+            throw new IllegalArgumentException("Either the alternate bases or the variant type is required");
         }
 
         if (variantType != null) {
@@ -185,7 +187,8 @@ public class BeaconServiceV2 {
                 VariantType.valueOf(variantType);
             } catch (Exception e) {
                 String errorMessage = "Please provide a valid variant type from ";
-                return errorMessage + String.join(", ", Arrays.asList(VariantType.values()).toString());
+                throw new IllegalArgumentException(errorMessage + String.join(", ", Arrays.asList(VariantType.values())
+                        .toString()));
             }
         }
 
@@ -195,11 +198,10 @@ public class BeaconServiceV2 {
                         BeaconAlleleRequest.IncludeDatasetResponsesEnum.valueOf(includeDatasetResponses);
             } catch (Exception e) {
                 String errorMessage = "Please provide a valid dataset inclusion flag from ";
-                return errorMessage + String.join(", ", Arrays.asList(BeaconAlleleRequest.
-                        IncludeDatasetResponsesEnum.values()).toString());
+                throw new IllegalArgumentException(errorMessage + String.join(", ", Arrays.asList(BeaconAlleleRequest.
+                        IncludeDatasetResponsesEnum.values()).toString()));
             }
         }
-        return null;
     }
 
     private BeaconAlleleResponse buildBeaconAlleleResponse(Boolean exists, BeaconAlleleRequest request,
@@ -308,7 +310,7 @@ public class BeaconServiceV2 {
                 .externalUrl("enternalUrl");
     }
 
-    public BeaconAlleleResponse find(BeaconAlleleRequest requestBody) throws IllegalArgumentException {
+    public BeaconAlleleResponse find(BeaconAlleleRequest requestBody) {
         return find(requestBody.getReferenceName().toString(),
                 requestBody.getStart(),
                 requestBody.getStartMin() == null ? null : (long) requestBody.getStartMin(),
