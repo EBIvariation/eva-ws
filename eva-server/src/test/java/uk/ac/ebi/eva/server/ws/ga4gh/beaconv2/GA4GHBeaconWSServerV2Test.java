@@ -84,13 +84,6 @@ public class GA4GHBeaconWSServerV2Test {
                 eq(pageable))).willReturn(variantMongoList);
         given(service.countByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters)))
                 .willReturn(1L);
-
-        variantRepositoryFilters = new FilterBuilder().getBeaconFilters("G", "A",
-                VariantType.SNV, Arrays.asList("PRJEB7218"));
-        given(service.findByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters),
-                eq(pageable))).willReturn(variantMongoList);
-        given(service.countByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters)))
-                .willReturn(1L);
     }
 
     @Test
@@ -178,7 +171,7 @@ public class GA4GHBeaconWSServerV2Test {
     }
 
     @Test
-    public void testForVariantTypeAndAlternateBasesCombinations() {
+    public void testNonExisingForBothAlternateAndVariantType() {
         String url = UriComponentsBuilder.fromUriString("")
                 .path("/v2/beacon/query")
                 .queryParam("referenceName", Chromosome.X)
@@ -188,32 +181,8 @@ public class GA4GHBeaconWSServerV2Test {
                 .queryParam("start", 100470026L)
                 .queryParam("end", 100470026L)
                 .queryParam("datasetIds" ,String.join(",", Arrays.asList("PRJEB7218")))
-                .build().toString();
-        assertTrue(testBeaconHelper(url).getBody().get(0).isExists());
-
-        url = UriComponentsBuilder.fromUriString("")
-                .path("/v2/beacon/query")
-                .queryParam("referenceName", Chromosome.X)
-                .queryParam("referenceBases", "G")
-                .queryParam("assemblyId", "GRCh37")
-                .queryParam("start", 100470026L)
-                .queryParam("end", 100470026L)
-                .queryParam("datasetIds" ,String.join(",", Arrays.asList("PRJEB7218")))
                 .queryParam("variantType", "SNV")
                 .build().toString();
-        assertTrue(testBeaconHelper(url).getBody().get(0).isExists());
-
-        url = UriComponentsBuilder.fromUriString("")
-                .path("/v2/beacon/query")
-                .queryParam("referenceName", Chromosome.X)
-                .queryParam("referenceBases", "G")
-                .queryParam("assemblyId", "GRCh37")
-                .queryParam("alternateBases", "A")
-                .queryParam("start", 100470026L)
-                .queryParam("end", 100470026L)
-                .queryParam("datasetIds" ,String.join(",", Arrays.asList("PRJEB7218")))
-                .queryParam("variantType", "SNV")
-                .build().toString();
-        assertTrue(testBeaconHelper(url).getBody().get(0).isExists());
+        assertFalse(testBeaconHelper(url).getBody().get(0).isExists());
     }
 }
