@@ -255,7 +255,7 @@ public class BeaconServiceV2 {
         List<VariantSource> variantSourceList = variantSourceService.findAllVariantSourcesForBeacon();
 
         HashSet<String> datasetIdsPresent = new HashSet<>();
-        HashMap<String, Float> datasetIdToFrequencyMapeer = new HashMap<>();
+        HashMap<String, Float> datasetIdToFrequencyMapper = new HashMap<>();
 
         variantMongoList.forEach(variantMongo -> {
             variantMongo.getSourceEntries().forEach(variantSourceEntryMongo -> {
@@ -264,7 +264,7 @@ public class BeaconServiceV2 {
             variantMongo.getVariantStatsMongo().forEach(variantStatisticsMongo -> {
                 if (variantMongo.getAlternate().equalsIgnoreCase(variantStatisticsMongo.getMafAllele()) ||
                         variantMongo.getReference().equalsIgnoreCase(variantStatisticsMongo.getMafAllele())) {
-                    datasetIdToFrequencyMapeer.put(variantStatisticsMongo.getStudyId() + "_" + variantStatisticsMongo
+                    datasetIdToFrequencyMapper.put(variantStatisticsMongo.getStudyId() + "_" + variantStatisticsMongo
                                     .getFileId(), variantStatisticsMongo.getMaf());
                 }
             });
@@ -282,8 +282,8 @@ public class BeaconServiceV2 {
                                 .IncludeDatasetResponsesEnum.HIT)) {
                     datasetAllelResponses.add(buildDatasetAlleleResponseHelper(true,
                             variantSource,
-                            datasetIdToFrequencyMapeer.get(variantSource.getStudyId()) == null ?
-                                    null : new Float(datasetIdToFrequencyMapeer.get(variantSource.getStudyId()))));
+                            datasetIdToFrequencyMapper.get(variantSource.getStudyId()) == null ?
+                                    null : new Float(datasetIdToFrequencyMapper.get(variantSource.getStudyId()))));
                 }
             } else {
                 if (request.getIncludeDatasetResponses().equals(BeaconAlleleRequest.IncludeDatasetResponsesEnum.ALL) ||
