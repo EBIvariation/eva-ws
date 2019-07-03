@@ -254,34 +254,36 @@ public class BeaconServiceV2 {
 
         List<VariantSource> variantSourceList = variantSourceService.findAllVariantSourcesForBeacon();
 
-        HashSet<String> studiesPresent = new HashSet<String>();
-        HashMap<String, Float> studyIdToFrequencyMapper = new HashMap<>();
+        HashSet<String> datasetIdsPresent = new HashSet<>();
+        HashMap<String, Float> datasetIdToFrequencyMapper = new HashMap<>();
+
         variantMongoList.forEach(variantMongo -> {
             variantMongo.getSourceEntries().forEach(variantSourceEntryMongo -> {
-                studiesPresent.add(variantSourceEntryMongo.getStudyId());
+                datasetIdsPresent.add(variantSourceEntryMongo.getStudyId() + "_" + variantSourceEntryMongo.getFileId());
             });
             variantMongo.getVariantStatsMongo().forEach(variantStatisticsMongo -> {
                 if (variantMongo.getAlternate().equalsIgnoreCase(variantStatisticsMongo.getMafAllele()) ||
                         variantMongo.getReference().equalsIgnoreCase(variantStatisticsMongo.getMafAllele())) {
-                    studyIdToFrequencyMapper.put(variantStatisticsMongo.getStudyId(), variantStatisticsMongo.getMaf());
+                    datasetIdToFrequencyMapper.put(variantStatisticsMongo.getStudyId() + "_" + variantStatisticsMongo
+                                    .getFileId(), variantStatisticsMongo.getMaf());
                 }
             });
         });
 
-        HashMap<String, VariantSource> allStudies = new HashMap<>();
+        HashMap<String, VariantSource> allDatasetIds = new HashMap<>();
         variantSourceList.forEach(variantSource -> {
-            allStudies.put(variantSource.getStudyId(), variantSource);
+            allDatasetIds.put(variantSource.getStudyId() + "_" + variantSource.getFileId(), variantSource);
         });
 
-        allStudies.forEach((studyId, variantSource) -> {
-            if (studiesPresent.contains(studyId)) {
+        allDatasetIds.forEach((datasetId, variantSource) -> {
+            if (datasetIdsPresent.contains(datasetId)) {
                 if (request.getIncludeDatasetResponses().equals(BeaconAlleleRequest.IncludeDatasetResponsesEnum.ALL) ||
                         request.getIncludeDatasetResponses().equals(BeaconAlleleRequest
                                 .IncludeDatasetResponsesEnum.HIT)) {
                     datasetAllelResponses.add(buildDatasetAlleleResponseHelper(true,
                             variantSource,
-                            studyIdToFrequencyMapper.get(variantSource.getStudyId()) == null ?
-                                    null : new Float(studyIdToFrequencyMapper.get(variantSource.getStudyId()))));
+                            datasetIdToFrequencyMapper.get(variantSource.getStudyId()) == null ?
+                                    null : new Float(datasetIdToFrequencyMapper.get(variantSource.getStudyId()))));
                 }
             } else {
                 if (request.getIncludeDatasetResponses().equals(BeaconAlleleRequest.IncludeDatasetResponsesEnum.ALL) ||
@@ -298,7 +300,7 @@ public class BeaconServiceV2 {
     private BeaconDatasetAlleleResponse buildDatasetAlleleResponseHelper(boolean exists, VariantSource variantSource,
                                                                          Float frequency) {
         return new BeaconDatasetAlleleResponse()
-                .datasetId(variantSource.getStudyId())
+                .datasetId(variantSource.getStudyId() + "_" + variantSource.getFileId())
                 .exists(exists)
                 .frequency(frequency == null ? null : new BigDecimal(frequency))
                 .variantCount(variantSource.getStats() == null ? null : (long) variantSource.getStats().
