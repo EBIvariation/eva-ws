@@ -31,25 +31,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
 
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -65,7 +57,7 @@ public class IdentifierWSServerV2Test {
     @Before
     public void setUp() throws Exception {
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(VARIANT);
-        given(variantEntityRepository.findByIdsAndComplexFilters(Arrays.asList("ss481155011"), null, null, null ,
+        given(variantEntityRepository.findByIdsAndComplexFilters(Arrays.asList("ss481155011"), null, null, null,
                 null)).willReturn(Arrays.asList(VARIANT));
     }
 
@@ -75,7 +67,10 @@ public class IdentifierWSServerV2Test {
         ResponseEntity<List<Variant>> response = restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<Variant>>() {
                 });
-        assertEquals( HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("1", response.getBody().get(0).getChromosome());
+        assertEquals("T", response.getBody().get(0).getAlternate());
+        assertEquals("A", response.getBody().get(0).getReference());
         assertTrue(response.getBody().size() > 0);
     }
 

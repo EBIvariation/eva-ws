@@ -89,6 +89,11 @@ public class IdentifierWSServerV2IntegrationTest {
                 new ParameterizedTypeReference<List<Variant>>() {
                 });
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("20", response.getBody().get(0).getChromosome());
+        assertEquals("T", response.getBody().get(0).getAlternate());
+        assertEquals("A", response.getBody().get(0).getReference());
+        assertEquals(60100l, response.getBody().get(0).getStart());
+        assertEquals(60100l, response.getBody().get(0).getEnd());
         assertTrue(response.getBody().size() > 0);
     }
 

@@ -47,8 +47,8 @@ public class IdentifierWSServerV2 {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
-    @GetMapping(value = "/{identifierId}")
-    public ResponseEntity getVariants(@PathVariable("identifierId") String identifierId,
+    @GetMapping(value = "/{identifier}")
+    public ResponseEntity getVariants(@PathVariable("identifier") String identifier,
                                       @RequestParam(name = "species") String species,
                                       @RequestParam(name = "assembly") String assembly) throws
             AnnotationMetadataNotFoundException, IllegalArgumentException {
@@ -56,7 +56,7 @@ public class IdentifierWSServerV2 {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
         List<VariantWithSamplesAndAnnotation> variantEntities = service.findByIdsAndComplexFilters(Arrays.asList
-                (identifierId), null, null, null, null);
+                (identifier), null, null, null, null);
 
         List<Variant> coreVariantInfo = new ArrayList<>();
         variantEntities.forEach(variantEntity -> {
