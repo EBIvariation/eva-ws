@@ -86,16 +86,6 @@ public class RegionWSServerV2IntegrationTest {
         testGetVariantsByRegionHelper("20:60000-62000", 1,HttpStatus.OK);
     }
 
-    @Test
-    public void testGetVariantsByRegions() throws URISyntaxException {
-        testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 2,HttpStatus.OK);
-    }
-
-    @Test
-    public void testGetVariantsByNonExistingRegion() throws URISyntaxException {
-        testGetVariantsByRegionHelper("21:8000-9000", 0,HttpStatus.NOT_FOUND);
-    }
-
     private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants, HttpStatus status)
             throws URISyntaxException {
         String url = "/v2/segments/" + testRegion + "?species=mmusculus&assembly=grcm38";
@@ -105,5 +95,15 @@ public class RegionWSServerV2IntegrationTest {
                 });
         assertEquals(status, response.getStatusCode());
         assertEquals(expectedVariants,response.getBody().size());
+    }
+
+    @Test
+    public void testGetVariantsByRegions() throws URISyntaxException {
+        testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 2,HttpStatus.OK);
+    }
+
+    @Test
+    public void testGetVariantsByNonExistingRegion() throws URISyntaxException {
+        testGetVariantsByRegionHelper("21:8000-9000", 0,HttpStatus.NOT_FOUND);
     }
 }
