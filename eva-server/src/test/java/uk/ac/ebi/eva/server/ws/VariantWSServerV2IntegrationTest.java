@@ -141,6 +141,10 @@ public class VariantWSServerV2IntegrationTest {
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));
+        url = "/v2/variants/13:32889669:C:T/annotations?species=mmusculus&assembly=grcm38&" +
+                "annot-vep-cache-version=1";
+        assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
+                "or neither", testForErrorHelper(url));
     }
 
     @Test
