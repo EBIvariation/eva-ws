@@ -67,7 +67,7 @@ public class VariantWSServerV2Test {
     private TestRestTemplate restTemplate;
 
     @MockBean
-    private VariantWithSamplesAndAnnotationsService variantEntityRepository;
+    private VariantWithSamplesAndAnnotationsService service;
 
     @Before
     public void setUp() throws Exception {
@@ -76,8 +76,7 @@ public class VariantWSServerV2Test {
         VARIANT.addSourceEntry(new VariantSourceEntryWithSampleNames("fid", "sid", null, null, null, null, null));
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(VARIANT);
 
-        given(variantEntityRepository
-                .findByChromosomeAndStartAndReferenceAndAlternate(eq(CHROMOSOME), anyInt(), any(), any(), any()))
+        given(service.findByChromosomeAndStartAndReferenceAndAlternate(eq(CHROMOSOME), anyInt(), any(), any(), any()))
                 .willReturn(variantEntities);
     }
 
@@ -152,7 +151,7 @@ public class VariantWSServerV2Test {
 
     @Test
     public void sourceEntriesEndPointTestExisting() throws URISyntaxException {
-        String url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/source-entries?species=mmusculus&assembly=grcm38";
+        String url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/sources?species=mmusculus&assembly=grcm38";
         ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> annotations = restTemplate.
                 exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference
                         <QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>>() {
@@ -163,7 +162,7 @@ public class VariantWSServerV2Test {
 
     @Test
     public void sourceEntriesEndPointTestNonExisting() throws URISyntaxException {
-        String url = "/v2/variants/100:0:C:T/source-entries?species=mmusculus&assembly=grcm38";
+        String url = "/v2/variants/100:0:C:T/sources?species=mmusculus&assembly=grcm38";
         ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(url, HttpMethod.GET,
                 null, new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
                 });
@@ -173,7 +172,7 @@ public class VariantWSServerV2Test {
 
     @Test
     public void sourceEntriesEndpointTestForError() throws URISyntaxException {
-        String url = "/v2/variants/13:32889669:C:T/source-entries?species=mmusculus&assembly=grcm38&" +
+        String url = "/v2/variants/13:32889669:C:T/sources?species=mmusculus&assembly=grcm38&" +
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));

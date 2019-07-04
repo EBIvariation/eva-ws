@@ -64,7 +64,6 @@ public class VariantWSServerV2 extends EvaWSServer {
         try {
             checkParameters(variantCoreString, null, null, species, assembly);
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new Resource<>(setErrorQueryResponse(e.getMessage()));
         }
@@ -99,7 +98,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
                 species, assembly, null, null, response)).toUri().toString(), "annotation");
 
-        Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getsources(variantCoreString, species,
+        Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getSources(variantCoreString, species,
                 assembly, null, null, response)).toUri().toString(), "sources");
 
         List<Link> links = new ArrayList<>();
@@ -192,8 +191,8 @@ public class VariantWSServerV2 extends EvaWSServer {
         return setQueryResponse(queryResult);
     }
 
-    @GetMapping(value = "/{variantCoreString}/source-entries")
-    public QueryResponse getsources(@PathVariable("variantCoreString") String variantCoreString,
+    @GetMapping(value = "/{variantCoreString}/sources")
+    public QueryResponse getSources(@PathVariable("variantCoreString") String variantCoreString,
                                     @RequestParam(name = "species") String species,
                                     @RequestParam(name = "assembly") String assembly,
                                     @RequestParam(name = "annot-vep-version", required = false)

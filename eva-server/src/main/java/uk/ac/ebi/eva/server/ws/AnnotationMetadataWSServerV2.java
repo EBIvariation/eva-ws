@@ -34,7 +34,7 @@ import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/v2/annotation-metadata", produces = "application/json")
+@RequestMapping(value = "/v2/annotation-versions", produces = "application/json")
 @Api(tags = {"annotation"})
 public class AnnotationMetadataWSServerV2 {
 
