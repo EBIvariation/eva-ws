@@ -2,7 +2,7 @@
  * European Variation Archive (EVA) - Open-access database of all types of genetic
  * variation data from all species
  *
- * Copyright 2014-2016 EMBL - European Bioinformatics Institute
+ * Copyright 2019 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import springfox.documentation.annotations.ApiIgnore;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
@@ -44,6 +45,8 @@ import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.RateLimit;
 import uk.ac.ebi.eva.server.Utils;
 
+import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +63,7 @@ public class RegionWSServerV2 {
     public RegionWSServerV2() {
     }
 
-    @RequestMapping(value = "/{regionId}/variants", method = RequestMethod.GET)
+    @RequestMapping(value = "/{regionId}", method = RequestMethod.GET)
     @ResponseBody
     @RateLimit(value = REGION_REQUEST_RATE_LIMIT)
     public ResponseEntity getVariantsByRegion(@PathVariable("regionId") String regionId,
@@ -72,13 +75,13 @@ public class RegionWSServerV2 {
                                               @RequestParam(name = "maf", required = false) String maf,
                                               @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                               @RequestParam(name = "sift", required = false) String siftScore,
-                                              @RequestParam(name = "exclude", required = false) List<String> exclude,
                                               @RequestParam(name = "annot-vep-version", required = false)
                                                       String annotationVepVersion,
                                               @RequestParam(name = "annot-vep-cache-version", required = false)
-                                                      String annotationVepCacheVersion)
+                                                      String annotationVepCacheVersion,
+                                              @ApiIgnore HttpServletRequest request)
             throws IllegalArgumentException {
-        checkParameters(annotationVepVersion, annotationVepCacheVersion, species, exclude);
+        checkParameters(annotationVepVersion, annotationVepCacheVersion, species);
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
@@ -86,14 +89,18 @@ public class RegionWSServerV2 {
                 .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
         List<Region> regions = Region.parseRegions(regionId);
-        List<String> excludeMapped = getExcludeMapped(exclude);
+        List<String> excludeMapped = getExcludeMapped();
 
         AnnotationMetadata annotationMetadata = getAnnotationMetadataHelper(annotationVepVersion,
                 annotationVepCacheVersion);
         Integer pageSize = service.countByRegionsAndComplexFilters(regions, filters).intValue();
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
+        List<Variant> variantCoreInfo = new ArrayList<>();
 
+        if(pageSize==0) {
+            return new ResponseEntity(variantCoreInfo, HttpStatus.NOT_FOUND);
+        }
         try {
             variantEntities = service.findByRegionsAndComplexFilters(regions,
                     filters,
@@ -104,20 +111,19 @@ public class RegionWSServerV2 {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        List<Variant> variantCoreInfo = new ArrayList<>();
-
         variantEntities.forEach(variantEntity -> {
             Variant variant = new Variant(variantEntity.getChromosome(), variantEntity.getStart(),
                     variantEntity.getEnd(), variantEntity.getReference(), variantEntity.getAlternate());
             variant.setIds(variantEntity.getIds());
+            variant.setMainId(variantEntity.getMainId());
             variantCoreInfo.add(variant);
         });
 
         return new ResponseEntity(variantCoreInfo, HttpStatus.OK);
     }
 
-    public String checkParameters(String annotationVepVersion, String annotationVepCacheVersion, String species,
-                                  List<String> exclude) throws IllegalArgumentException {
+    public String checkParameters(String annotationVepVersion, String annotationVepCacheVersion, String species) throws
+            IllegalArgumentException {
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
             throw new IllegalArgumentException("Please specify either both annotation VEP version and annotation VEP" +
                     " cache version, or neither");
@@ -126,27 +132,14 @@ public class RegionWSServerV2 {
         if (species.isEmpty()) {
             throw new IllegalArgumentException("Please specify a species");
         }
-
-        if (exclude != null && !exclude.isEmpty()) {
-            for (String e : exclude) {
-                String docPath = Utils.getApiToMongoDocNameMap().get(e);
-                if (docPath == null) {
-                    throw new IllegalArgumentException("Unrecognised exclude field: " + e);
-                }
-            }
-        }
-
         return null;
     }
 
-    public List<String> getExcludeMapped(List<String> exclude) {
+    public List<String> getExcludeMapped() {
         List<String> excludeMapped = new ArrayList<>();
-        if (exclude != null && !exclude.isEmpty()) {
-            for (String e : exclude) {
-                String docPath = Utils.getApiToMongoDocNameMap().get(e);
-                excludeMapped.add(docPath);
-            }
-        }
+        Utils.getApiToMongoDocNameMap().forEach((key,value)->{
+            excludeMapped.add(value);
+        });
         return excludeMapped;
     }
 
@@ -157,5 +150,4 @@ public class RegionWSServerV2 {
         }
         return null;
     }
-
 }
