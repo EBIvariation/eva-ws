@@ -81,18 +81,18 @@ public class VariantWSServerV2IntegrationTest {
     public void setUp() throws Exception { }
 
     @Test
-    public void rootTestGetVariantsByVariantId() throws URISyntaxException {
+    public void rootTestGetVariantsByVariantCoreString() throws URISyntaxException {
         String url = "/v2/variants/20:60100:A:T?species=mmusculus&assembly=grcm38";
         List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotations = WSTestHelpers.testRestTemplateHelper(
                 url,restTemplate);
         assertTrue(variantWithSamplesAndAnnotations.size() > 0);
-        assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().size() == 0);
+        assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().isEmpty());
         assertNull(variantWithSamplesAndAnnotations.get(0).getAnnotation());
         assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size() > 0);
     }
 
     @Test
-    public void rootTestGetVariantsByNonExistingVariantId() throws URISyntaxException {
+    public void rootTestGetVariantsByNonExistingVariantCoreString() throws URISyntaxException {
         String url = "/v2/variants/10:0:A:T?species=mmusculus&assembly=grcm38";
 
         ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
@@ -104,7 +104,7 @@ public class VariantWSServerV2IntegrationTest {
     }
 
     @Test
-    public void rootTestForError() throws URISyntaxException {
+    public void rootTestParameterErrors() throws URISyntaxException {
         String url = "/v2/variants/13:32889669:C:T?species=&assembly=grcm38";
         assertEquals("Please specify a species", testForErrorHelper(url));
     }

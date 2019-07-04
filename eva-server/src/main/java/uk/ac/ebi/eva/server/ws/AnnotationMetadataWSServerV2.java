@@ -52,7 +52,7 @@ public class AnnotationMetadataWSServerV2 {
         if(assembly.isEmpty()) {
             throw new IllegalArgumentException("Please specify an assembly");
         }
-        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species+"_"+assembly));
+        MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
         return service.findAllByOrderByCacheVersionDescVepVersionDesc();
     }
 

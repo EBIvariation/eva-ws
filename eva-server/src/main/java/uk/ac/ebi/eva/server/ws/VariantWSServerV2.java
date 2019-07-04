@@ -77,7 +77,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         try {
             variantEntities = getVariantEntitiesByParams(variantCoreString, null, null);
             numTotalResults = (long) variantEntities.size();
-            if (variantEntities.size() == 0) {
+            if (numTotalResults == 0L) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return new Resource<>(setQueryResponse(variantEntities));
             }

@@ -61,15 +61,14 @@ public class AnnotationMetadataWSServerV2Test {
     }
 
     @Test
-    public void testFetAnnotationMetadata() {
+    public void testGetAnnotationMetadata() {
         String url = "/v2/annotation-metadata?species=mmusculus&assembly=grcm38";
         ResponseEntity<List<AnnotationMetadata>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<AnnotationMetadata>>() {
                 });
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        System.out.println(response);
-        List<AnnotationMetadata> annotationMetadataList= response.getBody();
+        List<AnnotationMetadata> annotationMetadataList = response.getBody();
         assertEquals(2, annotationMetadataList.size());
     }
 }
