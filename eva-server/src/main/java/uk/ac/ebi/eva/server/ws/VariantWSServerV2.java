@@ -42,7 +42,6 @@ import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -231,7 +230,6 @@ public class VariantWSServerV2 extends EvaWSServer {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
         }
-
 
         List<VariantSourceEntryWithSampleNames> variantSources = new ArrayList<>();
         if (!variantEntity.isPresent()) {
