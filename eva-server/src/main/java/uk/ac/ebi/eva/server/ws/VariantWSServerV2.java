@@ -113,6 +113,17 @@ public class VariantWSServerV2 extends EvaWSServer {
                                  String annotationVepCacheVersion, String species, String assembly) {
         if (!variantCoreString.contains(":")) {
             throw new IllegalArgumentException("Please describe a variant as 'sequence:location:reference:alternate'");
+        } else {
+            String[] regionId = variantCoreString.split(":");
+            if(regionId.length!=4) {
+                throw new IllegalArgumentException("VariantCoreString requires 4 fields, " + regionId.length +
+                        "fields were given in the input");
+            }
+            try {
+                Integer.parseInt(regionId[1]);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Please specify a valid Integer for `start` in VariantCoreString");
+            }
         }
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
@@ -135,18 +146,16 @@ public class VariantWSServerV2 extends EvaWSServer {
             String annotationVepCacheVersion)
             throws AnnotationMetadataNotFoundException, IllegalArgumentException {
         String[] regionId = variantCoreString.split(":");
-        if (regionId.length != 4) {
-            throw new IllegalArgumentException("VariantCoreString requires 4 fields, " + regionId.length +
-                    "fields were given in the input");
-        }
 
         AnnotationMetadata annotationMetadata = null;
         if (annotationVepVersion != null && annotationVepCacheVersion != null) {
             annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
         }
+
         List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotationList = service.
                 findByChromosomeAndStartAndReferenceAndAlternate(regionId[0], Integer.parseInt(regionId[1]),
                         regionId[2], regionId[3], annotationMetadata);
+
         if (variantWithSamplesAndAnnotationList.size() == 1) {
             return Optional.of(variantWithSamplesAndAnnotationList.get(0));
         } else if (variantWithSamplesAndAnnotationList.size() > 1) {
