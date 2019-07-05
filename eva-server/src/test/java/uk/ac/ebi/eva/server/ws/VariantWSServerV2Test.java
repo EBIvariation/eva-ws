@@ -85,7 +85,7 @@ public class VariantWSServerV2Test {
         String url = "/v2/variants/" + CHROMOSOME +":71822:C:G?species=mmusculus&assembly=grcm38";
         List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotations = WSTestHelpers
                 .testRestTemplateHelper(url,restTemplate);
-        assertTrue(variantWithSamplesAndAnnotations.size() == 1);
+        assertTrue(1, variantWithSamplesAndAnnotations.size());
         assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().size() == 0);
         assertNull(variantWithSamplesAndAnnotations.get(0).getAnnotation());
         assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size() > 0);

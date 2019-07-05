@@ -115,14 +115,17 @@ public class VariantWSServerV2 extends EvaWSServer {
             throw new IllegalArgumentException("Please describe a variant as 'sequence:location:reference:alternate'");
         } else {
             String[] regionId = variantCoreString.split(":");
-            if(regionId.length!=4) {
+            if (regionId.length != 4) {
                 throw new IllegalArgumentException("VariantCoreString requires 4 fields, " + regionId.length +
                         "fields were given in the input");
             }
             try {
-                Integer.parseInt(regionId[1]);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Please specify a valid Integer for `start` in VariantCoreString");
+                long position = Long.parseLong(regionId[1]);
+                if (position < 0) {
+                    throw new IllegalArgumentException("Please provide a positive start position");
+                }
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Please specify a valid integer start position");
             }
         }
 
@@ -159,7 +162,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         if (variantWithSamplesAndAnnotationList.size() == 1) {
             return Optional.of(variantWithSamplesAndAnnotationList.get(0));
         } else if (variantWithSamplesAndAnnotationList.size() > 1) {
-            throw new IllegalArgumentException("More than one variant retireved. Please enter a unique VariantId");
+            throw new IllegalArgumentException("More than one variant has been found.");
         }
         return Optional.ofNullable(null);
     }
