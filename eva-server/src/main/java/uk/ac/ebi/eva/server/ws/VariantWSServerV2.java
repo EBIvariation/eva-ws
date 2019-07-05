@@ -42,7 +42,9 @@ import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -59,7 +61,7 @@ public class VariantWSServerV2 extends EvaWSServer {
     public Resource getCoreInfo(@PathVariable("variantCoreString") String variantCoreString,
                                 @RequestParam(name = "species") String species,
                                 @RequestParam(name = "assembly") String assembly,
-                                HttpServletResponse response) throws IllegalArgumentException{
+                                HttpServletResponse response) throws IllegalArgumentException {
         initializeQuery();
         try {
             checkParameters(variantCoreString, null, null, species, assembly);
@@ -70,30 +72,31 @@ public class VariantWSServerV2 extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
-        List<VariantWithSamplesAndAnnotation> variantEntities;
-        Long numTotalResults;
+        Optional<VariantWithSamplesAndAnnotation> variantEntity;
 
         try {
-            variantEntities = getVariantEntitiesByParams(variantCoreString, null, null);
-            numTotalResults = (long) variantEntities.size();
-            if (numTotalResults == 0L) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return new Resource<>(setQueryResponse(variantEntities));
-            }
+            variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, null, null);
         } catch (AnnotationMetadataNotFoundException ex) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return new Resource<>(setQueryResponse(ex.getMessage()));
+        } catch (IllegalArgumentException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new Resource<>(setQueryResponse(ex.getMessage()));
         }
 
         List<Variant> variantList = new ArrayList<>();
-        variantEntities.forEach(variantEntity->{
-            Variant variant = new Variant(variantEntity.getChromosome(), variantEntity.getStart(),
-                    variantEntity.getEnd(), variantEntity.getReference(),variantEntity.getAlternate());
-            variant.setIds(variantEntity.getIds());
-            variantList.add(variant);
-        });
+        if (!variantEntity.isPresent()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return new Resource<>(setQueryResponse(variantList));
+        }
 
-        QueryResult<Variant> queryResult = buildQueryResult(variantList, numTotalResults);
+        Variant variant = new Variant(variantEntity.get().getChromosome(), variantEntity.get().getStart(),
+                variantEntity.get().getEnd(), variantEntity.get().getReference(), variantEntity.get().
+                getAlternate());
+        variant.setIds(variantEntity.get().getIds());
+        variantList.add(variant);
+
+        QueryResult<Variant> queryResult = buildQueryResult(variantList, 1);
 
         Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
                 species, assembly, null, null, response)).toUri().toString(), "annotation");
@@ -108,7 +111,7 @@ public class VariantWSServerV2 extends EvaWSServer {
     }
 
     private void checkParameters(String variantCoreString, String annotationVepVersion,
-                                 String annotationVepCacheVersion, String species, String assembly)  {
+                                 String annotationVepCacheVersion, String species, String assembly) {
         if (!variantCoreString.contains(":")) {
             throw new IllegalArgumentException("Please describe a variant as 'sequence:location:reference:alternate'");
         }
@@ -127,25 +130,29 @@ public class VariantWSServerV2 extends EvaWSServer {
         }
     }
 
-    private List<VariantWithSamplesAndAnnotation> getVariantEntitiesByParams(String variantCoreString,
-                                                                             String annotationVepVersion,
-                                                                             String annotationVepCacheVersion) throws
-            AnnotationMetadataNotFoundException {
+    private Optional<VariantWithSamplesAndAnnotation> getVariantByCoordinatesAndAnnotationVersion(
+            String variantCoreString,
+                                                                                 String annotationVepVersion,
+                                                                                 String annotationVepCacheVersion)
+            throws AnnotationMetadataNotFoundException, IllegalArgumentException {
         String[] regionId = variantCoreString.split(":");
-        String alternate = (regionId.length > 3) ? regionId[3] : null;
-
+        Optional<String> alternate = Optional.ofNullable(regionId[3]);
+        if (!alternate.isPresent()) {
+            return Optional.ofNullable(null);
+        }
         AnnotationMetadata annotationMetadata = null;
         if (annotationVepVersion != null && annotationVepCacheVersion != null) {
             annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
         }
-
-        if (alternate != null) {
-            return service.findByChromosomeAndStartAndReferenceAndAlternate(regionId[0], Integer.parseInt(regionId[1]),
-                    regionId[2], alternate, annotationMetadata);
-        } else {
-            return service.findByChromosomeAndStartAndReference(regionId[0], Integer.parseInt(regionId[1]),
-                    regionId[2], annotationMetadata);
+        List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotationList = service.
+                findByChromosomeAndStartAndReferenceAndAlternate(regionId[0], Integer.parseInt(regionId[1]),
+                        regionId[2], alternate.get(), annotationMetadata);
+        if (variantWithSamplesAndAnnotationList.size() == 1) {
+            return Optional.of(variantWithSamplesAndAnnotationList.get(0));
+        } else if (variantWithSamplesAndAnnotationList.size() > 1) {
+            throw new IllegalArgumentException("More than one variant retireved. Please enter a unique VariantId");
         }
+        return Optional.ofNullable(null);
     }
 
     @GetMapping(value = "/{variantCoreString}/annotations")
@@ -168,23 +175,25 @@ public class VariantWSServerV2 extends EvaWSServer {
         }
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
-        List<VariantWithSamplesAndAnnotation> variantEntities;
+        Optional<VariantWithSamplesAndAnnotation> variantEntity;
         try {
-            variantEntities = getVariantEntitiesByParams(variantCoreString, annotationVepVersion,
+            variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, annotationVepVersion,
                     annotationVepCacheVersion);
-            if (variantEntities.size() == 0) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return setQueryResponse(buildQueryResult(variantEntities, 0));
-            }
         } catch (AnnotationMetadataNotFoundException ex) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(ex.getMessage());
+        } catch (IllegalArgumentException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
         }
 
         List<Annotation> annotations = new ArrayList<>();
-        variantEntities.forEach(variantEntity -> {
-            annotations.add(variantEntity.getAnnotation());
-        });
+        if (!variantEntity.isPresent()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return setQueryResponse(buildQueryResult(annotations, 0));
+        }
+
+        annotations.add(variantEntity.get().getAnnotation());
 
         QueryResult<Annotation> queryResult = buildQueryResult(annotations, annotations.size());
 
@@ -211,26 +220,27 @@ public class VariantWSServerV2 extends EvaWSServer {
         }
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
-        List<VariantWithSamplesAndAnnotation> variantEntities;
+        Optional<VariantWithSamplesAndAnnotation> variantEntity;
         try {
-            variantEntities = getVariantEntitiesByParams(variantCoreString, annotationVepVersion,
+            variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, annotationVepVersion,
                     annotationVepCacheVersion);
-            if (variantEntities.size() == 0) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return setQueryResponse(buildQueryResult(variantEntities, 0));
-            }
         } catch (AnnotationMetadataNotFoundException ex) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse(ex.getMessage());
+        } catch (IllegalArgumentException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
         }
 
-        List<VariantSourceEntryWithSampleNames> variantSources = new ArrayList<>();
-        variantEntities.forEach(variantEntity -> {
-            variantEntity.getSourceEntries().forEach(sourceEntry -> {
-                variantSources.add(sourceEntry);
-            });
-        });
 
+        List<VariantSourceEntryWithSampleNames> variantSources = new ArrayList<>();
+        if (!variantEntity.isPresent()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return setQueryResponse(buildQueryResult(variantSources, 0));
+        }
+        variantEntity.get().getSourceEntries().forEach(sourceEntry -> {
+            variantSources.add(sourceEntry);
+        });
         QueryResult<VariantSourceEntryWithSampleNames> queryResult = buildQueryResult(variantSources,
                 variantSources.size());
 
