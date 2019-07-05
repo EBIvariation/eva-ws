@@ -131,21 +131,22 @@ public class VariantWSServerV2 extends EvaWSServer {
 
     private Optional<VariantWithSamplesAndAnnotation> getVariantByCoordinatesAndAnnotationVersion(
             String variantCoreString,
-                                                                                 String annotationVepVersion,
-                                                                                 String annotationVepCacheVersion)
+            String annotationVepVersion,
+            String annotationVepCacheVersion)
             throws AnnotationMetadataNotFoundException, IllegalArgumentException {
         String[] regionId = variantCoreString.split(":");
-        Optional<String> alternate = Optional.ofNullable(regionId[3]);
-        if (!alternate.isPresent()) {
-            return Optional.ofNullable(null);
+        if (regionId.length != 4) {
+            throw new IllegalArgumentException("VariantCoreString requires 4 fields, " + regionId.length +
+                    "fields were given in the input");
         }
+
         AnnotationMetadata annotationMetadata = null;
         if (annotationVepVersion != null && annotationVepCacheVersion != null) {
             annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
         }
         List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotationList = service.
                 findByChromosomeAndStartAndReferenceAndAlternate(regionId[0], Integer.parseInt(regionId[1]),
-                        regionId[2], alternate.get(), annotationMetadata);
+                        regionId[2], regionId[3], annotationMetadata);
         if (variantWithSamplesAndAnnotationList.size() == 1) {
             return Optional.of(variantWithSamplesAndAnnotationList.get(0));
         } else if (variantWithSamplesAndAnnotationList.size() > 1) {
