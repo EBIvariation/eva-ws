@@ -82,10 +82,10 @@ public class VariantWSServerV2Test {
 
     @Test
     public void rootTestGetVariantsByVariantCoreString() throws URISyntaxException {
-        String url = "/v2/variants/" + CHROMOSOME +":71822:C:G?species=mmusculus&assembly=grcm38";
+        String url = "/v2/variants/" + CHROMOSOME + ":71822:C:G?species=mmusculus&assembly=grcm38";
         List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotations = WSTestHelpers
-                .testRestTemplateHelper(url,restTemplate);
-        assertTrue(1, variantWithSamplesAndAnnotations.size());
+                .testRestTemplateHelper(url, restTemplate);
+        assertEquals(1, variantWithSamplesAndAnnotations.size());
         assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().size() == 0);
         assertNull(variantWithSamplesAndAnnotations.get(0).getAnnotation());
         assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size() > 0);
@@ -98,7 +98,7 @@ public class VariantWSServerV2Test {
 
     @Test
     public void rootTestGetVariantsByNonExistingVariantCoreString() throws URISyntaxException {
-        String url = "/v2/variants/" + NON_EXISTING_CHROMOSOME+":71822:C:G?species=mmusculus&assembly=grcm38";
+        String url = "/v2/variants/" + NON_EXISTING_CHROMOSOME + ":71822:C:G?species=mmusculus&assembly=grcm38";
 
         ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,

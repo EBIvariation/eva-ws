@@ -78,13 +78,14 @@ public class VariantWSServerV2IntegrationTest {
     private VariantWithSamplesAndAnnotationsService service;
 
     @Before
-    public void setUp() throws Exception { }
+    public void setUp() throws Exception {
+    }
 
     @Test
     public void rootTestGetVariantsByVariantCoreString() throws URISyntaxException {
         String url = "/v2/variants/20:60100:A:T?species=mmusculus&assembly=grcm38";
         List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotations = WSTestHelpers.testRestTemplateHelper(
-                url,restTemplate);
+                url, restTemplate);
         assertEquals(1, variantWithSamplesAndAnnotations.size());
         assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().isEmpty());
         assertNull(variantWithSamplesAndAnnotations.get(0).getAnnotation());

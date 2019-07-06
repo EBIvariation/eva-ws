@@ -75,10 +75,7 @@ public class VariantWSServerV2 extends EvaWSServer {
 
         try {
             variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, null, null);
-        } catch (AnnotationMetadataNotFoundException ex) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return new Resource<>(setQueryResponse(ex.getMessage()));
-        } catch (IllegalArgumentException ex) {
+        } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new Resource<>(setQueryResponse(ex.getMessage()));
         }
@@ -89,9 +86,9 @@ public class VariantWSServerV2 extends EvaWSServer {
             return new Resource<>(setQueryResponse(variantList));
         }
 
-        Variant variant = new Variant(variantEntity.get().getChromosome(), variantEntity.get().getStart(),
-                variantEntity.get().getEnd(), variantEntity.get().getReference(), variantEntity.get().
-                getAlternate());
+        VariantWithSamplesAndAnnotation retrievedVariant = variantEntity.get();
+        Variant variant = new Variant(retrievedVariant.getChromosome(), retrievedVariant.getStart(),
+                retrievedVariant.getEnd(), retrievedVariant.getReference(), retrievedVariant.getAlternate());
         variant.setIds(variantEntity.get().getIds());
         variantList.add(variant);
 
@@ -113,20 +110,19 @@ public class VariantWSServerV2 extends EvaWSServer {
                                  String annotationVepCacheVersion, String species, String assembly) {
         if (!variantCoreString.contains(":")) {
             throw new IllegalArgumentException("Please describe a variant as 'sequence:location:reference:alternate'");
-        } else {
-            String[] regionId = variantCoreString.split(":");
-            if (regionId.length != 4) {
-                throw new IllegalArgumentException("VariantCoreString requires 4 fields, " + regionId.length +
-                        "fields were given in the input");
+        }
+        String[] regionId = variantCoreString.split(":");
+        if (regionId.length != 4) {
+            throw new IllegalArgumentException("Please describe a variant as 'sequence:location:reference:" +
+                    "alternate'");
+        }
+        try {
+            long position = Long.parseLong(regionId[1]);
+            if (position < 0) {
+                throw new IllegalArgumentException("Please provide a positive start position");
             }
-            try {
-                long position = Long.parseLong(regionId[1]);
-                if (position < 0) {
-                    throw new IllegalArgumentException("Please provide a positive start position");
-                }
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Please specify a valid integer start position");
-            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Please specify a valid integer start position");
         }
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
@@ -191,10 +187,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         try {
             variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, annotationVepVersion,
                     annotationVepCacheVersion);
-        } catch (AnnotationMetadataNotFoundException ex) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse(ex.getMessage());
-        } catch (IllegalArgumentException ex) {
+        } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
         }
@@ -236,10 +229,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         try {
             variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, annotationVepVersion,
                     annotationVepCacheVersion);
-        } catch (AnnotationMetadataNotFoundException ex) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return setQueryResponse(ex.getMessage());
-        } catch (IllegalArgumentException ex) {
+        } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
         }
