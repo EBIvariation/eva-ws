@@ -108,9 +108,6 @@ public class VariantWSServerV2 extends EvaWSServer {
 
     private void checkParameters(String variantCoreString, String annotationVepVersion,
                                  String annotationVepCacheVersion, String species, String assembly) {
-        if (!variantCoreString.contains(":")) {
-            throw new IllegalArgumentException("Please describe a variant as 'sequence:location:reference:alternate'");
-        }
         String[] regionId = variantCoreString.split(":");
         if (regionId.length != 4) {
             throw new IllegalArgumentException("Please describe a variant as 'sequence:location:reference:" +
