@@ -134,6 +134,13 @@ public class VariantWSServerV2IntegrationTest {
                 });
         assertEquals(HttpStatus.NOT_FOUND, annotations.getStatusCode());
         assertTrue(annotations.getBody().getResponse().get(0).getResult().size() == 0);
+
+        url = "/v2/variants/X:1000014:G:A/annotations?species=mmusculus&assembly=grcm38";
+        annotations = restTemplate.exchange(url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
+                });
+        assertEquals(HttpStatus.NOT_FOUND, annotations.getStatusCode());
+        assertTrue(annotations.getBody().getResponse().get(0).getResult().size() == 0);
     }
 
     @Test
@@ -151,23 +158,24 @@ public class VariantWSServerV2IntegrationTest {
     @Test
     public void sourceEntriesEndPointTestExisting() throws URISyntaxException {
         String url = "/v2/variants/20:60100:A:T/sources?species=mmusculus&assembly=grcm38";
-        ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> annotations = restTemplate.
+        ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> sources = restTemplate.
                 exchange(url, HttpMethod.GET, null,
                         new ParameterizedTypeReference<QueryResponse<QueryResult
                                 <VariantSourceEntryWithSampleNames>>>() {
                         });
-        assertEquals(HttpStatus.OK, annotations.getStatusCode());
-        assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getFileId().isEmpty());
+        assertEquals(HttpStatus.OK, sources.getStatusCode());
+        assertFalse(sources.getBody().getResponse().get(0).getResult().get(0).getFileId().isEmpty());
     }
 
     @Test
     public void sourceEntriesEndPointTestNonExisting() throws URISyntaxException {
         String url = "/v2/variants/100:0:C:T/sources?species=mmusculus&assembly=grcm38";
-        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(url, HttpMethod.GET,
-                null, new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
+        ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> sources = restTemplate.
+                exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<QueryResponse<
+                        QueryResult<VariantSourceEntryWithSampleNames>>>() {
                 });
-        assertEquals(HttpStatus.NOT_FOUND, annotations.getStatusCode());
-        assertTrue(annotations.getBody().getResponse().get(0).getResult().size() == 0);
+        assertEquals(HttpStatus.NOT_FOUND, sources.getStatusCode());
+        assertTrue(sources.getBody().getResponse().get(0).getResult().size() == 0);
     }
 
     @Test

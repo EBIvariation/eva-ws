@@ -193,7 +193,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         }
 
         List<Annotation> annotations = new ArrayList<>();
-        if (!variantEntity.isPresent()) {
+        if (!variantEntity.isPresent() || variantEntity.get().getAnnotation() == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return setQueryResponse(buildQueryResult(annotations, 0));
         }
