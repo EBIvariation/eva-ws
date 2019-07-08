@@ -197,7 +197,7 @@ public class VariantWSServerIntegrationTest {
 
     @Test
     public void testCountVariants() throws URISyntaxException {
-        Long expectedNumberOfVariants = new Long(2);
+        Long expectedNumberOfVariants = new Long(3);
 
         String url = "/v1/variants/count";
         ResponseEntity<QueryResponse<QueryResult<Long>>> response = restTemplate.exchange(
