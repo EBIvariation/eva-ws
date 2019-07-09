@@ -19,9 +19,15 @@
 
 package uk.ac.ebi.eva.server.ws;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,9 +52,13 @@ import uk.ac.ebi.eva.server.RateLimit;
 import uk.ac.ebi.eva.server.Utils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Field;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/v2/segments", produces = "application/json")
@@ -66,21 +76,24 @@ public class RegionWSServerV2 {
     @RequestMapping(value = "/{regionId}", method = RequestMethod.GET)
     @ResponseBody
     @RateLimit(value = REGION_REQUEST_RATE_LIMIT)
-    public ResponseEntity getVariantsByRegion(@PathVariable("regionId") String regionId,
-                                              @RequestParam(name = "species") String species,
-                                              @RequestParam(name = "assembly") String assembly,
-                                              @RequestParam(name = "studies", required = false) List<String> studies,
-                                              @RequestParam(name = "annot-ct", required = false)
-                                                      List<String> consequenceType,
-                                              @RequestParam(name = "maf", required = false) String maf,
-                                              @RequestParam(name = "polyphen", required = false) String polyphenScore,
-                                              @RequestParam(name = "sift", required = false) String siftScore,
-                                              @RequestParam(name = "annot-vep-version", required = false)
-                                                      String annotationVepVersion,
-                                              @RequestParam(name = "annot-vep-cache-version", required = false)
-                                                      String annotationVepCacheVersion,
-                                              @ApiIgnore HttpServletRequest request)
-            throws IllegalArgumentException {
+    public Resource<ResponseEntity> getVariantsByRegion(@PathVariable("regionId") String regionId,
+                                                        @RequestParam(name = "species") String species,
+                                                        @RequestParam(name = "assembly") String assembly,
+                                                        @RequestParam(name = "studies", required = false) List<String>
+                                                                studies,
+                                                        @RequestParam(name = "annot-ct", required = false)
+                                                                List<String> consequenceType,
+                                                        @RequestParam(name = "maf", required = false) String maf,
+                                                        @RequestParam(name = "polyphen", required = false) String
+                                                                polyphenScore,
+                                                        @RequestParam(name = "sift", required = false) String siftScore,
+                                                        @RequestParam(name = "annot-vep-version", required = false)
+                                                                String annotationVepVersion,
+                                                        @RequestParam(name = "annot-vep-cache-version", required = false)
+                                                                String annotationVepCacheVersion,
+                                                        HttpServletResponse response,
+                                                        @ApiIgnore HttpServletRequest request)
+            throws IllegalArgumentException, IOException {
         checkParameters(annotationVepVersion, annotationVepCacheVersion, species);
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
@@ -98,8 +111,9 @@ public class RegionWSServerV2 {
         List<VariantWithSamplesAndAnnotation> variantEntities;
         List<Variant> variantCoreInfo = new ArrayList<>();
 
-        if(pageSize==0) {
-            return new ResponseEntity(variantCoreInfo, HttpStatus.NOT_FOUND);
+        if (pageSize == 0) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return new Resource<>(new ResponseEntity(variantCoreInfo, HttpStatus.NOT_FOUND));
         }
         try {
             variantEntities = service.findByRegionsAndComplexFilters(regions,
@@ -108,8 +122,9 @@ public class RegionWSServerV2 {
                     excludeMapped,
                     new PageRequest(0, pageSize));
         } catch (AnnotationMetadataNotFoundException ex) {
-            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
+            return new Resource<>(new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST));
         }
+        List<Link> variantCoreInfoLink = new ArrayList<>();
 
         variantEntities.forEach(variantEntity -> {
             Variant variant = new Variant(variantEntity.getChromosome(), variantEntity.getStart(),
@@ -117,9 +132,18 @@ public class RegionWSServerV2 {
             variant.setIds(variantEntity.getIds());
             variant.setMainId(variantEntity.getMainId());
             variantCoreInfo.add(variant);
+            try {
+                variantCoreInfoLink.add(new Link(linkTo(methodOn(VariantWSServer.class).getVariantById(
+                        variant.getChromosome() + ":" + variant.getStart() + ":" + variant.getReference() + ":" +
+                                variant.getAlternate(),
+                        null, species, null, null, null, null, null, null, null,
+                        response)).toUri().toString(), "varintCoreInfo"));
+            }catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         });
 
-        return new ResponseEntity(variantCoreInfo, HttpStatus.OK);
+        return new Resource<>(new ResponseEntity(variantCoreInfo, HttpStatus.OK), variantCoreInfoLink);
     }
 
     public String checkParameters(String annotationVepVersion, String annotationVepCacheVersion, String species) throws
@@ -137,7 +161,7 @@ public class RegionWSServerV2 {
 
     public List<String> getExcludeMapped() {
         List<String> excludeMapped = new ArrayList<>();
-        Utils.getApiToMongoDocNameMap().forEach((key,value)->{
+        Utils.getApiToMongoDocNameMap().forEach((key, value) -> {
             excludeMapped.add(value);
         });
         return excludeMapped;
