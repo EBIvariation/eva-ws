@@ -116,7 +116,7 @@ public class VariantWSServerV2 extends EvaWSServer {
         try {
             long position = Long.parseLong(regionId[1]);
             if (position < 0) {
-                throw new IllegalArgumentException("Please provide a positive start position");
+                throw new IllegalArgumentException("Please provide a start position equals or greater than zero");
             }
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Please specify a valid integer start position");

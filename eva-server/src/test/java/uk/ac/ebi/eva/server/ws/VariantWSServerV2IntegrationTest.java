@@ -185,7 +185,7 @@ public class VariantWSServerV2IntegrationTest {
                         QueryResult<VariantSourceEntryWithSampleNames>>>() {
                 });
         assertEquals(HttpStatus.NOT_FOUND, sources.getStatusCode());
-        assertTrue(sources.getBody().getResponse().get(0).getResult().size() == 0);
+        assertTrue(sources.getBody().getResponse().get(0).getResult().isEmpty());
     }
 
     @Test
