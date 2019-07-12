@@ -61,6 +61,16 @@ public class WSTestHelpers {
         return queryResponse.getResponse().get(0).getResult();
     }
 
+    public static String testRestTemplateHelperForError(String url,
+                                                        TestRestTemplate restTemplate) {
+        ResponseEntity<QueryResponse<String> > response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<String>>() {
+                });
+        assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
+        return response.getBody().getError();
+    }
+
     public static void checkVariantsInFullResults(List<VariantWithSamplesAndAnnotation> results,
                                                   int expectedVariants) {
         assertEquals(expectedVariants, results.size());
@@ -76,5 +86,4 @@ public class WSTestHelpers {
             assertNotEquals(0, variantEntity.getEnd());
         }
     }
-
 }

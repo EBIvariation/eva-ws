@@ -82,6 +82,19 @@
             <artifactId>guava</artifactId>
             <version>27.0-jre</version>
         </dependency>
+        <!--
+            The reason why this dependency was used for hateoas instead of using `spring-boot-starter-hateoas`
+            is that, `spring 1.4.2.RELEASE` is used in the project and hence `spring-boot-starter-hateoas` uses
+            `spring-hateoas` but an older version `0.20.0.RELEASE` while the dependency used below uses 0.25.1.RELEASE.
+            The issue is that the older version (`0.20.0.RELEASE`) retrieves the fields having `null` values along
+            with the response for APIs wherever hateoas feature is used whereas the newer version retrieves only the
+            `non-null` fields.
+        -->
+        <dependency>
+            <groupId>org.springframework.hateoas</groupId>
+            <artifactId>spring-hateoas</artifactId>
+            <version>0.25.1.RELEASE</version>
+        </dependency>
     </dependencies>
     
     <build>
