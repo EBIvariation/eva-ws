@@ -89,8 +89,8 @@ public class RegionWSServerV2 {
                                                         @RequestParam(name = "sift", required = false) String siftScore,
                                                         @RequestParam(name = "annot-vep-version", required = false)
                                                                 String annotationVepVersion,
-                                                        @RequestParam(name = "annot-vep-cache-version", required = false)
-                                                                String annotationVepCacheVersion,
+                                                        @RequestParam(name = "annot-vep-cache-version",
+                                                                required = false) String annotationVepCacheVersion,
                                                         HttpServletResponse response,
                                                         @ApiIgnore HttpServletRequest request)
             throws IllegalArgumentException, IOException {
@@ -132,15 +132,11 @@ public class RegionWSServerV2 {
             variant.setIds(variantEntity.getIds());
             variant.setMainId(variantEntity.getMainId());
             variantCoreInfo.add(variant);
-            try {
-                variantCoreInfoLink.add(new Link(linkTo(methodOn(VariantWSServer.class).getVariantById(
-                        variant.getChromosome() + ":" + variant.getStart() + ":" + variant.getReference() + ":" +
-                                variant.getAlternate(),
-                        null, species, null, null, null, null, null, null, null,
-                        response)).toUri().toString(), "varintCoreInfo"));
-            }catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+
+            variantCoreInfoLink.add(new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(
+                    variantEntity.getChromosome() + ":" + variantEntity.getStart() + ":" + variantEntity.getReference()
+                            + ":" + variantEntity.getAlternate(),
+                    species, assembly, response)).toUri().toString(), "VariantCoreInfo"));
         });
 
         return new Resource<>(new ResponseEntity(variantCoreInfo, HttpStatus.OK), variantCoreInfoLink);
