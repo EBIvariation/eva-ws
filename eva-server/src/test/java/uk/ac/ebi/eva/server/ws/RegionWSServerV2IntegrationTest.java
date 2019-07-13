@@ -43,6 +43,7 @@ import uk.ac.ebi.eva.lib.Profiles;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
@@ -82,8 +83,8 @@ public class RegionWSServerV2IntegrationTest {
     }
 
     @Test
-    public void testGetVariantsByRegion() throws URISyntaxException {
-        testGetVariantsByRegionHelper("20:60000-62000", 1,HttpStatus.OK);
+    public void testGetVariantsByExistingRegion() throws URISyntaxException {
+        testGetVariantsByRegionHelper("20:60000-62000", 1, HttpStatus.OK);
     }
 
     private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants, HttpStatus status)
@@ -92,18 +93,23 @@ public class RegionWSServerV2IntegrationTest {
         ResponseEntity<List<Variant>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<Variant>>() {
-                });
+                }, Collections.emptyMap());
         assertEquals(status, response.getStatusCode());
-        assertEquals(expectedVariants,response.getBody().size());
+        assertEquals(expectedVariants, response.getBody().size());
     }
 
     @Test
-    public void testGetVariantsByRegions() throws URISyntaxException {
-        testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 2,HttpStatus.OK);
+    public void testGetVariantsByExistingRegions() throws URISyntaxException {
+        testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 2, HttpStatus.OK);
     }
 
     @Test
     public void testGetVariantsByNonExistingRegion() throws URISyntaxException {
-        testGetVariantsByRegionHelper("21:8000-9000", 0,HttpStatus.NOT_FOUND);
+        testGetVariantsByRegionHelper("21:8000-9000", 0, HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void testGetVariantsByNonExistingRegions() throws URISyntaxException {
+        testGetVariantsByRegionHelper("21:8000-9000,21:8000-9000", 0, HttpStatus.NOT_FOUND);
     }
 }

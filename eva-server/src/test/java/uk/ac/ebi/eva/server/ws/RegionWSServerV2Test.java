@@ -72,9 +72,9 @@ public class RegionWSServerV2Test {
                 .willReturn(Collections.singletonList(variantEntity));
         given(service.countByRegionsAndComplexFilters(eq(oneRegion), any())).willReturn(1l);
 
-        List<Region> twoRegions = Arrays.asList(
-                new Region("20", 60000L, 61000L),
+        List<Region> twoRegions = Arrays.asList(new Region("20", 60000L, 61000L),
                 new Region("20", 61500L, 62500L));
+
         given(service.findByRegionsAndComplexFilters(eq(twoRegions), any(), any(), any(), any()))
                 .willReturn(Arrays.asList(variantEntity, variantEntity));
         given(service.countByRegionsAndComplexFilters(eq(twoRegions), any())).willReturn(2l);
@@ -83,11 +83,10 @@ public class RegionWSServerV2Test {
                 .findByRegionsAndComplexFilters(not(or(eq(oneRegion), eq(twoRegions))), any(), any(), any(), any()))
                 .willReturn(Collections.emptyList());
         given(service.countByRegionsAndComplexFilters(not(or(eq(oneRegion), eq(twoRegions))), any())).willReturn(0l);
-
     }
 
     @Test
-    public void testGetVariantsByRegion() throws URISyntaxException {
+    public void testGetVariantsByExistingRegion() throws URISyntaxException {
         testGetVariantsByRegionHelper("20:60000-62000", 1, HttpStatus.OK);
     }
 
@@ -118,12 +117,17 @@ public class RegionWSServerV2Test {
     }
 
     @Test
-    public void testGetVariantsByRegions() throws URISyntaxException {
+    public void testGetVariantsByExistingRegions() throws URISyntaxException {
         testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 2, HttpStatus.OK);
     }
 
     @Test
     public void testGetVariantsByNonExistingRegion() throws URISyntaxException {
         testGetVariantsByRegionHelper("21:8000-9000", 0, HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void testGetVariantsByNonExistingRegions() throws URISyntaxException {
+        testGetVariantsByRegionHelper("21:8000-9000,21:8000-9000", 0, HttpStatus.NOT_FOUND);
     }
 }
