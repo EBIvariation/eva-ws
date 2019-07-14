@@ -106,7 +106,7 @@ public class RegionWSServerV2Test {
     }
 
     private List<Variant> regionWsHelper(String testRegion, HttpStatus status) {
-        String url = "/v2/segments/" + testRegion + "?species=mmusculus&assembly=grcm38";
+        String url = "/v2/regions/" + testRegion + "?species=mmusculus&assembly=grcm38";
         ResponseEntity<List<Variant>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<Variant>>() {

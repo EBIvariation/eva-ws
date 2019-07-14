@@ -89,7 +89,7 @@ public class RegionWSServerV2IntegrationTest {
 
     private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants, HttpStatus status)
             throws URISyntaxException {
-        String url = "/v2/segments/" + testRegion + "?species=mmusculus&assembly=grcm38";
+        String url = "/v2/regions/" + testRegion + "?species=mmusculus&assembly=grcm38";
         ResponseEntity<List<Variant>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<Variant>>() {
