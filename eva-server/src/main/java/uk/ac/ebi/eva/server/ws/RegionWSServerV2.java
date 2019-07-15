@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -129,7 +130,7 @@ public class RegionWSServerV2 {
                     species, assembly, response)).toString());
             resourcesList.add(new Resource<>(variant, variantLink));
         });
-        return new ResponseEntity(resourcesList, HttpStatus.OK);
+        return new ResponseEntity(new Resources<>(resourcesList), HttpStatus.OK);
     }
 
     public String checkParameters(String annotationVepVersion, String annotationVepCacheVersion, String species) throws
