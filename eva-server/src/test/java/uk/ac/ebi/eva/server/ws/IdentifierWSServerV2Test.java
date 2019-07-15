@@ -70,10 +70,11 @@ public class IdentifierWSServerV2Test {
                 new ParameterizedTypeReference<List<Variant>>() {
                 });
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("1", response.getBody().get(0).getChromosome());
-        assertEquals("T", response.getBody().get(0).getAlternate());
-        assertEquals("A", response.getBody().get(0).getReference());
-        assertTrue(response.getBody().size() > 0);
+        List<Variant> variantList = response.getBody();
+        assertEquals("1", variantList.get(0).getChromosome());
+        assertEquals("T", variantList.get(0).getAlternate());
+        assertEquals("A", variantList.get(0).getReference());
+        assertTrue(variantList.size() > 0);
     }
 
     @Test
