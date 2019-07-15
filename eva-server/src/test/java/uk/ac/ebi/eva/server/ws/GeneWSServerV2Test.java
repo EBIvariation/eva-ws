@@ -31,7 +31,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
 import uk.ac.ebi.eva.commons.mongodb.services.FeatureService;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

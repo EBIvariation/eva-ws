@@ -35,24 +35,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
-import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.Profiles;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
 
-import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
