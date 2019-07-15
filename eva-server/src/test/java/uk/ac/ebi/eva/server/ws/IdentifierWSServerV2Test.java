@@ -49,8 +49,10 @@ public class IdentifierWSServerV2Test {
 
     private static final VariantWithSamplesAndAnnotation VARIANT = new VariantWithSamplesAndAnnotation("1", 1000, 1005,
             "A", "T", "rs1");
+
     @Autowired
     private TestRestTemplate restTemplate;
+
     @MockBean
     private VariantWithSamplesAndAnnotationsService variantEntityRepository;
 

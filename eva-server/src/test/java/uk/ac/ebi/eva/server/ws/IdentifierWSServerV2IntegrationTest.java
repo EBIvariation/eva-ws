@@ -92,7 +92,7 @@ public class IdentifierWSServerV2IntegrationTest {
         assertEquals("20", response.getBody().get(0).getChromosome());
         assertEquals("T", response.getBody().get(0).getAlternate());
         assertEquals("A", response.getBody().get(0).getReference());
-        assertEquals(60100l, response.getBody().get(0).getStart());
+        assertEquals(60100L, response.getBody().get(0).getStart());
         assertEquals(60100l, response.getBody().get(0).getEnd());
         assertTrue(response.getBody().size() > 0);
     }
