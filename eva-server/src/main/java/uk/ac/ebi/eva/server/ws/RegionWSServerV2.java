@@ -51,6 +51,7 @@ import uk.ac.ebi.eva.server.Utils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class RegionWSServerV2 {
     public RegionWSServerV2() {
     }
 
-    @GetMapping(value = "/{regionId}", produces = "application/json")
+    @GetMapping(value = "/{regionId}", produces = "application/hal+json")
     @ResponseBody
     @RateLimit(value = REGION_REQUEST_RATE_LIMIT)
     public ResponseEntity getVariantsByRegion(@PathVariable("regionId") String regionId,
@@ -104,10 +105,11 @@ public class RegionWSServerV2 {
         Integer pageSize = service.countByRegionsAndComplexFilters(regions, filters).intValue();
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
+        List<Resource> resourcesList = new ArrayList<>();
 
         if (pageSize == 0) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return new ResponseEntity(Collections.EMPTY_LIST, HttpStatus.NOT_FOUND);
+            return new ResponseEntity(new Resources<>(resourcesList), HttpStatus.NOT_FOUND);
         }
         try {
             variantEntities = service.findByRegionsAndComplexFilters(regions,
@@ -118,19 +120,28 @@ public class RegionWSServerV2 {
         } catch (AnnotationMetadataNotFoundException ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        List<Resource> resourcesList = new ArrayList<>();
+
+        List<Link> links = new ArrayList<>();
+
         variantEntities.forEach(variantEntity -> {
             Variant variant = new Variant(variantEntity.getChromosome(), variantEntity.getStart(),
                     variantEntity.getEnd(), variantEntity.getReference(), variantEntity.getAlternate());
             variant.setIds(variantEntity.getIds());
             variant.setMainId(variantEntity.getMainId());
-            Link variantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(
-                    variantEntity.getChromosome() + ":" + variantEntity.getStart() + ":" + variantEntity.getReference()
-                            + ":" + variantEntity.getAlternate(),
-                    species, assembly, response)).toString());
-            resourcesList.add(new Resource<>(variant, variantLink));
+
+            String variantCoreString = variantEntity.getChromosome() + ":" + variantEntity.getStart() + ":" +
+                    variantEntity.getReference() + ":" + variantEntity.getAlternate();
+
+            Link annotationsLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
+                    species, assembly, null, null, response)).toUri().toString(), "annotation");
+            Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getSources(variantCoreString, species,
+                    assembly, null, null, response)).toUri().toString(), "sources");
+
+            resourcesList.add(new Resource<>(variant, Arrays.asList(sourcesLink, annotationsLink)));
+            links.add(annotationsLink);
+            links.add(sourcesLink);
         });
-        return new ResponseEntity(new Resources<>(resourcesList), HttpStatus.OK);
+        return new ResponseEntity(new Resources<>(resourcesList, links), HttpStatus.OK);
     }
 
     public String checkParameters(String annotationVepVersion, String annotationVepCacheVersion, String species) throws

@@ -16,6 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.ac.ebi.eva.server.ws;
 
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
@@ -45,7 +46,7 @@ import uk.ac.ebi.eva.lib.Profiles;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
 
 import java.net.URISyntaxException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
@@ -64,21 +65,16 @@ import static org.junit.Assert.assertEquals;
 public class RegionWSServerV2IntegrationTest {
 
     private static final String TEST_DB = "test-db";
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Autowired
-    private VariantWithSamplesAndAnnotationsService service;
-
-    @Autowired
-    MongoDbFactory mongoDbFactory;
-
     @Rule
     public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
+    @Autowired
+    MongoDbFactory mongoDbFactory;
+    @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
+    private TestRestTemplate restTemplate;
+    @Autowired
+    private VariantWithSamplesAndAnnotationsService service;
 
     @Before
     public void setUp() throws Exception {
@@ -86,24 +82,30 @@ public class RegionWSServerV2IntegrationTest {
 
     @Test
     public void testGetVariantsByExistingRegion() throws URISyntaxException {
-        testGetVariantsByRegionHelper("20:60000-62000", 1, HttpStatus.OK);
+        assertEquals("20", testGetVariantsByRegionHelper("20:60000-62000", 1, HttpStatus.OK).get(0));
     }
 
-    private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants, HttpStatus status)
+    private List<String> testGetVariantsByRegionHelper(String testRegion, int expectedVariants, HttpStatus status)
             throws URISyntaxException {
         String url = "/v2/regions/" + testRegion + "?species=mmusculus&assembly=grcm38";
-        ResponseEntity<Resources<Variant>> response = restTemplate.exchange(
+        ResponseEntity<Resources<Resource<Variant>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<Resources<Variant>>() {
+                new ParameterizedTypeReference<Resources<Resource<Variant>>>() {
                 });
         assertEquals(status, response.getStatusCode());
-        System.out.println(response.getBody());
-        //assertEquals(expectedVariants, response.getBody().size());
+        assertEquals(expectedVariants, response.getBody().getContent().size());
+        List<String> chromosomes = new ArrayList<>();
+        response.getBody().getContent().forEach(itr -> {
+            chromosomes.add(itr.getContent().getChromosome());
+        });
+        return chromosomes;
     }
 
     @Test
     public void testGetVariantsByExistingRegions() throws URISyntaxException {
-        testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 2, HttpStatus.OK);
+        List<String> chromosomes = testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 2, HttpStatus.OK);
+        assertEquals("20", chromosomes.get(0));
+        assertEquals("20", chromosomes.get(1));
     }
 
     @Test

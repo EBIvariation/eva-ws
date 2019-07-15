@@ -27,6 +27,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +40,7 @@ import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsSe
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -92,27 +95,28 @@ public class RegionWSServerV2Test {
 
     private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants, HttpStatus status) throws
             URISyntaxException {
-        List<Variant> results = regionWsHelper(testRegion, status);
+        Collection<Resource<Variant>> results = regionWsHelper(testRegion, status);
         assertEquals(expectedVariants, results.size());
 
-        for (Variant variantEntity : results) {
+        results.forEach(itr -> {
+            Variant variantEntity = itr.getContent();
             assertFalse(variantEntity.getChromosome().isEmpty());
             assertFalse(variantEntity.getReference().isEmpty());
             assertFalse(variantEntity.getAlternate().isEmpty());
             assertNotEquals(0, variantEntity.getStart());
             assertNotEquals(0, variantEntity.getEnd());
             assertEquals(MAIN_ID, variantEntity.getMainId());
-        }
+        });
     }
 
-    private List<Variant> regionWsHelper(String testRegion, HttpStatus status) {
+    private Collection<Resource<Variant>> regionWsHelper(String testRegion, HttpStatus status) {
         String url = "/v2/regions/" + testRegion + "?species=mmusculus&assembly=grcm38";
-        ResponseEntity<List<Variant>> response = restTemplate.exchange(
+        ResponseEntity<Resources<Resource<Variant>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Variant>>() {
+                new ParameterizedTypeReference<Resources<Resource<Variant>>>() {
                 });
         assertEquals(status, response.getStatusCode());
-        List<Variant> queryResponse = response.getBody();
+        Collection<Resource<Variant>> queryResponse = response.getBody().getContent();
         return queryResponse;
     }
 
