@@ -307,8 +307,8 @@ public class BeaconServiceV2 {
                         getVariantsCount())
                 .sampleCount(variantSource.getStats() == null ? null : (long) variantSource.getStats().
                         getSamplesCount())
-                .note("notestring")
-                .externalUrl("enternalUrl");
+                .note(variantSource.getStudyName())
+                .externalUrl("https://www.ebi.ac.uk/eva/?eva-study=" + variantSource.getStudyId());
     }
 
     public BeaconAlleleResponse find(BeaconAlleleRequest requestBody) {
