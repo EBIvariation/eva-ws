@@ -20,6 +20,7 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,9 +49,13 @@ public class IdentifierWSServerV2 {
     private VariantWithSamplesAndAnnotationsService service;
 
     @GetMapping(value = "/{identifier}")
-    public ResponseEntity getVariants(@PathVariable("identifier") String identifier,
-                                      @RequestParam(name = "species") String species,
-                                      @RequestParam(name = "assembly") String assembly) throws
+    public ResponseEntity getVariants(
+            @ApiParam(value = "Numerical identifier of the field `ids` of a variant, e.g.: rs55880202", required = true)
+            @PathVariable("identifier") String identifier,
+            @ApiParam(value = "species can be looked up in /v1/meta/species/list/ in the field named taxonomyCode, " +
+                    "e.g.: " + "hsapiens", required = true) @RequestParam(name = "species") String species,
+            @ApiParam(value = "assemblies can be looked up in /v1/meta/species/list/ in the field named assemblyName," +
+                    " e.g.: grch37", required = true) @RequestParam(name = "assembly") String assembly) throws
             AnnotationMetadataNotFoundException, IllegalArgumentException {
         checkParameters(species, assembly);
 
