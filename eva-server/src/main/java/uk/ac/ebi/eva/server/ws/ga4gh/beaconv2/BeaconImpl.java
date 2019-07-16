@@ -33,11 +33,10 @@ public class BeaconImpl extends Beacon {
 
     static final String API_VERSION = "v1.0";
 
-    static final String DESCRIPTION = "descriptionString";
+    static final String DESCRIPTION = "Beacon for human variants in the European Variation Archive, an open-access " +
+        "database of all types of genetic variation data from all species.";
 
     static final String VERSION = "v2";
-
-    static final String WELCOME_URL = "welcomeUrlString";
 
     public BeaconImpl() {
         setId(ID);
@@ -46,6 +45,6 @@ public class BeaconImpl extends Beacon {
         setOrganization(new BeaconOrganizationImpl());
         setDescription(DESCRIPTION);
         setVersion(VERSION);
-        setWelcomeUrl(WELCOME_URL);
+        // Welcome URL is optional and there isn't one, so not set for now
     }
 }
