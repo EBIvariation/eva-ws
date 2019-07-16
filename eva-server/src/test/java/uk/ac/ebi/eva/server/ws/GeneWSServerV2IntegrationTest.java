@@ -69,7 +69,7 @@ public class GeneWSServerV2IntegrationTest {
     }
 
     @Test
-    public void testGeneIdExisint() {
+    public void testGeneIdExisting() {
         testGeneIdHelper(Arrays.asList("ENSG00000223972"), HttpStatus.OK, 1);
     }
 

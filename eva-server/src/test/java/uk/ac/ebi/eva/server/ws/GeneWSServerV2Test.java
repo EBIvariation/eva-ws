@@ -64,7 +64,7 @@ public class GeneWSServerV2Test {
     }
 
     @Test
-    public void testGeneIdExisit() {
+    public void testGeneIdExisting() {
         testGeneIdHelper(Arrays.asList(GENE_ID), HttpStatus.OK, 1);
     }
 
