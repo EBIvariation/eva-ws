@@ -55,18 +55,14 @@ import static org.junit.Assert.assertEquals;
 public class GeneWSServerV2IntegrationTest {
 
     private static final String TEST_DB = "test-db";
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Autowired
-    MongoDbFactory mongoDbFactory;
-
     @Rule
     public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
+    @Autowired
+    MongoDbFactory mongoDbFactory;
+    @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
+    private TestRestTemplate restTemplate;
 
     @Before
     public void setUp() throws Exception {
@@ -78,16 +74,21 @@ public class GeneWSServerV2IntegrationTest {
     }
 
     private void testGeneIdHelper(List<String> geneIds, HttpStatus status, int size) {
-        String url = "/v2/genes/" + String.join(",", geneIds) + "?species=hsapiens&assembly=grch37";
-        ResponseEntity<List<FeatureCoordinates>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<FeatureCoordinates>>() {
-                });
+        ResponseEntity<List<FeatureCoordinates>> response = getResponse(geneIds);
         assertEquals(status, response.getStatusCode());
         assertEquals(size, response.getBody().size());
         for (int i = 0; i < response.getBody().size(); i++) {
             assertEquals(geneIds.get(i), response.getBody().get(i).getId());
         }
+    }
+
+    private ResponseEntity<List<FeatureCoordinates>> getResponse(List<String> geneIds) {
+        String url = "/v2/genes/" + String.join(",", geneIds) + "?species=hsapiens&assembly=grch37";
+        ResponseEntity<List<FeatureCoordinates>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<FeatureCoordinates>>() {
+                });
+        return response;
     }
 
     @Test
@@ -103,5 +104,34 @@ public class GeneWSServerV2IntegrationTest {
     @Test
     public void testGendIdsNonExisiting() {
         testGeneIdHelper(Arrays.asList("ENSG00223972", "ENST000450305"), HttpStatus.NOT_FOUND, 0);
+    }
+
+    @Test
+    public void testGeneNameExisting() {
+        testGeneNameHelper(Arrays.asList("DDX11L1"), HttpStatus.OK, 1);
+    }
+
+    private void testGeneNameHelper(List<String> geneNames, HttpStatus status, int size) {
+        ResponseEntity<List<FeatureCoordinates>> response = getResponse(geneNames);
+        assertEquals(status, response.getStatusCode());
+        assertEquals(size, response.getBody().size());
+        for (int i = 0; i < response.getBody().size(); i++) {
+            assertEquals(geneNames.get(i), response.getBody().get(i).getName());
+        }
+    }
+
+    @Test
+    public void testGendNamesExisiting() {
+        testGeneNameHelper(Arrays.asList("DDX11L1", "DDX11L1-202"), HttpStatus.OK, 2);
+    }
+
+    @Test
+    public void testGeneNameNonExisting() {
+        testGeneNameHelper(Arrays.asList("DDX"), HttpStatus.NOT_FOUND, 0);
+    }
+
+    @Test
+    public void testGendNamesNonExisiting() {
+        testGeneNameHelper(Arrays.asList("DDX", "DDY"), HttpStatus.NOT_FOUND, 0);
     }
 }
