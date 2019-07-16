@@ -50,13 +50,13 @@ public class IdentifierWSServerV2 {
 
     @GetMapping(value = "/{identifier}")
     public ResponseEntity getVariants(
-            @ApiParam(value = "Numerical identifier of the field `ids` of a variant, e.g.: rs55880202", required = true)
-            @PathVariable("identifier") String identifier,
-            @ApiParam(value = "species can be looked up in /v1/meta/species/list/ in the field named taxonomyCode, " +
-                    "e.g.: " + "hsapiens", required = true) @RequestParam(name = "species") String species,
-            @ApiParam(value = "assemblies can be looked up in /v1/meta/species/list/ in the field named assemblyName," +
-                    " e.g.: grch37", required = true) @RequestParam(name = "assembly") String assembly) throws
-            AnnotationMetadataNotFoundException, IllegalArgumentException {
+            @ApiParam(value = "RS or SS identifier of a variant, e.g.: rs55880202", required = true) @PathVariable
+                    String identifier,
+            @ApiParam(value = "Allowed values can be looked up in /v1/meta/species/list/ in the field named "
+                              + "taxonomyCode, e.g.: hsapiens", required = true) @RequestParam String species,
+            @ApiParam(value = "Allowed values can be looked up in /v1/meta/species/list/ in the field named "
+                              + "assemblyCode, e.g.: grch37", required = true) @RequestParam String assembly)
+            throws AnnotationMetadataNotFoundException, IllegalArgumentException {
         checkParameters(species, assembly);
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
