@@ -56,11 +56,11 @@ public class GeneWSServerV2Test {
 
         List<FeatureCoordinates> featureCoordinate = Arrays.asList(feature);
         List<String> geneId = Arrays.asList(GENE_ID);
-        given(service.findAllByGeneIds(eq(geneId))).willReturn(featureCoordinate);
+        given(service.findAllByGeneIdsOrGeneNames(eq(geneId), eq(geneId))).willReturn(featureCoordinate);
 
         List<FeatureCoordinates> featureCoordinates = Arrays.asList(feature, feature);
         List<String> geneIds = Arrays.asList(GENE_ID, GENE_ID);
-        given(service.findAllByGeneIds(eq(geneIds))).willReturn(featureCoordinates);
+        given(service.findAllByGeneIdsOrGeneNames(eq(geneIds), eq(geneIds))).willReturn(featureCoordinates);
     }
 
     @Test

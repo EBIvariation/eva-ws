@@ -53,7 +53,7 @@ public class GeneWSServerV2 {
             throws IllegalArgumentException {
         checkParameters(species, assembly);
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
-        List<FeatureCoordinates> featureCoordinates = service.findAllByGeneIds(geneIds);
+        List<FeatureCoordinates> featureCoordinates = service.findAllByGeneIdsOrGeneNames(geneIds, geneIds);
         if (featureCoordinates.size() == 0) {
             return new ResponseEntity(featureCoordinates, HttpStatus.NOT_FOUND);
         }
