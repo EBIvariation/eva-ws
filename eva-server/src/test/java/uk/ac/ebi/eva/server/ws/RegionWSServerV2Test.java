@@ -19,6 +19,13 @@
 
 package uk.ac.ebi.eva.server.ws;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.TypeRef;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,10 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -40,7 +43,6 @@ import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsSe
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,6 +66,9 @@ public class RegionWSServerV2Test {
 
     @MockBean
     private VariantWithSamplesAndAnnotationsService service;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Before
     public void setUp() throws Exception {
@@ -95,11 +100,15 @@ public class RegionWSServerV2Test {
 
     private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants, HttpStatus status) throws
             URISyntaxException {
-        Collection<Resource<Variant>> results = regionWsHelper(testRegion, status);
-        assertEquals(expectedVariants, results.size());
+        List<Variant> results = regionWsHelper(testRegion, status);
 
-        results.forEach(itr -> {
-            Variant variantEntity = itr.getContent();
+        if (results == null) {
+            assertEquals(0, expectedVariants);
+            return;
+        }
+
+        assertEquals(expectedVariants, results.size());
+        results.forEach(variantEntity -> {
             assertFalse(variantEntity.getChromosome().isEmpty());
             assertFalse(variantEntity.getReference().isEmpty());
             assertFalse(variantEntity.getAlternate().isEmpty());
@@ -109,15 +118,19 @@ public class RegionWSServerV2Test {
         });
     }
 
-    private Collection<Resource<Variant>> regionWsHelper(String testRegion, HttpStatus status) {
+    private List<Variant> regionWsHelper(String testRegion, HttpStatus status) {
         String url = "/v2/regions/" + testRegion + "?species=mmusculus&assembly=grcm38";
-        ResponseEntity<Resources<Resource<Variant>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<Resources<Resource<Variant>>>() {
-                });
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(status, response.getStatusCode());
-        Collection<Resource<Variant>> queryResponse = response.getBody().getContent();
-        return queryResponse;
+
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        List<Variant> variantList = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['_embedded']['variantList']", new TypeRef<List<Variant>>() {
+                });
+        return variantList;
     }
 
     @Test

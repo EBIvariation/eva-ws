@@ -19,11 +19,8 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.TypeRef;
@@ -40,9 +37,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -103,10 +98,7 @@ public class RegionWSServerV2IntegrationTest {
     private List<String> testGetVariantsByRegionHelper(String testRegion, int expectedVariants, HttpStatus status)
             throws URISyntaxException {
         String url = "/v2/regions/" + testRegion + "?species=mmusculus&assembly=grcm38";
-        ResponseEntity<String> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<String>() {
-                });
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(status, response.getStatusCode());
 
         Configuration configuration = Configuration.defaultConfiguration()
