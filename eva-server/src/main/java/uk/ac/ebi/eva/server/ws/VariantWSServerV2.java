@@ -52,7 +52,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(value = "/v2/variants", produces = "application/hal+json")
+@RequestMapping(value = "/v2/variants", produces = "application/json")
 @Api(tags = {"variants"})
 public class VariantWSServerV2 {
 
