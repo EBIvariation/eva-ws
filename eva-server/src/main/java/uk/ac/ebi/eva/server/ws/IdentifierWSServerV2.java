@@ -52,10 +52,12 @@ public class IdentifierWSServerV2 {
     public ResponseEntity getVariants(
             @ApiParam(value = "RS or SS identifier of a variant, e.g.: rs55880202", required = true) @PathVariable
                     String identifier,
-            @ApiParam(value = "Allowed values can be looked up in /v1/meta/species/list/ in the field named "
-                              + "taxonomyCode, e.g.: hsapiens", required = true) @RequestParam String species,
-            @ApiParam(value = "Allowed values can be looked up in /v1/meta/species/list/ in the field named "
-                              + "assemblyCode, e.g.: grch37", required = true) @RequestParam String assembly)
+            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. Allowed" +
+                    " values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
+                    required = true) @RequestParam String species,
+            @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in" +
+                    " /v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
+            @RequestParam String assembly)
             throws AnnotationMetadataNotFoundException, IllegalArgumentException {
         checkParameters(species, assembly);
 

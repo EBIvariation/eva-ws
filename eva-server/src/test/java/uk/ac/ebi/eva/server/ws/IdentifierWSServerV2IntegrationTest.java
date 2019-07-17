@@ -90,12 +90,12 @@ public class IdentifierWSServerV2IntegrationTest {
                 });
         assertEquals(HttpStatus.OK, response.getStatusCode());
         List<Variant> variantList = response.getBody();
+        assertTrue(variantList.size() > 0);
         assertEquals("20", variantList.get(0).getChromosome());
         assertEquals("T", variantList.get(0).getAlternate());
         assertEquals("A", variantList.get(0).getReference());
         assertEquals(60100L, variantList.get(0).getStart());
         assertEquals(60100L, variantList.get(0).getEnd());
-        assertTrue(variantList.size() > 0);
     }
 
     @Test

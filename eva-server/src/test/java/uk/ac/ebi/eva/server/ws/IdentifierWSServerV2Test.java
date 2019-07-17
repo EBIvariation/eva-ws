@@ -71,10 +71,10 @@ public class IdentifierWSServerV2Test {
                 });
         assertEquals(HttpStatus.OK, response.getStatusCode());
         List<Variant> variantList = response.getBody();
+        assertTrue(variantList.size() > 0);
         assertEquals("1", variantList.get(0).getChromosome());
         assertEquals("T", variantList.get(0).getAlternate());
         assertEquals("A", variantList.get(0).getReference());
-        assertTrue(variantList.size() > 0);
     }
 
     @Test
