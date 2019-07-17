@@ -32,6 +32,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.Annotation;
+import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
@@ -82,31 +83,26 @@ public class VariantWSServerV2Test {
     @Test
     public void rootTestGetVariantsByVariantCoreString() throws URISyntaxException {
         String url = "/v2/variants/" + CHROMOSOME + ":71822:C:G?species=mmusculus&assembly=grcm38";
-        List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotations = WSTestHelpers
-                .testRestTemplateHelper(url, restTemplate);
-        assertEquals(1, variantWithSamplesAndAnnotations.size());
-        assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().size() == 0);
-        assertNull(variantWithSamplesAndAnnotations.get(0).getAnnotation());
-        assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size() > 0);
-    }
-
-    private List<VariantWithSamplesAndAnnotation> variantWsHelper(String testVariantId) {
-        String url = "/v2/variants/" + testVariantId + "?species=mmusculus&assembly=grcm38";
-        return WSTestHelpers.testRestTemplateHelper(url, restTemplate);
+        ResponseEntity<VariantWithSamplesAndAnnotation> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<VariantWithSamplesAndAnnotation>() {
+                });
+        VariantWithSamplesAndAnnotation variantWithSamplesAndAnnotation = response.getBody();
+        assertEquals(0,variantWithSamplesAndAnnotation.getSourceEntries().size());
+        assertNull(variantWithSamplesAndAnnotation.getAnnotation());
+        assertTrue(variantWithSamplesAndAnnotation.getIds().size() > 0);
     }
 
     @Test
     public void rootTestGetVariantsByNonExistingVariantCoreString() throws URISyntaxException {
         String url = "/v2/variants/" + NON_EXISTING_CHROMOSOME + ":71822:C:G?species=mmusculus&assembly=grcm38";
+        testForNonExistingHelper(url);
+    }
 
-        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>>() {
-                });
+    private void testForNonExistingHelper(String url) {
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-
-        QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>> queryResponse = response.getBody();
-        assertEquals(0, queryResponse.getResponse().size());
+        assertNull(response.getBody());
     }
 
     @Test
@@ -122,22 +118,17 @@ public class VariantWSServerV2Test {
     @Test
     public void annotationEndPointTestExisting() throws URISyntaxException {
         String url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/annotations?species=mmusculus&assembly=grcm38";
-        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(url, HttpMethod.GET,
-                null, new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
+        ResponseEntity<Annotation> annotations = restTemplate.exchange(url, HttpMethod.GET,
+                null, new ParameterizedTypeReference<Annotation>() {
                 });
         assertEquals(HttpStatus.OK, annotations.getStatusCode());
-        assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getChromosome().isEmpty());
+        assertFalse(annotations.getBody().getChromosome().isEmpty());
     }
 
     @Test
     public void annotationEndPointTestNonExisting() throws URISyntaxException {
         String url = "/v2/variants/100:0:C:T/annotations?species=mmusculus&assembly=grcm38";
-        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
-                });
-        assertEquals(HttpStatus.NOT_FOUND, annotations.getStatusCode());
-        assertTrue(annotations.getBody().getResponse().get(0).getResult().size() == 0);
+        testForNonExistingHelper(url);
     }
 
     @Test
@@ -151,22 +142,18 @@ public class VariantWSServerV2Test {
     @Test
     public void sourceEntriesEndPointTestExisting() throws URISyntaxException {
         String url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/sources?species=mmusculus&assembly=grcm38";
-        ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> annotations = restTemplate.
+        ResponseEntity<List<VariantSourceEntryWithSampleNames>> annotations = restTemplate.
                 exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference
-                        <QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>>() {
+                        <List<VariantSourceEntryWithSampleNames>>() {
                 });
         assertEquals(HttpStatus.OK, annotations.getStatusCode());
-        assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getFileId().isEmpty());
+        assertFalse(annotations.getBody().get(0).getFileId().isEmpty());
     }
 
     @Test
     public void sourceEntriesEndPointTestNonExisting() throws URISyntaxException {
         String url = "/v2/variants/100:0:C:T/sources?species=mmusculus&assembly=grcm38";
-        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(url, HttpMethod.GET,
-                null, new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
-                });
-        assertEquals(HttpStatus.NOT_FOUND, annotations.getStatusCode());
-        assertTrue(annotations.getBody().getResponse().get(0).getResult().size() == 0);
+        testForNonExistingHelper(url);
     }
 
     @Test
