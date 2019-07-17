@@ -19,6 +19,16 @@
 
 package uk.ac.ebi.eva.server.ws;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.TypeRef;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
 import org.junit.Before;
@@ -32,8 +42,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,14 +75,21 @@ public class RegionWSServerV2IntegrationTest {
     private static final String TEST_DB = "test-db";
     @Rule
     public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
+
     @Autowired
     MongoDbFactory mongoDbFactory;
+
     @Autowired
     private ApplicationContext applicationContext;
+
     @Autowired
     private TestRestTemplate restTemplate;
+
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Before
     public void setUp() throws Exception {
@@ -88,15 +103,27 @@ public class RegionWSServerV2IntegrationTest {
     private List<String> testGetVariantsByRegionHelper(String testRegion, int expectedVariants, HttpStatus status)
             throws URISyntaxException {
         String url = "/v2/regions/" + testRegion + "?species=mmusculus&assembly=grcm38";
-        ResponseEntity<Resources<Resource<Variant>>> response = restTemplate.exchange(
+        ResponseEntity<String> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<Resources<Resource<Variant>>>() {
+                new ParameterizedTypeReference<String>() {
                 });
         assertEquals(status, response.getStatusCode());
-        assertEquals(expectedVariants, response.getBody().getContent().size());
+
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        List<Variant> variantList = JsonPath.using(configuration).parse(response.getBody())
+                .read( "$['_embedded']['variantList']", new TypeRef<List<Variant>>() {});
+
+        if (variantList == null) {
+            assertEquals(0,expectedVariants);
+            return null;
+        }
+        assertEquals(expectedVariants,variantList.size());
         List<String> chromosomes = new ArrayList<>();
-        response.getBody().getContent().forEach(itr -> {
-            chromosomes.add(itr.getContent().getChromosome());
+        variantList.forEach(variant -> {
+            chromosomes.add(variant.getChromosome());
         });
         return chromosomes;
     }

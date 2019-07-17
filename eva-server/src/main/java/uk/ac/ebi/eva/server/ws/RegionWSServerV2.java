@@ -59,7 +59,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(value = "/v2/regions")
+@RequestMapping(value = "/v2/regions", produces = "application/hal+json")
 @Api(tags = {"regions"})
 public class RegionWSServerV2 {
 
@@ -71,7 +71,7 @@ public class RegionWSServerV2 {
     public RegionWSServerV2() {
     }
 
-    @GetMapping(value = "/{regionId}", produces = "application/hal+json")
+    @GetMapping(value = "/{regionId}")
     @ResponseBody
     @RateLimit(value = REGION_REQUEST_RATE_LIMIT)
     public ResponseEntity getVariantsByRegion(@PathVariable("regionId") String regionId,
