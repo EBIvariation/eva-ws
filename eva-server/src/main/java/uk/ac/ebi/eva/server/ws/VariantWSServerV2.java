@@ -223,7 +223,7 @@ public class VariantWSServerV2 {
             resourceList.add(new Resource<>(sourceEntry));
         });
         Link coreVariantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
-                species, assembly, response)).toUri().toString(), "CoreVariant");
+                species, assembly, response)).toUri().toString(), "coreVariant");
         if (resourceList.size() == 0) {
             return new ResponseEntity(new Resources<>(resourceList, coreVariantLink), HttpStatus.NOT_FOUND);
         }
