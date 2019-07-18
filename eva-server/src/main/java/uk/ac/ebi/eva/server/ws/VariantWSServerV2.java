@@ -21,6 +21,7 @@ package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,7 +54,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 @RequestMapping(value = "/v2/variants", produces = "application/hal+json")
 @Api(tags = {"variants"})
-public class VariantWSServerV2  {
+public class VariantWSServerV2 {
 
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
@@ -81,7 +82,7 @@ public class VariantWSServerV2  {
 
         if (!variantEntity.isPresent()) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return new ResponseEntity(null,HttpStatus.NOT_FOUND);
+            return new ResponseEntity(null, HttpStatus.NOT_FOUND);
         }
 
         VariantWithSamplesAndAnnotation retrievedVariant = variantEntity.get();
@@ -98,7 +99,7 @@ public class VariantWSServerV2  {
         List<Link> links = new ArrayList<>();
         links.add(sourcesLink);
         links.add(annotationLink);
-        return new ResponseEntity(new Resource<>(variant, links),HttpStatus.OK);
+        return new ResponseEntity(new Resource<>(variant, links), HttpStatus.OK);
     }
 
     private void checkParameters(String variantCoreString, String annotationVepVersion,
@@ -157,18 +158,18 @@ public class VariantWSServerV2  {
 
     @GetMapping(value = "/{variantCoreString}/annotations")
     public ResponseEntity getAnnotations(@PathVariable("variantCoreString") String variantCoreString,
-                                        @RequestParam(name = "species") String species,
-                                        @RequestParam(name = "assembly") String assembly,
-                                        @RequestParam(name = "annot-vep-version", required = false)
-                                                String annotationVepVersion,
-                                        @RequestParam(name = "annot-vep-cache-version", required = false)
-                                                String annotationVepCacheVersion,
-                                        HttpServletResponse response) throws IllegalArgumentException {
+                                         @RequestParam(name = "species") String species,
+                                         @RequestParam(name = "assembly") String assembly,
+                                         @RequestParam(name = "annot-vep-version", required = false)
+                                                 String annotationVepVersion,
+                                         @RequestParam(name = "annot-vep-cache-version", required = false)
+                                                 String annotationVepCacheVersion,
+                                         HttpServletResponse response) throws IllegalArgumentException {
         try {
             checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
                     species, assembly);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
@@ -177,24 +178,27 @@ public class VariantWSServerV2  {
             variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, annotationVepVersion,
                     annotationVepCacheVersion);
         } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {
-            return new ResponseEntity(ex.getMessage(),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         if (!variantEntity.isPresent() || variantEntity.get().getAnnotation() == null) {
             return new ResponseEntity(null, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity(variantEntity.get().getAnnotation(), HttpStatus.OK);
+        Link coreVariantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
+                species, assembly, response)).toUri().toString(), "CoreVariant");
+
+        return new ResponseEntity(new Resource<>(variantEntity.get().getAnnotation(), coreVariantLink), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{variantCoreString}/sources")
     public ResponseEntity getSources(@PathVariable("variantCoreString") String variantCoreString,
-                                    @RequestParam(name = "species") String species,
-                                    @RequestParam(name = "assembly") String assembly,
-                                    @RequestParam(name = "annot-vep-version", required = false)
-                                            String annotationVepVersion,
-                                    @RequestParam(name = "annot-vep-cache-version", required = false)
-                                            String annotationVepCacheVersion,
-                                    HttpServletResponse response) throws IllegalArgumentException {
+                                     @RequestParam(name = "species") String species,
+                                     @RequestParam(name = "assembly") String assembly,
+                                     @RequestParam(name = "annot-vep-version", required = false)
+                                             String annotationVepVersion,
+                                     @RequestParam(name = "annot-vep-cache-version", required = false)
+                                             String annotationVepCacheVersion,
+                                     HttpServletResponse response) throws IllegalArgumentException {
         try {
             checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
                     species, assembly);
@@ -211,16 +215,18 @@ public class VariantWSServerV2  {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        List<VariantSourceEntryWithSampleNames> variantSources = new ArrayList<>();
+        List<Resource> resourceList = new ArrayList<>();
         if (!variantEntity.isPresent()) {
             return new ResponseEntity(null, HttpStatus.NOT_FOUND);
         }
         variantEntity.get().getSourceEntries().forEach(sourceEntry -> {
-            variantSources.add(sourceEntry);
+            resourceList.add(new Resource<>(sourceEntry));
         });
-        if(variantSources.size()==0) {
-            return new ResponseEntity(null, HttpStatus.NOT_FOUND);
+        Link coreVariantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
+                species, assembly, response)).toUri().toString(), "CoreVariant");
+        if (resourceList.size() == 0) {
+            return new ResponseEntity(new Resources<>(resourceList, coreVariantLink), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity(variantSources, HttpStatus.OK);
+        return new ResponseEntity(new Resources<>(resourceList, coreVariantLink), HttpStatus.OK);
     }
 }

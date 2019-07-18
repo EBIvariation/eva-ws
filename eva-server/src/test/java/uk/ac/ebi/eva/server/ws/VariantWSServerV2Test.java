@@ -19,6 +19,13 @@
 
 package uk.ac.ebi.eva.server.ws;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.TypeRef;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,6 +76,9 @@ public class VariantWSServerV2Test {
     @MockBean
     private VariantWithSamplesAndAnnotationsService service;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Before
     public void setUp() throws Exception {
         VARIANT.addId("randomID");
@@ -88,7 +98,7 @@ public class VariantWSServerV2Test {
                 new ParameterizedTypeReference<VariantWithSamplesAndAnnotation>() {
                 });
         VariantWithSamplesAndAnnotation variantWithSamplesAndAnnotation = response.getBody();
-        assertEquals(0,variantWithSamplesAndAnnotation.getSourceEntries().size());
+        assertEquals(0, variantWithSamplesAndAnnotation.getSourceEntries().size());
         assertNull(variantWithSamplesAndAnnotation.getAnnotation());
         assertTrue(variantWithSamplesAndAnnotation.getIds().size() > 0);
     }
@@ -142,12 +152,16 @@ public class VariantWSServerV2Test {
     @Test
     public void sourceEntriesEndPointTestExisting() throws URISyntaxException {
         String url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/sources?species=mmusculus&assembly=grcm38";
-        ResponseEntity<List<VariantSourceEntryWithSampleNames>> annotations = restTemplate.
-                exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference
-                        <List<VariantSourceEntryWithSampleNames>>() {
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        List<VariantSourceEntryWithSampleNames> sources = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['_embedded']['variantSourceEntryWithSampleNamesList']", new TypeRef<List<VariantSourceEntryWithSampleNames>>() {
                 });
-        assertEquals(HttpStatus.OK, annotations.getStatusCode());
-        assertFalse(annotations.getBody().get(0).getFileId().isEmpty());
+        assertFalse(sources.get(0).getFileId().isEmpty());
     }
 
     @Test

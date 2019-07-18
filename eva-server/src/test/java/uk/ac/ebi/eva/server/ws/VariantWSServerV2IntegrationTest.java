@@ -19,6 +19,13 @@
 
 package uk.ac.ebi.eva.server.ws;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.TypeRef;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
 import org.junit.Before;
@@ -81,6 +88,9 @@ public class VariantWSServerV2IntegrationTest {
 
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Before
     public void setUp() throws Exception {
@@ -157,12 +167,17 @@ public class VariantWSServerV2IntegrationTest {
     @Test
     public void sourceEntriesEndPointTestExisting() throws URISyntaxException {
         String url = "/v2/variants/20:60100:A:T/sources?species=mmusculus&assembly=grcm38";
-        ResponseEntity<List<VariantSourceEntryWithSampleNames>> sources = restTemplate.
-                exchange(url, HttpMethod.GET, null,
-                        new ParameterizedTypeReference<List<VariantSourceEntryWithSampleNames>>() {
-                        });
-        assertEquals(HttpStatus.OK, sources.getStatusCode());
-        assertFalse(sources.getBody().get(0).getFileId().isEmpty());
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        List<VariantSourceEntryWithSampleNames> sources = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['_embedded']['variantSourceEntryWithSampleNamesList']", new TypeRef
+                        <List<VariantSourceEntryWithSampleNames>>() {
+                });
+        assertFalse(sources.get(0).getFileId().isEmpty());
     }
 
     @Test
@@ -175,12 +190,17 @@ public class VariantWSServerV2IntegrationTest {
     public void sourceEntriesEndPointTestNonExistingWithExistingVariantAndNonExistingStatistics() throws
             URISyntaxException {
         String url = "/v2/variants/X:1000014:G:A/sources?species=mmusculus&assembly=grcm38";
-        ResponseEntity<List<VariantSourceEntryWithSampleNames>> sources = restTemplate.
-                exchange(url, HttpMethod.GET, null,
-                        new ParameterizedTypeReference<List<VariantSourceEntryWithSampleNames>>() {
-                        });
-        assertEquals(HttpStatus.OK, sources.getStatusCode());
-        assertTrue(sources.getBody().get(0).getCohortStats().isEmpty());
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        List<VariantSourceEntryWithSampleNames> sources = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['_embedded']['variantSourceEntryWithSampleNamesList']", new TypeRef
+                        <List<VariantSourceEntryWithSampleNames>>() {
+                });
+        assertTrue(sources.get(0).getCohortStats().isEmpty());
     }
 
     @Test
