@@ -98,7 +98,7 @@ public class RegionWSServerV2 {
                 .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
         List<Region> regions = Region.parseRegions(regionId);
-        List<String> excludeMapped = getExcludeMapped();
+        List<String> excludeMapped = getExcludedFields();
 
         AnnotationMetadata annotationMetadata = getAnnotationMetadataHelper(annotationVepVersion,
                 annotationVepCacheVersion);
@@ -157,7 +157,7 @@ public class RegionWSServerV2 {
         return null;
     }
 
-    public List<String> getExcludeMapped() {
+    public List<String> getExcludedFields() {
         List<String> excludeMapped = new ArrayList<>();
         Utils.getApiToMongoDocNameMap().forEach((key, value) -> {
             excludeMapped.add(value);
