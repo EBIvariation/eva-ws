@@ -185,7 +185,7 @@ public class VariantWSServerV2 {
             return new ResponseEntity(null, HttpStatus.NOT_FOUND);
         }
         Link coreVariantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
-                species, assembly, response)).toUri().toString(), "CoreVariant");
+                species, assembly, response)).toUri().toString(), "coreVariant");
 
         return new ResponseEntity(new Resource<>(variantEntity.get().getAnnotation(), coreVariantLink), HttpStatus.OK);
     }
