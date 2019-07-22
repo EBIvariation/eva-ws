@@ -63,12 +63,9 @@ public class WSTestHelpers {
 
     public static String testRestTemplateHelperForError(String url,
                                                         TestRestTemplate restTemplate) {
-        ResponseEntity<QueryResponse<String> > response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<String>>() {
-                });
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.BAD_REQUEST,response.getStatusCode());
-        return response.getBody().getError();
+        return response.getBody();
     }
 
     public static void checkVariantsInFullResults(List<VariantWithSamplesAndAnnotation> results,

@@ -19,6 +19,13 @@
 
 package uk.ac.ebi.eva.server.ws;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.TypeRef;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
 import org.junit.Before;
@@ -66,16 +73,24 @@ import static org.junit.Assert.*;
 public class VariantWSServerV2IntegrationTest {
 
     private static final String TEST_DB = "test-db";
+
     @Rule
     public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
+
     @Autowired
     MongoDbFactory mongoDbFactory;
+
     @Autowired
     private ApplicationContext applicationContext;
+
     @Autowired
     private TestRestTemplate restTemplate;
+
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Before
     public void setUp() throws Exception {
@@ -84,24 +99,25 @@ public class VariantWSServerV2IntegrationTest {
     @Test
     public void rootTestGetVariantsByVariantCoreString() throws URISyntaxException {
         String url = "/v2/variants/20:60100:A:T?species=mmusculus&assembly=grcm38";
-        List<VariantWithSamplesAndAnnotation> variantWithSamplesAndAnnotations = WSTestHelpers.testRestTemplateHelper(
-                url, restTemplate);
-        assertEquals(1, variantWithSamplesAndAnnotations.size());
-        assertTrue(variantWithSamplesAndAnnotations.get(0).getSourceEntries().isEmpty());
-        assertNull(variantWithSamplesAndAnnotations.get(0).getAnnotation());
-        assertTrue(variantWithSamplesAndAnnotations.get(0).getIds().size() > 0);
+        VariantWithSamplesAndAnnotation variantWithSamplesAndAnnotations = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<VariantWithSamplesAndAnnotation>() {
+                }).getBody();
+        assertTrue(variantWithSamplesAndAnnotations.getSourceEntries().isEmpty());
+        assertNull(variantWithSamplesAndAnnotations.getAnnotation());
+        assertTrue(variantWithSamplesAndAnnotations.getIds().size() > 0);
     }
 
     @Test
     public void rootTestGetVariantsByNonExistingVariantCoreString() throws URISyntaxException {
         String url = "/v2/variants/10:0:A:T?species=mmusculus&assembly=grcm38";
+        testForNonExistingHelper(url);
+    }
 
-        ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>>() {
-                });
+    private void testForNonExistingHelper(String url) throws URISyntaxException {
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(0, response.getBody().getResponse().size());
+        assertNull(response.getBody());
     }
 
     @Test
@@ -117,33 +133,23 @@ public class VariantWSServerV2IntegrationTest {
     @Test
     public void annotationEndPointTestExisting() throws URISyntaxException {
         String url = "/v2/variants/20:60100:A:T/annotations?species=mmusculus&assembly=grcm38";
-        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
+        ResponseEntity<Annotation> annotations = restTemplate.exchange(url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<Annotation>() {
                 });
         assertEquals(HttpStatus.OK, annotations.getStatusCode());
-        assertFalse(annotations.getBody().getResponse().get(0).getResult().get(0).getChromosome().isEmpty());
+        assertFalse(annotations.getBody().getChromosome().isEmpty());
     }
 
     @Test
     public void annotationEndPointTestForNonExistingAnnotationWithNonExistingVariant() throws URISyntaxException {
         String url = "/v2/variants/100:0:C:T/annotations?species=mmusculus&assembly=grcm38";
-        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
-                });
-        assertEquals(HttpStatus.NOT_FOUND, annotations.getStatusCode());
-        assertTrue(annotations.getBody().getResponse().get(0).getResult().size() == 0);
+        testForNonExistingHelper(url);
     }
 
     @Test
     public void annotationEndPointTestForNonExistingAnnotationWithExistingVariant() throws URISyntaxException {
         String url = "/v2/variants/X:1000014:G:A/annotations?species=mmusculus&assembly=grcm38";
-        ResponseEntity<QueryResponse<QueryResult<Annotation>>> annotations = restTemplate.exchange(url, HttpMethod.GET,
-                null, new ParameterizedTypeReference<QueryResponse<QueryResult<Annotation>>>() {
-                });
-        assertEquals(HttpStatus.NOT_FOUND, annotations.getStatusCode());
-        assertTrue(annotations.getBody().getResponse().get(0).getResult().size() == 0);
+        testForNonExistingHelper(url);
     }
 
     @Test
@@ -161,36 +167,40 @@ public class VariantWSServerV2IntegrationTest {
     @Test
     public void sourceEntriesEndPointTestExisting() throws URISyntaxException {
         String url = "/v2/variants/20:60100:A:T/sources?species=mmusculus&assembly=grcm38";
-        ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> sources = restTemplate.
-                exchange(url, HttpMethod.GET, null,
-                        new ParameterizedTypeReference<QueryResponse<QueryResult
-                                <VariantSourceEntryWithSampleNames>>>() {
-                        });
-        assertEquals(HttpStatus.OK, sources.getStatusCode());
-        assertFalse(sources.getBody().getResponse().get(0).getResult().get(0).getFileId().isEmpty());
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        List<VariantSourceEntryWithSampleNames> sources = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['_embedded']['variantSourceEntryWithSampleNamesList']", new TypeRef
+                        <List<VariantSourceEntryWithSampleNames>>() {
+                });
+        assertFalse(sources.get(0).getFileId().isEmpty());
     }
 
     @Test
     public void sourceEntriesEndPointTestNonExistingWithNonExistingVariant() throws URISyntaxException {
         String url = "/v2/variants/100:0:C:T/sources?species=mmusculus&assembly=grcm38";
-        ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> sources = restTemplate.
-                exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<QueryResponse<
-                        QueryResult<VariantSourceEntryWithSampleNames>>>() {
-                });
-        assertEquals(HttpStatus.NOT_FOUND, sources.getStatusCode());
-        assertTrue(sources.getBody().getResponse().get(0).getResult().isEmpty());
+        testForNonExistingHelper(url);
     }
 
     @Test
     public void sourceEntriesEndPointTestNonExistingWithExistingVariantAndNonExistingStatistics() throws
             URISyntaxException {
         String url = "/v2/variants/X:1000014:G:A/sources?species=mmusculus&assembly=grcm38";
-        ResponseEntity<QueryResponse<QueryResult<VariantSourceEntryWithSampleNames>>> sources = restTemplate.exchange
-                (url, HttpMethod.GET, null, new ParameterizedTypeReference<QueryResponse<QueryResult
-                        <VariantSourceEntryWithSampleNames>>>() {
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        List<VariantSourceEntryWithSampleNames> sources = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['_embedded']['variantSourceEntryWithSampleNamesList']", new TypeRef
+                        <List<VariantSourceEntryWithSampleNames>>() {
                 });
-        assertEquals(HttpStatus.OK, sources.getStatusCode());
-        assertTrue(sources.getBody().getResponse().get(0).getResult().get(0).getCohortStats().isEmpty());
+        assertTrue(sources.get(0).getCohortStats().isEmpty());
     }
 
     @Test
