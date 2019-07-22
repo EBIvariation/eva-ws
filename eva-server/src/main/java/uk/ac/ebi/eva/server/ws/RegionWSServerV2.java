@@ -121,8 +121,6 @@ public class RegionWSServerV2 {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        List<Link> links = new ArrayList<>();
-
         variantEntities.forEach(variantEntity -> {
             Variant variant = new Variant(variantEntity.getChromosome(), variantEntity.getStart(),
                     variantEntity.getEnd(), variantEntity.getReference(), variantEntity.getAlternate());
@@ -138,10 +136,8 @@ public class RegionWSServerV2 {
                     assembly, null, null, response)).toUri().toString(), "sources");
 
             resourcesList.add(new Resource<>(variant, Arrays.asList(sourcesLink, annotationsLink)));
-            links.add(annotationsLink);
-            links.add(sourcesLink);
         });
-        return new ResponseEntity(new Resources<>(resourcesList, links), HttpStatus.OK);
+        return new ResponseEntity(new Resources<>(resourcesList), HttpStatus.OK);
     }
 
     public String checkParameters(String annotationVepVersion, String annotationVepCacheVersion, String species) throws
