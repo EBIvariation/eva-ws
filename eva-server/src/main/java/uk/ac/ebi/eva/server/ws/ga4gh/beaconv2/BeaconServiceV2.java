@@ -121,6 +121,10 @@ public class BeaconServiceV2 {
         List<VariantMongo> variantMongoList;
 
         if (pageSize > 0) {
+            if (includeDatasetResponses == null || IncludeDatasetResponsesEnum.valueOf(includeDatasetResponses) ==
+                    IncludeDatasetResponsesEnum.NONE) {
+                return buildBeaconAlleleResponse(true, request, null, null);
+            }
             variantMongoList = service.findByRegionAndOtherBeaconFilters(startRange, endRange, filters,
                     new PageRequest(0, pageSize));
         } else {
