@@ -44,9 +44,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
@@ -85,6 +86,12 @@ public class IdentifierWSServerV2Test {
         List<Variant> variantList = JsonPath.using(configuration).parse(response.getBody())
                 .read("$['_embedded']['variantList']", new TypeRef<List<Variant>>() {
                 });
+        assertFalse(JsonPath.using(configuration).parse(response.getBody()).read
+                ("$['_embedded']['variantList'][0]['_links']['sources']['href']", new TypeRef<String>() {
+                }).isEmpty());
+        assertFalse(JsonPath.using(configuration).parse(response.getBody()).read
+                ("$['_embedded']['variantList'][0]['_links']['annotation']['href']", new TypeRef<String>() {
+                }).isEmpty());
 
         assertTrue(variantList.size() > 0);
         Variant variant = variantList.get(0);

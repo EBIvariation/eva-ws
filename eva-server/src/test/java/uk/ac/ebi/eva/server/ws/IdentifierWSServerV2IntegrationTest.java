@@ -51,9 +51,10 @@ import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
 import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -105,6 +106,12 @@ public class IdentifierWSServerV2IntegrationTest {
         List<Variant> variantList = JsonPath.using(configuration).parse(response.getBody())
                 .read("$['_embedded']['variantList']", new TypeRef<List<Variant>>() {
                 });
+        assertFalse(JsonPath.using(configuration).parse(response.getBody()).read
+                ("$['_embedded']['variantList'][0]['_links']['sources']['href']", new TypeRef<String>() {
+                }).isEmpty());
+        assertFalse(JsonPath.using(configuration).parse(response.getBody()).read
+                ("$['_embedded']['variantList'][0]['_links']['annotation']['href']", new TypeRef<String>() {
+                }).isEmpty());
 
         assertTrue(variantList.size() > 0);
         Variant variant = variantList.get(0);
