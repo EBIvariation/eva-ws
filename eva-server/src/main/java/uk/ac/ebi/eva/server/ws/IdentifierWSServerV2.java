@@ -74,7 +74,6 @@ public class IdentifierWSServerV2 {
                 (identifier), null, null, null, null);
 
         List<Resource> resourcesList = new ArrayList<>();
-        List<Link> links = new ArrayList<>();
 
         variantEntities.forEach(variantEntity -> {
             Variant variant = new Variant(variantEntity.getChromosome(), variantEntity.getStart(), variantEntity
@@ -90,11 +89,9 @@ public class IdentifierWSServerV2 {
                     assembly, null, null, response)).toUri().toString(), "sources");
 
             resourcesList.add(new Resource<>(variant, Arrays.asList(sourcesLink, annotationsLink)));
-            links.add(annotationsLink);
-            links.add(sourcesLink);
         });
         if (resourcesList.size() > 0) {
-            return new ResponseEntity<>(new Resources<>(resourcesList, links), HttpStatus.OK);
+            return new ResponseEntity<>(new Resources<>(resourcesList), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
