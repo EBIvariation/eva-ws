@@ -169,11 +169,7 @@ public class BeaconServiceV2 {
         } else if (start < 0) {
             throw new IllegalArgumentException("Please provide a positive start number");
         }
-        if (end == null) {
-            if (endMin == null || endMax == null) {
-                throw new IllegalArgumentException("Please provied either end or both endMin and endMax");
-            }
-        } else if (end < 0) {
+        if (end != null && end < 0) {
             throw new IllegalArgumentException("Please provide a positive end number");
         }
 
