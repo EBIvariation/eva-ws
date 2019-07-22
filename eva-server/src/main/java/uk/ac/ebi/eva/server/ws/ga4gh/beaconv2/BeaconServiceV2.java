@@ -168,7 +168,7 @@ public class BeaconServiceV2 {
 
         if (start == null) {
             if (startMin == null || startMax == null) {
-                throw new IllegalArgumentException("Please provied either start or both startMin and startMax");
+                throw new IllegalArgumentException("Please provide either start or both startMin and startMax");
             }
         } else if (start < 0) {
             throw new IllegalArgumentException("Please provide a positive start number");
