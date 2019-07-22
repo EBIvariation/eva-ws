@@ -119,7 +119,7 @@ public class RegionWSServerV2Test {
     }
 
     private List<Variant> regionWsHelper(String testRegion, HttpStatus status) {
-        String url = "/v2/regions/" + testRegion + "?species=mmusculus&assembly=grcm38";
+        String url = "/v2/regions/" + testRegion + "/variants?species=mmusculus&assembly=grcm38";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(status, response.getStatusCode());
 

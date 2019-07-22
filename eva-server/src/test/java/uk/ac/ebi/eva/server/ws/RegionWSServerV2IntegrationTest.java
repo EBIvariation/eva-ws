@@ -97,7 +97,7 @@ public class RegionWSServerV2IntegrationTest {
 
     private List<String> testGetVariantsByRegionHelper(String testRegion, int expectedVariants, HttpStatus status)
             throws URISyntaxException {
-        String url = "/v2/regions/" + testRegion + "?species=mmusculus&assembly=grcm38";
+        String url = "/v2/regions/" + testRegion + "/variants?species=mmusculus&assembly=grcm38";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(status, response.getStatusCode());
 
