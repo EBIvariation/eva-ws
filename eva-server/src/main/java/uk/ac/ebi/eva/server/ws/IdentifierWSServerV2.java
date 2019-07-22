@@ -55,7 +55,7 @@ public class IdentifierWSServerV2 {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
-    @GetMapping(value = "/{identifier}")
+    @GetMapping(value = "/{identifier}/variants")
     public ResponseEntity getVariants(
             @ApiParam(value = "RS or SS identifier of a variant, e.g.: rs55880202", required = true) @PathVariable
                     String identifier,

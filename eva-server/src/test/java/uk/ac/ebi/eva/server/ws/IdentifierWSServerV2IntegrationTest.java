@@ -94,7 +94,7 @@ public class IdentifierWSServerV2IntegrationTest {
 
     @Test
     public void testForExisting() {
-        String url = "/v2/identifiers/rs199692280?species=mmusculus&assembly=grcm38";
+        String url = "/v2/identifiers/rs199692280/variants?species=mmusculus&assembly=grcm38";
 
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -124,7 +124,7 @@ public class IdentifierWSServerV2IntegrationTest {
 
     @Test
     public void testForNonExisting() {
-        String url = "/v2/identifiers/abcd?species=hsapiens&assembly=grch37";
+        String url = "/v2/identifiers/abcd/variants?species=hsapiens&assembly=grch37";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
