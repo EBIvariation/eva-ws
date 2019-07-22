@@ -175,8 +175,8 @@ public class GA4GHBeaconWSServerV2Test {
                 .queryParam("assemblyId", "GRch37")
                 .build().toString();
         assertEquals(400, testBeaconHelper(url).getBody().get(0).getError().getErrorCode().intValue());
-        assertEquals("Please provied either start or both startMin and startMax", testBeaconHelper(url).
-                getBody().get(0).getError().getErrorMessage());
+        assertEquals("Please provide either start or both startMin,startMax and endMin,endMax",
+                testBeaconHelper(url).getBody().get(0).getError().getErrorMessage());
     }
 
     private ResponseEntity<List<BeaconAlleleResponse>> testBeaconHelper(String url) {
