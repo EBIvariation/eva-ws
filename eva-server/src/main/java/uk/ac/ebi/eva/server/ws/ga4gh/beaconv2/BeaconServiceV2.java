@@ -100,7 +100,7 @@ public class BeaconServiceV2 {
 
         try {
             checkParameters(chromosome, referenceBases, start, end, alternateBases, variantType, assemblyId,
-                    includeDatasetResponses);
+                    includeDatasetResponses, startMin, startMax, endMin, endMax);
         } catch (IllegalArgumentException e) {
             return buildBeaconAlleleResponse(null, null, null, e.getMessage());
         }
@@ -139,7 +139,8 @@ public class BeaconServiceV2 {
 
     private void checkParameters(String chromosome, String referenceBases, Long start, Long end,
                                  String alternateBases, String variantType, String assemblyId,
-                                 String includeDatasetResponses) throws IllegalArgumentException {
+                                 String includeDatasetResponses, Long startMin, Long startMax, Long endMin,
+                                 Long endMax) throws IllegalArgumentException {
         if (chromosome == null || chromosome.length() == 0) {
             String errorMessage = "Please provide a valid reference name from ";
             throw new IllegalArgumentException(errorMessage + String.join(", ",
@@ -161,11 +162,18 @@ public class BeaconServiceV2 {
             throw new IllegalArgumentException("Please provide reference bases");
         }
 
-        if (start != null && start < 0) {
+        if (start == null) {
+            if (startMin == null || startMax == null) {
+                throw new IllegalArgumentException("Please provied either start or both startMin and startMax");
+            }
+        } else if (start < 0) {
             throw new IllegalArgumentException("Please provide a positive start number");
         }
-
-        if (end != null && end < 0) {
+        if (end == null) {
+            if (endMin == null || endMax == null) {
+                throw new IllegalArgumentException("Please provied either end or both endMin and endMax");
+            }
+        } else if (end < 0) {
             throw new IllegalArgumentException("Please provide a positive end number");
         }
 
@@ -265,7 +273,7 @@ public class BeaconServiceV2 {
                 if (variantMongo.getAlternate().equalsIgnoreCase(variantStatisticsMongo.getMafAllele()) ||
                         variantMongo.getReference().equalsIgnoreCase(variantStatisticsMongo.getMafAllele())) {
                     datasetIdToFrequencyMapper.put(variantStatisticsMongo.getStudyId() + "_" + variantStatisticsMongo
-                                    .getFileId(), variantStatisticsMongo.getMaf());
+                            .getFileId(), variantStatisticsMongo.getMaf());
                 }
             });
         });
