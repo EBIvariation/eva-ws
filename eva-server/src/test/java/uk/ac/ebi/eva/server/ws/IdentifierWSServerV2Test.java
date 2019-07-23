@@ -19,6 +19,13 @@
 
 package uk.ac.ebi.eva.server.ws;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.TypeRef;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -39,8 +44,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
@@ -56,6 +63,9 @@ public class IdentifierWSServerV2Test {
     @MockBean
     private VariantWithSamplesAndAnnotationsService variantEntityRepository;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Before
     public void setUp() throws Exception {
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(VARIANT);
@@ -65,26 +75,39 @@ public class IdentifierWSServerV2Test {
 
     @Test
     public void testForExisting() {
-        String url = "/v2/identifiers/ss481155011?species=hsapiens&assembly=grch37";
-        ResponseEntity<List<Variant>> response = restTemplate.exchange(url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Variant>>() {
-                });
+        String url = "/v2/identifiers/ss481155011/variants?species=hsapiens&assembly=grch37";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        List<Variant> variantList = response.getBody();
+
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        List<Variant> variantList = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['_embedded']['variantList']", new TypeRef<List<Variant>>() {
+                });
+        assertFalse(JsonPath.using(configuration).parse(response.getBody()).read
+                ("$['_embedded']['variantList'][0]['_links']['sources']['href']", new TypeRef<String>() {
+                }).isEmpty());
+        assertFalse(JsonPath.using(configuration).parse(response.getBody()).read
+                ("$['_embedded']['variantList'][0]['_links']['annotation']['href']", new TypeRef<String>() {
+                }).isEmpty());
+
         assertTrue(variantList.size() > 0);
-        assertEquals("1", variantList.get(0).getChromosome());
-        assertEquals("T", variantList.get(0).getAlternate());
-        assertEquals("A", variantList.get(0).getReference());
+        Variant variant = variantList.get(0);
+        assertEquals("1", variant.getChromosome());
+        assertEquals("T", variant.getAlternate());
+        assertEquals("A", variant.getReference());
+        assertEquals(1000L, variant.getStart());
+        assertEquals(1005L, variant.getEnd());
     }
 
     @Test
     public void testForNonExisting() {
-        String url = "/v2/identifiers/abcd?species=hsapiens&assembly=grch37";
-        ResponseEntity<List<Variant>> response = restTemplate.exchange(url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Variant>>() {
-                });
+        String url = "/v2/identifiers/abcd/variants?species=hsapiens&assembly=grch37";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertTrue(response.getBody().size() == 0);
+        assertNull(response.getBody());
     }
 
 }

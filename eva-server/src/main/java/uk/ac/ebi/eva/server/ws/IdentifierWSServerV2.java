@@ -22,6 +22,9 @@ package uk.ac.ebi.eva.server.ws;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,19 +39,23 @@ import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsSe
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 @RestController
-@RequestMapping(value = "/v2/identifiers")
+@RequestMapping(value = "/v2/identifiers", produces = "application/hal+json")
 @Api(tags = "identifier")
 public class IdentifierWSServerV2 {
 
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
-    @GetMapping(value = "/{identifier}")
+    @GetMapping(value = "/{identifier}/variants")
     public ResponseEntity getVariants(
             @ApiParam(value = "RS or SS identifier of a variant, e.g.: rs55880202", required = true) @PathVariable
                     String identifier,
@@ -57,7 +64,8 @@ public class IdentifierWSServerV2 {
                     required = true) @RequestParam String species,
             @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in" +
                     " /v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
-            @RequestParam String assembly)
+            @RequestParam String assembly,
+            HttpServletResponse response)
             throws AnnotationMetadataNotFoundException, IllegalArgumentException {
         checkParameters(species, assembly);
 
@@ -65,18 +73,27 @@ public class IdentifierWSServerV2 {
         List<VariantWithSamplesAndAnnotation> variantEntities = service.findByIdsAndComplexFilters(Arrays.asList
                 (identifier), null, null, null, null);
 
-        List<Variant> coreVariantInfo = new ArrayList<>();
+        List<Resource> resourcesList = new ArrayList<>();
+
         variantEntities.forEach(variantEntity -> {
             Variant variant = new Variant(variantEntity.getChromosome(), variantEntity.getStart(), variantEntity
                     .getEnd(), variantEntity.getReference(), variantEntity.getAlternate());
             variant.setIds(variantEntity.getIds());
-            coreVariantInfo.add(variant);
 
+            String variantCoreString = variantEntity.getChromosome() + ":" + variantEntity.getStart() + ":" +
+                    variantEntity.getReference() + ":" + variantEntity.getAlternate();
+
+            Link annotationsLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
+                    species, assembly, null, null, response)).toUri().toString(), "annotation");
+            Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getSources(variantCoreString, species,
+                    assembly, null, null, response)).toUri().toString(), "sources");
+
+            resourcesList.add(new Resource<>(variant, Arrays.asList(sourcesLink, annotationsLink)));
         });
-        if (coreVariantInfo.size() > 0) {
-            return new ResponseEntity<>(coreVariantInfo, HttpStatus.OK);
+        if (resourcesList.size() > 0) {
+            return new ResponseEntity<>(new Resources<>(resourcesList), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(coreVariantInfo, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 

@@ -19,6 +19,13 @@
 
 package uk.ac.ebi.eva.server.ws;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.TypeRef;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
 import org.junit.Before;
@@ -30,9 +37,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -46,8 +51,10 @@ import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
 import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -78,33 +85,48 @@ public class IdentifierWSServerV2IntegrationTest {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Before
     public void setUp() throws Exception {
     }
 
     @Test
     public void testForExisting() {
-        String url = "/v2/identifiers/rs199692280?species=mmusculus&assembly=grcm38";
-        ResponseEntity<List<Variant>> response = restTemplate.exchange(url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Variant>>() {
-                });
+        String url = "/v2/identifiers/rs199692280/variants?species=mmusculus&assembly=grcm38";
+
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        List<Variant> variantList = response.getBody();
+
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        List<Variant> variantList = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['_embedded']['variantList']", new TypeRef<List<Variant>>() {
+                });
+        assertFalse(JsonPath.using(configuration).parse(response.getBody()).read
+                ("$['_embedded']['variantList'][0]['_links']['sources']['href']", new TypeRef<String>() {
+                }).isEmpty());
+        assertFalse(JsonPath.using(configuration).parse(response.getBody()).read
+                ("$['_embedded']['variantList'][0]['_links']['annotation']['href']", new TypeRef<String>() {
+                }).isEmpty());
+
         assertTrue(variantList.size() > 0);
-        assertEquals("20", variantList.get(0).getChromosome());
-        assertEquals("T", variantList.get(0).getAlternate());
-        assertEquals("A", variantList.get(0).getReference());
-        assertEquals(60100L, variantList.get(0).getStart());
-        assertEquals(60100L, variantList.get(0).getEnd());
+        Variant variant = variantList.get(0);
+        assertEquals("20", variant.getChromosome());
+        assertEquals("T", variant.getAlternate());
+        assertEquals("A", variant.getReference());
+        assertEquals(60100L, variant.getStart());
+        assertEquals(60100L, variant.getEnd());
     }
 
     @Test
     public void testForNonExisting() {
-        String url = "/v2/identifiers/abcd?species=hsapiens&assembly=grch37";
-        ResponseEntity<List<Variant>> response = restTemplate.exchange(url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<Variant>>() {
-                });
+        String url = "/v2/identifiers/abcd/variants?species=hsapiens&assembly=grch37";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertTrue(response.getBody().size() == 0);
+        assertNull(response.getBody());
     }
 }
