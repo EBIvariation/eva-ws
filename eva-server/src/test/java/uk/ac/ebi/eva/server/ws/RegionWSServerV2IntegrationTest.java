@@ -37,8 +37,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -166,6 +164,5 @@ public class RegionWSServerV2IntegrationTest {
         assertEquals(0, pageNumber.intValue());
         assertEquals(10, size.intValue());
         assertEquals(1, totalPages.intValue());
-        System.out.println();
     }
 }
