@@ -55,7 +55,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -106,12 +105,12 @@ public class RegionWSServerV2 {
 
         AnnotationMetadata annotationMetadata = getAnnotationMetadataHelper(annotationVepVersion,
                 annotationVepCacheVersion);
-        Integer pageSize = service.countByRegionsAndComplexFilters(regions, filters).intValue();
+        Integer totalNumberOfResults = service.countByRegionsAndComplexFilters(regions, filters).intValue();
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
         List<Resource> resourcesList = new ArrayList<>();
 
-        if (pageSize == 0) {
+        if (totalNumberOfResults == 0) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return new ResponseEntity(new Resources<>(resourcesList), HttpStatus.NOT_FOUND);
         }
@@ -141,9 +140,9 @@ public class RegionWSServerV2 {
 
             resourcesList.add(new Resource<>(variant, Arrays.asList(sourcesLink, annotationsLink)));
         });
-        PageMetadata pageMetadata= new PagedResources.PageMetadata(pageable.getPageSize(),pageable.getPageNumber(),
-                pageSize);
-        return new ResponseEntity(new PagedResources<>(resourcesList,pageMetadata), HttpStatus.OK);
+        PageMetadata pageMetadata = new PagedResources.PageMetadata(pageable.getPageSize(), pageable.getPageNumber(),
+                totalNumberOfResults);
+        return new ResponseEntity(new PagedResources<>(resourcesList, pageMetadata), HttpStatus.OK);
     }
 
     public String checkParameters(String annotationVepVersion, String annotationVepCacheVersion, String species) throws
