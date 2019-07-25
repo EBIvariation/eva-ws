@@ -16,6 +16,13 @@
 
 package uk.ac.ebi.eva.server.ws;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.TypeRef;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,76 +30,134 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
+import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.FeatureService;
+import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.mockito.AdditionalMatchers.not;
+import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GeneWSServerV2Test {
 
+    private static final String MAIN_ID = "rs1";
+
     @Autowired
     private TestRestTemplate restTemplate;
 
     @MockBean
-    private FeatureService service;
+    private FeatureService featureService;
 
-    private String GENE_ID = "GeneId";
+    @MockBean
+    private VariantWithSamplesAndAnnotationsService variantService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private String GENE_ID1 = "ENSG00000227232";
+
+    private String GENE_ID2 = "ENSG00000227244";
 
     @Before
     public void setUp() throws Exception {
-        FeatureCoordinates feature = new FeatureCoordinates(GENE_ID, "id", "feature", "chromosome", 1l, 2l);
+        VariantWithSamplesAndAnnotation variantEntity = new VariantWithSamplesAndAnnotation("20", 1000, 1005,
+                "reference", "alternate", MAIN_ID);
 
-        List<FeatureCoordinates> featureCoordinate = Arrays.asList(feature);
-        List<String> geneId = Arrays.asList(GENE_ID);
-        given(service.findAllByGeneIdsOrGeneNames(eq(geneId), eq(geneId))).willReturn(featureCoordinate);
+        List<Region> oneRegion = Collections.singletonList(new Region("20", 60000L, 62000L));
+        given(variantService.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any(), any()))
+                .willReturn(Collections.singletonList(variantEntity));
+        given(variantService.countByRegionsAndComplexFilters(eq(oneRegion), any())).willReturn(1l);
 
-        List<FeatureCoordinates> featureCoordinates = Arrays.asList(feature, feature);
-        List<String> geneIds = Arrays.asList(GENE_ID, GENE_ID);
-        given(service.findAllByGeneIdsOrGeneNames(eq(geneIds), eq(geneIds))).willReturn(featureCoordinates);
+        List<Region> twoRegions = Arrays.asList(new Region("20", 60000L, 62000L),
+                new Region("20", 63000L, 64000L));
+
+
+        given(variantService.findByRegionsAndComplexFilters(eq(twoRegions), any(), any(), any(), any()))
+                .willReturn(Arrays.asList(variantEntity, variantEntity));
+        given(variantService.countByRegionsAndComplexFilters(eq(twoRegions), any())).willReturn(2l);
+
+        given(variantService
+                .findByRegionsAndComplexFilters(not(or(eq(oneRegion), eq(twoRegions))), any(), any(), any(), any()))
+                .willReturn(Collections.emptyList());
+        given(variantService.countByRegionsAndComplexFilters(not(or(eq(oneRegion), eq(twoRegions))), any()))
+                .willReturn(0l);
+
+        FeatureCoordinates feature1 = new FeatureCoordinates(GENE_ID1, "id", "feature", "20", 60000L, 62000L);
+        FeatureCoordinates feature2 = new FeatureCoordinates(GENE_ID1, "id", "feature", "20", 63000L, 64000L);
+
+        List<FeatureCoordinates> featureCoordinate = Arrays.asList(feature1);
+        List<String> geneId = Arrays.asList(GENE_ID1);
+        given(featureService.findAllByGeneIdsOrGeneNames(eq(geneId), eq(geneId))).willReturn(featureCoordinate);
+
+        List<FeatureCoordinates> featureCoordinates = Arrays.asList(feature1, feature2);
+        List<String> geneIds = Arrays.asList(GENE_ID1, GENE_ID2);
+        given(featureService.findAllByGeneIdsOrGeneNames(eq(geneIds), eq(geneIds))).willReturn(featureCoordinates);
     }
 
     @Test
-    public void testGeneIdExisting() {
-        testGeneIdHelper(Arrays.asList(GENE_ID), HttpStatus.OK, 1);
+    public void testGetVariantsByExistingGene() throws URISyntaxException {
+        assertEquals("20", testGetVariantsGeneHelper("ENSG00000227232", 1, HttpStatus.OK).get(0));
     }
 
-    private void testGeneIdHelper(List<String> geneIds, HttpStatus status, int size) {
-        String url = "/v2/genes/" + String.join(",", geneIds) + "?species=hsapiens&assembly=grch37";
-        ResponseEntity<List<FeatureCoordinates>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<FeatureCoordinates>>() {
-                });
+    private List<String> testGetVariantsGeneHelper(String testRegion, int expectedVariants, HttpStatus status)
+            throws URISyntaxException {
+        String url = "/v2/genes/" + testRegion + "/variants?species=mmusculus&assembly=grcm38";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(status, response.getStatusCode());
-        assertEquals(size, response.getBody().size());
-        for (int i = 0; i < response.getBody().size(); i++) {
-            assertEquals(geneIds.get(i), response.getBody().get(i).getId());
+
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        List<Variant> variantList = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['_embedded']['variantList']", new TypeRef<List<Variant>>() {
+                });
+
+        if (variantList == null) {
+            assertEquals(0, expectedVariants);
+            return null;
         }
+        assertEquals(expectedVariants, variantList.size());
+        List<String> chromosomes = new ArrayList<>();
+        variantList.forEach(variant -> {
+            chromosomes.add(variant.getChromosome());
+        });
+        return chromosomes;
     }
 
     @Test
-    public void testGendIdsExisiting() {
-        testGeneIdHelper(Arrays.asList(GENE_ID, GENE_ID), HttpStatus.OK, 2);
+    public void testGetVariantsByExistingGenes() throws URISyntaxException {
+        List<String> chromosomes = testGetVariantsGeneHelper("ENSG00000227232,ENSG00000227244", 2, HttpStatus.OK);
+        assertEquals("20", chromosomes.get(0));
+        assertEquals("20", chromosomes.get(1));
     }
 
     @Test
-    public void testGeneIdNonExisting() {
-        testGeneIdHelper(Arrays.asList("ENSG000002972"), HttpStatus.NOT_FOUND, 0);
+    public void testGetVariantsByNonExistingRegion() throws URISyntaxException {
+        testGetVariantsGeneHelper("nonexis", 0, HttpStatus.NOT_FOUND);
     }
 
     @Test
-    public void testGendIdsNonExisiting() {
-        testGeneIdHelper(Arrays.asList("ENSG00223972", "ENST000450305"), HttpStatus.NOT_FOUND, 0);
+    public void testGetVariantsByNonExistingRegions() throws URISyntaxException {
+        testGetVariantsGeneHelper("nonexis,nonexis", 0, HttpStatus.NOT_FOUND);
     }
 }

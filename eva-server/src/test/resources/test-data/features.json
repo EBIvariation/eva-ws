@@ -28,17 +28,17 @@
       "_id": "ENSG00000227232",
       "name": "WASH7P",
       "feature": "gene",
-      "chromosome": "1",
-      "start": 14404,
-      "end": 29570
+      "chromosome": "20",
+      "start": 60100,
+      "end": 60100
     },
     {
       "_id": "ENST00000488147",
       "name": "WASH7P-201",
       "feature": "transcript",
-      "chromosome": "1",
-      "start": 14404,
-      "end": 29570
+      "chromosome": "20",
+      "start": 62300,
+      "end": 62300
     }
   ]
 }

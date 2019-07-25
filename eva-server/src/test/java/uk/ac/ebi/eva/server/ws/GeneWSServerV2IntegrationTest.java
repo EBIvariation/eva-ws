@@ -16,6 +16,13 @@
 
 package uk.ac.ebi.eva.server.ws;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Option;
+import com.jayway.jsonpath.TypeRef;
+import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
 import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
 import org.junit.Before;
@@ -27,19 +34,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
+import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.lib.Profiles;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
 
-import java.util.Arrays;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
@@ -49,89 +55,81 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(MongoRepositoryTestConfiguration.class)
 @UsingDataSet(locations = {
-        "/test-data/features.json"
+        "/test-data/features.json",
+        "/test-data/variants.json",
+        "/test-data/files.json",
+        "/test-data/annotations.json",
+        "/test-data/annotation_metadata.json"
 })
 @ActiveProfiles(Profiles.TEST_MONGO_FACTORY)
 public class GeneWSServerV2IntegrationTest {
 
     private static final String TEST_DB = "test-db";
+
     @Rule
     public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
+
     @Autowired
     MongoDbFactory mongoDbFactory;
+
     @Autowired
     private ApplicationContext applicationContext;
+
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Before
     public void setUp() throws Exception {
     }
 
     @Test
-    public void testGeneIdExisting() {
-        testGeneIdHelper(Arrays.asList("ENSG00000223972"), HttpStatus.OK, 1);
+    public void testGetVariantsByExistingGene() throws URISyntaxException {
+        assertEquals("20", testGetVariantsGeneHelper("ENSG00000227232", 1, HttpStatus.OK).get(0));
     }
 
-    private void testGeneIdHelper(List<String> geneIds, HttpStatus status, int size) {
-        ResponseEntity<List<FeatureCoordinates>> response = getResponse(geneIds);
+    private List<String> testGetVariantsGeneHelper(String testRegion, int expectedVariants, HttpStatus status)
+            throws URISyntaxException {
+        String url = "/v2/genes/" + testRegion + "/variants?species=mmusculus&assembly=grcm38";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(status, response.getStatusCode());
-        assertEquals(size, response.getBody().size());
-        for (int i = 0; i < response.getBody().size(); i++) {
-            assertEquals(geneIds.get(i), response.getBody().get(i).getId());
-        }
-    }
 
-    private ResponseEntity<List<FeatureCoordinates>> getResponse(List<String> geneIds) {
-        String url = "/v2/genes/" + String.join(",", geneIds) + "?species=hsapiens&assembly=grch37";
-        ResponseEntity<List<FeatureCoordinates>> response = restTemplate.exchange(
-                url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<FeatureCoordinates>>() {
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        List<Variant> variantList = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['_embedded']['variantList']", new TypeRef<List<Variant>>() {
                 });
-        return response;
-    }
 
-    @Test
-    public void testGendIdsExisiting() {
-        testGeneIdHelper(Arrays.asList("ENSG00000223972", "ENST00000450305"), HttpStatus.OK, 2);
-    }
-
-    @Test
-    public void testGeneIdNonExisting() {
-        testGeneIdHelper(Arrays.asList("ENSG000002972"), HttpStatus.NOT_FOUND, 0);
-    }
-
-    @Test
-    public void testGendIdsNonExisiting() {
-        testGeneIdHelper(Arrays.asList("ENSG00223972", "ENST000450305"), HttpStatus.NOT_FOUND, 0);
-    }
-
-    @Test
-    public void testGeneNameExisting() {
-        testGeneNameHelper(Arrays.asList("DDX11L1"), HttpStatus.OK, 1);
-    }
-
-    private void testGeneNameHelper(List<String> geneNames, HttpStatus status, int size) {
-        ResponseEntity<List<FeatureCoordinates>> response = getResponse(geneNames);
-        assertEquals(status, response.getStatusCode());
-        assertEquals(size, response.getBody().size());
-        for (int i = 0; i < response.getBody().size(); i++) {
-            assertEquals(geneNames.get(i), response.getBody().get(i).getName());
+        if (variantList == null) {
+            assertEquals(0, expectedVariants);
+            return null;
         }
+        assertEquals(expectedVariants, variantList.size());
+        List<String> chromosomes = new ArrayList<>();
+        variantList.forEach(variant -> {
+            chromosomes.add(variant.getChromosome());
+        });
+        return chromosomes;
     }
 
     @Test
-    public void testGendNamesExisiting() {
-        testGeneNameHelper(Arrays.asList("DDX11L1", "DDX11L1-202"), HttpStatus.OK, 2);
+    public void testGetVariantsByExistingRegions() throws URISyntaxException {
+        List<String> chromosomes = testGetVariantsGeneHelper("ENSG00000227232,ENST00000488147", 2, HttpStatus.OK);
+        assertEquals("20", chromosomes.get(0));
+        assertEquals("20", chromosomes.get(1));
     }
 
     @Test
-    public void testGeneNameNonExisting() {
-        testGeneNameHelper(Arrays.asList("DDX"), HttpStatus.NOT_FOUND, 0);
+    public void testGetVariantsByNonExistingRegion() throws URISyntaxException {
+        testGetVariantsGeneHelper("nonexis", 0, HttpStatus.NOT_FOUND);
     }
 
     @Test
-    public void testGendNamesNonExisiting() {
-        testGeneNameHelper(Arrays.asList("DDX", "DDY"), HttpStatus.NOT_FOUND, 0);
+    public void testGetVariantsByNonExistingRegions() throws URISyntaxException {
+        testGetVariantsGeneHelper("nonexis,nonexis", 0, HttpStatus.NOT_FOUND);
     }
 }

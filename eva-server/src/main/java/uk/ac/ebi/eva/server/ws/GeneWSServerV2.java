@@ -23,6 +23,7 @@ import io.swagger.annotations.Api;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import springfox.documentation.annotations.ApiIgnore;
 import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
 import uk.ac.ebi.eva.commons.mongodb.services.FeatureService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
@@ -33,23 +34,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/v2/genes", produces = "application/json")
+@RequestMapping(value = "/v2/genes", produces = "application/hal+json")
 @Api(tags = {"genes"})
 public class GeneWSServerV2 {
 
     @Autowired
     private FeatureService service;
 
+    @Autowired
+    private RegionWSServerV2 regionWSServerV2;
+
     public GeneWSServerV2() {
     }
 
-    @GetMapping(value = "/{geneIds}")
+    @GetMapping(value = "/{geneIds}/variants")
     public ResponseEntity getVariantsByGene(@PathVariable("geneIds") List<String> geneIds,
                                             @RequestParam(name = "species") String species,
-                                            @RequestParam(name = "assembly") String assembly)
+                                            @RequestParam(name = "assembly") String assembly,
+                                            HttpServletResponse response,
+                                            @ApiIgnore HttpServletRequest request)
             throws IllegalArgumentException {
         checkParameters(species, assembly);
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
@@ -57,7 +65,16 @@ public class GeneWSServerV2 {
         if (featureCoordinates.size() == 0) {
             return new ResponseEntity(featureCoordinates, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity(featureCoordinates, HttpStatus.OK);
+        String regions = "";
+        for (int i = 0; i < featureCoordinates.size(); i++) {
+            if (i != featureCoordinates.size() - 1) {
+                regions = regions + getRegionString(featureCoordinates.get(i)) + ",";
+            } else {
+                regions = regions + getRegionString(featureCoordinates.get(i));
+            }
+        }
+        return regionWSServerV2.getVariantsByRegion(regions, species, assembly, null, null, null, null, null, null,
+                null, response, request);
     }
 
     private void checkParameters(String species, String assembly) throws IllegalArgumentException {
@@ -68,6 +85,10 @@ public class GeneWSServerV2 {
         if (assembly.isEmpty()) {
             throw new IllegalArgumentException("Please specify an assembly");
         }
+    }
+
+    private String getRegionString(FeatureCoordinates coordinates) {
+        return coordinates.getChromosome() + ":" + coordinates.getStart() + "-" + coordinates.getEnd();
     }
 }
 
