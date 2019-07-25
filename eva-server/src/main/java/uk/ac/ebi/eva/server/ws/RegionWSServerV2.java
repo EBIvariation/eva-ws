@@ -22,9 +22,12 @@ package uk.ac.ebi.eva.server.ws;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.PagedResources.PageMetadata;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -87,6 +90,7 @@ public class RegionWSServerV2 {
                                                       annotationVepVersion,
                                               @RequestParam(name = "annot-vep-cache-version", required = false) String
                                                       annotationVepCacheVersion,
+                                              Pageable pageable,
                                               HttpServletResponse response,
                                               @ApiIgnore HttpServletRequest request)
             throws IllegalArgumentException {
@@ -116,7 +120,7 @@ public class RegionWSServerV2 {
                     filters,
                     annotationMetadata,
                     excludeMapped,
-                    new PageRequest(0, pageSize));
+                    new PageRequest(pageable.getPageNumber(), pageable.getPageSize()));
         } catch (AnnotationMetadataNotFoundException ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -137,7 +141,9 @@ public class RegionWSServerV2 {
 
             resourcesList.add(new Resource<>(variant, Arrays.asList(sourcesLink, annotationsLink)));
         });
-        return new ResponseEntity(new Resources<>(resourcesList), HttpStatus.OK);
+        PageMetadata pageMetadata= new PagedResources.PageMetadata(pageable.getPageSize(),pageable.getPageNumber(),
+                pageSize);
+        return new ResponseEntity(new PagedResources<>(resourcesList,pageMetadata), HttpStatus.OK);
     }
 
     public String checkParameters(String annotationVepVersion, String annotationVepCacheVersion, String species) throws
