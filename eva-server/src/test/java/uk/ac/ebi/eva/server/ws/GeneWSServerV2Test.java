@@ -152,12 +152,12 @@ public class GeneWSServerV2Test {
     }
 
     @Test
-    public void testGetVariantsByNonExistingRegion() throws URISyntaxException {
-        testGetVariantsGeneHelper("nonexis", 0, HttpStatus.NOT_FOUND);
+    public void testGetVariantsByNonExistingGene() throws URISyntaxException {
+        testGetVariantsGeneHelper("nonexisting", 0, HttpStatus.NOT_FOUND);
     }
 
     @Test
-    public void testGetVariantsByNonExistingRegions() throws URISyntaxException {
-        testGetVariantsGeneHelper("nonexis,nonexis", 0, HttpStatus.NOT_FOUND);
+    public void testGetVariantsByNonExistingGenes() throws URISyntaxException {
+        testGetVariantsGeneHelper("nonexisting,nonexisting", 0, HttpStatus.NOT_FOUND);
     }
 }

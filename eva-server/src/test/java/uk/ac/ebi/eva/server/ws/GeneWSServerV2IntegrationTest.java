@@ -117,19 +117,19 @@ public class GeneWSServerV2IntegrationTest {
     }
 
     @Test
-    public void testGetVariantsByExistingRegions() throws URISyntaxException {
+    public void testGetVariantsByExistingGenes() throws URISyntaxException {
         List<String> chromosomes = testGetVariantsGeneHelper("ENSG00000227232,ENST00000488147", 2, HttpStatus.OK);
         assertEquals("20", chromosomes.get(0));
         assertEquals("20", chromosomes.get(1));
     }
 
     @Test
-    public void testGetVariantsByNonExistingRegion() throws URISyntaxException {
-        testGetVariantsGeneHelper("nonexis", 0, HttpStatus.NOT_FOUND);
+    public void testGetVariantsByNonExistingGene() throws URISyntaxException {
+        testGetVariantsGeneHelper("nonexisting", 0, HttpStatus.NOT_FOUND);
     }
 
     @Test
-    public void testGetVariantsByNonExistingRegions() throws URISyntaxException {
-        testGetVariantsGeneHelper("nonexis,nonexis", 0, HttpStatus.NOT_FOUND);
+    public void testGetVariantsByNonExistingGenes() throws URISyntaxException {
+        testGetVariantsGeneHelper("nonexisting,nonexisting", 0, HttpStatus.NOT_FOUND);
     }
 }
