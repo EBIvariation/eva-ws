@@ -26,7 +26,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.hateoas.PagedResources.PageMetadata;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -144,7 +143,30 @@ public class RegionWSServerV2 {
             resourcesList.add(new Resource<>(variant, Arrays.asList(sourcesLink, annotationsLink)));
         });
 
-        return new ResponseEntity(new PagedResources<>(resourcesList, pageMetadata), HttpStatus.OK);
+        PagedResources pagedResources = new PagedResources<>(resourcesList, pageMetadata);
+
+        if (pageable.getPageNumber() != 0) {
+            pagedResources.add(new Link(linkTo(methodOn(RegionWSServerV2.class).getVariantsByRegion(regionId, species,
+                    assembly, studies, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
+                    annotationVepCacheVersion, new PageRequest(pageable.getPageNumber() - 1, pageable.getPageSize()),
+                    response, request))
+                    .toUriComponentsBuilder()
+                    .queryParam("size", pageable.getPageSize())
+                    .queryParam("page", pageable.getPageNumber() - 1)
+                    .toUriString(), "prev"));
+        }
+        if (pageable.getPageNumber() + 1 != pageMetadata.getTotalPages()) {
+            pagedResources.add(new Link(linkTo(methodOn(RegionWSServerV2.class).getVariantsByRegion(regionId, species,
+                    assembly, studies, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
+                    annotationVepCacheVersion, new PageRequest(pageable.getPageNumber() + 1, pageable.getPageSize()),
+                    response, request))
+                    .toUriComponentsBuilder()
+                    .queryParam("size", pageable.getPageSize())
+                    .queryParam("page", pageable.getPageNumber() + 1)
+                    .toUriString(), "next"));
+        }
+
+        return new ResponseEntity(pagedResources, HttpStatus.OK);
     }
 
     public String checkParameters(String annotationVepVersion, String annotationVepCacheVersion, String species) throws
