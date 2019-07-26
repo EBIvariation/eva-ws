@@ -154,6 +154,15 @@ public class RegionWSServerV2 {
                     .queryParam("size", pageable.getPageSize())
                     .queryParam("page", pageable.getPageNumber() - 1)
                     .toUriString(), "prev"));
+
+            pagedResources.add(new Link(linkTo(methodOn(RegionWSServerV2.class).getVariantsByRegion(regionId, species,
+                    assembly, studies, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
+                    annotationVepCacheVersion, new PageRequest(0, pageable.getPageSize()),
+                    response, request))
+                    .toUriComponentsBuilder()
+                    .queryParam("size", pageable.getPageSize())
+                    .queryParam("page", 0)
+                    .toUriString(), "first"));
         }
         if (pageable.getPageNumber() + 1 != pageMetadata.getTotalPages()) {
             pagedResources.add(new Link(linkTo(methodOn(RegionWSServerV2.class).getVariantsByRegion(regionId, species,
@@ -164,8 +173,17 @@ public class RegionWSServerV2 {
                     .queryParam("size", pageable.getPageSize())
                     .queryParam("page", pageable.getPageNumber() + 1)
                     .toUriString(), "next"));
-        }
 
+            pagedResources.add(new Link(linkTo(methodOn(RegionWSServerV2.class).getVariantsByRegion(regionId, species,
+                    assembly, studies, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
+                    annotationVepCacheVersion, new PageRequest(
+                            (int)pageMetadata.getTotalPages()-1, pageable.getPageSize()),
+                    response, request))
+                    .toUriComponentsBuilder()
+                    .queryParam("size", pageable.getPageSize())
+                    .queryParam("page", pageMetadata.getTotalPages()-1)
+                    .toUriString(), "last"));
+        }
         return new ResponseEntity(pagedResources, HttpStatus.OK);
     }
 
