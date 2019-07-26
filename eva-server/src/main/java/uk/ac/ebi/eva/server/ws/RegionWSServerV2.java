@@ -110,9 +110,12 @@ public class RegionWSServerV2 {
         List<VariantWithSamplesAndAnnotation> variantEntities;
         List<Resource> resourcesList = new ArrayList<>();
 
+        PageMetadata pageMetadata = new PagedResources.PageMetadata(pageable.getPageSize(), pageable.getPageNumber(),
+                totalNumberOfResults);
+
         if (totalNumberOfResults == 0) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return new ResponseEntity(new Resources<>(resourcesList), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(new PagedResources<>(resourcesList, pageMetadata), HttpStatus.NOT_FOUND);
         }
         try {
             variantEntities = service.findByRegionsAndComplexFilters(regions,
@@ -140,8 +143,7 @@ public class RegionWSServerV2 {
 
             resourcesList.add(new Resource<>(variant, Arrays.asList(sourcesLink, annotationsLink)));
         });
-        PageMetadata pageMetadata = new PagedResources.PageMetadata(pageable.getPageSize(), pageable.getPageNumber(),
-                totalNumberOfResults);
+
         return new ResponseEntity(new PagedResources<>(resourcesList, pageMetadata), HttpStatus.OK);
     }
 
