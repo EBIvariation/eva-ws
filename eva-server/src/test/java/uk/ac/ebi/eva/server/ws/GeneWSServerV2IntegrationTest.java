@@ -50,6 +50,7 @@ import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -95,7 +96,10 @@ public class GeneWSServerV2IntegrationTest {
         String url = "/v2/genes/" + testRegion + "/variants?species=mmusculus&assembly=grcm38";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(status, response.getStatusCode());
-
+        if (status == HttpStatus.NO_CONTENT) {
+            assertNull(response.getBody());
+            return null;
+        }
         Configuration configuration = Configuration.defaultConfiguration()
                 .jsonProvider(new JacksonJsonProvider())
                 .mappingProvider(new JacksonMappingProvider(objectMapper))
@@ -125,11 +129,11 @@ public class GeneWSServerV2IntegrationTest {
 
     @Test
     public void testGetVariantsByNonExistingGene() throws URISyntaxException {
-        testGetVariantsGeneHelper("nonexisting", 0, HttpStatus.NOT_FOUND);
+        testGetVariantsGeneHelper("nonexisting", 0, HttpStatus.NO_CONTENT);
     }
 
     @Test
     public void testGetVariantsByNonExistingGenes() throws URISyntaxException {
-        testGetVariantsGeneHelper("nonexisting,nonexisting", 0, HttpStatus.NOT_FOUND);
+        testGetVariantsGeneHelper("nonexisting,nonexisting", 0, HttpStatus.NO_CONTENT);
     }
 }

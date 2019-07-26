@@ -46,9 +46,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.BDDMockito.given;
@@ -123,7 +121,10 @@ public class GeneWSServerV2Test {
         String url = "/v2/genes/" + testRegion + "/variants?species=mmusculus&assembly=grcm38";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(status, response.getStatusCode());
-
+        if (status == HttpStatus.NO_CONTENT) {
+            assertNull(response.getBody());
+            return null;
+        }
         Configuration configuration = Configuration.defaultConfiguration()
                 .jsonProvider(new JacksonJsonProvider())
                 .mappingProvider(new JacksonMappingProvider(objectMapper))
@@ -153,11 +154,11 @@ public class GeneWSServerV2Test {
 
     @Test
     public void testGetVariantsByNonExistingGene() throws URISyntaxException {
-        testGetVariantsGeneHelper("nonexisting", 0, HttpStatus.NOT_FOUND);
+        testGetVariantsGeneHelper("nonexisting", 0, HttpStatus.NO_CONTENT);
     }
 
     @Test
     public void testGetVariantsByNonExistingGenes() throws URISyntaxException {
-        testGetVariantsGeneHelper("nonexisting,nonexisting", 0, HttpStatus.NOT_FOUND);
+        testGetVariantsGeneHelper("nonexisting,nonexisting", 0, HttpStatus.NO_CONTENT);
     }
 }

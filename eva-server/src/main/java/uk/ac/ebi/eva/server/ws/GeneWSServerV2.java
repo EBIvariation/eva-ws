@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/v2/genes", produces = "application/hal+json")
@@ -63,16 +64,9 @@ public class GeneWSServerV2 {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
         List<FeatureCoordinates> featureCoordinates = service.findAllByGeneIdsOrGeneNames(geneIds, geneIds);
         if (featureCoordinates.size() == 0) {
-            return new ResponseEntity(featureCoordinates, HttpStatus.NOT_FOUND);
+            return new ResponseEntity(featureCoordinates, HttpStatus.NO_CONTENT);
         }
-        String regions = "";
-        for (int i = 0; i < featureCoordinates.size(); i++) {
-            if (i != featureCoordinates.size() - 1) {
-                regions = regions + getRegionString(featureCoordinates.get(i)) + ",";
-            } else {
-                regions = regions + getRegionString(featureCoordinates.get(i));
-            }
-        }
+        String regions = featureCoordinates.stream().map(this::getRegionString).collect(Collectors.joining(","));
         return regionWSServerV2.getVariantsByRegion(regions, species, assembly, null, null, null, null, null, null,
                 null, response, request);
     }
