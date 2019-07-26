@@ -69,6 +69,10 @@ public class RegionWSServerV2 {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
+    private static final String SIZE= "size";
+
+    private static final String PAGE_NUMBER = "page";
+
     public RegionWSServerV2() {
     }
 
@@ -151,8 +155,8 @@ public class RegionWSServerV2 {
                     annotationVepCacheVersion, new PageRequest(pageable.getPageNumber() - 1, pageable.getPageSize()),
                     response, request))
                     .toUriComponentsBuilder()
-                    .queryParam("size", pageable.getPageSize())
-                    .queryParam("page", pageable.getPageNumber() - 1)
+                    .queryParam(SIZE, pageable.getPageSize())
+                    .queryParam(PAGE_NUMBER, pageable.getPageNumber() - 1)
                     .toUriString(), "prev"));
 
             pagedResources.add(new Link(linkTo(methodOn(RegionWSServerV2.class).getVariantsByRegion(regionId, species,
@@ -160,8 +164,8 @@ public class RegionWSServerV2 {
                     annotationVepCacheVersion, new PageRequest(0, pageable.getPageSize()),
                     response, request))
                     .toUriComponentsBuilder()
-                    .queryParam("size", pageable.getPageSize())
-                    .queryParam("page", 0)
+                    .queryParam(SIZE, pageable.getPageSize())
+                    .queryParam(PAGE_NUMBER, 0)
                     .toUriString(), "first"));
         }
         if (pageable.getPageNumber() + 1 != pageMetadata.getTotalPages()) {
@@ -170,8 +174,8 @@ public class RegionWSServerV2 {
                     annotationVepCacheVersion, new PageRequest(pageable.getPageNumber() + 1, pageable.getPageSize()),
                     response, request))
                     .toUriComponentsBuilder()
-                    .queryParam("size", pageable.getPageSize())
-                    .queryParam("page", pageable.getPageNumber() + 1)
+                    .queryParam(SIZE, pageable.getPageSize())
+                    .queryParam(PAGE_NUMBER, pageable.getPageNumber() + 1)
                     .toUriString(), "next"));
 
             pagedResources.add(new Link(linkTo(methodOn(RegionWSServerV2.class).getVariantsByRegion(regionId, species,
@@ -180,8 +184,8 @@ public class RegionWSServerV2 {
                             (int)pageMetadata.getTotalPages()-1, pageable.getPageSize()),
                     response, request))
                     .toUriComponentsBuilder()
-                    .queryParam("size", pageable.getPageSize())
-                    .queryParam("page", pageMetadata.getTotalPages()-1)
+                    .queryParam(SIZE, pageable.getPageSize())
+                    .queryParam(PAGE_NUMBER, pageMetadata.getTotalPages()-1)
                     .toUriString(), "last"));
         }
         return new ResponseEntity(pagedResources, HttpStatus.OK);
