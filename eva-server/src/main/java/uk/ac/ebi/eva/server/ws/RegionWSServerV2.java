@@ -68,10 +68,6 @@ public class RegionWSServerV2 {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
-    private static final int DEFAULT_PAGE_SIZE = 20;
-
-    private static final int DEFAULT_PAGE = 0;
-
     public RegionWSServerV2() {
     }
 
@@ -92,7 +88,7 @@ public class RegionWSServerV2 {
                                               @RequestParam(name = "annot-vep-cache-version", required = false) String
                                                       annotationVepCacheVersion,
                                               @RequestParam(value = "page", required = false, defaultValue = "0")
-                                                      Integer page,
+                                                      Integer pageNumber,
                                               @RequestParam(value = "size", required = false, defaultValue = "20")
                                                       Integer pageSize,
                                               HttpServletResponse response,
@@ -117,24 +113,25 @@ public class RegionWSServerV2 {
 
         if (totalNumberOfResults == 0) {
             return new ResponseEntity(new PagedResources<>(resourcesList, new PageMetadata(pageSize,
-                    page < 0 ? 0 : page, totalNumberOfResults)), HttpStatus.NO_CONTENT);
+                    pageNumber < 0 ? 0 : pageNumber, totalNumberOfResults)), HttpStatus.NO_CONTENT);
         }
 
         Long totalPages = pageSize == 0L ? 0L : (long) Math.ceil((double) totalNumberOfResults / (double) pageSize);
-        if (page < 0 || page >= totalPages) {
+        if (pageNumber < 0 || pageNumber >= totalPages) {
 
             return new ResponseEntity("For the given page size, there are " + totalPages + " page(s), so the" +
                     " correct page range is from 0 to " + String.valueOf(totalPages - 1) + " (both included).",
                     HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
         }
-        PageMetadata pageMetadata = new PagedResources.PageMetadata(pageSize, page, totalNumberOfResults, totalPages);
+        PageMetadata pageMetadata = new PagedResources.PageMetadata(pageSize, pageNumber, totalNumberOfResults,
+                totalPages);
 
         try {
             variantEntities = service.findByRegionsAndComplexFilters(regions,
                     filters,
                     annotationMetadata,
                     excludeMapped,
-                    new PageRequest(page, pageSize));
+                    new PageRequest(pageNumber, pageSize));
         } catch (AnnotationMetadataNotFoundException ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -158,19 +155,19 @@ public class RegionWSServerV2 {
 
         PagedResources pagedResources = new PagedResources<>(resourcesList, pageMetadata);
 
-        if (page > 0) {
+        if (pageNumber > 0) {
             pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
-                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, page - 1, pageSize,
-                    response, request, "prev"));
+                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, pageNumber - 1,
+                    pageSize, response, request, "prev"));
 
             pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
                     polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, 0, pageSize,
                     response, request, "first"));
         }
-        if (page < (pageMetadata.getTotalPages() - 1)) {
+        if (pageNumber < (pageMetadata.getTotalPages() - 1)) {
             pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
-                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, page + 1, pageSize,
-                    response, request, "next"));
+                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, pageNumber + 1,
+                    pageSize, response, request, "next"));
 
             pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
                     polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
@@ -211,11 +208,11 @@ public class RegionWSServerV2 {
     private Link createPaginationLink(String regionId, String species, String assembly, List<String> studies,
                                       List<String> consequenceType, String maf, String polyphenScore,
                                       String siftScore, String annotationVepVersion, String annotationVepCacheVersion,
-                                      int page, int pageSize, HttpServletResponse response, HttpServletRequest request,
-                                      String linkName) {
+                                      int pageNumber, int pageSize, HttpServletResponse response,
+                                      HttpServletRequest request, String linkName) {
         return new Link(linkTo(methodOn(RegionWSServerV2.class).getVariantsByRegion(regionId, species,
                 assembly, studies, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
-                annotationVepCacheVersion, page, pageSize, response, request))
+                annotationVepCacheVersion, pageNumber, pageSize, response, request))
                 .toUriComponentsBuilder()
                 .toUriString(), linkName);
     }
