@@ -63,7 +63,7 @@ public class GeneWSServerV2 {
         checkParameters(species, assembly);
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
         List<FeatureCoordinates> featureCoordinates = service.findAllByGeneIdsOrGeneNames(geneIds, geneIds);
-        if (featureCoordinates.size() == 0) {
+        if (featureCoordinates.isEmpty()) {
             return new ResponseEntity(featureCoordinates, HttpStatus.NO_CONTENT);
         }
         String regions = featureCoordinates.stream().map(this::getRegionString).collect(Collectors.joining(","));
