@@ -69,7 +69,7 @@ public class RegionWSServerV2 {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
-    private static final String SIZE= "size";
+    private static final String SIZE = "size";
 
     private static final String PAGE_NUMBER = "page";
 
@@ -120,6 +120,12 @@ public class RegionWSServerV2 {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return new ResponseEntity(new PagedResources<>(resourcesList, pageMetadata), HttpStatus.NOT_FOUND);
         }
+
+        if (pageable.getPageNumber() < 0 || pageable.getPageNumber() >= pageMetadata.getTotalPages()) {
+            return new ResponseEntity("The correct page range is from 0 to "+
+                    String.valueOf(pageMetadata.getTotalPages()-1)+ " for the given page size",
+                    HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
+        }
         try {
             variantEntities = service.findByRegionsAndComplexFilters(regions,
                     filters,
@@ -149,7 +155,7 @@ public class RegionWSServerV2 {
 
         PagedResources pagedResources = new PagedResources<>(resourcesList, pageMetadata);
 
-        if (pageable.getPageNumber() != 0) {
+        if (pageable.getPageNumber() > 0) {
             pagedResources.add(new Link(linkTo(methodOn(RegionWSServerV2.class).getVariantsByRegion(regionId, species,
                     assembly, studies, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
                     annotationVepCacheVersion, new PageRequest(pageable.getPageNumber() - 1, pageable.getPageSize()),
@@ -168,7 +174,7 @@ public class RegionWSServerV2 {
                     .queryParam(PAGE_NUMBER, 0)
                     .toUriString(), "first"));
         }
-        if (pageable.getPageNumber() + 1 != pageMetadata.getTotalPages()) {
+        if (pageable.getPageNumber() < pageMetadata.getTotalPages()) {
             pagedResources.add(new Link(linkTo(methodOn(RegionWSServerV2.class).getVariantsByRegion(regionId, species,
                     assembly, studies, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
                     annotationVepCacheVersion, new PageRequest(pageable.getPageNumber() + 1, pageable.getPageSize()),
@@ -181,11 +187,11 @@ public class RegionWSServerV2 {
             pagedResources.add(new Link(linkTo(methodOn(RegionWSServerV2.class).getVariantsByRegion(regionId, species,
                     assembly, studies, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
                     annotationVepCacheVersion, new PageRequest(
-                            (int)pageMetadata.getTotalPages()-1, pageable.getPageSize()),
+                            (int) pageMetadata.getTotalPages() - 1, pageable.getPageSize()),
                     response, request))
                     .toUriComponentsBuilder()
                     .queryParam(SIZE, pageable.getPageSize())
-                    .queryParam(PAGE_NUMBER, pageMetadata.getTotalPages()-1)
+                    .queryParam(PAGE_NUMBER, pageMetadata.getTotalPages() - 1)
                     .toUriString(), "last"));
         }
         return new ResponseEntity(pagedResources, HttpStatus.OK);

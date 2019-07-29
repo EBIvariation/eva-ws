@@ -165,4 +165,12 @@ public class RegionWSServerV2IntegrationTest {
         assertEquals(10, size.intValue());
         assertEquals(1, totalPages.intValue());
     }
+
+    @Test
+    public void testInvalidPageRanges() {
+        String url = "/v2/regions/20:60000-62000/variants?species=mmusculus&assembly=grcm38?&page=1000&size=1";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        assertEquals(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, response.getStatusCode());
+        assertEquals("The correct page range is from 0 to 0 for the given page size", response.getBody());
+    }
 }
