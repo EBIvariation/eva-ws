@@ -54,6 +54,7 @@ import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -101,6 +102,10 @@ public class RegionWSServerV2IntegrationTest {
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(status, response.getStatusCode());
 
+        if (status == HttpStatus.NO_CONTENT) {
+            assertNull(response.getBody());
+            return null;
+        }
         Configuration configuration = Configuration.defaultConfiguration()
                 .jsonProvider(new JacksonJsonProvider())
                 .mappingProvider(new JacksonMappingProvider(objectMapper))
@@ -133,12 +138,12 @@ public class RegionWSServerV2IntegrationTest {
 
     @Test
     public void testGetVariantsByNonExistingRegion() throws URISyntaxException {
-        testGetVariantsByRegionHelper("21:8000-9000", 0, HttpStatus.NOT_FOUND);
+        testGetVariantsByRegionHelper("21:8000-9000", 0, HttpStatus.NO_CONTENT);
     }
 
     @Test
     public void testGetVariantsByNonExistingRegions() throws URISyntaxException {
-        testGetVariantsByRegionHelper("21:8000-9000,21:8000-9000", 0, HttpStatus.NOT_FOUND);
+        testGetVariantsByRegionHelper("21:8000-9000,21:8000-9000", 0, HttpStatus.NO_CONTENT);
     }
 
     @Test
