@@ -68,10 +68,6 @@ public class RegionWSServerV2 {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
-    private static final String SIZE = "size";
-
-    private static final String PAGE_NUMBER = "page";
-
     private static final int DEFAULT_SIZE = 20;
 
     private static final int DEFAULT_PAGE = 0;
