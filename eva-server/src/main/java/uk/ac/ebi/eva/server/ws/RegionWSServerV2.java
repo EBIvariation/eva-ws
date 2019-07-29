@@ -117,12 +117,13 @@ public class RegionWSServerV2 {
         }
 
         Long totalPages = pageSize == 0L ? 0L : (long) Math.ceil((double) totalNumberOfResults / (double) pageSize);
-        if (pageNumber < 0 || pageNumber >= totalPages) {
 
+        if (pageNumber < 0 || pageNumber >= totalPages) {
             return new ResponseEntity("For the given page size, there are " + totalPages + " page(s), so the" +
                     " correct page range is from 0 to " + String.valueOf(totalPages - 1) + " (both included).",
                     HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
         }
+
         PageMetadata pageMetadata = new PagedResources.PageMetadata(pageSize, pageNumber, totalNumberOfResults,
                 totalPages);
 
@@ -164,6 +165,7 @@ public class RegionWSServerV2 {
                     polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, 0, pageSize,
                     response, request, "first"));
         }
+
         if (pageNumber < (pageMetadata.getTotalPages() - 1)) {
             pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
                     polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, pageNumber + 1,
