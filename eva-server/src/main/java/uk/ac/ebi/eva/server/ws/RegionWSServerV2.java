@@ -87,10 +87,8 @@ public class RegionWSServerV2 {
                                                       annotationVepVersion,
                                               @RequestParam(name = "annot-vep-cache-version", required = false) String
                                                       annotationVepCacheVersion,
-                                              @RequestParam(required = false, defaultValue = "0")
-                                                      Integer pageNumber,
-                                              @RequestParam(required = false, defaultValue = "20")
-                                                      Integer pageSize,
+                                              @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+                                              @RequestParam(required = false, defaultValue = "20") Integer pageSize,
                                               HttpServletResponse response,
                                               @ApiIgnore HttpServletRequest request)
             throws IllegalArgumentException {
