@@ -171,14 +171,12 @@ public class RegionWSServerV2 {
 
     private PageMetadata buildPageMetadata(Integer pageSize, Integer pageNumber, Integer totalNumberOfResults)
             throws IllegalArgumentException {
-
         Long totalPages = pageSize == 0L ? 0L : (long) Math.ceil((double) totalNumberOfResults / (double) pageSize);
 
         if (pageNumber < 0 || pageNumber >= totalPages) {
             throw new IllegalArgumentException("For the given page size, there are " + totalPages + " page(s), so the" +
                     " correct page range is from 0 to " + String.valueOf(totalPages - 1) + " (both included).");
         }
-
         return new PagedResources.PageMetadata(pageSize, pageNumber, totalNumberOfResults, totalPages);
     }
 
@@ -202,7 +200,6 @@ public class RegionWSServerV2 {
 
             resourcesList.add(new Resource<>(variant, Arrays.asList(sourcesLink, annotationsLink)));
         });
-
         return resourcesList;
     }
 
@@ -241,11 +238,10 @@ public class RegionWSServerV2 {
                                       String siftScore, String annotationVepVersion, String annotationVepCacheVersion,
                                       int pageNumber, int pageSize, HttpServletResponse response,
                                       HttpServletRequest request, String linkName) {
-        return new Link(linkTo(methodOn(RegionWSServerV2.class).getVariantsByRegion(regionId, species,
-                assembly, studies, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
+        return new Link(linkTo(methodOn(RegionWSServerV2.class).getVariantsByRegion(regionId, species, assembly,
+                studies, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
                 annotationVepCacheVersion, pageNumber, pageSize, response, request))
                 .toUriComponentsBuilder()
                 .toUriString(), linkName);
     }
-
 }
