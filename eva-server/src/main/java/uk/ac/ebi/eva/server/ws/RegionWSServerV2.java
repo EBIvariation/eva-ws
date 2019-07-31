@@ -53,6 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -104,27 +105,22 @@ public class RegionWSServerV2 {
 
         AnnotationMetadata annotationMetadata = getAnnotationMetadataHelper(annotationVepVersion,
                 annotationVepCacheVersion);
+
         Integer totalNumberOfResults = service.countByRegionsAndComplexFilters(regions, filters).intValue();
 
-        List<VariantWithSamplesAndAnnotation> variantEntities;
-        List<Resource> resourcesList = new ArrayList<>();
-
         if (totalNumberOfResults == 0) {
-            return new ResponseEntity(new PagedResources<>(resourcesList, new PageMetadata(pageSize,
+            return new ResponseEntity(new PagedResources<>(Collections.EMPTY_LIST, new PageMetadata(pageSize,
                     pageNumber < 0 ? 0 : pageNumber, totalNumberOfResults)), HttpStatus.NO_CONTENT);
         }
 
-        Long totalPages = pageSize == 0L ? 0L : (long) Math.ceil((double) totalNumberOfResults / (double) pageSize);
-
-        if (pageNumber < 0 || pageNumber >= totalPages) {
-            return new ResponseEntity("For the given page size, there are " + totalPages + " page(s), so the" +
-                    " correct page range is from 0 to " + String.valueOf(totalPages - 1) + " (both included).",
-                    HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
+        PageMetadata pageMetadata;
+        try {
+            pageMetadata = buildPageMetadata(pageSize, pageNumber, totalNumberOfResults);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
         }
 
-        PageMetadata pageMetadata = new PagedResources.PageMetadata(pageSize, pageNumber, totalNumberOfResults,
-                totalPages);
-
+        List<VariantWithSamplesAndAnnotation> variantEntities;
         try {
             variantEntities = service.findByRegionsAndComplexFilters(regions,
                     filters,
@@ -135,44 +131,12 @@ public class RegionWSServerV2 {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        variantEntities.forEach(variantEntity -> {
-            Variant variant = new Variant(variantEntity.getChromosome(), variantEntity.getStart(),
-                    variantEntity.getEnd(), variantEntity.getReference(), variantEntity.getAlternate());
-            variant.setIds(variantEntity.getIds());
-            variant.setMainId(variantEntity.getMainId());
+        List<Resource> resourcesList = getResources(variantEntities, species, assembly, response);
 
-            String variantCoreString = variantEntity.getChromosome() + ":" + variantEntity.getStart() + ":" +
-                    variantEntity.getReference() + ":" + variantEntity.getAlternate();
+        PagedResources pagedResources = buildPage(resourcesList, pageMetadata, regionId, species, assembly, studies,
+                consequenceType, maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
+                pageNumber, pageSize, response, request);
 
-            Link annotationsLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
-                    species, assembly, null, null, response)).toUri().toString(), "annotation");
-            Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getSources(variantCoreString, species,
-                    assembly, null, null, response)).toUri().toString(), "sources");
-
-            resourcesList.add(new Resource<>(variant, Arrays.asList(sourcesLink, annotationsLink)));
-        });
-
-        PagedResources pagedResources = new PagedResources<>(resourcesList, pageMetadata);
-
-        if (pageNumber > 0) {
-            pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
-                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, pageNumber - 1,
-                    pageSize, response, request, "prev"));
-
-            pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
-                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, 0, pageSize,
-                    response, request, "first"));
-        }
-
-        if (pageNumber < (pageMetadata.getTotalPages() - 1)) {
-            pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
-                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, pageNumber + 1,
-                    pageSize, response, request, "next"));
-
-            pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
-                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
-                    (int) pageMetadata.getTotalPages() - 1, pageSize, response, request, "last"));
-        }
         return new ResponseEntity(pagedResources, HttpStatus.OK);
     }
 
@@ -205,6 +169,73 @@ public class RegionWSServerV2 {
         return null;
     }
 
+    private PageMetadata buildPageMetadata(Integer pageSize, Integer pageNumber, Integer totalNumberOfResults)
+            throws IllegalArgumentException {
+
+        Long totalPages = pageSize == 0L ? 0L : (long) Math.ceil((double) totalNumberOfResults / (double) pageSize);
+
+        if (pageNumber < 0 || pageNumber >= totalPages) {
+            throw new IllegalArgumentException("For the given page size, there are " + totalPages + " page(s), so the" +
+                    " correct page range is from 0 to " + String.valueOf(totalPages - 1) + " (both included).");
+        }
+
+        return new PagedResources.PageMetadata(pageSize, pageNumber, totalNumberOfResults, totalPages);
+    }
+
+    private List<Resource> getResources(List<VariantWithSamplesAndAnnotation> variantEntities, String species,
+                                        String assembly, HttpServletResponse response) {
+        List<Resource> resourcesList = new ArrayList<>();
+
+        variantEntities.forEach(variantEntity -> {
+            Variant variant = new Variant(variantEntity.getChromosome(), variantEntity.getStart(),
+                    variantEntity.getEnd(), variantEntity.getReference(), variantEntity.getAlternate());
+            variant.setIds(variantEntity.getIds());
+            variant.setMainId(variantEntity.getMainId());
+
+            String variantCoreString = variantEntity.getChromosome() + ":" + variantEntity.getStart() + ":" +
+                    variantEntity.getReference() + ":" + variantEntity.getAlternate();
+
+            Link annotationsLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
+                    species, assembly, null, null, response)).toUri().toString(), "annotation");
+            Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getSources(variantCoreString, species,
+                    assembly, null, null, response)).toUri().toString(), "sources");
+
+            resourcesList.add(new Resource<>(variant, Arrays.asList(sourcesLink, annotationsLink)));
+        });
+
+        return resourcesList;
+    }
+
+    private PagedResources buildPage(List<Resource> resourcesList, PageMetadata pageMetadata, String regionId,
+                                     String species, String assembly, List<String> studies,
+                                     List<String> consequenceType, String maf, String polyphenScore,
+                                     String siftScore, String annotationVepVersion, String annotationVepCacheVersion,
+                                     int pageNumber, int pageSize, HttpServletResponse response,
+                                     HttpServletRequest request) {
+        PagedResources pagedResources = new PagedResources<>(resourcesList, pageMetadata);
+
+        if (pageNumber > 0) {
+            pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
+                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, pageNumber - 1,
+                    pageSize, response, request, "prev"));
+
+            pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
+                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, 0, pageSize,
+                    response, request, "first"));
+        }
+
+        if (pageNumber < (pageMetadata.getTotalPages() - 1)) {
+            pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
+                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, pageNumber + 1,
+                    pageSize, response, request, "next"));
+
+            pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
+                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
+                    (int) pageMetadata.getTotalPages() - 1, pageSize, response, request, "last"));
+        }
+        return pagedResources;
+    }
+
     private Link createPaginationLink(String regionId, String species, String assembly, List<String> studies,
                                       List<String> consequenceType, String maf, String polyphenScore,
                                       String siftScore, String annotationVepVersion, String annotationVepCacheVersion,
@@ -216,4 +247,5 @@ public class RegionWSServerV2 {
                 .toUriComponentsBuilder()
                 .toUriString(), linkName);
     }
+
 }
