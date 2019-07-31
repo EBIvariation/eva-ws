@@ -135,7 +135,7 @@ public class RegionWSServerV2 {
 
         PagedResources pagedResources = buildPage(resourcesList, pageMetadata, regionId, species, assembly, studies,
                 consequenceType, maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
-                pageNumber, pageSize, response, request);
+                response, request);
 
         return new ResponseEntity(pagedResources, HttpStatus.OK);
     }
@@ -207,9 +207,11 @@ public class RegionWSServerV2 {
                                      String species, String assembly, List<String> studies,
                                      List<String> consequenceType, String maf, String polyphenScore,
                                      String siftScore, String annotationVepVersion, String annotationVepCacheVersion,
-                                     int pageNumber, int pageSize, HttpServletResponse response,
-                                     HttpServletRequest request) {
+                                     HttpServletResponse response, HttpServletRequest request) {
         PagedResources pagedResources = new PagedResources<>(resourcesList, pageMetadata);
+
+        int pageNumber = (int) pageMetadata.getNumber();
+        int pageSize = (int) pageMetadata.getSize();
 
         if (pageNumber > 0) {
             pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
