@@ -87,9 +87,9 @@ public class RegionWSServerV2 {
                                                       annotationVepVersion,
                                               @RequestParam(name = "annot-vep-cache-version", required = false) String
                                                       annotationVepCacheVersion,
-                                              @RequestParam(value = "pageNumber", required = false, defaultValue = "0")
+                                              @RequestParam(required = false, defaultValue = "0")
                                                       Integer pageNumber,
-                                              @RequestParam(value = "pageSize", required = false, defaultValue = "20")
+                                              @RequestParam(required = false, defaultValue = "20")
                                                       Integer pageSize,
                                               HttpServletResponse response,
                                               @ApiIgnore HttpServletRequest request)
