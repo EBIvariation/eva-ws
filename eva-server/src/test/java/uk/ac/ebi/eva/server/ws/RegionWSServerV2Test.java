@@ -128,6 +128,7 @@ public class RegionWSServerV2Test {
             assertNull(response.getBody());
             return null;
         }
+
         Configuration configuration = Configuration.defaultConfiguration()
                 .jsonProvider(new JacksonJsonProvider())
                 .mappingProvider(new JacksonMappingProvider(objectMapper))
