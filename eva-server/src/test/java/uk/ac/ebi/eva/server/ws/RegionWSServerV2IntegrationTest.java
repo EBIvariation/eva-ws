@@ -54,6 +54,7 @@ import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -101,18 +102,26 @@ public class RegionWSServerV2IntegrationTest {
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(status, response.getStatusCode());
 
+        if (status == HttpStatus.NO_CONTENT) {
+            assertNull(response.getBody());
+            return null;
+        }
         Configuration configuration = Configuration.defaultConfiguration()
                 .jsonProvider(new JacksonJsonProvider())
                 .mappingProvider(new JacksonMappingProvider(objectMapper))
                 .addOptions(Option.SUPPRESS_EXCEPTIONS);
         List<Variant> variantList = JsonPath.using(configuration).parse(response.getBody())
-                .read( "$['_embedded']['variantList']", new TypeRef<List<Variant>>() {});
+                .read("$['_embedded']['variantList']", new TypeRef<List<Variant>>() {
+                });
 
         if (variantList == null) {
-            assertEquals(0,expectedVariants);
+            assertEquals(0, expectedVariants);
             return null;
         }
-        assertEquals(expectedVariants,variantList.size());
+
+        Integer totalNumberOfElements = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['page']['totalElements']", Integer.class);
+        assertEquals(expectedVariants, totalNumberOfElements.intValue());
         List<String> chromosomes = new ArrayList<>();
         variantList.forEach(variant -> {
             chromosomes.add(variant.getChromosome());
@@ -129,11 +138,46 @@ public class RegionWSServerV2IntegrationTest {
 
     @Test
     public void testGetVariantsByNonExistingRegion() throws URISyntaxException {
-        testGetVariantsByRegionHelper("21:8000-9000", 0, HttpStatus.NOT_FOUND);
+        testGetVariantsByRegionHelper("21:8000-9000", 0, HttpStatus.NO_CONTENT);
     }
 
     @Test
     public void testGetVariantsByNonExistingRegions() throws URISyntaxException {
-        testGetVariantsByRegionHelper("21:8000-9000,21:8000-9000", 0, HttpStatus.NOT_FOUND);
+        testGetVariantsByRegionHelper("21:8000-9000,21:8000-9000", 0, HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void testPagination() {
+        String url = "/v2/regions/20:60000-62000/variants?species=mmusculus&assembly=grcm38?&pageNumber=0&pageSize=10";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        Integer totalNumberOfElements = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['page']['totalElements']", Integer.class);
+        Integer pageNumber = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['page']['number']", Integer.class);
+        Integer size = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['page']['size']", Integer.class);
+        Integer totalPages = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['page']['totalPages']", Integer.class);
+
+        assertEquals(1, totalNumberOfElements.intValue());
+        assertEquals(0, pageNumber.intValue());
+        assertEquals(10, size.intValue());
+        assertEquals(1, totalPages.intValue());
+    }
+
+    @Test
+    public void testInvalidPageRanges() {
+        String url = "/v2/regions/20:60000-62000/variants?species=mmusculus&assembly=grcm38?&pageNumber=1000&" +
+                "pageSize=1";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        assertEquals(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, response.getStatusCode());
+        assertEquals("For the given page size, there are 1 page(s), so the correct page range is from 0 to 0" +
+                " (both included).", response.getBody());
     }
 }
