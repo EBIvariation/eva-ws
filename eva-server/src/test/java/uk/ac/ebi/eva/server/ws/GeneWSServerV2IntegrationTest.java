@@ -136,4 +136,40 @@ public class GeneWSServerV2IntegrationTest {
     public void testGetVariantsByNonExistingGenes() throws URISyntaxException {
         testGetVariantsGeneHelper("nonexisting,nonexisting", 0, HttpStatus.NO_CONTENT);
     }
+
+    @Test
+    public void testPagination() {
+        String url = "/v2/genes/ENSG00000227232,ENST00000488147/variants?species=mmusculus&assembly=grcm38&pageSize=1";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+
+        Integer totalNumberOfElements = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['page']['totalElements']", Integer.class);
+        Integer pageNumber = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['page']['number']", Integer.class);
+        Integer size = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['page']['size']", Integer.class);
+        Integer totalPages = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['page']['totalPages']", Integer.class);
+
+        assertEquals(2, totalNumberOfElements.intValue());
+        assertEquals(0, pageNumber.intValue());
+        assertEquals(1, size.intValue());
+        assertEquals(2, totalPages.intValue());
+    }
+
+    @Test
+    public void testInvalidPageRanges() {
+        String url = "/v2/genes/ENSG00000227232/variants?species=mmusculus&assembly=grcm38?&pageNumber=1000&" +
+                "pageSize=1";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        assertEquals(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, response.getStatusCode());
+        assertEquals("For the given page size, there are 1 page(s), so the correct page range is from 0 to 0" +
+                " (both included).", response.getBody());
+    }
 }

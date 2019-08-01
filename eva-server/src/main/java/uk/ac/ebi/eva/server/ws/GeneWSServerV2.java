@@ -20,6 +20,8 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +41,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping(value = "/v2/genes", produces = "application/hal+json")
 @Api(tags = {"genes"})
@@ -57,6 +62,8 @@ public class GeneWSServerV2 {
     public ResponseEntity getVariantsByGene(@PathVariable("geneIds") List<String> geneIds,
                                             @RequestParam(name = "species") String species,
                                             @RequestParam(name = "assembly") String assembly,
+                                            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+                                            @RequestParam(required = false, defaultValue = "20") Integer pageSize,
                                             HttpServletResponse response,
                                             @ApiIgnore HttpServletRequest request)
             throws IllegalArgumentException {
@@ -66,9 +73,20 @@ public class GeneWSServerV2 {
         if (featureCoordinates.isEmpty()) {
             return new ResponseEntity(featureCoordinates, HttpStatus.NO_CONTENT);
         }
+
         String regions = featureCoordinates.stream().map(this::getRegionString).collect(Collectors.joining(","));
-        return regionWSServerV2.getVariantsByRegion(regions, species, assembly, null, null, null, null, null, null,
-                null, response, request);
+
+        ResponseEntity<PagedResources> responseEntity = regionWSServerV2.getVariantsByRegion(regions, species, assembly,
+                null, null, null, null, null, null, null, pageNumber, pageSize, response, request);
+
+        if (responseEntity.getStatusCode() != HttpStatus.OK) {
+            return responseEntity;
+        }
+
+        responseEntity.getBody().removeLinks();
+
+        return new ResponseEntity(buildPage(geneIds, species, assembly, responseEntity.getBody(), response, request),
+                HttpStatus.OK);
     }
 
     private void checkParameters(String species, String assembly) throws IllegalArgumentException {
@@ -83,6 +101,41 @@ public class GeneWSServerV2 {
 
     private String getRegionString(FeatureCoordinates coordinates) {
         return coordinates.getChromosome() + ":" + coordinates.getStart() + "-" + coordinates.getEnd();
+    }
+
+    private PagedResources buildPage(List<String> geneIds, String species, String assembly,
+                                     PagedResources pagedResources, HttpServletResponse response,
+                                     HttpServletRequest request) {
+
+        int pageNumber = (int) pagedResources.getMetadata().getNumber();
+        int pageSize = (int) pagedResources.getMetadata().getSize();
+        int totalPages = (int) pagedResources.getMetadata().getTotalPages();
+
+        if (pageNumber > 0) {
+            pagedResources.add(createPaginationLink(geneIds, species, assembly, pageNumber - 1,
+                    pageSize, response, request, "prev"));
+
+            pagedResources.add(createPaginationLink(geneIds, species, assembly, 0, pageSize,
+                    response, request, "first"));
+        }
+
+        if (pageNumber < (totalPages - 1)) {
+            pagedResources.add(createPaginationLink(geneIds, species, assembly, pageNumber + 1,
+                    pageSize, response, request, "next"));
+
+            pagedResources.add(createPaginationLink(geneIds, species, assembly,
+                    totalPages - 1, pageSize, response, request, "last"));
+        }
+        return pagedResources;
+    }
+
+    private Link createPaginationLink(List<String> geneIds, String species, String assembly, int pageNumber,
+                                      int pageSize, HttpServletResponse response, HttpServletRequest request,
+                                      String linkName) {
+        return new Link(linkTo(methodOn(GeneWSServerV2.class).getVariantsByGene(geneIds, species, assembly,
+                pageNumber, pageSize, response, request))
+                .toUriComponentsBuilder()
+                .toUriString(), linkName);
     }
 }
 
