@@ -83,7 +83,7 @@ public class GeneWSServerV2Test {
         List<Region> oneRegion = Collections.singletonList(new Region("20", 60000L, 62000L));
         given(variantService.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any(), any()))
                 .willReturn(Collections.singletonList(variantEntity));
-        given(variantService.countByRegionsAndComplexFilters(eq(oneRegion), any())).willReturn(1l);
+        given(variantService.countByRegionsAndComplexFilters(eq(oneRegion), any())).willReturn(1L);
 
         List<Region> twoRegions = Arrays.asList(new Region("20", 60000L, 62000L),
                 new Region("20", 63000L, 64000L));
@@ -116,7 +116,7 @@ public class GeneWSServerV2Test {
         assertEquals("20", testGetVariantsGeneHelper("ENSG00000227232", 1, HttpStatus.OK).get(0));
     }
 
-    private List<String> testGetVariantsGeneHelper(String testRegion, int expectedVariants, HttpStatus status)
+    private List<String> testGetVariantsByGeneHelper(String testRegion, int expectedVariants, HttpStatus status)
             throws URISyntaxException {
         String url = "/v2/genes/" + testRegion + "/variants?species=mmusculus&assembly=grcm38";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
@@ -134,7 +134,7 @@ public class GeneWSServerV2Test {
                 });
 
         if (variantList == null) {
-            assertEquals(0, expectedVariants);
+            assertEquals(expectedVariants, 0);
             return null;
         }
         assertEquals(expectedVariants, variantList.size());
