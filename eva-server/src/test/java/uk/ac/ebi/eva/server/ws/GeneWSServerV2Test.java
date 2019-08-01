@@ -41,7 +41,6 @@ import uk.ac.ebi.eva.commons.mongodb.services.FeatureService;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -78,7 +77,7 @@ public class GeneWSServerV2Test {
     @Before
     public void setUp() throws Exception {
         VariantWithSamplesAndAnnotation variantEntity = new VariantWithSamplesAndAnnotation("20", 1000, 1005,
-                "reference", "alternate", MAIN_ID);
+                "A", "C", MAIN_ID);
 
         List<Region> oneRegion = Collections.singletonList(new Region("20", 60000L, 62000L));
         given(variantService.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any(), any()))
@@ -91,13 +90,13 @@ public class GeneWSServerV2Test {
 
         given(variantService.findByRegionsAndComplexFilters(eq(twoRegions), any(), any(), any(), any()))
                 .willReturn(Arrays.asList(variantEntity, variantEntity));
-        given(variantService.countByRegionsAndComplexFilters(eq(twoRegions), any())).willReturn(2l);
+        given(variantService.countByRegionsAndComplexFilters(eq(twoRegions), any())).willReturn(2L);
 
         given(variantService
                 .findByRegionsAndComplexFilters(not(or(eq(oneRegion), eq(twoRegions))), any(), any(), any(), any()))
                 .willReturn(Collections.emptyList());
         given(variantService.countByRegionsAndComplexFilters(not(or(eq(oneRegion), eq(twoRegions))), any()))
-                .willReturn(0l);
+                .willReturn(0L);
 
         FeatureCoordinates feature1 = new FeatureCoordinates(GENE_ID1, "id", "feature", "20", 60000L, 62000L);
         FeatureCoordinates feature2 = new FeatureCoordinates(GENE_ID1, "id", "feature", "20", 63000L, 64000L);
@@ -113,10 +112,13 @@ public class GeneWSServerV2Test {
 
     @Test
     public void testGetVariantsByExistingGene() throws URISyntaxException {
-        assertEquals("20", testGetVariantsGeneHelper("ENSG00000227232", 1, HttpStatus.OK).get(0));
+        Variant variant = testGetVariantsByGeneHelper("ENSG00000227232", 1, HttpStatus.OK).get(0);
+        assertEquals("20", variant.getChromosome());
+        assertEquals("A", variant.getReference());
+        assertEquals("C", variant.getAlternate());
     }
 
-    private List<String> testGetVariantsByGeneHelper(String testRegion, int expectedVariants, HttpStatus status)
+    private List<Variant> testGetVariantsByGeneHelper(String testRegion, int expectedVariants, HttpStatus status)
             throws URISyntaxException {
         String url = "/v2/genes/" + testRegion + "/variants?species=mmusculus&assembly=grcm38";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
@@ -138,27 +140,27 @@ public class GeneWSServerV2Test {
             return null;
         }
         assertEquals(expectedVariants, variantList.size());
-        List<String> chromosomes = new ArrayList<>();
-        variantList.forEach(variant -> {
-            chromosomes.add(variant.getChromosome());
-        });
-        return chromosomes;
+        return variantList;
     }
 
     @Test
     public void testGetVariantsByExistingGenes() throws URISyntaxException {
-        List<String> chromosomes = testGetVariantsGeneHelper("ENSG00000227232,ENSG00000227244", 2, HttpStatus.OK);
-        assertEquals("20", chromosomes.get(0));
-        assertEquals("20", chromosomes.get(1));
+        List<Variant> variants = testGetVariantsByGeneHelper("ENSG00000227232,ENSG00000227244", 2, HttpStatus.OK);
+        assertEquals("20", variants.get(0).getChromosome());
+        assertEquals("A", variants.get(0).getReference());
+        assertEquals("C", variants.get(0).getAlternate());
+        assertEquals("20", variants.get(1).getChromosome());
+        assertEquals("A", variants.get(1).getReference());
+        assertEquals("C", variants.get(1).getAlternate());
     }
 
     @Test
     public void testGetVariantsByNonExistingGene() throws URISyntaxException {
-        testGetVariantsGeneHelper("nonexisting", 0, HttpStatus.NO_CONTENT);
+        testGetVariantsByGeneHelper("nonexisting", 0, HttpStatus.NO_CONTENT);
     }
 
     @Test
     public void testGetVariantsByNonExistingGenes() throws URISyntaxException {
-        testGetVariantsGeneHelper("nonexisting,nonexisting", 0, HttpStatus.NO_CONTENT);
+        testGetVariantsByGeneHelper("nonexisting,nonexisting", 0, HttpStatus.NO_CONTENT);
     }
 }

@@ -88,10 +88,13 @@ public class GeneWSServerV2IntegrationTest {
 
     @Test
     public void testGetVariantsByExistingGene() throws URISyntaxException {
-        assertEquals("20", testGetVariantsGeneHelper("ENSG00000227232", 1, HttpStatus.OK).get(0));
+        Variant variant = testGetVariantsGeneHelper("ENSG00000227232", 1, HttpStatus.OK).get(0);
+        assertEquals("20", variant.getChromosome());
+        assertEquals("A", variant.getReference());
+        assertEquals("T", variant.getAlternate());
     }
 
-    private List<String> testGetVariantsGeneHelper(String testRegion, int expectedVariants, HttpStatus status)
+    private List<Variant> testGetVariantsGeneHelper(String testRegion, int expectedVariants, HttpStatus status)
             throws URISyntaxException {
         String url = "/v2/genes/" + testRegion + "/variants?species=mmusculus&assembly=grcm38";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
@@ -113,18 +116,18 @@ public class GeneWSServerV2IntegrationTest {
             return null;
         }
         assertEquals(expectedVariants, variantList.size());
-        List<String> chromosomes = new ArrayList<>();
-        variantList.forEach(variant -> {
-            chromosomes.add(variant.getChromosome());
-        });
-        return chromosomes;
+        return variantList;
     }
 
     @Test
     public void testGetVariantsByExistingGenes() throws URISyntaxException {
-        List<String> chromosomes = testGetVariantsGeneHelper("ENSG00000227232,ENST00000488147", 2, HttpStatus.OK);
-        assertEquals("20", chromosomes.get(0));
-        assertEquals("20", chromosomes.get(1));
+        List<Variant> variants = testGetVariantsGeneHelper("ENSG00000227232,ENST00000488147", 2, HttpStatus.OK);
+        assertEquals("20", variants.get(0).getChromosome());
+        assertEquals("A", variants.get(0).getReference());
+        assertEquals("T", variants.get(0).getAlternate());
+        assertEquals("20", variants.get(1).getChromosome());
+        assertEquals("C", variants.get(1).getReference());
+        assertEquals("G", variants.get(1).getAlternate());
     }
 
     @Test
@@ -161,6 +164,9 @@ public class GeneWSServerV2IntegrationTest {
         assertEquals(0, pageNumber.intValue());
         assertEquals(1, size.intValue());
         assertEquals(2, totalPages.intValue());
+
+        url = "/v2/genes/ENSG00000227232,ENST00000488147/variants?species=mmusculus&assembly=grcm38&pageSize=1&pageNumber=1";
+        response = restTemplate.getForEntity(url, String.class);
     }
 
     @Test
