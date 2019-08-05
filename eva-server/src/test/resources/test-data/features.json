@@ -1,0 +1,44 @@
+{
+  "testFeatures": [
+    {
+      "_id": "ENSG00000223972",
+      "name": "DDX11L1",
+      "feature": "gene",
+      "chromosome": "1",
+      "start": 11869,
+      "end": 14409
+    },
+    {
+      "_id": "ENST00000456328",
+      "name": "DDX11L1-202",
+      "feature": "transcript",
+      "chromosome": "1",
+      "start": 11869,
+      "end": 14409
+    },
+    {
+      "_id": "ENST00000450305",
+      "name": "DDX11L1-201",
+      "feature": "transcript",
+      "chromosome": "1",
+      "start": 12010,
+      "end": 13670
+    },
+    {
+      "_id": "ENSG00000227232",
+      "name": "WASH7P",
+      "feature": "gene",
+      "chromosome": "20",
+      "start": 60100,
+      "end": 60100
+    },
+    {
+      "_id": "ENST00000488147",
+      "name": "WASH7P-201",
+      "feature": "transcript",
+      "chromosome": "20",
+      "start": 62300,
+      "end": 62300
+    }
+  ]
+}
