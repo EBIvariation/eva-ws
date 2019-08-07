@@ -20,6 +20,7 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
@@ -61,7 +62,14 @@ public class VariantWSServerV2 {
 
     @GetMapping(value = "/{variantCoreString}")
     public ResponseEntity getCoreInfo(@PathVariable("variantCoreString") String variantCoreString,
+                                      @ApiParam(value = "First letter of the genus, followed by the full species " +
+                                              "name, e.g. hsapiens. Allowed values can be looked up in " +
+                                              "/v1/meta/species/list/ in the field named 'taxonomyCode'.",
+                                              required = true)
                                       @RequestParam(name = "species") String species,
+                                      @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be " +
+                                              "looked up in /v1/meta/species/list/ in the field named 'assemblyCode'."
+                                              , required = true)
                                       @RequestParam(name = "assembly") String assembly,
                                       HttpServletResponse response) throws IllegalArgumentException {
         try {
@@ -158,7 +166,14 @@ public class VariantWSServerV2 {
 
     @GetMapping(value = "/{variantCoreString}/annotations")
     public ResponseEntity getAnnotations(@PathVariable("variantCoreString") String variantCoreString,
+                                         @ApiParam(value = "First letter of the genus, followed by the full species " +
+                                                 "name, e.g. hsapiens. Allowed values can be looked up in " +
+                                                 "/v1/meta/species/list/ in the field named 'taxonomyCode'.",
+                                                 required = true)
                                          @RequestParam(name = "species") String species,
+                                         @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be " +
+                                                 "looked up in /v1/meta/species/list/ in the field named " +
+                                                 "'assemblyCode'.", required = true)
                                          @RequestParam(name = "assembly") String assembly,
                                          @RequestParam(name = "annot-vep-version", required = false)
                                                  String annotationVepVersion,
@@ -192,7 +207,14 @@ public class VariantWSServerV2 {
 
     @GetMapping(value = "/{variantCoreString}/sources")
     public ResponseEntity getSources(@PathVariable("variantCoreString") String variantCoreString,
+                                     @ApiParam(value = "First letter of the genus, followed by the full species " +
+                                             "name, e.g. hsapiens. Allowed values can be looked up in " +
+                                             "/v1/meta/species/list/ in the field named 'taxonomyCode'.",
+                                             required = true)
                                      @RequestParam(name = "species") String species,
+                                     @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be " +
+                                             "looked up in /v1/meta/species/list/ in the field named " +
+                                             "'assemblyCode'.", required = true)
                                      @RequestParam(name = "assembly") String assembly,
                                      @RequestParam(name = "annot-vep-version", required = false)
                                              String annotationVepVersion,
