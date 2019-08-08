@@ -22,14 +22,14 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(value = "/v2/meta", produces = "application/hal+json")
-@Api(tags = "archive")
-public class ArchiveWSServerV2 {
+@RequestMapping(value = "/v2/studies", produces = "application/hal+json")
+@Api(tags = "studies")
+public class StudyWSServerV2 {
 
     @Autowired
     private VariantStudySummaryService variantStudySummaryService;
 
-    @RequestMapping(value = "/studies", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public ResponseEntity getBrowsableStudies(@RequestParam("species") String species,
                                               @RequestParam("assembly") String assembly,
                                               @RequestParam(required = false, defaultValue = "0") Integer pageNumber,

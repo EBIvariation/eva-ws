@@ -64,7 +64,7 @@ import static org.junit.Assert.assertNull;
         "/test-data/files.json"
 })
 @ActiveProfiles(Profiles.TEST_MONGO_FACTORY)
-public class ArchiveWSServerV2IntegrationTest {
+public class StudyWSServerV2IntegrationTest {
 
     private static final String TEST_DB = "test-db";
 
@@ -89,7 +89,7 @@ public class ArchiveWSServerV2IntegrationTest {
 
     @Test
     public void testGetStudies() {
-        String url = "/v2/meta/studies?species=mmusculus&assembly=grcm38&pageNumber=0&pageSize=1";
+        String url = "/v2/studies?species=mmusculus&assembly=grcm38&pageNumber=0&pageSize=1";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
@@ -123,7 +123,7 @@ public class ArchiveWSServerV2IntegrationTest {
 
     @Test
     public void testInvalidPageRanges() {
-        String url = "/v2/meta/studies?species=mmusculus&assembly=grcm38&pageNumber=1000&pageSize=1";
+        String url = "/v2/studies?species=mmusculus&assembly=grcm38&pageNumber=1000&pageSize=1";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, response.getStatusCode());
         assertEquals("For the given page size, there are 2 page(s), so the correct page range is from 0 to 1" +

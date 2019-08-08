@@ -29,11 +29,11 @@ import static org.mockito.Matchers.eq;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ArchiveWSServerV2Test {
+public class StudyWSServerV2Test {
 
-    private static final int PAGE_SIZE = 2;
+    private static final long PAGE_SIZE = 2;
 
-    private static final int PAGE_NUMBER = 0;
+    private static final long PAGE_NUMBER = 0;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -66,7 +66,7 @@ public class ArchiveWSServerV2Test {
 
     @Test
     public void testGetStudies() {
-        String url = "/v2/meta/studies?species=mmusculus&assembly=grcm38&pageNumber=0&pageSize=2";
+        String url = "/v2/studies?species=mmusculus&assembly=grcm38&pageNumber=0&pageSize=2";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
@@ -78,6 +78,7 @@ public class ArchiveWSServerV2Test {
         List<VariantStudySummary> variantList = JsonPath.using(configuration).parse(response.getBody())
                 .read("$['_embedded']['variantStudySummaryList']", new TypeRef<List<VariantStudySummary>>() {
                 });
+        System.out.println(response.getBody());
         assertEquals("studyId1", variantList.get(0).getStudyId());
         assertEquals("studyName1", variantList.get(0).getStudyName());
         assertEquals("studyId2", variantList.get(1).getStudyId());
