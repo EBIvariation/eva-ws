@@ -89,6 +89,8 @@ public class RegionWSServerV2 {
                                               @RequestParam(name = "studies", required = false) List<String> studies,
                                               @RequestParam(name = "annot-ct", required = false) List<String>
                                                       consequenceType,
+                                              @ApiParam(value = "Retrieve only variants with exactly this Minor " +
+                                                      "Allele Frequency")
                                               @RequestParam(name = "maf", required = false) String maf,
                                               @RequestParam(name = "polyphen", required = false) String polyphenScore,
                                               @RequestParam(name = "sift", required = false) String siftScore,

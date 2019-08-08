@@ -61,17 +61,18 @@ public class VariantWSServerV2 {
     private VariantWithSamplesAndAnnotationsService service;
 
     @GetMapping(value = "/{variantCoreString}")
-    public ResponseEntity getCoreInfo(@PathVariable("variantCoreString") String variantCoreString,
-                                      @ApiParam(value = "First letter of the genus, followed by the full species " +
-                                              "name, e.g. hsapiens. Allowed values can be looked up in " +
-                                              "/v1/meta/species/list/ in the field named 'taxonomyCode'.",
-                                              required = true)
-                                      @RequestParam(name = "species") String species,
-                                      @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be " +
-                                              "looked up in /v1/meta/species/list/ in the field named 'assemblyCode'."
-                                              , required = true)
-                                      @RequestParam(name = "assembly") String assembly,
-                                      HttpServletResponse response) throws IllegalArgumentException {
+    public ResponseEntity getCoreInfo(
+            @ApiParam(value = "Internal species-relative variant ID. Chromosome, start, reference allele and" +
+                    " alternate allele; all joined by colon. e.g. 13:32884647:T:C")
+            @PathVariable("variantCoreString") String variantCoreString,
+            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. " +
+                    "Allowed values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
+                    required = true)
+            @RequestParam(name = "species") String species,
+            @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
+                    "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
+            @RequestParam(name = "assembly") String assembly,
+            HttpServletResponse response) throws IllegalArgumentException {
         try {
             checkParameters(variantCoreString, null, null, species, assembly);
         } catch (IllegalArgumentException e) {
@@ -165,21 +166,22 @@ public class VariantWSServerV2 {
     }
 
     @GetMapping(value = "/{variantCoreString}/annotations")
-    public ResponseEntity getAnnotations(@PathVariable("variantCoreString") String variantCoreString,
-                                         @ApiParam(value = "First letter of the genus, followed by the full species " +
-                                                 "name, e.g. hsapiens. Allowed values can be looked up in " +
-                                                 "/v1/meta/species/list/ in the field named 'taxonomyCode'.",
-                                                 required = true)
-                                         @RequestParam(name = "species") String species,
-                                         @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be " +
-                                                 "looked up in /v1/meta/species/list/ in the field named " +
-                                                 "'assemblyCode'.", required = true)
-                                         @RequestParam(name = "assembly") String assembly,
-                                         @RequestParam(name = "annot-vep-version", required = false)
-                                                 String annotationVepVersion,
-                                         @RequestParam(name = "annot-vep-cache-version", required = false)
-                                                 String annotationVepCacheVersion,
-                                         HttpServletResponse response) throws IllegalArgumentException {
+    public ResponseEntity getAnnotations(
+            @ApiParam(value = "Internal species-relative variant ID. Chromosome, start, reference allele and" +
+                    " alternate allele; all joined by colon. e.g. 13:32884647:T:C")
+            @PathVariable("variantCoreString") String variantCoreString,
+            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens." +
+                    " Allowed values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
+                    required = true)
+            @RequestParam(name = "species") String species,
+            @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in" +
+                    " /v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
+            @RequestParam(name = "assembly") String assembly,
+            @RequestParam(name = "annot-vep-version", required = false)
+                    String annotationVepVersion,
+            @RequestParam(name = "annot-vep-cache-version", required = false)
+                    String annotationVepCacheVersion,
+            HttpServletResponse response) throws IllegalArgumentException {
         try {
             checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
                     species, assembly);
@@ -206,21 +208,22 @@ public class VariantWSServerV2 {
     }
 
     @GetMapping(value = "/{variantCoreString}/sources")
-    public ResponseEntity getSources(@PathVariable("variantCoreString") String variantCoreString,
-                                     @ApiParam(value = "First letter of the genus, followed by the full species " +
-                                             "name, e.g. hsapiens. Allowed values can be looked up in " +
-                                             "/v1/meta/species/list/ in the field named 'taxonomyCode'.",
-                                             required = true)
-                                     @RequestParam(name = "species") String species,
-                                     @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be " +
-                                             "looked up in /v1/meta/species/list/ in the field named " +
-                                             "'assemblyCode'.", required = true)
-                                     @RequestParam(name = "assembly") String assembly,
-                                     @RequestParam(name = "annot-vep-version", required = false)
-                                             String annotationVepVersion,
-                                     @RequestParam(name = "annot-vep-cache-version", required = false)
-                                             String annotationVepCacheVersion,
-                                     HttpServletResponse response) throws IllegalArgumentException {
+    public ResponseEntity getSources(
+            @ApiParam(value = "Internal species-relative variant ID. Chromosome, start, reference allele and" +
+                    " alternate allele; all joined by colon. e.g. 13:32884647:T:C")
+            @PathVariable("variantCoreString") String variantCoreString,
+            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. " +
+                    "Allowed values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
+                    required = true)
+            @RequestParam(name = "species") String species,
+            @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
+                    "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
+            @RequestParam(name = "assembly") String assembly,
+            @RequestParam(name = "annot-vep-version", required = false)
+                    String annotationVepVersion,
+            @RequestParam(name = "annot-vep-cache-version", required = false)
+                    String annotationVepCacheVersion,
+            HttpServletResponse response) throws IllegalArgumentException {
         try {
             checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
                     species, assembly);
