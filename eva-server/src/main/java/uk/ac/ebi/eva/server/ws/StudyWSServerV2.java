@@ -94,7 +94,7 @@ public class StudyWSServerV2 {
     }
 
     private Link createPaginationLink(String species, String assembly, int pageNumber, int pageSize, String linkName) {
-        return new Link(linkTo(methodOn(ArchiveWSServerV2.class).getBrowsableStudies(species, assembly,
+        return new Link(linkTo(methodOn(StudyWSServerV2.class).getBrowsableStudies(species, assembly,
                 pageNumber, pageSize))
                 .toUriComponentsBuilder()
                 .toUriString(), linkName);
