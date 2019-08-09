@@ -1,6 +1,7 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedResources;
@@ -29,11 +30,20 @@ public class StudyWSServerV2 {
     @Autowired
     private VariantStudySummaryService variantStudySummaryService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ResponseEntity getBrowsableStudies(@RequestParam("species") String species,
-                                              @RequestParam("assembly") String assembly,
-                                              @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
-                                              @RequestParam(required = false, defaultValue = "20") Integer pageSize)
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ResponseEntity getBrowsableStudies(
+            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. " +
+                    "Allowed" + " values can be looked up in /v1/meta/species/list/ in the field named" +
+                    " 'taxonomyCode'.", required = true)
+            @RequestParam("species") String species,
+            @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
+                    "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
+            @RequestParam("assembly") String assembly,
+            @ApiParam(value = "The number of the page that shoulde be displayed. Starts from 0 and is an integer." +
+                    " e.g. 0")
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @ApiParam(value = "The number of elements that should be displayed in a single page. e.g. 5")
+            @RequestParam(required = false, defaultValue = "20") Integer pageSize)
             throws IllegalArgumentException {
         if (species == null || species.isEmpty()) {
             throw new IllegalArgumentException("Please specify a species");

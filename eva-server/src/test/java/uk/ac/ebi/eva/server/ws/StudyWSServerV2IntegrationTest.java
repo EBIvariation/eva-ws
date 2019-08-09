@@ -83,10 +83,6 @@ public class StudyWSServerV2IntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Before
-    public void setUp() throws Exception {
-    }
-
     @Test
     public void testGetStudies() {
         String url = "/v2/studies?species=mmusculus&assembly=grcm38&pageNumber=0&pageSize=1";
