@@ -33,13 +33,13 @@ public class StudyWSServerV2 {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity getBrowsableStudies(
             @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. " +
-                    "Allowed" + " values can be looked up in /v1/meta/species/list/ in the field named" +
+                    "Allowed values can be looked up in /v1/meta/species/list/ in the field named" +
                     " 'taxonomyCode'.", required = true)
             @RequestParam("species") String species,
             @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
                     "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam("assembly") String assembly,
-            @ApiParam(value = "The number of the page that shoulde be displayed. Starts from 0 and is an integer." +
+            @ApiParam(value = "The number of the page that should be displayed. Starts from 0 and is an integer." +
                     " e.g. 0")
             @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
             @ApiParam(value = "The number of elements that should be displayed in a single page. e.g. 5")
@@ -77,7 +77,7 @@ public class StudyWSServerV2 {
 
         if (pageNumber < 0 || pageNumber >= totalPages) {
             throw new IllegalArgumentException("For the given page size, there are " + totalPages + " page(s), so " +
-                    "the correct page range is from 0 to " + String.valueOf(totalPages - 1) + " (both included).");
+                    "the correct page range is from 0 to " + (totalPages - 1) + " (both included).");
         }
         return new PagedResources.PageMetadata(pageSize, pageNumber, totalNumberOfResults, totalPages);
     }

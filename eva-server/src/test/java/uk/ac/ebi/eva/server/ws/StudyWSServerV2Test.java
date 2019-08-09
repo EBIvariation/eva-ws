@@ -78,7 +78,6 @@ public class StudyWSServerV2Test {
         List<VariantStudySummary> variantList = JsonPath.using(configuration).parse(response.getBody())
                 .read("$['_embedded']['variantStudySummaryList']", new TypeRef<List<VariantStudySummary>>() {
                 });
-        System.out.println(response.getBody());
         assertEquals("studyId1", variantList.get(0).getStudyId());
         assertEquals("studyName1", variantList.get(0).getStudyName());
         assertEquals("studyId2", variantList.get(1).getStudyId());
