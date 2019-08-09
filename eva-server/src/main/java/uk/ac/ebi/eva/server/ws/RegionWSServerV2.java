@@ -86,9 +86,9 @@ public class RegionWSServerV2 {
             @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
                     "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam(name = "assembly") String assembly,
-            @ApiParam(value = "Identifiers of studies, as defined in /v2/studies. If this field is null/not" +
-                    " specified, all studies should be queried. Each individual identifier of studies can " +
-                    "be looked up in /v2/studies in the field named `studyId`. e.g. PRJEB6930,PRJEB27824")
+            @ApiParam(value = "Identifiers of studies. If this field is null/not specified, all studies should" +
+                    " be queried. Each individual identifier of studies can be looked up in" +
+                    " /v2/studies in the field named `studyId`. e.g. PRJEB6930,PRJEB27824")
             @RequestParam(name = "studies", required = false) List<String> studies,
             @ApiParam(value = "Retrieve only variants with exactly this consequence type (as stated by Ensembl VEP)")
             @RequestParam(name = "annot-ct", required = false) List<String>
