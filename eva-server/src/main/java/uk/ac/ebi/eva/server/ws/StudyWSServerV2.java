@@ -70,13 +70,14 @@ public class StudyWSServerV2 {
         return new ResponseEntity(pagedResources, HttpStatus.OK);
     }
 
-    private PagedResources.PageMetadata buildPageMetadata(Integer pageSize, Integer pageNumber, Integer totalNumberOfResults)
+    private PagedResources.PageMetadata buildPageMetadata(Integer pageSize, Integer pageNumber, Integer
+            totalNumberOfResults)
             throws IllegalArgumentException {
         Long totalPages = pageSize == 0L ? 0L : (long) Math.ceil((double) totalNumberOfResults / (double) pageSize);
 
         if (pageNumber < 0 || pageNumber >= totalPages) {
-            throw new IllegalArgumentException("For the given page size, there are " + totalPages + " page(s), so the" +
-                    " correct page range is from 0 to " + String.valueOf(totalPages - 1) + " (both included).");
+            throw new IllegalArgumentException("For the given page size, there are " + totalPages + " page(s), so " +
+                    "the correct page range is from 0 to " + String.valueOf(totalPages - 1) + " (both included).");
         }
         return new PagedResources.PageMetadata(pageSize, pageNumber, totalNumberOfResults, totalPages);
     }
@@ -98,7 +99,8 @@ public class StudyWSServerV2 {
         if (pageNumber < (pageMetadata.getTotalPages() - 1)) {
             pagedResources.add(createPaginationLink(species, assembly, pageNumber + 1, pageSize, "next"));
 
-            pagedResources.add(createPaginationLink(species, assembly, (int) pageMetadata.getTotalPages() - 1, pageSize, "last"));
+            pagedResources.add(createPaginationLink(species, assembly, (int) pageMetadata.getTotalPages() - 1,
+                    pageSize, "last"));
         }
         return pagedResources;
     }
