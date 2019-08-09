@@ -177,8 +177,10 @@ public class VariantWSServerV2 {
             @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in" +
                     " /v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam(name = "assembly") String assembly,
+            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP release. e.g. 78 ")
             @RequestParam(name = "annot-vep-version", required = false)
                     String annotationVepVersion,
+            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP cache release. e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false)
                     String annotationVepCacheVersion,
             HttpServletResponse response) throws IllegalArgumentException {
@@ -219,8 +221,10 @@ public class VariantWSServerV2 {
             @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
                     "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam(name = "assembly") String assembly,
+            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP release. e.g. 78 ")
             @RequestParam(name = "annot-vep-version", required = false)
                     String annotationVepVersion,
+            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP cache release. e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false)
                     String annotationVepCacheVersion,
             HttpServletResponse response) throws IllegalArgumentException {

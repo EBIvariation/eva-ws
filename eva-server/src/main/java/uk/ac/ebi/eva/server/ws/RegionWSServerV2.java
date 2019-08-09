@@ -99,10 +99,10 @@ public class RegionWSServerV2 {
             @RequestParam(name = "polyphen", required = false) String polyphenScore,
             @ApiParam(value = "Retrieve only variants with exactly this Sift score (as stated by Ensembl VEP)")
             @RequestParam(name = "sift", required = false) String siftScore,
-            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP release ")
+            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP release. e.g. 78 ")
             @RequestParam(name = "annot-vep-version", required = false) String
                     annotationVepVersion,
-            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP cache release ")
+            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP cache release. e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false) String
                     annotationVepCacheVersion,
             @ApiParam(value = "The number of the page that shoulde be displayed. Starts from 0 and is an " +
