@@ -76,49 +76,41 @@ public class RegionWSServerV2 {
     @GetMapping(value = "/{regionId}/variants")
     @ResponseBody
     @RateLimit(value = REGION_REQUEST_RATE_LIMIT)
-    public ResponseEntity getVariantsByRegion(@PathVariable("regionId") String regionId,
-                                              @ApiParam(value = "First letter of the genus, followed by the full" +
-                                                      " species name, e.g. hsapiens. Allowed values can be looked up" +
-                                                      " in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
-                                                      required = true)
-                                              @RequestParam(name = "species") String species,
-                                              @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values" +
-                                                      " can be looked up in /v1/meta/species/list/ in the field " +
-                                                      "named 'assemblyCode'.", required = true)
-                                              @RequestParam(name = "assembly") String assembly,
-                                              @ApiParam(value = "Identifiers of studies, as defined in /v2/studies." +
-                                                      " If this field is null/not specified, all studies should " +
-                                                      "be queried.")
-                                              @RequestParam(name = "studies", required = false) List<String> studies,
-                                              @ApiParam(value = "Retrieve only variants with exactly this " +
-                                                      "consequence type (as stated by Ensembl VEP)")
-                                              @RequestParam(name = "annot-ct", required = false) List<String>
-                                                      consequenceType,
-                                              @ApiParam(value = "Retrieve only variants with exactly this Minor " +
-                                                      "Allele Frequency")
-                                              @RequestParam(name = "maf", required = false) String maf,
-                                              @ApiParam(value = "Retrieve only variants with exactly this Polyphen" +
-                                                      " score (as stated by Ensembl VEP)")
-                                              @RequestParam(name = "polyphen", required = false) String polyphenScore,
-                                              @ApiParam(value = "Retrieve only variants with exactly this Sift score" +
-                                                      " (as stated by Ensembl VEP)")
-                                              @RequestParam(name = "sift", required = false) String siftScore,
-                                              @ApiParam(value = "Include in the response any available annotation" +
-                                                      " for this Ensembl VEP release ")
-                                              @RequestParam(name = "annot-vep-version", required = false) String
-                                                      annotationVepVersion,
-                                              @ApiParam(value = "Include in the response any available annotation" +
-                                                      " for this Ensembl VEP cache release ")
-                                              @RequestParam(name = "annot-vep-cache-version", required = false) String
-                                                      annotationVepCacheVersion,
-                                              @ApiParam(value = "The number of the page that shoulde be displayed. " +
-                                                      "Starts from 0 and is an integer. e.g. 0")
-                                              @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
-                                              @ApiParam(value = "The number of elements that should be displayed in a" +
-                                                      " single page. e.g. 5")
-                                              @RequestParam(required = false, defaultValue = "20") Integer pageSize,
-                                              HttpServletResponse response,
-                                              @ApiIgnore HttpServletRequest request)
+    public ResponseEntity getVariantsByRegion(
+            @ApiParam(value = "Comma separated values of regions, in format chr:start-end. e.g. 13:32884600-32884700")
+            @PathVariable("regionId") String regionId,
+            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. " +
+                    "Allowed values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
+                    required = true)
+            @RequestParam(name = "species") String species,
+            @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
+                    "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
+            @RequestParam(name = "assembly") String assembly,
+            @ApiParam(value = "Identifiers of studies, as defined in /v2/studies. If this field is null/not" +
+                    " specified, all studies should be queried.")
+            @RequestParam(name = "studies", required = false) List<String> studies,
+            @ApiParam(value = "Retrieve only variants with exactly this consequence type (as stated by Ensembl VEP)")
+            @RequestParam(name = "annot-ct", required = false) List<String>
+                    consequenceType,
+            @ApiParam(value = "Retrieve only variants with exactly this Minor Allele Frequency")
+            @RequestParam(name = "maf", required = false) String maf,
+            @ApiParam(value = "Retrieve only variants with exactly this Polyphen score (as stated by Ensembl VEP)")
+            @RequestParam(name = "polyphen", required = false) String polyphenScore,
+            @ApiParam(value = "Retrieve only variants with exactly this Sift score (as stated by Ensembl VEP)")
+            @RequestParam(name = "sift", required = false) String siftScore,
+            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP release ")
+            @RequestParam(name = "annot-vep-version", required = false) String
+                    annotationVepVersion,
+            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP cache release ")
+            @RequestParam(name = "annot-vep-cache-version", required = false) String
+                    annotationVepCacheVersion,
+            @ApiParam(value = "The number of the page that shoulde be displayed. Starts from 0 and is an " +
+                    "integer. e.g. 0")
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @ApiParam(value = "The number of elements that should be displayed in a single page. e.g. 5")
+            @RequestParam(required = false, defaultValue = "20") Integer pageSize,
+            HttpServletResponse response,
+            @ApiIgnore HttpServletRequest request)
             throws IllegalArgumentException {
         checkParameters(annotationVepVersion, annotationVepCacheVersion, species);
 
