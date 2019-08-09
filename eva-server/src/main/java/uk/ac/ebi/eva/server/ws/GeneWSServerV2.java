@@ -70,8 +70,7 @@ public class GeneWSServerV2 {
             @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
                     "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam(name = "assembly") String assembly,
-            @ApiParam(value = "The number of the page that shoulde be displayed. Starts from 0 and is an integer." +
-                    " e.g. 0")
+            @ApiParam(value = "The number of the page that shoulde be displayed. Starts from 0 and is an integer.")
             @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
             @ApiParam(value = "The number of elements that should be retrieved per page.")
             @RequestParam(required = false, defaultValue = "20") Integer pageSize,

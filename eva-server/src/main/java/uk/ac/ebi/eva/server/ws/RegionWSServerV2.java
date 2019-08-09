@@ -99,16 +99,16 @@ public class RegionWSServerV2 {
             @RequestParam(name = "polyphen", required = false) String polyphenScore,
             @ApiParam(value = "Retrieve only variants with exactly this Sift score (as stated by Ensembl VEP)")
             @RequestParam(name = "sift", required = false) String siftScore,
-            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP release. e.g. 78 ")
+            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP release. e.g. 78")
             @RequestParam(name = "annot-vep-version", required = false) String
                     annotationVepVersion,
-            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP cache release. e.g. 78")
+            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP cache release. " +
+                    "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false) String
                     annotationVepCacheVersion,
-            @ApiParam(value = "The number of the page that shoulde be displayed. Starts from 0 and is an " +
-                    "integer. e.g. 0")
+            @ApiParam(value = "The number of the page that shoulde be displayed. Starts from 0 and is an integer.")
             @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
-            @ApiParam(value = "The number of elements that should be displayed in a single page. e.g. 5")
+            @ApiParam(value = "The number of elements that should be displayed in a single page.")
             @RequestParam(required = false, defaultValue = "20") Integer pageSize,
             HttpServletResponse response,
             @ApiIgnore HttpServletRequest request)
