@@ -63,8 +63,8 @@ public class GeneWSServerV2 {
     public ResponseEntity getVariantsByGene(
             @ApiParam(value = "Comma separated values of gene names or gene ids. e.g. BRCA2,FOXP2,ENSG00000223972")
             @PathVariable("geneIds") List<String> geneIds,
-            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. Allowed" + " values can be looked" +
-                    " up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
+            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. Allowed" +
+                    " values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
                     required = true)
             @RequestParam(name = "species") String species,
             @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
@@ -78,7 +78,6 @@ public class GeneWSServerV2 {
             HttpServletResponse response,
             @ApiIgnore HttpServletRequest request)
             throws IllegalArgumentException {
-        System.out.println(geneIds);
         checkParameters(species, assembly);
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
         List<FeatureCoordinates> featureCoordinates = service.findAllByGeneIdsOrGeneNames(geneIds, geneIds);

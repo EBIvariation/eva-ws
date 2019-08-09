@@ -188,8 +188,8 @@ public class RegionWSServerV2 {
         Long totalPages = pageSize == 0L ? 0L : (long) Math.ceil((double) totalNumberOfResults / (double) pageSize);
 
         if (pageNumber < 0 || pageNumber >= totalPages) {
-            throw new IllegalArgumentException("For the given page size, there are " + totalPages + " page(s), so the" +
-                    " correct page range is from 0 to " + String.valueOf(totalPages - 1) + " (both included).");
+            throw new IllegalArgumentException("For the given page size, there are " + totalPages + " page(s), so the"
+                    + " correct page range is from 0 to " + String.valueOf(totalPages - 1) + " (both included).");
         }
         return new PagedResources.PageMetadata(pageSize, pageNumber, totalNumberOfResults, totalPages);
     }
