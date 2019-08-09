@@ -77,7 +77,7 @@ public class RegionWSServerV2 {
     @ResponseBody
     @RateLimit(value = REGION_REQUEST_RATE_LIMIT)
     public ResponseEntity getVariantsByRegion(
-            @ApiParam(value = "Comma separated values of regions, in format chr:start-end. e.g. 13:32884600-32884700")
+            @ApiParam(value = "Comma separated genomic regions in the format chr:start-end.")
             @PathVariable("regionId") String regionId,
             @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. " +
                     "Allowed values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
