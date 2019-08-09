@@ -114,7 +114,7 @@ public class StudyWSServerV2IntegrationTest {
         assertEquals(2, totalNumberOfElements.intValue());
         assertEquals(0, pageNumber.intValue());
         assertEquals(1, size.intValue());
-
+        assertEquals(2, totalPages.intValue());
     }
 
     @Test
