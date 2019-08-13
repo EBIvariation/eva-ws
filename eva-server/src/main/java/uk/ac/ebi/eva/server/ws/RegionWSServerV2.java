@@ -93,17 +93,14 @@ public class RegionWSServerV2 {
             @ApiParam(value = "Retrieve only variants with exactly this consequence type (as stated by Ensembl VEP)")
             @RequestParam(name = "annot-ct", required = false) List<String>
                     consequenceType,
-            @ApiParam(value = "Minor Allele Frequency. If only the value is given, it compares" +
-                    " against the exact value of Minor Allele Frequency, but <, <=, =, >, >= symbols preceding the " +
-                    "value can be provided. e.g. >=0.5")
+            @ApiParam(value = "Minor Allele Frequency. The value of Minor Allele Frequency with one of the " +
+                    "<, <=, =, >, >= symbols preceding it has to be provided. e.g. >=0.5")
             @RequestParam(name = "maf", required = false) String maf,
-            @ApiParam(value = "PolyPhen score as stated by Ensembl VEP. If only the value" +
-                    " is given, it compares against the exact value of Polyphen score, but <, <=, =, >, >= symbols" +
-                    " preceding the value can be provided. e.g. >0.2")
+            @ApiParam(value = "PolyPhen score as stated by Ensembl VEP. The value of Polyphen score with one of the" +
+                    "<, <=, =, >, >= symbols preceding it to be provided. e.g. >0.2")
             @RequestParam(name = "polyphen", required = false) String polyphenScore,
-            @ApiParam(value = "SIFT score as stated by Ensembl VEP. If only the value" +
-                    " is given, it compares against the exact value of Sift score, but <, <=, =, >, >= symbols" +
-                    " preceding the value can be provided. e.g. <=0.2")
+            @ApiParam(value = "SIFT score as stated by Ensembl VEP. The value of Sift score with one of the" +
+                    " <, <=, =, >, >= symbols preceding it has to be provided. e.g. <=0.2")
             @RequestParam(name = "sift", required = false) String siftScore,
             @ApiParam(value = "Ensembl VEP release whose annotations will be included in the response, e.g. 78")
             @RequestParam(name = "annot-vep-version", required = false) String
