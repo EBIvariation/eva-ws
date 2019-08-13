@@ -93,11 +93,17 @@ public class RegionWSServerV2 {
             @ApiParam(value = "Retrieve only variants with exactly this consequence type (as stated by Ensembl VEP)")
             @RequestParam(name = "annot-ct", required = false) List<String>
                     consequenceType,
-            @ApiParam(value = "Retrieve only variants with exactly this Minor Allele Frequency")
+            @ApiParam(value = "Filter variants using Minor Allele Frequency. If only the value is given, it compares" +
+                    " against the exact value of Minor Allele Frequency, but <, <=, =, >, >= symbols preceding the " +
+                    "value can be provided. e.g. >=0.5")
             @RequestParam(name = "maf", required = false) String maf,
-            @ApiParam(value = "Retrieve only variants with exactly this Polyphen score (as stated by Ensembl VEP)")
+            @ApiParam(value = "Filter variants using Polyphen score (as stated by Ensembl VEP). If only the value" +
+                    " is given, it compares against the exact value of Polyphen score, but <, <=, =, >, >= symbols" +
+                    " preceding the value can be provided. e.g. >0.2")
             @RequestParam(name = "polyphen", required = false) String polyphenScore,
-            @ApiParam(value = "Retrieve only variants with exactly this Sift score (as stated by Ensembl VEP)")
+            @ApiParam(value = "Filter variants using Sift score (as stated by Ensembl VEP). If only the value" +
+                    " is given, it compares against the exact value of Sift score, but <, <=, =, >, >= symbols" +
+                    " preceding the value can be provided. e.g. <=0.2")
             @RequestParam(name = "sift", required = false) String siftScore,
             @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP release. e.g. 78")
             @RequestParam(name = "annot-vep-version", required = false) String
@@ -106,7 +112,7 @@ public class RegionWSServerV2 {
                     "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false) String
                     annotationVepCacheVersion,
-            @ApiParam(value = "The number of the page that shoulde be displayed. Starts from 0 and is an integer.")
+            @ApiParam(value = "The number of the page that should be displayed. Starts from 0 and is an integer.")
             @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
             @ApiParam(value = "The number of elements that should be displayed in a single page.")
             @RequestParam(required = false, defaultValue = "20") Integer pageSize,
