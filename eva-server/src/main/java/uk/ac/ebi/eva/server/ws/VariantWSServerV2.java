@@ -62,7 +62,7 @@ public class VariantWSServerV2 {
 
     @GetMapping(value = "/{variantCoreString}")
     public ResponseEntity getCoreInfo(
-            @ApiParam(value = "Internal species-relative variant ID. Chromosome, start, reference allele and" +
+            @ApiParam(value = "Chromosome, start, reference allele and" +
                     " alternate allele; all joined by colon. e.g. 13:32884647:T:C")
             @PathVariable("variantCoreString") String variantCoreString,
             @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. " +
@@ -167,7 +167,7 @@ public class VariantWSServerV2 {
 
     @GetMapping(value = "/{variantCoreString}/annotations")
     public ResponseEntity getAnnotations(
-            @ApiParam(value = "Internal species-relative variant ID. Chromosome, start, reference allele and" +
+            @ApiParam(value = "Chromosome, start, reference allele and" +
                     " alternate allele; all joined by colon. e.g. 13:32884647:T:C")
             @PathVariable("variantCoreString") String variantCoreString,
             @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens." +
@@ -222,10 +222,10 @@ public class VariantWSServerV2 {
             @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
                     "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam(name = "assembly") String assembly,
-            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP release. e.g. 78")
+            @ApiParam(value = "Ensembl VEP release whose annotations will be included in the response, e.g. 78")
             @RequestParam(name = "annot-vep-version", required = false)
                     String annotationVepVersion,
-            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP cache release. " +
+            @ApiParam(value = "Ensembl VEP cache release whose annotations will be included in the response, " +
                     "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false)
                     String annotationVepCacheVersion,

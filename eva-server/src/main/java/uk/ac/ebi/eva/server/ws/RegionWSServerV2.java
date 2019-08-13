@@ -93,22 +93,22 @@ public class RegionWSServerV2 {
             @ApiParam(value = "Retrieve only variants with exactly this consequence type (as stated by Ensembl VEP)")
             @RequestParam(name = "annot-ct", required = false) List<String>
                     consequenceType,
-            @ApiParam(value = "Filter variants using Minor Allele Frequency. If only the value is given, it compares" +
+            @ApiParam(value = "Minor Allele Frequency. If only the value is given, it compares" +
                     " against the exact value of Minor Allele Frequency, but <, <=, =, >, >= symbols preceding the " +
                     "value can be provided. e.g. >=0.5")
             @RequestParam(name = "maf", required = false) String maf,
-            @ApiParam(value = "Filter variants using Polyphen score (as stated by Ensembl VEP). If only the value" +
+            @ApiParam(value = "PolyPhen score as stated by Ensembl VEP. If only the value" +
                     " is given, it compares against the exact value of Polyphen score, but <, <=, =, >, >= symbols" +
                     " preceding the value can be provided. e.g. >0.2")
             @RequestParam(name = "polyphen", required = false) String polyphenScore,
-            @ApiParam(value = "Filter variants using Sift score (as stated by Ensembl VEP). If only the value" +
+            @ApiParam(value = "SIFT score as stated by Ensembl VEP. If only the value" +
                     " is given, it compares against the exact value of Sift score, but <, <=, =, >, >= symbols" +
                     " preceding the value can be provided. e.g. <=0.2")
             @RequestParam(name = "sift", required = false) String siftScore,
-            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP release. e.g. 78")
+            @ApiParam(value = "Ensembl VEP release whose annotations will be included in the response, e.g. 78")
             @RequestParam(name = "annot-vep-version", required = false) String
                     annotationVepVersion,
-            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP cache release. " +
+            @ApiParam(value = "Ensembl VEP cache release whose annotations will be included in the response, " +
                     "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false) String
                     annotationVepCacheVersion,
