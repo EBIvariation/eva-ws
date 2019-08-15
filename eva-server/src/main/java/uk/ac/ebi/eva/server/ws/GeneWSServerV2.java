@@ -20,6 +20,7 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpStatus;
@@ -59,13 +60,22 @@ public class GeneWSServerV2 {
     }
 
     @GetMapping(value = "/{geneIds}/variants")
-    public ResponseEntity getVariantsByGene(@PathVariable("geneIds") List<String> geneIds,
-                                            @RequestParam(name = "species") String species,
-                                            @RequestParam(name = "assembly") String assembly,
-                                            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
-                                            @RequestParam(required = false, defaultValue = "20") Integer pageSize,
-                                            HttpServletResponse response,
-                                            @ApiIgnore HttpServletRequest request)
+    public ResponseEntity getVariantsByGene(
+            @ApiParam(value = "Comma separated gene symbols and/or Ensembl gene IDs, e.g. BRCA2,FOXP2,ENSG00000223972")
+            @PathVariable("geneIds") List<String> geneIds,
+            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. Allowed" +
+                    " values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
+                    required = true)
+            @RequestParam(name = "species") String species,
+            @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
+                    "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
+            @RequestParam(name = "assembly") String assembly,
+            @ApiParam(value = "The number of the page that should be displayed. Starts from 0 and is an integer.")
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @ApiParam(value = "The number of elements that should be retrieved per page.")
+            @RequestParam(required = false, defaultValue = "20") Integer pageSize,
+            HttpServletResponse response,
+            @ApiIgnore HttpServletRequest request)
             throws IllegalArgumentException {
         checkParameters(species, assembly);
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));

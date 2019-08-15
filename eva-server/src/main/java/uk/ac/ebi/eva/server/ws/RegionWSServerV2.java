@@ -20,6 +20,7 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.Link;
@@ -75,23 +76,48 @@ public class RegionWSServerV2 {
     @GetMapping(value = "/{regionId}/variants")
     @ResponseBody
     @RateLimit(value = REGION_REQUEST_RATE_LIMIT)
-    public ResponseEntity getVariantsByRegion(@PathVariable("regionId") String regionId,
-                                              @RequestParam(name = "species") String species,
-                                              @RequestParam(name = "assembly") String assembly,
-                                              @RequestParam(name = "studies", required = false) List<String> studies,
-                                              @RequestParam(name = "annot-ct", required = false) List<String>
-                                                      consequenceType,
-                                              @RequestParam(name = "maf", required = false) String maf,
-                                              @RequestParam(name = "polyphen", required = false) String polyphenScore,
-                                              @RequestParam(name = "sift", required = false) String siftScore,
-                                              @RequestParam(name = "annot-vep-version", required = false) String
-                                                      annotationVepVersion,
-                                              @RequestParam(name = "annot-vep-cache-version", required = false) String
-                                                      annotationVepCacheVersion,
-                                              @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
-                                              @RequestParam(required = false, defaultValue = "20") Integer pageSize,
-                                              HttpServletResponse response,
-                                              @ApiIgnore HttpServletRequest request)
+    public ResponseEntity getVariantsByRegion(
+            @ApiParam(value = "Comma separated genomic regions in the format chr:start-end.")
+            @PathVariable("regionId") String regionId,
+            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. " +
+                    "Allowed values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
+                    required = true)
+            @RequestParam(name = "species") String species,
+            @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
+                    "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
+            @RequestParam(name = "assembly") String assembly,
+            @ApiParam(value = "Identifiers of studies. If this field is null/not specified, all studies should" +
+                    " be queried. Each individual identifier of studies can be looked up in" +
+                    " /v2/studies in the field named `studyId`. e.g. PRJEB6930,PRJEB27824")
+            @RequestParam(name = "studies", required = false) List<String> studies,
+            @ApiParam(value = "Retrieve only variants with exactly this consequence type (as stated by Ensembl VEP)")
+            @RequestParam(name = "annot-ct", required = false) List<String>
+                    consequenceType,
+            @ApiParam(value = "Retrieve only variants whose Minor Allele Frequency is less than (<), less" +
+                    " than or equals (<=), greater than (>), greater than or equals (>=) or equals (=) the" +
+                    " provided number. e.g. <0.1")
+            @RequestParam(name = "maf", required = false) String maf,
+            @ApiParam(value = "Retrieve only variants whose PolyPhen score as stated by Ensembl VEP is less than" +
+                    " (<), less than or equals (<=), greater than (>), greater than or equals (>=) or equals (=) " +
+                    "the provided number. e.g. <0.1")
+            @RequestParam(name = "polyphen", required = false) String polyphenScore,
+            @ApiParam(value = "Retrieve only variants whose SIFT score as stated by Ensembl VEP is less than (<)," +
+                    " less than or equals (<=), greater than (>), greater than or equals (>=) or equals (=) the " +
+                    "provided number. e.g. <0.1")
+            @RequestParam(name = "sift", required = false) String siftScore,
+            @ApiParam(value = "Ensembl VEP release whose annotations will be included in the response, e.g. 78")
+            @RequestParam(name = "annot-vep-version", required = false) String
+                    annotationVepVersion,
+            @ApiParam(value = "Ensembl VEP cache release whose annotations will be included in the response, " +
+                    "e.g. 78")
+            @RequestParam(name = "annot-vep-cache-version", required = false) String
+                    annotationVepCacheVersion,
+            @ApiParam(value = "The number of the page that should be displayed. Starts from 0 and is an integer.")
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @ApiParam(value = "The number of elements that should be displayed in a single page.")
+            @RequestParam(required = false, defaultValue = "20") Integer pageSize,
+            HttpServletResponse response,
+            @ApiIgnore HttpServletRequest request)
             throws IllegalArgumentException {
         checkParameters(annotationVepVersion, annotationVepCacheVersion, species);
 
@@ -174,8 +200,8 @@ public class RegionWSServerV2 {
         Long totalPages = pageSize == 0L ? 0L : (long) Math.ceil((double) totalNumberOfResults / (double) pageSize);
 
         if (pageNumber < 0 || pageNumber >= totalPages) {
-            throw new IllegalArgumentException("For the given page size, there are " + totalPages + " page(s), so the" +
-                    " correct page range is from 0 to " + String.valueOf(totalPages - 1) + " (both included).");
+            throw new IllegalArgumentException("For the given page size, there are " + totalPages + " page(s), so the"
+                    + " correct page range is from 0 to " + String.valueOf(totalPages - 1) + " (both included).");
         }
         return new PagedResources.PageMetadata(pageSize, pageNumber, totalNumberOfResults, totalPages);
     }
