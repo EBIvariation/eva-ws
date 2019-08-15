@@ -70,6 +70,32 @@ public class GeneWSServerV2 {
             @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
                     "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam(name = "assembly") String assembly,
+            @ApiParam(value = "Identifiers of studies. If this field is null/not specified, all studies should" +
+                    " be queried. Each individual identifier of studies can be looked up in" +
+                    " /v2/studies in the field named `studyId`. e.g. PRJEB6930,PRJEB27824")
+            @RequestParam(name = "studies", required = false) List<String> studies,
+            @ApiParam(value = "Retrieve only variants with exactly this consequence type (as stated by Ensembl VEP)")
+            @RequestParam(name = "annot-ct", required = false) List<String>
+                    consequenceType,
+            @ApiParam(value = "Retrieve only variants whose Minor Allele Frequency is less than (<), less" +
+                    " than or equals (<=), greater than (>), greater than or equals (>=) or equals (=) the" +
+                    " provided number. e.g. <0.1")
+            @RequestParam(name = "maf", required = false) String maf,
+            @ApiParam(value = "Retrieve only variants whose PolyPhen score as stated by Ensembl VEP is less than" +
+                    " (<), less than or equals (<=), greater than (>), greater than or equals (>=) or equals (=) " +
+                    "the provided number. e.g. <0.1")
+            @RequestParam(name = "polyphen", required = false) String polyphenScore,
+            @ApiParam(value = "Retrieve only variants whose SIFT score as stated by Ensembl VEP is less than (<)," +
+                    " less than or equals (<=), greater than (>), greater than or equals (>=) or equals (=) the " +
+                    "provided number. e.g. <0.1")
+            @RequestParam(name = "sift", required = false) String siftScore,
+            @ApiParam(value = "Ensembl VEP release whose annotations will be included in the response, e.g. 78")
+            @RequestParam(name = "annot-vep-version", required = false) String
+                    annotationVepVersion,
+            @ApiParam(value = "Ensembl VEP cache release whose annotations will be included in the response, " +
+                    "e.g. 78")
+            @RequestParam(name = "annot-vep-cache-version", required = false) String
+                    annotationVepCacheVersion,
             @ApiParam(value = "The number of the page that should be displayed. Starts from 0 and is an integer.")
             @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
             @ApiParam(value = "The number of elements that should be retrieved per page.")
@@ -95,8 +121,9 @@ public class GeneWSServerV2 {
 
         responseEntity.getBody().removeLinks();
 
-        return new ResponseEntity(buildPage(geneIds, species, assembly, responseEntity.getBody(), response, request),
-                HttpStatus.OK);
+        return new ResponseEntity(buildPage(geneIds, species, assembly, studies, consequenceType, maf, polyphenScore,
+                siftScore, annotationVepVersion, annotationVepCacheVersion, responseEntity.getBody(), response,
+                request), HttpStatus.OK);
     }
 
     private void checkParameters(String species, String assembly) throws IllegalArgumentException {
@@ -113,7 +140,9 @@ public class GeneWSServerV2 {
         return coordinates.getChromosome() + ":" + coordinates.getStart() + "-" + coordinates.getEnd();
     }
 
-    private PagedResources buildPage(List<String> geneIds, String species, String assembly,
+    private PagedResources buildPage(List<String> geneIds, String species, String assembly, List<String> studies,
+                                     List<String> consequenceType, String maf, String polyphenScore, String siftScore,
+                                     String annotationVepVersion, String annotationVepCacheVersion,
                                      PagedResources pagedResources, HttpServletResponse response,
                                      HttpServletRequest request) {
 
@@ -122,28 +151,40 @@ public class GeneWSServerV2 {
         int totalPages = (int) pagedResources.getMetadata().getTotalPages();
 
         if (pageNumber > 0) {
-            pagedResources.add(createPaginationLink(geneIds, species, assembly, pageNumber - 1,
+            pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
+                    maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
+                    pageNumber - 1,
                     pageSize, response, request, "prev"));
 
-            pagedResources.add(createPaginationLink(geneIds, species, assembly, 0, pageSize,
-                    response, request, "first"));
+            pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
+                    maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
+                    pageNumber - 1,
+                    pageSize, response, request, "first"));
         }
 
         if (pageNumber < (totalPages - 1)) {
-            pagedResources.add(createPaginationLink(geneIds, species, assembly, pageNumber + 1,
+            pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
+                    maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
+                    pageNumber - 1,
                     pageSize, response, request, "next"));
 
-            pagedResources.add(createPaginationLink(geneIds, species, assembly,
-                    totalPages - 1, pageSize, response, request, "last"));
+            pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
+                    maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
+                    pageNumber - 1,
+                    pageSize, response, request, "last"));
         }
         return pagedResources;
     }
 
-    private Link createPaginationLink(List<String> geneIds, String species, String assembly, int pageNumber,
-                                      int pageSize, HttpServletResponse response, HttpServletRequest request,
+    private Link createPaginationLink(List<String> geneIds, String species, String assembly, List<String> studies,
+                                      List<String> consequenceType, String maf, String polyphenScore, String siftScore,
+                                      String annotationVepVersion, String annotationVepCacheVersion,
+                                      int pageNumber, int pageSize, HttpServletResponse response,
+                                      HttpServletRequest request,
                                       String linkName) {
-        return new Link(linkTo(methodOn(GeneWSServerV2.class).getVariantsByGene(geneIds, species, assembly,
-                pageNumber, pageSize, response, request))
+        return new Link(linkTo(methodOn(GeneWSServerV2.class).getVariantsByGene(geneIds, species, assembly, studies,
+                consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
+                annotationVepCacheVersion, pageNumber, pageSize, response, request))
                 .toUriComponentsBuilder()
                 .toUriString(), linkName);
     }
