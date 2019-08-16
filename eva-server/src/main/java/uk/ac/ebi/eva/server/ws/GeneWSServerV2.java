@@ -107,7 +107,7 @@ public class GeneWSServerV2 {
             HttpServletResponse response,
             @ApiIgnore HttpServletRequest request)
             throws IllegalArgumentException {
-        checkParameters(species, assembly);
+        checkParameters(species, assembly, bufferValue);
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
         List<FeatureCoordinates> featureCoordinates = service.findAllByGeneIdsOrGeneNames(geneIds, geneIds);
 
@@ -119,9 +119,10 @@ public class GeneWSServerV2 {
             List<FeatureCoordinates> bufferCoordinates = new ArrayList<>();
             featureCoordinates.forEach(coordinate ->{
                 bufferCoordinates.add(new FeatureCoordinates(null, null, null,coordinate.getChromosome(),
-                        coordinate.getStart()-bufferValue,coordinate.getEnd()+bufferValue));
+                        coordinate.getStart()-bufferValue>=0?coordinate.getStart()-bufferValue:0,
+                        coordinate.getEnd()+bufferValue));
             });
-            featureCoordinates.addAll(bufferCoordinates);
+            featureCoordinates = bufferCoordinates;
         }
 
         String regions = featureCoordinates.stream().map(this::getRegionString).collect(Collectors.joining(","));
@@ -141,13 +142,17 @@ public class GeneWSServerV2 {
                 response, request), HttpStatus.OK);
     }
 
-    private void checkParameters(String species, String assembly) throws IllegalArgumentException {
+    private void checkParameters(String species, String assembly, Integer bufferValue) throws IllegalArgumentException {
         if (species.isEmpty()) {
             throw new IllegalArgumentException("Please specify a species");
         }
 
         if (assembly.isEmpty()) {
             throw new IllegalArgumentException("Please specify an assembly");
+        }
+
+        if(bufferValue<0) {
+            throw new IllegalArgumentException("Pleas specify a non-negative integer value for buffer");
         }
     }
 
