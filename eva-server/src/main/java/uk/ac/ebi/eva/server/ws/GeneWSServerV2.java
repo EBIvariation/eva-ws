@@ -40,9 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -117,10 +115,10 @@ public class GeneWSServerV2 {
 
         if (bufferValue != 0) {
             List<FeatureCoordinates> bufferCoordinates = new ArrayList<>();
-            featureCoordinates.forEach(coordinate ->{
-                bufferCoordinates.add(new FeatureCoordinates(null, null, null,coordinate.getChromosome(),
-                        coordinate.getStart()-bufferValue>=0?coordinate.getStart()-bufferValue:0,
-                        coordinate.getEnd()+bufferValue));
+            featureCoordinates.forEach(coordinate -> {
+                bufferCoordinates.add(new FeatureCoordinates(null, null, null, coordinate.getChromosome(),
+                        coordinate.getStart() - bufferValue >= 0 ? coordinate.getStart() - bufferValue : 0,
+                        coordinate.getEnd() + bufferValue));
             });
             featureCoordinates = bufferCoordinates;
         }
@@ -151,7 +149,7 @@ public class GeneWSServerV2 {
             throw new IllegalArgumentException("Please specify an assembly");
         }
 
-        if(bufferValue<0) {
+        if (bufferValue < 0) {
             throw new IllegalArgumentException("Pleas specify a non-negative integer value for buffer");
         }
     }
