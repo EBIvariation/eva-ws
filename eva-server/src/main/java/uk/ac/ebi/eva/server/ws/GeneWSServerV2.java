@@ -39,7 +39,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -100,20 +102,51 @@ public class GeneWSServerV2 {
             @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
             @ApiParam(value = "The number of elements that should be retrieved per page.")
             @RequestParam(required = false, defaultValue = "20") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "0", name = "buffer") Integer bufferValue,
             HttpServletResponse response,
             @ApiIgnore HttpServletRequest request)
             throws IllegalArgumentException {
         checkParameters(species, assembly);
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
         List<FeatureCoordinates> featureCoordinates = service.findAllByGeneIdsOrGeneNames(geneIds, geneIds);
+
         if (featureCoordinates.isEmpty()) {
             return new ResponseEntity(featureCoordinates, HttpStatus.NO_CONTENT);
         }
 
+        Map<String, Long> startMap = new HashMap<>();
+        Map<String, Long> endMap = new HashMap<>();
+
+        featureCoordinates.forEach(coordinate -> {
+            String chromosome = coordinate.getChromosome();
+            long start = coordinate.getStart();
+            long end = coordinate.getEnd();
+
+            if (startMap.containsKey(coordinate.getChromosome())) {
+                startMap.replace(chromosome, Math.min(startMap.get(chromosome), start));
+            } else {
+                startMap.put(chromosome, start);
+            }
+
+            if (endMap.containsKey(coordinate.getChromosome())) {
+                endMap.replace(chromosome, Math.max(endMap.get(chromosome), end));
+            } else {
+                endMap.put(chromosome, end);
+            }
+        });
+
+        if (bufferValue != 0) {
+            startMap.forEach((key, value) -> {
+                featureCoordinates.add(new FeatureCoordinates(null, null, null, key,
+                        (value - bufferValue) < 0 ? 0 : value - bufferValue, endMap.get(key) + bufferValue));
+            });
+        }
+
         String regions = featureCoordinates.stream().map(this::getRegionString).collect(Collectors.joining(","));
 
-        ResponseEntity<PagedResources> responseEntity = regionWSServerV2.getVariantsByRegion(regions, species, assembly,
-                null, null, null, null, null, null, null, pageNumber, pageSize, response, request);
+        ResponseEntity<PagedResources> responseEntity = regionWSServerV2.getVariantsByRegion(regions, species,
+                assembly, studies, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
+                annotationVepCacheVersion, pageNumber, pageSize, response, request);
 
         if (responseEntity.getStatusCode() != HttpStatus.OK) {
             return responseEntity;
@@ -122,8 +155,8 @@ public class GeneWSServerV2 {
         responseEntity.getBody().removeLinks();
 
         return new ResponseEntity(buildPage(geneIds, species, assembly, studies, consequenceType, maf, polyphenScore,
-                siftScore, annotationVepVersion, annotationVepCacheVersion, responseEntity.getBody(), response,
-                request), HttpStatus.OK);
+                siftScore, annotationVepVersion, annotationVepCacheVersion, bufferValue, responseEntity.getBody(),
+                response, request), HttpStatus.OK);
     }
 
     private void checkParameters(String species, String assembly) throws IllegalArgumentException {
@@ -143,8 +176,8 @@ public class GeneWSServerV2 {
     private PagedResources buildPage(List<String> geneIds, String species, String assembly, List<String> studies,
                                      List<String> consequenceType, String maf, String polyphenScore, String siftScore,
                                      String annotationVepVersion, String annotationVepCacheVersion,
-                                     PagedResources pagedResources, HttpServletResponse response,
-                                     HttpServletRequest request) {
+                                     Integer bufferValue, PagedResources pagedResources,
+                                     HttpServletResponse response, HttpServletRequest request) {
 
         int pageNumber = (int) pagedResources.getMetadata().getNumber();
         int pageSize = (int) pagedResources.getMetadata().getSize();
@@ -153,25 +186,21 @@ public class GeneWSServerV2 {
         if (pageNumber > 0) {
             pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
                     maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
-                    pageNumber - 1,
-                    pageSize, response, request, "prev"));
+                    pageNumber - 1, pageSize, bufferValue, response, request, "prev"));
 
             pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
                     maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
-                    pageNumber - 1,
-                    pageSize, response, request, "first"));
+                    pageNumber - 1, pageSize, bufferValue, response, request, "first"));
         }
 
         if (pageNumber < (totalPages - 1)) {
             pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
                     maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
-                    pageNumber - 1,
-                    pageSize, response, request, "next"));
+                    pageNumber - 1, pageSize, bufferValue, response, request, "next"));
 
             pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
                     maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
-                    pageNumber - 1,
-                    pageSize, response, request, "last"));
+                    pageNumber - 1, pageSize, bufferValue, response, request, "last"));
         }
         return pagedResources;
     }
@@ -179,12 +208,12 @@ public class GeneWSServerV2 {
     private Link createPaginationLink(List<String> geneIds, String species, String assembly, List<String> studies,
                                       List<String> consequenceType, String maf, String polyphenScore, String siftScore,
                                       String annotationVepVersion, String annotationVepCacheVersion,
-                                      int pageNumber, int pageSize, HttpServletResponse response,
+                                      int pageNumber, int pageSize, Integer bufferValue, HttpServletResponse response,
                                       HttpServletRequest request,
                                       String linkName) {
         return new Link(linkTo(methodOn(GeneWSServerV2.class).getVariantsByGene(geneIds, species, assembly, studies,
                 consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
-                annotationVepCacheVersion, pageNumber, pageSize, response, request))
+                annotationVepCacheVersion, pageNumber, pageSize, bufferValue, response, request))
                 .toUriComponentsBuilder()
                 .toUriString(), linkName);
     }
