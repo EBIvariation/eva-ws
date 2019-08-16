@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,32 +115,13 @@ public class GeneWSServerV2 {
             return new ResponseEntity(featureCoordinates, HttpStatus.NO_CONTENT);
         }
 
-        Map<String, Long> startMap = new HashMap<>();
-        Map<String, Long> endMap = new HashMap<>();
-
-        featureCoordinates.forEach(coordinate -> {
-            String chromosome = coordinate.getChromosome();
-            long start = coordinate.getStart();
-            long end = coordinate.getEnd();
-
-            if (startMap.containsKey(coordinate.getChromosome())) {
-                startMap.replace(chromosome, Math.min(startMap.get(chromosome), start));
-            } else {
-                startMap.put(chromosome, start);
-            }
-
-            if (endMap.containsKey(coordinate.getChromosome())) {
-                endMap.replace(chromosome, Math.max(endMap.get(chromosome), end));
-            } else {
-                endMap.put(chromosome, end);
-            }
-        });
-
         if (bufferValue != 0) {
-            startMap.forEach((key, value) -> {
-                featureCoordinates.add(new FeatureCoordinates(null, null, null, key,
-                        (value - bufferValue) < 0 ? 0 : value - bufferValue, endMap.get(key) + bufferValue));
+            List<FeatureCoordinates> bufferCoordinates = new ArrayList<>();
+            featureCoordinates.forEach(coordinate ->{
+                bufferCoordinates.add(new FeatureCoordinates(null, null, null,coordinate.getChromosome(),
+                        coordinate.getStart()-bufferValue,coordinate.getEnd()+bufferValue));
             });
+            featureCoordinates.addAll(bufferCoordinates);
         }
 
         String regions = featureCoordinates.stream().map(this::getRegionString).collect(Collectors.joining(","));
