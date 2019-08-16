@@ -178,4 +178,26 @@ public class GeneWSServerV2IntegrationTest {
         assertEquals("For the given page size, there are 1 page(s), so the correct page range is from 0 to 0" +
                 " (both included).", response.getBody());
     }
+
+    @Test
+    public void testBufferValue() {
+        String url = "/v2/genes/ENSG00000227232/variants?species=mmusculus&assembly=grcm38&buffer=10000";
+        assertEquals(2, testbufferValueParameterHelper(url));
+
+        url = "/v2/genes/ENSG00000227232/variants?species=mmusculus&assembly=grcm38&buffer=0";
+        assertEquals(1, testbufferValueParameterHelper(url));
+    }
+
+    private int testbufferValueParameterHelper(String url) {
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        List<Variant> variantList = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['_embedded']['variantList']", new TypeRef<List<Variant>>() {
+                });
+        return variantList.size();
+    }
 }
