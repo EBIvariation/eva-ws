@@ -199,7 +199,6 @@ public class GeneWSServerV2IntegrationTest {
         assertEquals("T", variants.get(0).getAlternate());
     }
 
-
     @Test
     public void testByMafParameterExisting() throws URISyntaxException{
         String url = "/v2/genes/ENSG00000227232/variants?species=mmusculus&assembly=grcm38&maf=<=0.2";

@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -116,7 +115,7 @@ public class GeneWSServerV2 {
 
         if (bufferValue != 0) {
             List<FeatureCoordinates> bufferCoordinates = featureCoordinates.stream()
-                    .map(coordinate->new FeatureCoordinates(null, null, null, coordinate.getChromosome(),
+                    .map(coordinate -> new FeatureCoordinates(null, null, null, coordinate.getChromosome(),
                             coordinate.getStart() - bufferValue >= 0 ? coordinate.getStart() - bufferValue : 0,
                             coordinate.getEnd() + bufferValue)).collect(Collectors.toList());
             featureCoordinates = bufferCoordinates;
