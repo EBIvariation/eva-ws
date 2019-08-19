@@ -45,7 +45,6 @@ import uk.ac.ebi.eva.lib.Profiles;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
@@ -88,15 +87,15 @@ public class GeneWSServerV2IntegrationTest {
 
     @Test
     public void testGetVariantsByExistingGene() throws URISyntaxException {
-        Variant variant = testGetVariantsGeneHelper("ENSG00000227232", 1, HttpStatus.OK).get(0);
+        String url = "/v2/genes/ENSG00000227232/variants?species=mmusculus&assembly=grcm38";
+        Variant variant = testGetVariantsGeneHelper(url, 1, HttpStatus.OK).get(0);
         assertEquals("20", variant.getChromosome());
         assertEquals("A", variant.getReference());
         assertEquals("T", variant.getAlternate());
     }
 
-    private List<Variant> testGetVariantsGeneHelper(String testRegion, int expectedVariants, HttpStatus status)
+    private List<Variant> testGetVariantsGeneHelper(String url, int expectedVariants, HttpStatus status)
             throws URISyntaxException {
-        String url = "/v2/genes/" + testRegion + "/variants?species=mmusculus&assembly=grcm38";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(status, response.getStatusCode());
         if (status == HttpStatus.NO_CONTENT) {
@@ -121,7 +120,8 @@ public class GeneWSServerV2IntegrationTest {
 
     @Test
     public void testGetVariantsByExistingGenes() throws URISyntaxException {
-        List<Variant> variants = testGetVariantsGeneHelper("ENSG00000227232,ENST00000488147", 2, HttpStatus.OK);
+        String url = "/v2/genes/ENSG00000227232,ENST00000488147/variants?species=mmusculus&assembly=grcm38";
+        List<Variant> variants = testGetVariantsGeneHelper(url, 2, HttpStatus.OK);
         assertEquals("20", variants.get(0).getChromosome());
         assertEquals("A", variants.get(0).getReference());
         assertEquals("T", variants.get(0).getAlternate());
@@ -132,12 +132,14 @@ public class GeneWSServerV2IntegrationTest {
 
     @Test
     public void testGetVariantsByNonExistingGene() throws URISyntaxException {
-        testGetVariantsGeneHelper("nonexisting", 0, HttpStatus.NO_CONTENT);
+        String url = "/v2/genes/nonexisting/variants?species=mmusculus&assembly=grcm38";
+        testGetVariantsGeneHelper(url, 0, HttpStatus.NO_CONTENT);
     }
 
     @Test
     public void testGetVariantsByNonExistingGenes() throws URISyntaxException {
-        testGetVariantsGeneHelper("nonexisting,nonexisting", 0, HttpStatus.NO_CONTENT);
+        String url = "/v2/genes/nonexisting,nonexisting/variants?species=mmusculus&assembly=grcm38";
+        testGetVariantsGeneHelper(url, 0, HttpStatus.NO_CONTENT);
     }
 
     @Test
@@ -180,24 +182,37 @@ public class GeneWSServerV2IntegrationTest {
     }
 
     @Test
-    public void testBufferValue() {
+    public void testBufferValue() throws URISyntaxException{
         String url = "/v2/genes/ENSG00000227232/variants?species=mmusculus&assembly=grcm38&buffer=10000";
-        assertEquals(2, testbufferValueParameterHelper(url));
+        List<Variant> variants = testGetVariantsGeneHelper(url, 2, HttpStatus.OK);
+        assertEquals("20", variants.get(0).getChromosome());
+        assertEquals("A", variants.get(0).getReference());
+        assertEquals("T", variants.get(0).getAlternate());
+        assertEquals("20", variants.get(1).getChromosome());
+        assertEquals("C", variants.get(1).getReference());
+        assertEquals("G", variants.get(1).getAlternate());
 
         url = "/v2/genes/ENSG00000227232/variants?species=mmusculus&assembly=grcm38&buffer=0";
-        assertEquals(1, testbufferValueParameterHelper(url));
+        testGetVariantsGeneHelper(url, 1, HttpStatus.OK);
+        assertEquals("20", variants.get(0).getChromosome());
+        assertEquals("A", variants.get(0).getReference());
+        assertEquals("T", variants.get(0).getAlternate());
     }
 
-    private int testbufferValueParameterHelper(String url) {
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        Configuration configuration = Configuration.defaultConfiguration()
-                .jsonProvider(new JacksonJsonProvider())
-                .mappingProvider(new JacksonMappingProvider(objectMapper))
-                .addOptions(Option.SUPPRESS_EXCEPTIONS);
-        List<Variant> variantList = JsonPath.using(configuration).parse(response.getBody())
-                .read("$['_embedded']['variantList']", new TypeRef<List<Variant>>() {
-                });
-        return variantList.size();
+
+    @Test
+    public void testByMafParameterExisting() throws URISyntaxException{
+        String url = "/v2/genes/ENSG00000227232/variants?species=mmusculus&assembly=grcm38&maf=<=0.2";
+        List<Variant> variants = testGetVariantsGeneHelper(url, 1, HttpStatus.OK);
+        assertEquals("20", variants.get(0).getChromosome());
+        assertEquals("A", variants.get(0).getReference());
+        assertEquals("T", variants.get(0).getAlternate());
+    }
+
+    @Test
+    public void testByMafParameterNonExisting() throws URISyntaxException{
+        String url = "/v2/genes/ENSG00000227232/variants?species=mmusculus&assembly=grcm38&maf=>=0.3";
+        List<Variant> variants = testGetVariantsGeneHelper(url, 0, HttpStatus.NO_CONTENT);
+
     }
 }

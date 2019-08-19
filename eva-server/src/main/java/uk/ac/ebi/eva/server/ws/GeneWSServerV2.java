@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ch.lambdaj.Lambda.collect;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
@@ -114,12 +115,10 @@ public class GeneWSServerV2 {
         }
 
         if (bufferValue != 0) {
-            List<FeatureCoordinates> bufferCoordinates = new ArrayList<>();
-            featureCoordinates.forEach(coordinate -> {
-                bufferCoordinates.add(new FeatureCoordinates(null, null, null, coordinate.getChromosome(),
-                        coordinate.getStart() - bufferValue >= 0 ? coordinate.getStart() - bufferValue : 0,
-                        coordinate.getEnd() + bufferValue));
-            });
+            List<FeatureCoordinates> bufferCoordinates = featureCoordinates.stream()
+                    .map(coordinate->new FeatureCoordinates(null, null, null, coordinate.getChromosome(),
+                            coordinate.getStart() - bufferValue >= 0 ? coordinate.getStart() - bufferValue : 0,
+                            coordinate.getEnd() + bufferValue)).collect(Collectors.toList());
             featureCoordinates = bufferCoordinates;
         }
 
