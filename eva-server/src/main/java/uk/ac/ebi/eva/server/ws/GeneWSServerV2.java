@@ -174,17 +174,17 @@ public class GeneWSServerV2 {
 
             pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
                     maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
-                    pageNumber - 1, pageSize, bufferValue, response, request, "first"));
+                    0, pageSize, bufferValue, response, request, "first"));
         }
 
         if (pageNumber < (totalPages - 1)) {
             pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
                     maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
-                    pageNumber - 1, pageSize, bufferValue, response, request, "next"));
+                    pageNumber + 1, pageSize, bufferValue, response, request, "next"));
 
             pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
                     maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
-                    pageNumber - 1, pageSize, bufferValue, response, request, "last"));
+                    totalPages - 1, pageSize, bufferValue, response, request, "last"));
         }
         return pagedResources;
     }
