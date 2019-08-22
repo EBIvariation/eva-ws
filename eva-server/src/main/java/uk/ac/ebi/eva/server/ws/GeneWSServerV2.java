@@ -104,7 +104,7 @@ public class GeneWSServerV2 {
             HttpServletResponse response,
             @ApiIgnore HttpServletRequest request)
             throws IllegalArgumentException {
-        checkParameters(species, assembly, bufferValue);
+        checkParameters(geneIds, species, assembly, bufferValue);
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
         List<FeatureCoordinates> featureCoordinates = service.findAllByGeneIdsOrGeneNames(geneIds, geneIds);
 
@@ -137,7 +137,17 @@ public class GeneWSServerV2 {
                 response, request), HttpStatus.OK);
     }
 
-    private void checkParameters(String species, String assembly, Integer bufferValue) throws IllegalArgumentException {
+    private void checkParameters(List<String> geneIds, String species, String assembly, Integer bufferValue)
+            throws IllegalArgumentException {
+        List<String> filteredGeneIds = geneIds.stream().filter(geneId -> geneId.isEmpty() == false).
+                collect(Collectors.toList());
+        geneIds.clear();
+        geneIds.addAll(filteredGeneIds);
+
+        if (geneIds.isEmpty()) {
+            throw new IllegalArgumentException("Please specify geneIds");
+        }
+
         if (species.isEmpty()) {
             throw new IllegalArgumentException("Please specify a species");
         }
