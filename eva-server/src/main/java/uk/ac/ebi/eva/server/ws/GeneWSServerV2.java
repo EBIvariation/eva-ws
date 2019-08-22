@@ -139,9 +139,12 @@ public class GeneWSServerV2 {
 
     private void checkParameters(List<String> geneIds, String species, String assembly, Integer bufferValue)
             throws IllegalArgumentException {
-        long emptyGeneIdCount = geneIds.stream().map(String::isEmpty).filter(value -> value == true).count();
+        List<String> filteredGeneIds = geneIds.stream().filter(geneId -> geneId.isEmpty() == false).
+                collect(Collectors.toList());
+        geneIds.clear();
+        geneIds.addAll(filteredGeneIds);
 
-        if (emptyGeneIdCount > 0) {
+        if (geneIds.size() == 0) {
             throw new IllegalArgumentException("Please specify geneIds");
         }
 
