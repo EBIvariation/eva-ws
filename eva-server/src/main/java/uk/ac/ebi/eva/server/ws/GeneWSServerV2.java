@@ -144,7 +144,7 @@ public class GeneWSServerV2 {
         geneIds.clear();
         geneIds.addAll(filteredGeneIds);
 
-        if (geneIds.size() == 0) {
+        if (geneIds.isEmpty()) {
             throw new IllegalArgumentException("Please specify geneIds");
         }
 
