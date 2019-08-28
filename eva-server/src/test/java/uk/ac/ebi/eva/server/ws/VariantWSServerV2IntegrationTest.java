@@ -210,4 +210,31 @@ public class VariantWSServerV2IntegrationTest {
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));
     }
+
+    @Test
+    public void rootTestForAdditions() throws URISyntaxException {
+        String url = "/v2/variants/13:32889711:T:?species=mmusculus&assembly=grcm38";
+        VariantWithSamplesAndAnnotation variantWithSamplesAndAnnotations = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<VariantWithSamplesAndAnnotation>() {
+                }).getBody();
+        assertEquals("13", variantWithSamplesAndAnnotations.getChromosome());
+        assertEquals("T", variantWithSamplesAndAnnotations.getReference());
+        assertNull(variantWithSamplesAndAnnotations.getAlternate());
+        assertEquals(32889711, variantWithSamplesAndAnnotations.getStart());
+    }
+
+    @Test
+    public void rootTestForDeletions() throws URISyntaxException {
+        String url = "/v2/variants/13:32889711::A?species=mmusculus&assembly=grcm38";
+        VariantWithSamplesAndAnnotation variantWithSamplesAndAnnotations = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<VariantWithSamplesAndAnnotation>() {
+                }).getBody();
+        assertEquals("13", variantWithSamplesAndAnnotations.getChromosome());
+        assertNull(variantWithSamplesAndAnnotations.getReference());
+        assertEquals("A", variantWithSamplesAndAnnotations.getAlternate());
+        assertEquals(32889711, variantWithSamplesAndAnnotations.getStart());
+    }
+
 }
