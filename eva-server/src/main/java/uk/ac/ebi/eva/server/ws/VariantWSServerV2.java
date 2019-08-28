@@ -113,7 +113,7 @@ public class VariantWSServerV2 {
 
     private void checkParameters(String variantCoreString, String annotationVepVersion,
                                  String annotationVepCacheVersion, String species, String assembly) {
-        String[] regionId = variantCoreString.split(":");
+        String[] regionId = variantCoreString.split(":", -1);
         if (regionId.length != 4) {
             throw new IllegalArgumentException("Please describe a variant as 'sequence:location:reference:" +
                     "alternate'");
