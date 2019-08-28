@@ -146,7 +146,7 @@ public class VariantWSServerV2 {
             String annotationVepVersion,
             String annotationVepCacheVersion)
             throws AnnotationMetadataNotFoundException, IllegalArgumentException {
-        String[] regionId = variantCoreString.split(":");
+        String[] regionId = variantCoreString.split(":", -1);
 
         AnnotationMetadata annotationMetadata = null;
         if (annotationVepVersion != null && annotationVepCacheVersion != null) {
