@@ -96,9 +96,10 @@ public class VariantWSServerV2 {
 
         VariantWithSamplesAndAnnotation retrievedVariant = variantEntity.get();
         Variant variant = new Variant(retrievedVariant.getChromosome(), retrievedVariant.getStart(),
-                retrievedVariant.getEnd(), retrievedVariant.getReference(), retrievedVariant.getAlternate());
+                retrievedVariant.getEnd(),
+                retrievedVariant.getReference().isEmpty() ? " " : retrievedVariant.getReference(),
+                retrievedVariant.getAlternate().isEmpty() ? " " : retrievedVariant.getAlternate());
         variant.setIds(variantEntity.get().getIds());
-
         Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
                 species, assembly, null, null, response)).toUri().toString(), "annotation");
 
