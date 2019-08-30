@@ -50,8 +50,6 @@ import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.Profiles;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
 
 import java.net.URISyntaxException;
@@ -220,7 +218,7 @@ public class VariantWSServerV2IntegrationTest {
                 }).getBody();
         assertEquals("13", variantWithSamplesAndAnnotations.getChromosome());
         assertEquals("T", variantWithSamplesAndAnnotations.getReference());
-        assertEquals(" ", variantWithSamplesAndAnnotations.getAlternate());
+        assertTrue(variantWithSamplesAndAnnotations.getAlternate().isEmpty());
         assertEquals(32889711, variantWithSamplesAndAnnotations.getStart());
     }
 
@@ -232,7 +230,7 @@ public class VariantWSServerV2IntegrationTest {
                 new ParameterizedTypeReference<VariantWithSamplesAndAnnotation>() {
                 }).getBody();
         assertEquals("13", variantWithSamplesAndAnnotations.getChromosome());
-        assertEquals(" ", variantWithSamplesAndAnnotations.getReference());
+        assertTrue(variantWithSamplesAndAnnotations.getReference().isEmpty());
         assertEquals("A", variantWithSamplesAndAnnotations.getAlternate());
         assertEquals(32889711, variantWithSamplesAndAnnotations.getStart());
     }

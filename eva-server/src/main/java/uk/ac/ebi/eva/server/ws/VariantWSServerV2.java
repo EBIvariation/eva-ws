@@ -32,17 +32,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
-import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
-import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -96,9 +92,7 @@ public class VariantWSServerV2 {
 
         VariantWithSamplesAndAnnotation retrievedVariant = variantEntity.get();
         Variant variant = new Variant(retrievedVariant.getChromosome(), retrievedVariant.getStart(),
-                retrievedVariant.getEnd(),
-                retrievedVariant.getReference().isEmpty() ? " " : retrievedVariant.getReference(),
-                retrievedVariant.getAlternate().isEmpty() ? " " : retrievedVariant.getAlternate());
+                retrievedVariant.getEnd(), retrievedVariant.getReference(), retrievedVariant.getAlternate());
         variant.setIds(variantEntity.get().getIds());
         Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
                 species, assembly, null, null, response)).toUri().toString(), "annotation");
