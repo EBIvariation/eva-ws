@@ -17,12 +17,15 @@
 package uk.ac.ebi.eva.lib.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import uk.ac.ebi.eva.commons.core.models.VariantType;
 
 @JsonIgnoreProperties({"id"})
 public abstract class VariantMixin {
+    @JsonInclude(JsonInclude.Include.NON_NULL) String reference;
+    @JsonInclude(JsonInclude.Include.NON_NULL) String alternate;
     @JsonProperty("type") abstract VariantType getType();
     @JsonProperty("length") abstract int getLength();
 }

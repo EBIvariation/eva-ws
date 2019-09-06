@@ -50,8 +50,6 @@ import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.Profiles;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
 
 import java.net.URISyntaxException;
@@ -210,4 +208,31 @@ public class VariantWSServerV2IntegrationTest {
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
                 "or neither", testForErrorHelper(url));
     }
+
+    @Test
+    public void rootTestForDeletions() throws URISyntaxException {
+        String url = "/v2/variants/13:32889711:T:?species=mmusculus&assembly=grcm38";
+        VariantWithSamplesAndAnnotation variantWithSamplesAndAnnotations = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<VariantWithSamplesAndAnnotation>() {
+                }).getBody();
+        assertEquals("13", variantWithSamplesAndAnnotations.getChromosome());
+        assertEquals("T", variantWithSamplesAndAnnotations.getReference());
+        assertTrue(variantWithSamplesAndAnnotations.getAlternate().isEmpty());
+        assertEquals(32889711, variantWithSamplesAndAnnotations.getStart());
+    }
+
+    @Test
+    public void rootTestForInsertions() throws URISyntaxException {
+        String url = "/v2/variants/13:32889711::A?species=mmusculus&assembly=grcm38";
+        VariantWithSamplesAndAnnotation variantWithSamplesAndAnnotations = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<VariantWithSamplesAndAnnotation>() {
+                }).getBody();
+        assertEquals("13", variantWithSamplesAndAnnotations.getChromosome());
+        assertTrue(variantWithSamplesAndAnnotations.getReference().isEmpty());
+        assertEquals("A", variantWithSamplesAndAnnotations.getAlternate());
+        assertEquals(32889711, variantWithSamplesAndAnnotations.getStart());
+    }
+
 }
