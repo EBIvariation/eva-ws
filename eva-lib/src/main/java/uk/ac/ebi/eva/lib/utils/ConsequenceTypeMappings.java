@@ -67,9 +67,7 @@ public class ConsequenceTypeMappings {
         termToAccession.put("intergenic_variant", 1628);
         termToAccession.put("lincRNA", 1463);
         termToAccession.put("downstream_gene_variant", 1632);
-        termToAccession.put("2KB_downstream_gene_variant", 1632);
         termToAccession.put("upstream_gene_variant", 1631);
-        termToAccession.put("2KB_upstream_gene_variant", 1631);
         termToAccession.put("SNV", 1483);
         termToAccession.put("SNP", 694);
         termToAccession.put("RNA_polymerase_promoter", 1203);
@@ -81,7 +79,7 @@ public class ConsequenceTypeMappings {
 
         // Fill the accession to term map
         for(String key : termToAccession.keySet()) {
-            accessionToTerm.put(termToAccession.get(key), key);
+            accessionToTerm.putIfAbsent(termToAccession.get(key), key);
         }
     }
 
