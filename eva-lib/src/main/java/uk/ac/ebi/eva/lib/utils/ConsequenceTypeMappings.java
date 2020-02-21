@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.eva.lib.utils;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -24,9 +24,9 @@ import java.util.Map;
  */
 public class ConsequenceTypeMappings {
 
-    public static final Map<String, Integer> termToAccession = new HashMap<>();
+    public static final Map<String, Integer> termToAccession = new LinkedHashMap<>();
 
-    public static final Map<Integer, String> accessionToTerm = new HashMap<>();
+    public static final Map<Integer, String> accessionToTerm = new LinkedHashMap<>();
 
     static {
         // Fill the term to accession map
