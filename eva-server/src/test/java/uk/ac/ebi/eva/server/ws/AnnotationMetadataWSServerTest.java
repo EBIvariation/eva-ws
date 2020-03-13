@@ -61,7 +61,7 @@ public class AnnotationMetadataWSServerTest {
 
     @Test
     public void testFetAnnotationMetadata() {
-        String url = "/v1/segments?species=mmusculus_grcm38";
+        String url = "/v1/annotation?species=mmusculus_grcm38";
         ResponseEntity<QueryResponse<QueryResult<AnnotationMetadata>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<AnnotationMetadata>>>() {
