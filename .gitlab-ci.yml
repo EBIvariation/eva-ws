@@ -1,92 +1,98 @@
 stages:
-    - build
     - test
+    - package
     - deploy
 
-# Not executed, parent job definition for Maven builds
-.maven-build:
-    image: maven:3.5.4-jdk-8
-    stage: build
-    variables:
-        ARTIFACT_PATH: "eva-server/target/eva-$ENVIRONMENT_NAME.war"
-        _JAVA_OPTIONS: "-Djdk.net.URLClassPath.disableClassPathURLCheck=true"
-    script:
-        - "mvn package --settings .gitlab.settings.xml -P $MAVEN_PROFILE"
-        - "cp eva-server/target/eva-*.war $ARTIFACT_PATH"
-    artifacts:
-        paths:
-            - "$ARTIFACT_PATH"
-        expire_in: 2 weeks
+variables:
+    WS_ARTIFACT_PATH: eva-server/target/eva-$ENVIRONMENT_NAME.war
+    MAVEN_SETTINGS: maven-settings.xml
+    URL_MAVEN_SETTINGS: https://api.github.com/repos/EBIvariation/configuration/contents/eva-maven-settings.xml
+    MEDIA_TYPE: application/vnd.github.raw
 
-maven-test:
-    image: maven:3.5.4-jdk-8
+test:
     stage: test
-    variables:
-        _JAVA_OPTIONS: "-Djdk.net.URLClassPath.disableClassPathURLCheck=true"
+    image: maven:3.6.1-jdk-8-alpine
     script:
-        - mvn verify --settings .gitlab.settings.xml
-    artifacts:
-        reports:
-            junit:
-                - eva-server/target/surefire-reports/TEST-*.xml
+        - mvn clean test --projects 'eva-lib,eva-server'
     only:
         - master
+        - tags
+
+# Not executed, parent job definition for package
+.package:
+    image: maven:3.6.1-jdk-8-alpine
+    stage: package
+    environment:
+        name: $ENVIRONMENT_NAME
+    before_script:
+        - DATETIME=$(date +%Y-%m-%dT%H-%M-%S)
+        - apk add --update curl
+        - curl -u $GITHUB_USER:$GITHUB_TOKEN -H "Accept:$MEDIA_TYPE" $URL_MAVEN_SETTINGS > $MAVEN_SETTINGS
+    script:
+        - mvn package --projects 'eva-lib,eva-server' --settings $MAVEN_SETTINGS -P $MAVEN_PROFILE" -DskipTests -Dtimestamp=$DATETIME
+        - cp eva-server/target/eva-*.war $WS_ARTIFACT_PATH
+    after_script:
+        - rm $MAVEN_SETTINGS
+    artifacts:
+        paths:
+            - $WS_ARTIFACT_PATH
+
+package-internal:
+    extends: .package
+    variables:
+        MAVEN_PROFILE: internal
+        ENVIRONMENT_NAME: internal
+    only:
+        - master
+
+package-development:
+    extends: .package
+    variables:
+        MAVEN_PROFILE: development
+        ENVIRONMENT_NAME: development
+    only:
+        - master
+
+package-production:
+    extends: .package
+    variables:
+        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
+        ENVIRONMENT_NAME: production
+    only:
         - tags
 
 # Not executed, parent job definition for Tomcat deployments
 .deploy-tomcat:
-    image: maven:3.5.4-jdk-8-alpine
     stage: deploy
+    image: alpine:3.9.5
     environment:
         name: $ENVIRONMENT_NAME
-        url: "http://$TOMCAT_HOST/eva/webservices/rest/swagger-ui.html"
-    variables:
-        ARTIFACT_PATH: "eva-server/target/eva-$ENVIRONMENT_NAME.war"
     script:
-        - "apk add --update curl"
-        - "curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T \"$ARTIFACT_PATH\" \"http://$TOMCAT_HOST/manager/text/deploy?update=true&path=/eva\" | grep \"OK - Deployed application\""
-
-maven-build-internal:
-    extends: .maven-build
-    variables:
-        MAVEN_PROFILE: "internal,evadev,dgvadev"
-        ENVIRONMENT_NAME: "internal"
-    only:
-        - master
-
-maven-build-development:
-    extends: .maven-build
-    variables:
-        MAVEN_PROFILE: "development,evadev,dgvadev"
-        ENVIRONMENT_NAME: "development"
-    only:
-        - master
-
-maven-build-production:
-    extends: .maven-build
-    variables:
-        MAVEN_PROFILE: "production,$ACTIVE_EVAPRO,dgvapro"
-        ENVIRONMENT_NAME: "production"
-    only:
-        - tags
+        - DATETIME=$(date +%Y-%m-%dT%H-%M-%S)
+        - apk add --update curl
+        - curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T "$WS_ARTIFACT_PATH" "http://$TOMCAT_HOST/manager/text/deploy?update=true&path=/eva&version=$DATETIME" | grep "OK - Deployed application"
 
 deploy-tomcat-internal:
     extends: .deploy-tomcat
     variables:
-        TOMCAT_USER: "$TOMCAT_INTERNAL_USER"
-        TOMCAT_PASSWORD: "$TOMCAT_INTERNAL_PASSWORD"
-        TOMCAT_HOST: "$TOMCAT_INTERNAL_HOST"
-        ENVIRONMENT_NAME: "internal"
+        ENVIRONMENT_NAME: internal
+        TOMCAT_USER: $TOMCAT_INTERNAL_USER
+        TOMCAT_PASSWORD: $TOMCAT_INTERNAL_PASSWORD
+        TOMCAT_HOST: $TOMCAT_INTERNAL_HOST
+    dependencies:
+        - package-internal
     only:
         - master
 
 deploy-tomcat-development:
     extends: .deploy-tomcat
     variables:
-        TOMCAT_USER: "$TOMCAT_DEVELOPMENT_USER"
-        TOMCAT_PASSWORD: "$TOMCAT_DEVELOPMENT_PASSWORD"
-        TOMCAT_HOST: "$TOMCAT_DEVELOPMENT_HOST"
-        ENVIRONMENT_NAME: "development"
+        ENVIRONMENT_NAME: development
+        TOMCAT_USER: $TOMCAT_DEVELOPMENT_USER
+        TOMCAT_PASSWORD: $TOMCAT_DEVELOPMENT_PASSWORD
+        TOMCAT_HOST: $TOMCAT_DEVELOPMENT_HOST
+    dependencies:
+        - package-development
     only:
         - master
 
@@ -94,10 +100,10 @@ deploy-tomcat-production:
     extends: .deploy-tomcat
     when: manual
     variables:
-        TOMCAT_USER: "$TOMCAT_PRODUCTION_USER"
-        TOMCAT_PASSWORD: "$TOMCAT_PRODUCTION_PASSWORD"
-        TOMCAT_HOST: "$TOMCAT_PRODUCTION_HOST"
-        ENVIRONMENT_NAME: "production"
+        ENVIRONMENT_NAME: production
+        TOMCAT_USER: $TOMCAT_PRODUCTION_USER
+        TOMCAT_PASSWORD: $TOMCAT_PRODUCTION_PASSWORD
+        TOMCAT_HOST: $TOMCAT_PRODUCTION_HOST
     only:
         - tags
 
@@ -105,9 +111,9 @@ deploy-tomcat-production-fallback:
     extends: .deploy-tomcat
     when: manual
     variables:
-        TOMCAT_USER: "$TOMCAT_PRODUCTION_FALLBACK_USER"
-        TOMCAT_PASSWORD: "$TOMCAT_PRODUCTION_FALLBACK_PASSWORD"
-        TOMCAT_HOST: "$TOMCAT_PRODUCTION_FALLBACK_HOST"
-        ENVIRONMENT_NAME: "production"
+        ENVIRONMENT_NAME: production
+        TOMCAT_USER: $TOMCAT_PRODUCTION_FALLBACK_USER
+        TOMCAT_PASSWORD: $TOMCAT_PRODUCTION_FALLBACK_PASSWORD
+        TOMCAT_HOST: $TOMCAT_PRODUCTION_FALLBACK_HOST
     only:
         - tags
