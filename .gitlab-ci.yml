@@ -30,7 +30,7 @@ test:
         - apk add --update curl
         - curl -u $GITHUB_USER:$GITHUB_TOKEN -H "Accept:$MEDIA_TYPE" $URL_MAVEN_SETTINGS > $MAVEN_SETTINGS
     script:
-        - mvn package --projects 'eva-lib,eva-server' --settings $MAVEN_SETTINGS -P $MAVEN_PROFILE" -DskipTests -Dtimestamp=$DATETIME
+        - mvn package --projects 'eva-lib,eva-server' --settings $MAVEN_SETTINGS -P $MAVEN_PROFILE -DskipTests -Dtimestamp=$DATETIME
         - cp eva-server/target/eva-*.war $WS_ARTIFACT_PATH
     after_script:
         - rm $MAVEN_SETTINGS
