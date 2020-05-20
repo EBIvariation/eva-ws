@@ -38,7 +38,8 @@ import static org.junit.Assert.assertNotEquals;
 
 public class WSTestHelpers {
 
-    public static JSONObject testRestTemplateHelperJsonObject(String url, TestRestTemplate restTemplate) {
+    public static JSONObject testRestTemplateHelperJsonObject(String url, TestRestTemplate restTemplate)
+            throws Exception {
         ResponseEntity<String> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<String>() {

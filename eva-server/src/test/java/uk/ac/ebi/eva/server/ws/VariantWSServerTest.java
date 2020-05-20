@@ -44,10 +44,11 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
+
 
 /**
  * Tests for VariantWSServer
@@ -81,7 +82,7 @@ public class VariantWSServerTest {
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(VARIANT);
 
         given(variantEntityRepository
-                .findByChromosomeAndStartAndReferenceAndAlternate(eq(CHROMOSOME), anyInt(), any(), any(), any()))
+                .findByChromosomeAndStartAndReferenceAndAlternate(eq(CHROMOSOME), anyLong(), any(), any(), any()))
                 .willReturn(variantEntities);
 
         given(variantEntityRepository.findByIdsAndComplexFilters(eq(Arrays.asList(VARIANT_ID)), any(), any(), any(), any()))

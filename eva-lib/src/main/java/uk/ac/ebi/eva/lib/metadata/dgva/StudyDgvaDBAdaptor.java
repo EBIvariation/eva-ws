@@ -28,6 +28,7 @@ import uk.ac.ebi.eva.lib.dgva_utils.DgvaDBUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
@@ -62,10 +63,10 @@ public class StudyDgvaDBAdaptor implements StudyDBAdaptor {
     @Override
     public QueryResult getStudyById(String studyId, QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
-        DgvaStudyBrowser dgvaStudy = dgvaStudyBrowserRepository.findOne(studyId);
+        Optional<DgvaStudyBrowser> dgvaStudy = dgvaStudyBrowserRepository.findById(studyId);
         List<VariantStudy> variantStudy = new ArrayList<>();
-        if (dgvaStudy != null) {
-            variantStudy.add(dgvaStudy.generateVariantStudy());
+        if (dgvaStudy.isPresent()) {
+            variantStudy.add(dgvaStudy.get().generateVariantStudy());
         }
         long end = System.currentTimeMillis();
         return new QueryResult(null, ((Long) (end - start)).intValue(), variantStudy.size(), variantStudy.size(), null, null, variantStudy);

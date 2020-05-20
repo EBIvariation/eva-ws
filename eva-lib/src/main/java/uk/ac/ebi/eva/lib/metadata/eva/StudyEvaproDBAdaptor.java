@@ -28,6 +28,7 @@ import uk.ac.ebi.eva.lib.repositories.EvaStudyBrowserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static uk.ac.ebi.eva.lib.eva_utils.EvaproDbUtils.getSpeciesAndTypeFilters;
 
@@ -66,10 +67,10 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
     @Override
     public QueryResult getStudyById(String s, QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
-        EvaStudyBrowser study = evaStudyBrowserRepository.findOne(s);
+        Optional<EvaStudyBrowser> study = evaStudyBrowserRepository.findById(s);
         List<VariantStudy> variantStudy = new ArrayList<>();
-        if (study != null) {
-            variantStudy.add(study.generateVariantStudy());
+        if (study.isPresent()) {
+            variantStudy.add(study.get().generateVariantStudy());
         }
         long end = System.currentTimeMillis();
         return new QueryResult(null, ((Long) (end - start)).intValue(), variantStudy.size(), variantStudy.size(), null, null, variantStudy);

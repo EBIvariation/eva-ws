@@ -13,6 +13,7 @@
 
     <properties>
         <compileSource>1.8</compileSource>
+        <eva.mongo.host.test>localhost</eva.mongo.host.test>
     </properties>
 
     <dependencies>
@@ -33,23 +34,12 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.fakemongo</groupId>
-            <artifactId>fongo</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.lordofthejars</groupId>
             <artifactId>nosqlunit-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.lordofthejars</groupId>
             <artifactId>nosqlunit-mongodb</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.github.fakemongo</groupId>
-                    <artifactId>fongo</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -59,10 +49,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -77,6 +63,19 @@
 
     <build>
         <finalName>${project.artifactId}-${project.version}-${git.commit.id.abbrev}</finalName>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources/properties</directory>
+                <filtering>true</filtering>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>src/test/resources/properties/*</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
     </build>
     
 </project>

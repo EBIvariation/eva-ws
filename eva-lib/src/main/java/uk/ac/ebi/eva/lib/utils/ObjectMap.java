@@ -295,7 +295,7 @@ public class ObjectMap implements Map<String, Object>, Serializable {
             if (value instanceof List) {
                 return (List) value;
             } else {
-                return Arrays.<Object>asList(value.toString().split(separator));
+                return Arrays.<Object>asList((Object[])(value.toString().split(separator)));
             }
         }
     }

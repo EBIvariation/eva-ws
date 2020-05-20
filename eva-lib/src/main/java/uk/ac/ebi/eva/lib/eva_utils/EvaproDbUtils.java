@@ -16,7 +16,6 @@
 package uk.ac.ebi.eva.lib.eva_utils;
 
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 
 import uk.ac.ebi.eva.commons.core.models.StudyType;
 import uk.ac.ebi.eva.lib.extension.GenericSpecifications;
@@ -24,7 +23,7 @@ import uk.ac.ebi.eva.lib.repositories.EvaStudyBrowserRepository;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryOptionsConstants;
 
-import static org.springframework.data.jpa.domain.Specifications.where;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 public class EvaproDbUtils {
 
@@ -58,14 +57,14 @@ public class EvaproDbUtils {
             return null;
         }
 
-        Specifications speciesSpecifications = null;
+        Specification speciesSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.SPECIES)) {
             Object[] species = queryOptions.getAsStringList(QueryOptionsConstants.SPECIES).toArray(new Object[]{});
             speciesSpecifications = where(GenericSpecifications.in(EvaStudyBrowserRepository.COMMON_NAME, species))
                     .or(GenericSpecifications.in(EvaStudyBrowserRepository.SCIENTIFIC_NAME, species));
         }
 
-        Specifications typeSpecifications = null;
+        Specification typeSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.TYPE)) {
             Object[] types = queryOptions.getAsStringList(QueryOptionsConstants.TYPE).toArray(new Object[]{});
             typeSpecifications = where(GenericSpecifications.in(EvaStudyBrowserRepository.EXPERIMENT_TYPE, types));

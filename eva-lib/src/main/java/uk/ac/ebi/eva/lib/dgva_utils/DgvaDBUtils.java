@@ -16,12 +16,11 @@
 package uk.ac.ebi.eva.lib.dgva_utils;
 
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import uk.ac.ebi.eva.lib.repositories.DgvaStudyBrowserRepository;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryOptionsConstants;
 
-import static org.springframework.data.jpa.domain.Specifications.where;
+import static org.springframework.data.jpa.domain.Specification.where;
 import static uk.ac.ebi.eva.lib.extension.GenericSpecifications.ilike;
 import static uk.ac.ebi.eva.lib.extension.GenericSpecifications.in;
 
@@ -32,7 +31,7 @@ public class DgvaDBUtils {
             return null;
         }
 
-        Specifications speciesSpecifications = null;
+        Specification speciesSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.SPECIES)) {
             String[] species = queryOptions.getAsStringList(QueryOptionsConstants.SPECIES).toArray(new String[]{});
             speciesSpecifications = where(in(DgvaStudyBrowserRepository.COMMON_NAME, (Object[])species))
@@ -45,12 +44,13 @@ public class DgvaDBUtils {
             }
         }
 
-        Specifications typeSpecifications = null;
+        Specification typeSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.TYPE)) {
             String[] types = queryOptions.getAsStringList(QueryOptionsConstants.TYPE).toArray(new String[]{});
             typeSpecifications = where(in(DgvaStudyBrowserRepository.STUDY_TYPE, (Object[])types));
             for (String type : types) {
-                typeSpecifications = typeSpecifications.or(ilike(DgvaStudyBrowserRepository.STUDY_TYPE, "%" + type + "%"));
+                typeSpecifications = typeSpecifications.or(
+                        ilike(DgvaStudyBrowserRepository.STUDY_TYPE, "%" + type + "%"));
             }
         }
 
