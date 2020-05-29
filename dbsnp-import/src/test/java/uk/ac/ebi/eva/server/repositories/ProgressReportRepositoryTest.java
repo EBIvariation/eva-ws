@@ -28,10 +28,11 @@ import uk.ac.ebi.eva.server.models.Status;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -47,13 +48,14 @@ public class ProgressReportRepositoryTest {
 
     @Test
     public void testFindById() {
-        ProgressReport report = progressReportRepository.findOne(new ProgressReportPK("fruitfly_7227",
-                                                                                      "GCA_000001215.4"));
+        Optional<ProgressReport> report = progressReportRepository.findById(new ProgressReportPK("fruitfly_7227",
+                                                                                                 "GCA_000001215.4"));
+        assertTrue(report.isPresent());
         ProgressReport expected = new ProgressReport("fruitfly_7227", 7227, "Drosophila melanogaster", "Fruit fly",
                                                      "GCA_000001215.4", 149, true, false, false, Status.pending,
                                                      Status.pending, Status.pending, null, null, null, 0L, 0L, 0L, 0L,
                                                      0L, 0L);
-        assertEquals(expected, report);
+        assertEquals(expected, report.get());
     }
 
     @Test
@@ -70,24 +72,25 @@ public class ProgressReportRepositoryTest {
 
     @Test
     public void testVariantWithEvidenceImportFields() {
-        ProgressReport report = progressReportRepository.findOne(new ProgressReportPK("arabidopsis_3702",
-                                                                                      "GCA_000001735.1"));
-        assertEquals(Status.done, report.getVariantsWithEvidenceImported());
+        Optional<ProgressReport> report = progressReportRepository.findById(new ProgressReportPK("arabidopsis_3702",
+                                                                                                 "GCA_000001735.1"));
+        assertTrue(report.isPresent());
+        assertEquals(Status.done, report.get().getVariantsWithEvidenceImported());
         Calendar cal = Calendar.getInstance();
         cal.set(2018, Calendar.MAY, 30, 0, 0, 0);
         cal.set(Calendar.MILLISECOND, 0);
         Date date = cal.getTime();
-        assertEquals(date.getTime(), report.getVariantsWithEvidenceImportedDate().getTime());
+        assertEquals(date.getTime(), report.get().getVariantsWithEvidenceImportedDate().getTime());
     }
 
     @Test
     public void testVariantWithoutGenbankAccession() {
         String databaseName = "orangutan_9600";
         String genbankAssemblyAccession = "";
-        ProgressReport report = progressReportRepository.findOne(new ProgressReportPK(databaseName,
-                                                                                      genbankAssemblyAccession));
-        assertNotNull(report);
-        assertEquals(genbankAssemblyAccession, report.getGenbankAssemblyAccession());
-        assertEquals(databaseName, report.getDatabaseName());
+        Optional<ProgressReport> report = progressReportRepository.findById(new ProgressReportPK(databaseName,
+                                                                                                 genbankAssemblyAccession));
+        assertTrue(report.isPresent());
+        assertEquals(genbankAssemblyAccession, report.get().getGenbankAssemblyAccession());
+        assertEquals(databaseName, report.get().getDatabaseName());
     }
 }

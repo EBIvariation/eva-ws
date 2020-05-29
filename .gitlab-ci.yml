@@ -12,8 +12,11 @@ variables:
 test:
     stage: test
     image: maven:3.6.1-jdk-8-alpine
+    services:
+        - mongo:4.0.18
     script:
-        - mvn clean test --projects 'eva-lib,eva-server'
+        # Gitlab exposes services under their own hostnames. So test host should be "mongo" instead of "localhost".
+        - mvn clean test --projects 'eva-lib,eva-server' -Deva.mongo.host.test=mongo
     only:
         - master
         - tags

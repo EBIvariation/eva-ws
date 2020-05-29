@@ -18,27 +18,44 @@
  */
 package uk.ac.ebi.eva.lib.configuration;
 
-import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
+
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import uk.ac.ebi.eva.lib.MongoConfiguration;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+
+import java.net.UnknownHostException;
 
 @Configuration
 @EnableMongoRepositories(basePackages = "uk.ac.ebi.eva.lib.repositories")
 @Import({MongoConfiguration.class})
+@EnableMongoAuditing
+@AutoConfigureDataMongo
 public class MongoRepositoryTestConfiguration {
 
+    @Primary
     @Bean
-    public MongoClient mongoClient() {
-        return new Fongo("defaultInstance").getMongo();
+    @ConfigurationProperties(prefix = "spring.data.mongodb")
+    public MongoProperties mongoProperties() {
+        return new MongoProperties();
+    }
+
+    @Bean
+    public MongoClient mongoClient(SpringDataMongoDbProperties properties) throws UnknownHostException {
+        return DBAdaptorConnector.getMongoClient(properties);
     }
 
     @Bean

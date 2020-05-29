@@ -38,10 +38,10 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -59,7 +59,7 @@ public class GA4GHBeaconWSServerTest {
                                                                                       "alternate", "rs1");
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(variant);
 
-        given(service.findByChromosomeAndStartAndAltAndStudyIn(eq("1"), anyInt(), any(), any(), any()))
+        given(service.findByChromosomeAndStartAndAltAndStudyIn(eq("1"), anyLong(), any(), any(), any()))
                 .willReturn(variantEntities);
     }
 

@@ -15,25 +15,29 @@
  */
 package uk.ac.ebi.eva.server.configuration;
 
-import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
+
+import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 
 import uk.ac.ebi.eva.lib.MongoConfiguration;
 import uk.ac.ebi.eva.lib.Profiles;
+import uk.ac.ebi.eva.lib.configuration.SpringDataMongoDbProperties;
 
 @Configuration
 @Import({MongoConfiguration.class})
 @PropertySource({"classpath:application.properties"})
+@EnableMongoAuditing
+@AutoConfigureDataMongo
 public class MongoRepositoryTestConfiguration {
 
     @Bean
@@ -43,14 +47,14 @@ public class MongoRepositoryTestConfiguration {
     }
 
     @Bean
-    @Profile(Profiles.TEST_MONGO_FACTORY)
-    public MongoDbFactory mongoDbFactory(MongoClient mongoClient) throws Exception {
-        return new SimpleMongoDbFactory(mongoClient, this.getDatabaseName());
+    public MongoClient mongoClient(SpringDataMongoDbProperties properties) throws Exception {
+        return MongoConfiguration.getMongoClient(properties);
     }
 
     @Bean
-    public MongoClient mongoClient() {
-        return new Fongo("defaultInstance").getMongo();
+    @Profile(Profiles.TEST_MONGO_FACTORY)
+    public MongoDbFactory mongoDbFactory(MongoClient mongoClient) throws Exception {
+        return new SimpleMongoDbFactory(mongoClient, this.getDatabaseName());
     }
 
     private String getDatabaseName() {

@@ -16,6 +16,7 @@
 package uk.ac.ebi.eva.lib.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import uk.ac.ebi.eva.lib.models.FileFtpReference;
 import uk.ac.ebi.eva.lib.entities.File;
@@ -27,8 +28,10 @@ public interface FileRepository extends JpaRepository<File, Long> {
     Long countByFileTypeIn(List<String> strings);
 
     //named query
+    @Query(nativeQuery = true)
     FileFtpReference getFileFtpReferenceByFilename(@Param("filename") String filename);
 
     //named query
+    @Query(nativeQuery = true)
     List<FileFtpReference> getFileFtpReferenceByNames(@Param("filenames") List<String> filenames);
 }

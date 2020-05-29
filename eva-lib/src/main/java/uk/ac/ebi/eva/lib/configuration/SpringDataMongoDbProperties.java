@@ -24,10 +24,14 @@ import javax.validation.constraints.Size;
 @Component
 public class SpringDataMongoDbProperties {
 
+    private String database;
+
     @Size(min = 1)
     private String host;
 
     private String authenticationDatabase;
+
+    private String authenticationMechanism;
 
     private String username;
 
@@ -35,8 +39,16 @@ public class SpringDataMongoDbProperties {
 
     private String readPreference;
 
+    public String getDatabase() {
+        return database;
+    }
+
     public String getHost() {
         return host;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
     }
 
     public void setHost(String host) {
@@ -49,6 +61,14 @@ public class SpringDataMongoDbProperties {
 
     public void setAuthenticationDatabase(String authenticationDatabase) {
         this.authenticationDatabase = authenticationDatabase;
+    }
+
+    public String getAuthenticationMechanism() {
+        return authenticationMechanism;
+    }
+
+    public void setAuthenticationMechanism(String authenticationMechanism) {
+        this.authenticationMechanism = authenticationMechanism;
     }
 
     public String getUsername() {

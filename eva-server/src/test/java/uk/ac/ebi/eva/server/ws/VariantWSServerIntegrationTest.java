@@ -142,7 +142,7 @@ public class VariantWSServerIntegrationTest {
     }
 
     @Test
-    public void testVariantSearchByList() {
+    public void testVariantSearchByList() throws Exception {
         String testVariantIds = "rs370478,rs199692280";
         String url = "/v1/variants/" + testVariantIds + "/?species=mmusculus_grcm38";
         JSONObject jsonObject = WSTestHelpers.testRestTemplateHelperJsonObject(url, restTemplate);
@@ -169,7 +169,7 @@ public class VariantWSServerIntegrationTest {
     }
 
     @Test
-    public void testProteinSubstitutionScoresModel() {
+    public void testProteinSubstitutionScoresModel() throws Exception {
         String testVariantId = "rs370478";
         String url = "/v1/variants/" + testVariantId + "/info?species=mmusculus_grcm38";
         JSONObject jsonObject = WSTestHelpers.testRestTemplateHelperJsonObject(url, restTemplate);

@@ -17,7 +17,6 @@ package uk.ac.ebi.eva.lib.metadata.eva;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.eva.lib.metadata.ArchiveDBAdaptor;
@@ -35,7 +34,7 @@ import javax.persistence.Tuple;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.springframework.data.jpa.domain.Specifications.where;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @Component
 public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
@@ -133,14 +132,14 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
             return null;
         }
 
-        Specifications speciesSpecifications = null;
+        Specification speciesSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.SPECIES)) {
             Object[] species = queryOptions.getAsStringList(QueryOptionsConstants.SPECIES).toArray(new Object[]{});
             speciesSpecifications = where(GenericSpecifications.in(EvaStudyBrowserRepository.COMMON_NAME, species))
                     .or(GenericSpecifications.in(EvaStudyBrowserRepository.SCIENTIFIC_NAME, species));
         }
 
-        Specifications typeSpecifications = null;
+        Specification typeSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.TYPE)) {
             Object[] types = queryOptions.getAsStringList(QueryOptionsConstants.TYPE).toArray(new Object[]{});
             typeSpecifications = where(GenericSpecifications.in(EvaStudyBrowserRepository.EXPERIMENT_TYPE, types));

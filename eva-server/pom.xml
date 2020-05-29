@@ -30,6 +30,7 @@
         <dependency>
             <groupId>org.springframework.security.oauth</groupId>
             <artifactId>spring-security-oauth2</artifactId>
+            <version>2.1.0.RELEASE</version>
         </dependency>
 
         <dependency>
@@ -66,11 +67,6 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.fakemongo</groupId>
-            <artifactId>fongo</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -127,11 +123,25 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources/properties</directory>
+                <filtering>true</filtering>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>src/test/resources/properties/*</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
     </build>
 
     <properties>
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+        <eva.mongo.host.test>localhost</eva.mongo.host.test>
     </properties>
     
 </project>
