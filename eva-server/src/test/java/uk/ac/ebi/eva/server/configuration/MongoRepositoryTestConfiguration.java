@@ -32,6 +32,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import uk.ac.ebi.eva.lib.MongoConfiguration;
 import uk.ac.ebi.eva.lib.Profiles;
 import uk.ac.ebi.eva.lib.configuration.SpringDataMongoDbProperties;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 
 @Configuration
 @Import({MongoConfiguration.class})
@@ -48,7 +49,7 @@ public class MongoRepositoryTestConfiguration {
 
     @Bean
     public MongoClient mongoClient(SpringDataMongoDbProperties properties) throws Exception {
-        return MongoConfiguration.getMongoClient(properties);
+        return DBAdaptorConnector.getMongoClient(properties);
     }
 
     @Bean

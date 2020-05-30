@@ -15,13 +15,6 @@
  */
 package uk.ac.ebi.eva.lib;
 
-import com.mongodb.AuthenticationMechanism;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoCredential;
-import com.mongodb.ReadPreference;
-import com.mongodb.ServerAddress;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -38,12 +31,9 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 import uk.ac.ebi.eva.lib.configuration.DbCollectionsProperties;
 import uk.ac.ebi.eva.lib.configuration.SpringDataMongoDbProperties;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Configuration
 @Import(DbCollectionsProperties.class)
@@ -107,63 +97,9 @@ public class MongoConfiguration {
         return mongoConverter;
     }
 
-    /**
-     * Get a MongoClient using the configuration (credentials) in a given Properties.
-     *
-     * @param springDataMongoDbProperties can have the next values:
-     *                   - eva.mongo.auth.db authentication database
-     *                   - eva.mongo.host comma-separated strings of colon-separated host and port strings: host_1:port_1,host_2:port_2
-     *                   - eva.mongo.user
-     *                   - eva.mongo.passwd
-     *                   - eva.mongo.read-preference string, "secondaryPreferred" if unspecified. one of:
-     *                          [primary, primaryPreferred, secondary, secondaryPreferred, nearest]
-     * @return MongoClient with given credentials
-     * @throws UnknownHostException
-     */
-    public static MongoClient getMongoClient(SpringDataMongoDbProperties springDataMongoDbProperties) throws UnknownHostException {
-
-        String[] hosts = springDataMongoDbProperties.getHost().split(",");
-        List<ServerAddress> servers = new ArrayList<>();
-
-        // Get the list of hosts (optionally including the port number)
-        for (String host : hosts) {
-            String[] params = host.split(":");
-            if (params.length > 1) {
-                servers.add(new ServerAddress(params[0], Integer.parseInt(params[1])));
-            } else {
-                servers.add(new ServerAddress(params[0], 27017));
-            }
-        }
-
-        String readPreference = springDataMongoDbProperties.getReadPreference();
-        readPreference = readPreference == null || readPreference.isEmpty()? "secondaryPreferred" : readPreference;
-
-        MongoClientOptions options = MongoClientOptions.builder()
-                                                       .readPreference(ReadPreference.valueOf(readPreference))
-                                                       .build();
-
-        List<MongoCredential> mongoCredentialList = new ArrayList<>();
-        String authenticationDb = springDataMongoDbProperties.getAuthenticationDatabase();
-        if (authenticationDb != null && !authenticationDb.isEmpty()) {
-            MongoCredential mongoCredential = MongoCredential.createCredential(
-                    springDataMongoDbProperties.getUsername(),
-                    authenticationDb,
-                    springDataMongoDbProperties.getPassword().toCharArray());
-            String authenticationMechanism = springDataMongoDbProperties.getAuthenticationMechanism();
-            if (authenticationMechanism == null) {
-                return new MongoClient(servers, options);
-            }
-            mongoCredential = mongoCredential.withMechanism(
-                    AuthenticationMechanism.fromMechanismName(authenticationMechanism));
-            mongoCredentialList = Collections.singletonList(mongoCredential);
-        }
-
-        return new MongoClient(servers, mongoCredentialList, options);
-    }
-
     @Bean
     public MongoDbFactory mongoDbFactory(SpringDataMongoDbProperties springDataMongoDbProperties) throws Exception {
-        return new SimpleMongoDbFactory(getMongoClient(springDataMongoDbProperties),
+        return new SimpleMongoDbFactory(DBAdaptorConnector.getMongoClient(springDataMongoDbProperties),
                                         springDataMongoDbProperties.getDatabase());
     }
 }
