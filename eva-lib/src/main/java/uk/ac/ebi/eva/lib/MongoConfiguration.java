@@ -29,6 +29,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
@@ -158,5 +159,11 @@ public class MongoConfiguration {
         }
 
         return new MongoClient(servers, mongoCredentialList, options);
+    }
+
+    @Bean
+    public MongoDbFactory mongoDbFactory(SpringDataMongoDbProperties springDataMongoDbProperties) throws Exception {
+        return new SimpleMongoDbFactory(getMongoClient(springDataMongoDbProperties),
+                                        springDataMongoDbProperties.getDatabase());
     }
 }
