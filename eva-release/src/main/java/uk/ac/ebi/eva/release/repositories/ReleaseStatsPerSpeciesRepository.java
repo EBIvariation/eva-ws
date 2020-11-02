@@ -37,4 +37,7 @@ public interface ReleaseStatsPerSpeciesRepository extends CrudRepository<Release
             int releaseVersion, long currentRs, long multiMappedRs, long mergedRs, long deprecatedRs,
             long mergedDeprecatedRs, long unmappedRs);
 
+    Iterable<ReleaseStatsPerSpecies> findByNewCurrentRsGreaterThan(long currentRs);
+
+    Iterable<ReleaseStatsPerSpecies> findByReleaseVersionAndNewCurrentRsGreaterThan(int releaseVersion, long currentRs);
 }

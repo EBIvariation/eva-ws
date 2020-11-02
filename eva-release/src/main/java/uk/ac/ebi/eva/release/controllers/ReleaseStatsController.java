@@ -40,6 +40,11 @@ public class ReleaseStatsController {
             @RequestParam(name = "releaseVersion", required = false) Integer releaseVersion,
             @RequestParam(name = "excludeUnmappedOnly", required = false) boolean excludeUnmappedOnly) {
         return releaseStatsService.getReleaseStatsPerSpecies(releaseVersion, excludeUnmappedOnly);
+    }
 
+    @GetMapping("/per-species/new")
+    public Iterable<ReleaseStatsPerSpeciesDto> getSpeciesWithNewRsIds(
+            @RequestParam(name = "releaseVersion") Integer releaseVersion) {
+        return releaseStatsService.getSpeciesWithNewRsIds(releaseVersion);
     }
 }

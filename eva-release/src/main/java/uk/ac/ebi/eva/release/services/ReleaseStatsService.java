@@ -98,8 +98,18 @@ public class ReleaseStatsService {
         releaseStatsPerSpeciesDto.setNewUnmappedRs(releaseStatsPerSpecies.getNewUnmappedRs());
         releaseStatsPerSpeciesDto.setNewSsClustered(releaseStatsPerSpecies.getNewSsClustered());
         releaseStatsPerSpeciesDto.setReleaseLink(FTP_RELEASE_URL + releaseStatsPerSpecies.getReleaseVersion()
-                                                + SPECIES_DIRECTORY + releaseStatsPerSpecies.getReleaseFolder());
+                                                         + SPECIES_DIRECTORY + releaseStatsPerSpecies
+                .getReleaseFolder());
         releaseStatsPerSpeciesDto.setTaxonomyLink(TAXONOMY_URL + releaseStatsPerSpecies.getTaxonomyId());
         return releaseStatsPerSpeciesDto;
+    }
+
+    public Iterable<ReleaseStatsPerSpeciesDto> getSpeciesWithNewRsIds(Integer releaseVersion) {
+        if (releaseVersion != null) {
+            return toDto(releaseStatsPerSpeciesRepository
+                                 .findByReleaseVersionAndNewCurrentRsGreaterThan(releaseVersion, 0L));
+        } else {
+            return toDto(releaseStatsPerSpeciesRepository.findByNewCurrentRsGreaterThan(0L));
+        }
     }
 }
