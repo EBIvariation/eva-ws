@@ -20,7 +20,10 @@ import org.springframework.stereotype.Repository;
 
 import uk.ac.ebi.eva.release.models.ReleaseInfo;
 
+import java.util.Optional;
+
 @Repository
 public interface ReleaseInfoRepository extends CrudRepository<ReleaseInfo, Integer> {
 
+    Optional<ReleaseInfo> findFirstByOrderByReleaseDateDesc();
 }
