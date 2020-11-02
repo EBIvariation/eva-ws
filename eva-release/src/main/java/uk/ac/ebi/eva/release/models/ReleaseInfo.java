@@ -37,13 +37,6 @@ public class ReleaseInfo {
     public ReleaseInfo() {
     }
 
-    public ReleaseInfo(int releaseVersion, LocalDateTime releaseDate, String releaseDescription, String releaseFtp){
-        this.releaseVersion = releaseVersion;
-        this.releaseDate = releaseDate;
-        this.releaseDescription = releaseDescription;
-        this.releaseFtp = releaseFtp;
-    }
-
     public int getReleaseVersion() {
         return releaseVersion;
     }

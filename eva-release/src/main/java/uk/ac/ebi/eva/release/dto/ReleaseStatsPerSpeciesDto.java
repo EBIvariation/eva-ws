@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.release.models;
+package uk.ac.ebi.eva.release.dto;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
 import java.util.Objects;
 
-@Entity
-@IdClass(ReleaseStartsPerSpeciesPK.class)
-@Table(name = "release_rs_statistics_per_species")
-public class ReleaseStatsPerSpecies {
+public class ReleaseStatsPerSpeciesDto {
 
     @Id
     private int taxonomyId;
@@ -62,7 +56,11 @@ public class ReleaseStatsPerSpecies {
 
     private Long newSsClustered;
 
-    public ReleaseStatsPerSpecies() {
+    private String releaseLink;
+
+    private String taxonomyLink;
+
+    public ReleaseStatsPerSpeciesDto() {
     }
 
     public int getTaxonomyId() {
@@ -201,11 +199,27 @@ public class ReleaseStatsPerSpecies {
         this.newSsClustered = newSsClustered;
     }
 
+    public String getReleaseLink() {
+        return releaseLink;
+    }
+
+    public void setReleaseLink(String releaseLink) {
+        this.releaseLink = releaseLink;
+    }
+
+    public String getTaxonomyLink() {
+        return taxonomyLink;
+    }
+
+    public void setTaxonomyLink(String taxonomyLink) {
+        this.taxonomyLink = taxonomyLink;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ReleaseStatsPerSpecies that = (ReleaseStatsPerSpecies) o;
+        ReleaseStatsPerSpeciesDto that = (ReleaseStatsPerSpeciesDto) o;
         return taxonomyId == that.taxonomyId &&
                 releaseVersion == that.releaseVersion &&
                 Objects.equals(scientificName, that.scientificName) &&
@@ -222,7 +236,9 @@ public class ReleaseStatsPerSpecies {
                 Objects.equals(newDeprecatedRs, that.newDeprecatedRs) &&
                 Objects.equals(newMergedDeprecatedRs, that.newMergedDeprecatedRs) &&
                 Objects.equals(newUnmappedRs, that.newUnmappedRs) &&
-                Objects.equals(newSsClustered, that.newSsClustered);
+                Objects.equals(newSsClustered, that.newSsClustered) &&
+                Objects.equals(releaseLink, that.releaseLink) &&
+                Objects.equals(taxonomyLink, that.taxonomyLink);
     }
 
     @Override
@@ -230,12 +246,13 @@ public class ReleaseStatsPerSpecies {
         return Objects.hash(taxonomyId, releaseVersion, scientificName, releaseFolder, currentRs, multiMappedRs,
                             mergedRs,
                             deprecatedRs, mergedDeprecatedRs, unmappedRs, newCurrentRs, newMultiMappedRs, newMergedRs,
-                            newDeprecatedRs, newMergedDeprecatedRs, newUnmappedRs, newSsClustered);
+                            newDeprecatedRs, newMergedDeprecatedRs, newUnmappedRs, newSsClustered, releaseLink,
+                            taxonomyLink);
     }
 
     @Override
     public String toString() {
-        return "ReleaseStatsPerSpecies{" +
+        return "ReleaseStatsPerSpeciesDto{" +
                 "taxonomyId=" + taxonomyId +
                 ", releaseVersion=" + releaseVersion +
                 ", scientificName='" + scientificName + '\'' +
@@ -253,6 +270,8 @@ public class ReleaseStatsPerSpecies {
                 ", newMergedDeprecatedRs=" + newMergedDeprecatedRs +
                 ", newUnmappedRs=" + newUnmappedRs +
                 ", newSsClustered=" + newSsClustered +
+                ", releaseLink='" + releaseLink + '\'' +
+                ", taxonomyLink='" + taxonomyLink + '\'' +
                 '}';
     }
 }

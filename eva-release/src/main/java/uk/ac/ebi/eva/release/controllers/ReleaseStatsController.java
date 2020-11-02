@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.ac.ebi.eva.release.models.ReleaseStatsPerSpecies;
+import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesDto;
 import uk.ac.ebi.eva.release.services.ReleaseStatsService;
 
 @RestController
@@ -36,7 +36,7 @@ public class ReleaseStatsController {
     }
 
     @GetMapping("/per-species")
-    public Iterable<ReleaseStatsPerSpecies> getReleaseStatsPerSpecies(
+    public Iterable<ReleaseStatsPerSpeciesDto> getReleaseStatsPerSpecies(
             @RequestParam(name = "releaseVersion", required = false) Integer releaseVersion,
             @RequestParam(name = "excludeUnmappedOnly", required = false) boolean excludeUnmappedOnly) {
         return releaseStatsService.getReleaseStatsPerSpecies(releaseVersion, excludeUnmappedOnly);
