@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.stats.repositories;
+package uk.ac.ebi.eva.release.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import uk.ac.ebi.eva.stats.models.ReleaseStartsPerSpeciesPK;
-import uk.ac.ebi.eva.stats.models.ReleaseStatsPerSpecies;
+import uk.ac.ebi.eva.release.models.ReleaseStartsPerSpeciesPK;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerSpecies;
 
 @Repository
 public interface ReleaseStatsPerSpeciesRepository extends CrudRepository<ReleaseStatsPerSpecies,

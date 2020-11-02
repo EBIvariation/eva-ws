@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.stats.controllers;
+package uk.ac.ebi.eva.release.controllers;
 
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.ac.ebi.eva.stats.models.ReleaseInfo;
-import uk.ac.ebi.eva.stats.repositories.ReleaseInfoRepository;
+import uk.ac.ebi.eva.release.models.ReleaseInfo;
+import uk.ac.ebi.eva.release.repositories.ReleaseInfoRepository;
 
 import java.util.Collections;
 
 @RestController
 @RequestMapping(value = "/v1/info", produces = "application/json")
+@Api(tags = {"RS Release Info"})
 public class ReleaseInfoController {
 
     private final ReleaseInfoRepository releaseInfoRepository;

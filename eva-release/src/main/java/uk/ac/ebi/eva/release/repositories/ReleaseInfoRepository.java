@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.stats;
+package uk.ac.ebi.eva.release.repositories;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-@SpringBootApplication
-public class Application extends SpringBootServletInitializer {
+import uk.ac.ebi.eva.release.models.ReleaseInfo;
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
+@Repository
+public interface ReleaseInfoRepository extends CrudRepository<ReleaseInfo, Integer> {
+
 }

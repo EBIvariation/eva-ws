@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.stats.models;
-
-import uk.ac.ebi.eva.stats.services.ReleaseStatsService;
+package uk.ac.ebi.eva.release.models;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

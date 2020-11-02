@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>eva-stats</artifactId>
+    <artifactId>eva-release</artifactId>
     <packaging>war</packaging>
 
     <dependencies>

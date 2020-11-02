@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.stats.services;
+package uk.ac.ebi.eva.release.services;
 
 import org.springframework.stereotype.Service;
 
-import uk.ac.ebi.eva.stats.models.ReleaseStatsPerSpecies;
-import uk.ac.ebi.eva.stats.repositories.ReleaseStatsPerSpeciesRepository;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerSpecies;
+import uk.ac.ebi.eva.release.repositories.ReleaseStatsPerSpeciesRepository;
 
 @Service
 public class ReleaseStatsService {

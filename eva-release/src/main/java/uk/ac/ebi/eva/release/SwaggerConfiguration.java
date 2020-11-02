@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.stats;
+package uk.ac.ebi.eva.release;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +35,7 @@ public class SwaggerConfiguration {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(getApiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("uk.ac.ebi.eva.stats"))
+                .apis(RequestHandlerSelectors.basePackage("uk.ac.ebi.eva.release"))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -45,10 +45,10 @@ public class SwaggerConfiguration {
                 .contact(new Contact("Europe Variation Archive - EMBL-EBI", "https://www.ebi.ac.uk/eva", null))
                 .license("Apache 2.0")
                 .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0")
-                .title("EVA variant identifiers API")
+                .title("EVA RS Release API")
                 .description(
-                        "API to retrieve information about submitted variant identifiers (usually called SubSNP or " +
-                                "SS) and clustered variant identifiers (usually called RefSNP or RS).")
+                        "API to retrieve information about clustered variant identifiers (usually called RefSNP or RS)" +
+                                "released by the EVA")
                 .version("0.1")
                 .build();
     }
