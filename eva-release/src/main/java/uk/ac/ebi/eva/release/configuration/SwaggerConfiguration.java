@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.eva.release;
+package uk.ac.ebi.eva.release.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,8 +47,8 @@ public class SwaggerConfiguration {
                 .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0")
                 .title("EVA RS Release API")
                 .description(
-                        "API to retrieve information about clustered variant identifiers (usually called RefSNP or RS)" +
-                                "released by the EVA")
+                        "API to retrieve information about clustered variant identifiers (usually called RefSNP or " +
+                                "RS) released by the EVA")
                 .version("0.1")
                 .build();
     }
