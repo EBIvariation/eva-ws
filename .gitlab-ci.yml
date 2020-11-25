@@ -5,7 +5,7 @@ stages:
 
 variables:
     WS_ARTIFACT_PATH: eva-server/target/eva-$ENVIRONMENT_NAME.war
-    WS_RS_RELEASE_ARTIFACT_PATH: eva-release/target/eva-$ENVIRONMENT_NAME.war
+    WS_RS_RELEASE_ARTIFACT_PATH: eva-release/target/eva-release-$ENVIRONMENT_NAME.war
     MAVEN_SETTINGS: maven-settings.xml
     URL_MAVEN_SETTINGS: https://api.github.com/repos/EBIvariation/configuration/contents/eva-maven-settings.xml
     MEDIA_TYPE: application/vnd.github.raw
@@ -35,7 +35,7 @@ test:
     script:
         - mvn package --projects 'eva-lib,eva-server' --settings $MAVEN_SETTINGS -P $MAVEN_PROFILE -DskipTests -Dtimestamp=$DATETIME
         - cp eva-server/target/eva-*.war $WS_ARTIFACT_PATH
-        - cp eva-release/target/eva-*.war $WS_RS_RELEASE_ARTIFACT_PATH
+        - cp eva-release/target/eva-release-*.war $WS_RS_RELEASE_ARTIFACT_PATH
     after_script:
         - rm $MAVEN_SETTINGS
     artifacts:
