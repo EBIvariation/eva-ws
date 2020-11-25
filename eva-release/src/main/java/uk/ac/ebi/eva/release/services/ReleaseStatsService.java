@@ -44,30 +44,18 @@ public class ReleaseStatsService {
         Iterable<ReleaseStatsPerSpecies> releaseData;
         if (releaseVersion != null) {
             if (excludeUnmappedOnly) {
-                releaseData = getReleaseDataByVersionExcludingUnmappedOnly(releaseVersion);
+                releaseData = releaseStatsPerSpeciesRepository.getAllByVersionExcludingUnmappedOnly(releaseVersion);
             } else {
                 releaseData = releaseStatsPerSpeciesRepository.findAllByReleaseVersion(releaseVersion);
             }
         } else {
             if (excludeUnmappedOnly) {
-                releaseData = getReleaseDataExcludingUnmappedOnly();
+                releaseData = releaseStatsPerSpeciesRepository.getAllExcludingUnmappedOnly();
             } else {
                 releaseData = releaseStatsPerSpeciesRepository.findAll();
             }
         }
         return toDto(releaseData);
-    }
-
-    private Iterable<ReleaseStatsPerSpecies> getReleaseDataByVersionExcludingUnmappedOnly(Integer releaseVersion) {
-        return releaseStatsPerSpeciesRepository
-                .findByReleaseVersionAndCurrentRsNotAndMultiMappedRsNotAndMergedRsNotAndDeprecatedRsNotAndMergedDeprecatedRsNotAndUnmappedRsGreaterThan(
-                        releaseVersion, 0, 0, 0, 0, 0, 0);
-    }
-
-    private Iterable<ReleaseStatsPerSpecies> getReleaseDataExcludingUnmappedOnly() {
-        return releaseStatsPerSpeciesRepository
-                .findByCurrentRsNotAndMultiMappedRsNotAndMergedRsNotAndDeprecatedRsNotAndMergedDeprecatedRsNotAndUnmappedRsGreaterThan(
-                        0, 0, 0, 0, 0, 0);
     }
 
     private Iterable<ReleaseStatsPerSpeciesDto> toDto(Iterable<ReleaseStatsPerSpecies> releaseStatsPerSpecies) {
@@ -105,11 +93,6 @@ public class ReleaseStatsService {
     }
 
     public Iterable<ReleaseStatsPerSpeciesDto> getSpeciesWithNewRsIds(Integer releaseVersion) {
-        if (releaseVersion != null) {
-            return toDto(releaseStatsPerSpeciesRepository
-                                 .findByReleaseVersionAndNewCurrentRsGreaterThan(releaseVersion, 0L));
-        } else {
-            return toDto(releaseStatsPerSpeciesRepository.findByNewCurrentRsGreaterThan(0L));
-        }
+        return toDto(releaseStatsPerSpeciesRepository.getSpeciesWithVariantsInRelease(releaseVersion));
     }
 }

@@ -50,15 +50,23 @@ public class ReleaseStatsControllerTest {
 
     @Test
     public void getStatsByReleaseVersionNoUnmapped() {
-        int speciesInRelease2ExcludingUnmapped = 22;
-        Iterable<ReleaseStatsPerSpeciesDto> allRecords = releaseStatsController.getReleaseStatsPerSpecies(2, true);
-        assertEquals(speciesInRelease2ExcludingUnmapped, IterableUtil.sizeOf(allRecords));
+        int speciesInRelease1ExcludingUnmapped = 58;
+        Iterable<ReleaseStatsPerSpeciesDto> release1 = releaseStatsController.getReleaseStatsPerSpecies(1, true);
+        assertEquals(speciesInRelease1ExcludingUnmapped, IterableUtil.sizeOf(release1));
+
+        int speciesInRelease2ExcludingUnmapped = 79;
+        Iterable<ReleaseStatsPerSpeciesDto> release2 = releaseStatsController.getReleaseStatsPerSpecies(2, true);
+        assertEquals(speciesInRelease2ExcludingUnmapped, IterableUtil.sizeOf(release2));
     }
 
     @Test
     public void getStatsForNewVariantsOnlyInSpecificRelease() {
-        int numberOfSpeciesWithNewVariants = 29;
-        Iterable<ReleaseStatsPerSpeciesDto> allRecords = releaseStatsController.getSpeciesWithNewRsIds(2);
-        assertEquals(numberOfSpeciesWithNewVariants, IterableUtil.sizeOf(allRecords));
+        int numberOfSpeciesWithNewVariantsRelease1 = 199;
+        Iterable<ReleaseStatsPerSpeciesDto> Release1 = releaseStatsController.getSpeciesWithNewRsIds(1);
+        assertEquals(numberOfSpeciesWithNewVariantsRelease1, IterableUtil.sizeOf(Release1));
+
+        int numberOfSpeciesWithNewVariantsRelease2 = 29;
+        Iterable<ReleaseStatsPerSpeciesDto> Release2 = releaseStatsController.getSpeciesWithNewRsIds(2);
+        assertEquals(numberOfSpeciesWithNewVariantsRelease2, IterableUtil.sizeOf(Release2));
     }
 }

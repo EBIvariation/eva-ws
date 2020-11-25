@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.eva.release.repositories;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -27,17 +28,21 @@ public interface ReleaseStatsPerSpeciesRepository extends CrudRepository<Release
 
     Iterable<ReleaseStatsPerSpecies> findAllByReleaseVersion(int releaseVersion);
 
-    //All release data excluding rows with only unmapped data
-    Iterable<ReleaseStatsPerSpecies> findByCurrentRsNotAndMultiMappedRsNotAndMergedRsNotAndDeprecatedRsNotAndMergedDeprecatedRsNotAndUnmappedRsGreaterThan(
-            long currentRs, long multiMappedRs, long mergedRs, long deprecatedRs, long mergedDeprecatedRs,
-            long unmappedRs);
+    //All released species stats excluding the unmapped only
+    @Query(value = "select * from release_rs_statistics_per_species " +
+            "where not (current_rs = 0 and multi_mapped_rs = 0 and merged_rs = 0 and deprecated_rs = 0 " +
+            "and merged_deprecated_rs = 0 and unmapped_rs > 0)", nativeQuery=true)
+    Iterable<ReleaseStatsPerSpecies> getAllExcludingUnmappedOnly();
 
-    //Data by release version excluding rows with only unmapped data
-    Iterable<ReleaseStatsPerSpecies> findByReleaseVersionAndCurrentRsNotAndMultiMappedRsNotAndMergedRsNotAndDeprecatedRsNotAndMergedDeprecatedRsNotAndUnmappedRsGreaterThan(
-            int releaseVersion, long currentRs, long multiMappedRs, long mergedRs, long deprecatedRs,
-            long mergedDeprecatedRs, long unmappedRs);
+    //Species stats by release version excluding the unmapped only
+    @Query(value = "select * from release_rs_statistics_per_species " +
+            "where release_version = ?1 and not (current_rs = 0 and multi_mapped_rs = 0 and merged_rs = 0 " +
+            "and deprecated_rs = 0  and merged_deprecated_rs = 0 and unmapped_rs > 0)", nativeQuery=true)
+    Iterable<ReleaseStatsPerSpecies> getAllByVersionExcludingUnmappedOnly(int releaseVersion);
 
-    Iterable<ReleaseStatsPerSpecies> findByNewCurrentRsGreaterThan(long currentRs);
-
-    Iterable<ReleaseStatsPerSpecies> findByReleaseVersionAndNewCurrentRsGreaterThan(int releaseVersion, long currentRs);
+    //Species that introduced new variants in specified release
+    @Query(value = "select * from release_rs_statistics_per_species where release_version = ?1 " +
+            "and (new_current_rs > 0 or new_merged_rs > 0 or new_deprecated_rs > 0 or new_merged_deprecated_rs > 0 " +
+            "or new_unmapped_rs > 0)", nativeQuery=true)
+    Iterable<ReleaseStatsPerSpecies> getSpeciesWithVariantsInRelease(int releaseVersion);
 }
