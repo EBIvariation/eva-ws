@@ -1,0 +1,31 @@
+name: Run tests
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mongodb-version: [4.0.18]
+        java-version: [1.8]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Java JDK
+        uses: actions/setup-java@v1.4.3
+        # The Java version to make available on the path. Takes a whole or semver Java version, or 1.x syntax (e.g. 1.8 => Java 8.x). Early access versions can be specified in the form of e.g. 14-ea, 14.0.0-ea, or 14.0.0-ea.28
+        with:
+          java-version: ${{ matrix.java-version }}
+      - name: Install and Start MongoDB
+        run: |
+          wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${{ matrix.mongodb-version }}.tgz
+          tar xfz mongodb-linux-x86_64-${{ matrix.mongodb-version }}.tgz
+          export PATH=`pwd`/mongodb-linux-x86_64-${{ matrix.mongodb-version }}/bin:$PATH
+          mkdir -p data/db
+          mongod --dbpath=data/db &
+          mongod --version
+      - name: Run Maven tests
+        run: |
+          mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -PGithubActions
+          mvn test -s .ci.settings.xml -PGithubActions
