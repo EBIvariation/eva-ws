@@ -28,4 +28,4 @@ jobs:
       - name: Run Maven tests
         run: |
           mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -PGithubActions
-          mvn test -s .ci.settings.xml -PGithubActions
+          mvn test -s .github/workflows/.ci.settings.xml -PGithubActions
