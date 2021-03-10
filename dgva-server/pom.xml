@@ -82,7 +82,7 @@
 
     <profiles>
         <profile>
-            <id>Non-Travis</id>
+            <id>Non-GithubActions</id>
             <dependencies>
                 <dependency>
                     <groupId>com.oracle.jdbc</groupId>
@@ -96,7 +96,7 @@
         </profile>
 
         <profile>
-            <id>Travis</id>
+            <id>GithubActions</id>
         </profile>
     </profiles>
 

@@ -180,29 +180,27 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>eva-snapshots</id>
-            <url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+            <id>cloudsmith</id>
+            <url>https://maven.cloudsmith.io/ebivariation/packages/</url>
         </snapshotRepository>
         <repository>
-            <id>eva-releases</id>
-            <url>https://oss.jfrog.org/artifactory/oss-release-local</url>
+            <id>cloudsmith</id>
+            <url>https://maven.cloudsmith.io/ebivariation/packages/</url>
         </repository>
     </distributionManagement>
 
     <repositories>
         <repository>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-          <id>eva-releases</id>
-          <url>https://oss.jfrog.org/artifactory/libs-release</url>
-        </repository>
-        <repository>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-          <id>eva-snapshots</id>
-          <url>https://oss.jfrog.org/artifactory/libs-snapshot</url>
+            <id>cloudsmith</id>
+            <url>https://dl.cloudsmith.io/public/ebivariation/packages/maven/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
     </repositories>
 </project>
