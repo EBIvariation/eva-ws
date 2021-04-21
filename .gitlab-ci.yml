@@ -5,6 +5,7 @@ stages:
 
 variables:
     WS_ARTIFACT_PATH: eva-server/target/eva-$ENVIRONMENT_NAME.war
+    WS_RS_RELEASE_ARTIFACT_PATH: eva-release/target/eva-release-$ENVIRONMENT_NAME.war
     MAVEN_SETTINGS: maven-settings.xml
     URL_MAVEN_SETTINGS: https://api.github.com/repos/EBIvariation/configuration/contents/eva-maven-settings.xml
     MEDIA_TYPE: application/vnd.github.raw
@@ -16,7 +17,7 @@ test:
         - mongo:4.0.18
     script:
         # Gitlab exposes services under their own hostnames. So test host should be "mongo" instead of "localhost".
-        - mvn clean test --projects 'eva-lib,eva-server' -Deva.mongo.host.test=mongo
+        - mvn clean test --projects 'eva-lib,eva-server,eva-release' -Deva.mongo.host.test=mongo
     only:
         - master
         - tags
@@ -34,11 +35,13 @@ test:
     script:
         - mvn package --projects 'eva-lib,eva-server' --settings $MAVEN_SETTINGS -P $MAVEN_PROFILE -DskipTests -Dtimestamp=$DATETIME
         - cp eva-server/target/eva-*.war $WS_ARTIFACT_PATH
+        - cp eva-release/target/eva-release-*.war $WS_RS_RELEASE_ARTIFACT_PATH
     after_script:
         - rm $MAVEN_SETTINGS
     artifacts:
         paths:
             - $WS_ARTIFACT_PATH
+            - $WS_RS_RELEASE_ARTIFACT_PATH
 
 package-internal:
     extends: .package
@@ -74,6 +77,7 @@ package-production:
         - DATETIME=$(date +%Y-%m-%dT%H-%M-%S)
         - apk add --update curl
         - curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T "$WS_ARTIFACT_PATH" "http://$TOMCAT_HOST/manager/text/deploy?update=true&path=/eva&version=$DATETIME" | grep "OK - Deployed application"
+        - curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T "$WS_RS_RELEASE_ARTIFACT_PATH" "http://$TOMCAT_HOST/manager/text/deploy?update=true&path=/eva/webservices/release&version=$DATETIME" | grep "OK - Deployed application"
 
 deploy-tomcat-internal:
     extends: .deploy-tomcat

@@ -16,6 +16,7 @@
 package uk.ac.ebi.eva.release.controllers;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.release.models.ReleaseInfo;
 import uk.ac.ebi.eva.release.repositories.ReleaseInfoRepository;
 
-import javax.websocket.server.PathParam;
 import java.util.Collections;
 
 @RestController
@@ -40,6 +40,7 @@ public class ReleaseInfoController {
 
     @GetMapping
     public Iterable<ReleaseInfo> getReleaseInfo(
+            @ApiParam(value = "Version of the RS Release, e.g.: 2")
             @RequestParam(name = "releaseVersion", required = false) Integer releaseVersion) {
         if (releaseVersion != null) {
             return Collections.singleton(releaseInfoRepository.findById(releaseVersion).get());
