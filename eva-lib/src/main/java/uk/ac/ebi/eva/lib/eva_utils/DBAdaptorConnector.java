@@ -19,6 +19,7 @@ import com.mongodb.AuthenticationMechanism;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
+import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,8 +73,7 @@ public class DBAdaptorConnector {
         readPreference = readPreference == null || readPreference.isEmpty()? "secondaryPreferred" : readPreference;
 
         MongoClientOptions options = MongoClientOptions.builder()
-                                                       .readPreference(ReadPreference.valueOf(readPreference))
-                                                       .build();
+                .readPreference(ReadPreference.valueOf(readPreference)).readConcern(ReadConcern.MAJORITY).build();
 
         List<MongoCredential> mongoCredentialList = new ArrayList<>();
         String authenticationDb = springDataMongoDbProperties.getAuthenticationDatabase();
