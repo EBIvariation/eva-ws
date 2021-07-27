@@ -13,7 +13,7 @@ import uk.ac.ebi.eva.countstats.service.CountService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/countstats")
+@RequestMapping("/v1")
 public class CountController {
     private CountService countService;
 

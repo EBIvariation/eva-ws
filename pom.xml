@@ -15,6 +15,7 @@
         <module>dgva-server</module>
         <module>dbsnp-import</module>
         <module>eva-release</module>
+        <module>count-stats</module>
     </modules>
 
     <parent>

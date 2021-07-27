@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "process_count_metric")
+@Table(name = "count_stats")
 @TypeDefs({@TypeDef(name = "StringJsonObject", typeClass = StringJsonUserType.class)})
 public class Count {
     @Id

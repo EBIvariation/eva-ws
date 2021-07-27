@@ -8,7 +8,7 @@
         <version>1.7.6-SNAPSHOT</version>
     </parent>
 
-    <artifactId>count-stats-ws</artifactId>
+    <artifactId>count-stats</artifactId>
     <packaging>war</packaging>
 
     <dependencies>
@@ -99,5 +99,10 @@
             </resource>
         </resources>
     </build>
+
+    <properties>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+    </properties>
 
 </project>
