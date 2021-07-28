@@ -78,18 +78,6 @@
                     </excludes>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                    <delimiters>
-                        <!-- Provide a delimiter that doesn't clash with Spring ${} placeholders nor @ in URLs -->
-                        <delimiter>|</delimiter>
-                    </delimiters>
-                </configuration>
-            </plugin>
         </plugins>
 
         <resources>
