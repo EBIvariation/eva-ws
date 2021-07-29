@@ -11,7 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.TestPropertySourceUtils;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import uk.ac.ebi.eva.countstats.model.Count;
 import uk.ac.ebi.eva.countstats.repository.CountRepository;
@@ -34,11 +36,8 @@ public class CountStatsIntegrationTest {
     @Autowired
     private CountRepository countRepository;
 
+    @Container
     public static PostgreSQLContainer<?> postgreDBContainer = new PostgreSQLContainer<>("postgres:9.6");
-
-    static {
-        postgreDBContainer.start();
-    }
 
     public static class DockerPostgreDataSourceInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
@@ -53,26 +52,31 @@ public class CountStatsIntegrationTest {
     }
 
     @Test
+    @Transactional
     public void testSaveCount() throws Exception {
-        Count count1 = new Count(1L, "VARIANT_WAREHOUSE_INGESTION", "{\"study\": \"PRJ11111\", \"analysis\": \"ERZ11111\", \"batch\":1}",
+        Count count1 = new Count("VARIANT_WAREHOUSE_INGESTION", "{\"study\": \"PRJ11111\", \"analysis\": \"ERZ11111\", \"batch\":1}",
                 "INSERTED_VARIANTS", 10000);
-        Count count2 = new Count(2L, "VARIANT_WAREHOUSE_INGESTION", "{\"study\": \"PRJ11111\", \"analysis\": \"ERZ11111\", \"batch\":1}",
+        Count count2 = new Count("VARIANT_WAREHOUSE_INGESTION", "{\"study\": \"PRJ11111\", \"analysis\": \"ERZ11111\", \"batch\":1}",
                 "INSERTED_VARIANTS", 15000);
 
-        mvc.perform(post("/v1/countstats/count")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(count1)))
-                .andExpect(status().isOk());
-        mvc.perform(post("/v1/countstats/count")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(count2)))
-                .andExpect(status().isOk());
+        String res1 = mvc.perform(post("/v1/count")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(count1)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        String res2 = mvc.perform(post("/v1/count")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(count2)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
 
-        Optional<Count> resCount1 = countRepository.findById(1L);
+        long id1 = objectMapper.readTree(res1).get("id").longValue();
+        Optional<Count> resCount1 = countRepository.findById(id1);
         assertThat(resCount1.get()).isNotNull();
         assertThat(resCount1.get().getCount()).isEqualTo(10000);
 
-        Optional<Count> resCount2 = countRepository.findById(2L);
+        long id2 = objectMapper.readTree(res2).get("id").longValue();
+        Optional<Count> resCount2 = countRepository.findById(id2);
         assertThat(resCount2.get()).isNotNull();
         assertThat(resCount2.get().getCount()).isEqualTo(15000);
 
