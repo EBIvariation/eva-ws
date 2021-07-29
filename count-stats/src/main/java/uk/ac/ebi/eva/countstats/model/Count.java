@@ -27,19 +27,24 @@ public class Count {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NonNull
     @Column(nullable = false)
     private String process;
+
     @NonNull
     @Column(nullable = false)
     @Type(type = "StringJsonObject")
     private String identifier;
+
     @NonNull
     @Column(nullable = false)
     private String metric;
+
     @NonNull
     @Column(nullable = false)
     private long count;
+
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private LocalDateTime timestamp;
 }
