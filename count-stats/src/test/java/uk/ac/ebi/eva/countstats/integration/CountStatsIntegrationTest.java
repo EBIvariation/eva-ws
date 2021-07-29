@@ -59,23 +59,23 @@ public class CountStatsIntegrationTest {
         Count count2 = new Count("VARIANT_WAREHOUSE_INGESTION", "{\"study\": \"PRJ11111\", \"analysis\": \"ERZ11111\", \"batch\":1}",
                 "INSERTED_VARIANTS", 15000);
 
-        String res1 = mvc.perform(post("/v1/count")
+        String response1 = mvc.perform(post("/v1/count")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(count1)))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-        String res2 = mvc.perform(post("/v1/count")
+        String response2 = mvc.perform(post("/v1/count")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(count2)))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        long id1 = objectMapper.readTree(res1).get("id").longValue();
+        long id1 = objectMapper.readTree(response1).get("id").longValue();
         Optional<Count> resCount1 = countRepository.findById(id1);
         assertThat(resCount1.get()).isNotNull();
         assertThat(resCount1.get().getCount()).isEqualTo(10000);
 
-        long id2 = objectMapper.readTree(res2).get("id").longValue();
+        long id2 = objectMapper.readTree(response2).get("id").longValue();
         Optional<Count> resCount2 = countRepository.findById(id2);
         assertThat(resCount2.get()).isNotNull();
         assertThat(resCount2.get().getCount()).isEqualTo(15000);
