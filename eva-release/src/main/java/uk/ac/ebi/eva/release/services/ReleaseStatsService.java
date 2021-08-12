@@ -18,25 +18,31 @@ package uk.ac.ebi.eva.release.services;
 import org.springframework.stereotype.Service;
 
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesDto;
+import uk.ac.ebi.eva.release.models.ReleaseInfo;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerSpecies;
+import uk.ac.ebi.eva.release.repositories.ReleaseInfoRepository;
 import uk.ac.ebi.eva.release.repositories.ReleaseStatsPerSpeciesRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReleaseStatsService {
 
-    private static final String FTP_RELEASE_URL = "ftp://ftp.ebi.ac.uk/pub/databases/eva/rs_releases/release_";
-
-    private static final String SPECIES_DIRECTORY = "/by_species/";
+    private static final String SPECIES_DIRECTORY = "by_species/";
 
     private static final String TAXONOMY_URL = "https://www.ebi.ac.uk/ena/browser/view/Taxon:";
 
     private final ReleaseStatsPerSpeciesRepository releaseStatsPerSpeciesRepository;
 
-    public ReleaseStatsService(ReleaseStatsPerSpeciesRepository releaseStatsPerSpeciesRepository) {
+    private final ReleaseInfoRepository releaseInfoRepository;
+
+    public ReleaseStatsService(ReleaseStatsPerSpeciesRepository releaseStatsPerSpeciesRepository,
+                               ReleaseInfoRepository releaseInfoRepository) {
         this.releaseStatsPerSpeciesRepository = releaseStatsPerSpeciesRepository;
+        this.releaseInfoRepository = releaseInfoRepository;
     }
 
     public Iterable<ReleaseStatsPerSpeciesDto> getReleaseStatsPerSpecies(Integer releaseVersion,
@@ -79,6 +85,8 @@ public class ReleaseStatsService {
     }
 
     private ReleaseStatsPerSpeciesDto toDto(ReleaseStatsPerSpecies releaseStatsPerSpecies) {
+        Map<Integer, String> releasesFtp = getReleasesFtp();
+
         ReleaseStatsPerSpeciesDto releaseStatsPerSpeciesDto = new ReleaseStatsPerSpeciesDto();
         releaseStatsPerSpeciesDto.setTaxonomyId(releaseStatsPerSpecies.getTaxonomyId());
         releaseStatsPerSpeciesDto.setReleaseVersion(releaseStatsPerSpecies.getReleaseVersion());
@@ -97,11 +105,17 @@ public class ReleaseStatsService {
         releaseStatsPerSpeciesDto.setNewMergedDeprecatedRs(releaseStatsPerSpecies.getNewMergedDeprecatedRs());
         releaseStatsPerSpeciesDto.setNewUnmappedRs(releaseStatsPerSpecies.getNewUnmappedRs());
         releaseStatsPerSpeciesDto.setNewSsClustered(releaseStatsPerSpecies.getNewSsClustered());
-        releaseStatsPerSpeciesDto.setReleaseLink(FTP_RELEASE_URL + releaseStatsPerSpecies.getReleaseVersion()
-                                                         + SPECIES_DIRECTORY + releaseStatsPerSpecies
-                .getReleaseFolder());
+        String releaseLink = releasesFtp.get(releaseStatsPerSpecies.getReleaseVersion()) + SPECIES_DIRECTORY +
+                releaseStatsPerSpecies.getReleaseFolder();
+        releaseStatsPerSpeciesDto.setReleaseLink(releaseLink);
         releaseStatsPerSpeciesDto.setTaxonomyLink(TAXONOMY_URL + releaseStatsPerSpecies.getTaxonomyId());
         return releaseStatsPerSpeciesDto;
+    }
+
+    private Map<Integer, String> getReleasesFtp() {
+        Map<Integer, String> releaseFtp = new HashMap<>();
+        releaseInfoRepository.findAll().forEach(r -> releaseFtp.put(r.getReleaseVersion(), r.getReleaseFtp()));
+        return releaseFtp;
     }
 
     public Iterable<ReleaseStatsPerSpeciesDto> getSpeciesWithNewRsIds(Integer releaseVersion) {
