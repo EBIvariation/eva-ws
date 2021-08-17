@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.TestPropertySourceUtils;
@@ -36,6 +37,9 @@ public class CountStatsIntegrationTest {
     @Autowired
     private CountRepository countRepository;
 
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
+
     @Container
     public static PostgreSQLContainer<?> postgreDBContainer = new PostgreSQLContainer<>("postgres:9.6");
 
@@ -46,7 +50,9 @@ public class CountStatsIntegrationTest {
                     applicationContext,
                     "spring.datasource.url=" + postgreDBContainer.getJdbcUrl(),
                     "spring.datasource.username=" + postgreDBContainer.getUsername(),
-                    "spring.datasource.password=" + postgreDBContainer.getPassword()
+                    "spring.datasource.password=" + postgreDBContainer.getPassword(),
+                    "controller.auth.admin.username=" + USERNAME,
+                    "controller.auth.admin.password=" + PASSWORD
             );
         }
     }
@@ -54,17 +60,21 @@ public class CountStatsIntegrationTest {
     @Test
     @Transactional
     public void testSaveCount() throws Exception {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setBasicAuth(USERNAME, PASSWORD);
         Count count1 = new Count("VARIANT_WAREHOUSE_INGESTION", "{\"study\": \"PRJ11111\", \"analysis\": \"ERZ11111\", \"batch\":1}",
                 "INSERTED_VARIANTS", 10000);
         Count count2 = new Count("VARIANT_WAREHOUSE_INGESTION", "{\"study\": \"PRJ11111\", \"analysis\": \"ERZ11111\", \"batch\":1}",
                 "INSERTED_VARIANTS", 15000);
 
         String response1 = mvc.perform(post("/v1/count")
+                        .headers(httpHeaders)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(count1)))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         String response2 = mvc.perform(post("/v1/count")
+                        .headers(httpHeaders)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(count2)))
                 .andExpect(status().isOk())
