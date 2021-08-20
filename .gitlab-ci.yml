@@ -4,6 +4,7 @@ stages:
     - deploy
 
 variables:
+    COUNT_STATS_ARTIFACT_PATH: count-stats/target/count-stats-$ENVIRONMENT_NAME.war
     WS_ARTIFACT_PATH: eva-server/target/eva-$ENVIRONMENT_NAME.war
     MAVEN_SETTINGS: maven-settings.xml
     URL_MAVEN_SETTINGS: https://api.github.com/repos/EBIvariation/configuration/contents/eva-maven-settings.xml
@@ -16,7 +17,7 @@ test:
         - mongo:4.0.18
     script:
         # Gitlab exposes services under their own hostnames. So test host should be "mongo" instead of "localhost".
-        - mvn clean test --projects 'eva-lib,eva-server' -Deva.mongo.host.test=mongo
+        - mvn clean test --projects 'eva-lib,eva-server,count-stats' -Deva.mongo.host.test=mongo
     only:
         - master
         - tags
@@ -32,18 +33,22 @@ test:
         - apk add --update curl
         - curl -u $GITHUB_USER:$GITHUB_TOKEN -H "Accept:$MEDIA_TYPE" $URL_MAVEN_SETTINGS > $MAVEN_SETTINGS
     script:
-        - mvn package --projects 'eva-lib,eva-server' --settings $MAVEN_SETTINGS -P $MAVEN_PROFILE -DskipTests -Dtimestamp=$DATETIME
+        - mvn package --projects 'eva-lib,eva-server' --settings $MAVEN_SETTINGS -P $WS_MAVEN_PROFILE -DskipTests -Dtimestamp=$DATETIME
+        - mvn package --projects 'count-stats' --settings $MAVEN_SETTINGS -P $COUNT_STATS_MAVEN_PROFILE -DskipTests -Dtimestamp=$DATETIME
         - cp eva-server/target/eva-*.war $WS_ARTIFACT_PATH
+        - cp count-stats/target/count-stats-*.war $COUNT_STATS_ARTIFACT_PATH
     after_script:
         - rm $MAVEN_SETTINGS
     artifacts:
         paths:
             - $WS_ARTIFACT_PATH
+            - $COUNT_STATS_ARTIFACT_PATH
 
 package-internal:
     extends: .package
     variables:
-        MAVEN_PROFILE: internal
+        WS_MAVEN_PROFILE: internal
+        COUNT_STATS_MAVEN_PROFILE: internal
         ENVIRONMENT_NAME: internal
     only:
         - master
@@ -51,7 +56,8 @@ package-internal:
 package-development:
     extends: .package
     variables:
-        MAVEN_PROFILE: development
+        WS_MAVEN_PROFILE: development
+        COUNT_STATS_MAVEN_PROFILE: development
         ENVIRONMENT_NAME: development
     only:
         - master
@@ -59,7 +65,8 @@ package-development:
 package-production:
     extends: .package
     variables:
-        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
+        WS_MAVEN_PROFILE: production,$ACTIVE_EVAPRO
+        COUNT_STATS_MAVEN_PROFILE: production,evapro-staging
         ENVIRONMENT_NAME: production
     only:
         - tags
@@ -74,6 +81,7 @@ package-production:
         - DATETIME=$(date +%Y-%m-%dT%H-%M-%S)
         - apk add --update curl
         - curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T "$WS_ARTIFACT_PATH" "http://$TOMCAT_HOST/manager/text/deploy?update=true&path=/eva&version=$DATETIME" | grep "OK - Deployed application"
+        - curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T "$COUNT_STATS_ARTIFACT_PATH" "http://$TOMCAT_HOST/manager/text/deploy?update=true&path=/eva/webservices/count-stats&version=$DATETIME" | grep "OK - Deployed application"
 
 deploy-tomcat-internal:
     extends: .deploy-tomcat
