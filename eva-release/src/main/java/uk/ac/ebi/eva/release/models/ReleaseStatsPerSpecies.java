@@ -38,9 +38,13 @@ public class ReleaseStatsPerSpecies {
 
     private Long currentRs;
 
+    private Long remappedCurrentRs;
+
     private Long multiMappedRs;
 
     private Long mergedRs;
+
+    private Long splitRs;
 
     private Long deprecatedRs;
 
@@ -48,11 +52,17 @@ public class ReleaseStatsPerSpecies {
 
     private Long unmappedRs;
 
+    private Long ssClustered;
+
     private Long newCurrentRs;
+
+    private Long newRemappedCurrentRs;
 
     private Long newMultiMappedRs;
 
     private Long newMergedRs;
+
+    private Long newSplitRs;
 
     private Long newDeprecatedRs;
 
@@ -105,6 +115,14 @@ public class ReleaseStatsPerSpecies {
         this.currentRs = currentRs;
     }
 
+    public Long getRemappedCurrentRs() {
+        return remappedCurrentRs;
+    }
+
+    public void setRemappedCurrentRs(Long remappedCurrentRs) {
+        this.remappedCurrentRs = remappedCurrentRs;
+    }
+
     public Long getMultiMappedRs() {
         return multiMappedRs;
     }
@@ -119,6 +137,14 @@ public class ReleaseStatsPerSpecies {
 
     public void setMergedRs(Long mergedRs) {
         this.mergedRs = mergedRs;
+    }
+
+    public Long getSplitRs() {
+        return splitRs;
+    }
+
+    public void setSplitRs(Long splitRs) {
+        this.splitRs = splitRs;
     }
 
     public Long getDeprecatedRs() {
@@ -145,12 +171,28 @@ public class ReleaseStatsPerSpecies {
         this.unmappedRs = unmappedRs;
     }
 
+    public Long getSsClustered() {
+        return ssClustered;
+    }
+
+    public void setSsClustered(Long ssClustered) {
+        this.ssClustered = ssClustered;
+    }
+
     public Long getNewCurrentRs() {
         return newCurrentRs;
     }
 
     public void setNewCurrentRs(Long newCurrentRs) {
         this.newCurrentRs = newCurrentRs;
+    }
+
+    public Long getNewRemappedCurrentRs() {
+        return newRemappedCurrentRs;
+    }
+
+    public void setNewRemappedCurrentRs(Long newRemappedCurrentRs) {
+        this.newRemappedCurrentRs = newRemappedCurrentRs;
     }
 
     public Long getNewMultiMappedRs() {
@@ -167,6 +209,14 @@ public class ReleaseStatsPerSpecies {
 
     public void setNewMergedRs(Long newMergedRs) {
         this.newMergedRs = newMergedRs;
+    }
+
+    public Long getNewSplitRs() {
+        return newSplitRs;
+    }
+
+    public void setNewSplitRs(Long newSplitRs) {
+        this.newSplitRs = newSplitRs;
     }
 
     public Long getNewDeprecatedRs() {
@@ -211,14 +261,19 @@ public class ReleaseStatsPerSpecies {
                 Objects.equals(scientificName, that.scientificName) &&
                 Objects.equals(releaseFolder, that.releaseFolder) &&
                 Objects.equals(currentRs, that.currentRs) &&
+                Objects.equals(remappedCurrentRs, that.remappedCurrentRs) &&
                 Objects.equals(multiMappedRs, that.multiMappedRs) &&
                 Objects.equals(mergedRs, that.mergedRs) &&
+                Objects.equals(splitRs, that.splitRs) &&
                 Objects.equals(deprecatedRs, that.deprecatedRs) &&
                 Objects.equals(mergedDeprecatedRs, that.mergedDeprecatedRs) &&
                 Objects.equals(unmappedRs, that.unmappedRs) &&
+                Objects.equals(ssClustered, that.ssClustered) &&
                 Objects.equals(newCurrentRs, that.newCurrentRs) &&
+                Objects.equals(newRemappedCurrentRs, that.newRemappedCurrentRs) &&
                 Objects.equals(newMultiMappedRs, that.newMultiMappedRs) &&
                 Objects.equals(newMergedRs, that.newMergedRs) &&
+                Objects.equals(newSplitRs, that.newSplitRs) &&
                 Objects.equals(newDeprecatedRs, that.newDeprecatedRs) &&
                 Objects.equals(newMergedDeprecatedRs, that.newMergedDeprecatedRs) &&
                 Objects.equals(newUnmappedRs, that.newUnmappedRs) &&
@@ -227,9 +282,9 @@ public class ReleaseStatsPerSpecies {
 
     @Override
     public int hashCode() {
-        return Objects.hash(taxonomyId, releaseVersion, scientificName, releaseFolder, currentRs, multiMappedRs,
-                            mergedRs,
-                            deprecatedRs, mergedDeprecatedRs, unmappedRs, newCurrentRs, newMultiMappedRs, newMergedRs,
+        return Objects.hash(taxonomyId, releaseVersion, scientificName, releaseFolder, currentRs, remappedCurrentRs,
+                            multiMappedRs, mergedRs, splitRs, deprecatedRs, mergedDeprecatedRs, unmappedRs, ssClustered,
+                            newCurrentRs, newRemappedCurrentRs, newMultiMappedRs, newMergedRs, newSplitRs,
                             newDeprecatedRs, newMergedDeprecatedRs, newUnmappedRs, newSsClustered);
     }
 
@@ -241,14 +296,19 @@ public class ReleaseStatsPerSpecies {
                 ", scientificName='" + scientificName + '\'' +
                 ", releaseFolder='" + releaseFolder + '\'' +
                 ", currentRs=" + currentRs +
+                ", remappedCurrentRs=" + remappedCurrentRs +
                 ", multiMappedRs=" + multiMappedRs +
                 ", mergedRs=" + mergedRs +
+                ", splitRs=" + splitRs +
                 ", deprecatedRs=" + deprecatedRs +
                 ", mergedDeprecatedRs=" + mergedDeprecatedRs +
                 ", unmappedRs=" + unmappedRs +
+                ", ssClustered=" + ssClustered +
                 ", newCurrentRs=" + newCurrentRs +
+                ", newRemappedCurrentRs=" + newRemappedCurrentRs +
                 ", newMultiMappedRs=" + newMultiMappedRs +
                 ", newMergedRs=" + newMergedRs +
+                ", newSplitRs=" + newSplitRs +
                 ", newDeprecatedRs=" + newDeprecatedRs +
                 ", newMergedDeprecatedRs=" + newMergedDeprecatedRs +
                 ", newUnmappedRs=" + newUnmappedRs +
