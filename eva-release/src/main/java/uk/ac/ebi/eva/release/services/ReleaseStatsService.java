@@ -17,10 +17,13 @@ package uk.ac.ebi.eva.release.services;
 
 import org.springframework.stereotype.Service;
 
+import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyDto;
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesDto;
-import uk.ac.ebi.eva.release.models.ReleaseInfo;
+import uk.ac.ebi.eva.release.mappers.ReleaseStatsPerAssemblyMapper;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssembly;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerSpecies;
 import uk.ac.ebi.eva.release.repositories.ReleaseInfoRepository;
+import uk.ac.ebi.eva.release.repositories.ReleaseStatsPerAssemblyRepository;
 import uk.ac.ebi.eva.release.repositories.ReleaseStatsPerSpeciesRepository;
 
 import java.util.ArrayList;
@@ -39,10 +42,18 @@ public class ReleaseStatsService {
 
     private final ReleaseInfoRepository releaseInfoRepository;
 
+    private final ReleaseStatsPerAssemblyRepository releaseStatsPerAssemblyRepository;
+
+    private final ReleaseStatsPerAssemblyMapper releaseStatsPerAssemblyMapper;
+
     public ReleaseStatsService(ReleaseStatsPerSpeciesRepository releaseStatsPerSpeciesRepository,
-                               ReleaseInfoRepository releaseInfoRepository) {
+                               ReleaseInfoRepository releaseInfoRepository,
+                               ReleaseStatsPerAssemblyRepository releaseStatsPerAssemblyRepository,
+                               ReleaseStatsPerAssemblyMapper releaseStatsPerAssemblyMapper) {
         this.releaseStatsPerSpeciesRepository = releaseStatsPerSpeciesRepository;
         this.releaseInfoRepository = releaseInfoRepository;
+        this.releaseStatsPerAssemblyRepository = releaseStatsPerAssemblyRepository;
+        this.releaseStatsPerAssemblyMapper = releaseStatsPerAssemblyMapper;
     }
 
     public Iterable<ReleaseStatsPerSpeciesDto> getReleaseStatsPerSpecies(Integer releaseVersion,
@@ -124,6 +135,26 @@ public class ReleaseStatsService {
                                  .findByReleaseVersionAndNewCurrentRsGreaterThan(releaseVersion, 0L));
         } else {
             return toDto(releaseStatsPerSpeciesRepository.findByNewCurrentRsGreaterThan(0L));
+        }
+    }
+
+    public Iterable<ReleaseStatsPerAssemblyDto> getReleaseStatsPerAssembly(Integer releaseVersion) {
+        Iterable<ReleaseStatsPerAssembly> releaseData;
+        if (releaseVersion != null) {
+            releaseData = releaseStatsPerAssemblyRepository.findAllByReleaseVersion(releaseVersion);
+        } else {
+            releaseData = releaseStatsPerAssemblyRepository.findAll();
+        }
+        return releaseStatsPerAssemblyMapper.toDto(releaseData);
+    }
+
+    public Iterable<ReleaseStatsPerAssemblyDto> getReleaseStatsPerAssemblyWithNewRsIds(Integer releaseVersion) {
+        if (releaseVersion != null) {
+            return releaseStatsPerAssemblyMapper.toDto(
+                    releaseStatsPerAssemblyRepository.findByReleaseVersionAndNewCurrentRsGreaterThan(releaseVersion, 0L));
+        } else {
+            return releaseStatsPerAssemblyMapper.toDto(
+                    releaseStatsPerAssemblyRepository.findByNewCurrentRsGreaterThan(0L));
         }
     }
 }

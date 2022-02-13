@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyDto;
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesDto;
 import uk.ac.ebi.eva.release.services.ReleaseStatsService;
 
@@ -46,5 +47,17 @@ public class ReleaseStatsController {
     public Iterable<ReleaseStatsPerSpeciesDto> getSpeciesWithNewRsIds(
             @RequestParam(name = "releaseVersion") Integer releaseVersion) {
         return releaseStatsService.getSpeciesWithNewRsIds(releaseVersion);
+    }
+
+    @GetMapping("/per-assembly")
+    public Iterable<ReleaseStatsPerAssemblyDto> getReleaseStatsPerAssemblies(
+            @RequestParam(name = "releaseVersion", required = false) Integer releaseVersion) {
+        return releaseStatsService.getReleaseStatsPerAssembly(releaseVersion);
+    }
+
+    @GetMapping("/per-assembly/new")
+    public Iterable<ReleaseStatsPerAssemblyDto> getAssembliesWithNewRsIds(
+            @RequestParam(name = "releaseVersion") Integer releaseVersion) {
+        return releaseStatsService.getReleaseStatsPerAssemblyWithNewRsIds(releaseVersion);
     }
 }
