@@ -61,6 +61,10 @@ public class ReleaseStatsPerAssemblyDto {
 
     private Long newSsClustered;
 
+    private Long clusteredCurrentRs;
+
+    private Long newClusteredCurrentRs;
+
     private String releaseLink;
 
     private String taxonomyLink;
@@ -252,31 +256,50 @@ public class ReleaseStatsPerAssemblyDto {
         this.taxonomyLink = taxonomyLink;
     }
 
+    public Long getClusteredCurrentRs() {
+        return clusteredCurrentRs;
+    }
+
+    public void setClusteredCurrentRs(Long clusteredCurrentRs) {
+        this.clusteredCurrentRs = clusteredCurrentRs;
+    }
+
+    public Long getNewClusteredCurrentRs() {
+        return newClusteredCurrentRs;
+    }
+
+    public void setNewClusteredCurrentRs(Long newClusteredCurrentRs) {
+        this.newClusteredCurrentRs = newClusteredCurrentRs;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReleaseStatsPerAssemblyDto that = (ReleaseStatsPerAssemblyDto) o;
-        return taxonomyId == that.taxonomyId && assemblyAccession == that.assemblyAccession && releaseVersion == that.releaseVersion && Objects.equals(
-                scientificName, that.scientificName) && Objects.equals(releaseFolder,
-                                                                       that.releaseFolder) && Objects.equals(
-                currentRs, that.currentRs) && Objects.equals(remappedCurrentRs,
-                                                             that.remappedCurrentRs) && Objects.equals(
-                multiMappedRs, that.multiMappedRs) && Objects.equals(mergedRs,
-                                                                     that.mergedRs) && Objects.equals(
-                splitRs, that.splitRs) && Objects.equals(deprecatedRs,
-                                                         that.deprecatedRs) && Objects.equals(
-                mergedDeprecatedRs, that.mergedDeprecatedRs) && Objects.equals(ssClustered,
-                                                                               that.ssClustered) && Objects.equals(
-                newCurrentRs, that.newCurrentRs) && Objects.equals(newRemappedCurrentRs,
-                                                                   that.newRemappedCurrentRs) && Objects.equals(
-                newMultiMappedRs, that.newMultiMappedRs) && Objects.equals(newMergedRs,
-                                                                           that.newMergedRs) && Objects.equals(
-                newSplitRs, that.newSplitRs) && Objects.equals(newDeprecatedRs,
-                                                               that.newDeprecatedRs) && Objects.equals(
-                newMergedDeprecatedRs, that.newMergedDeprecatedRs) && Objects.equals(newSsClustered,
-                                                                                     that.newSsClustered) && Objects.equals(
-                releaseLink, that.releaseLink) && Objects.equals(taxonomyLink, that.taxonomyLink);
+        return taxonomyId == that.taxonomyId && releaseVersion == that.releaseVersion && Objects.equals(
+                assemblyAccession, that.assemblyAccession) && Objects.equals(scientificName,
+                                                                             that.scientificName) && Objects.equals(
+                releaseFolder, that.releaseFolder) && Objects.equals(currentRs,
+                                                                     that.currentRs) && Objects.equals(
+                remappedCurrentRs, that.remappedCurrentRs) && Objects.equals(multiMappedRs,
+                                                                             that.multiMappedRs) && Objects.equals(
+                mergedRs, that.mergedRs) && Objects.equals(splitRs, that.splitRs) && Objects.equals(
+                deprecatedRs, that.deprecatedRs) && Objects.equals(mergedDeprecatedRs,
+                                                                   that.mergedDeprecatedRs) && Objects.equals(
+                ssClustered, that.ssClustered) && Objects.equals(newCurrentRs,
+                                                                 that.newCurrentRs) && Objects.equals(
+                newRemappedCurrentRs, that.newRemappedCurrentRs) && Objects.equals(newMultiMappedRs,
+                                                                                   that.newMultiMappedRs) && Objects.equals(
+                newMergedRs, that.newMergedRs) && Objects.equals(newSplitRs,
+                                                                 that.newSplitRs) && Objects.equals(
+                newDeprecatedRs, that.newDeprecatedRs) && Objects.equals(newMergedDeprecatedRs,
+                                                                         that.newMergedDeprecatedRs) && Objects.equals(
+                newSsClustered, that.newSsClustered) && Objects.equals(clusteredCurrentRs,
+                                                                       that.clusteredCurrentRs) && Objects.equals(
+                newClusteredCurrentRs, that.newClusteredCurrentRs) && Objects.equals(releaseLink,
+                                                                                     that.releaseLink) && Objects.equals(
+                taxonomyLink, that.taxonomyLink);
     }
 
     @Override
@@ -284,14 +307,15 @@ public class ReleaseStatsPerAssemblyDto {
         return Objects.hash(taxonomyId, assemblyAccession, releaseVersion, scientificName, releaseFolder, currentRs,
                             remappedCurrentRs, multiMappedRs, mergedRs, splitRs, deprecatedRs, mergedDeprecatedRs,
                             ssClustered, newCurrentRs, newRemappedCurrentRs, newMultiMappedRs, newMergedRs, newSplitRs,
-                            newDeprecatedRs, newMergedDeprecatedRs, newSsClustered, releaseLink, taxonomyLink);
+                            newDeprecatedRs, newMergedDeprecatedRs, newSsClustered, clusteredCurrentRs,
+                            newClusteredCurrentRs, releaseLink, taxonomyLink);
     }
 
     @Override
     public String toString() {
         return "ReleaseStatsPerAssemblyDto{" +
                 "taxonomyId=" + taxonomyId +
-                ", assemblyAccession=" + assemblyAccession +
+                ", assemblyAccession='" + assemblyAccession + '\'' +
                 ", releaseVersion=" + releaseVersion +
                 ", scientificName='" + scientificName + '\'' +
                 ", releaseFolder='" + releaseFolder + '\'' +
@@ -311,6 +335,8 @@ public class ReleaseStatsPerAssemblyDto {
                 ", newDeprecatedRs=" + newDeprecatedRs +
                 ", newMergedDeprecatedRs=" + newMergedDeprecatedRs +
                 ", newSsClustered=" + newSsClustered +
+                ", clusteredCurrentRs=" + clusteredCurrentRs +
+                ", newClusteredCurrentRs=" + newClusteredCurrentRs +
                 ", releaseLink='" + releaseLink + '\'' +
                 ", taxonomyLink='" + taxonomyLink + '\'' +
                 '}';

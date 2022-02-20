@@ -72,6 +72,8 @@ public class ReleaseStatsPerAssemblyMapper {
         releaseStatsPerAssemblyDto.setNewDeprecatedRs(releaseStatsPerAssembly.getNewDeprecatedRs());
         releaseStatsPerAssemblyDto.setNewMergedDeprecatedRs(releaseStatsPerAssembly.getNewMergedDeprecatedRs());
         releaseStatsPerAssemblyDto.setNewSsClustered(releaseStatsPerAssembly.getNewSsClustered());
+        releaseStatsPerAssemblyDto.setClusteredCurrentRs(releaseStatsPerAssembly.getClusteredCurrentRs());
+        releaseStatsPerAssemblyDto.setNewClusteredCurrentRs(releaseStatsPerAssembly.getNewClusteredCurrentRs());
         String releaseLink = releasesFtp.get(releaseStatsPerAssembly.getReleaseVersion()) + SPECIES_DIRECTORY +
                 releaseStatsPerAssembly.getReleaseFolder();
         releaseStatsPerAssemblyDto.setReleaseLink(releaseLink);
