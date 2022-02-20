@@ -22,7 +22,7 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@IdClass(ReleaseStartsPerAssemblyPK.class)
+@IdClass(ReleaseStatsPerAssemblyPK.class)
 @Table(name = "release_rs_statistics_per_assembly")
 public class ReleaseStatsPerAssembly {
 

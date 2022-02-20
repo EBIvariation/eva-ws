@@ -18,13 +18,13 @@ package uk.ac.ebi.eva.release.models;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class ReleaseStartsPerSpeciesPK implements Serializable {
+public class ReleaseStatsPerSpeciesPK implements Serializable {
 
     private int taxonomyId;
 
     private int releaseVersion;
 
-    public ReleaseStartsPerSpeciesPK() {
+    public ReleaseStatsPerSpeciesPK() {
     }
 
     public int getTaxonomyId() {
@@ -47,7 +47,7 @@ public class ReleaseStartsPerSpeciesPK implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ReleaseStartsPerSpeciesPK that = (ReleaseStartsPerSpeciesPK) o;
+        ReleaseStatsPerSpeciesPK that = (ReleaseStatsPerSpeciesPK) o;
         return taxonomyId == that.taxonomyId &&
                 releaseVersion == that.releaseVersion;
     }
@@ -59,7 +59,7 @@ public class ReleaseStartsPerSpeciesPK implements Serializable {
 
     @Override
     public String toString() {
-        return "ReleaseStartsPerSpeciesPK{" +
+        return "ReleaseStatsPerSpeciesPK{" +
                 "taxonomyId=" + taxonomyId +
                 ", releaseVersion=" + releaseVersion +
                 '}';

@@ -18,7 +18,7 @@ package uk.ac.ebi.eva.release.models;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class ReleaseStartsPerAssemblyPK implements Serializable {
+public class ReleaseStatsPerAssemblyPK implements Serializable {
 
     private int taxonomyId;
 
@@ -26,7 +26,7 @@ public class ReleaseStartsPerAssemblyPK implements Serializable {
 
     private int releaseVersion;
 
-    public ReleaseStartsPerAssemblyPK() {
+    public ReleaseStatsPerAssemblyPK() {
     }
 
     public int getTaxonomyId() {
@@ -57,7 +57,7 @@ public class ReleaseStartsPerAssemblyPK implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ReleaseStartsPerAssemblyPK that = (ReleaseStartsPerAssemblyPK) o;
+        ReleaseStatsPerAssemblyPK that = (ReleaseStatsPerAssemblyPK) o;
         return taxonomyId == that.taxonomyId && assemblyAccession == that.assemblyAccession
                 && releaseVersion == that.releaseVersion;
     }
@@ -69,7 +69,7 @@ public class ReleaseStartsPerAssemblyPK implements Serializable {
 
     @Override
     public String toString() {
-        return "ReleaseStartsPerAssemblyPK{" +
+        return "ReleaseStatsPerAssemblyPK{" +
                 "taxonomyId=" + taxonomyId +
                 ", assemblyAccession=" + assemblyAccession +
                 ", releaseVersion=" + releaseVersion +
