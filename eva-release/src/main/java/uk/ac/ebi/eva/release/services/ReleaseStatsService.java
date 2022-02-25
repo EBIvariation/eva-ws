@@ -17,32 +17,34 @@ package uk.ac.ebi.eva.release.services;
 
 import org.springframework.stereotype.Service;
 
+import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyDto;
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesDto;
-import uk.ac.ebi.eva.release.models.ReleaseInfo;
+import uk.ac.ebi.eva.release.mappers.ReleaseStatsPerAssemblyMapper;
+import uk.ac.ebi.eva.release.mappers.ReleaseStatsPerSpeciesMapper;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssembly;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerSpecies;
-import uk.ac.ebi.eva.release.repositories.ReleaseInfoRepository;
+import uk.ac.ebi.eva.release.repositories.ReleaseStatsPerAssemblyRepository;
 import uk.ac.ebi.eva.release.repositories.ReleaseStatsPerSpeciesRepository;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class ReleaseStatsService {
 
-    private static final String SPECIES_DIRECTORY = "by_species/";
-
-    private static final String TAXONOMY_URL = "https://www.ebi.ac.uk/ena/browser/view/Taxon:";
-
     private final ReleaseStatsPerSpeciesRepository releaseStatsPerSpeciesRepository;
 
-    private final ReleaseInfoRepository releaseInfoRepository;
+    private final ReleaseStatsPerAssemblyRepository releaseStatsPerAssemblyRepository;
+
+    private final ReleaseStatsPerSpeciesMapper releaseStatsPerSpeciesMapper;
+
+    private final ReleaseStatsPerAssemblyMapper releaseStatsPerAssemblyMapper;
 
     public ReleaseStatsService(ReleaseStatsPerSpeciesRepository releaseStatsPerSpeciesRepository,
-                               ReleaseInfoRepository releaseInfoRepository) {
+                               ReleaseStatsPerAssemblyRepository releaseStatsPerAssemblyRepository,
+                               ReleaseStatsPerSpeciesMapper releaseStatsPerSpeciesMapper,
+                               ReleaseStatsPerAssemblyMapper releaseStatsPerAssemblyMapper) {
         this.releaseStatsPerSpeciesRepository = releaseStatsPerSpeciesRepository;
-        this.releaseInfoRepository = releaseInfoRepository;
+        this.releaseStatsPerAssemblyRepository = releaseStatsPerAssemblyRepository;
+        this.releaseStatsPerSpeciesMapper = releaseStatsPerSpeciesMapper;
+        this.releaseStatsPerAssemblyMapper = releaseStatsPerAssemblyMapper;
     }
 
     public Iterable<ReleaseStatsPerSpeciesDto> getReleaseStatsPerSpecies(Integer releaseVersion,
@@ -61,7 +63,7 @@ public class ReleaseStatsService {
                 releaseData = releaseStatsPerSpeciesRepository.findAll();
             }
         }
-        return toDto(releaseData);
+        return releaseStatsPerSpeciesMapper.toDto(releaseData);
     }
 
     private Iterable<ReleaseStatsPerSpecies> getReleaseDataByVersionExcludingUnmappedOnly(Integer releaseVersion) {
@@ -76,54 +78,32 @@ public class ReleaseStatsService {
                         0, 0, 0, 0, 0, 0);
     }
 
-    private Iterable<ReleaseStatsPerSpeciesDto> toDto(Iterable<ReleaseStatsPerSpecies> releaseStatsPerSpecies) {
-        List<ReleaseStatsPerSpeciesDto> releaseStatsPerSpeciesDtos = new ArrayList();
-        for (ReleaseStatsPerSpecies species : releaseStatsPerSpecies) {
-            releaseStatsPerSpeciesDtos.add(toDto(species));
-        }
-        return releaseStatsPerSpeciesDtos;
-    }
-
-    private ReleaseStatsPerSpeciesDto toDto(ReleaseStatsPerSpecies releaseStatsPerSpecies) {
-        Map<Integer, String> releasesFtp = getReleasesFtp();
-
-        ReleaseStatsPerSpeciesDto releaseStatsPerSpeciesDto = new ReleaseStatsPerSpeciesDto();
-        releaseStatsPerSpeciesDto.setTaxonomyId(releaseStatsPerSpecies.getTaxonomyId());
-        releaseStatsPerSpeciesDto.setReleaseVersion(releaseStatsPerSpecies.getReleaseVersion());
-        releaseStatsPerSpeciesDto.setScientificName(releaseStatsPerSpecies.getScientificName());
-        releaseStatsPerSpeciesDto.setReleaseFolder(releaseStatsPerSpecies.getReleaseFolder());
-        releaseStatsPerSpeciesDto.setCurrentRs(releaseStatsPerSpecies.getCurrentRs());
-        releaseStatsPerSpeciesDto.setMultiMappedRs(releaseStatsPerSpecies.getMultiMappedRs());
-        releaseStatsPerSpeciesDto.setMergedRs(releaseStatsPerSpecies.getMergedRs());
-        releaseStatsPerSpeciesDto.setDeprecatedRs(releaseStatsPerSpecies.getDeprecatedRs());
-        releaseStatsPerSpeciesDto.setMergedDeprecatedRs(releaseStatsPerSpecies.getMergedDeprecatedRs());
-        releaseStatsPerSpeciesDto.setUnmappedRs(releaseStatsPerSpecies.getUnmappedRs());
-        releaseStatsPerSpeciesDto.setNewCurrentRs(releaseStatsPerSpecies.getNewCurrentRs());
-        releaseStatsPerSpeciesDto.setNewMultiMappedRs(releaseStatsPerSpecies.getNewMultiMappedRs());
-        releaseStatsPerSpeciesDto.setNewMergedRs(releaseStatsPerSpecies.getNewMergedRs());
-        releaseStatsPerSpeciesDto.setNewDeprecatedRs(releaseStatsPerSpecies.getNewDeprecatedRs());
-        releaseStatsPerSpeciesDto.setNewMergedDeprecatedRs(releaseStatsPerSpecies.getNewMergedDeprecatedRs());
-        releaseStatsPerSpeciesDto.setNewUnmappedRs(releaseStatsPerSpecies.getNewUnmappedRs());
-        releaseStatsPerSpeciesDto.setNewSsClustered(releaseStatsPerSpecies.getNewSsClustered());
-        String releaseLink = releasesFtp.get(releaseStatsPerSpecies.getReleaseVersion()) + SPECIES_DIRECTORY +
-                releaseStatsPerSpecies.getReleaseFolder();
-        releaseStatsPerSpeciesDto.setReleaseLink(releaseLink);
-        releaseStatsPerSpeciesDto.setTaxonomyLink(TAXONOMY_URL + releaseStatsPerSpecies.getTaxonomyId());
-        return releaseStatsPerSpeciesDto;
-    }
-
-    private Map<Integer, String> getReleasesFtp() {
-        Map<Integer, String> releaseFtp = new HashMap<>();
-        releaseInfoRepository.findAll().forEach(r -> releaseFtp.put(r.getReleaseVersion(), r.getReleaseFtp()));
-        return releaseFtp;
-    }
-
     public Iterable<ReleaseStatsPerSpeciesDto> getSpeciesWithNewRsIds(Integer releaseVersion) {
         if (releaseVersion != null) {
-            return toDto(releaseStatsPerSpeciesRepository
+            return releaseStatsPerSpeciesMapper.toDto(releaseStatsPerSpeciesRepository
                                  .findByReleaseVersionAndNewCurrentRsGreaterThan(releaseVersion, 0L));
         } else {
-            return toDto(releaseStatsPerSpeciesRepository.findByNewCurrentRsGreaterThan(0L));
+            return releaseStatsPerSpeciesMapper.toDto(releaseStatsPerSpeciesRepository.findByNewCurrentRsGreaterThan(0L));
+        }
+    }
+
+    public Iterable<ReleaseStatsPerAssemblyDto> getReleaseStatsPerAssembly(Integer releaseVersion) {
+        Iterable<ReleaseStatsPerAssembly> releaseData;
+        if (releaseVersion != null) {
+            releaseData = releaseStatsPerAssemblyRepository.findAllByReleaseVersion(releaseVersion);
+        } else {
+            releaseData = releaseStatsPerAssemblyRepository.findAll();
+        }
+        return releaseStatsPerAssemblyMapper.toDto(releaseData);
+    }
+
+    public Iterable<ReleaseStatsPerAssemblyDto> getReleaseStatsPerAssemblyWithNewRsIds(Integer releaseVersion) {
+        if (releaseVersion != null) {
+            return releaseStatsPerAssemblyMapper.toDto(
+                    releaseStatsPerAssemblyRepository.findByReleaseVersionAndNewCurrentRsGreaterThan(releaseVersion, 0L));
+        } else {
+            return releaseStatsPerAssemblyMapper.toDto(
+                    releaseStatsPerAssemblyRepository.findByNewCurrentRsGreaterThan(0L));
         }
     }
 }

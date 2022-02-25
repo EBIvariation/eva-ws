@@ -18,12 +18,12 @@ package uk.ac.ebi.eva.release.repositories;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import uk.ac.ebi.eva.release.models.ReleaseStartsPerSpeciesPK;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerSpeciesPK;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerSpecies;
 
 @Repository
 public interface ReleaseStatsPerSpeciesRepository extends CrudRepository<ReleaseStatsPerSpecies,
-        ReleaseStartsPerSpeciesPK> {
+        ReleaseStatsPerSpeciesPK> {
 
     Iterable<ReleaseStatsPerSpecies> findAllByReleaseVersion(int releaseVersion);
 
