@@ -22,7 +22,6 @@ test:
     only:
         - master
         - tags
-        - test_deployment
 
 # Not executed, parent job definition for package
 .package:
@@ -56,7 +55,6 @@ package-internal:
         ENVIRONMENT_NAME: internal
     only:
         - master
-        - test_deployment
 
 package-development:
     extends: .package
@@ -66,7 +64,6 @@ package-development:
         ENVIRONMENT_NAME: development
     only:
         - master
-        - test_deployment
 
 package-production:
     extends: .package
@@ -101,7 +98,6 @@ deploy-tomcat-internal:
         - package-internal
     only:
         - master
-        - test_deployment
 
 deploy-tomcat-development:
     extends: .deploy-tomcat
@@ -114,7 +110,6 @@ deploy-tomcat-development:
         - package-development
     only:
         - master
-        - test_deployment
 
 deploy-tomcat-production:
     extends: .deploy-tomcat
