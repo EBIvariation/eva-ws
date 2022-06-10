@@ -15,7 +15,7 @@
                 <eva.mongo.collections.files>files</eva.mongo.collections.files>
                 <eva.version>1.2</eva.version>
                 <eva.context.root>http://localhost:8080/eva</eva.context.root>
-                <eva.evapro.datasource>evadev</eva.evapro.datasource>
+                <eva.evapro.datasource>evapro</eva.evapro.datasource>
             </properties>
         </profile>
     </profiles>
