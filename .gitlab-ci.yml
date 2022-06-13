@@ -69,7 +69,7 @@ package-production:
     extends: .package
     variables:
         WS_MAVEN_PROFILE: production,$ACTIVE_EVAPRO
-        COUNT_STATS_MAVEN_PROFILE: production,evapro-staging
+        COUNT_STATS_MAVEN_PROFILE: production_processing
         ENVIRONMENT_NAME: production
     only:
         - tags
