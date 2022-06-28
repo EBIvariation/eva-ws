@@ -56,12 +56,12 @@ package-internal:
     only:
         - master
 
-package-development:
+package-staging:
     extends: .package
     variables:
         WS_MAVEN_PROFILE: production_processing
         COUNT_STATS_MAVEN_PROFILE: production_processing
-        ENVIRONMENT_NAME: development
+        ENVIRONMENT_NAME: staging
     only:
         - master
 
@@ -69,7 +69,8 @@ package-production:
     extends: .package
     variables:
         WS_MAVEN_PROFILE: production,$ACTIVE_EVAPRO
-        COUNT_STATS_MAVEN_PROFILE: production
+        # COUNT_STATS_MAVEN_PROFILE is production_processing because we are writing to the staging metadata database
+        COUNT_STATS_MAVEN_PROFILE: production_processing
         ENVIRONMENT_NAME: production
     only:
         - tags
@@ -99,15 +100,15 @@ deploy-tomcat-internal:
     only:
         - master
 
-deploy-tomcat-development:
+deploy-tomcat-staging:
     extends: .deploy-tomcat
     variables:
-        ENVIRONMENT_NAME: development
+        ENVIRONMENT_NAME: staging
         TOMCAT_USER: $TOMCAT_DEVELOPMENT_USER
         TOMCAT_PASSWORD: $TOMCAT_DEVELOPMENT_PASSWORD
         TOMCAT_HOST: $TOMCAT_DEVELOPMENT_HOST
     dependencies:
-        - package-development
+        - package-staging
     only:
         - master
 
