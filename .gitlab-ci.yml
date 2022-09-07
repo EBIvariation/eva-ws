@@ -114,7 +114,6 @@ deploy-tomcat-staging:
 
 deploy-tomcat-production:
     extends: .deploy-tomcat
-    when: manual
     variables:
         ENVIRONMENT_NAME: production
         TOMCAT_USER: $TOMCAT_PRODUCTION_USER
@@ -127,7 +126,6 @@ deploy-tomcat-production:
 
 deploy-tomcat-production-fallback:
     extends: .deploy-tomcat
-    when: manual
     variables:
         ENVIRONMENT_NAME: production
         TOMCAT_USER: $TOMCAT_PRODUCTION_FALLBACK_USER
