@@ -29,6 +29,7 @@ test:
     stage: package
     environment:
         name: $ENVIRONMENT_NAME
+    resource_group: $ENVIRONMENT_NAME
     before_script:
         - DATETIME=$(date +%Y-%m-%dT%H-%M-%S)
         - apk add --update curl
