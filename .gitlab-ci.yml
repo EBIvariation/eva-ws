@@ -81,6 +81,7 @@ package-production:
     image: alpine:3.9.5
     environment:
         name: $ENVIRONMENT_NAME
+    resource_group: $ENVIRONMENT_NAME
     script:
         - DATETIME=$(date +%Y-%m-%dT%H-%M-%S)
         - apk add --update curl
