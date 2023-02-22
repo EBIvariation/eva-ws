@@ -70,5 +70,15 @@ public class MultiMongoDbFactory extends SimpleMongoDbFactory {
         logger.debug("Acquiring database: " + dbToUse);
         return super.getDb(dbToUse);
     }
+
+    @Override
+    public void destroy() throws Exception {
+        this.getMongoClient().close();
+        super.destroy();
+    }
+
+    public static void unset() {
+        dbName.remove();
+    }
 }
 
