@@ -123,9 +123,11 @@ public class DgvaStudyBrowser {
             // Ignore, default value null.
         }
         publications = (pubmedId == null) ? null : pubmedId.split(", ");
-        // Convert to CURIE to be consistent with EvaStudyBrowser
-        for (int i = 0; i < publications.length; i++) {
-            publications[i] = "PubMed:" + publications[i];
+        if (publications != null) {
+            // Convert to CURIE to be consistent with EvaStudyBrowser
+            for (int i = 0; i < publications.length; i++) {
+                publications[i] = "PubMed:" + publications[i];
+            }
         }
 
         VariantStudy study = new VariantStudy(displayName, studyAccession, null,
