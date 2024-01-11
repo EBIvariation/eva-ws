@@ -119,9 +119,15 @@ public class DgvaStudyBrowser {
         String[] publications = null;
         try {
             uri = new URI(studyUrl);
-            publications = (pubmedId == null) ? null : pubmedId.split(", ");
         } catch (URISyntaxException | NullPointerException ex) {
             // Ignore, default value null.
+        }
+        publications = (pubmedId == null) ? null : pubmedId.split(", ");
+        if (publications != null) {
+            // Convert to CURIE to be consistent with EvaStudyBrowser
+            for (int i = 0; i < publications.length; i++) {
+                publications[i] = "PubMed:" + publications[i];
+            }
         }
 
         VariantStudy study = new VariantStudy(displayName, studyAccession, null,
