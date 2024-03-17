@@ -22,35 +22,32 @@ import java.util.Objects;
 
 @Entity
 @IdClass(ReleaseStatsPerAssemblyViewPK.class)
-@Table(name = "release_rs_count_per_assembly_accession")
-public class ReleaseStatsPerAssemblyView {
-
-
-    @Id
-    private String assemblyAccession;
+@Table(name = "release_rs_count_per_assembly")
+public class ReleaseStatsPerAssemblyView implements ReleaseStatsView {
 
     @Id
     private int releaseVersion;
-
-    private int[] taxonomyIds;
+    @Id
+    private String assemblyAccession;
 
     private String rsType;
+
+//    private int[] taxonomyIds;
 
     private Long count;
 
     @Column(name="new")
-    private Long newAddition;
-
+    protected Long newAddition;
     public ReleaseStatsPerAssemblyView() {
     }
 
-    public int[] getTaxonomyIds() {
-        return taxonomyIds;
-    }
-
-    public void setTaxonomyIds(int[] taxonomyIds) {
-        this.taxonomyIds = taxonomyIds;
-    }
+//    public int[] getTaxonomyIds() {
+//        return taxonomyIds;
+//    }
+//
+//    public void setTaxonomyIds(int[] taxonomyIds) {
+//        this.taxonomyIds = taxonomyIds;
+//    }
 
     public String getAssemblyAccession() {
         return assemblyAccession;
@@ -60,6 +57,11 @@ public class ReleaseStatsPerAssemblyView {
         this.assemblyAccession = assemblyAccession;
     }
 
+    public String getRsType() {
+        return rsType;
+    }
+
+
     public int getReleaseVersion() {
         return releaseVersion;
     }
@@ -68,14 +70,31 @@ public class ReleaseStatsPerAssemblyView {
         this.releaseVersion = releaseVersion;
     }
 
-
-    public String getRsType() {
-        return rsType;
-    }
-
     public void setRsType(String rsType) {
         this.rsType = rsType;
     }
+
+    public Long getCount() {
+        return count;
+    }
+
+    public void setCount(Long count) {
+        this.count = count;
+    }
+
+    public Long getNewAddition() {
+        return newAddition;
+    }
+
+    public void setNewAddition(Long newAddition) {
+        this.newAddition = newAddition;
+    }
+
+    @Override
+    public String getKey() {
+        return this.assemblyAccession + "_" + this.releaseVersion;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

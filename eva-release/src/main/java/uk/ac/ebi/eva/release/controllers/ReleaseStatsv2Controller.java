@@ -20,8 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyDto;
-import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesDto;
+import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyV2Dto;
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesV2Dto;
 import uk.ac.ebi.eva.release.services.ReleaseStatsServicev2;
 
@@ -40,24 +39,28 @@ public class ReleaseStatsv2Controller {
     public Iterable<ReleaseStatsPerSpeciesV2Dto> getReleaseStatsPerSpecies(
             @RequestParam(name = "releaseVersion", required = false) Integer releaseVersion,
             @RequestParam(name = "excludeUnmappedOnly", required = false) boolean excludeUnmappedOnly) {
-        return releaseStatsService.getReleaseStatsPerSpecies(releaseVersion);
+        if (releaseVersion != null) {
+            return releaseStatsService.getReleaseStatsPerSpecies(releaseVersion, excludeUnmappedOnly);
+        }else{
+            return releaseStatsService.getReleaseStatsPerSpecies(excludeUnmappedOnly);
+        }
     }
 
-//    @GetMapping("/per-species/new")
-//    public Iterable<ReleaseStatsPerSpeciesDto> getSpeciesWithNewRsIds(
-//            @RequestParam(name = "releaseVersion") Integer releaseVersion) {
-//        return releaseStatsService.getSpeciesWithNewRsIds(releaseVersion);
-//    }
-//
-//    @GetMapping("/per-assembly")
-//    public Iterable<ReleaseStatsPerAssemblyDto> getReleaseStatsPerAssemblies(
-//            @RequestParam(name = "releaseVersion", required = false) Integer releaseVersion) {
-//        return releaseStatsService.getReleaseStatsPerAssembly(releaseVersion);
-//    }
-//
-//    @GetMapping("/per-assembly/new")
-//    public Iterable<ReleaseStatsPerAssemblyDto> getAssembliesWithNewRsIds(
-//            @RequestParam(name = "releaseVersion") Integer releaseVersion) {
-//        return releaseStatsService.getReleaseStatsPerAssemblyWithNewRsIds(releaseVersion);
-//    }
+    @GetMapping("/per-species/new")
+    public Iterable<ReleaseStatsPerSpeciesV2Dto> getSpeciesWithNewRsIds(
+            @RequestParam(name = "releaseVersion") Integer releaseVersion) {
+        return releaseStatsService.getSpeciesWithNewRsIds(releaseVersion);
+    }
+
+    @GetMapping("/per-assembly")
+    public Iterable<ReleaseStatsPerAssemblyV2Dto> getReleaseStatsPerAssemblies(
+            @RequestParam(name = "releaseVersion", required = false) Integer releaseVersion) {
+        return releaseStatsService.getReleaseStatsPerAssembly(releaseVersion, false);
+    }
+
+    @GetMapping("/per-assembly/new")
+    public Iterable<ReleaseStatsPerAssemblyV2Dto> getAssembliesWithNewRsIds(
+            @RequestParam(name = "releaseVersion") Integer releaseVersion) {
+        return releaseStatsService.getReleaseStatsPerAssembly(releaseVersion, true);
+    }
 }

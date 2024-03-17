@@ -20,23 +20,26 @@ import java.util.Objects;
 
 @Entity
 @IdClass(ReleaseStatsPerTaxonomyViewPK.class)
-@Table(name = "release_rs_count_per_taxonomy_id")
-public class ReleaseStatsPerTaxonomyView {
+@Table(name = "release_rs_count_per_taxonomy")
+public class ReleaseStatsPerTaxonomyView implements ReleaseStatsView{
 
     @Id
     private int taxonomyId;
-
     @Id
     private int releaseVersion;
-
-    private String[] assemblyAccessions;
-
     private String rsType;
+
+//    private String[] assemblyAccessions;
+
+    private String scientificName;
+
+    private String commonName;
 
     private Long count;
 
     @Column(name="new")
-    private Long newAddition;
+    protected Long newAddition;
+
 
     public ReleaseStatsPerTaxonomyView() {
     }
@@ -49,13 +52,18 @@ public class ReleaseStatsPerTaxonomyView {
         this.taxonomyId = taxonomyId;
     }
 
-    public String[] getAssemblyAccessions() {
-        return assemblyAccessions;
+//    public String[] getAssemblyAccessions() {
+//        return assemblyAccessions;
+//    }
+//
+//    public void setAssemblyAccessions(String[] assemblyAccessions) {
+//        this.assemblyAccessions = assemblyAccessions;
+//    }
+
+    public String getRsType() {
+        return rsType;
     }
 
-    public void setAssemblyAccessions(String[] assemblyAccessions) {
-        this.assemblyAccessions = assemblyAccessions;
-    }
 
     public int getReleaseVersion() {
         return releaseVersion;
@@ -63,11 +71,6 @@ public class ReleaseStatsPerTaxonomyView {
 
     public void setReleaseVersion(int releaseVersion) {
         this.releaseVersion = releaseVersion;
-    }
-
-
-    public String getRsType() {
-        return rsType;
     }
 
     public void setRsType(String rsType) {
@@ -88,6 +91,28 @@ public class ReleaseStatsPerTaxonomyView {
 
     public void setNewAddition(Long newAddition) {
         this.newAddition = newAddition;
+    }
+
+    @Override
+    public String getKey() {
+        return this.taxonomyId + "_" + this.releaseVersion;
+    }
+
+
+    public String getScientificName() {
+        return scientificName;
+    }
+
+    public void setScientificName(String scientificName) {
+        this.scientificName = scientificName;
+    }
+
+    public String getCommonName() {
+        return commonName;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
     }
 
     @Override

@@ -18,41 +18,10 @@ package uk.ac.ebi.eva.release.dto;
 import javax.persistence.Id;
 import java.util.Objects;
 
-public class ReleaseStatsPerSpeciesV2Dto {
+public class ReleaseStatsPerSpeciesV2Dto extends ReleaseStatsPerV2Dto {
 
     @Id
     private int taxonomyId;
-
-    @Id
-    private int releaseVersion;
-
-    private String releaseFolder;
-
-    private Long currentRs;
-
-    private Long multiMappedRs;
-
-    private Long mergedRs;
-
-    private Long deprecatedRs;
-
-    private Long mergedDeprecatedRs;
-
-    private Long unmappedRs;
-
-    private Long newCurrentRs;
-
-    private Long newMultiMappedRs;
-
-    private Long newMergedRs;
-
-    private Long newDeprecatedRs;
-
-    private Long newMergedDeprecatedRs;
-
-    private Long newUnmappedRs;
-
-    private String releaseLink;
 
     private String taxonomyLink;
 
@@ -69,132 +38,12 @@ public class ReleaseStatsPerSpeciesV2Dto {
         this.taxonomyId = taxonomyId;
     }
 
-    public int getReleaseVersion() {
-        return releaseVersion;
-    }
-
-    public void setReleaseVersion(int releaseVersion) {
-        this.releaseVersion = releaseVersion;
-    }
-
     public String getScientificName() {
         return scientificName;
     }
 
     public void setScientificName(String scientificName) {
         this.scientificName = scientificName;
-    }
-
-    public String getReleaseFolder() {
-        return releaseFolder;
-    }
-
-    public void setReleaseFolder(String releaseFolder) {
-        this.releaseFolder = releaseFolder;
-    }
-
-    public Long getCurrentRs() {
-        return currentRs;
-    }
-
-    public void setCurrentRs(Long currentRs) {
-        this.currentRs = currentRs;
-    }
-
-    public Long getMultiMappedRs() {
-        return multiMappedRs;
-    }
-
-    public void setMultiMappedRs(Long multiMappedRs) {
-        this.multiMappedRs = multiMappedRs;
-    }
-
-    public Long getMergedRs() {
-        return mergedRs;
-    }
-
-    public void setMergedRs(Long mergedRs) {
-        this.mergedRs = mergedRs;
-    }
-
-    public Long getDeprecatedRs() {
-        return deprecatedRs;
-    }
-
-    public void setDeprecatedRs(Long deprecatedRs) {
-        this.deprecatedRs = deprecatedRs;
-    }
-
-    public Long getMergedDeprecatedRs() {
-        return mergedDeprecatedRs;
-    }
-
-    public void setMergedDeprecatedRs(Long mergedDeprecatedRs) {
-        this.mergedDeprecatedRs = mergedDeprecatedRs;
-    }
-
-    public Long getUnmappedRs() {
-        return unmappedRs;
-    }
-
-    public void setUnmappedRs(Long unmappedRs) {
-        this.unmappedRs = unmappedRs;
-    }
-
-    public Long getNewCurrentRs() {
-        return newCurrentRs;
-    }
-
-    public void setNewCurrentRs(Long newCurrentRs) {
-        this.newCurrentRs = newCurrentRs;
-    }
-
-    public Long getNewMultiMappedRs() {
-        return newMultiMappedRs;
-    }
-
-    public void setNewMultiMappedRs(Long newMultiMappedRs) {
-        this.newMultiMappedRs = newMultiMappedRs;
-    }
-
-    public Long getNewMergedRs() {
-        return newMergedRs;
-    }
-
-    public void setNewMergedRs(Long newMergedRs) {
-        this.newMergedRs = newMergedRs;
-    }
-
-    public Long getNewDeprecatedRs() {
-        return newDeprecatedRs;
-    }
-
-    public void setNewDeprecatedRs(Long newDeprecatedRs) {
-        this.newDeprecatedRs = newDeprecatedRs;
-    }
-
-    public Long getNewMergedDeprecatedRs() {
-        return newMergedDeprecatedRs;
-    }
-
-    public void setNewMergedDeprecatedRs(Long newMergedDeprecatedRs) {
-        this.newMergedDeprecatedRs = newMergedDeprecatedRs;
-    }
-
-    public Long getNewUnmappedRs() {
-        return newUnmappedRs;
-    }
-
-    public void setNewUnmappedRs(Long newUnmappedRs) {
-        this.newUnmappedRs = newUnmappedRs;
-    }
-
-    public String getReleaseLink() {
-        return releaseLink;
-    }
-
-    public void setReleaseLink(String releaseLink) {
-        this.releaseLink = releaseLink;
     }
 
     public String getTaxonomyLink() {
@@ -246,18 +95,18 @@ public class ReleaseStatsPerSpeciesV2Dto {
                 ", releaseVersion=" + releaseVersion +
                 ", scientificName='" + scientificName + '\'' +
                 ", releaseFolder='" + releaseFolder + '\'' +
-                ", currentRs=" + currentRs +
-                ", multiMappedRs=" + multiMappedRs +
-                ", mergedRs=" + mergedRs +
-                ", deprecatedRs=" + deprecatedRs +
-                ", mergedDeprecatedRs=" + mergedDeprecatedRs +
-                ", unmappedRs=" + unmappedRs +
-                ", newCurrentRs=" + newCurrentRs +
-                ", newMultiMappedRs=" + newMultiMappedRs +
-                ", newMergedRs=" + newMergedRs +
-                ", newDeprecatedRs=" + newDeprecatedRs +
-                ", newMergedDeprecatedRs=" + newMergedDeprecatedRs +
-                ", newUnmappedRs=" + newUnmappedRs +
+                ", currentRs=" + getCurrentRs() +
+                ", multiMappedRs=" + getMultiMappedRs() +
+                ", mergedRs=" + getMergedRs() +
+                ", deprecatedRs=" + getDeprecatedRs() +
+                ", mergedDeprecatedRs=" + getMergedDeprecatedRs() +
+                ", unmappedRs=" + getUnmappedRs() +
+                ", newCurrentRs=" + getNewCurrentRs() +
+                ", newMultiMappedRs=" + getNewMultiMappedRs() +
+                ", newMergedRs=" + getNewMergedRs() +
+                ", newDeprecatedRs=" + getNewDeprecatedRs() +
+                ", newMergedDeprecatedRs=" + getNewMergedDeprecatedRs() +
+                ", newUnmappedRs=" + getNewUnmappedRs() +
                 ", releaseLink='" + releaseLink + '\'' +
                 ", taxonomyLink='" + taxonomyLink + '\'' +
                 '}';
