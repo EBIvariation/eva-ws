@@ -52,6 +52,7 @@ public class ReleaseStatsPerAssemblyMapper {
             }
             ReleaseStatsPerAssemblyV2Dto dto = keyToDto.get(key);
             dto.setAssemblyAccession(assemblyData.getAssemblyAccession());
+            dto.setReleaseFolder(assemblyData.getReleaseFolder());
             this.releaseStatMapperUtils.populateDtoFromV2LongForm(dto, assemblyData);
             String releaseLink = this.releaseLinkMap.get(assemblyData.getReleaseVersion()) + ASSEMBLY_DIRECTORY +
                     assemblyData.getAssemblyAccession();

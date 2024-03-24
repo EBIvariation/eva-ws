@@ -33,6 +33,7 @@ public class ReleaseStatsPerAssemblyV2 implements ReleaseStatsV2 {
     @Id
     private String assemblyAccession;
 
+    @Id
     private String rsType;
 
     @Type(type = "int-array")
@@ -42,10 +43,15 @@ public class ReleaseStatsPerAssemblyV2 implements ReleaseStatsV2 {
     )
     private int[] taxonomyIds;
 
+    private String releaseFolder;
+
     private Long count;
 
     @Column(name="new")
     protected Long newAddition;
+
+
+
     public ReleaseStatsPerAssemblyV2() {
     }
 
@@ -80,6 +86,14 @@ public class ReleaseStatsPerAssemblyV2 implements ReleaseStatsV2 {
 
     public void setRsType(String rsType) {
         this.rsType = rsType;
+    }
+
+    public String getReleaseFolder() {
+        return releaseFolder;
+    }
+
+    public void setReleaseFolder(String releaseFolder) {
+        this.releaseFolder = releaseFolder;
     }
 
     public Long getCount() {

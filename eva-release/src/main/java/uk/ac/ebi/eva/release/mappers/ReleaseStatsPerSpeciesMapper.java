@@ -54,6 +54,7 @@ public class ReleaseStatsPerSpeciesMapper {
             dto.setScientificName(taxonomyData.getScientificName());
             dto.setCommonName(taxonomyData.getCommonName());
             this.releaseStatMapperUtils.populateDtoFromV2LongForm(dto, taxonomyData);
+            dto.setReleaseFolder(taxonomyData.getReleaseFolder());
             String releaseLink = this.releaseLinkMap.get(taxonomyData.getReleaseVersion()) + SPECIES_DIRECTORY +
                     taxonomyData.getReleaseFolder();
             dto.setReleaseLink(releaseLink);
