@@ -18,7 +18,7 @@ package uk.ac.ebi.eva.release.services;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyV2Dto;
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesV2Dto;
-import uk.ac.ebi.eva.release.dto.ReleaseStatsPerV2Dto;
+import uk.ac.ebi.eva.release.dto.ReleaseStatsV2Dto;
 import uk.ac.ebi.eva.release.mappers.ReleaseStatsPerAssemblyMapper;
 import uk.ac.ebi.eva.release.mappers.ReleaseStatsPerSpeciesMapper;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyV2;
@@ -27,11 +27,10 @@ import uk.ac.ebi.eva.release.models.ReleaseStatsV2;
 import uk.ac.ebi.eva.release.repositories.ReleaseStatsPerAssemblyViewRepository;
 import uk.ac.ebi.eva.release.repositories.ReleaseStatsPerTaxonomyViewRepository;
 
-import java.util.HashMap;
 import java.util.stream.Collectors;
 
 @Service
-public class ReleaseStatsServicev2 {
+public class ReleaseStatsServiceV2 {
 
     private final ReleaseStatsPerTaxonomyViewRepository releaseStatsPerTaxonomyRepository;
 
@@ -41,7 +40,7 @@ public class ReleaseStatsServicev2 {
 
     private final ReleaseStatsPerAssemblyMapper releaseStatsPerAssemblyMapper;
 
-    public ReleaseStatsServicev2(ReleaseStatsPerTaxonomyViewRepository releaseStatsPerTaxonomyRepository,
+    public ReleaseStatsServiceV2(ReleaseStatsPerTaxonomyViewRepository releaseStatsPerTaxonomyRepository,
                                  ReleaseStatsPerAssemblyViewRepository releaseStatsPerAssemblyRepository,
                                  ReleaseStatsPerSpeciesMapper releaseStatsPerSpeciesMapper,
                                  ReleaseStatsPerAssemblyMapper releaseStatsPerAssemblyMapper) {
@@ -100,13 +99,13 @@ public class ReleaseStatsServicev2 {
                 .collect(Collectors.toList());
 
     }
-    private boolean isNotUnmappedOnly(ReleaseStatsPerV2Dto dto){
-        return dto.getCurrentRs() != 0 &&
-                dto.getMergedRs() != 0 &&
-                dto.getDeprecatedRs() != 0 &&
+    private boolean isNotUnmappedOnly(ReleaseStatsV2Dto dto){
+        return dto.getCurrentRs() != 0 ||
+                dto.getMergedRs() != 0 ||
+                dto.getDeprecatedRs() != 0 ||
                 dto.getMergedDeprecatedRs() !=0;
     }
-    private boolean isNonNew(ReleaseStatsPerV2Dto dto){
+    private boolean isNonNew(ReleaseStatsV2Dto dto){
         return dto.getNewCurrentRs() > 0 ||
                 dto.getNewMergedRs() > 0 ||
                 dto.getNewDeprecatedRs() > 0 ||
@@ -114,7 +113,7 @@ public class ReleaseStatsServicev2 {
                 dto.getNewUnmappedRs() > 0;
     }
 
-    private void populateDtoFromViewData(ReleaseStatsPerV2Dto dto, ReleaseStatsV2 viewData){
+    private void populateDtoFromViewData(ReleaseStatsV2Dto dto, ReleaseStatsV2 viewData){
         dto.setReleaseVersion(viewData.getReleaseVersion());
         switch (viewData.getRsType()){
             case "current":

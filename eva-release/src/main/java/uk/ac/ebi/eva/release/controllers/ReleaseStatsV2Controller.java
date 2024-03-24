@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyV2Dto;
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesV2Dto;
-import uk.ac.ebi.eva.release.services.ReleaseStatsServicev2;
+import uk.ac.ebi.eva.release.services.ReleaseStatsServiceV2;
 
 @RestController
 @RequestMapping(value = "/v2/stats", produces = "application/json")
@@ -31,7 +31,7 @@ public class ReleaseStatsV2Controller {
 
     private final ReleaseStatsServiceV2 releaseStatsService;
 
-    public ReleaseStatsv2Controller(ReleaseStatsServicev2 releaseStatsService) {
+    public ReleaseStatsV2Controller(ReleaseStatsServiceV2 releaseStatsService) {
         this.releaseStatsService = releaseStatsService;
     }
 

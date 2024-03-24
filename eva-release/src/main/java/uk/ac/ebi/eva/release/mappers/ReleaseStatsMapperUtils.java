@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.eva.release.mappers;
 
-import uk.ac.ebi.eva.release.dto.ReleaseStatsPerV2Dto;
+import uk.ac.ebi.eva.release.dto.ReleaseStatsV2Dto;
 import uk.ac.ebi.eva.release.models.ReleaseStatsV2;
 import uk.ac.ebi.eva.release.repositories.ReleaseInfoRepository;
 
@@ -31,7 +31,7 @@ public class ReleaseStatsMapperUtils {
         this.releaseInfoRepository = releaseInfoRepository;
     }
 
-    public void populateDtoFromV2LongForm(ReleaseStatsPerV2Dto dto, ReleaseStatsV2 viewData){
+    public void populateDtoFromV2LongForm(ReleaseStatsV2Dto dto, ReleaseStatsV2 viewData){
         dto.setReleaseVersion(viewData.getReleaseVersion());
         switch (viewData.getRsType()){
             case "current":

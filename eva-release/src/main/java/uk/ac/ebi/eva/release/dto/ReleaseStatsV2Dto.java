@@ -15,10 +15,7 @@
  */
 package uk.ac.ebi.eva.release.dto;
 
-import javax.persistence.Id;
-import java.util.Objects;
-
-public abstract class ReleaseStatsPerV2Dto {
+public abstract class ReleaseStatsV2Dto {
 
     protected int releaseVersion;
 
@@ -50,7 +47,7 @@ public abstract class ReleaseStatsPerV2Dto {
 
     protected String releaseLink;
 
-    public ReleaseStatsPerV2Dto() {
+    public ReleaseStatsV2Dto() {
     }
 
 

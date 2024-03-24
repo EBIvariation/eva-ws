@@ -19,10 +19,8 @@ import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyDto;
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyV2Dto;
-import uk.ac.ebi.eva.release.dto.ReleaseStatsPerV2Dto;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssembly;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyV2;
-import uk.ac.ebi.eva.release.models.ReleaseStatsV2;
 import uk.ac.ebi.eva.release.repositories.ReleaseInfoRepository;
 
 import java.util.*;

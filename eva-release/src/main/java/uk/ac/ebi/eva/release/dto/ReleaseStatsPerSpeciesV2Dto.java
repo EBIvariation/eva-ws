@@ -15,10 +15,9 @@
  */
 package uk.ac.ebi.eva.release.dto;
 
-import javax.persistence.Id;
 import java.util.Objects;
 
-public class ReleaseStatsPerSpeciesV2Dto extends ReleaseStatsPerV2Dto {
+public class ReleaseStatsPerSpeciesV2Dto extends ReleaseStatsV2Dto {
 
     private int taxonomyId;
 

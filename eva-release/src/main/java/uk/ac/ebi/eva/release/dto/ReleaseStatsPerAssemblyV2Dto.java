@@ -17,15 +17,11 @@ package uk.ac.ebi.eva.release.dto;
 
 import java.util.Objects;
 
-public class ReleaseStatsPerAssemblyV2Dto extends ReleaseStatsPerV2Dto {
+public class ReleaseStatsPerAssemblyV2Dto extends ReleaseStatsV2Dto {
 
     private String assemblyAccession;
 
-    private int releaseVersion;
-
     private int[] taxonomyIds;
-
-    private String releaseLink;
 
     private String[] taxonomyLinks;
 
