@@ -17,16 +17,14 @@ package uk.ac.ebi.eva.release.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssembly;
-import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyPK;
-import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyView;
-import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyViewPK;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyV2;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyV2PK;
 
 @Repository
-public interface ReleaseStatsPerAssemblyViewRepository extends CrudRepository<ReleaseStatsPerAssemblyView,
-        ReleaseStatsPerAssemblyViewPK> {
+public interface ReleaseStatsPerAssemblyViewRepository extends CrudRepository<ReleaseStatsPerAssemblyV2,
+        ReleaseStatsPerAssemblyV2PK> {
 
-    Iterable<ReleaseStatsPerAssemblyView> findAllByReleaseVersion(int releaseVersion);
+    Iterable<ReleaseStatsPerAssemblyV2> findAllByReleaseVersion(int releaseVersion);
 
 
 }

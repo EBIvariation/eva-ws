@@ -55,6 +55,10 @@
             <artifactId>springfox-swagger2</artifactId>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>io.hypersistence</groupId>
+            <artifactId>hypersistence-utils-hibernate-52</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -18,13 +18,12 @@ package uk.ac.ebi.eva.release.mappers;
 import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesDto;
+import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesV2Dto;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerSpecies;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerTaxonomyV2;
 import uk.ac.ebi.eva.release.repositories.ReleaseInfoRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class ReleaseStatsPerSpeciesMapper {
@@ -33,10 +32,35 @@ public class ReleaseStatsPerSpeciesMapper {
 
     private static final String TAXONOMY_URL = "https://www.ebi.ac.uk/ena/browser/view/Taxon:";
 
-    private final ReleaseInfoRepository releaseInfoRepository;
+
+    private final Map<Integer, String> releaseLinkMap;
+
+    private final ReleaseStatsMapperUtils releaseStatMapperUtils;
 
     public ReleaseStatsPerSpeciesMapper(ReleaseInfoRepository releaseInfoRepository) {
-        this.releaseInfoRepository = releaseInfoRepository;
+        this.releaseStatMapperUtils = new ReleaseStatsMapperUtils(releaseInfoRepository);
+        this.releaseLinkMap = this.releaseStatMapperUtils.getReleasesFtp();
+    }
+
+    public Collection<ReleaseStatsPerSpeciesV2Dto> toDtoV2(Iterable<ReleaseStatsPerTaxonomyV2> releaseData){
+        HashMap<String, ReleaseStatsPerSpeciesV2Dto> keyToDto= new HashMap<>();
+        for (ReleaseStatsPerTaxonomyV2 taxonomyData : releaseData) {
+            String key = taxonomyData.getKey();
+            if (!keyToDto.containsKey(key)) {
+                keyToDto.put(key, new ReleaseStatsPerSpeciesV2Dto());
+            }
+            ReleaseStatsPerSpeciesV2Dto dto = keyToDto.get(key);
+            dto.setTaxonomyId(taxonomyData.getTaxonomyId());
+            dto.setScientificName(taxonomyData.getScientificName());
+            dto.setCommonName(taxonomyData.getCommonName());
+            this.releaseStatMapperUtils.populateDtoFromV2LongForm(dto, taxonomyData);
+            String releaseLink = this.releaseLinkMap.get(taxonomyData.getReleaseVersion()) + SPECIES_DIRECTORY +
+                    taxonomyData.getReleaseFolder();
+            dto.setReleaseLink(releaseLink);
+            dto.setAssemblyAccessions(taxonomyData.getAssemblyAccessions());
+            dto.setTaxonomyLink(TAXONOMY_URL + taxonomyData.getTaxonomyId());
+        }
+        return keyToDto.values();
     }
 
     public Iterable<ReleaseStatsPerSpeciesDto> toDto(Iterable<ReleaseStatsPerSpecies> releaseStatsPerSpecies) {
@@ -48,7 +72,7 @@ public class ReleaseStatsPerSpeciesMapper {
     }
 
     private ReleaseStatsPerSpeciesDto toDto(ReleaseStatsPerSpecies releaseStatsPerSpecies) {
-        Map<Integer, String> releasesFtp = getReleasesFtp();
+        Map<Integer, String> releasesFtp = this.releaseStatMapperUtils.getReleasesFtp();
 
         ReleaseStatsPerSpeciesDto releaseStatsPerSpeciesDto = new ReleaseStatsPerSpeciesDto();
         releaseStatsPerSpeciesDto.setTaxonomyId(releaseStatsPerSpecies.getTaxonomyId());
@@ -75,9 +99,4 @@ public class ReleaseStatsPerSpeciesMapper {
         return releaseStatsPerSpeciesDto;
     }
 
-    private Map<Integer, String> getReleasesFtp() {
-        Map<Integer, String> releaseFtp = new HashMap<>();
-        releaseInfoRepository.findAll().forEach(r -> releaseFtp.put(r.getReleaseVersion(), r.getReleaseFtp()));
-        return releaseFtp;
-    }
 }

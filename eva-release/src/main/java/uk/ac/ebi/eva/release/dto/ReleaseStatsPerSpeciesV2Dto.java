@@ -20,12 +20,15 @@ import java.util.Objects;
 
 public class ReleaseStatsPerSpeciesV2Dto extends ReleaseStatsPerV2Dto {
 
-    @Id
     private int taxonomyId;
+
+    private String[] assemblyAccessions;
 
     private String taxonomyLink;
 
     private String scientificName;
+
+    private String commonName;
 
     public ReleaseStatsPerSpeciesV2Dto() {
     }
@@ -46,12 +49,28 @@ public class ReleaseStatsPerSpeciesV2Dto extends ReleaseStatsPerV2Dto {
         this.scientificName = scientificName;
     }
 
+    public String getCommonName() {
+        return commonName;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
+    }
+
     public String getTaxonomyLink() {
         return taxonomyLink;
     }
 
     public void setTaxonomyLink(String taxonomyLink) {
         this.taxonomyLink = taxonomyLink;
+    }
+
+    public String[] getAssemblyAccessions() {
+        return assemblyAccessions;
+    }
+
+    public void setAssemblyAccessions(String[] assemblyAccessions) {
+        this.assemblyAccessions = assemblyAccessions;
     }
 
     @Override

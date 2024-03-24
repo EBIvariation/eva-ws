@@ -15,22 +15,19 @@
  */
 package uk.ac.ebi.eva.release.dto;
 
-import javax.persistence.Id;
 import java.util.Objects;
 
 public class ReleaseStatsPerAssemblyV2Dto extends ReleaseStatsPerV2Dto {
 
-    @Id
     private String assemblyAccession;
 
-    @Id
     private int releaseVersion;
 
     private int[] taxonomyIds;
 
     private String releaseLink;
 
-    private String taxonomyLink;
+    private String[] taxonomyLinks;
 
     public ReleaseStatsPerAssemblyV2Dto() {
     }
@@ -39,7 +36,7 @@ public class ReleaseStatsPerAssemblyV2Dto extends ReleaseStatsPerV2Dto {
         return taxonomyIds;
     }
 
-    public void setTaxonomyId(int[] taxonomyIds) {
+    public void setTaxonomyIds(int[] taxonomyIds) {
         this.taxonomyIds = taxonomyIds;
     }
 
@@ -51,12 +48,12 @@ public class ReleaseStatsPerAssemblyV2Dto extends ReleaseStatsPerV2Dto {
         this.assemblyAccession = assemblyAccession;
     }
 
-    public String getTaxonomyLink() {
-        return taxonomyLink;
+    public String[] getTaxonomyLinks() {
+        return taxonomyLinks;
     }
 
-    public void setTaxonomyLink(String taxonomyLink) {
-        this.taxonomyLink = taxonomyLink;
+    public void setTaxonomyLinks(String[] taxonomyLinks) {
+        this.taxonomyLinks = taxonomyLinks;
     }
 
 
@@ -92,7 +89,7 @@ public class ReleaseStatsPerAssemblyV2Dto extends ReleaseStatsPerV2Dto {
                 ", newDeprecatedRs=" + getNewDeprecatedRs() +
                 ", newMergedDeprecatedRs=" + getNewMergedDeprecatedRs() +
                 ", releaseLink='" + releaseLink + '\'' +
-                ", taxonomyLink='" + taxonomyLink + '\'' +
+                ", taxonomyLinks='" + taxonomyLinks + '\'' +
                 '}';
     }
 }

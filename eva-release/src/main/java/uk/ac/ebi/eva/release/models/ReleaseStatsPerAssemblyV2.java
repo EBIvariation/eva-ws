@@ -15,15 +15,18 @@
  */
 package uk.ac.ebi.eva.release.models;
 
+import io.hypersistence.utils.hibernate.type.array.IntArrayType;
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@IdClass(ReleaseStatsPerAssemblyViewPK.class)
-@Table(name = "release_rs_count_per_assembly")
-public class ReleaseStatsPerAssemblyView implements ReleaseStatsView {
+@IdClass(ReleaseStatsPerAssemblyV2PK.class)
+@Table(name = "release_rs_count_per_assembly", schema="eva_stats")
+public class ReleaseStatsPerAssemblyV2 implements ReleaseStatsV2 {
 
     @Id
     private int releaseVersion;
@@ -32,22 +35,27 @@ public class ReleaseStatsPerAssemblyView implements ReleaseStatsView {
 
     private String rsType;
 
-//    private int[] taxonomyIds;
+    @Type(type = "int-array")
+    @Column(
+            name = "taxonomy_ids",
+            columnDefinition = "integer[]"
+    )
+    private int[] taxonomyIds;
 
     private Long count;
 
     @Column(name="new")
     protected Long newAddition;
-    public ReleaseStatsPerAssemblyView() {
+    public ReleaseStatsPerAssemblyV2() {
     }
 
-//    public int[] getTaxonomyIds() {
-//        return taxonomyIds;
-//    }
-//
-//    public void setTaxonomyIds(int[] taxonomyIds) {
-//        this.taxonomyIds = taxonomyIds;
-//    }
+    public int[] getTaxonomyIds() {
+        return taxonomyIds;
+    }
+
+    public void setTaxonomyIds(int[] taxonomyIds) {
+        this.taxonomyIds = taxonomyIds;
+    }
 
     public String getAssemblyAccession() {
         return assemblyAccession;
@@ -99,7 +107,7 @@ public class ReleaseStatsPerAssemblyView implements ReleaseStatsView {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ReleaseStatsPerAssemblyView assembly = (ReleaseStatsPerAssemblyView) o;
+        ReleaseStatsPerAssemblyV2 assembly = (ReleaseStatsPerAssemblyV2) o;
         return releaseVersion == assembly.releaseVersion &&
                 Objects.equals(assemblyAccession, assembly.assemblyAccession) &&
                 Objects.equals(rsType, assembly.rsType);

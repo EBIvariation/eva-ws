@@ -18,25 +18,54 @@ package uk.ac.ebi.eva.release.mappers;
 import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyDto;
+import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyV2Dto;
+import uk.ac.ebi.eva.release.dto.ReleaseStatsPerV2Dto;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssembly;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyV2;
+import uk.ac.ebi.eva.release.models.ReleaseStatsV2;
 import uk.ac.ebi.eva.release.repositories.ReleaseInfoRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class ReleaseStatsPerAssemblyMapper {
+
+    private static final String ASSEMBLY_DIRECTORY = "by_assembly/";
 
     private static final String SPECIES_DIRECTORY = "by_species/";
 
     private static final String TAXONOMY_URL = "https://www.ebi.ac.uk/ena/browser/view/Taxon:";
 
-    private final ReleaseInfoRepository releaseInfoRepository;
+    private final Map<Integer, String> releaseLinkMap;
+
+    private final ReleaseStatsMapperUtils releaseStatMapperUtils;
 
     public ReleaseStatsPerAssemblyMapper(ReleaseInfoRepository releaseInfoRepository) {
-        this.releaseInfoRepository = releaseInfoRepository;
+        this.releaseStatMapperUtils = new ReleaseStatsMapperUtils(releaseInfoRepository);
+        this.releaseLinkMap = this.releaseStatMapperUtils.getReleasesFtp();
+    }
+
+    public Collection<ReleaseStatsPerAssemblyV2Dto> toDtoV2(Iterable<ReleaseStatsPerAssemblyV2> releaseData){
+        HashMap<String, ReleaseStatsPerAssemblyV2Dto> keyToDto= new HashMap<>();
+        for (ReleaseStatsPerAssemblyV2 assemblyData : releaseData) {
+            String key = assemblyData.getKey();
+            if (!keyToDto.containsKey(key)) {
+                keyToDto.put(key, new ReleaseStatsPerAssemblyV2Dto());
+            }
+            ReleaseStatsPerAssemblyV2Dto dto = keyToDto.get(key);
+            dto.setAssemblyAccession(assemblyData.getAssemblyAccession());
+            this.releaseStatMapperUtils.populateDtoFromV2LongForm(dto, assemblyData);
+            String releaseLink = this.releaseLinkMap.get(assemblyData.getReleaseVersion()) + ASSEMBLY_DIRECTORY +
+                    assemblyData.getAssemblyAccession();
+            dto.setReleaseLink(releaseLink);
+            dto.setTaxonomyIds(assemblyData.getTaxonomyIds());
+            String[] taxonomyLinks = Arrays.stream(assemblyData.getTaxonomyIds())
+                    .mapToObj(String::valueOf).map(t -> TAXONOMY_URL + t).toArray(String[]::new);
+            dto.setTaxonomyLinks(taxonomyLinks);
+
+
+        }
+        return keyToDto.values();
     }
 
     public Iterable<ReleaseStatsPerAssemblyDto> toDto(Iterable<ReleaseStatsPerAssembly> releaseStatsPerAssembly) {
@@ -48,7 +77,7 @@ public class ReleaseStatsPerAssemblyMapper {
     }
 
     private ReleaseStatsPerAssemblyDto toDto(ReleaseStatsPerAssembly releaseStatsPerAssembly) {
-        Map<Integer, String> releasesFtp = getReleasesFtp();
+        Map<Integer, String> releasesFtp = this.releaseStatMapperUtils.getReleasesFtp();
 
         ReleaseStatsPerAssemblyDto releaseStatsPerAssemblyDto = new ReleaseStatsPerAssemblyDto();
         releaseStatsPerAssemblyDto.setTaxonomyId(releaseStatsPerAssembly.getTaxonomyId());
@@ -79,12 +108,6 @@ public class ReleaseStatsPerAssemblyMapper {
         releaseStatsPerAssemblyDto.setReleaseLink(releaseLink);
         releaseStatsPerAssemblyDto.setTaxonomyLink(TAXONOMY_URL + releaseStatsPerAssembly.getTaxonomyId());
         return releaseStatsPerAssemblyDto;
-    }
-
-    private Map<Integer, String> getReleasesFtp() {
-        Map<Integer, String> releaseFtp = new HashMap<>();
-        releaseInfoRepository.findAll().forEach(r -> releaseFtp.put(r.getReleaseVersion(), r.getReleaseFtp()));
-        return releaseFtp;
     }
 
 }

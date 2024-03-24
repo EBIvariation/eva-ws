@@ -39,17 +39,13 @@ public class ReleaseStatsv2Controller {
     public Iterable<ReleaseStatsPerSpeciesV2Dto> getReleaseStatsPerSpecies(
             @RequestParam(name = "releaseVersion", required = false) Integer releaseVersion,
             @RequestParam(name = "excludeUnmappedOnly", required = false) boolean excludeUnmappedOnly) {
-        if (releaseVersion != null) {
-            return releaseStatsService.getReleaseStatsPerSpecies(releaseVersion, excludeUnmappedOnly);
-        }else{
-            return releaseStatsService.getReleaseStatsPerSpecies(excludeUnmappedOnly);
-        }
+        return releaseStatsService.getReleaseStatsPerSpecies(releaseVersion, excludeUnmappedOnly);
     }
 
     @GetMapping("/per-species/new")
     public Iterable<ReleaseStatsPerSpeciesV2Dto> getSpeciesWithNewRsIds(
             @RequestParam(name = "releaseVersion") Integer releaseVersion) {
-        return releaseStatsService.getSpeciesWithNewRsIds(releaseVersion);
+        return releaseStatsService.getReleaseStatsPerSpeciesWithNewRsIds(releaseVersion);
     }
 
     @GetMapping("/per-assembly")

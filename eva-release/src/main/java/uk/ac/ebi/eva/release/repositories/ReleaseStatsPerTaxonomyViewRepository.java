@@ -17,16 +17,14 @@ package uk.ac.ebi.eva.release.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import uk.ac.ebi.eva.release.models.ReleaseStatsPerSpecies;
-import uk.ac.ebi.eva.release.models.ReleaseStatsPerSpeciesPK;
-import uk.ac.ebi.eva.release.models.ReleaseStatsPerTaxonomyView;
-import uk.ac.ebi.eva.release.models.ReleaseStatsPerTaxonomyViewPK;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerTaxonomyV2;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerTaxonomyV2PK;
 
 @Repository
-public interface ReleaseStatsPerTaxonomyViewRepository extends CrudRepository<ReleaseStatsPerTaxonomyView,
-        ReleaseStatsPerTaxonomyViewPK> {
+public interface ReleaseStatsPerTaxonomyViewRepository extends CrudRepository<ReleaseStatsPerTaxonomyV2,
+        ReleaseStatsPerTaxonomyV2PK> {
 
-    Iterable<ReleaseStatsPerTaxonomyView> findAllByReleaseVersion(int releaseVersion);
+    Iterable<ReleaseStatsPerTaxonomyV2> findAllByReleaseVersion(int releaseVersion);
 
 
 }

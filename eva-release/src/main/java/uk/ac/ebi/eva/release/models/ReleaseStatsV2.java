@@ -15,9 +15,7 @@
  */
 package uk.ac.ebi.eva.release.models;
 
-import javax.persistence.*;
-
-public interface ReleaseStatsView {
+public interface ReleaseStatsV2 {
 
     public String getRsType();
 

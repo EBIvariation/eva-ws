@@ -17,20 +17,21 @@ package uk.ac.ebi.eva.release.models;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.Table;
-import java.io.Serializable;
 import java.util.Objects;
 
-public class ReleaseStatsPerTaxonomyViewPK implements Serializable {
+@Entity
+@Table(name = "taxonomy", schema="evapro")
+public class Taxonomy {
 
+    @Id
     private int taxonomyId;
 
-    private int releaseVersion;
+    private String commonName;
 
-    private String rsType;
+    private String scientificName;
 
-    public ReleaseStatsPerTaxonomyViewPK() {
+    public Taxonomy() {
     }
 
     public int getTaxonomyId() {
@@ -41,43 +42,32 @@ public class ReleaseStatsPerTaxonomyViewPK implements Serializable {
         this.taxonomyId = taxonomyId;
     }
 
-    public int getReleaseVersion() {
-        return releaseVersion;
+    public String getCommonName() {
+        return commonName;
     }
 
-    public void setReleaseVersion(int releaseVersion) {
-        this.releaseVersion = releaseVersion;
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
     }
 
-
-    public String getRsType() {
-        return rsType;
+    public String getScientificName() {
+        return scientificName;
     }
 
-    public void setRsType(String rsType) {
-        this.rsType = rsType;
+    public void setScientificName(String scientificName) {
+        this.scientificName = scientificName;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ReleaseStatsPerTaxonomyViewPK taxonomy = (ReleaseStatsPerTaxonomyViewPK) o;
-        return releaseVersion == taxonomy.releaseVersion &&
-                Objects.equals(taxonomyId, taxonomy.taxonomyId) &&
-                Objects.equals(rsType, taxonomy.rsType);
+        Taxonomy taxonomy = (Taxonomy) o;
+        return taxonomyId == taxonomy.taxonomyId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(taxonomyId, releaseVersion, rsType);
-    }
-
-    @Override
-    public String toString() {
-        return "ReleaseStatsPerAssembly{" +
-                ", taxonomyId=" + taxonomyId +
-                ", releaseVersion=" + releaseVersion +
-                ", rsType='" + rsType + '\'' +
-                '}';
+        return Objects.hash(taxonomyId);
     }
 }
