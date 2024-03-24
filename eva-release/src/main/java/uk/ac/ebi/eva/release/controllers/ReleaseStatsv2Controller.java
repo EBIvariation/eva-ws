@@ -25,11 +25,11 @@ import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesV2Dto;
 import uk.ac.ebi.eva.release.services.ReleaseStatsServicev2;
 
 @RestController
-@RequestMapping(value = "/v1/stats2", produces = "application/json")
+@RequestMapping(value = "/v2/stats", produces = "application/json")
 @Api(tags = {"RS Release Statistics"})
-public class ReleaseStatsv2Controller {
+public class ReleaseStatsV2Controller {
 
-    private final ReleaseStatsServicev2 releaseStatsService;
+    private final ReleaseStatsServiceV2 releaseStatsService;
 
     public ReleaseStatsv2Controller(ReleaseStatsServicev2 releaseStatsService) {
         this.releaseStatsService = releaseStatsService;
