@@ -26,15 +26,12 @@ import java.util.Objects;
 @Entity
 @IdClass(ReleaseStatsPerAssemblyV2PK.class)
 @Table(name = "release_rs_count_per_assembly", schema="eva_stats")
-public class ReleaseStatsPerAssemblyV2 implements ReleaseStatsV2 {
+public class ReleaseStatsPerAssemblyV2 {
 
     @Id
     private int releaseVersion;
     @Id
     private String assemblyAccession;
-
-    @Id
-    private String rsType;
 
     @Type(type = "int-array")
     @Column(
@@ -45,12 +42,25 @@ public class ReleaseStatsPerAssemblyV2 implements ReleaseStatsV2 {
 
     private String releaseFolder;
 
-    private Long count;
+    private Long currentRs;
 
-    @Column(name="new")
-    protected Long newAddition;
+    private Long multimapRs;
 
+    private Long mergedRs;
 
+    private Long deprecatedRs;
+
+    private Long mergedDeprecatedRs;
+
+    private Long newCurrentRs;
+
+    private Long newMultimapRs;
+
+    private Long newMergedRs;
+
+    private Long newDeprecatedRs;
+
+    private Long newMergedDeprecatedRs;
 
     public ReleaseStatsPerAssemblyV2() {
     }
@@ -71,9 +81,6 @@ public class ReleaseStatsPerAssemblyV2 implements ReleaseStatsV2 {
         this.assemblyAccession = assemblyAccession;
     }
 
-    public String getRsType() {
-        return rsType;
-    }
 
 
     public int getReleaseVersion() {
@@ -84,9 +91,6 @@ public class ReleaseStatsPerAssemblyV2 implements ReleaseStatsV2 {
         this.releaseVersion = releaseVersion;
     }
 
-    public void setRsType(String rsType) {
-        this.rsType = rsType;
-    }
 
     public String getReleaseFolder() {
         return releaseFolder;
@@ -96,25 +100,84 @@ public class ReleaseStatsPerAssemblyV2 implements ReleaseStatsV2 {
         this.releaseFolder = releaseFolder;
     }
 
-    public Long getCount() {
-        return count;
+    public Long getCurrentRs() {
+        return currentRs;
     }
 
-    public void setCount(Long count) {
-        this.count = count;
+    public void setCurrentRs(Long currentRs) {
+        this.currentRs = currentRs;
+    }
+    
+    public Long getNewMergedRs() {
+        return newMergedRs;
     }
 
-    public Long getNewAddition() {
-        return newAddition;
+    public void setNewMergedRs(Long newMergedRs) {
+        this.newMergedRs = newMergedRs;
     }
 
-    public void setNewAddition(Long newAddition) {
-        this.newAddition = newAddition;
+    public Long getMultimapRs() {
+        return multimapRs;
     }
 
-    @Override
-    public String getKey() {
-        return this.assemblyAccession + "_" + this.releaseVersion;
+    public void setMultimapRs(Long multimapRs) {
+        this.multimapRs = multimapRs;
+    }
+
+    public Long getMergedRs() {
+        return mergedRs;
+    }
+
+    public void setMergedRs(Long mergedRs) {
+        this.mergedRs = mergedRs;
+    }
+
+    public Long getDeprecatedRs() {
+        return deprecatedRs;
+    }
+
+    public void setDeprecatedRs(Long deprecatedRs) {
+        this.deprecatedRs = deprecatedRs;
+    }
+
+    public Long getMergedDeprecatedRs() {
+        return mergedDeprecatedRs;
+    }
+
+    public void setMergedDeprecatedRs(Long mergedDeprecatedRs) {
+        this.mergedDeprecatedRs = mergedDeprecatedRs;
+    }
+
+    public Long getNewCurrentRs() {
+        return newCurrentRs;
+    }
+
+    public void setNewCurrentRs(Long newCurrentRs) {
+        this.newCurrentRs = newCurrentRs;
+    }
+
+    public Long getNewMultimapRs() {
+        return newMultimapRs;
+    }
+
+    public void setNewMultimapRs(Long newMultimapRs) {
+        this.newMultimapRs = newMultimapRs;
+    }
+
+    public Long getNewDeprecatedRs() {
+        return newDeprecatedRs;
+    }
+
+    public void setNewDeprecatedRs(Long newDeprecatedRs) {
+        this.newDeprecatedRs = newDeprecatedRs;
+    }
+
+    public Long getNewMergedDeprecatedRs() {
+        return newMergedDeprecatedRs;
+    }
+
+    public void setNewMergedDeprecatedRs(Long newMergedDeprecatedRs) {
+        this.newMergedDeprecatedRs = newMergedDeprecatedRs;
     }
 
     @Override
@@ -123,23 +186,12 @@ public class ReleaseStatsPerAssemblyV2 implements ReleaseStatsV2 {
         if (o == null || getClass() != o.getClass()) return false;
         ReleaseStatsPerAssemblyV2 assembly = (ReleaseStatsPerAssemblyV2) o;
         return releaseVersion == assembly.releaseVersion &&
-                Objects.equals(assemblyAccession, assembly.assemblyAccession) &&
-                Objects.equals(rsType, assembly.rsType);
+                Objects.equals(assemblyAccession, assembly.assemblyAccession);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(assemblyAccession, releaseVersion, rsType);
+        return Objects.hash(assemblyAccession, releaseVersion);
     }
 
-    @Override
-    public String toString() {
-        return "ReleaseStatsPerAssembly{" +
-                ", assemblyAccession='" + assemblyAccession + '\'' +
-                ", releaseVersion=" + releaseVersion +
-                ", rsType='" + rsType + '\'' +
-                ", count=" + count +
-                ", new=" + newAddition +
-                '}';
-    }
 }

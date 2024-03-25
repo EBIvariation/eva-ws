@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 EMBL - European Bioinformatics Institute
+ * Copyright 2022 EMBL - European Bioinformatics Institute
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,16 @@ package uk.ac.ebi.eva.release.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import uk.ac.ebi.eva.release.models.ReleaseStatsPerTaxonomyV2;
-import uk.ac.ebi.eva.release.models.ReleaseStatsPerTaxonomyV2PK;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyV2;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyV2PK;
 
 @Repository
-public interface ReleaseStatsPerTaxonomyViewRepository extends CrudRepository<ReleaseStatsPerTaxonomyV2,
-        ReleaseStatsPerTaxonomyV2PK> {
+public interface ReleaseStatsPerAssemblyV2Repository extends CrudRepository<ReleaseStatsPerAssemblyV2,
+        ReleaseStatsPerAssemblyV2PK> {
 
-    Iterable<ReleaseStatsPerTaxonomyV2> findAllByReleaseVersion(int releaseVersion);
+    Iterable<ReleaseStatsPerAssemblyV2> findAllByReleaseVersion(int releaseVersion);
 
+    Iterable<ReleaseStatsPerAssemblyV2> findByNewCurrentRsGreaterThan(long currentRs);
 
+    Iterable<ReleaseStatsPerAssemblyV2> findByReleaseVersionAndNewCurrentRsGreaterThan(int releaseVersion, long currentRs);
 }

@@ -15,8 +15,6 @@
  */
 package uk.ac.ebi.eva.release.mappers;
 
-import uk.ac.ebi.eva.release.dto.ReleaseStatsV2Dto;
-import uk.ac.ebi.eva.release.models.ReleaseStatsV2;
 import uk.ac.ebi.eva.release.repositories.ReleaseInfoRepository;
 
 import java.util.HashMap;
@@ -29,36 +27,6 @@ public class ReleaseStatsMapperUtils {
 
     public ReleaseStatsMapperUtils(ReleaseInfoRepository releaseInfoRepository) {
         this.releaseInfoRepository = releaseInfoRepository;
-    }
-
-    public void populateDtoFromV2LongForm(ReleaseStatsV2Dto dto, ReleaseStatsV2 viewData){
-        dto.setReleaseVersion(viewData.getReleaseVersion());
-        switch (viewData.getRsType()){
-            case "current":
-                dto.setCurrentRs(viewData.getCount());
-                dto.setNewCurrentRs(viewData.getNewAddition());
-                break;
-            case "deprecated":
-                dto.setDeprecatedRs(viewData.getCount());
-                dto.setNewDeprecatedRs(viewData.getNewAddition());
-                break;
-            case "merged":
-                dto.setMergedRs(viewData.getCount());
-                dto.setNewMergedRs(viewData.getNewAddition());
-                break;
-            case "merged_deprecated":
-                dto.setMergedDeprecatedRs(viewData.getCount());
-                dto.setNewMergedDeprecatedRs(viewData.getNewAddition());
-                break;
-            case "multimap":
-                dto.setMultiMappedRs(viewData.getCount());
-                dto.setNewMultiMappedRs(viewData.getNewAddition());
-                break;
-            case "unmapped":
-                dto.setUnmappedRs(viewData.getCount());
-                dto.setNewUnmappedRs(viewData.getNewAddition());
-                break;
-        }
     }
 
     public Map<Integer, String> getReleasesFtp() {

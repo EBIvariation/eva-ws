@@ -28,8 +28,6 @@ public class ReleaseStatsPerTaxonomyV2PK implements Serializable {
 
     private int releaseVersion;
 
-    private String rsType;
-
     public ReleaseStatsPerTaxonomyV2PK() {
     }
 
@@ -49,13 +47,6 @@ public class ReleaseStatsPerTaxonomyV2PK implements Serializable {
         this.releaseVersion = releaseVersion;
     }
 
-    public String getRsType() {
-        return rsType;
-    }
-
-    public void setRsType(String rsType) {
-        this.rsType = rsType;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -63,13 +54,12 @@ public class ReleaseStatsPerTaxonomyV2PK implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         ReleaseStatsPerTaxonomyV2PK taxonomy = (ReleaseStatsPerTaxonomyV2PK) o;
         return releaseVersion == taxonomy.releaseVersion &&
-                Objects.equals(taxonomyId, taxonomy.taxonomyId) &&
-                Objects.equals(rsType, taxonomy.rsType);
+                Objects.equals(taxonomyId, taxonomy.taxonomyId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(taxonomyId, releaseVersion, rsType);
+        return Objects.hash(taxonomyId, releaseVersion);
     }
 
     @Override
@@ -77,7 +67,6 @@ public class ReleaseStatsPerTaxonomyV2PK implements Serializable {
         return "ReleaseStatsPerAssembly{" +
                 ", taxonomyId=" + taxonomyId +
                 ", releaseVersion=" + releaseVersion +
-                ", rsType='" + rsType + '\'' +
                 '}';
     }
 }

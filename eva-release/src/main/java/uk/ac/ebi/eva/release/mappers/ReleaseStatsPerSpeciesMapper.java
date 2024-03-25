@@ -42,26 +42,40 @@ public class ReleaseStatsPerSpeciesMapper {
         this.releaseLinkMap = this.releaseStatMapperUtils.getReleasesFtp();
     }
 
-    public Collection<ReleaseStatsPerSpeciesV2Dto> toDtoV2(Iterable<ReleaseStatsPerTaxonomyV2> releaseData){
-        HashMap<String, ReleaseStatsPerSpeciesV2Dto> keyToDto= new HashMap<>();
+    public Iterable<ReleaseStatsPerSpeciesV2Dto> toDtoV2(Iterable<ReleaseStatsPerTaxonomyV2> releaseData){
+        List<ReleaseStatsPerSpeciesV2Dto> releaseStatsPerSpeciesDtos = new ArrayList();
         for (ReleaseStatsPerTaxonomyV2 taxonomyData : releaseData) {
-            String key = taxonomyData.getKey();
-            if (!keyToDto.containsKey(key)) {
-                keyToDto.put(key, new ReleaseStatsPerSpeciesV2Dto());
-            }
-            ReleaseStatsPerSpeciesV2Dto dto = keyToDto.get(key);
-            dto.setTaxonomyId(taxonomyData.getTaxonomyId());
-            dto.setScientificName(taxonomyData.getScientificName());
-            dto.setCommonName(taxonomyData.getCommonName());
-            this.releaseStatMapperUtils.populateDtoFromV2LongForm(dto, taxonomyData);
-            dto.setReleaseFolder(taxonomyData.getReleaseFolder());
-            String releaseLink = this.releaseLinkMap.get(taxonomyData.getReleaseVersion()) + SPECIES_DIRECTORY +
-                    taxonomyData.getReleaseFolder();
-            dto.setReleaseLink(releaseLink);
-            dto.setAssemblyAccessions(taxonomyData.getAssemblyAccessions());
-            dto.setTaxonomyLink(TAXONOMY_URL + taxonomyData.getTaxonomyId());
+            releaseStatsPerSpeciesDtos.add(toDtoV2(taxonomyData));
         }
-        return keyToDto.values();
+        return releaseStatsPerSpeciesDtos;
+    }
+
+    public ReleaseStatsPerSpeciesV2Dto toDtoV2(ReleaseStatsPerTaxonomyV2 taxonomyData){
+        ReleaseStatsPerSpeciesV2Dto dto = new ReleaseStatsPerSpeciesV2Dto();
+        dto.setTaxonomyId(taxonomyData.getTaxonomyId());
+        dto.setTaxonomyLink(TAXONOMY_URL + taxonomyData.getTaxonomyId());
+        dto.setReleaseVersion(taxonomyData.getReleaseVersion());
+        dto.setScientificName(taxonomyData.getScientificName());
+        dto.setCommonName(taxonomyData.getCommonName());
+        dto.setReleaseFolder(taxonomyData.getReleaseFolder());
+        String releaseLink = this.releaseLinkMap.get(taxonomyData.getReleaseVersion()) + SPECIES_DIRECTORY +
+                taxonomyData.getReleaseFolder();
+        dto.setReleaseLink(releaseLink);
+        dto.setAssemblyAccessions(taxonomyData.getAssemblyAccessions());
+
+        dto.setCurrentRs(taxonomyData.getCurrentRs());
+        dto.setMultiMappedRs(taxonomyData.getMultimapRs());
+        dto.setMergedRs(taxonomyData.getMergedRs());
+        dto.setDeprecatedRs(taxonomyData.getDeprecatedRs());
+        dto.setMergedDeprecatedRs(taxonomyData.getMergedDeprecatedRs());
+        dto.setUnmappedRs(taxonomyData.getUnmappedRs());
+        dto.setNewCurrentRs(taxonomyData.getNewCurrentRs());
+        dto.setNewMultiMappedRs(taxonomyData.getNewMultimapRs());
+        dto.setNewMergedRs(taxonomyData.getNewMergedRs());
+        dto.setNewDeprecatedRs(taxonomyData.getNewDeprecatedRs());
+        dto.setNewMergedDeprecatedRs(taxonomyData.getNewMergedDeprecatedRs());
+        dto.setNewUnmappedRs(taxonomyData.getNewUnmappedRs());
+        return dto;
     }
 
     public Iterable<ReleaseStatsPerSpeciesDto> toDto(Iterable<ReleaseStatsPerSpecies> releaseStatsPerSpecies) {

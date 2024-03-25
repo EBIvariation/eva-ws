@@ -43,28 +43,39 @@ public class ReleaseStatsPerAssemblyMapper {
         this.releaseLinkMap = this.releaseStatMapperUtils.getReleasesFtp();
     }
 
-    public Collection<ReleaseStatsPerAssemblyV2Dto> toDtoV2(Iterable<ReleaseStatsPerAssemblyV2> releaseData){
-        HashMap<String, ReleaseStatsPerAssemblyV2Dto> keyToDto= new HashMap<>();
+    public Iterable<ReleaseStatsPerAssemblyV2Dto> toDtoV2(Iterable<ReleaseStatsPerAssemblyV2> releaseData){
+        List<ReleaseStatsPerAssemblyV2Dto> releaseStatsPerAssemblyDtos = new ArrayList();
         for (ReleaseStatsPerAssemblyV2 assemblyData : releaseData) {
-            String key = assemblyData.getKey();
-            if (!keyToDto.containsKey(key)) {
-                keyToDto.put(key, new ReleaseStatsPerAssemblyV2Dto());
-            }
-            ReleaseStatsPerAssemblyV2Dto dto = keyToDto.get(key);
-            dto.setAssemblyAccession(assemblyData.getAssemblyAccession());
-            dto.setReleaseFolder(assemblyData.getReleaseFolder());
-            this.releaseStatMapperUtils.populateDtoFromV2LongForm(dto, assemblyData);
-            String releaseLink = this.releaseLinkMap.get(assemblyData.getReleaseVersion()) + ASSEMBLY_DIRECTORY +
-                    assemblyData.getAssemblyAccession();
-            dto.setReleaseLink(releaseLink);
-            dto.setTaxonomyIds(assemblyData.getTaxonomyIds());
-            String[] taxonomyLinks = Arrays.stream(assemblyData.getTaxonomyIds())
-                    .mapToObj(String::valueOf).map(t -> TAXONOMY_URL + t).toArray(String[]::new);
-            dto.setTaxonomyLinks(taxonomyLinks);
-
-
+            releaseStatsPerAssemblyDtos.add(toDtoV2(assemblyData));
         }
-        return keyToDto.values();
+        return releaseStatsPerAssemblyDtos;
+    }
+
+    public ReleaseStatsPerAssemblyV2Dto toDtoV2(ReleaseStatsPerAssemblyV2 assemblyData){
+        HashMap<String, ReleaseStatsPerAssemblyV2Dto> keyToDto= new HashMap<>();
+        ReleaseStatsPerAssemblyV2Dto dto = new ReleaseStatsPerAssemblyV2Dto();
+        dto.setAssemblyAccession(assemblyData.getAssemblyAccession());
+        dto.setReleaseVersion(assemblyData.getReleaseVersion());
+        dto.setReleaseFolder(assemblyData.getReleaseFolder());
+        String releaseLink = this.releaseLinkMap.get(assemblyData.getReleaseVersion()) + ASSEMBLY_DIRECTORY +
+                assemblyData.getAssemblyAccession();
+        dto.setReleaseLink(releaseLink);
+        dto.setTaxonomyIds(assemblyData.getTaxonomyIds());
+        String[] taxonomyLinks = Arrays.stream(assemblyData.getTaxonomyIds())
+                .mapToObj(String::valueOf).map(t -> TAXONOMY_URL + t).toArray(String[]::new);
+        dto.setTaxonomyLinks(taxonomyLinks);
+
+        dto.setCurrentRs(assemblyData.getCurrentRs());
+        dto.setMultiMappedRs(assemblyData.getMultimapRs());
+        dto.setMergedRs(assemblyData.getMergedRs());
+        dto.setDeprecatedRs(assemblyData.getDeprecatedRs());
+        dto.setMergedDeprecatedRs(assemblyData.getMergedDeprecatedRs());
+        dto.setNewCurrentRs(assemblyData.getNewCurrentRs());
+        dto.setNewMultiMappedRs(assemblyData.getNewMultimapRs());
+        dto.setNewMergedRs(assemblyData.getNewMergedRs());
+        dto.setNewDeprecatedRs(assemblyData.getNewDeprecatedRs());
+        dto.setNewMergedDeprecatedRs(assemblyData.getNewMergedDeprecatedRs());
+        return dto;
     }
 
     public Iterable<ReleaseStatsPerAssemblyDto> toDto(Iterable<ReleaseStatsPerAssembly> releaseStatsPerAssembly) {

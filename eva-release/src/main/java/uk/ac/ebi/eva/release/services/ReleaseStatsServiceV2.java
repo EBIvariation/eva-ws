@@ -16,32 +16,30 @@
 package uk.ac.ebi.eva.release.services;
 
 import org.springframework.stereotype.Service;
-import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyV2Dto;
-import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesV2Dto;
-import uk.ac.ebi.eva.release.dto.ReleaseStatsV2Dto;
+import uk.ac.ebi.eva.release.dto.*;
 import uk.ac.ebi.eva.release.mappers.ReleaseStatsPerAssemblyMapper;
 import uk.ac.ebi.eva.release.mappers.ReleaseStatsPerSpeciesMapper;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssembly;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyV2;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerSpecies;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerTaxonomyV2;
-import uk.ac.ebi.eva.release.models.ReleaseStatsV2;
-import uk.ac.ebi.eva.release.repositories.ReleaseStatsPerAssemblyViewRepository;
-import uk.ac.ebi.eva.release.repositories.ReleaseStatsPerTaxonomyViewRepository;
+import uk.ac.ebi.eva.release.repositories.ReleaseStatsPerAssemblyV2Repository;
+import uk.ac.ebi.eva.release.repositories.ReleaseStatsPerTaxonomyV2Repository;
 
-import java.util.stream.Collectors;
 
 @Service
 public class ReleaseStatsServiceV2 {
 
-    private final ReleaseStatsPerTaxonomyViewRepository releaseStatsPerTaxonomyRepository;
+    private final ReleaseStatsPerTaxonomyV2Repository releaseStatsPerTaxonomyRepository;
 
-    private final ReleaseStatsPerAssemblyViewRepository releaseStatsPerAssemblyRepository;
+    private final ReleaseStatsPerAssemblyV2Repository releaseStatsPerAssemblyRepository;
 
     private final ReleaseStatsPerSpeciesMapper releaseStatsPerSpeciesMapper;
 
     private final ReleaseStatsPerAssemblyMapper releaseStatsPerAssemblyMapper;
 
-    public ReleaseStatsServiceV2(ReleaseStatsPerTaxonomyViewRepository releaseStatsPerTaxonomyRepository,
-                                 ReleaseStatsPerAssemblyViewRepository releaseStatsPerAssemblyRepository,
+    public ReleaseStatsServiceV2(ReleaseStatsPerTaxonomyV2Repository releaseStatsPerTaxonomyRepository,
+                                 ReleaseStatsPerAssemblyV2Repository releaseStatsPerAssemblyRepository,
                                  ReleaseStatsPerSpeciesMapper releaseStatsPerSpeciesMapper,
                                  ReleaseStatsPerAssemblyMapper releaseStatsPerAssemblyMapper) {
         this.releaseStatsPerTaxonomyRepository = releaseStatsPerTaxonomyRepository;
@@ -50,20 +48,11 @@ public class ReleaseStatsServiceV2 {
         this.releaseStatsPerAssemblyMapper = releaseStatsPerAssemblyMapper;
     }
 
-    public Iterable<ReleaseStatsPerSpeciesV2Dto> getReleaseStatsPerSpecies(Integer releaseVersion, boolean excludeUnmappedOnly) {
-        Iterable<ReleaseStatsPerTaxonomyV2> releaseData;
-        if (releaseVersion != null) {
-            releaseData = releaseStatsPerTaxonomyRepository.findAllByReleaseVersion(releaseVersion);
-        }else{
-            releaseData = releaseStatsPerTaxonomyRepository.findAll();
-        }
-        return populateAllTaxonomyDtoFrom(releaseData, excludeUnmappedOnly, false);
-    }
 
     public Iterable<ReleaseStatsPerSpeciesV2Dto> getReleaseStatsPerSpeciesWithNewRsIds(Integer releaseVersion){
         Iterable<ReleaseStatsPerTaxonomyV2> releaseData;
         releaseData = releaseStatsPerTaxonomyRepository.findAllByReleaseVersion(releaseVersion);
-        return populateAllTaxonomyDtoFrom(releaseData, false, true);
+        return this.releaseStatsPerSpeciesMapper.toDtoV2(releaseData);
 
     }
 
@@ -74,72 +63,66 @@ public class ReleaseStatsServiceV2 {
         } else {
             releaseData = releaseStatsPerAssemblyRepository.findAll();
         }
-        return populateAssemblyDtoFrom(releaseData, false, excludeNonNew);
+        return this.releaseStatsPerAssemblyMapper.toDtoV2(releaseData);
     }
 
-    private Iterable<ReleaseStatsPerSpeciesV2Dto> populateAllTaxonomyDtoFrom(
-            Iterable<ReleaseStatsPerTaxonomyV2> releaseData,
-            boolean excludeUnmappedOnly,
-            boolean excludeNonNew
-    ){
-        return this.releaseStatsPerSpeciesMapper.toDtoV2(releaseData).stream()
-                .filter(excludeUnmappedOnly? this::isNotUnmappedOnly : s -> true)
-                .filter(excludeNonNew? this::isNonNew :s -> true)
-                .collect(Collectors.toList());
+    public Iterable<ReleaseStatsPerSpeciesV2Dto> getReleaseStatsPerSpecies(Integer releaseVersion,
+                                                                           boolean excludeUnmappedOnly) {
+        Iterable<ReleaseStatsPerTaxonomyV2> releaseData;
+        if (releaseVersion != null) {
+            if (excludeUnmappedOnly) {
+                releaseData = getReleaseDataByVersionExcludingUnmappedOnly(releaseVersion);
+            } else {
+                releaseData = releaseStatsPerTaxonomyRepository.findAllByReleaseVersion(releaseVersion);
+            }
+        } else {
+            if (excludeUnmappedOnly) {
+                releaseData = getReleaseDataExcludingUnmappedOnly();
+            } else {
+                releaseData = releaseStatsPerTaxonomyRepository.findAll();
+            }
+        }
+        return releaseStatsPerSpeciesMapper.toDtoV2(releaseData);
     }
 
-    private Iterable<ReleaseStatsPerAssemblyV2Dto> populateAssemblyDtoFrom(
-            Iterable<ReleaseStatsPerAssemblyV2> releaseData,
-            boolean excludeUnmappedOnly,
-            boolean excludeNonNew
-    ){
-        return this.releaseStatsPerAssemblyMapper.toDtoV2(releaseData).stream()
-                .filter(excludeUnmappedOnly? this::isNotUnmappedOnly : s -> true)
-                .filter(excludeNonNew? this::isNonNew :s -> true)
-                .collect(Collectors.toList());
-
-    }
-    private boolean isNotUnmappedOnly(ReleaseStatsV2Dto dto){
-        return dto.getCurrentRs() != 0 ||
-                dto.getMergedRs() != 0 ||
-                dto.getDeprecatedRs() != 0 ||
-                dto.getMergedDeprecatedRs() !=0;
-    }
-    private boolean isNonNew(ReleaseStatsV2Dto dto){
-        return dto.getNewCurrentRs() > 0 ||
-                dto.getNewMergedRs() > 0 ||
-                dto.getNewDeprecatedRs() > 0 ||
-                dto.getNewMultiMappedRs() > 0 ||
-                dto.getNewUnmappedRs() > 0;
+    private Iterable<ReleaseStatsPerTaxonomyV2> getReleaseDataByVersionExcludingUnmappedOnly(Integer releaseVersion) {
+        return releaseStatsPerTaxonomyRepository
+                .findByReleaseVersionAndCurrentRsNotAndMultimapRsNotAndMergedRsNotAndDeprecatedRsNotAndMergedDeprecatedRsNotAndUnmappedRsGreaterThan(
+                        releaseVersion, 0, 0, 0, 0, 0, 0);
     }
 
-    private void populateDtoFromViewData(ReleaseStatsV2Dto dto, ReleaseStatsV2 viewData){
-        dto.setReleaseVersion(viewData.getReleaseVersion());
-        switch (viewData.getRsType()){
-            case "current":
-                dto.setCurrentRs(viewData.getCount());
-                dto.setNewCurrentRs(viewData.getNewAddition());
-                break;
-            case "deprecated":
-                dto.setDeprecatedRs(viewData.getCount());
-                dto.setNewDeprecatedRs(viewData.getNewAddition());
-                break;
-            case "merged":
-                dto.setMergedRs(viewData.getCount());
-                dto.setNewMergedRs(viewData.getNewAddition());
-                break;
-            case "merged_deprecated":
-                dto.setMergedDeprecatedRs(viewData.getCount());
-                dto.setNewMergedDeprecatedRs(viewData.getNewAddition());
-                break;
-            case "multimap":
-                dto.setMultiMappedRs(viewData.getCount());
-                dto.setNewMultiMappedRs(viewData.getNewAddition());
-                break;
-            case "unmapped":
-                dto.setUnmappedRs(viewData.getCount());
-                dto.setNewUnmappedRs(viewData.getNewAddition());
-                break;
+    private Iterable<ReleaseStatsPerTaxonomyV2> getReleaseDataExcludingUnmappedOnly() {
+        return releaseStatsPerTaxonomyRepository
+                .findByCurrentRsNotAndMultimapRsNotAndMergedRsNotAndDeprecatedRsNotAndMergedDeprecatedRsNotAndUnmappedRsGreaterThan(
+                        0, 0, 0, 0, 0, 0);
+    }
+
+    public Iterable<ReleaseStatsPerSpeciesV2Dto> getSpeciesWithNewRsIds(Integer releaseVersion) {
+        if (releaseVersion != null) {
+            return releaseStatsPerSpeciesMapper.toDtoV2(releaseStatsPerTaxonomyRepository
+                    .findByReleaseVersionAndNewCurrentRsGreaterThan(releaseVersion, 0L));
+        } else {
+            return releaseStatsPerSpeciesMapper.toDtoV2(releaseStatsPerTaxonomyRepository.findByNewCurrentRsGreaterThan(0L));
+        }
+    }
+
+    public Iterable<ReleaseStatsPerAssemblyV2Dto> getReleaseStatsPerAssembly(Integer releaseVersion) {
+        Iterable<ReleaseStatsPerAssemblyV2> releaseData;
+        if (releaseVersion != null) {
+            releaseData = releaseStatsPerAssemblyRepository.findAllByReleaseVersion(releaseVersion);
+        } else {
+            releaseData = releaseStatsPerAssemblyRepository.findAll();
+        }
+        return releaseStatsPerAssemblyMapper.toDtoV2(releaseData);
+    }
+
+    public Iterable<ReleaseStatsPerAssemblyV2Dto> getReleaseStatsPerAssemblyWithNewRsIds(Integer releaseVersion) {
+        if (releaseVersion != null) {
+            return releaseStatsPerAssemblyMapper.toDtoV2(
+                    releaseStatsPerAssemblyRepository.findByReleaseVersionAndNewCurrentRsGreaterThan(releaseVersion, 0L));
+        } else {
+            return releaseStatsPerAssemblyMapper.toDtoV2(
+                    releaseStatsPerAssemblyRepository.findByNewCurrentRsGreaterThan(0L));
         }
     }
 

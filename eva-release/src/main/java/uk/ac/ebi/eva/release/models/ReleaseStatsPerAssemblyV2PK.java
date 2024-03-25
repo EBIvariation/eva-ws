@@ -26,8 +26,6 @@ public class ReleaseStatsPerAssemblyV2PK implements Serializable {
 
     private int releaseVersion;
 
-    private String rsType;
-
     public ReleaseStatsPerAssemblyV2PK() {
     }
 
@@ -47,27 +45,18 @@ public class ReleaseStatsPerAssemblyV2PK implements Serializable {
         this.releaseVersion = releaseVersion;
     }
 
-    public String getRsType() {
-        return rsType;
-    }
-
-    public void setRsType(String rsType) {
-        this.rsType = rsType;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReleaseStatsPerAssemblyV2PK assembly = (ReleaseStatsPerAssemblyV2PK) o;
         return releaseVersion == assembly.releaseVersion &&
-                Objects.equals(assemblyAccession, assembly.assemblyAccession) &&
-                Objects.equals(rsType, assembly.rsType);
+                Objects.equals(assemblyAccession, assembly.assemblyAccession);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(assemblyAccession, releaseVersion, rsType);
+        return Objects.hash(assemblyAccession, releaseVersion);
     }
 
     @Override
@@ -75,7 +64,6 @@ public class ReleaseStatsPerAssemblyV2PK implements Serializable {
         return "ReleaseStatsPerAssembly{" +
                 ", assemblyAccession='" + assemblyAccession + '\'' +
                 ", releaseVersion=" + releaseVersion +
-                ", rsType='" + rsType + '\'' +
                 '}';
     }
 }
