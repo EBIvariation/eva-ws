@@ -56,16 +56,6 @@ public class ReleaseStatsServiceV2 {
 
     }
 
-    public Iterable<ReleaseStatsPerAssemblyV2Dto> getReleaseStatsPerAssembly(Integer releaseVersion, boolean excludeNonNew) {
-        Iterable<ReleaseStatsPerAssemblyV2> releaseData;
-        if (releaseVersion != null) {
-            releaseData = releaseStatsPerAssemblyRepository.findAllByReleaseVersion(releaseVersion);
-        } else {
-            releaseData = releaseStatsPerAssemblyRepository.findAll();
-        }
-        return this.releaseStatsPerAssemblyMapper.toDtoV2(releaseData);
-    }
-
     public Iterable<ReleaseStatsPerSpeciesV2Dto> getReleaseStatsPerSpecies(Integer releaseVersion,
                                                                            boolean excludeUnmappedOnly) {
         Iterable<ReleaseStatsPerTaxonomyV2> releaseData;
@@ -77,7 +67,7 @@ public class ReleaseStatsServiceV2 {
             }
         } else {
             if (excludeUnmappedOnly) {
-                releaseData = getReleaseDataExcludingUnmappedOnly();
+                releaseData = getReleaseDataPerSpeciesExcludingUnmappedOnly();
             } else {
                 releaseData = releaseStatsPerTaxonomyRepository.findAll();
             }
@@ -91,7 +81,7 @@ public class ReleaseStatsServiceV2 {
                         releaseVersion, 0, 0, 0, 0, 0, 0);
     }
 
-    private Iterable<ReleaseStatsPerTaxonomyV2> getReleaseDataExcludingUnmappedOnly() {
+    private Iterable<ReleaseStatsPerTaxonomyV2> getReleaseDataPerSpeciesExcludingUnmappedOnly() {
         return releaseStatsPerTaxonomyRepository
                 .findByCurrentRsNotAndMultimapRsNotAndMergedRsNotAndDeprecatedRsNotAndMergedDeprecatedRsNotAndUnmappedRsGreaterThan(
                         0, 0, 0, 0, 0, 0);

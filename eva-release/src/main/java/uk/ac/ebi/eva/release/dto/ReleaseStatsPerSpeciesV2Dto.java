@@ -100,10 +100,8 @@ public class ReleaseStatsPerSpeciesV2Dto extends ReleaseStatsV2Dto {
     @Override
     public int hashCode() {
         return Objects.hash(taxonomyId, releaseVersion, scientificName, releaseFolder, currentRs, multiMappedRs,
-                            mergedRs,
-                            deprecatedRs, mergedDeprecatedRs, unmappedRs, newCurrentRs, newMultiMappedRs, newMergedRs,
-                            newDeprecatedRs, newMergedDeprecatedRs, newUnmappedRs, releaseLink,
-                            taxonomyLink);
+                mergedRs, deprecatedRs, mergedDeprecatedRs, unmappedRs, newCurrentRs, newMultiMappedRs, newMergedRs,
+                newDeprecatedRs, newMergedDeprecatedRs, newUnmappedRs, releaseLink, taxonomyLink);
     }
 
     @Override

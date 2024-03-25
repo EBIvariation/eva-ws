@@ -45,18 +45,18 @@ public class ReleaseStatsV2Controller {
     @GetMapping("/per-species/new")
     public Iterable<ReleaseStatsPerSpeciesV2Dto> getSpeciesWithNewRsIds(
             @RequestParam(name = "releaseVersion") Integer releaseVersion) {
-        return releaseStatsService.getReleaseStatsPerSpeciesWithNewRsIds(releaseVersion);
+        return releaseStatsService.getSpeciesWithNewRsIds(releaseVersion);
     }
 
     @GetMapping("/per-assembly")
     public Iterable<ReleaseStatsPerAssemblyV2Dto> getReleaseStatsPerAssemblies(
             @RequestParam(name = "releaseVersion", required = false) Integer releaseVersion) {
-        return releaseStatsService.getReleaseStatsPerAssembly(releaseVersion, false);
+        return releaseStatsService.getReleaseStatsPerAssembly(releaseVersion);
     }
 
     @GetMapping("/per-assembly/new")
     public Iterable<ReleaseStatsPerAssemblyV2Dto> getAssembliesWithNewRsIds(
             @RequestParam(name = "releaseVersion") Integer releaseVersion) {
-        return releaseStatsService.getReleaseStatsPerAssembly(releaseVersion, true);
+        return releaseStatsService.getReleaseStatsPerAssemblyWithNewRsIds(releaseVersion);
     }
 }

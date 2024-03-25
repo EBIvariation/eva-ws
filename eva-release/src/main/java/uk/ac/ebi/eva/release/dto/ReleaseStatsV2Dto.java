@@ -69,7 +69,7 @@ public abstract class ReleaseStatsV2Dto {
 
     public Long getCurrentRs() {
 
-        if (currentRs == null){
+        if (currentRs == null) {
             return new Long(0);
         }
         return currentRs;
@@ -80,7 +80,7 @@ public abstract class ReleaseStatsV2Dto {
     }
 
     public Long getMergedRs() {
-        if (mergedRs == null){
+        if (mergedRs == null) {
             return new Long(0);
         }
         return mergedRs;
@@ -91,7 +91,7 @@ public abstract class ReleaseStatsV2Dto {
     }
 
     public Long getDeprecatedRs() {
-        if (deprecatedRs == null){
+        if (deprecatedRs == null) {
             return new Long(0);
         }
         return deprecatedRs;
@@ -102,7 +102,7 @@ public abstract class ReleaseStatsV2Dto {
     }
 
     public Long getMergedDeprecatedRs() {
-        if (mergedDeprecatedRs == null){
+        if (mergedDeprecatedRs == null) {
             return new Long(0);
         }
         return mergedDeprecatedRs;
@@ -113,7 +113,7 @@ public abstract class ReleaseStatsV2Dto {
     }
 
     public Long getNewCurrentRs() {
-        if (newCurrentRs == null){
+        if (newCurrentRs == null) {
             return new Long(0);
         }
         return newCurrentRs;
@@ -124,7 +124,7 @@ public abstract class ReleaseStatsV2Dto {
     }
 
     public Long getNewMergedRs() {
-        if (newMergedRs == null){
+        if (newMergedRs == null) {
             return new Long(0);
         }
         return newMergedRs;
@@ -135,7 +135,7 @@ public abstract class ReleaseStatsV2Dto {
     }
 
     public Long getNewDeprecatedRs() {
-        if (newDeprecatedRs == null){
+        if (newDeprecatedRs == null) {
             return new Long(0);
         }
         return newDeprecatedRs;
@@ -146,7 +146,7 @@ public abstract class ReleaseStatsV2Dto {
     }
 
     public Long getNewMergedDeprecatedRs() {
-        if (newMergedDeprecatedRs == null){
+        if (newMergedDeprecatedRs == null) {
             return new Long(0);
         }
         return newMergedDeprecatedRs;
@@ -155,8 +155,9 @@ public abstract class ReleaseStatsV2Dto {
     public void setNewMergedDeprecatedRs(Long newMergedDeprecatedRs) {
         this.newMergedDeprecatedRs = newMergedDeprecatedRs;
     }
+
     public Long getMultiMappedRs() {
-        if (multiMappedRs == null){
+        if (multiMappedRs == null) {
             return new Long(0);
         }
         return multiMappedRs;
@@ -167,7 +168,7 @@ public abstract class ReleaseStatsV2Dto {
     }
 
     public Long getNewMultiMappedRs() {
-        if (newMultiMappedRs == null){
+        if (newMultiMappedRs == null) {
             return new Long(0);
         }
         return newMultiMappedRs;
@@ -178,7 +179,7 @@ public abstract class ReleaseStatsV2Dto {
     }
 
     public Long getUnmappedRs() {
-        if (unmappedRs == null){
+        if (unmappedRs == null) {
             return new Long(0);
         }
         return unmappedRs;
@@ -189,7 +190,7 @@ public abstract class ReleaseStatsV2Dto {
     }
 
     public Long getNewUnmappedRs() {
-        if (newUnmappedRs == null){
+        if (newUnmappedRs == null) {
             return new Long(0);
         }
         return newUnmappedRs;
