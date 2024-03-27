@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.release.models.ReleaseInfo;
 import uk.ac.ebi.eva.release.repositories.ReleaseInfoRepository;
 
-import javax.websocket.server.PathParam;
 import java.util.Collections;
 
 @RestController

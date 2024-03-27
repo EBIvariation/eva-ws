@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "release_rs")
+@Table(name = "release_rs", schema="eva_stats")
 public class ReleaseInfo {
 
     @Id

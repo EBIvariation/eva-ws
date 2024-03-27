@@ -23,7 +23,7 @@ import java.util.Objects;
 
 @Entity
 @IdClass(ReleaseStatsPerAssemblyPK.class)
-@Table(name = "release_rs_statistics_per_assembly")
+@Table(name = "release_rs_statistics_per_assembly", schema="eva_stats")
 public class ReleaseStatsPerAssembly {
 
     @Id
