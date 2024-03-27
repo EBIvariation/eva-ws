@@ -51,7 +51,7 @@ public class ReleaseStatsPerAssemblyMapper {
         return releaseStatsPerAssemblyDtos;
     }
 
-    public ReleaseStatsPerAssemblyV2Dto toDtoV2(ReleaseStatsPerAssemblyV2 assemblyData){
+    private ReleaseStatsPerAssemblyV2Dto toDtoV2(ReleaseStatsPerAssemblyV2 assemblyData) {
         HashMap<String, ReleaseStatsPerAssemblyV2Dto> keyToDto= new HashMap<>();
         ReleaseStatsPerAssemblyV2Dto dto = new ReleaseStatsPerAssemblyV2Dto();
         dto.setAssemblyAccession(assemblyData.getAssemblyAccession());

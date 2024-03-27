@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.eva.release.dto;
 
-public abstract class ReleaseStatsV2Dto {
+public class ReleaseStatsV2Dto {
 
     protected int releaseVersion;
 
