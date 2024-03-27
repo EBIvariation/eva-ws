@@ -15,23 +15,21 @@
  */
 package uk.ac.ebi.eva.release.models;
 
-import io.hypersistence.utils.hibernate.type.array.IntArrayType;
-import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@IdClass(ReleaseStatsPerAssemblyV2PK.class)
 @Table(name = "release_rs_count_per_assembly", schema="eva_stats")
 public class ReleaseStatsPerAssemblyV2 {
 
-    @Id
+
+    @EmbeddedId
+    ReleaseStatsPerAssemblyV2PK releaseStatsPerAssemblyV2Id;
+
+    @Column(insertable = false, updatable = false)
     private int releaseVersion;
-    @Id
-    private String assemblyAccession;
 
     @Type(type = "int-array")
     @Column(
@@ -74,21 +72,19 @@ public class ReleaseStatsPerAssemblyV2 {
     }
 
     public String getAssemblyAccession() {
-        return assemblyAccession;
+        return releaseStatsPerAssemblyV2Id.getAssemblyAccession();
     }
 
     public void setAssemblyAccession(String assemblyAccession) {
-        this.assemblyAccession = assemblyAccession;
+        releaseStatsPerAssemblyV2Id.setAssemblyAccession(assemblyAccession);
     }
 
-
-
     public int getReleaseVersion() {
-        return releaseVersion;
+        return releaseStatsPerAssemblyV2Id.getReleaseVersion();
     }
 
     public void setReleaseVersion(int releaseVersion) {
-        this.releaseVersion = releaseVersion;
+        releaseStatsPerAssemblyV2Id.setReleaseVersion(releaseVersion);
     }
 
 
@@ -107,7 +103,7 @@ public class ReleaseStatsPerAssemblyV2 {
     public void setCurrentRs(Long currentRs) {
         this.currentRs = currentRs;
     }
-    
+
     public Long getNewMergedRs() {
         return newMergedRs;
     }
@@ -185,13 +181,13 @@ public class ReleaseStatsPerAssemblyV2 {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReleaseStatsPerAssemblyV2 assembly = (ReleaseStatsPerAssemblyV2) o;
-        return releaseVersion == assembly.releaseVersion &&
-                Objects.equals(assemblyAccession, assembly.assemblyAccession);
+        return this.getReleaseVersion() == assembly.getReleaseVersion() &&
+                Objects.equals(this.getAssemblyAccession(), assembly.getAssemblyAccession());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(assemblyAccession, releaseVersion);
+        return Objects.hash(this.getAssemblyAccession(), this.getReleaseVersion());
     }
 
 }
