@@ -22,9 +22,12 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.util.Objects;
 
+
 @Entity
 @Table(name = "release_rs_count_per_taxonomy", schema="eva_stats")
 public class ReleaseStatsPerTaxonomyV2 {
+
+    private static final String SPECIES_DIRECTORY = "by_species/";
 
     @EmbeddedId
     ReleaseStatsPerTaxonomyV2PK releaseStatsPerTaxonomyV2Id;
@@ -33,6 +36,11 @@ public class ReleaseStatsPerTaxonomyV2 {
     private int releaseVersion;
 
     @ManyToOne
+    @JoinColumn(name="releaseVersion", insertable = false, updatable = false)
+    @NotFound(action=NotFoundAction.IGNORE)
+    private ReleaseInfo releaseInfo;
+
+    @ManyToOne()
     @JoinColumn(name="taxonomyId", insertable = false, updatable = false)
     @NotFound(action=NotFoundAction.IGNORE)
     private Taxonomy taxonomy;
@@ -213,6 +221,10 @@ public class ReleaseStatsPerTaxonomyV2 {
         }else {
             return null;
         }
+    }
+
+    public String getReleaseLink() {
+        return this.releaseInfo.getReleaseFtp() + SPECIES_DIRECTORY + this.getReleaseFolder();
     }
 
     @Override

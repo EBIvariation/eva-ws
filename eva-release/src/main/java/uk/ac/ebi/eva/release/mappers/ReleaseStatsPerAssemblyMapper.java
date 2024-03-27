@@ -34,13 +34,10 @@ public class ReleaseStatsPerAssemblyMapper {
 
     private static final String TAXONOMY_URL = "https://www.ebi.ac.uk/ena/browser/view/Taxon:";
 
-    private final Map<Integer, String> releaseLinkMap;
-
     private final ReleaseStatsMapperUtils releaseStatMapperUtils;
 
     public ReleaseStatsPerAssemblyMapper(ReleaseInfoRepository releaseInfoRepository) {
         this.releaseStatMapperUtils = new ReleaseStatsMapperUtils(releaseInfoRepository);
-        this.releaseLinkMap = this.releaseStatMapperUtils.getReleasesFtp();
     }
 
     public Iterable<ReleaseStatsPerAssemblyV2Dto> toDtoV2(Iterable<ReleaseStatsPerAssemblyV2> releaseData){
@@ -57,9 +54,7 @@ public class ReleaseStatsPerAssemblyMapper {
         dto.setAssemblyAccession(assemblyData.getAssemblyAccession());
         dto.setReleaseVersion(assemblyData.getReleaseVersion());
         dto.setReleaseFolder(assemblyData.getReleaseFolder());
-        String releaseLink = this.releaseLinkMap.get(assemblyData.getReleaseVersion()) + ASSEMBLY_DIRECTORY +
-                assemblyData.getAssemblyAccession();
-        dto.setReleaseLink(releaseLink);
+        dto.setReleaseLink(assemblyData.getReleaseLink());
         dto.setTaxonomyIds(assemblyData.getTaxonomyIds());
         String[] taxonomyLinks = Arrays.stream(assemblyData.getTaxonomyIds())
                 .mapToObj(String::valueOf).map(t -> TAXONOMY_URL + t).toArray(String[]::new);

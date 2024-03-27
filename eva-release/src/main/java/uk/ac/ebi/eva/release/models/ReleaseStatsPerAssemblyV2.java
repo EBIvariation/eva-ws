@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.eva.release.models;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -24,12 +26,19 @@ import java.util.Objects;
 @Table(name = "release_rs_count_per_assembly", schema="eva_stats")
 public class ReleaseStatsPerAssemblyV2 {
 
+    private static final String ASSEMBLY_DIRECTORY = "by_assembly/";
 
     @EmbeddedId
     ReleaseStatsPerAssemblyV2PK releaseStatsPerAssemblyV2Id;
 
+
     @Column(insertable = false, updatable = false)
     private int releaseVersion;
+
+    @ManyToOne
+    @JoinColumn(name="releaseVersion", insertable = false, updatable = false)
+    @NotFound(action= NotFoundAction.IGNORE)
+    private ReleaseInfo releaseInfo;
 
     @Type(type = "int-array")
     @Column(
@@ -174,6 +183,10 @@ public class ReleaseStatsPerAssemblyV2 {
 
     public void setNewMergedDeprecatedRs(Long newMergedDeprecatedRs) {
         this.newMergedDeprecatedRs = newMergedDeprecatedRs;
+    }
+
+    public String getReleaseLink() {
+        return this.releaseInfo.getReleaseFtp() + ASSEMBLY_DIRECTORY + this.getReleaseFolder();
     }
 
     @Override

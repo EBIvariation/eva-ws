@@ -32,14 +32,10 @@ public class ReleaseStatsPerSpeciesMapper {
 
     private static final String TAXONOMY_URL = "https://www.ebi.ac.uk/ena/browser/view/Taxon:";
 
-
-    private final Map<Integer, String> releaseLinkMap;
-
     private final ReleaseStatsMapperUtils releaseStatMapperUtils;
 
     public ReleaseStatsPerSpeciesMapper(ReleaseInfoRepository releaseInfoRepository) {
         this.releaseStatMapperUtils = new ReleaseStatsMapperUtils(releaseInfoRepository);
-        this.releaseLinkMap = this.releaseStatMapperUtils.getReleasesFtp();
     }
 
     public Iterable<ReleaseStatsPerSpeciesV2Dto> toDtoV2(Iterable<ReleaseStatsPerTaxonomyV2> releaseData){
@@ -58,11 +54,8 @@ public class ReleaseStatsPerSpeciesMapper {
         dto.setScientificName(taxonomyData.getScientificName());
         dto.setCommonName(taxonomyData.getCommonName());
         dto.setReleaseFolder(taxonomyData.getReleaseFolder());
-        String releaseLink = this.releaseLinkMap.get(taxonomyData.getReleaseVersion()) + SPECIES_DIRECTORY +
-                taxonomyData.getReleaseFolder();
-        dto.setReleaseLink(releaseLink);
+        dto.setReleaseLink(taxonomyData.getReleaseLink());
         dto.setAssemblyAccessions(taxonomyData.getAssemblyAccessions());
-
         dto.setCurrentRs(taxonomyData.getCurrentRs());
         dto.setMultiMappedRs(taxonomyData.getMultimapRs());
         dto.setMergedRs(taxonomyData.getMergedRs());
