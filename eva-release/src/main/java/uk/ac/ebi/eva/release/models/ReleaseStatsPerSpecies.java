@@ -23,7 +23,7 @@ import java.util.Objects;
 
 @Entity
 @IdClass(ReleaseStatsPerSpeciesPK.class)
-@Table(name = "release_rs_statistics_per_species")
+@Table(name = "release_rs_statistics_per_species", schema="eva_stats")
 public class ReleaseStatsPerSpecies {
 
     @Id
