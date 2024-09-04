@@ -33,12 +33,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -56,6 +58,9 @@ public class VariantWSServerV2 {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
+    @Autowired
+    private ContigAliasService contigAliasService;
+
     @GetMapping(value = "/{variantCoreString}")
     public ResponseEntity getCoreInfo(
             @ApiParam(value = "Chromosome, start, reference allele and" +
@@ -68,6 +73,8 @@ public class VariantWSServerV2 {
             @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
                     "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam(name = "assembly") String assembly,
+            @ApiParam(value = "Contig naming convention desired, default is INSDC")
+            @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
             HttpServletResponse response) throws IllegalArgumentException {
         try {
             checkParameters(variantCoreString, null, null, species, assembly);
@@ -91,7 +98,12 @@ public class VariantWSServerV2 {
         }
 
         VariantWithSamplesAndAnnotation retrievedVariant = variantEntity.get();
-        Variant variant = new Variant(retrievedVariant.getChromosome(), retrievedVariant.getStart(),
+        String variantContig = retrievedVariant.getChromosome();
+        String translatedContig = contigAliasService.translateContigFromInsdc(retrievedVariant.getChromosome(), contigNamingConvention);
+        if (!translatedContig.isEmpty()) {
+            variantContig = translatedContig;
+        }
+        Variant variant = new Variant(variantContig, retrievedVariant.getStart(),
                 retrievedVariant.getEnd(), retrievedVariant.getReference(), retrievedVariant.getAlternate());
         variant.setIds(variantEntity.get().getIds());
         Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
@@ -200,8 +212,9 @@ public class VariantWSServerV2 {
             return new ResponseEntity(null, HttpStatus.NOT_FOUND);
         }
         Link coreVariantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
-                species, assembly, response)).toUri().toString(), "coreVariant");
+                species, assembly, null, response)).toUri().toString(), "coreVariant");
 
+        // TODO: check if we need to change the chromosome in annotation also
         return new ResponseEntity(new Resource<>(variantEntity.get().getAnnotation(), coreVariantLink), HttpStatus.OK);
     }
 
@@ -249,7 +262,7 @@ public class VariantWSServerV2 {
             resourceList.add(new Resource<>(sourceEntry));
         });
         Link coreVariantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
-                species, assembly, response)).toUri().toString(), "coreVariant");
+                species, assembly, null, response)).toUri().toString(), "coreVariant");
         if (resourceList.size() == 0) {
             return new ResponseEntity(new Resources<>(resourceList, coreVariantLink), HttpStatus.NOT_FOUND);
         }

@@ -32,12 +32,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -55,16 +57,21 @@ public class IdentifierWSServerV2 {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
+    @Autowired
+    private ContigAliasService contigAliasService;
+
     @GetMapping(value = "/{identifier}/variants")
     public ResponseEntity getVariants(
             @ApiParam(value = "RS or SS identifier of a variant, e.g.: rs55880202", required = true) @PathVariable
-                    String identifier,
+            String identifier,
             @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. Allowed" +
                     " values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
                     required = true) @RequestParam String species,
             @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in" +
                     " /v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam String assembly,
+            @ApiParam(value = "Contig naming convention desired, default is INSDC")
+            @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
             HttpServletResponse response)
             throws AnnotationMetadataNotFoundException, IllegalArgumentException {
         checkParameters(species, assembly);
@@ -76,7 +83,12 @@ public class IdentifierWSServerV2 {
         List<Resource> resourcesList = new ArrayList<>();
 
         variantEntities.forEach(variantEntity -> {
-            Variant variant = new Variant(variantEntity.getChromosome(), variantEntity.getStart(), variantEntity
+            String variantContig = variantEntity.getChromosome();
+            String translatedContig = contigAliasService.translateContigFromInsdc(variantEntity.getChromosome(), contigNamingConvention);
+            if (!translatedContig.isEmpty()) {
+                variantContig = translatedContig;
+            }
+            Variant variant = new Variant(variantContig, variantEntity.getStart(), variantEntity
                     .getEnd(), variantEntity.getReference(), variantEntity.getAlternate());
             variant.setIds(variantEntity.getIds());
 

@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
@@ -49,6 +50,7 @@ import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.RateLimit;
 import uk.ac.ebi.eva.server.Utils;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,6 +71,9 @@ public class RegionWSServerV2 {
 
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
+
+    @Autowired
+    private ContigAliasService contigAliasService;
 
     public RegionWSServerV2() {
     }
@@ -112,6 +117,8 @@ public class RegionWSServerV2 {
                     "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false) String
                     annotationVepCacheVersion,
+            @ApiParam(value = "Contig naming convention desired, default is INSDC")
+            @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
             @ApiParam(value = "The number of the page that should be displayed. Starts from 0 and is an integer.")
             @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
             @ApiParam(value = "The number of elements that should be displayed in a single page.")
@@ -157,10 +164,11 @@ public class RegionWSServerV2 {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        List<Resource> resourcesList = getResources(variantEntities, species, assembly, response);
+        List<Resource> resourcesList = getResources(contigAliasService.getVariantsWithTranslatedContig(variantEntities, contigNamingConvention),
+                species, assembly, response);
 
         PagedResources pagedResources = buildPage(resourcesList, pageMetadata, regionId, species, assembly, studies,
-                consequenceType, maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
+                consequenceType, maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, contigNamingConvention,
                 response, request);
 
         return new ResponseEntity(pagedResources, HttpStatus.OK);
@@ -233,6 +241,7 @@ public class RegionWSServerV2 {
                                      String species, String assembly, List<String> studies,
                                      List<String> consequenceType, String maf, String polyphenScore,
                                      String siftScore, String annotationVepVersion, String annotationVepCacheVersion,
+                                     ContigNamingConvention contigNamingConvention,
                                      HttpServletResponse response, HttpServletRequest request) {
         PagedResources pagedResources = new PagedResources<>(resourcesList, pageMetadata);
 
@@ -241,21 +250,21 @@ public class RegionWSServerV2 {
 
         if (pageNumber > 0) {
             pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
-                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, pageNumber - 1,
-                    pageSize, response, request, "prev"));
+                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
+                    contigNamingConvention, pageNumber - 1, pageSize, response, request, "prev"));
 
             pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
-                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, 0, pageSize,
-                    response, request, "first"));
+                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, contigNamingConvention,
+                    0, pageSize, response, request, "first"));
         }
 
         if (pageNumber < (pageMetadata.getTotalPages() - 1)) {
             pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
-                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, pageNumber + 1,
-                    pageSize, response, request, "next"));
+                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, contigNamingConvention,
+                    pageNumber + 1, pageSize, response, request, "next"));
 
             pagedResources.add(createPaginationLink(regionId, species, assembly, studies, consequenceType, maf,
-                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
+                    polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, contigNamingConvention,
                     (int) pageMetadata.getTotalPages() - 1, pageSize, response, request, "last"));
         }
         return pagedResources;
@@ -264,11 +273,11 @@ public class RegionWSServerV2 {
     private Link createPaginationLink(String regionId, String species, String assembly, List<String> studies,
                                       List<String> consequenceType, String maf, String polyphenScore,
                                       String siftScore, String annotationVepVersion, String annotationVepCacheVersion,
-                                      int pageNumber, int pageSize, HttpServletResponse response,
-                                      HttpServletRequest request, String linkName) {
+                                      ContigNamingConvention contigNamingConvention, int pageNumber, int pageSize,
+                                      HttpServletResponse response, HttpServletRequest request, String linkName) {
         return new Link(linkTo(methodOn(RegionWSServerV2.class).getVariantsByRegion(regionId, species, assembly,
                 studies, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
-                annotationVepCacheVersion, pageNumber, pageSize, response, request))
+                annotationVepCacheVersion, contigNamingConvention, pageNumber, pageSize, response, request))
                 .toUriComponentsBuilder()
                 .toUriString(), linkName);
     }

@@ -36,6 +36,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
@@ -47,12 +48,14 @@ import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.server.RateLimit;
 import uk.ac.ebi.eva.server.Utils;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/v1/segments", produces = "application/json")
@@ -61,6 +64,9 @@ public class RegionWSServer extends EvaWSServer {
 
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
+
+    @Autowired
+    private ContigAliasService contigAliasService;
 
     protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
 
@@ -82,6 +88,7 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "exclude", required = false) List<String> exclude,
                                              @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
                                              @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
+                                             @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
                                              HttpServletResponse response,
                                              @ApiIgnore HttpServletRequest request)
             throws IOException {
@@ -136,7 +143,9 @@ public class RegionWSServer extends EvaWSServer {
 
         Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
-        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(
+                contigAliasService.getVariantsWithTranslatedContig(variantEntities, contigNamingConvention),
+                numTotalResults);
         return setQueryResponse(queryResult);
     }
 
@@ -148,6 +157,7 @@ public class RegionWSServer extends EvaWSServer {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ResponseBody
     public QueryResponse getChromosomes(@RequestParam(name = "species") String species,
+                                        @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
                                         HttpServletResponse response)
             throws IOException {
         if (species.isEmpty()) {
@@ -157,6 +167,18 @@ public class RegionWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List<String> chromosomeList = new ArrayList<>(service.findDistinctChromosomes());
+
+        if (contigNamingConvention != null && !contigNamingConvention.equals(ContigNamingConvention.NO_REPLACEMENT)
+                && !contigNamingConvention.equals(ContigNamingConvention.INSDC)) {
+            chromosomeList = chromosomeList.stream().map(chromosome -> {
+                String translatedChromosome = contigAliasService.translateContigFromInsdc(chromosome, contigNamingConvention);
+                if (translatedChromosome.equals("")) {
+                    return chromosome;
+                } else {
+                    return translatedChromosome;
+                }
+            }).collect(Collectors.toList());
+        }
         QueryResult<String> queryResult = buildQueryResult(chromosomeList);
         return setQueryResponse(queryResult);
     }

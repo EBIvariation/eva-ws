@@ -36,9 +36,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,6 +65,9 @@ public class IdentifierWSServerV2Test {
     @MockBean
     private VariantWithSamplesAndAnnotationsService variantEntityRepository;
 
+    @MockBean
+    private ContigAliasService contigAliasService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -71,6 +76,8 @@ public class IdentifierWSServerV2Test {
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(VARIANT);
         given(variantEntityRepository.findByIdsAndComplexFilters(Arrays.asList("ss481155011"), null, null, null,
                 null)).willReturn(Arrays.asList(VARIANT));
+        given(contigAliasService.translateContigFromInsdc(VARIANT.getChromosome(), null))
+                .willReturn("");
     }
 
     @Test
@@ -96,6 +103,38 @@ public class IdentifierWSServerV2Test {
         assertTrue(variantList.size() > 0);
         Variant variant = variantList.get(0);
         assertEquals("1", variant.getChromosome());
+        assertEquals("T", variant.getAlternate());
+        assertEquals("A", variant.getReference());
+        assertEquals(1000L, variant.getStart());
+        assertEquals(1005L, variant.getEnd());
+    }
+
+    @Test
+    public void testForExistingWithTranslatedContig() {
+        given(contigAliasService.translateContigFromInsdc(VARIANT.getChromosome(),
+                ContigNamingConvention.ENA_SEQUENCE_NAME)).willReturn("2");
+
+        String url = "/v2/identifiers/ss481155011/variants?species=hsapiens&assembly=grch37&contigNamingConvention=ENA_SEQUENCE_NAME";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        Configuration configuration = Configuration.defaultConfiguration()
+                .jsonProvider(new JacksonJsonProvider())
+                .mappingProvider(new JacksonMappingProvider(objectMapper))
+                .addOptions(Option.SUPPRESS_EXCEPTIONS);
+        List<Variant> variantList = JsonPath.using(configuration).parse(response.getBody())
+                .read("$['_embedded']['variantList']", new TypeRef<List<Variant>>() {
+                });
+        assertFalse(JsonPath.using(configuration).parse(response.getBody()).read
+                ("$['_embedded']['variantList'][0]['_links']['sources']['href']", new TypeRef<String>() {
+                }).isEmpty());
+        assertFalse(JsonPath.using(configuration).parse(response.getBody()).read
+                ("$['_embedded']['variantList'][0]['_links']['annotation']['href']", new TypeRef<String>() {
+                }).isEmpty());
+
+        assertTrue(variantList.size() > 0);
+        Variant variant = variantList.get(0);
+        assertEquals("2", variant.getChromosome());
         assertEquals("T", variant.getAlternate());
         assertEquals("A", variant.getReference());
         assertEquals(1000L, variant.getStart());

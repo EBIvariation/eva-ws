@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
@@ -38,6 +39,7 @@ import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsSe
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -50,6 +52,9 @@ public class GeneWSServer extends EvaWSServer {
 
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
+
+    @Autowired
+    private ContigAliasService contigAliasService;
 
     public GeneWSServer() {
     }
@@ -66,6 +71,7 @@ public class GeneWSServer extends EvaWSServer {
                                            @RequestParam(name = "exclude", required = false) List<String> exclude,
                                            @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
                                            @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
+                                           @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
                                            HttpServletResponse response) {
         initializeQuery();
 
@@ -113,7 +119,9 @@ public class GeneWSServer extends EvaWSServer {
 
         Long numTotalResults = service.countByGenesAndComplexFilters(geneIds, filters);
 
-        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(
+                contigAliasService.getVariantsWithTranslatedContig(variantEntities, contigNamingConvention),
+                numTotalResults);
         return setQueryResponse(queryResult);
     }
 
@@ -128,9 +136,10 @@ public class GeneWSServer extends EvaWSServer {
                                                @RequestParam(name = "exclude", required = false) List<String> exclude,
                                                @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
                                                @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheversion,
+                                               @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
                                                HttpServletResponse response) throws AnnotationMetadataNotFoundException {
         return getVariantsByGene(geneIds, species, studies, consequenceType, maf, polyphenScore, siftScore, exclude,
-                                 annotationVepVersion, annotationVepCacheversion, response);
+                annotationVepVersion, annotationVepCacheversion, contigNamingConvention, response);
     }
 
 }

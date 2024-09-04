@@ -40,16 +40,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.commons.core.models.Annotation;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -75,6 +79,9 @@ public class VariantWSServerV2Test {
     @MockBean
     private VariantWithSamplesAndAnnotationsService service;
 
+    @MockBean
+    private ContigAliasService contigAliasService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -87,6 +94,8 @@ public class VariantWSServerV2Test {
 
         given(service.findByChromosomeAndStartAndReferenceAndAlternate(eq(CHROMOSOME), anyLong(), any(), any(), any()))
                 .willReturn(variantEntities);
+        given(contigAliasService.translateContigFromInsdc(VARIANT.getChromosome(), null))
+                .willReturn("");
     }
 
     @Test
@@ -97,6 +106,23 @@ public class VariantWSServerV2Test {
                 new ParameterizedTypeReference<VariantWithSamplesAndAnnotation>() {
                 });
         VariantWithSamplesAndAnnotation variantWithSamplesAndAnnotation = response.getBody();
+        assertEquals(0, variantWithSamplesAndAnnotation.getSourceEntries().size());
+        assertNull(variantWithSamplesAndAnnotation.getAnnotation());
+        assertTrue(variantWithSamplesAndAnnotation.getIds().size() > 0);
+    }
+
+    @Test
+    public void rootTestGetVariantsByVariantCoreStringWithTranslatedContig() throws URISyntaxException {
+        given(contigAliasService.translateContigFromInsdc(VARIANT.getChromosome(), ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn("2");
+
+        String url = "/v2/variants/" + CHROMOSOME + ":71822:C:G?species=mmusculus&assembly=grcm38&contigNamingConvention=ENA_SEQUENCE_NAME";
+        ResponseEntity<VariantWithSamplesAndAnnotation> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<VariantWithSamplesAndAnnotation>() {
+                });
+        VariantWithSamplesAndAnnotation variantWithSamplesAndAnnotation = response.getBody();
+        assertEquals("2", variantWithSamplesAndAnnotation.getChromosome());
         assertEquals(0, variantWithSamplesAndAnnotation.getSourceEntries().size());
         assertNull(variantWithSamplesAndAnnotation.getAnnotation());
         assertTrue(variantWithSamplesAndAnnotation.getIds().size() > 0);
