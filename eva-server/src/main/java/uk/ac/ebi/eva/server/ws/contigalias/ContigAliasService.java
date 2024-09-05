@@ -18,6 +18,7 @@
 package uk.ac.ebi.eva.server.ws.contigalias;
 
 import org.springframework.web.client.RestTemplate;
+import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasResponse;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasTranslator;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
@@ -70,6 +71,26 @@ public class ContigAliasService {
         return variantWithNewContig;
     }
 
+    public List<FeatureCoordinates> getFeatureCoordinatesWithTranslatedContig(List<FeatureCoordinates> featuresList,
+                                                          ContigNamingConvention contigNamingConvention) {
+        if (skipContigTranslation(contigNamingConvention)) {
+            return featuresList;
+        }
+
+        List<FeatureCoordinates> featureListTranslatedContig = new ArrayList<>();
+        for (FeatureCoordinates feature : featuresList) {
+            String translatedContig = translateContigFromInsdc(feature.getChromosome(), contigNamingConvention);
+            if (translatedContig.equals("")) {
+                featureListTranslatedContig.add(feature);
+            } else {
+                featureListTranslatedContig.add(new FeatureCoordinates(feature.getId(), feature.getName(),
+                        feature.getFeature(), translatedContig, feature.getStart(), feature.getEnd()));
+            }
+        }
+
+        return featureListTranslatedContig;
+    }
+
 
     public String translateContigFromInsdc(String genbankContig, ContigNamingConvention contigNamingConvention) {
         String url = contigAliasUrl + CONTIG_ALIAS_CHROMOSOMES_GENBANK_ENDPOINT + genbankContig;
@@ -81,7 +102,7 @@ public class ContigAliasService {
         }
     }
 
-    private boolean skipContigTranslation(ContigNamingConvention contigNamingConvention) {
+    public boolean skipContigTranslation(ContigNamingConvention contigNamingConvention) {
         return contigNamingConvention == null ||
                 contigNamingConvention.equals(ContigNamingConvention.INSDC) ||
                 contigNamingConvention.equals(ContigNamingConvention.NO_REPLACEMENT);
