@@ -120,6 +120,8 @@ public class GeneWSServerV2Test {
                 .willReturn(Collections.singletonList(variantEntity));
         given(contigAliasService.getVariantsWithTranslatedContig(Arrays.asList(variantEntity, variantEntity), null))
                 .willReturn(Arrays.asList(variantEntity, variantEntity));
+        given(contigAliasService.translateContigFromInsdc(variantEntity.getChromosome(), null))
+                .willReturn(variantEntity.getChromosome());
     }
 
     @Test
@@ -132,11 +134,8 @@ public class GeneWSServerV2Test {
 
     @Test
     public void testGetVariantsByExistingGeneWithTranslatedContig() throws URISyntaxException {
-        VariantWithSamplesAndAnnotation tranlatedVariant = new VariantWithSamplesAndAnnotation("chr20", 1000, 1005,
-                "A", "C", MAIN_ID);
-        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(variantEntity),
-                ContigNamingConvention.ENA_SEQUENCE_NAME))
-                .willReturn(Collections.singletonList(tranlatedVariant));
+        given(contigAliasService.translateContigFromInsdc(variantEntity.getChromosome(), ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn("chr20");
 
         Variant variant = testGetVariantsByGeneHelper("ENSG00000227232", 1, HttpStatus.OK,
                 ContigNamingConvention.ENA_SEQUENCE_NAME).get(0);
