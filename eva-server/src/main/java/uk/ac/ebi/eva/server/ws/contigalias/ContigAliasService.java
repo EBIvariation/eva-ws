@@ -32,6 +32,10 @@ public class ContigAliasService {
 
     public static final String CONTIG_ALIAS_CHROMOSOMES_GENBANK_ENDPOINT = "/v1/chromosomes/genbank/";
 
+    public static final String CONTIG_ALIAS_CHROMOSOMES_REFSEQ_ENDPOINT = "/v1/chromosomes/refseq/";
+
+    public static final String CONTIG_ALIAS_CHROMOSOMES_NAME_ENDPOINT = "/v1/chromosomes/name/";
+
     private final RestTemplate restTemplate;
 
     private final String contigAliasUrl;
@@ -93,6 +97,9 @@ public class ContigAliasService {
 
 
     public String translateContigFromInsdc(String genbankContig, ContigNamingConvention contigNamingConvention) {
+        if (contigNamingConvention == null) {
+            return "";
+        }
         String url = contigAliasUrl + CONTIG_ALIAS_CHROMOSOMES_GENBANK_ENDPOINT + genbankContig;
         ContigAliasResponse contigAliasResponse = restTemplate.getForObject(url, ContigAliasResponse.class);
         if (contigAliasResponse == null || contigAliasResponse.getEmbedded() == null) {
@@ -106,6 +113,47 @@ public class ContigAliasService {
         return contigNamingConvention == null ||
                 contigNamingConvention.equals(ContigNamingConvention.INSDC) ||
                 contigNamingConvention.equals(ContigNamingConvention.NO_REPLACEMENT);
+    }
+
+    public String translateContigToInsdc(String contig, String assembly, ContigNamingConvention contigNamingConvention) {
+        if (skipContigTranslation(contigNamingConvention)) {
+            return contig;
+        }
+        if (contigNamingConvention.equals(ContigNamingConvention.REFSEQ)) {
+            return translateContigRefseqToInsdc(contig);
+        } else {
+            return translateContigNameToInsdc(contig, assembly, contigNamingConvention);
+        }
+    }
+
+    private String translateContigRefseqToInsdc(String refseq) {
+        String url = contigAliasUrl + CONTIG_ALIAS_CHROMOSOMES_REFSEQ_ENDPOINT + refseq;
+        ContigAliasResponse contigAliasResponse = restTemplate.getForObject(url, ContigAliasResponse.class);
+        if (contigAliasResponse == null || contigAliasResponse.getEmbedded() == null) {
+            return "";
+        }
+        return ContigAliasTranslator.getTranslatedContig(contigAliasResponse, ContigNamingConvention.INSDC);
+    }
+
+    private String translateContigNameToInsdc(String contigName, String assembly, ContigNamingConvention contigNamingConvention) {
+        String url = contigAliasUrl + CONTIG_ALIAS_CHROMOSOMES_NAME_ENDPOINT + contigName
+                + "?accession=" + assembly + "&name=" + getNameParam(contigNamingConvention);
+        ContigAliasResponse contigAliasResponse = restTemplate.getForObject(url, ContigAliasResponse.class);
+        if (contigAliasResponse == null || contigAliasResponse.getEmbedded() == null) {
+            return "";
+        }
+        return ContigAliasTranslator.getTranslatedContig(contigAliasResponse, ContigNamingConvention.INSDC);
+    }
+
+    private String getNameParam(ContigNamingConvention contigNamingConvention) {
+        switch (contigNamingConvention) {
+            case UCSC:
+                return "ucsc";
+            case ENA_SEQUENCE_NAME:
+                return "ena";
+            default:
+                return "genbank";
+        }
     }
 
 }
