@@ -96,9 +96,9 @@ public class IdentifierWSServerV2 {
                     variantEntity.getReference() + ":" + variantEntity.getAlternate();
 
             Link annotationsLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
-                    species, assembly, null, null, response)).toUri().toString(), "annotation");
+                    species, assembly, null, null, contigNamingConvention, response)).toUri().toString(), "annotation");
             Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getSources(variantCoreString, species,
-                    assembly, null, null, response)).toUri().toString(), "sources");
+                    assembly, null, null, contigNamingConvention, response)).toUri().toString(), "sources");
 
             resourcesList.add(new Resource<>(variant, Arrays.asList(sourcesLink, annotationsLink)));
         });

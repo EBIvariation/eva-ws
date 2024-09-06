@@ -165,7 +165,7 @@ public class RegionWSServerV2 {
         }
 
         List<Resource> resourcesList = getResources(contigAliasService.getVariantsWithTranslatedContig(variantEntities, contigNamingConvention),
-                species, assembly, response);
+                species, assembly, contigNamingConvention, response);
 
         PagedResources pagedResources = buildPage(resourcesList, pageMetadata, regionId, species, assembly, studies,
                 consequenceType, maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, contigNamingConvention,
@@ -215,7 +215,8 @@ public class RegionWSServerV2 {
     }
 
     private List<Resource> getResources(List<VariantWithSamplesAndAnnotation> variantEntities, String species,
-                                        String assembly, HttpServletResponse response) {
+                                        String assembly, ContigNamingConvention contigNamingConvention,
+                                        HttpServletResponse response) {
         List<Resource> resourcesList = new ArrayList<>();
 
         variantEntities.forEach(variantEntity -> {
@@ -228,9 +229,9 @@ public class RegionWSServerV2 {
                     variantEntity.getReference() + ":" + variantEntity.getAlternate();
 
             Link annotationsLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
-                    species, assembly, null, null, response)).toUri().toString(), "annotation");
+                    species, assembly, null, null, contigNamingConvention, response)).toUri().toString(), "annotation");
             Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getSources(variantCoreString, species,
-                    assembly, null, null, response)).toUri().toString(), "sources");
+                    assembly, null, null, contigNamingConvention, response)).toUri().toString(), "sources");
 
             resourcesList.add(new Resource<>(variant, Arrays.asList(sourcesLink, annotationsLink)));
         });

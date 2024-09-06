@@ -152,12 +152,30 @@ public class VariantWSServerV2Test {
 
     @Test
     public void annotationEndPointTestExisting() throws URISyntaxException {
+        given(contigAliasService.getAnnotationWithTranslatedContig(VARIANT.getAnnotation(), null))
+                .willReturn(VARIANT.getAnnotation());
         String url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/annotations?species=mmusculus&assembly=grcm38";
         ResponseEntity<Annotation> annotations = restTemplate.exchange(url, HttpMethod.GET,
                 null, new ParameterizedTypeReference<Annotation>() {
                 });
         assertEquals(HttpStatus.OK, annotations.getStatusCode());
         assertFalse(annotations.getBody().getChromosome().isEmpty());
+        assertEquals("existingChromosome", annotations.getBody().getChromosome());
+    }
+
+    @Test
+    public void annotationEndPointTestExistingWithTranslatedContig() throws URISyntaxException {
+        Annotation translatedAnnotation = new Annotation("chr1", 0, 0, null, null, null, null);
+        given(contigAliasService.getAnnotationWithTranslatedContig(VARIANT.getAnnotation(), ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn(translatedAnnotation);
+        String url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/annotations?species=mmusculus&assembly=grcm38&contigNamingConvention="
+                + ContigNamingConvention.ENA_SEQUENCE_NAME;
+        ResponseEntity<Annotation> annotations = restTemplate.exchange(url, HttpMethod.GET,
+                null, new ParameterizedTypeReference<Annotation>() {
+                });
+        assertEquals(HttpStatus.OK, annotations.getStatusCode());
+        assertFalse(annotations.getBody().getChromosome().isEmpty());
+        assertEquals("chr1", annotations.getBody().getChromosome());
     }
 
     @Test

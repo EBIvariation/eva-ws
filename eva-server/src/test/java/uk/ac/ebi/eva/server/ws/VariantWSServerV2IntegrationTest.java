@@ -62,6 +62,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
@@ -143,6 +145,9 @@ public class VariantWSServerV2IntegrationTest {
 
     @Test
     public void annotationEndPointTestExisting() throws URISyntaxException {
+        Annotation translatedAnnotation = new Annotation("chr1", 0, 0, null, null, null, null);
+        given(contigAliasService.getAnnotationWithTranslatedContig(any(), eq(null)))
+                .willReturn(translatedAnnotation);
         String url = "/v2/variants/20:60100:A:T/annotations?species=mmusculus&assembly=grcm38";
         ResponseEntity<Annotation> annotations = restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<Annotation>() {

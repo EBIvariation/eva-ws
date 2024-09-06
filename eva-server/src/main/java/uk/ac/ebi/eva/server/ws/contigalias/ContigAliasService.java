@@ -18,6 +18,7 @@
 package uk.ac.ebi.eva.server.ws.contigalias;
 
 import org.springframework.web.client.RestTemplate;
+import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasResponse;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasTranslator;
@@ -95,6 +96,17 @@ public class ContigAliasService {
         return featureListTranslatedContig;
     }
 
+    public Annotation getAnnotationWithTranslatedContig(Annotation annotation,
+                                                        ContigNamingConvention contigNamingConvention) {
+        String translatedContig = translateContigFromInsdc(annotation.getChromosome(), contigNamingConvention);
+        if (translatedContig.isEmpty()) {
+            return annotation;
+        } else {
+            return new Annotation(translatedContig, annotation.getStart(), annotation.getEnd(),
+                    annotation.getVepVersion(), annotation.getVepCacheVersion(), annotation.getXrefs(),
+                    annotation.getConsequenceTypes());
+        }
+    }
 
     public String translateContigFromInsdc(String genbankContig, ContigNamingConvention contigNamingConvention) {
         if (contigNamingConvention == null) {

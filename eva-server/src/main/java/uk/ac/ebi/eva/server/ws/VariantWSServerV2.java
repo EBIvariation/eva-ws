@@ -107,10 +107,10 @@ public class VariantWSServerV2 {
                 retrievedVariant.getEnd(), retrievedVariant.getReference(), retrievedVariant.getAlternate());
         variant.setIds(variantEntity.get().getIds());
         Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
-                species, assembly, null, null, response)).toUri().toString(), "annotation");
+                species, assembly, null, null, contigNamingConvention, response)).toUri().toString(), "annotation");
 
         Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getSources(variantCoreString, species,
-                assembly, null, null, response)).toUri().toString(), "sources");
+                assembly, null, null, contigNamingConvention, response)).toUri().toString(), "sources");
 
         List<Link> links = new ArrayList<>();
         links.add(sourcesLink);
@@ -190,7 +190,9 @@ public class VariantWSServerV2 {
             @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP cache release. " +
                     "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false)
-                    String annotationVepCacheVersion,
+            String annotationVepCacheVersion,
+            @ApiParam(value = "Contig naming convention desired, default is INSDC")
+            @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
             HttpServletResponse response) throws IllegalArgumentException {
         try {
             checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
@@ -212,10 +214,10 @@ public class VariantWSServerV2 {
             return new ResponseEntity(null, HttpStatus.NOT_FOUND);
         }
         Link coreVariantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
-                species, assembly, null, response)).toUri().toString(), "coreVariant");
+                species, assembly, contigNamingConvention, response)).toUri().toString(), "coreVariant");
 
-        // TODO: check if we need to change the chromosome in annotation also
-        return new ResponseEntity(new Resource<>(variantEntity.get().getAnnotation(), coreVariantLink), HttpStatus.OK);
+        return new ResponseEntity(new Resource<>(contigAliasService.getAnnotationWithTranslatedContig(
+                variantEntity.get().getAnnotation(), contigNamingConvention), coreVariantLink), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{variantCoreString}/sources")
@@ -236,7 +238,9 @@ public class VariantWSServerV2 {
             @ApiParam(value = "Ensembl VEP cache release whose annotations will be included in the response, " +
                     "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false)
-                    String annotationVepCacheVersion,
+            String annotationVepCacheVersion,
+            @ApiParam(value = "Contig naming convention desired, default is INSDC")
+            @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
             HttpServletResponse response) throws IllegalArgumentException {
         try {
             checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
@@ -262,7 +266,7 @@ public class VariantWSServerV2 {
             resourceList.add(new Resource<>(sourceEntry));
         });
         Link coreVariantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
-                species, assembly, null, response)).toUri().toString(), "coreVariant");
+                species, assembly, contigNamingConvention, response)).toUri().toString(), "coreVariant");
         if (resourceList.size() == 0) {
             return new ResponseEntity(new Resources<>(resourceList, coreVariantLink), HttpStatus.NOT_FOUND);
         }
