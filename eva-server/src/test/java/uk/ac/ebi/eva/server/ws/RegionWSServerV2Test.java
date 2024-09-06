@@ -101,6 +101,7 @@ public class RegionWSServerV2Test {
                 .willReturn(Collections.singletonList(variantEntity));
         given(contigAliasService.getVariantsWithTranslatedContig(Arrays.asList(variantEntity, variantEntity), null))
                 .willReturn(Arrays.asList(variantEntity, variantEntity));
+        given(contigAliasService.translateContigFromInsdc(variantEntity.getChromosome(), null)).willReturn("");
     }
 
     @Test
@@ -110,10 +111,8 @@ public class RegionWSServerV2Test {
 
     @Test
     public void testGetVariantsByExistingRegionWithTranslatedContig() throws URISyntaxException {
-        VariantWithSamplesAndAnnotation translatedVariant = new VariantWithSamplesAndAnnotation("1", 1000, 1005,
-                "reference", "alternate", MAIN_ID);
-        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(variantEntity), ContigNamingConvention.ENA_SEQUENCE_NAME))
-                .willReturn(Collections.singletonList(translatedVariant));
+        given(contigAliasService.translateContigFromInsdc(variantEntity.getChromosome(), ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn("1");
         List<Variant> results = regionWsHelper("20:60000-62000", HttpStatus.OK, ContigNamingConvention.ENA_SEQUENCE_NAME);
 
         assertEquals(1, results.size());

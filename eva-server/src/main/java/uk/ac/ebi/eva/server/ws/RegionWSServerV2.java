@@ -164,8 +164,7 @@ public class RegionWSServerV2 {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        List<Resource> resourcesList = getResources(contigAliasService.getVariantsWithTranslatedContig(variantEntities, contigNamingConvention),
-                species, assembly, contigNamingConvention, response);
+        List<Resource> resourcesList = getResources(variantEntities, species, assembly, contigNamingConvention, response);
 
         PagedResources pagedResources = buildPage(resourcesList, pageMetadata, regionId, species, assembly, studies,
                 consequenceType, maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, contigNamingConvention,
@@ -220,7 +219,12 @@ public class RegionWSServerV2 {
         List<Resource> resourcesList = new ArrayList<>();
 
         variantEntities.forEach(variantEntity -> {
-            Variant variant = new Variant(variantEntity.getChromosome(), variantEntity.getStart(),
+            String variantContig = variantEntity.getChromosome();
+            String translatedContig = contigAliasService.translateContigFromInsdc(variantContig, contigNamingConvention);
+            if (!translatedContig.isEmpty()) {
+                variantContig = translatedContig;
+            }
+            Variant variant = new Variant(variantContig, variantEntity.getStart(),
                     variantEntity.getEnd(), variantEntity.getReference(), variantEntity.getAlternate());
             variant.setIds(variantEntity.getIds());
             variant.setMainId(variantEntity.getMainId());
