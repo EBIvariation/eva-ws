@@ -85,9 +85,18 @@ public class VariantWSServerV2 {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
         Optional<VariantWithSamplesAndAnnotation> variantEntity;
-
+        boolean isFoundWithInsdcAccession = true;
         try {
             variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, null, null);
+            if (!variantEntity.isPresent()) {
+                isFoundWithInsdcAccession = false;
+                String variantContig = variantCoreString.split(":", -1)[0];
+                String translatedContig = contigAliasService.translateContigToInsdc(variantContig, assembly, contigNamingConvention);
+                if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
+                    String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
+                    variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, null, null);
+                }
+            }
         } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -99,9 +108,11 @@ public class VariantWSServerV2 {
 
         VariantWithSamplesAndAnnotation retrievedVariant = variantEntity.get();
         String variantContig = retrievedVariant.getChromosome();
-        String translatedContig = contigAliasService.translateContigFromInsdc(retrievedVariant.getChromosome(), contigNamingConvention);
-        if (!translatedContig.isEmpty()) {
-            variantContig = translatedContig;
+        if (!contigAliasService.skipContigTranslation(contigNamingConvention) && isFoundWithInsdcAccession) {
+            String translatedContig = contigAliasService.translateContigFromInsdc(retrievedVariant.getChromosome(), contigNamingConvention);
+            if (!translatedContig.isEmpty()) {
+                variantContig = translatedContig;
+            }
         }
         Variant variant = new Variant(variantContig, retrievedVariant.getStart(),
                 retrievedVariant.getEnd(), retrievedVariant.getReference(), retrievedVariant.getAlternate());
@@ -203,9 +214,19 @@ public class VariantWSServerV2 {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
         Optional<VariantWithSamplesAndAnnotation> variantEntity;
+        boolean isFoundWithInsdcAccession = true;
         try {
             variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, annotationVepVersion,
                     annotationVepCacheVersion);
+            if (!variantEntity.isPresent()) {
+                isFoundWithInsdcAccession = false;
+                String variantContig = variantCoreString.split(":", -1)[0];
+                String translatedContig = contigAliasService.translateContigToInsdc(variantContig, assembly, contigNamingConvention);
+                if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
+                    String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
+                    variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, annotationVepVersion, annotationVepCacheVersion);
+                }
+            }
         } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -215,9 +236,12 @@ public class VariantWSServerV2 {
         }
         Link coreVariantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
                 species, assembly, contigNamingConvention, response)).toUri().toString(), "coreVariant");
-
-        return new ResponseEntity(new Resource<>(contigAliasService.getAnnotationWithTranslatedContig(
-                variantEntity.get().getAnnotation(), contigNamingConvention), coreVariantLink), HttpStatus.OK);
+        if (isFoundWithInsdcAccession) {
+            return new ResponseEntity(new Resource<>(contigAliasService.getAnnotationWithTranslatedContig(
+                    variantEntity.get().getAnnotation(), contigNamingConvention), coreVariantLink), HttpStatus.OK);
+        } else {
+            return new ResponseEntity(new Resource<>(variantEntity.get().getAnnotation(), coreVariantLink), HttpStatus.OK);
+        }
     }
 
     @GetMapping(value = "/{variantCoreString}/sources")
@@ -254,6 +278,14 @@ public class VariantWSServerV2 {
         try {
             variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, annotationVepVersion,
                     annotationVepCacheVersion);
+            if (!variantEntity.isPresent()) {
+                String variantContig = variantCoreString.split(":", -1)[0];
+                String translatedContig = contigAliasService.translateContigToInsdc(variantContig, assembly, contigNamingConvention);
+                if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
+                    String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
+                    variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, annotationVepVersion, annotationVepCacheVersion);
+                }
+            }
         } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }

@@ -45,7 +45,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
@@ -107,6 +106,10 @@ public class VariantWSServerV2IntegrationTest {
                 .willReturn("");
         given(contigAliasService.translateContigFromInsdc("20", null))
                 .willReturn("");
+        given(contigAliasService.translateContigToInsdc("10", "grcm38", null))
+                .willReturn("10");
+        given(contigAliasService.translateContigToInsdc("100", "grcm38", null))
+                .willReturn("100");
     }
 
     @Test

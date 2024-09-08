@@ -38,7 +38,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
@@ -96,6 +95,10 @@ public class VariantWSServerV2Test {
                 .willReturn(variantEntities);
         given(contigAliasService.translateContigFromInsdc(VARIANT.getChromosome(), null))
                 .willReturn("");
+        given(contigAliasService.translateContigToInsdc("100", "grcm38", null))
+                .willReturn("100");
+        given(contigAliasService.translateContigToInsdc(NON_EXISTING_CHROMOSOME, "grcm38", null))
+                .willReturn(NON_EXISTING_CHROMOSOME);
     }
 
     @Test
