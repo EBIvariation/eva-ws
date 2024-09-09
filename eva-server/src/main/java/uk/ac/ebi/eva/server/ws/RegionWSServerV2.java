@@ -58,6 +58,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -160,6 +161,29 @@ public class RegionWSServerV2 {
                     annotationMetadata,
                     excludeMapped,
                     new PageRequest(pageNumber, pageSize));
+
+            if (variantEntities == null || variantEntities.isEmpty()) {
+                List<Region> translatedRegions = regions.stream().map(region -> {
+                            String regionContig = region.getChromosome();
+                            String translatedContig = contigAliasService.translateContigToInsdc(regionContig, assembly,
+                                    contigNamingConvention);
+                            if (translatedContig.isEmpty() || translatedContig.equals(regionContig)) {
+                                return null;
+                            } else {
+                                return new Region(translatedContig, region.getStart(), region.getEnd());
+                            }
+                        })
+                        .filter(r -> r != null)
+                        .collect(Collectors.toList());
+                if (!translatedRegions.isEmpty()) {
+                    variantEntities = service.findByRegionsAndComplexFilters(translatedRegions,
+                            filters,
+                            annotationMetadata,
+                            excludeMapped,
+                            new PageRequest(pageNumber, pageSize));
+                }
+
+            }
         } catch (AnnotationMetadataNotFoundException ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }

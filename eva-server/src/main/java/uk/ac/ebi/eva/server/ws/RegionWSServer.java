@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
-
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
@@ -59,7 +58,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/v1/segments", produces = "application/json")
-@Api(tags = { "segments" })
+@Api(tags = {"segments"})
 public class RegionWSServer extends EvaWSServer {
 
     @Autowired
@@ -77,7 +76,7 @@ public class RegionWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/{regionId}/variants", method = RequestMethod.GET)
     @ResponseBody
-    @RateLimit(value=REGION_REQUEST_RATE_LIMIT)
+    @RateLimit(value = REGION_REQUEST_RATE_LIMIT)
     public QueryResponse getVariantsByRegion(@PathVariable("regionId") String regionId,
                                              @RequestParam(name = "species") String species,
                                              @RequestParam(name = "studies", required = false) List<String> studies,
@@ -112,7 +111,7 @@ public class RegionWSServer extends EvaWSServer {
         PageRequest pageRequest = Utils.getPageRequest(getQueryOptions());
 
         List<String> excludeMapped = new ArrayList<>();
-        if (exclude != null && !exclude.isEmpty()){
+        if (exclude != null && !exclude.isEmpty()) {
             for (String e : exclude) {
                 String docPath = Utils.getApiToMongoDocNameMap().get(e);
                 if (docPath == null) {
@@ -132,10 +131,35 @@ public class RegionWSServer extends EvaWSServer {
 
         try {
             variantEntities = service.findByRegionsAndComplexFilters(regions,
-                                                                     filters,
-                                                                     annotationMetadata,
-                                                                     excludeMapped,
-                                                                     pageRequest);
+                    filters,
+                    annotationMetadata,
+                    excludeMapped,
+                    pageRequest);
+            /*
+            // To translate contig needs assembly
+            if (variantEntities == null || variantEntities.isEmpty()) {
+                List<Region> translatedRegions = regions.stream().map(region -> {
+                            String regionContig = region.getChromosome();
+                            String translatedContig = contigAliasService.translateContigToInsdc(regionContig, assembly,
+                                    contigNamingConvention);
+                            if (translatedContig.isEmpty() || translatedContig.equals(regionContig)) {
+                                return null;
+                            } else {
+                                return new Region(translatedContig, region.getStart(), region.getEnd());
+                            }
+                        })
+                        .filter(r -> r != null)
+                        .collect(Collectors.toList());
+                if (!translatedRegions.isEmpty()) {
+                    variantEntities = service.findByRegionsAndComplexFilters(translatedRegions,
+                            filters,
+                            annotationMetadata,
+                            excludeMapped,
+                            pageRequest);
+                }
+
+            }
+            */
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());

@@ -85,11 +85,13 @@ public class VariantWSServerV2 {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
         Optional<VariantWithSamplesAndAnnotation> variantEntity;
-        boolean isFoundWithInsdcAccession = true;
         try {
             variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, null, null);
+            /*
+            If we don't find anything using the contig given by user, assume we have it stored using insdc
+            Try to convert the contig to insdc and search
+            * */
             if (!variantEntity.isPresent()) {
-                isFoundWithInsdcAccession = false;
                 String variantContig = variantCoreString.split(":", -1)[0];
                 String translatedContig = contigAliasService.translateContigToInsdc(variantContig, assembly, contigNamingConvention);
                 if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
@@ -108,11 +110,14 @@ public class VariantWSServerV2 {
 
         VariantWithSamplesAndAnnotation retrievedVariant = variantEntity.get();
         String variantContig = retrievedVariant.getChromosome();
-        if (!contigAliasService.skipContigTranslation(contigNamingConvention) && isFoundWithInsdcAccession) {
-            String translatedContig = contigAliasService.translateContigFromInsdc(retrievedVariant.getChromosome(), contigNamingConvention);
-            if (!translatedContig.isEmpty()) {
-                variantContig = translatedContig;
-            }
+        /*
+        Because we don't know if the variant returned has insdc contig or not,
+        we assume it does and try to convert that to the given contigNamingConvention.
+        If successful returns the translated Contig else return the original one
+        * */
+        String translatedContig = contigAliasService.translateContigFromInsdc(retrievedVariant.getChromosome(), contigNamingConvention);
+        if (!translatedContig.isEmpty()) {
+            variantContig = translatedContig;
         }
         Variant variant = new Variant(variantContig, retrievedVariant.getStart(),
                 retrievedVariant.getEnd(), retrievedVariant.getReference(), retrievedVariant.getAlternate());
@@ -214,12 +219,10 @@ public class VariantWSServerV2 {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
         Optional<VariantWithSamplesAndAnnotation> variantEntity;
-        boolean isFoundWithInsdcAccession = true;
         try {
             variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, annotationVepVersion,
                     annotationVepCacheVersion);
             if (!variantEntity.isPresent()) {
-                isFoundWithInsdcAccession = false;
                 String variantContig = variantCoreString.split(":", -1)[0];
                 String translatedContig = contigAliasService.translateContigToInsdc(variantContig, assembly, contigNamingConvention);
                 if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
@@ -236,12 +239,10 @@ public class VariantWSServerV2 {
         }
         Link coreVariantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
                 species, assembly, contigNamingConvention, response)).toUri().toString(), "coreVariant");
-        if (isFoundWithInsdcAccession) {
-            return new ResponseEntity(new Resource<>(contigAliasService.getAnnotationWithTranslatedContig(
-                    variantEntity.get().getAnnotation(), contigNamingConvention), coreVariantLink), HttpStatus.OK);
-        } else {
-            return new ResponseEntity(new Resource<>(variantEntity.get().getAnnotation(), coreVariantLink), HttpStatus.OK);
-        }
+
+        return new ResponseEntity(new Resource<>(contigAliasService.getAnnotationWithTranslatedContig(
+                variantEntity.get().getAnnotation(), contigNamingConvention), coreVariantLink), HttpStatus.OK);
+
     }
 
     @GetMapping(value = "/{variantCoreString}/sources")
