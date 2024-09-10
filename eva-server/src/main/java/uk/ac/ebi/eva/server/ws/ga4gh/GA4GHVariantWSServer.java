@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
@@ -43,6 +44,7 @@ import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -58,6 +60,9 @@ public class GA4GHVariantWSServer extends EvaWSServer {
 
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
+
+    @Autowired
+    private ContigAliasService contigAliasService;
 
     protected static Logger logger = LoggerFactory.getLogger(GA4GHVariantWSServer.class);
 
@@ -76,6 +81,8 @@ public class GA4GHVariantWSServer extends EvaWSServer {
 //                                        @RequestParam("variantName") String id,
                                                         @RequestParam(name = "variantSetIds", required = false) List<String> files,
 //                                        @RequestParam(name = "callSetIds", required = false) String samples,
+                                                        @RequestParam(name = "contigNamingConvention", required = false)
+                                                        ContigNamingConvention contigNamingConvention,
                                                         @RequestParam(name = "pageToken", required = false) String pageToken,
                                                         @RequestParam(name = "pageSize", defaultValue = "10") int limit)
             throws UnknownHostException, IOException, AnnotationMetadataNotFoundException {
@@ -97,7 +104,8 @@ public class GA4GHVariantWSServer extends EvaWSServer {
         List<VariantWithSamplesAndAnnotation> variantEntities = service.findByRegionsAndComplexFilters(regions, filters,
                                                                                                        null, null,
                                                                                                        pageRequest);
-        List<VariantWithSamplesAndAnnotation> variants = Collections.unmodifiableList(variantEntities);
+        List<VariantWithSamplesAndAnnotation> variants = Collections.unmodifiableList(
+                contigAliasService.getVariantsWithTranslatedContig(variantEntities, contigNamingConvention));
 
         Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
@@ -111,11 +119,13 @@ public class GA4GHVariantWSServer extends EvaWSServer {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, consumes = "application/json")
-    public GASearchVariantsResponse getVariantsByRegion(GASearchVariantRequest request)
+    public GASearchVariantsResponse getVariantsByRegion(GASearchVariantRequest request,
+                                                        @RequestParam(name = "contigNamingConvention", required = false)
+                                                        ContigNamingConvention contigNamingConvention)
             throws UnknownHostException, IOException, AnnotationMetadataNotFoundException {
         request.validate();
         return getVariantsByRegion(request.getReferenceName(), request.getStart(), request.getEnd(),
-                request.getVariantSetIds(), request.getPageToken(), request.getPageSize());
+                request.getVariantSetIds(), contigNamingConvention, request.getPageToken(), request.getPageSize());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

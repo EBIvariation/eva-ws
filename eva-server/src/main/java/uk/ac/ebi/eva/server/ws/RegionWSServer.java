@@ -192,8 +192,7 @@ public class RegionWSServer extends EvaWSServer {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List<String> chromosomeList = new ArrayList<>(service.findDistinctChromosomes());
 
-        if (contigNamingConvention != null && !contigNamingConvention.equals(ContigNamingConvention.NO_REPLACEMENT)
-                && !contigNamingConvention.equals(ContigNamingConvention.INSDC)) {
+        if (contigAliasService.skipContigTranslation(contigNamingConvention)) {
             chromosomeList = chromosomeList.stream().map(chromosome -> {
                 String translatedChromosome = contigAliasService.translateContigFromInsdc(chromosome, contigNamingConvention);
                 if (translatedChromosome.equals("")) {
