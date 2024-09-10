@@ -36,12 +36,15 @@ import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
+import javax.swing.text.html.Option;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -67,6 +70,9 @@ public class RegionWSServerTest {
     @MockBean
     private ContigAliasService contigAliasService;
 
+    @MockBean
+    private TaxonomyUtils taxonomyUtils;
+
     VariantWithSamplesAndAnnotation variantEntity = new VariantWithSamplesAndAnnotation("chr1", 1000, 1005,
             "reference", "alternate",
             MAIN_ID);
@@ -91,6 +97,7 @@ public class RegionWSServerTest {
                 .willReturn(Collections.singletonList(variantEntity));
         given(contigAliasService.getVariantsWithTranslatedContig(Arrays.asList(variantEntity, variantEntity), null))
                 .willReturn(Arrays.asList(variantEntity, variantEntity));
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.empty());
     }
 
     @Test

@@ -43,11 +43,13 @@ import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -81,6 +83,9 @@ public class VariantWSServerV2Test {
     @MockBean
     private ContigAliasService contigAliasService;
 
+    @MockBean
+    private TaxonomyUtils taxonomyUtils;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -99,6 +104,7 @@ public class VariantWSServerV2Test {
                 .willReturn("100");
         given(contigAliasService.translateContigToInsdc(NON_EXISTING_CHROMOSOME, "grcm38", null))
                 .willReturn(NON_EXISTING_CHROMOSOME);
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.empty());
     }
 
     @Test

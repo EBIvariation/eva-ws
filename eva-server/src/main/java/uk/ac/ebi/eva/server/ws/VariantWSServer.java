@@ -20,8 +20,6 @@
 package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
@@ -40,6 +37,9 @@ import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundExceptio
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/v1/variants", produces = "application/json")
@@ -59,6 +60,9 @@ public class VariantWSServer extends EvaWSServer {
 
     @Autowired
     private ContigAliasService contigAliasService;
+
+    @Autowired
+    private TaxonomyUtils taxonomyUtils;
 
     protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
 
@@ -74,7 +78,7 @@ public class VariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "exclude", required = false) List<String> exclude,
                                         @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
                                         @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
-                                        @RequestParam(name="contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
+                                        @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
                                         HttpServletResponse response)
             throws IOException {
         initializeQuery();
@@ -100,6 +104,18 @@ public class VariantWSServer extends EvaWSServer {
                 String alternate = (regionId.length > 3) ? regionId[3] : null;
                 variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
                         alternate, annotationVepVersion, annotationVepCacheVersion);
+                if (variantEntities.isEmpty()) {
+                    String[] dbNameParts = species.split("_", -1);
+                    Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[dbNameParts.length - 1]);
+                    if (asmAcc.isPresent()) {
+                        String translatedContig = contigAliasService.translateContigToInsdc(regionId[0], asmAcc.get(),
+                                contigNamingConvention);
+                        if (!translatedContig.isEmpty() && !translatedContig.equals(translatedContig)) {
+                            variantEntities = queryByCoordinatesAndAlleles(translatedContig, Integer.parseInt(regionId[1]), regionId[2],
+                                    alternate, annotationVepVersion, annotationVepCacheVersion);
+                        }
+                    }
+                }
                 numTotalResults = (long) variantEntities.size();
             } else {
                 List<VariantRepositoryFilter> filters = new FilterBuilder()
@@ -231,6 +247,8 @@ public class VariantWSServer extends EvaWSServer {
     public QueryResponse checkVariantExists(@PathVariable("variantId") String variantId,
                                             @RequestParam(name = "studies", required = false) List<String> studies,
                                             @RequestParam("species") String species,
+                                            @RequestParam(name = "contigNamingConvention", required = false)
+                                            ContigNamingConvention contigNamingConvention,
                                             HttpServletResponse response)
             throws IOException {
         initializeQuery();
@@ -267,6 +285,24 @@ public class VariantWSServer extends EvaWSServer {
                                                                alternate, null, null);
                 }
 
+                if (variantEntities.isEmpty()) {
+                    String[] dbNameParts = species.split("_", -1);
+                    Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[dbNameParts.length - 1]);
+                    if (asmAcc.isPresent()) {
+                        String translatedContig = contigAliasService.translateContigToInsdc(regionId[0], asmAcc.get(),
+                                contigNamingConvention);
+                        if (!translatedContig.isEmpty() && !translatedContig.equals(translatedContig)) {
+                            if (studies != null && !studies.isEmpty()) {
+                                variantEntities = queryByCoordinatesAndAllelesAndStudyIds(translatedContig, Integer.parseInt(regionId[1]),
+                                        regionId[2], alternate, studies);
+                            } else {
+                                variantEntities = queryByCoordinatesAndAlleles(translatedContig, Integer.parseInt(regionId[1]), regionId[2],
+                                        alternate, null, null);
+                            }
+                        }
+
+                    }
+                }
             } else {
                 List<VariantRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
                 variantEntities = service.findByIdsAndComplexFilters(Arrays.asList(variantId), filters, null, null,

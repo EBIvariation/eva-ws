@@ -40,6 +40,7 @@ import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundExceptio
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -60,6 +61,9 @@ public class VariantWSServerV2 {
 
     @Autowired
     private ContigAliasService contigAliasService;
+
+    @Autowired
+    private TaxonomyUtils taxonomyUtils;
 
     @GetMapping(value = "/{variantCoreString}")
     public ResponseEntity getCoreInfo(
@@ -92,11 +96,14 @@ public class VariantWSServerV2 {
             Try to convert the contig to insdc and search
             * */
             if (!variantEntity.isPresent()) {
-                String variantContig = variantCoreString.split(":", -1)[0];
-                String translatedContig = contigAliasService.translateContigToInsdc(variantContig, assembly, contigNamingConvention);
-                if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
-                    String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
-                    variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, null, null);
+                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
+                if (asmAcc.isPresent()) {
+                    String variantContig = variantCoreString.split(":", -1)[0];
+                    String translatedContig = contigAliasService.translateContigToInsdc(variantContig, asmAcc.get(), contigNamingConvention);
+                    if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
+                        String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
+                        variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, null, null);
+                    }
                 }
             }
         } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {
@@ -223,11 +230,14 @@ public class VariantWSServerV2 {
             variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, annotationVepVersion,
                     annotationVepCacheVersion);
             if (!variantEntity.isPresent()) {
-                String variantContig = variantCoreString.split(":", -1)[0];
-                String translatedContig = contigAliasService.translateContigToInsdc(variantContig, assembly, contigNamingConvention);
-                if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
-                    String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
-                    variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, annotationVepVersion, annotationVepCacheVersion);
+                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
+                if (asmAcc.isPresent()) {
+                    String variantContig = variantCoreString.split(":", -1)[0];
+                    String translatedContig = contigAliasService.translateContigToInsdc(variantContig, asmAcc.get(), contigNamingConvention);
+                    if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
+                        String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
+                        variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, annotationVepVersion, annotationVepCacheVersion);
+                    }
                 }
             }
         } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {
@@ -280,11 +290,14 @@ public class VariantWSServerV2 {
             variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, annotationVepVersion,
                     annotationVepCacheVersion);
             if (!variantEntity.isPresent()) {
-                String variantContig = variantCoreString.split(":", -1)[0];
-                String translatedContig = contigAliasService.translateContigToInsdc(variantContig, assembly, contigNamingConvention);
-                if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
-                    String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
-                    variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, annotationVepVersion, annotationVepCacheVersion);
+                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
+                if (asmAcc.isPresent()) {
+                    String variantContig = variantCoreString.split(":", -1)[0];
+                    String translatedContig = contigAliasService.translateContigToInsdc(variantContig, asmAcc.get(), contigNamingConvention);
+                    if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
+                        String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
+                        variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, annotationVepVersion, annotationVepCacheVersion);
+                    }
                 }
             }
         } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {

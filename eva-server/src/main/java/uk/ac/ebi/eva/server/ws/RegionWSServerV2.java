@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedResources;
+import org.springframework.hateoas.PagedResources.PageMetadata;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.PagedResources.PageMetadata;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,7 @@ import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundExceptio
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.RateLimit;
 import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
@@ -58,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -75,6 +78,9 @@ public class RegionWSServerV2 {
 
     @Autowired
     private ContigAliasService contigAliasService;
+
+    @Autowired
+    private TaxonomyUtils taxonomyUtils;
 
     public RegionWSServerV2() {
     }
@@ -165,12 +171,17 @@ public class RegionWSServerV2 {
             if (variantEntities == null || variantEntities.isEmpty()) {
                 List<Region> translatedRegions = regions.stream().map(region -> {
                             String regionContig = region.getChromosome();
-                            String translatedContig = contigAliasService.translateContigToInsdc(regionContig, assembly,
-                                    contigNamingConvention);
-                            if (translatedContig.isEmpty() || translatedContig.equals(regionContig)) {
-                                return null;
+                            Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
+                            if (asmAcc.isPresent()) {
+                                String translatedContig = contigAliasService.translateContigToInsdc(regionContig, asmAcc.get(),
+                                        contigNamingConvention);
+                                if (translatedContig.isEmpty() || translatedContig.equals(regionContig)) {
+                                    return null;
+                                } else {
+                                    return new Region(translatedContig, region.getStart(), region.getEnd());
+                                }
                             } else {
-                                return new Region(translatedContig, region.getStart(), region.getEnd());
+                                return null;
                             }
                         })
                         .filter(r -> r != null)

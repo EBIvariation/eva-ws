@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
@@ -35,20 +36,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.Profiles;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -73,6 +76,9 @@ public class RegionWSServerIntegrationTest {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
+    @MockBean
+    private TaxonomyUtils taxonomyUtils;
+
     @Autowired
     MongoDbFactory mongoDbFactory;
 
@@ -81,6 +87,7 @@ public class RegionWSServerIntegrationTest {
 
     @Before
     public void setUp() throws Exception {
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.empty());
     }
 
     @Test
@@ -148,14 +155,14 @@ public class RegionWSServerIntegrationTest {
         String annotationVepCacheversion = "78";
         int limit = 100000;
         String url = UriComponentsBuilder.fromUriString("")
-                                         .path("/v1/segments/")
-                                         .path(testRegion)
-                                         .path("/variants")
-                                         .queryParam("species", "mmusculus_grcm38")
-                                         .queryParam("annot-vep-version", annotationVepVersion)
-                                         .queryParam("annot-vep-cache-version", annotationVepCacheversion)
-                                         .queryParam("limit", limit)
-                                         .build().toString();
+                .path("/v1/segments/")
+                .path(testRegion)
+                .path("/variants")
+                .queryParam("species", "mmusculus_grcm38")
+                .queryParam("annot-vep-version", annotationVepVersion)
+                .queryParam("annot-vep-cache-version", annotationVepCacheversion)
+                .queryParam("limit", limit)
+                .build().toString();
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }

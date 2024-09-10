@@ -50,11 +50,13 @@ import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.Profiles;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
@@ -100,6 +102,9 @@ public class VariantWSServerV2IntegrationTest {
     @MockBean
     private ContigAliasService contigAliasService;
 
+    @MockBean
+    private TaxonomyUtils taxonomyUtils;
+
     @Before
     public void setUp() throws Exception {
         given(contigAliasService.translateContigFromInsdc("13", null))
@@ -110,6 +115,7 @@ public class VariantWSServerV2IntegrationTest {
                 .willReturn("10");
         given(contigAliasService.translateContigToInsdc("100", "grcm38", null))
                 .willReturn("100");
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.empty());
     }
 
     @Test

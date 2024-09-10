@@ -45,6 +45,7 @@ import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.RateLimit;
 import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
@@ -54,6 +55,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -66,6 +68,9 @@ public class RegionWSServer extends EvaWSServer {
 
     @Autowired
     private ContigAliasService contigAliasService;
+
+    @Autowired
+    private TaxonomyUtils taxonomyUtils;
 
     protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
 
@@ -87,7 +92,8 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "exclude", required = false) List<String> exclude,
                                              @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
                                              @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
-                                             @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
+                                             @RequestParam(name = "contigNamingConvention", required = false)
+                                                 ContigNamingConvention contigNamingConvention,
                                              HttpServletResponse response,
                                              @ApiIgnore HttpServletRequest request)
             throws IOException {
@@ -135,17 +141,22 @@ public class RegionWSServer extends EvaWSServer {
                     annotationMetadata,
                     excludeMapped,
                     pageRequest);
-            /*
-            // To translate contig needs assembly
+
             if (variantEntities == null || variantEntities.isEmpty()) {
                 List<Region> translatedRegions = regions.stream().map(region -> {
                             String regionContig = region.getChromosome();
-                            String translatedContig = contigAliasService.translateContigToInsdc(regionContig, assembly,
-                                    contigNamingConvention);
-                            if (translatedContig.isEmpty() || translatedContig.equals(regionContig)) {
-                                return null;
+                            String[] dbNameParts = species.split("_", -1);
+                            Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[dbNameParts.length - 1]);
+                            if (asmAcc.isPresent()) {
+                                String translatedContig = contigAliasService.translateContigToInsdc(regionContig, asmAcc.get(),
+                                        contigNamingConvention);
+                                if (translatedContig.isEmpty() || translatedContig.equals(regionContig)) {
+                                    return null;
+                                } else {
+                                    return new Region(translatedContig, region.getStart(), region.getEnd());
+                                }
                             } else {
-                                return new Region(translatedContig, region.getStart(), region.getEnd());
+                                return null;
                             }
                         })
                         .filter(r -> r != null)
@@ -159,7 +170,6 @@ public class RegionWSServer extends EvaWSServer {
                 }
 
             }
-            */
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
