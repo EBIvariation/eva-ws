@@ -33,13 +33,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
+import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
-import javax.swing.text.html.Option;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -103,6 +103,38 @@ public class RegionWSServerTest {
     @Test
     public void testGetVariantsByRegion() throws URISyntaxException {
         testGetVariantsByRegionHelper("20:60000-62000", 1);
+    }
+
+    @Test
+    public void testGetVariantsByRegionAfterSearchTranslation() throws URISyntaxException, AnnotationMetadataNotFoundException {
+        List<Region> oneRegion = Collections.singletonList(new Region("30", 80000L, 82000L));
+        given(service.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any(), any()))
+                .willReturn(Collections.emptyList());
+
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
+        given(contigAliasService.translateContigToInsdc("30", "GCA_000001635.2", ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn("chr30");
+
+        List<Region> translatedRegion = Collections.singletonList(new Region("chr30", 80000L, 82000L));
+        given(service.findByRegionsAndComplexFilters(eq(translatedRegion), any(), any(), any(), any()))
+                .willReturn(Collections.singletonList(variantEntity));
+
+        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(variantEntity), ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn(Collections.singletonList(new VariantWithSamplesAndAnnotation("chr30", 1000, 1005,
+                        "reference", "alternate", MAIN_ID)));
+
+        List<VariantWithSamplesAndAnnotation> results = regionWsHelper("30:80000-82000",
+                ContigNamingConvention.ENA_SEQUENCE_NAME);
+        assertEquals(1, results.size());
+
+        for (VariantWithSamplesAndAnnotation variantEntity : results) {
+            assertEquals("chr30", variantEntity.getChromosome());
+            assertFalse(variantEntity.getReference().isEmpty());
+            assertFalse(variantEntity.getAlternate().isEmpty());
+            assertNotEquals(0, variantEntity.getStart());
+            assertNotEquals(0, variantEntity.getEnd());
+            assertEquals(MAIN_ID, variantEntity.getMainId());
+        }
     }
 
     @Test
