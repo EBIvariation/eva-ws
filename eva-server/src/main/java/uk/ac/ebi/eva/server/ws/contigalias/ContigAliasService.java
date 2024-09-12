@@ -108,11 +108,11 @@ public class ContigAliasService {
         }
     }
 
-    public String translateContigFromInsdc(String genbankContig, ContigNamingConvention contigNamingConvention) {
+    public String translateContigFromInsdc(String insdcContig, ContigNamingConvention contigNamingConvention) {
         if (contigNamingConvention == null) {
             return "";
         }
-        String url = contigAliasUrl + CONTIG_ALIAS_CHROMOSOMES_GENBANK_ENDPOINT + genbankContig;
+        String url = contigAliasUrl + CONTIG_ALIAS_CHROMOSOMES_GENBANK_ENDPOINT + insdcContig;
         ContigAliasResponse contigAliasResponse = restTemplate.getForObject(url, ContigAliasResponse.class);
         if (contigAliasResponse == null || contigAliasResponse.getEmbedded() == null) {
             return "";
