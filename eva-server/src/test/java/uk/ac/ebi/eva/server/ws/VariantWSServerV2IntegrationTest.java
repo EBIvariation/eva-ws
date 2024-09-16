@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
@@ -44,19 +45,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.Profiles;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -90,8 +99,23 @@ public class VariantWSServerV2IntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @MockBean
+    private ContigAliasService contigAliasService;
+
+    @MockBean
+    private TaxonomyUtils taxonomyUtils;
+
     @Before
     public void setUp() throws Exception {
+        given(contigAliasService.translateContigFromInsdc("13", null))
+                .willReturn("");
+        given(contigAliasService.translateContigFromInsdc("20", null))
+                .willReturn("");
+        given(contigAliasService.translateContigToInsdc("10", "grcm38", null))
+                .willReturn("10");
+        given(contigAliasService.translateContigToInsdc("100", "grcm38", null))
+                .willReturn("100");
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.empty());
     }
 
     @Test
@@ -130,6 +154,9 @@ public class VariantWSServerV2IntegrationTest {
 
     @Test
     public void annotationEndPointTestExisting() throws URISyntaxException {
+        Annotation translatedAnnotation = new Annotation("chr1", 0, 0, null, null, null, null);
+        given(contigAliasService.getAnnotationWithTranslatedContig(any(), eq(null)))
+                .willReturn(translatedAnnotation);
         String url = "/v2/variants/20:60100:A:T/annotations?species=mmusculus&assembly=grcm38";
         ResponseEntity<Annotation> annotations = restTemplate.exchange(url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<Annotation>() {

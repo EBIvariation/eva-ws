@@ -38,18 +38,23 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import uk.ac.ebi.eva.commons.core.models.Annotation;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -75,6 +80,12 @@ public class VariantWSServerV2Test {
     @MockBean
     private VariantWithSamplesAndAnnotationsService service;
 
+    @MockBean
+    private ContigAliasService contigAliasService;
+
+    @MockBean
+    private TaxonomyUtils taxonomyUtils;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -87,6 +98,13 @@ public class VariantWSServerV2Test {
 
         given(service.findByChromosomeAndStartAndReferenceAndAlternate(eq(CHROMOSOME), anyLong(), any(), any(), any()))
                 .willReturn(variantEntities);
+        given(contigAliasService.translateContigFromInsdc(VARIANT.getChromosome(), null))
+                .willReturn("");
+        given(contigAliasService.translateContigToInsdc("100", "grcm38", null))
+                .willReturn("100");
+        given(contigAliasService.translateContigToInsdc(NON_EXISTING_CHROMOSOME, "grcm38", null))
+                .willReturn(NON_EXISTING_CHROMOSOME);
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.empty());
     }
 
     @Test
@@ -97,6 +115,23 @@ public class VariantWSServerV2Test {
                 new ParameterizedTypeReference<VariantWithSamplesAndAnnotation>() {
                 });
         VariantWithSamplesAndAnnotation variantWithSamplesAndAnnotation = response.getBody();
+        assertEquals(0, variantWithSamplesAndAnnotation.getSourceEntries().size());
+        assertNull(variantWithSamplesAndAnnotation.getAnnotation());
+        assertTrue(variantWithSamplesAndAnnotation.getIds().size() > 0);
+    }
+
+    @Test
+    public void rootTestGetVariantsByVariantCoreStringWithTranslatedContig() throws URISyntaxException {
+        given(contigAliasService.translateContigFromInsdc(VARIANT.getChromosome(), ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn("2");
+
+        String url = "/v2/variants/" + CHROMOSOME + ":71822:C:G?species=mmusculus&assembly=grcm38&contigNamingConvention=ENA_SEQUENCE_NAME";
+        ResponseEntity<VariantWithSamplesAndAnnotation> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<VariantWithSamplesAndAnnotation>() {
+                });
+        VariantWithSamplesAndAnnotation variantWithSamplesAndAnnotation = response.getBody();
+        assertEquals("2", variantWithSamplesAndAnnotation.getChromosome());
         assertEquals(0, variantWithSamplesAndAnnotation.getSourceEntries().size());
         assertNull(variantWithSamplesAndAnnotation.getAnnotation());
         assertTrue(variantWithSamplesAndAnnotation.getIds().size() > 0);
@@ -126,12 +161,30 @@ public class VariantWSServerV2Test {
 
     @Test
     public void annotationEndPointTestExisting() throws URISyntaxException {
+        given(contigAliasService.getAnnotationWithTranslatedContig(VARIANT.getAnnotation(), null))
+                .willReturn(VARIANT.getAnnotation());
         String url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/annotations?species=mmusculus&assembly=grcm38";
         ResponseEntity<Annotation> annotations = restTemplate.exchange(url, HttpMethod.GET,
                 null, new ParameterizedTypeReference<Annotation>() {
                 });
         assertEquals(HttpStatus.OK, annotations.getStatusCode());
         assertFalse(annotations.getBody().getChromosome().isEmpty());
+        assertEquals("existingChromosome", annotations.getBody().getChromosome());
+    }
+
+    @Test
+    public void annotationEndPointTestExistingWithTranslatedContig() throws URISyntaxException {
+        Annotation translatedAnnotation = new Annotation("chr1", 0, 0, null, null, null, null);
+        given(contigAliasService.getAnnotationWithTranslatedContig(VARIANT.getAnnotation(), ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn(translatedAnnotation);
+        String url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/annotations?species=mmusculus&assembly=grcm38&contigNamingConvention="
+                + ContigNamingConvention.ENA_SEQUENCE_NAME;
+        ResponseEntity<Annotation> annotations = restTemplate.exchange(url, HttpMethod.GET,
+                null, new ParameterizedTypeReference<Annotation>() {
+                });
+        assertEquals(HttpStatus.OK, annotations.getStatusCode());
+        assertFalse(annotations.getBody().getChromosome().isEmpty());
+        assertEquals("chr1", annotations.getBody().getChromosome());
     }
 
     @Test

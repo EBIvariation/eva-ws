@@ -51,22 +51,22 @@
             <dependency>
                 <groupId>uk.ac.ebi.eva</groupId>
                 <artifactId>variation-commons-core</artifactId>
-                <version>0.8.0</version>
+                <version>0.8.5</version>
             </dependency>
             <dependency>
                 <groupId>uk.ac.ebi.eva</groupId>
                 <artifactId>variation-commons-jpa</artifactId>
-                <version>0.8.0</version>
+                <version>0.8.5</version>
             </dependency>
             <dependency>
                 <groupId>uk.ac.ebi.eva</groupId>
                 <artifactId>variation-commons-mongodb</artifactId>
-                <version>0.8.0</version>
+                <version>0.8.5</version>
             </dependency>
             <dependency>
                 <groupId>uk.ac.ebi.eva</groupId>
                 <artifactId>variation-commons-beacon</artifactId>
-                <version>0.8.0</version>
+                <version>0.8.5</version>
             </dependency>
             <dependency>
                 <groupId>org.postgresql</groupId>

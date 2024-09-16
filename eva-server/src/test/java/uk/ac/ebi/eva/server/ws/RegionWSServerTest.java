@@ -31,15 +31,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
+import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -62,12 +67,18 @@ public class RegionWSServerTest {
     @MockBean
     private VariantWithSamplesAndAnnotationsService service;
 
+    @MockBean
+    private ContigAliasService contigAliasService;
+
+    @MockBean
+    private TaxonomyUtils taxonomyUtils;
+
+    VariantWithSamplesAndAnnotation variantEntity = new VariantWithSamplesAndAnnotation("chr1", 1000, 1005,
+            "reference", "alternate",
+            MAIN_ID);
+
     @Before
     public void setUp() throws Exception {
-        VariantWithSamplesAndAnnotation variantEntity = new VariantWithSamplesAndAnnotation("chr1", 1000, 1005,
-                                                                                            "reference", "alternate",
-                                                                                            MAIN_ID);
-
         List<Region> oneRegion = Collections.singletonList(new Region("20", 60000L, 62000L));
         given(service.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any(), any()))
                 .willReturn(Collections.singletonList(variantEntity));
@@ -81,11 +92,70 @@ public class RegionWSServerTest {
         given(service
                 .findByRegionsAndComplexFilters(not(or(eq(oneRegion), eq(twoRegions))), any(), any(), any(), any()))
                 .willReturn(Collections.emptyList());
+
+        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(variantEntity), null))
+                .willReturn(Collections.singletonList(variantEntity));
+        given(contigAliasService.getVariantsWithTranslatedContig(Arrays.asList(variantEntity, variantEntity), null))
+                .willReturn(Arrays.asList(variantEntity, variantEntity));
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.empty());
     }
 
     @Test
     public void testGetVariantsByRegion() throws URISyntaxException {
         testGetVariantsByRegionHelper("20:60000-62000", 1);
+    }
+
+    @Test
+    public void testGetVariantsByRegionAfterSearchTranslation() throws URISyntaxException, AnnotationMetadataNotFoundException {
+        List<Region> oneRegion = Collections.singletonList(new Region("30", 80000L, 82000L));
+        given(service.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any(), any()))
+                .willReturn(Collections.emptyList());
+
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
+        given(contigAliasService.translateContigToInsdc("30", "GCA_000001635.2", ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn("chr30");
+
+        List<Region> translatedRegion = Collections.singletonList(new Region("chr30", 80000L, 82000L));
+        given(service.findByRegionsAndComplexFilters(eq(translatedRegion), any(), any(), any(), any()))
+                .willReturn(Collections.singletonList(variantEntity));
+
+        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(variantEntity), ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn(Collections.singletonList(new VariantWithSamplesAndAnnotation("chr30", 1000, 1005,
+                        "reference", "alternate", MAIN_ID)));
+
+        List<VariantWithSamplesAndAnnotation> results = regionWsHelper("30:80000-82000",
+                ContigNamingConvention.ENA_SEQUENCE_NAME);
+        assertEquals(1, results.size());
+
+        for (VariantWithSamplesAndAnnotation variantEntity : results) {
+            assertEquals("chr30", variantEntity.getChromosome());
+            assertFalse(variantEntity.getReference().isEmpty());
+            assertFalse(variantEntity.getAlternate().isEmpty());
+            assertNotEquals(0, variantEntity.getStart());
+            assertNotEquals(0, variantEntity.getEnd());
+            assertEquals(MAIN_ID, variantEntity.getMainId());
+        }
+    }
+
+    @Test
+    public void testGetVariantsByRegionWithTranslatedContig() throws URISyntaxException {
+        VariantWithSamplesAndAnnotation translatedContig = new VariantWithSamplesAndAnnotation("1", 1000, 1005,
+                "reference", "alternate", MAIN_ID);
+        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(variantEntity), ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn(Collections.singletonList(translatedContig));
+
+        List<VariantWithSamplesAndAnnotation> results = regionWsHelper("20:60000-62000",
+                ContigNamingConvention.ENA_SEQUENCE_NAME);
+        assertEquals(1, results.size());
+
+        for (VariantWithSamplesAndAnnotation variantEntity : results) {
+            assertEquals("1", variantEntity.getChromosome());
+            assertFalse(variantEntity.getReference().isEmpty());
+            assertFalse(variantEntity.getAlternate().isEmpty());
+            assertNotEquals(0, variantEntity.getStart());
+            assertNotEquals(0, variantEntity.getEnd());
+            assertEquals(MAIN_ID, variantEntity.getMainId());
+        }
     }
 
     @Test
@@ -99,7 +169,7 @@ public class RegionWSServerTest {
     }
 
     private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants) throws URISyntaxException {
-        List<VariantWithSamplesAndAnnotation> results = regionWsHelper(testRegion);
+        List<VariantWithSamplesAndAnnotation> results = regionWsHelper(testRegion, null);
         assertEquals(expectedVariants, results.size());
 
         for (VariantWithSamplesAndAnnotation variantEntity : results) {
@@ -112,8 +182,11 @@ public class RegionWSServerTest {
         }
     }
 
-    private List<VariantWithSamplesAndAnnotation> regionWsHelper(String testRegion) {
+    private List<VariantWithSamplesAndAnnotation> regionWsHelper(String testRegion, ContigNamingConvention contigNamingConvention) {
         String url = "/v1/segments/" + testRegion + "/variants?species=mmusculus_grcm38";
+        if (contigNamingConvention != null) {
+            url += "&contigNamingConvention=" + contigNamingConvention;
+        }
         ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>>() {

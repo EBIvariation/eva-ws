@@ -35,17 +35,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
 import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.FeatureService;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.AdditionalMatchers.or;
 import static org.mockito.BDDMockito.given;
@@ -67,6 +71,9 @@ public class GeneWSServerV2Test {
     @MockBean
     private VariantWithSamplesAndAnnotationsService variantService;
 
+    @MockBean
+    private ContigAliasService contigAliasService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -74,11 +81,11 @@ public class GeneWSServerV2Test {
 
     private String GENE_ID2 = "ENSG00000227244";
 
+    VariantWithSamplesAndAnnotation variantEntity = new VariantWithSamplesAndAnnotation("20", 1000, 1005,
+            "A", "C", MAIN_ID);
+
     @Before
     public void setUp() throws Exception {
-        VariantWithSamplesAndAnnotation variantEntity = new VariantWithSamplesAndAnnotation("20", 1000, 1005,
-                "A", "C", MAIN_ID);
-
         List<Region> oneRegion = Collections.singletonList(new Region("20", 60000L, 62000L));
         given(variantService.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any(), any()))
                 .willReturn(Collections.singletonList(variantEntity));
@@ -108,19 +115,42 @@ public class GeneWSServerV2Test {
         List<FeatureCoordinates> featureCoordinates = Arrays.asList(feature1, feature2);
         List<String> geneIds = Arrays.asList(GENE_ID1, GENE_ID2);
         given(featureService.findAllByGeneIdsOrGeneNames(eq(geneIds), eq(geneIds))).willReturn(featureCoordinates);
+
+        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(variantEntity), null))
+                .willReturn(Collections.singletonList(variantEntity));
+        given(contigAliasService.getVariantsWithTranslatedContig(Arrays.asList(variantEntity, variantEntity), null))
+                .willReturn(Arrays.asList(variantEntity, variantEntity));
+        given(contigAliasService.translateContigFromInsdc(variantEntity.getChromosome(), null))
+                .willReturn(variantEntity.getChromosome());
     }
 
     @Test
     public void testGetVariantsByExistingGene() throws URISyntaxException {
-        Variant variant = testGetVariantsByGeneHelper("ENSG00000227232", 1, HttpStatus.OK).get(0);
+        Variant variant = testGetVariantsByGeneHelper("ENSG00000227232", 1, HttpStatus.OK, null).get(0);
         assertEquals("20", variant.getChromosome());
         assertEquals("A", variant.getReference());
         assertEquals("C", variant.getAlternate());
     }
 
-    private List<Variant> testGetVariantsByGeneHelper(String testRegion, int expectedVariants, HttpStatus status)
+    @Test
+    public void testGetVariantsByExistingGeneWithTranslatedContig() throws URISyntaxException {
+        given(contigAliasService.translateContigFromInsdc(variantEntity.getChromosome(), ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn("chr20");
+
+        Variant variant = testGetVariantsByGeneHelper("ENSG00000227232", 1, HttpStatus.OK,
+                ContigNamingConvention.ENA_SEQUENCE_NAME).get(0);
+        assertEquals("chr20", variant.getChromosome());
+        assertEquals("A", variant.getReference());
+        assertEquals("C", variant.getAlternate());
+    }
+
+    private List<Variant> testGetVariantsByGeneHelper(String testRegion, int expectedVariants, HttpStatus status,
+                                                      ContigNamingConvention contigNamingConvention)
             throws URISyntaxException {
         String url = "/v2/genes/" + testRegion + "/variants?species=mmusculus&assembly=grcm38";
+        if (contigNamingConvention != null) {
+            url += "&contigNamingConvention=" + contigNamingConvention;
+        }
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(status, response.getStatusCode());
         if (status == HttpStatus.NO_CONTENT) {
@@ -145,7 +175,8 @@ public class GeneWSServerV2Test {
 
     @Test
     public void testGetVariantsByExistingGenes() throws URISyntaxException {
-        List<Variant> variants = testGetVariantsByGeneHelper("ENSG00000227232,ENSG00000227244", 2, HttpStatus.OK);
+        List<Variant> variants = testGetVariantsByGeneHelper("ENSG00000227232,ENSG00000227244", 2,
+                HttpStatus.OK, null);
         assertEquals("20", variants.get(0).getChromosome());
         assertEquals("A", variants.get(0).getReference());
         assertEquals("C", variants.get(0).getAlternate());
@@ -156,11 +187,11 @@ public class GeneWSServerV2Test {
 
     @Test
     public void testGetVariantsByNonExistingGene() throws URISyntaxException {
-        testGetVariantsByGeneHelper("nonexisting", 0, HttpStatus.NO_CONTENT);
+        testGetVariantsByGeneHelper("nonexisting", 0, HttpStatus.NO_CONTENT, null);
     }
 
     @Test
     public void testGetVariantsByNonExistingGenes() throws URISyntaxException {
-        testGetVariantsByGeneHelper("nonexisting,nonexisting", 0, HttpStatus.NO_CONTENT);
+        testGetVariantsByGeneHelper("nonexisting,nonexisting", 0, HttpStatus.NO_CONTENT, null);
     }
 }

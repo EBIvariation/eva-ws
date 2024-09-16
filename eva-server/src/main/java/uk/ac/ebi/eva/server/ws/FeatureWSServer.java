@@ -26,11 +26,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.mongodb.services.FeatureService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -48,11 +50,16 @@ public class FeatureWSServer extends EvaWSServer {
     @Autowired
     private FeatureService service;
 
+    @Autowired
+    private ContigAliasService contigAliasService;
+
     protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
 
     @RequestMapping(value = "/{featureIdOrName}", method = RequestMethod.GET)
     public QueryResponse getFeatureByIdOrName(@PathVariable("featureIdOrName") String featureIdOrName,
                                               @RequestParam("species") String species,
+                                              @RequestParam(name = "contigNamingConvention", required = false)
+                                              ContigNamingConvention contigNamingConvention,
                                               HttpServletResponse response)
             throws IOException {
         initializeQuery();
@@ -66,7 +73,8 @@ public class FeatureWSServer extends EvaWSServer {
 
         List<FeatureCoordinates> features = service.findByIdOrName(featureIdOrName, featureIdOrName);
 
-        QueryResult<FeatureCoordinates> queryResult = buildQueryResult(features);
+        QueryResult<FeatureCoordinates> queryResult = buildQueryResult(
+                contigAliasService.getFeatureCoordinatesWithTranslatedContig(features, contigNamingConvention));
         return setQueryResponse(queryResult);
     }
 

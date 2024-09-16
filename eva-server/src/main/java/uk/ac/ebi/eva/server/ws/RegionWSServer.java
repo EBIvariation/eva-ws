@@ -33,9 +33,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
-
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
@@ -45,22 +45,32 @@ import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.RateLimit;
 import uk.ac.ebi.eva.server.Utils;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/v1/segments", produces = "application/json")
-@Api(tags = { "segments" })
+@Api(tags = {"segments"})
 public class RegionWSServer extends EvaWSServer {
 
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
+
+    @Autowired
+    private ContigAliasService contigAliasService;
+
+    @Autowired
+    private TaxonomyUtils taxonomyUtils;
 
     protected static Logger logger = LoggerFactory.getLogger(FeatureWSServer.class);
 
@@ -71,7 +81,7 @@ public class RegionWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/{regionId}/variants", method = RequestMethod.GET)
     @ResponseBody
-    @RateLimit(value=REGION_REQUEST_RATE_LIMIT)
+    @RateLimit(value = REGION_REQUEST_RATE_LIMIT)
     public QueryResponse getVariantsByRegion(@PathVariable("regionId") String regionId,
                                              @RequestParam(name = "species") String species,
                                              @RequestParam(name = "studies", required = false) List<String> studies,
@@ -82,6 +92,8 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "exclude", required = false) List<String> exclude,
                                              @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
                                              @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
+                                             @RequestParam(name = "contigNamingConvention", required = false)
+                                                 ContigNamingConvention contigNamingConvention,
                                              HttpServletResponse response,
                                              @ApiIgnore HttpServletRequest request)
             throws IOException {
@@ -105,7 +117,7 @@ public class RegionWSServer extends EvaWSServer {
         PageRequest pageRequest = Utils.getPageRequest(getQueryOptions());
 
         List<String> excludeMapped = new ArrayList<>();
-        if (exclude != null && !exclude.isEmpty()){
+        if (exclude != null && !exclude.isEmpty()) {
             for (String e : exclude) {
                 String docPath = Utils.getApiToMongoDocNameMap().get(e);
                 if (docPath == null) {
@@ -125,10 +137,39 @@ public class RegionWSServer extends EvaWSServer {
 
         try {
             variantEntities = service.findByRegionsAndComplexFilters(regions,
-                                                                     filters,
-                                                                     annotationMetadata,
-                                                                     excludeMapped,
-                                                                     pageRequest);
+                    filters,
+                    annotationMetadata,
+                    excludeMapped,
+                    pageRequest);
+
+            if (variantEntities == null || variantEntities.isEmpty()) {
+                List<Region> translatedRegions = regions.stream().map(region -> {
+                            String regionContig = region.getChromosome();
+                            String[] dbNameParts = species.split("_", -1);
+                            Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[dbNameParts.length - 1]);
+                            if (asmAcc.isPresent()) {
+                                String translatedContig = contigAliasService.translateContigToInsdc(regionContig, asmAcc.get(),
+                                        contigNamingConvention);
+                                if (translatedContig.isEmpty() || translatedContig.equals(regionContig)) {
+                                    return null;
+                                } else {
+                                    return new Region(translatedContig, region.getStart(), region.getEnd());
+                                }
+                            } else {
+                                return null;
+                            }
+                        })
+                        .filter(r -> r != null)
+                        .collect(Collectors.toList());
+                if (!translatedRegions.isEmpty()) {
+                    variantEntities = service.findByRegionsAndComplexFilters(translatedRegions,
+                            filters,
+                            annotationMetadata,
+                            excludeMapped,
+                            pageRequest);
+                }
+
+            }
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
@@ -136,7 +177,9 @@ public class RegionWSServer extends EvaWSServer {
 
         Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
-        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(variantEntities, numTotalResults);
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(
+                contigAliasService.getVariantsWithTranslatedContig(variantEntities, contigNamingConvention),
+                numTotalResults);
         return setQueryResponse(queryResult);
     }
 
@@ -148,6 +191,7 @@ public class RegionWSServer extends EvaWSServer {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ResponseBody
     public QueryResponse getChromosomes(@RequestParam(name = "species") String species,
+                                        @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
                                         HttpServletResponse response)
             throws IOException {
         if (species.isEmpty()) {
@@ -157,6 +201,17 @@ public class RegionWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
         List<String> chromosomeList = new ArrayList<>(service.findDistinctChromosomes());
+
+        if (contigAliasService.skipContigTranslation(contigNamingConvention)) {
+            chromosomeList = chromosomeList.stream().map(chromosome -> {
+                String translatedChromosome = contigAliasService.translateContigFromInsdc(chromosome, contigNamingConvention);
+                if (translatedChromosome.equals("")) {
+                    return chromosome;
+                } else {
+                    return translatedChromosome;
+                }
+            }).collect(Collectors.toList());
+        }
         QueryResult<String> queryResult = buildQueryResult(chromosomeList);
         return setQueryResponse(queryResult);
     }

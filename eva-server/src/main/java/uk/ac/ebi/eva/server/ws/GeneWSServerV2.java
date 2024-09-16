@@ -21,6 +21,7 @@ package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import springfox.documentation.annotations.ApiIgnore;
 import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.mongodb.services.FeatureService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
@@ -36,6 +38,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,6 +58,9 @@ public class GeneWSServerV2 {
 
     @Autowired
     private RegionWSServerV2 regionWSServerV2;
+
+    @Autowired
+    private ContigAliasService contigAliasService;
 
     public GeneWSServerV2() {
     }
@@ -96,6 +102,8 @@ public class GeneWSServerV2 {
                     "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false) String
                     annotationVepCacheVersion,
+            @ApiParam(value = "Contig naming convention desired, default is INSDC")
+            @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
             @ApiParam(value = "The number of the page that should be displayed. Starts from 0 and is an integer.")
             @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
             @ApiParam(value = "The number of elements that should be retrieved per page.")
@@ -124,7 +132,7 @@ public class GeneWSServerV2 {
 
         ResponseEntity<PagedResources> responseEntity = regionWSServerV2.getVariantsByRegion(regions, species,
                 assembly, studies, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
-                annotationVepCacheVersion, pageNumber, pageSize, response, request);
+                annotationVepCacheVersion, contigNamingConvention, pageNumber, pageSize, response, request);
 
         if (responseEntity.getStatusCode() != HttpStatus.OK) {
             return responseEntity;
@@ -133,8 +141,8 @@ public class GeneWSServerV2 {
         responseEntity.getBody().removeLinks();
 
         return new ResponseEntity(buildPage(geneIds, species, assembly, studies, consequenceType, maf, polyphenScore,
-                siftScore, annotationVepVersion, annotationVepCacheVersion, bufferValue, responseEntity.getBody(),
-                response, request), HttpStatus.OK);
+                siftScore, annotationVepVersion, annotationVepCacheVersion, contigNamingConvention, bufferValue,
+                responseEntity.getBody(), response, request), HttpStatus.OK);
     }
 
     private void checkParameters(List<String> geneIds, String species, String assembly, Integer bufferValue)
@@ -168,8 +176,9 @@ public class GeneWSServerV2 {
     private PagedResources buildPage(List<String> geneIds, String species, String assembly, List<String> studies,
                                      List<String> consequenceType, String maf, String polyphenScore, String siftScore,
                                      String annotationVepVersion, String annotationVepCacheVersion,
-                                     Integer bufferValue, PagedResources pagedResources,
-                                     HttpServletResponse response, HttpServletRequest request) {
+                                     ContigNamingConvention contigNamingConvention, Integer bufferValue,
+                                     PagedResources pagedResources, HttpServletResponse response,
+                                     HttpServletRequest request) {
 
         int pageNumber = (int) pagedResources.getMetadata().getNumber();
         int pageSize = (int) pagedResources.getMetadata().getSize();
@@ -177,22 +186,24 @@ public class GeneWSServerV2 {
 
         if (pageNumber > 0) {
             pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
-                    maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
+                    maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, contigNamingConvention,
                     pageNumber - 1, pageSize, bufferValue, response, request, "prev"));
 
             pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
                     maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
-                    0, pageSize, bufferValue, response, request, "first"));
+                    contigNamingConvention, 0, pageSize, bufferValue, response, request, "first"));
         }
 
         if (pageNumber < (totalPages - 1)) {
             pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
                     maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
-                    pageNumber + 1, pageSize, bufferValue, response, request, "next"));
+                    contigNamingConvention, pageNumber + 1, pageSize, bufferValue, response, request,
+                    "next"));
 
             pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
                     maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
-                    totalPages - 1, pageSize, bufferValue, response, request, "last"));
+                    contigNamingConvention, totalPages - 1, pageSize, bufferValue, response, request,
+                    "last"));
         }
         return pagedResources;
     }
@@ -200,12 +211,13 @@ public class GeneWSServerV2 {
     private Link createPaginationLink(List<String> geneIds, String species, String assembly, List<String> studies,
                                       List<String> consequenceType, String maf, String polyphenScore, String siftScore,
                                       String annotationVepVersion, String annotationVepCacheVersion,
+                                      ContigNamingConvention contigNamingConvention,
                                       int pageNumber, int pageSize, Integer bufferValue, HttpServletResponse response,
                                       HttpServletRequest request,
                                       String linkName) {
         return new Link(linkTo(methodOn(GeneWSServerV2.class).getVariantsByGene(geneIds, species, assembly, studies,
                 consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
-                annotationVepCacheVersion, pageNumber, pageSize, bufferValue, response, request))
+                annotationVepCacheVersion, contigNamingConvention, pageNumber, pageSize, bufferValue, response, request))
                 .toUriComponentsBuilder()
                 .toUriString(), linkName);
     }

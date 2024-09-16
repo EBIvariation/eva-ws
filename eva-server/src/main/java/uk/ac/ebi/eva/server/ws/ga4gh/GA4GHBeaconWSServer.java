@@ -28,12 +28,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.core.models.VariantType;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -47,6 +49,9 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
+    @Autowired
+    private ContigAliasService contigAliasService;
+
     protected static Logger logger = LoggerFactory.getLogger(GA4GHBeaconWSServer.class);
 
     public GA4GHBeaconWSServer() { }
@@ -56,6 +61,8 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
                                       @RequestParam("start") long start,
                                       @RequestParam("allele") String allele,
                                       @RequestParam("datasetIds") List<String> studies,
+                                      @RequestParam(name = "contigNamingConvention", required = false)
+                                      ContigNamingConvention contigNamingConvention,
                                       HttpServletResponse response)
             throws IOException, AnnotationMetadataNotFoundException {
         initializeQuery();
@@ -76,6 +83,10 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
             variantEntities = service.findByChromosomeAndStartAndAltAndStudyIn(chromosome, start, allele, studies, null);
         }
 
+        String translatedContig = contigAliasService.translateContigFromInsdc(chromosome, contigNamingConvention);
+        if (translatedContig != null && !translatedContig.isEmpty()) {
+            chromosome = translatedContig;
+        }
         return new GA4GHBeaconResponse(chromosome, start, allele, String.join(",", studies),
                                        variantEntities.size() > 0);
     }

@@ -30,16 +30,19 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -77,6 +80,12 @@ public class VariantWSServerTest {
     @MockBean
     private VariantWithSamplesAndAnnotationsService variantEntityRepository;
 
+    @MockBean
+    private ContigAliasService contigAliasService;
+
+    @MockBean
+    private TaxonomyUtils taxonomyUtils;
+
     @Before
     public void setUp() throws Exception {
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(VARIANT);
@@ -88,20 +97,40 @@ public class VariantWSServerTest {
         given(variantEntityRepository.findByIdsAndComplexFilters(eq(Arrays.asList(VARIANT_ID)), any(), any(), any(), any()))
                 .willReturn(variantEntities);
 
+        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(VARIANT), null))
+                .willReturn(Collections.singletonList(VARIANT));
+
+        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(VARIANT), ContigNamingConvention.NO_REPLACEMENT))
+                .willReturn(Collections.singletonList(VARIANT));
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.empty());
+
     }
 
     @Test
     public void testGetVariantById() {
-        testGetVariantByIdRegionHelper(VARIANT_ID);
+        testGetVariantByIdRegionHelper(VARIANT_ID, VARIANT, null);
+    }
+
+    @Test
+    public void testGetVariantByIdWithContigTranslation() {
+        VariantWithSamplesAndAnnotation variantWithTranslatedContig = new VariantWithSamplesAndAnnotation("X",
+                1000, 1005, "A", "T", MAIN_ID);
+        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(VARIANT), ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn(Collections.singletonList(variantWithTranslatedContig));
+        testGetVariantByIdRegionHelper(VARIANT_ID, variantWithTranslatedContig, ContigNamingConvention.ENA_SEQUENCE_NAME);
     }
 
     @Test
     public void testGetVariantByRegion() {
-        testGetVariantByIdRegionHelper(CHROMOSOME + ":71822:C:G");
+        testGetVariantByIdRegionHelper(CHROMOSOME + ":71822:C:G", VARIANT, ContigNamingConvention.NO_REPLACEMENT);
     }
 
-    private void testGetVariantByIdRegionHelper(String testString) {
+    private void testGetVariantByIdRegionHelper(String testString, VariantWithSamplesAndAnnotation expectedVariant,
+                                                ContigNamingConvention contigNamingConvention) {
         String url = "/v1/variants/" + testString + "/info?species=mmusculus_grcm38";
+        if (contigNamingConvention != null) {
+            url += "&contigNamingConvention=" + contigNamingConvention;
+        }
         ResponseEntity<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
                 new ParameterizedTypeReference<QueryResponse<QueryResult<VariantWithSamplesAndAnnotation>>>() {
@@ -114,8 +143,9 @@ public class VariantWSServerTest {
         List<VariantWithSamplesAndAnnotation> results = queryResponse.getResponse().get(0).getResult();
         assertEquals(1, results.size());
 
-        assertEquals(VARIANT, results.get(0));
+        assertEquals(expectedVariant, results.get(0));
         assertEquals(MAIN_ID, results.get(0).getMainId());
+        assertEquals(expectedVariant.getChromosome(), results.get(0).getChromosome());
     }
 
     @Test

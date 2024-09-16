@@ -33,12 +33,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -56,6 +59,12 @@ public class VariantWSServerV2 {
     @Autowired
     private VariantWithSamplesAndAnnotationsService service;
 
+    @Autowired
+    private ContigAliasService contigAliasService;
+
+    @Autowired
+    private TaxonomyUtils taxonomyUtils;
+
     @GetMapping(value = "/{variantCoreString}")
     public ResponseEntity getCoreInfo(
             @ApiParam(value = "Chromosome, start, reference allele and" +
@@ -68,6 +77,8 @@ public class VariantWSServerV2 {
             @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
                     "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam(name = "assembly") String assembly,
+            @ApiParam(value = "Contig naming convention desired, default is INSDC")
+            @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
             HttpServletResponse response) throws IllegalArgumentException {
         try {
             checkParameters(variantCoreString, null, null, species, assembly);
@@ -78,9 +89,23 @@ public class VariantWSServerV2 {
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
         Optional<VariantWithSamplesAndAnnotation> variantEntity;
-
         try {
             variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, null, null);
+            /*
+            If we don't find anything using the contig given by user, assume we have it stored using insdc
+            Try to convert the contig to insdc and search
+            * */
+            if (!variantEntity.isPresent()) {
+                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
+                if (asmAcc.isPresent()) {
+                    String variantContig = variantCoreString.split(":", -1)[0];
+                    String translatedContig = contigAliasService.translateContigToInsdc(variantContig, asmAcc.get(), contigNamingConvention);
+                    if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
+                        String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
+                        variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, null, null);
+                    }
+                }
+            }
         } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -91,14 +116,24 @@ public class VariantWSServerV2 {
         }
 
         VariantWithSamplesAndAnnotation retrievedVariant = variantEntity.get();
-        Variant variant = new Variant(retrievedVariant.getChromosome(), retrievedVariant.getStart(),
+        String variantContig = retrievedVariant.getChromosome();
+        /*
+        Because we don't know if the variant returned has insdc contig or not,
+        we assume it does and try to convert that to the given contigNamingConvention.
+        If successful returns the translated Contig else return the original one
+        * */
+        String translatedContig = contigAliasService.translateContigFromInsdc(retrievedVariant.getChromosome(), contigNamingConvention);
+        if (!translatedContig.isEmpty()) {
+            variantContig = translatedContig;
+        }
+        Variant variant = new Variant(variantContig, retrievedVariant.getStart(),
                 retrievedVariant.getEnd(), retrievedVariant.getReference(), retrievedVariant.getAlternate());
         variant.setIds(variantEntity.get().getIds());
         Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
-                species, assembly, null, null, response)).toUri().toString(), "annotation");
+                species, assembly, null, null, contigNamingConvention, response)).toUri().toString(), "annotation");
 
         Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getSources(variantCoreString, species,
-                assembly, null, null, response)).toUri().toString(), "sources");
+                assembly, null, null, contigNamingConvention, response)).toUri().toString(), "sources");
 
         List<Link> links = new ArrayList<>();
         links.add(sourcesLink);
@@ -178,7 +213,9 @@ public class VariantWSServerV2 {
             @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP cache release. " +
                     "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false)
-                    String annotationVepCacheVersion,
+            String annotationVepCacheVersion,
+            @ApiParam(value = "Contig naming convention desired, default is INSDC")
+            @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
             HttpServletResponse response) throws IllegalArgumentException {
         try {
             checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
@@ -192,6 +229,17 @@ public class VariantWSServerV2 {
         try {
             variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, annotationVepVersion,
                     annotationVepCacheVersion);
+            if (!variantEntity.isPresent()) {
+                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
+                if (asmAcc.isPresent()) {
+                    String variantContig = variantCoreString.split(":", -1)[0];
+                    String translatedContig = contigAliasService.translateContigToInsdc(variantContig, asmAcc.get(), contigNamingConvention);
+                    if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
+                        String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
+                        variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, annotationVepVersion, annotationVepCacheVersion);
+                    }
+                }
+            }
         } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -200,9 +248,11 @@ public class VariantWSServerV2 {
             return new ResponseEntity(null, HttpStatus.NOT_FOUND);
         }
         Link coreVariantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
-                species, assembly, response)).toUri().toString(), "coreVariant");
+                species, assembly, contigNamingConvention, response)).toUri().toString(), "coreVariant");
 
-        return new ResponseEntity(new Resource<>(variantEntity.get().getAnnotation(), coreVariantLink), HttpStatus.OK);
+        return new ResponseEntity(new Resource<>(contigAliasService.getAnnotationWithTranslatedContig(
+                variantEntity.get().getAnnotation(), contigNamingConvention), coreVariantLink), HttpStatus.OK);
+
     }
 
     @GetMapping(value = "/{variantCoreString}/sources")
@@ -223,7 +273,9 @@ public class VariantWSServerV2 {
             @ApiParam(value = "Ensembl VEP cache release whose annotations will be included in the response, " +
                     "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false)
-                    String annotationVepCacheVersion,
+            String annotationVepCacheVersion,
+            @ApiParam(value = "Contig naming convention desired, default is INSDC")
+            @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
             HttpServletResponse response) throws IllegalArgumentException {
         try {
             checkParameters(variantCoreString, annotationVepVersion, annotationVepCacheVersion,
@@ -237,6 +289,17 @@ public class VariantWSServerV2 {
         try {
             variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, annotationVepVersion,
                     annotationVepCacheVersion);
+            if (!variantEntity.isPresent()) {
+                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
+                if (asmAcc.isPresent()) {
+                    String variantContig = variantCoreString.split(":", -1)[0];
+                    String translatedContig = contigAliasService.translateContigToInsdc(variantContig, asmAcc.get(), contigNamingConvention);
+                    if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
+                        String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
+                        variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, annotationVepVersion, annotationVepCacheVersion);
+                    }
+                }
+            }
         } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -249,7 +312,7 @@ public class VariantWSServerV2 {
             resourceList.add(new Resource<>(sourceEntry));
         });
         Link coreVariantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
-                species, assembly, response)).toUri().toString(), "coreVariant");
+                species, assembly, contigNamingConvention, response)).toUri().toString(), "coreVariant");
         if (resourceList.size() == 0) {
             return new ResponseEntity(new Resources<>(resourceList, coreVariantLink), HttpStatus.NOT_FOUND);
         }
