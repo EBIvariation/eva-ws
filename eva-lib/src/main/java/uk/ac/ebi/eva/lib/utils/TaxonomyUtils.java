@@ -13,7 +13,7 @@ public class TaxonomyUtils {
 
     public Optional<String> getAssemblyAccessionForAssemblyCode(String assemblyCode) {
         return taxonomyRepository.getBrowsableSpecies().stream()
-                .filter(t -> t.getAssemblyCode().equals(assemblyCode))
+                .filter(t -> t != null && t.getAssemblyCode() != null && t.getAssemblyCode().equals(assemblyCode))
                 .map(t -> t.getAssemblyAccession())
                 .findFirst();
     }
