@@ -43,6 +43,7 @@ test:
     after_script:
         - rm $MAVEN_SETTINGS
     artifacts:
+        expire_in: 1 week
         paths:
             - $WS_ARTIFACT_PATH
             - $COUNT_STATS_ARTIFACT_PATH
