@@ -35,6 +35,10 @@ public class Utils {
 
     private static final int LIMIT_PARAMETER_THRESHOLD = 10000;
 
+    public static final String FILES_NAME = "files";
+
+    public static final String FILES_ATTRS_NAME = "files.attrs";
+
     static {
         apiToMongoDocNameMap = initApiToMongoDocNameMap();
     }
@@ -79,10 +83,10 @@ public class Utils {
 
     private static Map<String, String> initApiToMongoDocNameMap() {
         Map<String, String> map = new HashMap<>();
-        map.put("sourceEntries", "files");
+        map.put("sourceEntries", FILES_NAME);
         map.put("sourceEntries.statistics", "st");
         map.put("annotation", "annot");
-        map.put("sourceEntries.attributes", "files.attrs");
+        map.put("sourceEntries.attributes", FILES_ATTRS_NAME);
         return map;
     }
 

@@ -131,6 +131,11 @@ public class VariantWSServer extends EvaWSServer {
                         }
                         excludeMapped.add(docPath);
                     }
+                    // Recent versions of MongoDB do not allow projecting an embedded document with any of its fields.
+                    // See https://www.mongodb.com/docs/v4.4/release-notes/4.4-compatibility/#path-collision-restrictions
+                    if (excludeMapped.contains(Utils.FILES_NAME) && excludeMapped.contains(Utils.FILES_ATTRS_NAME)) {
+                        excludeMapped.remove(Utils.FILES_ATTRS_NAME);
+                    }
                 }
 
                 AnnotationMetadata annotationMetadata = null;
@@ -202,6 +207,11 @@ public class VariantWSServer extends EvaWSServer {
                         return setQueryResponse("Unrecognised exclude field: " + e);
                     }
                     excludeMapped.add(docPath);
+                }
+                // Recent versions of MongoDB do not allow projecting an embedded document with any of its fields.
+                // See https://www.mongodb.com/docs/v4.4/release-notes/4.4-compatibility/#path-collision-restrictions
+                if (excludeMapped.contains(Utils.FILES_NAME) && excludeMapped.contains(Utils.FILES_ATTRS_NAME)) {
+                    excludeMapped.remove(Utils.FILES_ATTRS_NAME);
                 }
             }
 
