@@ -224,7 +224,11 @@ public class RegionWSServerV2 {
     public List<String> getExcludedFields() {
         List<String> excludeMapped = new ArrayList<>();
         Utils.getApiToMongoDocNameMap().forEach((key, value) -> {
-            excludeMapped.add(value);
+            // Recent versions of MongoDB do not allow projecting an embedded document with any of its fields.
+            // See https://www.mongodb.com/docs/v4.4/release-notes/4.4-compatibility/#path-collision-restrictions
+            if (!value.equals(Utils.FILES_ATTRS_NAME)) {
+                excludeMapped.add(value);
+            }
         });
         return excludeMapped;
     }

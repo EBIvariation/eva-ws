@@ -11,7 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        mongodb-version: [4.0.18]
+        # Including "ubuntu2204" in the version is a temporary fix to the direct download URL while we transition
+        # between 4 and 6
+        mongodb-version: [4.0.18, ubuntu2204-6.0.6]
         java-version: [1.8]
 
     steps:
@@ -23,7 +25,7 @@ jobs:
           java-version: ${{ matrix.java-version }}
       - name: Install and Start MongoDB
         run: |
-          wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${{ matrix.mongodb-version }}.tgz
+          wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${{ matrix.mongodb-version }}.tgz
           tar xfz mongodb-linux-x86_64-${{ matrix.mongodb-version }}.tgz
           export PATH=`pwd`/mongodb-linux-x86_64-${{ matrix.mongodb-version }}/bin:$PATH
           mkdir -p data/db
