@@ -144,7 +144,7 @@ public class ArchiveEvaproDBAdaptorTest {
         long cowStudiesCount = results.stream().filter(e -> e.getKey().equals(CATTLE))
                                       .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         assertEquals(3, humanStudiesCount);
-        assertEquals(1, cowStudiesCount);
+        assertEquals(3, cowStudiesCount);
     }
 
     @Test
@@ -182,7 +182,7 @@ public class ArchiveEvaproDBAdaptorTest {
         long exomeSeqStudiesCount = results.stream()
                                            .filter(e -> e.getKey().equals(EvaStudyBrowserTestData.EXOME_SEQUENCING))
                                            .mapToLong(Map.Entry::getValue).findAny().getAsLong();
-        assertEquals(1, wgsStudiesCount);
+        assertEquals(3, wgsStudiesCount);
         assertEquals(1, rnaSeqStudiesCount);
         assertEquals(2, exomeSeqStudiesCount);
     }

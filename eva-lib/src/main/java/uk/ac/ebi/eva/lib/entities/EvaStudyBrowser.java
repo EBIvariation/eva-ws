@@ -16,10 +16,15 @@
 package uk.ac.ebi.eva.lib.entities;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.ebi.eva.commons.core.models.StudyType;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -27,6 +32,7 @@ import java.util.Arrays;
 @Entity
 @Table(name = "study_browser")
 public class EvaStudyBrowser {
+    protected static Logger logger = LoggerFactory.getLogger(EvaStudyBrowser.class);
 
     @Id
     @Column(length = 45, name = "project_accession")
@@ -124,7 +130,6 @@ public class EvaStudyBrowser {
     EvaStudyBrowser() { }
 
     public VariantStudy generateVariantStudy() {
-        // Convert the list of tax ids to integer values
         int[] taxIds = Arrays.stream(taxId.split(", ")).map(String::trim).mapToInt(Integer::parseInt).toArray();
 
         // Build the variant study object
@@ -135,13 +140,20 @@ public class EvaStudyBrowser {
             //Ignore, default values null
         }
 
+        String[] publicationsValues = null;
+        if (publications != null && !publications.isEmpty()) {
+            publicationsValues = publications.split(", ");
+        }
+
         int notNullVariantCount = (variantCount == null) ? 0 : variantCount.intValue();
 
+        int numSamples = samples == null ? 0 : samples.intValue();
+
         return new VariantStudy(projectTitle, projectAccession, null,
-                                description, taxIds, commonName, scientificName,
-                                sourceType, center, material, scope,
-                                StudyType.fromString(studyType), experimentType,
-                                experimentTypeAbbreviation, assemblyName, assemblyAccession, platform,
-                                uri, publications.split(", "), notNullVariantCount, samples, browsable);
+                description, taxIds, commonName, scientificName,
+                sourceType, center, material, scope,
+                StudyType.fromString(studyType), experimentType,
+                experimentTypeAbbreviation, assemblyName, assemblyAccession, platform,
+                uri, publicationsValues, notNullVariantCount, numSamples, browsable);
     }
 }

@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.eva.lib.metadata.eva;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -35,6 +37,7 @@ import static uk.ac.ebi.eva.lib.eva_utils.EvaproDbUtils.getSpeciesAndTypeFilters
 
 @Component
 public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
+    protected static Logger logger = LoggerFactory.getLogger(StudyEvaproDBAdaptor.class);
 
     @Autowired
     private EvaStudyBrowserRepository evaStudyBrowserRepository;
@@ -43,11 +46,15 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
     public QueryResult getAllStudies(QueryOptions queryOptions) {
         long start = System.currentTimeMillis();
         Specification filterSpecification = getSpeciesAndTypeFilters(queryOptions);
-        List<EvaStudyBrowser> dgvaStudies = evaStudyBrowserRepository.findAll(filterSpecification);
+        List<EvaStudyBrowser> evaStudies = evaStudyBrowserRepository.findAll(filterSpecification);
         List<VariantStudy> variantstudies = new ArrayList<>();
-        for (EvaStudyBrowser dgvaStudy : dgvaStudies) {
-            if (dgvaStudy != null) {
-                variantstudies.add(dgvaStudy.generateVariantStudy());
+        for (EvaStudyBrowser evaStudy : evaStudies) {
+            if (evaStudy != null) {
+                try {
+                    variantstudies.add(evaStudy.generateVariantStudy());
+                } catch (Exception ex) {
+                    logger.error("Exception while generating variant study for {}. Exception {}", evaStudy, ex);
+                }
             }
         }
         long end = System.currentTimeMillis();

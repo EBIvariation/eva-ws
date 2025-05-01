@@ -59,7 +59,7 @@ public class StudyEvaproDBAdaptorTest {
     public void getAllStudies() throws Exception {
         QueryResult<VariantStudy> queryResult = studyEvaproDBAdaptor.getAllStudies(new QueryOptions());
 
-        assertEquals(4, queryResult.getNumTotalResults());
+        assertEquals(5, queryResult.getNumTotalResults());
     }
 
     @Test
