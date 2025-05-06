@@ -53,7 +53,7 @@ public class StudyEvaproDBAdaptor implements StudyDBAdaptor {
                 try {
                     variantstudies.add(evaStudy.generateVariantStudy());
                 } catch (Exception ex) {
-                    logger.error("Exception while generating variant study for {}. Exception {}", evaStudy, ex);
+                    logger.error("EVA_Data_Error: Exception while generating variant study for {}. Exception {}", evaStudy, ex);
                 }
             }
         }
