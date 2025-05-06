@@ -60,9 +60,22 @@ final class EvaStudyBrowserTestData {
                                                          "center 4", "scope 4", "DNA", "PubMed:4444", "PRJ00004",
                                                          EXOME_SEQUENCING, "ES", "GCA_000003055.3", "UMD3.1",
                                                          "Illumina", "Resource4", false);
+        EvaStudyBrowser studyWithNullValues = new EvaStudyBrowser("PRJ0005", 5, "Project 5", null, "5555", CATTLE,
+                                                        BOS_TAURUS, "source 5", WHOLE_GENOME_SEQUENCING, 4000000L, null,
+                                                        "center 5", "scope 5", "DNA", null, "PRJ00005",
+                                                        WHOLE_GENOME_SEQUENCING, "ES", "GCA_000003055.3", "UMD3.1",
+                                                        "Illumina", "Resource5", false);
+        EvaStudyBrowser studyWithTaxIdNull = new EvaStudyBrowser("PRJ0006", 5, "Project 6", null, null, CATTLE,
+                                                        BOS_TAURUS, "source 6", WHOLE_GENOME_SEQUENCING, 4000000L, null,
+                                                        "center 6", "scope 6", "DNA", null, "PRJ00006",
+                                                        WHOLE_GENOME_SEQUENCING, "ES", "GCA_000003055.3", "UMD3.1",
+                                                        "Illumina", "Resource6", false);
+
         entityManager.persist(humanWGSStudy1);
         entityManager.persist(humanWGSStudy2);
         entityManager.persist(humanESStudy);
         entityManager.persist(cowESStudy);
+        entityManager.persist(studyWithNullValues);
+        entityManager.persist(studyWithTaxIdNull);
     }
 }
