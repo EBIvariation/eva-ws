@@ -46,6 +46,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.Annotation;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
@@ -115,7 +117,23 @@ public class VariantWSServerV2IntegrationTest {
                 .willReturn("10");
         given(contigAliasService.translateContigToInsdc("100", "grcm38", null))
                 .willReturn("100");
-        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.empty());
+
+        ContigAliasChromosome contigAliasChromosome20 = new ContigAliasChromosome();
+        contigAliasChromosome20.setInsdcAccession("20");
+        given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2", null))
+                .willReturn(contigAliasChromosome20);
+        ContigAliasChromosome contigAliasChromosome13 = new ContigAliasChromosome();
+        contigAliasChromosome13.setInsdcAccession("13");
+        given(contigAliasService.getUniqueInsdcChromosomeByName("13", "GCA_000001635.2", null))
+                .willReturn(contigAliasChromosome13);
+        ContigAliasChromosome contigAliasChromosomeX = new ContigAliasChromosome();
+        contigAliasChromosomeX.setInsdcAccession("X");
+        given(contigAliasService.getUniqueInsdcChromosomeByName("X", "GCA_000001635.2", null))
+                .willReturn(contigAliasChromosomeX);
+
+        given(contigAliasService.getMatchingContigNamingConvention(any(), any())).willReturn(ContigNamingConvention.INSDC);
+
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
     }
 
     @Test
@@ -154,6 +172,8 @@ public class VariantWSServerV2IntegrationTest {
 
     @Test
     public void annotationEndPointTestExisting() throws URISyntaxException {
+        given(contigAliasService.getMatchingContigNamingConvention(any(), any())).willReturn(null);
+
         Annotation translatedAnnotation = new Annotation("chr1", 0, 0, null, null, null, null);
         given(contigAliasService.getAnnotationWithTranslatedContig(any(), eq(null)))
                 .willReturn(translatedAnnotation);

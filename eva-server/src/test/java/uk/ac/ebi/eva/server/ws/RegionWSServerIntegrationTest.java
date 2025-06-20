@@ -37,12 +37,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.ebi.eva.commons.core.models.Annotation;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.Profiles;
 import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
+import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -51,6 +53,7 @@ import java.util.Optional;
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
@@ -79,6 +82,9 @@ public class RegionWSServerIntegrationTest {
     @MockBean
     private TaxonomyUtils taxonomyUtils;
 
+    @MockBean
+    private ContigAliasService contigAliasService;
+
     @Autowired
     MongoDbFactory mongoDbFactory;
 
@@ -87,7 +93,14 @@ public class RegionWSServerIntegrationTest {
 
     @Before
     public void setUp() throws Exception {
-        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.empty());
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
+
+        ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
+        contigAliasChromosome.setInsdcAccession("20");
+        given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2",
+                null)).willReturn(contigAliasChromosome);
+        given(contigAliasService.getVariantsWithTranslatedContig(any(), any()))
+                .willAnswer(invocation -> invocation.getArgument(0));
     }
 
     @Test

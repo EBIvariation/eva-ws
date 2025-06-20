@@ -31,6 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
@@ -97,7 +98,13 @@ public class RegionWSServerTest {
                 .willReturn(Collections.singletonList(variantEntity));
         given(contigAliasService.getVariantsWithTranslatedContig(Arrays.asList(variantEntity, variantEntity), null))
                 .willReturn(Arrays.asList(variantEntity, variantEntity));
-        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.empty());
+        ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
+        contigAliasChromosome.setInsdcAccession("20");
+        given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2",
+                null)).willReturn(contigAliasChromosome);
+        given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2",
+                ContigNamingConvention.ENA_SEQUENCE_NAME)).willReturn(contigAliasChromosome);
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
     }
 
     @Test
@@ -112,6 +119,11 @@ public class RegionWSServerTest {
                 .willReturn(Collections.emptyList());
 
         given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
+        ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
+        contigAliasChromosome.setInsdcAccession("chr30");
+        contigAliasChromosome.setEnaSequenceName("30");
+        given(contigAliasService.getUniqueInsdcChromosomeByName("30", "GCA_000001635.2", ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn(contigAliasChromosome);
         given(contigAliasService.translateContigToInsdc("30", "GCA_000001635.2", ContigNamingConvention.ENA_SEQUENCE_NAME))
                 .willReturn("chr30");
 
@@ -120,7 +132,7 @@ public class RegionWSServerTest {
                 .willReturn(Collections.singletonList(variantEntity));
 
         given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(variantEntity), ContigNamingConvention.ENA_SEQUENCE_NAME))
-                .willReturn(Collections.singletonList(new VariantWithSamplesAndAnnotation("chr30", 1000, 1005,
+                .willReturn(Collections.singletonList(new VariantWithSamplesAndAnnotation("30", 1000, 1005,
                         "reference", "alternate", MAIN_ID)));
 
         List<VariantWithSamplesAndAnnotation> results = regionWsHelper("30:80000-82000",
@@ -128,7 +140,7 @@ public class RegionWSServerTest {
         assertEquals(1, results.size());
 
         for (VariantWithSamplesAndAnnotation variantEntity : results) {
-            assertEquals("chr30", variantEntity.getChromosome());
+            assertEquals("30", variantEntity.getChromosome());
             assertFalse(variantEntity.getReference().isEmpty());
             assertFalse(variantEntity.getAlternate().isEmpty());
             assertNotEquals(0, variantEntity.getStart());

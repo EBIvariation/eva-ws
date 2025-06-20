@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
@@ -160,26 +161,17 @@ public class RegionWSServerV2 {
             return new ResponseEntity(e.getMessage(), HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
         }
 
-        List<VariantWithSamplesAndAnnotation> variantEntities;
+        List<VariantWithSamplesAndAnnotation> variantEntities = Collections.emptyList();
         try {
-            variantEntities = service.findByRegionsAndComplexFilters(regions,
-                    filters,
-                    annotationMetadata,
-                    excludeMapped,
-                    new PageRequest(pageNumber, pageSize));
-
-            if (variantEntities == null || variantEntities.isEmpty()) {
+            Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
+            if (asmAcc.isPresent()) {
                 List<Region> translatedRegions = regions.stream().map(region -> {
                             String regionContig = region.getChromosome();
-                            Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
-                            if (asmAcc.isPresent()) {
-                                String translatedContig = contigAliasService.translateContigToInsdc(regionContig, asmAcc.get(),
-                                        contigNamingConvention);
-                                if (translatedContig.isEmpty() || translatedContig.equals(regionContig)) {
-                                    return null;
-                                } else {
-                                    return new Region(translatedContig, region.getStart(), region.getEnd());
-                                }
+                            ContigAliasChromosome contigAliasChromosome = contigAliasService.getUniqueInsdcChromosomeByName(regionContig, asmAcc.get(),
+                                    contigNamingConvention);
+                            if (contigAliasChromosome != null) {
+                                String chromosomeInsdcAccession = contigAliasChromosome.getInsdcAccession();
+                                return new Region(chromosomeInsdcAccession, region.getStart(), region.getEnd());
                             } else {
                                 return null;
                             }

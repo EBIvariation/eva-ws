@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
@@ -47,6 +48,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,26 +99,30 @@ public class VariantWSServer extends EvaWSServer {
 
         List<VariantWithSamplesAndAnnotation> variantEntities;
         Long numTotalResults;
+        QueryResult<VariantWithSamplesAndAnnotation> queryResult = new QueryResult<>();
 
         try {
             if (variantId.contains(":")) {
                 String[] regionId = variantId.split(":");
                 String alternate = (regionId.length > 3) ? regionId[3] : null;
-                variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
-                        alternate, annotationVepVersion, annotationVepCacheVersion);
-                if (variantEntities.isEmpty()) {
-                    String[] dbNameParts = species.split("_", -1);
-                    Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[dbNameParts.length - 1]);
-                    if (asmAcc.isPresent()) {
-                        String translatedContig = contigAliasService.translateContigToInsdc(regionId[0], asmAcc.get(),
-                                contigNamingConvention);
-                        if (!translatedContig.isEmpty() && !translatedContig.equals(translatedContig)) {
-                            variantEntities = queryByCoordinatesAndAlleles(translatedContig, Integer.parseInt(regionId[1]), regionId[2],
-                                    alternate, annotationVepVersion, annotationVepCacheVersion);
+                String[] dbNameParts = species.split("_", -1);
+                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[dbNameParts.length - 1]);
+                if (asmAcc.isPresent()) {
+                    ContigAliasChromosome contigAliasChromosome = contigAliasService.getUniqueInsdcChromosomeByName(regionId[0], asmAcc.get(),
+                            contigNamingConvention);
+                    if (contigAliasChromosome != null) {
+                        String chromosomeInsdcAccession = contigAliasChromosome.getInsdcAccession();
+                        if (contigNamingConvention == null) {
+                            contigNamingConvention = contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, regionId[0]);
                         }
+                        variantEntities = queryByCoordinatesAndAlleles(chromosomeInsdcAccession, Integer.parseInt(regionId[1]), regionId[2],
+                                alternate, annotationVepVersion, annotationVepCacheVersion);
+
+                        numTotalResults = (long) variantEntities.size();
+                        queryResult = buildQueryResult(contigAliasService.getVariantsWithTranslatedContig(variantEntities,
+                                contigAliasChromosome, contigNamingConvention), numTotalResults);
                     }
                 }
-                numTotalResults = (long) variantEntities.size();
             } else {
                 List<VariantRepositoryFilter> filters = new FilterBuilder()
                         .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
@@ -147,15 +153,15 @@ public class VariantWSServer extends EvaWSServer {
                         Utils.getPageRequest(getQueryOptions()));
 
                 numTotalResults = service.countByIdsAndComplexFilters(Arrays.asList(variantId), filters);
+
+                queryResult = buildQueryResult(contigAliasService.getVariantsWithTranslatedContig(variantEntities,
+                        contigNamingConvention), numTotalResults);
             }
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
         }
 
-        QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(
-                contigAliasService.getVariantsWithTranslatedContig(variantEntities, contigNamingConvention),
-                numTotalResults);
         return setQueryResponse(queryResult);
     }
 
@@ -270,7 +276,7 @@ public class VariantWSServer extends EvaWSServer {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
-        List<VariantWithSamplesAndAnnotation> variantEntities;
+        List<VariantWithSamplesAndAnnotation> variantEntities = Collections.emptyList();
         Long numTotalResults;
 
         String invalidCoordinatesMessage =
@@ -286,40 +292,28 @@ public class VariantWSServer extends EvaWSServer {
 
                 String alternate = (regionId.length > 3) ? regionId[3] : null;
 
-
-                if (studies != null && !studies.isEmpty()) {
-                    variantEntities = queryByCoordinatesAndAllelesAndStudyIds(regionId[0], Integer.parseInt(regionId[1]),
-                        regionId[2], alternate, studies);
-                } else {
-                    variantEntities = queryByCoordinatesAndAlleles(regionId[0], Integer.parseInt(regionId[1]), regionId[2],
-                                                               alternate, null, null);
-                }
-
-                if (variantEntities.isEmpty()) {
-                    String[] dbNameParts = species.split("_", -1);
-                    Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[dbNameParts.length - 1]);
-                    if (asmAcc.isPresent()) {
-                        String translatedContig = contigAliasService.translateContigToInsdc(regionId[0], asmAcc.get(),
-                                contigNamingConvention);
-                        if (!translatedContig.isEmpty() && !translatedContig.equals(translatedContig)) {
-                            if (studies != null && !studies.isEmpty()) {
-                                variantEntities = queryByCoordinatesAndAllelesAndStudyIds(translatedContig, Integer.parseInt(regionId[1]),
-                                        regionId[2], alternate, studies);
-                            } else {
-                                variantEntities = queryByCoordinatesAndAlleles(translatedContig, Integer.parseInt(regionId[1]), regionId[2],
-                                        alternate, null, null);
-                            }
+                String[] dbNameParts = species.split("_", -1);
+                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[dbNameParts.length - 1]);
+                if (asmAcc.isPresent()) {
+                    ContigAliasChromosome contigAliasChromosome = contigAliasService.getUniqueInsdcChromosomeByName(regionId[0], asmAcc.get(),
+                            contigNamingConvention);
+                    if (contigAliasChromosome != null) {
+                        String chromosomeInsdcAccession = contigAliasChromosome.getInsdcAccession();
+                        if (studies != null && !studies.isEmpty()) {
+                            variantEntities = queryByCoordinatesAndAllelesAndStudyIds(chromosomeInsdcAccession, Integer.parseInt(regionId[1]),
+                                    regionId[2], alternate, studies);
+                        } else {
+                            variantEntities = queryByCoordinatesAndAlleles(chromosomeInsdcAccession, Integer.parseInt(regionId[1]), regionId[2],
+                                    alternate, null, null);
                         }
-
                     }
                 }
             } else {
                 List<VariantRepositoryFilter> filters = new FilterBuilder().withStudies(studies).build();
                 variantEntities = service.findByIdsAndComplexFilters(Arrays.asList(variantId), filters, null, null,
-                    Utils.getPageRequest(getQueryOptions()));
+                        Utils.getPageRequest(getQueryOptions()));
             }
-        }
-        catch (AnnotationMetadataNotFoundException ex) {
+        } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return setQueryResponse(ex.getMessage());
         }
@@ -332,12 +326,12 @@ public class VariantWSServer extends EvaWSServer {
     }
 
     private List<VariantWithSamplesAndAnnotation> queryByCoordinatesAndAllelesAndStudyIds(String chromosome, long start,
-                                                                                           String reference,
-                                                                                           String alternate,
-                                                                                           List<String> studyIds) throws AnnotationMetadataNotFoundException {
+                                                                                          String reference,
+                                                                                          String alternate,
+                                                                                          List<String> studyIds) throws AnnotationMetadataNotFoundException {
         if (alternate != null) {
             return service.findByChromosomeAndStartAndReferenceAndAlternateAndStudyIn(chromosome, start, reference,
-                                                                                      alternate, studyIds, null);
+                    alternate, studyIds, null);
         } else {
             return service.findByChromosomeAndStartAndReferenceAndStudyIn(chromosome, start, reference, studyIds, null);
         }
@@ -353,7 +347,6 @@ public class VariantWSServer extends EvaWSServer {
         queryResult.setResultType(Long.class.getCanonicalName());
         return setQueryResponse(queryResult);
     }
-
 
 
 }

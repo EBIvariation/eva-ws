@@ -37,16 +37,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -72,6 +75,9 @@ public class RegionWSServerV2Test {
 
     @MockBean
     private ContigAliasService contigAliasService;
+
+    @MockBean
+    private TaxonomyUtils taxonomyUtils;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -102,6 +108,14 @@ public class RegionWSServerV2Test {
         given(contigAliasService.getVariantsWithTranslatedContig(Arrays.asList(variantEntity, variantEntity), null))
                 .willReturn(Arrays.asList(variantEntity, variantEntity));
         given(contigAliasService.translateContigFromInsdc(variantEntity.getChromosome(), null)).willReturn("");
+
+        ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
+        contigAliasChromosome.setInsdcAccession("20");
+        given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2",
+                null)).willReturn(contigAliasChromosome);
+        given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2",
+                ContigNamingConvention.ENA_SEQUENCE_NAME)).willReturn(contigAliasChromosome);
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
     }
 
     @Test

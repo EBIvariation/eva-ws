@@ -30,6 +30,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
@@ -89,6 +90,8 @@ public class VariantWSServerTest {
     @Before
     public void setUp() throws Exception {
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(VARIANT);
+        ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
+        contigAliasChromosome.setInsdcAccession(CHROMOSOME);
 
         given(variantEntityRepository
                 .findByChromosomeAndStartAndReferenceAndAlternate(eq(CHROMOSOME), anyLong(), any(), any(), any()))
@@ -102,7 +105,17 @@ public class VariantWSServerTest {
 
         given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(VARIANT), ContigNamingConvention.NO_REPLACEMENT))
                 .willReturn(Collections.singletonList(VARIANT));
-        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.empty());
+
+        given(contigAliasService.getUniqueInsdcChromosomeByName(eq(CHROMOSOME), eq("GCA_000001635.2"),
+                eq(ContigNamingConvention.NO_REPLACEMENT))).willReturn(contigAliasChromosome);
+
+        given(contigAliasService.getUniqueInsdcChromosomeByName(eq(CHROMOSOME), eq("GCA_000001635.2"),
+                eq(null))).willReturn(contigAliasChromosome);
+
+        given(contigAliasService.getVariantsWithTranslatedContig(eq(variantEntities), eq(contigAliasChromosome),
+                eq(ContigNamingConvention.NO_REPLACEMENT))).willReturn(variantEntities);
+
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
 
     }
 

@@ -20,6 +20,7 @@ package uk.ac.ebi.eva.server.ws.contigalias;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasResponse;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasTranslator;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
@@ -27,6 +28,8 @@ import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 public class ContigAliasService {
@@ -37,6 +40,8 @@ public class ContigAliasService {
 
     public static final String CONTIG_ALIAS_CHROMOSOMES_NAME_ENDPOINT = "/v1/chromosomes/name/";
 
+    public static final String CONTIG_ALIAS_CHROMOSOMES_SEARCH_ENDPOINT = "/v1/search/chromosome/";
+
     private final RestTemplate restTemplate;
 
     private final String contigAliasUrl;
@@ -44,6 +49,22 @@ public class ContigAliasService {
     public ContigAliasService(RestTemplate restTemplate, String contigAliasUrl) {
         this.restTemplate = restTemplate;
         this.contigAliasUrl = contigAliasUrl;
+    }
+
+    public List<VariantWithSamplesAndAnnotation> getVariantsWithTranslatedContig(
+            List<VariantWithSamplesAndAnnotation> variantsList, ContigAliasChromosome contigAliasChromosome,
+            ContigNamingConvention contigNamingConvention) {
+
+        if (skipContigTranslation(contigNamingConvention)) {
+            return variantsList;
+        }
+
+        String translatedContig = ContigAliasTranslator.getTranslatedContig(contigAliasChromosome, contigNamingConvention);
+
+        List<VariantWithSamplesAndAnnotation> variantsListAfterTranslatedContig = new ArrayList<>();
+        variantsList.forEach(variant -> variantsListAfterTranslatedContig.add(createVariantsWithNewContig(variant, translatedContig)));
+
+        return variantsListAfterTranslatedContig;
     }
 
     public List<VariantWithSamplesAndAnnotation> getVariantsWithTranslatedContig(
@@ -157,12 +178,73 @@ public class ContigAliasService {
         return ContigAliasTranslator.getTranslatedContig(contigAliasResponse, ContigNamingConvention.INSDC);
     }
 
+    public List<ContigAliasChromosome> searchChromosomeByName(String contigName, String assembly, ContigNamingConvention contigNamingConvention) {
+        String url = contigAliasUrl + CONTIG_ALIAS_CHROMOSOMES_SEARCH_ENDPOINT + contigName;
+        if ((assembly != null && !assembly.isEmpty()) && contigNamingConvention != null) {
+            url += "?assemblyAccession=" + assembly + "&namingConvention=" + getNameParam(contigNamingConvention);
+        } else if (assembly != null && !assembly.isEmpty()) {
+            url += "?assemblyAccession=" + assembly;
+        } else if (contigNamingConvention != null) {
+            url += "?namingConvention=" + getNameParam(contigNamingConvention);
+        }
+
+        ContigAliasResponse contigAliasResponse = restTemplate.getForObject(url, ContigAliasResponse.class);
+        if (contigAliasResponse == null || contigAliasResponse.getEmbedded() == null ||
+                contigAliasResponse.getEmbedded().getContigAliasChromosomes() == null ||
+                contigAliasResponse.getEmbedded().getContigAliasChromosomes().isEmpty()) {
+            return null;
+        }
+
+        return contigAliasResponse.getEmbedded().getContigAliasChromosomes();
+    }
+
+    public ContigAliasChromosome getUniqueInsdcChromosomeByName(String contigName, String assembly, ContigNamingConvention contigNamingConvention) {
+        List<ContigAliasChromosome> chromosomeList = searchChromosomeByName(contigName, assembly, contigNamingConvention);
+        if (chromosomeList == null || chromosomeList.isEmpty()) {
+            return null;
+        }
+        if (chromosomeList.size() == 1) {
+            return chromosomeList.get(0);
+        } else {
+            Set<String> insdcAccessionsSet = chromosomeList.stream().map(cac -> cac.getInsdcAccession())
+                    .collect(Collectors.toSet());
+            if (insdcAccessionsSet.size() == 1) {
+                return chromosomeList.get(0);
+            } else {
+                throw new RuntimeException("Multiple Chromosomes found for " + contigName + " in assembly " + assembly
+                        + " with contig naming convention " + contigNamingConvention);
+            }
+        }
+    }
+
+    public ContigNamingConvention getMatchingContigNamingConvention(ContigAliasChromosome contigAliasChromosome, String chromosomeName) {
+        if (chromosomeName == contigAliasChromosome.getInsdcAccession()) {
+            return ContigNamingConvention.INSDC;
+        } else if (chromosomeName == contigAliasChromosome.getGenbankSequenceName()) {
+            return ContigNamingConvention.GENBANK_SEQUENCE_NAME;
+        } else if (chromosomeName == contigAliasChromosome.getEnaSequenceName()) {
+            return ContigNamingConvention.ENA_SEQUENCE_NAME;
+        } else if (chromosomeName == contigAliasChromosome.getRefseq()) {
+            return ContigNamingConvention.REFSEQ;
+        } else if (chromosomeName == contigAliasChromosome.getUcscName()) {
+            return ContigNamingConvention.UCSC;
+        } else {
+            return null;
+        }
+    }
+
     private String getNameParam(ContigNamingConvention contigNamingConvention) {
         switch (contigNamingConvention) {
+            case INSDC:
+                return "insdc";
+            case REFSEQ:
+                return "refseq";
             case UCSC:
                 return "ucsc";
             case ENA_SEQUENCE_NAME:
                 return "ena";
+            case GENBANK_SEQUENCE_NAME:
+                return "genbank";
             default:
                 return "genbank";
         }
