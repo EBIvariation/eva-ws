@@ -41,6 +41,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasTranslator;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
@@ -60,7 +61,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -162,6 +165,8 @@ public class RegionWSServerV2 {
         }
 
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.emptyList();
+        Map<Region, String> insdcRegionAndNameInOriginalNamingConventionMap = new HashMap<>();
+
         try {
             Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
             if (asmAcc.isPresent()) {
@@ -171,7 +176,15 @@ public class RegionWSServerV2 {
                                     contigNamingConvention);
                             if (contigAliasChromosome != null) {
                                 String chromosomeInsdcAccession = contigAliasChromosome.getInsdcAccession();
-                                return new Region(chromosomeInsdcAccession, region.getStart(), region.getEnd());
+                                Region insdcRegion = new Region(chromosomeInsdcAccession, region.getStart(), region.getEnd());
+                                if (contigNamingConvention != null) {
+                                    insdcRegionAndNameInOriginalNamingConventionMap.put(insdcRegion, ContigAliasTranslator.getTranslatedContig(contigAliasChromosome, contigNamingConvention));
+                                } else {
+                                    insdcRegionAndNameInOriginalNamingConventionMap.put(insdcRegion,
+                                            ContigAliasTranslator.getTranslatedContig(contigAliasChromosome,
+                                                    contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, regionContig)));
+                                }
+                                return insdcRegion;
                             } else {
                                 return null;
                             }
@@ -191,7 +204,8 @@ public class RegionWSServerV2 {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        List<Resource> resourcesList = getResources(variantEntities, species, assembly, contigNamingConvention, response);
+        List<Resource> resourcesList = getResources(variantEntities, species, assembly, contigNamingConvention,
+                insdcRegionAndNameInOriginalNamingConventionMap, response);
 
         PagedResources pagedResources = buildPage(resourcesList, pageMetadata, regionId, species, assembly, studies,
                 consequenceType, maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, contigNamingConvention,
@@ -246,13 +260,24 @@ public class RegionWSServerV2 {
 
     private List<Resource> getResources(List<VariantWithSamplesAndAnnotation> variantEntities, String species,
                                         String assembly, ContigNamingConvention contigNamingConvention,
+                                        Map<Region, String> insdcRegionAndNameInOriginalNamingConventionMap,
                                         HttpServletResponse response) {
         List<Resource> resourcesList = new ArrayList<>();
 
         variantEntities.forEach(variantEntity -> {
             String variantContig = variantEntity.getChromosome();
-            String translatedContig = contigAliasService.translateContigFromInsdc(variantContig, contigNamingConvention);
-            if (!translatedContig.isEmpty()) {
+            String translatedContig = insdcRegionAndNameInOriginalNamingConventionMap.entrySet().stream()
+                    .filter(entry -> {
+                        Region region = entry.getKey();
+                        if (variantEntity.getChromosome().equals(region.getChromosome())
+                                && variantEntity.getStart() >= region.getStart()
+                                && variantEntity.getEnd() <= region.getEnd()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }).findFirst().map(Map.Entry::getValue).orElse(null);
+            if (translatedContig != null && !translatedContig.isEmpty()) {
                 variantContig = translatedContig;
             }
             Variant variant = new Variant(variantContig, variantEntity.getStart(),

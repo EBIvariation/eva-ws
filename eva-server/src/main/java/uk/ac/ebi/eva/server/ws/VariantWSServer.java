@@ -105,8 +105,8 @@ public class VariantWSServer extends EvaWSServer {
             if (variantId.contains(":")) {
                 String[] regionId = variantId.split(":");
                 String alternate = (regionId.length > 3) ? regionId[3] : null;
-                String[] dbNameParts = species.split("_", -1);
-                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[dbNameParts.length - 1]);
+                String[] dbNameParts = species.split("_", 2);
+                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[1]);
                 if (asmAcc.isPresent()) {
                     ContigAliasChromosome contigAliasChromosome = contigAliasService.getUniqueInsdcChromosomeByName(regionId[0], asmAcc.get(),
                             contigNamingConvention);
@@ -292,8 +292,8 @@ public class VariantWSServer extends EvaWSServer {
 
                 String alternate = (regionId.length > 3) ? regionId[3] : null;
 
-                String[] dbNameParts = species.split("_", -1);
-                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[dbNameParts.length - 1]);
+                String[] dbNameParts = species.split("_", 2);
+                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[1]);
                 if (asmAcc.isPresent()) {
                     ContigAliasChromosome contigAliasChromosome = contigAliasService.getUniqueInsdcChromosomeByName(regionId[0], asmAcc.get(),
                             contigNamingConvention);

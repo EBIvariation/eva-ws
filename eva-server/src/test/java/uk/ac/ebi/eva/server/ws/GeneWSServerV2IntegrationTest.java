@@ -42,6 +42,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.lib.Profiles;
 import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
@@ -101,6 +102,8 @@ public class GeneWSServerV2IntegrationTest {
         given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2",
                 null)).willReturn(contigAliasChromosome);
         given(contigAliasService.translateContigFromInsdc(any(), any())).willReturn("");
+        given(contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, "20"))
+                .willReturn(ContigNamingConvention.INSDC);
 
         given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
     }

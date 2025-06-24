@@ -103,11 +103,6 @@ public class RegionWSServerV2Test {
                 .findByRegionsAndComplexFilters(not(or(eq(oneRegion), eq(twoRegions))), any(), any(), any(), any()))
                 .willReturn(Collections.emptyList());
         given(service.countByRegionsAndComplexFilters(not(or(eq(oneRegion), eq(twoRegions))), any())).willReturn(0l);
-        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(variantEntity), null))
-                .willReturn(Collections.singletonList(variantEntity));
-        given(contigAliasService.getVariantsWithTranslatedContig(Arrays.asList(variantEntity, variantEntity), null))
-                .willReturn(Arrays.asList(variantEntity, variantEntity));
-        given(contigAliasService.translateContigFromInsdc(variantEntity.getChromosome(), null)).willReturn("");
 
         ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
         contigAliasChromosome.setInsdcAccession("20");
@@ -115,6 +110,9 @@ public class RegionWSServerV2Test {
                 null)).willReturn(contigAliasChromosome);
         given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2",
                 ContigNamingConvention.ENA_SEQUENCE_NAME)).willReturn(contigAliasChromosome);
+        given(contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, "20"))
+                .willReturn(ContigNamingConvention.INSDC);
+
         given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
     }
 
@@ -124,10 +122,24 @@ public class RegionWSServerV2Test {
     }
 
     @Test
-    public void testGetVariantsByExistingRegionWithTranslatedContig() throws URISyntaxException {
-        given(contigAliasService.translateContigFromInsdc(variantEntity.getChromosome(), ContigNamingConvention.ENA_SEQUENCE_NAME))
-                .willReturn("1");
-        List<Variant> results = regionWsHelper("20:60000-62000", HttpStatus.OK, ContigNamingConvention.ENA_SEQUENCE_NAME);
+    public void testGetVariantsByExistingRegionWithTranslatedContig() throws Exception {
+        VariantWithSamplesAndAnnotation variant = new VariantWithSamplesAndAnnotation("20", 61000, 61005,
+                "reference", "alternate", MAIN_ID);
+        List<Region> oneRegion = Collections.singletonList(new Region("1", 60000L, 62000L));
+        given(service.countByRegionsAndComplexFilters(eq(oneRegion), any())).willReturn(1l);
+        List<Region> translatedRegion = Collections.singletonList(new Region("20", 60000L, 62000L));
+        given(service.findByRegionsAndComplexFilters(eq(translatedRegion), any(), any(), any(), any()))
+                .willReturn(Collections.singletonList(variant));
+
+        ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
+        contigAliasChromosome.setInsdcAccession("20");
+        contigAliasChromosome.setEnaSequenceName("1");
+        given(contigAliasService.getUniqueInsdcChromosomeByName("1", "GCA_000001635.2",
+                ContigNamingConvention.ENA_SEQUENCE_NAME)).willReturn(contigAliasChromosome);
+        given(contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, "1"))
+                .willReturn(ContigNamingConvention.ENA_SEQUENCE_NAME);
+
+        List<Variant> results = regionWsHelper("1:60000-62000", HttpStatus.OK, ContigNamingConvention.ENA_SEQUENCE_NAME);
 
         assertEquals(1, results.size());
         results.forEach(variantEntity -> {

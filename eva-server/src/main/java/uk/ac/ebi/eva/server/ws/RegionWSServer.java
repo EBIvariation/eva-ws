@@ -36,6 +36,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasTranslator;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
@@ -56,7 +57,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -142,9 +145,11 @@ public class RegionWSServer extends EvaWSServer {
 
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.emptyList();
 
+        Map<Region, String> insdcRegionAndNameInOriginalNamingConventionMap = new HashMap<>();
+
         try {
-            String[] dbNameParts = species.split("_", -1);
-            Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[dbNameParts.length - 1]);
+            String[] dbNameParts = species.split("_", 2);
+            Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[1]);
             if (asmAcc.isPresent()) {
                 List<Region> translatedRegions = regions.stream().map(region -> {
                             String regionContig = region.getChromosome();
@@ -152,7 +157,15 @@ public class RegionWSServer extends EvaWSServer {
                                     contigNamingConvention);
                             if (contigAliasChromosome != null) {
                                 String chromosomeInsdcAccession = contigAliasChromosome.getInsdcAccession();
-                                return new Region(chromosomeInsdcAccession, region.getStart(), region.getEnd());
+                                Region insdcRegion = new Region(chromosomeInsdcAccession, region.getStart(), region.getEnd());
+                                if (contigNamingConvention != null) {
+                                    insdcRegionAndNameInOriginalNamingConventionMap.put(insdcRegion, ContigAliasTranslator.getTranslatedContig(contigAliasChromosome, contigNamingConvention));
+                                } else {
+                                    insdcRegionAndNameInOriginalNamingConventionMap.put(insdcRegion,
+                                            ContigAliasTranslator.getTranslatedContig(contigAliasChromosome,
+                                                    contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, regionContig)));
+                                }
+                                return insdcRegion;
                             } else {
                                 return null;
                             }
@@ -173,8 +186,9 @@ public class RegionWSServer extends EvaWSServer {
         Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
         QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(
-                contigAliasService.getVariantsWithTranslatedContig(variantEntities, contigNamingConvention),
+                contigAliasService.getVariantsWithTranslatedContig(variantEntities, insdcRegionAndNameInOriginalNamingConventionMap),
                 numTotalResults);
+
         return setQueryResponse(queryResult);
     }
 

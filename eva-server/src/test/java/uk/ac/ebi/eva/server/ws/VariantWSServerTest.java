@@ -100,7 +100,7 @@ public class VariantWSServerTest {
         given(variantEntityRepository.findByIdsAndComplexFilters(eq(Arrays.asList(VARIANT_ID)), any(), any(), any(), any()))
                 .willReturn(variantEntities);
 
-        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(VARIANT), null))
+        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(VARIANT), (ContigNamingConvention) null))
                 .willReturn(Collections.singletonList(VARIANT));
 
         given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(VARIANT), ContigNamingConvention.NO_REPLACEMENT))

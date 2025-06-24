@@ -20,6 +20,7 @@ package uk.ac.ebi.eva.server.ws.contigalias;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
+import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasResponse;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasTranslator;
@@ -28,6 +29,7 @@ import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -68,6 +70,30 @@ public class ContigAliasService {
     }
 
     public List<VariantWithSamplesAndAnnotation> getVariantsWithTranslatedContig(
+            List<VariantWithSamplesAndAnnotation> variantsList, Map<Region, String> insdcRegionAndNameInOriginalNamingConventionMap) {
+        List<VariantWithSamplesAndAnnotation> variantsListAfterTranslatedContig = new ArrayList<>();
+        for (VariantWithSamplesAndAnnotation variant : variantsList) {
+            String translatedContig = insdcRegionAndNameInOriginalNamingConventionMap.entrySet().stream()
+                    .filter(entry -> {
+                        Region region = entry.getKey();
+                        if (variant.getChromosome().equals(region.getChromosome())
+                                && variant.getStart() >= region.getStart()
+                                && variant.getEnd() <= region.getEnd()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }).findFirst().map(Map.Entry::getValue).orElse(null);
+            if (translatedContig == null || translatedContig.equals("")) {
+                variantsListAfterTranslatedContig.add(variant);
+            } else {
+                variantsListAfterTranslatedContig.add(createVariantsWithNewContig(variant, translatedContig));
+            }
+        }
+        return variantsListAfterTranslatedContig;
+    }
+
+    public List<VariantWithSamplesAndAnnotation> getVariantsWithTranslatedContig(
             List<VariantWithSamplesAndAnnotation> variantsList, ContigNamingConvention contigNamingConvention) {
 
         if (skipContigTranslation(contigNamingConvention)) {
@@ -98,7 +124,7 @@ public class ContigAliasService {
     }
 
     public List<FeatureCoordinates> getFeatureCoordinatesWithTranslatedContig(List<FeatureCoordinates> featuresList,
-                                                          ContigNamingConvention contigNamingConvention) {
+                                                                              ContigNamingConvention contigNamingConvention) {
         if (skipContigTranslation(contigNamingConvention)) {
             return featuresList;
         }
@@ -211,8 +237,11 @@ public class ContigAliasService {
             if (insdcAccessionsSet.size() == 1) {
                 return chromosomeList.get(0);
             } else {
+                Set<ContigNamingConvention> contigNamingConventionSet = chromosomeList.stream()
+                        .map(contigAliasChromosome -> getMatchingContigNamingConvention(contigAliasChromosome, contigName))
+                        .collect(Collectors.toSet());
                 throw new RuntimeException("Multiple Chromosomes found for " + contigName + " in assembly " + assembly
-                        + " with contig naming convention " + contigNamingConvention);
+                        + " with contig naming conventions " + contigNamingConventionSet);
             }
         }
     }

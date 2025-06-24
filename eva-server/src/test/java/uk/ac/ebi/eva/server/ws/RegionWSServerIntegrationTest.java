@@ -38,6 +38,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
@@ -48,6 +49,7 @@ import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
@@ -99,7 +101,9 @@ public class RegionWSServerIntegrationTest {
         contigAliasChromosome.setInsdcAccession("20");
         given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2",
                 null)).willReturn(contigAliasChromosome);
-        given(contigAliasService.getVariantsWithTranslatedContig(any(), any()))
+        given(contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, "20"))
+                .willReturn(ContigNamingConvention.INSDC);
+        given(contigAliasService.getVariantsWithTranslatedContig(any(List.class), any(Map.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
     }
 

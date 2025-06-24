@@ -84,7 +84,7 @@ public class GeneWSServerTest {
 
         given(service.findByGenesAndComplexFilters(eq(geneIds), any(), any(), any(), any())).willReturn(variantEntities);
         given(service.countByGenesAndComplexFilters(eq(geneIds), any())).willReturn(1L);
-        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(testVariantEntity), null))
+        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(testVariantEntity), (ContigNamingConvention) null))
                 .willReturn(Collections.singletonList(testVariantEntity));
     }
 
