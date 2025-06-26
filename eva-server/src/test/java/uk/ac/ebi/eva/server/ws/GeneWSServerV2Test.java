@@ -35,18 +35,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
 import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.FeatureService;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
+import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -73,6 +75,9 @@ public class GeneWSServerV2Test {
 
     @MockBean
     private ContigAliasService contigAliasService;
+
+    @MockBean
+    private TaxonomyUtils taxonomyUtils;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -116,12 +121,17 @@ public class GeneWSServerV2Test {
         List<String> geneIds = Arrays.asList(GENE_ID1, GENE_ID2);
         given(featureService.findAllByGeneIdsOrGeneNames(eq(geneIds), eq(geneIds))).willReturn(featureCoordinates);
 
-        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(variantEntity), null))
-                .willReturn(Collections.singletonList(variantEntity));
-        given(contigAliasService.getVariantsWithTranslatedContig(Arrays.asList(variantEntity, variantEntity), null))
-                .willReturn(Arrays.asList(variantEntity, variantEntity));
-        given(contigAliasService.translateContigFromInsdc(variantEntity.getChromosome(), null))
-                .willReturn(variantEntity.getChromosome());
+        ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
+        contigAliasChromosome.setInsdcAccession("20");
+        given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2",
+                null)).willReturn(contigAliasChromosome);
+        given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2",
+                ContigNamingConvention.ENA_SEQUENCE_NAME)).willReturn(contigAliasChromosome);
+
+        given(contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, "20"))
+                .willReturn(ContigNamingConvention.INSDC);
+
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
     }
 
     @Test
@@ -133,15 +143,28 @@ public class GeneWSServerV2Test {
     }
 
     @Test
-    public void testGetVariantsByExistingGeneWithTranslatedContig() throws URISyntaxException {
-        given(contigAliasService.translateContigFromInsdc(variantEntity.getChromosome(), ContigNamingConvention.ENA_SEQUENCE_NAME))
-                .willReturn("chr20");
+    public void testGetVariantsByExistingGeneWithTranslatedContig() throws Exception {
+        List<Region> oneRegion = Collections.singletonList(new Region("20", 60000L, 62000L));
+        given(variantService.countByRegionsAndComplexFilters(eq(oneRegion), any())).willReturn(1l);
+        VariantWithSamplesAndAnnotation variant = new VariantWithSamplesAndAnnotation("20", 61000, 61005,
+                "A", "C", MAIN_ID);
+        List<Region> translatedRegion = Collections.singletonList(new Region("20", 60000L, 62000L));
+        given(variantService.findByRegionsAndComplexFilters(eq(translatedRegion), any(), any(), any(), any()))
+                .willReturn(Collections.singletonList(variant));
 
-        Variant variant = testGetVariantsByGeneHelper("ENSG00000227232", 1, HttpStatus.OK,
+        ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
+        contigAliasChromosome.setInsdcAccession("20");
+        contigAliasChromosome.setEnaSequenceName("chr20");
+        given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2",
+                ContigNamingConvention.ENA_SEQUENCE_NAME)).willReturn(contigAliasChromosome);
+        given(contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, "1"))
+                .willReturn(ContigNamingConvention.ENA_SEQUENCE_NAME);
+
+        Variant variantRes = testGetVariantsByGeneHelper("ENSG00000227232", 1, HttpStatus.OK,
                 ContigNamingConvention.ENA_SEQUENCE_NAME).get(0);
-        assertEquals("chr20", variant.getChromosome());
-        assertEquals("A", variant.getReference());
-        assertEquals("C", variant.getAlternate());
+        assertEquals("chr20", variantRes.getChromosome());
+        assertEquals("A", variantRes.getReference());
+        assertEquals("C", variantRes.getAlternate());
     }
 
     private List<Variant> testGetVariantsByGeneHelper(String testRegion, int expectedVariants, HttpStatus status,

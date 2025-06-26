@@ -39,6 +39,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.Annotation;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
@@ -95,6 +96,9 @@ public class VariantWSServerV2Test {
         VARIANT.setAnnotation(new Annotation(CHROMOSOME, 0, 0, null, null, null, null));
         VARIANT.addSourceEntry(new VariantSourceEntryWithSampleNames("fid", "sid", null, null, null, null, null));
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(VARIANT);
+        ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
+        contigAliasChromosome.setInsdcAccession(CHROMOSOME);
+        contigAliasChromosome.setEnaSequenceName("2");
 
         given(service.findByChromosomeAndStartAndReferenceAndAlternate(eq(CHROMOSOME), anyLong(), any(), any(), any()))
                 .willReturn(variantEntities);
@@ -104,7 +108,15 @@ public class VariantWSServerV2Test {
                 .willReturn("100");
         given(contigAliasService.translateContigToInsdc(NON_EXISTING_CHROMOSOME, "grcm38", null))
                 .willReturn(NON_EXISTING_CHROMOSOME);
-        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.empty());
+        given(contigAliasService.getUniqueInsdcChromosomeByName(eq(CHROMOSOME), eq("GCA_000001635.2"),
+                eq(ContigNamingConvention.ENA_SEQUENCE_NAME))).willReturn(contigAliasChromosome);
+        given(contigAliasService.getUniqueInsdcChromosomeByName(eq(CHROMOSOME), eq("GCA_000001635.2"), eq(null)))
+                .willReturn(contigAliasChromosome);
+        given(contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, CHROMOSOME))
+                .willReturn(ContigNamingConvention.INSDC);
+        given(contigAliasService.getAnnotationWithTranslatedContig(VARIANT.getAnnotation(), ContigNamingConvention.INSDC))
+                .willReturn(VARIANT.getAnnotation());
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
     }
 
     @Test

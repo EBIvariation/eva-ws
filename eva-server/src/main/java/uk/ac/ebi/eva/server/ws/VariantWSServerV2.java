@@ -22,6 +22,8 @@ package uk.ac.ebi.eva.server.ws;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +32,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resource;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasTranslator;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
@@ -88,22 +90,21 @@ public class VariantWSServerV2 {
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
-        Optional<VariantWithSamplesAndAnnotation> variantEntity;
+        Optional<VariantWithSamplesAndAnnotation> variantEntity = Optional.empty();
+        ContigAliasChromosome contigAliasChromosome = null;
         try {
-            variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, null, null);
-            /*
-            If we don't find anything using the contig given by user, assume we have it stored using insdc
-            Try to convert the contig to insdc and search
-            * */
-            if (!variantEntity.isPresent()) {
-                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
-                if (asmAcc.isPresent()) {
-                    String variantContig = variantCoreString.split(":", -1)[0];
-                    String translatedContig = contigAliasService.translateContigToInsdc(variantContig, asmAcc.get(), contigNamingConvention);
-                    if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
-                        String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
-                        variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, null, null);
+            Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
+            if (asmAcc.isPresent()) {
+                String variantContig = variantCoreString.split(":", -1)[0];
+                contigAliasChromosome = contigAliasService.getUniqueInsdcChromosomeByName(variantContig, asmAcc.get(),
+                        contigNamingConvention);
+                if (contigAliasChromosome != null) {
+                    String chromosomeInsdcAccession = contigAliasChromosome.getInsdcAccession();
+                    if (contigNamingConvention == null) {
+                        contigNamingConvention = contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, variantContig);
                     }
+                    String insdcVariantCoreString = chromosomeInsdcAccession + variantCoreString.substring(variantCoreString.indexOf(':'));
+                    variantEntity = getVariantByCoordinatesAndAnnotationVersion(insdcVariantCoreString, null, null);
                 }
             }
         } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {
@@ -116,16 +117,7 @@ public class VariantWSServerV2 {
         }
 
         VariantWithSamplesAndAnnotation retrievedVariant = variantEntity.get();
-        String variantContig = retrievedVariant.getChromosome();
-        /*
-        Because we don't know if the variant returned has insdc contig or not,
-        we assume it does and try to convert that to the given contigNamingConvention.
-        If successful returns the translated Contig else return the original one
-        * */
-        String translatedContig = contigAliasService.translateContigFromInsdc(retrievedVariant.getChromosome(), contigNamingConvention);
-        if (!translatedContig.isEmpty()) {
-            variantContig = translatedContig;
-        }
+        String variantContig = ContigAliasTranslator.getTranslatedContig(contigAliasChromosome, contigNamingConvention);
         Variant variant = new Variant(variantContig, retrievedVariant.getStart(),
                 retrievedVariant.getEnd(), retrievedVariant.getReference(), retrievedVariant.getAlternate());
         variant.setIds(variantEntity.get().getIds());
@@ -208,8 +200,7 @@ public class VariantWSServerV2 {
                     " /v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam(name = "assembly") String assembly,
             @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP release. e.g. 78")
-            @RequestParam(name = "annot-vep-version", required = false)
-                    String annotationVepVersion,
+            @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
             @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP cache release. " +
                     "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false)
@@ -225,19 +216,20 @@ public class VariantWSServerV2 {
         }
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
-        Optional<VariantWithSamplesAndAnnotation> variantEntity;
+        Optional<VariantWithSamplesAndAnnotation> variantEntity = Optional.empty();
         try {
-            variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, annotationVepVersion,
-                    annotationVepCacheVersion);
-            if (!variantEntity.isPresent()) {
-                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
-                if (asmAcc.isPresent()) {
-                    String variantContig = variantCoreString.split(":", -1)[0];
-                    String translatedContig = contigAliasService.translateContigToInsdc(variantContig, asmAcc.get(), contigNamingConvention);
-                    if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
-                        String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
-                        variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, annotationVepVersion, annotationVepCacheVersion);
+            Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
+            if (asmAcc.isPresent()) {
+                String variantContig = variantCoreString.split(":", -1)[0];
+                ContigAliasChromosome contigAliasChromosome = contigAliasService.getUniqueInsdcChromosomeByName(variantContig, asmAcc.get(),
+                        contigNamingConvention);
+                if (contigAliasChromosome != null) {
+                    String chromosomeInsdcAccession = contigAliasChromosome.getInsdcAccession();
+                    if (contigNamingConvention == null) {
+                        contigNamingConvention = contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, variantContig);
                     }
+                    String insdcVariantCoreString = chromosomeInsdcAccession + variantCoreString.substring(variantCoreString.indexOf(':'));
+                    variantEntity = getVariantByCoordinatesAndAnnotationVersion(insdcVariantCoreString, annotationVepVersion, annotationVepCacheVersion);
                 }
             }
         } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {
@@ -268,8 +260,7 @@ public class VariantWSServerV2 {
                     "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam(name = "assembly") String assembly,
             @ApiParam(value = "Ensembl VEP release whose annotations will be included in the response, e.g. 78")
-            @RequestParam(name = "annot-vep-version", required = false)
-                    String annotationVepVersion,
+            @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
             @ApiParam(value = "Ensembl VEP cache release whose annotations will be included in the response, " +
                     "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false)
@@ -285,19 +276,20 @@ public class VariantWSServerV2 {
         }
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
 
-        Optional<VariantWithSamplesAndAnnotation> variantEntity;
+        Optional<VariantWithSamplesAndAnnotation> variantEntity = Optional.empty();
         try {
-            variantEntity = getVariantByCoordinatesAndAnnotationVersion(variantCoreString, annotationVepVersion,
-                    annotationVepCacheVersion);
-            if (!variantEntity.isPresent()) {
-                Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
-                if (asmAcc.isPresent()) {
-                    String variantContig = variantCoreString.split(":", -1)[0];
-                    String translatedContig = contigAliasService.translateContigToInsdc(variantContig, asmAcc.get(), contigNamingConvention);
-                    if (!translatedContig.isEmpty() && !translatedContig.equals(variantContig)) {
-                        String translatedVariantCoreString = translatedContig + variantCoreString.substring(variantCoreString.indexOf(':'));
-                        variantEntity = getVariantByCoordinatesAndAnnotationVersion(translatedVariantCoreString, annotationVepVersion, annotationVepCacheVersion);
+            Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(assembly);
+            if (asmAcc.isPresent()) {
+                String variantContig = variantCoreString.split(":", -1)[0];
+                ContigAliasChromosome contigAliasChromosome = contigAliasService.getUniqueInsdcChromosomeByName(variantContig, asmAcc.get(),
+                        contigNamingConvention);
+                if (contigAliasChromosome != null) {
+                    String chromosomeInsdcAccession = contigAliasChromosome.getInsdcAccession();
+                    if (contigNamingConvention == null) {
+                        contigNamingConvention = contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, variantContig);
                     }
+                    String insdcVariantCoreString = chromosomeInsdcAccession + variantCoreString.substring(variantCoreString.indexOf(':'));
+                    variantEntity = getVariantByCoordinatesAndAnnotationVersion(insdcVariantCoreString, annotationVepVersion, annotationVepCacheVersion);
                 }
             }
         } catch (AnnotationMetadataNotFoundException | IllegalArgumentException ex) {

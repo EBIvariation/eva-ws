@@ -35,6 +35,8 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasTranslator;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
@@ -54,7 +56,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -93,7 +98,7 @@ public class RegionWSServer extends EvaWSServer {
                                              @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
                                              @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
                                              @RequestParam(name = "contigNamingConvention", required = false)
-                                                 ContigNamingConvention contigNamingConvention,
+                                             ContigNamingConvention contigNamingConvention,
                                              HttpServletResponse response,
                                              @ApiIgnore HttpServletRequest request)
             throws IOException {
@@ -138,42 +143,40 @@ public class RegionWSServer extends EvaWSServer {
             annotationMetadata = new AnnotationMetadata(annotationVepVersion, annotationVepCacheVersion);
         }
 
-        List<VariantWithSamplesAndAnnotation> variantEntities;
+        List<VariantWithSamplesAndAnnotation> variantEntities = Collections.emptyList();
+
+        Map<Region, String> insdcRegionAndNameInOriginalNamingConventionMap = new HashMap<>();
 
         try {
-            variantEntities = service.findByRegionsAndComplexFilters(regions,
-                    filters,
-                    annotationMetadata,
-                    excludeMapped,
-                    pageRequest);
-
-            if (variantEntities == null || variantEntities.isEmpty()) {
+            String[] dbNameParts = species.split("_", 2);
+            Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[1]);
+            if (asmAcc.isPresent()) {
                 List<Region> translatedRegions = regions.stream().map(region -> {
                             String regionContig = region.getChromosome();
-                            String[] dbNameParts = species.split("_", -1);
-                            Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[dbNameParts.length - 1]);
-                            if (asmAcc.isPresent()) {
-                                String translatedContig = contigAliasService.translateContigToInsdc(regionContig, asmAcc.get(),
-                                        contigNamingConvention);
-                                if (translatedContig.isEmpty() || translatedContig.equals(regionContig)) {
-                                    return null;
+                            ContigAliasChromosome contigAliasChromosome = contigAliasService.getUniqueInsdcChromosomeByName(regionContig, asmAcc.get(),
+                                    contigNamingConvention);
+                            if (contigAliasChromosome != null) {
+                                String chromosomeInsdcAccession = contigAliasChromosome.getInsdcAccession();
+                                Region insdcRegion = new Region(chromosomeInsdcAccession, region.getStart(), region.getEnd());
+                                if (contigNamingConvention != null) {
+                                    insdcRegionAndNameInOriginalNamingConventionMap.put(insdcRegion, ContigAliasTranslator.getTranslatedContig(contigAliasChromosome, contigNamingConvention));
                                 } else {
-                                    return new Region(translatedContig, region.getStart(), region.getEnd());
+                                    insdcRegionAndNameInOriginalNamingConventionMap.put(insdcRegion,
+                                            ContigAliasTranslator.getTranslatedContig(contigAliasChromosome,
+                                                    contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, regionContig)));
                                 }
+                                return insdcRegion;
                             } else {
                                 return null;
                             }
                         })
                         .filter(r -> r != null)
                         .collect(Collectors.toList());
-                if (!translatedRegions.isEmpty()) {
-                    variantEntities = service.findByRegionsAndComplexFilters(translatedRegions,
-                            filters,
-                            annotationMetadata,
-                            excludeMapped,
-                            pageRequest);
-                }
 
+                if (!translatedRegions.isEmpty()) {
+                    variantEntities = service.findByRegionsAndComplexFilters(translatedRegions, filters, annotationMetadata,
+                            excludeMapped, pageRequest);
+                }
             }
         } catch (AnnotationMetadataNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -183,8 +186,9 @@ public class RegionWSServer extends EvaWSServer {
         Long numTotalResults = service.countByRegionsAndComplexFilters(regions, filters);
 
         QueryResult<VariantWithSamplesAndAnnotation> queryResult = buildQueryResult(
-                contigAliasService.getVariantsWithTranslatedContig(variantEntities, contigNamingConvention),
+                contigAliasService.getVariantsWithTranslatedContig(variantEntities, insdcRegionAndNameInOriginalNamingConventionMap),
                 numTotalResults);
+
         return setQueryResponse(queryResult);
     }
 

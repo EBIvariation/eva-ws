@@ -31,6 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.commons.core.models.Region;
+import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
@@ -44,6 +45,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -93,11 +95,19 @@ public class RegionWSServerTest {
                 .findByRegionsAndComplexFilters(not(or(eq(oneRegion), eq(twoRegions))), any(), any(), any(), any()))
                 .willReturn(Collections.emptyList());
 
-        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(variantEntity), null))
-                .willReturn(Collections.singletonList(variantEntity));
-        given(contigAliasService.getVariantsWithTranslatedContig(Arrays.asList(variantEntity, variantEntity), null))
-                .willReturn(Arrays.asList(variantEntity, variantEntity));
-        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.empty());
+        ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
+        contigAliasChromosome.setInsdcAccession("20");
+        contigAliasChromosome.setEnaSequenceName("1");
+        given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2",
+                null)).willReturn(contigAliasChromosome);
+        given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2",
+                ContigNamingConvention.ENA_SEQUENCE_NAME)).willReturn(contigAliasChromosome);
+        given(contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, "20"))
+                .willReturn(ContigNamingConvention.INSDC);
+        given(contigAliasService.getVariantsWithTranslatedContig(any(List.class), any(Map.class)))
+                .willAnswer(invocation -> invocation.getArgument(0));
+
+        given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
     }
 
     @Test
@@ -107,20 +117,19 @@ public class RegionWSServerTest {
 
     @Test
     public void testGetVariantsByRegionAfterSearchTranslation() throws URISyntaxException, AnnotationMetadataNotFoundException {
-        List<Region> oneRegion = Collections.singletonList(new Region("30", 80000L, 82000L));
-        given(service.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any(), any()))
-                .willReturn(Collections.emptyList());
-
         given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
-        given(contigAliasService.translateContigToInsdc("30", "GCA_000001635.2", ContigNamingConvention.ENA_SEQUENCE_NAME))
-                .willReturn("chr30");
+        ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
+        contigAliasChromosome.setInsdcAccession("chr30");
+        contigAliasChromosome.setEnaSequenceName("30");
+        given(contigAliasService.getUniqueInsdcChromosomeByName("30", "GCA_000001635.2", ContigNamingConvention.ENA_SEQUENCE_NAME))
+                .willReturn(contigAliasChromosome);
 
         List<Region> translatedRegion = Collections.singletonList(new Region("chr30", 80000L, 82000L));
         given(service.findByRegionsAndComplexFilters(eq(translatedRegion), any(), any(), any(), any()))
                 .willReturn(Collections.singletonList(variantEntity));
 
-        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(variantEntity), ContigNamingConvention.ENA_SEQUENCE_NAME))
-                .willReturn(Collections.singletonList(new VariantWithSamplesAndAnnotation("chr30", 1000, 1005,
+        given(contigAliasService.getVariantsWithTranslatedContig(any(List.class), any(Map.class)))
+                .willReturn(Collections.singletonList(new VariantWithSamplesAndAnnotation("30", 1000, 1005,
                         "reference", "alternate", MAIN_ID)));
 
         List<VariantWithSamplesAndAnnotation> results = regionWsHelper("30:80000-82000",
@@ -128,7 +137,7 @@ public class RegionWSServerTest {
         assertEquals(1, results.size());
 
         for (VariantWithSamplesAndAnnotation variantEntity : results) {
-            assertEquals("chr30", variantEntity.getChromosome());
+            assertEquals("30", variantEntity.getChromosome());
             assertFalse(variantEntity.getReference().isEmpty());
             assertFalse(variantEntity.getAlternate().isEmpty());
             assertNotEquals(0, variantEntity.getStart());
@@ -141,9 +150,8 @@ public class RegionWSServerTest {
     public void testGetVariantsByRegionWithTranslatedContig() throws URISyntaxException {
         VariantWithSamplesAndAnnotation translatedContig = new VariantWithSamplesAndAnnotation("1", 1000, 1005,
                 "reference", "alternate", MAIN_ID);
-        given(contigAliasService.getVariantsWithTranslatedContig(Collections.singletonList(variantEntity), ContigNamingConvention.ENA_SEQUENCE_NAME))
+        given(contigAliasService.getVariantsWithTranslatedContig(any(List.class), any(Map.class)))
                 .willReturn(Collections.singletonList(translatedContig));
-
         List<VariantWithSamplesAndAnnotation> results = regionWsHelper("20:60000-62000",
                 ContigNamingConvention.ENA_SEQUENCE_NAME);
         assertEquals(1, results.size());
