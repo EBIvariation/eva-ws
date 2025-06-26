@@ -249,12 +249,12 @@ public class ContigAliasService {
     public ContigNamingConvention getMatchingContigNamingConvention(ContigAliasChromosome contigAliasChromosome, String chromosomeName) {
         if (chromosomeName == contigAliasChromosome.getInsdcAccession()) {
             return ContigNamingConvention.INSDC;
-        } else if (chromosomeName == contigAliasChromosome.getGenbankSequenceName()) {
-            return ContigNamingConvention.GENBANK_SEQUENCE_NAME;
-        } else if (chromosomeName == contigAliasChromosome.getEnaSequenceName()) {
-            return ContigNamingConvention.ENA_SEQUENCE_NAME;
         } else if (chromosomeName == contigAliasChromosome.getRefseq()) {
             return ContigNamingConvention.REFSEQ;
+        } else if (chromosomeName == contigAliasChromosome.getEnaSequenceName()) {
+            return ContigNamingConvention.ENA_SEQUENCE_NAME;
+        } else if (chromosomeName == contigAliasChromosome.getGenbankSequenceName()) {
+            return ContigNamingConvention.GENBANK_SEQUENCE_NAME;
         } else if (chromosomeName == contigAliasChromosome.getUcscName()) {
             return ContigNamingConvention.UCSC;
         } else {
