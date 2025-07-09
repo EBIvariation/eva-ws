@@ -35,10 +35,13 @@ public class Dataset extends RoCrateEntity {
     @JsonProperty("comment")
     private List<Comment> additionalProperties;
 
+    public Dataset() {}
+
     public Dataset(String accession, String name, String description, Date datePublished, String centerName,
-                   List<String> publications, List<String> analysisAccessions, List<URL> fileUrls, Integer taxonomyId,
+                   List<String> publications, List<String> analysisAccessions, List<URL> fileUrls, Long taxonomyId,
                    String scientificName, String scope, String material, String sourceType) {
         super("https://www.ebi.ac.uk/eva/?eva-study=" + accession, "schema.org/Dataset");
+        this.projectAccession = accession;
         this.name = name;
         this.description = description;
         this.datePublished = datePublished;
@@ -53,5 +56,45 @@ public class Dataset extends RoCrateEntity {
         additionalProperties.add(new Comment("scope", scope));
         additionalProperties.add(new Comment("material", material));
         additionalProperties.add(new Comment("sourceType", sourceType));
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Date getDatePublished() {
+        return datePublished;
+    }
+
+    public String getLicense() {
+        return license;
+    }
+
+    public String getCenterName() {
+        return centerName;
+    }
+
+    public List<String> getPublications() {
+        return publications;
+    }
+
+    public String getProjectAccession() {
+        return projectAccession;
+    }
+
+    public List<String> getAnalysisAccessions() {
+        return analysisAccessions;
+    }
+
+    public List<URL> getFileUrls() {
+        return fileUrls;
+    }
+
+    public List<Comment> getAdditionalProperties() {
+        return additionalProperties;
     }
 }

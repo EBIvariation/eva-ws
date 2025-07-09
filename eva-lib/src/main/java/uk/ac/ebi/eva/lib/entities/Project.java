@@ -18,6 +18,7 @@ package uk.ac.ebi.eva.lib.entities;
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * Created by jorizci on 03/10/16.
@@ -94,6 +95,20 @@ public class Project {
     @Column(length = 100, name= "study_type")
     private String studyType;
 
+    @ManyToMany
+    @JoinTable(name="project_taxonomy",
+            joinColumns = @JoinColumn(name="project_accession"),
+            inverseJoinColumns = @JoinColumn(name="taxonomy_id"))
+    private List<Taxonomy> taxonomies;
+
+    @OneToMany
+    @JoinTable(name="project_dbxref",
+            joinColumns = @JoinColumn(name="project_accession"),
+            inverseJoinColumns = @JoinColumn(name="dbxref_id"))
+    private List<DbXref> dbXrefs;
+
+    public Project() {}
+
     public Project(String projectAccession, String centerName, String alias, String title, String description,
                    String scope, String material, String selection, String type, String secondaryStudyId,
                    String sourceType, Long projectAccessionCode, String evaDescription,
@@ -144,6 +159,22 @@ public class Project {
 
     public String getSourceType() {
         return sourceType;
+    }
+
+    public List<Taxonomy> getTaxonomies() {
+        return taxonomies;
+    }
+
+    public void setTaxonomies(List<Taxonomy> taxonomies) {
+        this.taxonomies = taxonomies;
+    }
+
+    public List<DbXref> getDbXrefs() {
+        return dbXrefs;
+    }
+
+    public void setDbXrefs(List<DbXref> dbXrefs) {
+        this.dbXrefs = dbXrefs;
     }
 
 }

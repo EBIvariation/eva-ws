@@ -117,8 +117,6 @@ public class StudyWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/{study}/ro-crate", method = RequestMethod.GET)
     public RoCrateMetadata getStudyRoCrate(@PathVariable("study") String study) {
-        // TODO according to spec does this need to return the ro-crate json directly, or can it be nested inside
-        //  a QueryResponse object?
         RoCrateMetadata roCrateMetadata = roCrateMetadataAdaptor.getMetadataByProjectAccession(study);
         return roCrateMetadata;
     }
