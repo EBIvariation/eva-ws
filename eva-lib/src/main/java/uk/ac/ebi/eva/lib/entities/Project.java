@@ -116,4 +116,34 @@ public class Project {
         this.evaStudyAccession = evaStudyAccession;
         this.studyType = studyType;
     }
+
+
+    public String getProjectAccession() {
+        return projectAccession;
+    }
+
+    public String getCenterName() {
+        return centerName;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public String getSourceType() {
+        return sourceType;
+    }
+
 }

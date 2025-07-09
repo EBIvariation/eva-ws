@@ -31,7 +31,9 @@ import uk.ac.ebi.eva.commons.mongodb.entities.projections.VariantStudySummary;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantStudySummaryService;
 import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.eva.RoCrateMetadataAdaptor;
 import uk.ac.ebi.eva.lib.metadata.eva.StudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.models.rocrate.RoCrateMetadata;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
@@ -51,6 +53,8 @@ public class StudyWSServer extends EvaWSServer {
     private StudyDgvaDBAdaptor studyDgvaDbAdaptor;
     @Autowired
     private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
+    @Autowired
+    private RoCrateMetadataAdaptor roCrateMetadataAdaptor;
     @Autowired
     private VariantStudySummaryService variantStudySummaryService;
     @Autowired
@@ -109,5 +113,13 @@ public class StudyWSServer extends EvaWSServer {
         } else {
             return setQueryResponse(studyEvaproDbAdaptor.getStudyById(study, getQueryOptions()));
         }
+    }
+
+    @RequestMapping(value = "/{study}/ro-crate", method = RequestMethod.GET)
+    public RoCrateMetadata getStudyRoCrate(@PathVariable("study") String study) {
+        // TODO according to spec does this need to return the ro-crate json directly, or can it be nested inside
+        //  a QueryResponse object?
+        RoCrateMetadata roCrateMetadata = roCrateMetadataAdaptor.getMetadataByProjectAccession(study);
+        return roCrateMetadata;
     }
 }
