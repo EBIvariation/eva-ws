@@ -1,16 +1,15 @@
 package uk.ac.ebi.eva.lib.models.rocrate;
 
-public class Comment extends RoCrateEntity {
+public class CommentEntity extends RoCrateEntity {
 
     private String name;
 
     private String text;
 
-    public Comment() {}
+    public CommentEntity() {}
 
-    public Comment(String name, String text) {
-        // TODO what should the ID be?
-        super(name, "schema.org/Comment");
+    public CommentEntity(String name, String text) {
+        super("#" + name, "Comment");
         this.name = name;
         this.text = text;
     }

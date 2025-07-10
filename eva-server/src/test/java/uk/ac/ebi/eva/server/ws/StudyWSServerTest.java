@@ -1,11 +1,5 @@
 package uk.ac.ebi.eva.server.ws;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,18 +14,21 @@ import org.springframework.test.context.junit4.SpringRunner;
 import uk.ac.ebi.eva.lib.entities.DbXref;
 import uk.ac.ebi.eva.lib.entities.Project;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
-import uk.ac.ebi.eva.lib.models.rocrate.Comment;
-import uk.ac.ebi.eva.lib.models.rocrate.Dataset;
+import uk.ac.ebi.eva.lib.models.rocrate.CommentEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.DatasetEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.MetadataEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.Reference;
+import uk.ac.ebi.eva.lib.models.rocrate.RoCrateEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.RoCrateMetadata;
 import uk.ac.ebi.eva.lib.repositories.DbXrefRepository;
 import uk.ac.ebi.eva.lib.repositories.ProjectRepository;
 import uk.ac.ebi.eva.lib.repositories.TaxonomyRepository;
 
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -48,9 +45,6 @@ public class StudyWSServerTest {
 
     @Autowired
     private DbXrefRepository dbXrefRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Before
     public void setUp() {
@@ -69,24 +63,25 @@ public class StudyWSServerTest {
     @Test
     public void testGetRoCrate() {
         String url = "/v1/studies/PRJEB0001/ro-crate";
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, null, String.class);
+        ResponseEntity<RoCrateMetadata> response = restTemplate.exchange(url, HttpMethod.GET, null,
+                                                                         RoCrateMetadata.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        RoCrateMetadata roCrateMetadata = response.getBody();
 
-        Configuration configuration = Configuration.defaultConfiguration()
-                                                   .jsonProvider(new JacksonJsonProvider())
-                                                   .mappingProvider(new JacksonMappingProvider(objectMapper))
-                                                   .addOptions(Option.SUPPRESS_EXCEPTIONS);
-        Dataset dataset = JsonPath.using(configuration).parse(response.getBody())
-                                                        .read("$['@graph'][0]", Dataset.class);
+        // First entity describes the metadata document itself
+        MetadataEntity metadata = (MetadataEntity) roCrateMetadata.getGraph().get(0);
+        assertEquals("ro-crate-metadata.json", metadata.getId());
 
+        // Second entity is the dataset, corresponding to the project
+        DatasetEntity dataset = (DatasetEntity) roCrateMetadata.getGraph().get(1);
         assertEquals("PRJEB0001", dataset.getProjectAccession());
         assertEquals("project title", dataset.getName());
-        Set<String> taxonomies = dataset.getAdditionalProperties()
-                                        .stream()
-                                        .filter(comment -> comment.getName().equalsIgnoreCase("taxonomyId"))
-                                        .map(Comment::getText)
-                                        .collect(Collectors.toSet());
-        assertEquals(1, taxonomies.size());
-        assertTrue(taxonomies.contains("9606"));
+        List<Reference> taxonomyRefs = dataset.getAdditionalProperties()
+                                              .stream()
+                                              .filter(ref -> ref.getId().equalsIgnoreCase("#taxonomyId"))
+                                              .collect(Collectors.toList());
+        List<RoCrateEntity> taxonomyEntities = roCrateMetadata.getEntities(taxonomyRefs);
+        assertEquals(1, taxonomyEntities.size());
+        assertEquals("9606", ((CommentEntity) taxonomyEntities.get(0)).getText());
     }
 }

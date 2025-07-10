@@ -2,12 +2,10 @@ package uk.ac.ebi.eva.lib.models.rocrate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Dataset extends RoCrateEntity {
+public class DatasetEntity extends RoCrateEntity {
 
     private String name;
 
@@ -27,20 +25,21 @@ public class Dataset extends RoCrateEntity {
     private String projectAccession;
 
     @JsonProperty("processSequence")
-    private List<String> analysisAccessions;
+    private List<Reference> analysisAccessions;
 
     @JsonProperty("hasPart")
-    private List<URL> fileUrls;
+    private List<Reference> fileUrls;
 
     @JsonProperty("comment")
-    private List<Comment> additionalProperties;
+    // Project-level properties that aren't in schema.org/Dataset are included as Comments
+    private List<Reference> additionalProperties;
 
-    public Dataset() {}
+    public DatasetEntity() {}
 
-    public Dataset(String accession, String name, String description, Date datePublished, String centerName,
-                   List<String> publications, List<String> analysisAccessions, List<URL> fileUrls, Long taxonomyId,
-                   String scientificName, String scope, String material, String sourceType) {
-        super("https://www.ebi.ac.uk/eva/?eva-study=" + accession, "schema.org/Dataset");
+    public DatasetEntity(String accession, String name, String description, Date datePublished, String centerName,
+                         List<String> publications, List<Reference> analysisAccessions, List<Reference> fileUrls,
+                         List<Reference> additionalProperties) {
+        super("https://www.ebi.ac.uk/eva/?eva-study=" + accession, "Dataset");
         this.projectAccession = accession;
         this.name = name;
         this.description = description;
@@ -50,12 +49,7 @@ public class Dataset extends RoCrateEntity {
         this.publications = publications;
         this.analysisAccessions = analysisAccessions;
         this.fileUrls = fileUrls;
-        additionalProperties = new ArrayList<>();
-        additionalProperties.add(new Comment("taxonomyId", "" + taxonomyId));
-        additionalProperties.add(new Comment("scientificName", scientificName));
-        additionalProperties.add(new Comment("scope", scope));
-        additionalProperties.add(new Comment("material", material));
-        additionalProperties.add(new Comment("sourceType", sourceType));
+        this.additionalProperties = additionalProperties;
     }
 
     public String getName() {
@@ -86,15 +80,15 @@ public class Dataset extends RoCrateEntity {
         return projectAccession;
     }
 
-    public List<String> getAnalysisAccessions() {
+    public List<Reference> getAnalysisAccessions() {
         return analysisAccessions;
     }
 
-    public List<URL> getFileUrls() {
+    public List<Reference> getFileUrls() {
         return fileUrls;
     }
 
-    public List<Comment> getAdditionalProperties() {
+    public List<Reference> getAdditionalProperties() {
         return additionalProperties;
     }
 }

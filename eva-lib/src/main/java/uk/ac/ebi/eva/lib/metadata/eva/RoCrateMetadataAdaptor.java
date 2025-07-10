@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 import uk.ac.ebi.eva.lib.entities.DbXref;
 import uk.ac.ebi.eva.lib.entities.Project;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
-import uk.ac.ebi.eva.lib.models.rocrate.Dataset;
+import uk.ac.ebi.eva.lib.models.rocrate.CommentEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.DatasetEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.Reference;
 import uk.ac.ebi.eva.lib.models.rocrate.RoCrateEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.RoCrateMetadata;
 import uk.ac.ebi.eva.lib.repositories.ProjectRepository;
@@ -27,33 +29,52 @@ public class RoCrateMetadataAdaptor {
 
     public RoCrateMetadata getMetadataByProjectAccession(String accession) {
         Project project = projectRepository.getProjectByProjectAccession(accession);
-        Long taxonomyId = null;
-        String scientificName = null;
-        if (project.getTaxonomies().isEmpty()) {
-            logger.warn("No taxonomies found for project {}", accession);
-        } else {
-            if (project.getTaxonomies().size() > 1) {
-                logger.warn("Multiple taxonomies for project {}, will use the first", accession);
-            }
-            Taxonomy taxonomy = project.getTaxonomies().get(0);
-            taxonomyId = taxonomy.getTaxonomyId();
-            scientificName = taxonomy.getScientificName();
-        }
+
+        // TODO use entities/references for publications too?
         List<String> publications = project.getDbXrefs()
                                            .stream()
                                            .filter(dbXref -> dbXref.getLinkType().equalsIgnoreCase("publication"))
                                            .map(DbXref::getCurie)
                                            .collect(Collectors.toList());
+        List<RoCrateEntity> additionalProperties = getAdditionalProperties(project);
+        // TODO add submission date
 
         List<RoCrateEntity> entities = new ArrayList<>();
-        // TODO Get properties from: submission, analysis, file
-        entities.add(new Dataset(project.getProjectAccession(), project.getTitle(), project.getDescription(),
-                                 null, project.getCenterName(), publications, null, null, taxonomyId, scientificName,
-                                 project.getScope(),
-                                 project.getMaterial(), project.getSourceType()));
-        // TODO Create other RO-crate entities
+        entities.add(new DatasetEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
+                                       null, project.getCenterName(), publications, null, null,
+                                       getReferences(additionalProperties)));
+        entities.addAll(additionalProperties);
+        // TODO Create and reference other RO-crate entities: analysis, file, sample
 
         return new RoCrateMetadata(entities);
+    }
+
+    private List<Reference> getReferences(List<RoCrateEntity> entities) {
+        return entities.stream().map(entity -> new Reference(entity.getId())).collect(Collectors.toList());
+    }
+
+    private List<RoCrateEntity> getAdditionalProperties(Project project) {
+        List<RoCrateEntity> additionalProperties = new ArrayList<>();
+        Long taxonomyId = null;
+        String scientificName = null;
+        if (project.getTaxonomies().isEmpty()) {
+            logger.warn("No taxonomies found for project {}", project.getProjectAccession());
+        } else {
+            if (project.getTaxonomies().size() > 1) {
+                logger.warn("Multiple taxonomies for project {}, will use the first", project.getProjectAccession());
+            }
+            Taxonomy taxonomy = project.getTaxonomies().get(0);
+            taxonomyId = taxonomy.getTaxonomyId();
+            scientificName = taxonomy.getScientificName();
+        }
+
+        additionalProperties.add(new CommentEntity("taxonomyId", "" + taxonomyId));
+        additionalProperties.add(new CommentEntity("scientificName", scientificName));
+        additionalProperties.add(new CommentEntity("scope", project.getScope()));
+        additionalProperties.add(new CommentEntity("material", project.getMaterial()));
+        additionalProperties.add(new CommentEntity("sourceType", project.getSourceType()));
+
+        return additionalProperties;
     }
 
 }
