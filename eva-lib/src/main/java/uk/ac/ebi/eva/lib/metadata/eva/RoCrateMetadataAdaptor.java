@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import uk.ac.ebi.eva.lib.entities.DbXref;
 import uk.ac.ebi.eva.lib.entities.Project;
+import uk.ac.ebi.eva.lib.entities.Submission;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
 import uk.ac.ebi.eva.lib.models.rocrate.CommentEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.DatasetEntity;
@@ -15,7 +16,9 @@ import uk.ac.ebi.eva.lib.models.rocrate.RoCrateEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.RoCrateMetadata;
 import uk.ac.ebi.eva.lib.repositories.ProjectRepository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,19 +33,17 @@ public class RoCrateMetadataAdaptor {
     public RoCrateMetadata getMetadataByProjectAccession(String accession) {
         Project project = projectRepository.getProjectByProjectAccession(accession);
 
-        // TODO use entities/references for publications too?
         List<String> publications = project.getDbXrefs()
                                            .stream()
                                            .filter(dbXref -> dbXref.getLinkType().equalsIgnoreCase("publication"))
                                            .map(DbXref::getCurie)
                                            .collect(Collectors.toList());
         List<RoCrateEntity> additionalProperties = getAdditionalProperties(project);
-        // TODO add submission date
 
         List<RoCrateEntity> entities = new ArrayList<>();
         entities.add(new DatasetEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
-                                       null, project.getCenterName(), publications, null, null,
-                                       getReferences(additionalProperties)));
+                                       getFirstSubmissionDate(project), project.getCenterName(), publications, null,
+                                       null, getReferences(additionalProperties)));
         entities.addAll(additionalProperties);
         // TODO Create and reference other RO-crate entities: analysis, file, sample
 
@@ -51,6 +52,12 @@ public class RoCrateMetadataAdaptor {
 
     private List<Reference> getReferences(List<RoCrateEntity> entities) {
         return entities.stream().map(entity -> new Reference(entity.getId())).collect(Collectors.toList());
+    }
+
+    private LocalDate getFirstSubmissionDate(Project project) {
+        return project.getSubmissions().stream()
+                      .min(Comparator.comparing(Submission::getDate))
+                      .map(Submission::getDate).orElse(null);
     }
 
     private List<RoCrateEntity> getAdditionalProperties(Project project) {

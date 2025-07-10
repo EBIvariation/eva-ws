@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import uk.ac.ebi.eva.lib.entities.DbXref;
 import uk.ac.ebi.eva.lib.entities.Project;
+import uk.ac.ebi.eva.lib.entities.Submission;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
 import uk.ac.ebi.eva.lib.models.rocrate.CommentEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.DatasetEntity;
@@ -22,8 +23,11 @@ import uk.ac.ebi.eva.lib.models.rocrate.RoCrateEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.RoCrateMetadata;
 import uk.ac.ebi.eva.lib.repositories.DbXrefRepository;
 import uk.ac.ebi.eva.lib.repositories.ProjectRepository;
+import uk.ac.ebi.eva.lib.repositories.SubmissionRepository;
 import uk.ac.ebi.eva.lib.repositories.TaxonomyRepository;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +50,9 @@ public class StudyWSServerTest {
     @Autowired
     private DbXrefRepository dbXrefRepository;
 
+    @Autowired
+    private SubmissionRepository submissionRepository;
+
     @Before
     public void setUp() {
         Project project = new Project("PRJEB0001", "submitter center", "project alias", "project title", "description",
@@ -53,10 +60,20 @@ public class StudyWSServerTest {
                                       null, null, "control set");
         Taxonomy taxonomy = new Taxonomy(9606L, "human", "Homo sapiens", "hsapiens", "human");
         DbXref dbXref = new DbXref(1L, "doi", "123", null, "publication", "project");
+        Submission submission1 = new Submission(1L, "ERA123", "PROJECT", "ADD", "first submission", null,
+                                                LocalDate.of(2025, 1, 1), 1);
+        Submission submission2 = new Submission(2L, "ERA456", "PROJECT", "ADD", "second submission", null,
+                                                LocalDate.of(2025, 7, 1), 1);
         project.setDbXrefs(Collections.singletonList(dbXref));
         project.setTaxonomies(Collections.singletonList(taxonomy));
+        List<Submission> submissions = new ArrayList<>();
+        submissions.add(submission1);
+        submissions.add(submission2);
+        project.setSubmissions(submissions);
         taxonomyRepository.save(taxonomy);
         dbXrefRepository.save(dbXref);
+        submissionRepository.save(submission1);
+        submissionRepository.save(submission2);
         projectRepository.save(project);
     }
 
@@ -76,6 +93,9 @@ public class StudyWSServerTest {
         DatasetEntity dataset = (DatasetEntity) roCrateMetadata.getGraph().get(1);
         assertEquals("PRJEB0001", dataset.getProjectAccession());
         assertEquals("project title", dataset.getName());
+        assertEquals(LocalDate.of(2025, 1, 1), dataset.getDatePublished());
+
+        // Additional properties of project are separate entities
         List<Reference> taxonomyRefs = dataset.getAdditionalProperties()
                                               .stream()
                                               .filter(ref -> ref.getId().equalsIgnoreCase("#taxonomyId"))

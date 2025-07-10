@@ -7,7 +7,8 @@ public class Reference {
     @JsonProperty("@id")
     private String id;
 
-    public Reference() {}
+    public Reference() {
+    }
 
     public Reference(String id) {
         this.id = id;

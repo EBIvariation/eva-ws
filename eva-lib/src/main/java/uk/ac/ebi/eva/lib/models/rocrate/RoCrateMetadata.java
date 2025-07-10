@@ -13,7 +13,8 @@ public class RoCrateMetadata {
     @JsonProperty("@graph")
     private List<RoCrateEntity> graph;
 
-    public RoCrateMetadata() {}
+    public RoCrateMetadata() {
+    }
 
     public RoCrateMetadata(List<RoCrateEntity> graph) {
         this.context = "https://w3id.org/ro/crate/1.2/context";
@@ -33,7 +34,7 @@ public class RoCrateMetadata {
     public List<RoCrateEntity> getEntities(List<Reference> references) {
         List<String> identifiers = references.stream().map(Reference::getId).collect(Collectors.toList());
         return graph.stream().filter(roCrateEntity -> identifiers.contains(roCrateEntity.getId()))
-                .collect(Collectors.toList());
+                    .collect(Collectors.toList());
     }
 
 }

@@ -6,7 +6,8 @@ public class CommentEntity extends RoCrateEntity {
 
     private String text;
 
-    public CommentEntity() {}
+    public CommentEntity() {
+    }
 
     public CommentEntity(String name, String text) {
         super("#" + name, "Comment");

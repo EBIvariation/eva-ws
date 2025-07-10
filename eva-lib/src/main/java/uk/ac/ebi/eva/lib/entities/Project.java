@@ -107,6 +107,12 @@ public class Project {
             inverseJoinColumns = @JoinColumn(name="dbxref_id"))
     private List<DbXref> dbXrefs;
 
+    @OneToMany
+    @JoinTable(name="project_ena_submission",
+            joinColumns = @JoinColumn(name="project_accession"),
+            inverseJoinColumns = @JoinColumn(name="submission_id"))
+    private List<Submission> submissions;
+
     public Project() {}
 
     public Project(String projectAccession, String centerName, String alias, String title, String description,
@@ -175,6 +181,14 @@ public class Project {
 
     public void setDbXrefs(List<DbXref> dbXrefs) {
         this.dbXrefs = dbXrefs;
+    }
+
+    public List<Submission> getSubmissions() {
+        return submissions;
+    }
+
+    public void setSubmissions(List<Submission> submissions) {
+        this.submissions = submissions;
     }
 
 }

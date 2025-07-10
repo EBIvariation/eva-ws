@@ -1,8 +1,13 @@
 package uk.ac.ebi.eva.lib.models.rocrate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public class DatasetEntity extends RoCrateEntity {
@@ -11,7 +16,10 @@ public class DatasetEntity extends RoCrateEntity {
 
     private String description;
 
-    private Date datePublished;
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate datePublished;
 
     private String license;
 
@@ -34,9 +42,10 @@ public class DatasetEntity extends RoCrateEntity {
     // Project-level properties that aren't in schema.org/Dataset are included as Comments
     private List<Reference> additionalProperties;
 
-    public DatasetEntity() {}
+    public DatasetEntity() {
+    }
 
-    public DatasetEntity(String accession, String name, String description, Date datePublished, String centerName,
+    public DatasetEntity(String accession, String name, String description, LocalDate datePublished, String centerName,
                          List<String> publications, List<Reference> analysisAccessions, List<Reference> fileUrls,
                          List<Reference> additionalProperties) {
         super("https://www.ebi.ac.uk/eva/?eva-study=" + accession, "Dataset");
@@ -60,7 +69,7 @@ public class DatasetEntity extends RoCrateEntity {
         return description;
     }
 
-    public Date getDatePublished() {
+    public LocalDate getDatePublished() {
         return datePublished;
     }
 
