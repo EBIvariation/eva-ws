@@ -37,8 +37,6 @@ public class Project {
     @Column(length = 4000, nullable = false)
     private String alias;
 
-    @Lob
-    @Basic(fetch = FetchType.EAGER)
     private String title;
 
     @Column(length = 16000)
