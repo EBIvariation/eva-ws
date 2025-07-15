@@ -79,7 +79,7 @@ public class StudyWSServerTest {
 
     @Test
     public void testGetRoCrate() {
-        String url = "/v1/studies/PRJEB0001/ro-crate";
+        String url = "/v1/studies/ro-crate/PRJEB0001";
         ResponseEntity<RoCrateMetadata> response = restTemplate.exchange(url, HttpMethod.GET, null,
                                                                          RoCrateMetadata.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -103,5 +103,13 @@ public class StudyWSServerTest {
         List<RoCrateEntity> taxonomyEntities = roCrateMetadata.getEntities(taxonomyRefs);
         assertEquals(1, taxonomyEntities.size());
         assertEquals("9606", ((CommentEntity) taxonomyEntities.get(0)).getText());
+    }
+
+    @Test
+    public void testGetRoCrateNotFound() {
+        String url = "/v1/studies/ro-crate/PRJEB999";
+        ResponseEntity<RoCrateMetadata> response = restTemplate.exchange(url, HttpMethod.GET, null,
+                                                                         RoCrateMetadata.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

@@ -21,6 +21,8 @@ package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -115,9 +117,12 @@ public class StudyWSServer extends EvaWSServer {
         }
     }
 
-    @RequestMapping(value = "/{study}/ro-crate", method = RequestMethod.GET)
-    public RoCrateMetadata getStudyRoCrate(@PathVariable("study") String study) {
+    @RequestMapping(value = "/ro-crate/{study}", method = RequestMethod.GET)
+    public ResponseEntity<RoCrateMetadata> getStudyRoCrate(@PathVariable("study") String study) {
         RoCrateMetadata roCrateMetadata = roCrateMetadataAdaptor.getMetadataByProjectAccession(study);
-        return roCrateMetadata;
+        if (roCrateMetadata == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(roCrateMetadata);
     }
 }

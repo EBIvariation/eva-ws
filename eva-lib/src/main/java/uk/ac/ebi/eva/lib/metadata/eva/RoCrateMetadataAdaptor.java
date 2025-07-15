@@ -32,6 +32,9 @@ public class RoCrateMetadataAdaptor {
 
     public RoCrateMetadata getMetadataByProjectAccession(String accession) {
         Project project = projectRepository.getProjectByProjectAccession(accession);
+        if  (project == null) {
+            return null;
+        }
 
         List<String> publications = project.getDbXrefs()
                                            .stream()
