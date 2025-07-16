@@ -19,4 +19,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import uk.ac.ebi.eva.lib.entities.Project;
 
 public interface ProjectRepository extends JpaRepository<Project,String > {
+
+    Project getProjectByProjectAccession(String accession);
 }

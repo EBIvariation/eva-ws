@@ -21,6 +21,8 @@ package uk.ac.ebi.eva.server.ws;
 
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,7 +33,9 @@ import uk.ac.ebi.eva.commons.mongodb.entities.projections.VariantStudySummary;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantStudySummaryService;
 import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.eva.RoCrateMetadataAdaptor;
 import uk.ac.ebi.eva.lib.metadata.eva.StudyEvaproDBAdaptor;
+import uk.ac.ebi.eva.lib.models.rocrate.RoCrateMetadata;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
@@ -51,6 +55,8 @@ public class StudyWSServer extends EvaWSServer {
     private StudyDgvaDBAdaptor studyDgvaDbAdaptor;
     @Autowired
     private StudyEvaproDBAdaptor studyEvaproDbAdaptor;
+    @Autowired
+    private RoCrateMetadataAdaptor roCrateMetadataAdaptor;
     @Autowired
     private VariantStudySummaryService variantStudySummaryService;
     @Autowired
@@ -109,5 +115,14 @@ public class StudyWSServer extends EvaWSServer {
         } else {
             return setQueryResponse(studyEvaproDbAdaptor.getStudyById(study, getQueryOptions()));
         }
+    }
+
+    @RequestMapping(value = "/ro-crate/{study}", method = RequestMethod.GET)
+    public ResponseEntity<RoCrateMetadata> getStudyRoCrate(@PathVariable("study") String study) {
+        RoCrateMetadata roCrateMetadata = roCrateMetadataAdaptor.getMetadataByProjectAccession(study);
+        if (roCrateMetadata == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(roCrateMetadata);
     }
 }

@@ -18,6 +18,7 @@ package uk.ac.ebi.eva.lib.entities;
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * Created by jorizci on 03/10/16.
@@ -36,8 +37,6 @@ public class Project {
     @Column(length = 4000, nullable = false)
     private String alias;
 
-    @Lob
-    @Basic(fetch = FetchType.EAGER)
     private String title;
 
     @Column(length = 16000)
@@ -94,6 +93,26 @@ public class Project {
     @Column(length = 100, name= "study_type")
     private String studyType;
 
+    @ManyToMany
+    @JoinTable(name="project_taxonomy",
+            joinColumns = @JoinColumn(name="project_accession"),
+            inverseJoinColumns = @JoinColumn(name="taxonomy_id"))
+    private List<Taxonomy> taxonomies;
+
+    @OneToMany
+    @JoinTable(name="project_dbxref",
+            joinColumns = @JoinColumn(name="project_accession"),
+            inverseJoinColumns = @JoinColumn(name="dbxref_id"))
+    private List<DbXref> dbXrefs;
+
+    @OneToMany
+    @JoinTable(name="project_ena_submission",
+            joinColumns = @JoinColumn(name="project_accession"),
+            inverseJoinColumns = @JoinColumn(name="submission_id"))
+    private List<Submission> submissions;
+
+    public Project() {}
+
     public Project(String projectAccession, String centerName, String alias, String title, String description,
                    String scope, String material, String selection, String type, String secondaryStudyId,
                    String sourceType, Long projectAccessionCode, String evaDescription,
@@ -116,4 +135,58 @@ public class Project {
         this.evaStudyAccession = evaStudyAccession;
         this.studyType = studyType;
     }
+
+
+    public String getProjectAccession() {
+        return projectAccession;
+    }
+
+    public String getCenterName() {
+        return centerName;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public String getSourceType() {
+        return sourceType;
+    }
+
+    public List<Taxonomy> getTaxonomies() {
+        return taxonomies;
+    }
+
+    public void setTaxonomies(List<Taxonomy> taxonomies) {
+        this.taxonomies = taxonomies;
+    }
+
+    public List<DbXref> getDbXrefs() {
+        return dbXrefs;
+    }
+
+    public void setDbXrefs(List<DbXref> dbXrefs) {
+        this.dbXrefs = dbXrefs;
+    }
+
+    public List<Submission> getSubmissions() {
+        return submissions;
+    }
+
+    public void setSubmissions(List<Submission> submissions) {
+        this.submissions = submissions;
+    }
+
 }
