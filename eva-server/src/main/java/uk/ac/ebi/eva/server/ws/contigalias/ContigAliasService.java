@@ -247,15 +247,15 @@ public class ContigAliasService {
     }
 
     public ContigNamingConvention getMatchingContigNamingConvention(ContigAliasChromosome contigAliasChromosome, String chromosomeName) {
-        if (chromosomeName == contigAliasChromosome.getInsdcAccession()) {
+        if (chromosomeName.equals(contigAliasChromosome.getInsdcAccession())) {
             return ContigNamingConvention.INSDC;
-        } else if (chromosomeName == contigAliasChromosome.getRefseq()) {
+        } else if (chromosomeName.equals(contigAliasChromosome.getRefseq())) {
             return ContigNamingConvention.REFSEQ;
-        } else if (chromosomeName == contigAliasChromosome.getEnaSequenceName()) {
+        } else if (chromosomeName.equals(contigAliasChromosome.getEnaSequenceName())) {
             return ContigNamingConvention.ENA_SEQUENCE_NAME;
-        } else if (chromosomeName == contigAliasChromosome.getGenbankSequenceName()) {
+        } else if (chromosomeName.equals(contigAliasChromosome.getGenbankSequenceName())) {
             return ContigNamingConvention.GENBANK_SEQUENCE_NAME;
-        } else if (chromosomeName == contigAliasChromosome.getUcscName()) {
+        } else if (chromosomeName.equals(contigAliasChromosome.getUcscName())) {
             return ContigNamingConvention.UCSC;
         } else {
             return null;
