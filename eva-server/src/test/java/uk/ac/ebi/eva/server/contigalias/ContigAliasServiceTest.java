@@ -155,6 +155,24 @@ public class ContigAliasServiceTest {
 
     }
 
+    @Test
+    public void testGetMatchingContigNamingConvention() {
+        ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
+        contigAliasChromosome.setInsdcAccession("insdcContigName");
+        contigAliasChromosome.setEnaSequenceName("enaContigName");
+        contigAliasChromosome.setUcscName("ucscContigName");
+        contigAliasChromosome.setGenbankSequenceName("genbankContigName");
+        contigAliasChromosome.setRefseq("refseqContigName");
+
+        assertEquals(ContigNamingConvention.INSDC, contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, "insdcContigName"));
+        assertEquals(ContigNamingConvention.ENA_SEQUENCE_NAME, contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, "enaContigName"));
+        assertEquals(ContigNamingConvention.UCSC, contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, "ucscContigName"));
+        assertEquals(ContigNamingConvention.GENBANK_SEQUENCE_NAME, contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, "genbankContigName"));
+        assertEquals(ContigNamingConvention.REFSEQ, contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, "refseqContigName"));
+
+        assertEquals(null, contigAliasService.getMatchingContigNamingConvention(contigAliasChromosome, "20"));
+    }
+
 
     private ContigAliasResponse getContigAliasResponse(ContigNamingConvention contigNamingConvention, String chromosome) {
         ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
