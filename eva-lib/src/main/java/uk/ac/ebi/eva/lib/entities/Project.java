@@ -31,7 +31,7 @@ public class Project {
     @Column(length = 45, nullable = false, name = "project_accession")
     private String projectAccession;
 
-    @Column(length = 250, nullable = false, name= "center_name")
+    @Column(length = 250, nullable = false, name = "center_name")
     private String centerName;
 
     @Column(length = 4000, nullable = false)
@@ -66,16 +66,16 @@ public class Project {
     @Column(name = "project_accession_code", unique = true)
     private Long projectAccessionCode;
 
-    @Column(length = 4000, name="eva_description")
+    @Column(length = 4000, name = "eva_description")
     private String evaDescription;
 
-    @Column(length = 4000, name="eva_center_name")
+    @Column(length = 4000, name = "eva_center_name")
     private String evaCenterName;
 
-    @Column(length = 4000, name="eva_submitter_link")
+    @Column(length = 4000, name = "eva_submitter_link")
     private String evaSubmitterLink;
 
-    @Column(name ="eva_study_accession")
+    @Column(name = "eva_study_accession")
     private Long evaStudyAccession;
 
     @Column(name = "ena_status")
@@ -90,28 +90,35 @@ public class Project {
     @Column(name = "eva_timestamp")
     private Timestamp evaTimestamp;
 
-    @Column(length = 100, name= "study_type")
+    @Column(length = 100, name = "study_type")
     private String studyType;
 
     @ManyToMany
-    @JoinTable(name="project_taxonomy",
-            joinColumns = @JoinColumn(name="project_accession"),
-            inverseJoinColumns = @JoinColumn(name="taxonomy_id"))
+    @JoinTable(name = "project_taxonomy",
+            joinColumns = @JoinColumn(name = "project_accession"),
+            inverseJoinColumns = @JoinColumn(name = "taxonomy_id"))
     private List<Taxonomy> taxonomies;
 
     @OneToMany
-    @JoinTable(name="project_dbxref",
-            joinColumns = @JoinColumn(name="project_accession"),
-            inverseJoinColumns = @JoinColumn(name="dbxref_id"))
+    @JoinTable(name = "project_dbxref",
+            joinColumns = @JoinColumn(name = "project_accession"),
+            inverseJoinColumns = @JoinColumn(name = "dbxref_id"))
     private List<DbXref> dbXrefs;
 
     @OneToMany
-    @JoinTable(name="project_ena_submission",
-            joinColumns = @JoinColumn(name="project_accession"),
-            inverseJoinColumns = @JoinColumn(name="submission_id"))
+    @JoinTable(name = "project_ena_submission",
+            joinColumns = @JoinColumn(name = "project_accession"),
+            inverseJoinColumns = @JoinColumn(name = "submission_id"))
     private List<Submission> submissions;
 
-    public Project() {}
+    @OneToMany
+    @JoinTable(name = "project_analysis",
+            joinColumns = @JoinColumn(name = "project_accession"),
+            inverseJoinColumns = @JoinColumn(name = "analysis_accession"))
+    private List<Analysis> analyses;
+
+    public Project() {
+    }
 
     public Project(String projectAccession, String centerName, String alias, String title, String description,
                    String scope, String material, String selection, String type, String secondaryStudyId,
@@ -189,4 +196,11 @@ public class Project {
         this.submissions = submissions;
     }
 
+    public List<Analysis> getAnalyses() {
+        return analyses;
+    }
+
+    public void setAnalyses(List<Analysis> analyses) {
+        this.analyses = analyses;
+    }
 }

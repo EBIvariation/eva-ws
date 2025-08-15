@@ -18,6 +18,9 @@ package uk.ac.ebi.eva.lib.entities;
 import uk.ac.ebi.eva.lib.models.FileFtpReference;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jorizci on 03/10/16.
@@ -93,6 +96,12 @@ public class File {
     @Column(length = 15, name = "eva_submission_file_id")
     private String evaSubmissionFileId;
 
+    @OneToMany(mappedBy = "file")
+    private List<FileSample> fileSamples;
+
+    public File() {
+    }
+
     public File(Long fileId, String enaSubmissionFileId, String filename, String fileMd5, String fileLocation,
                 String fileType, String fileClass, int fileVersion, boolean isCurrent, String ftpFile,
                 boolean mongoLoadStatus, String evaSubmissionFileId) {
@@ -109,4 +118,34 @@ public class File {
         this.mongoLoadStatus = mongoLoadStatus;
         this.evaSubmissionFileId = evaSubmissionFileId;
     }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public String getFileMd5() {
+        return fileMd5;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public List<FileSample> getFileSamples() {
+        return fileSamples;
+    }
+
+    public void setFileSamples(List<FileSample> fileSamples) {
+        this.fileSamples = fileSamples;
+    }
+
+    public Map<String, Sample> getNameInFileToSampleMap() {
+        // TODO is nameInFile unique per file?
+        Map<String, Sample> nameInFileToSampleMap = new HashMap<>();
+        for (FileSample fileSample : fileSamples) {
+            nameInFileToSampleMap.put(fileSample.getNameInFile(), fileSample.getSample());
+        }
+        return nameInFileToSampleMap;
+    }
+
 }

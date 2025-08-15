@@ -5,21 +5,29 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import uk.ac.ebi.eva.lib.entities.Analysis;
 import uk.ac.ebi.eva.lib.entities.DbXref;
+import uk.ac.ebi.eva.lib.entities.File;
 import uk.ac.ebi.eva.lib.entities.Project;
+import uk.ac.ebi.eva.lib.entities.Sample;
 import uk.ac.ebi.eva.lib.entities.Submission;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
 import uk.ac.ebi.eva.lib.models.rocrate.CommentEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.DatasetEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.FileEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.LabProcessEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.Reference;
 import uk.ac.ebi.eva.lib.models.rocrate.RoCrateEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.RoCrateMetadata;
+import uk.ac.ebi.eva.lib.models.rocrate.SampleEntity;
 import uk.ac.ebi.eva.lib.repositories.ProjectRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -32,25 +40,70 @@ public class RoCrateMetadataAdaptor {
 
     public RoCrateMetadata getMetadataByProjectAccession(String accession) {
         Project project = projectRepository.getProjectByProjectAccession(accession);
-        if  (project == null) {
+        if (project == null) {
             return null;
         }
 
-        List<String> publications = project.getDbXrefs()
-                                           .stream()
-                                           .filter(dbXref -> dbXref.getLinkType().equalsIgnoreCase("publication"))
-                                           .map(DbXref::getCurie)
-                                           .collect(Collectors.toList());
-        List<RoCrateEntity> additionalProperties = getAdditionalProperties(project);
+        // Construct the analysis-related entities
+        List<RoCrateEntity> allAnalysisAdditionalProps = new ArrayList<>();
+        List<RoCrateEntity> allFiles = new ArrayList<>();
+        List<RoCrateEntity> allFileAdditionalProps = new ArrayList<>();
+        List<RoCrateEntity> allSamples = new ArrayList<>();
+        List<RoCrateEntity> analysisRoEntities = new ArrayList<>();
+        List<Analysis> analyses = project.getAnalyses();
+        for (Analysis analysis : analyses) {
+            List<RoCrateEntity> analysisProps = getAdditionalAnalysisProperties(analysis);
 
+            List<File> files = analysis.getFiles();
+            List<RoCrateEntity> fileRoEntities = new ArrayList<>();
+            List<RoCrateEntity> sampleRoEntities = new ArrayList<>();
+            // TODO filter files to get only VCFs? include accessioned files?
+            for (File file : files) {
+                List<RoCrateEntity> fileProps = Collections.singletonList(
+                        new CommentEntity(file.getFilename(), "md5", file.getFileMd5()));
+                fileRoEntities.add(new FileEntity(project.getProjectAccession(), file.getFilename(), null,
+                                                  file.getFileType(), getReferences(fileProps)));
+                allFileAdditionalProps.addAll(fileProps);
+
+                for (Map.Entry<String, Sample> entry : file.getNameInFileToSampleMap().entrySet()) {
+                    sampleRoEntities.add(new SampleEntity(entry.getKey(), entry.getValue().getBiosampleAccession()));
+                }
+            }
+
+            analysisRoEntities.add(new LabProcessEntity(analysis.getAnalysisAccession(), analysis.getTitle(),
+                                                        analysis.getDescription(), analysis.getSubmission().getDate(),
+                                                        getReferences(sampleRoEntities), getReferences(fileRoEntities),
+                                                        getReferences(analysisProps)));
+            allAnalysisAdditionalProps.addAll(analysisProps);
+            allFiles.addAll(fileRoEntities);
+            allSamples.addAll(sampleRoEntities);
+        }
+
+        // Construct the DatasetEntity for the project and add all entities to the RO-crate metadata
         List<RoCrateEntity> entities = new ArrayList<>();
+        List<String> publications = getPublications(project);
+        List<RoCrateEntity> additionalProjectProperties = getAdditionalProjectProperties(project);
         entities.add(new DatasetEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
-                                       getFirstSubmissionDate(project), project.getCenterName(), publications, null,
-                                       null, getReferences(additionalProperties)));
-        entities.addAll(additionalProperties);
-        // TODO Create and reference other RO-crate entities: analysis, file, sample
+                                       getFirstSubmissionDate(project), project.getCenterName(), publications,
+                                       getReferences(analysisRoEntities), getReferences(allFiles),
+                                       getReferences(additionalProjectProperties)));
+        // TODO would there be duplicates in any of these?
+        entities.addAll(additionalProjectProperties);
+        entities.addAll(analysisRoEntities);
+        entities.addAll(allAnalysisAdditionalProps);
+        entities.addAll(allFiles);
+        entities.addAll(allFileAdditionalProps);
+        entities.addAll(allSamples);
 
         return new RoCrateMetadata(entities);
+    }
+
+    private List<String> getPublications(Project project) {
+        return project.getDbXrefs()
+                      .stream()
+                      .filter(dbXref -> dbXref.getLinkType().equalsIgnoreCase("publication"))
+                      .map(DbXref::getCurie)
+                      .collect(Collectors.toList());
     }
 
     private List<Reference> getReferences(List<RoCrateEntity> entities) {
@@ -63,7 +116,7 @@ public class RoCrateMetadataAdaptor {
                       .map(Submission::getDate).orElse(null);
     }
 
-    private List<RoCrateEntity> getAdditionalProperties(Project project) {
+    private List<RoCrateEntity> getAdditionalProjectProperties(Project project) {
         List<RoCrateEntity> additionalProperties = new ArrayList<>();
         Long taxonomyId = null;
         String scientificName = null;
@@ -84,6 +137,18 @@ public class RoCrateMetadataAdaptor {
         additionalProperties.add(new CommentEntity("material", project.getMaterial()));
         additionalProperties.add(new CommentEntity("sourceType", project.getSourceType()));
 
+        return additionalProperties;
+    }
+
+    private List<RoCrateEntity> getAdditionalAnalysisProperties(Analysis analysis) {
+        List<RoCrateEntity> additionalProperties = new ArrayList<>();
+        String analysisAccession = analysis.getAnalysisAccession();
+        additionalProperties.add(new CommentEntity(analysisAccession, "assemblyAccession",
+                                                   analysis.getVcfReferenceAccession()));
+        additionalProperties.add(new CommentEntity(analysisAccession, "experimentType",
+                                                   analysis.getExperimentType().getExperimentType()));
+        additionalProperties.add(new CommentEntity(analysisAccession, "platform",
+                                                   analysis.getPlatform().getPlatform()));
         return additionalProperties;
     }
 

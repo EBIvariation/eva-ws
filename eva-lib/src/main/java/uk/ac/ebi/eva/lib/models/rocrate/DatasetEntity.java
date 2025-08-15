@@ -33,10 +33,10 @@ public class DatasetEntity extends RoCrateEntity {
     private String projectAccession;
 
     @JsonProperty("processSequence")
-    private List<Reference> analysisAccessions;
+    private List<Reference> analyses;
 
     @JsonProperty("hasPart")
-    private List<Reference> fileUrls;
+    private List<Reference> files;
 
     @JsonProperty("comment")
     // Project-level properties that aren't in schema.org/Dataset are included as Comments
@@ -46,7 +46,7 @@ public class DatasetEntity extends RoCrateEntity {
     }
 
     public DatasetEntity(String accession, String name, String description, LocalDate datePublished, String centerName,
-                         List<String> publications, List<Reference> analysisAccessions, List<Reference> fileUrls,
+                         List<String> publications, List<Reference> analyses, List<Reference> files,
                          List<Reference> additionalProperties) {
         super("https://www.ebi.ac.uk/eva/?eva-study=" + accession, "Dataset");
         this.projectAccession = accession;
@@ -56,8 +56,8 @@ public class DatasetEntity extends RoCrateEntity {
         this.license = "https://www.ebi.ac.uk/data-protection/privacy-notice/embl-ebi-public-website/";
         this.centerName = centerName;
         this.publications = publications;
-        this.analysisAccessions = analysisAccessions;
-        this.fileUrls = fileUrls;
+        this.analyses = analyses;
+        this.files = files;
         this.additionalProperties = additionalProperties;
     }
 
@@ -89,12 +89,12 @@ public class DatasetEntity extends RoCrateEntity {
         return projectAccession;
     }
 
-    public List<Reference> getAnalysisAccessions() {
-        return analysisAccessions;
+    public List<Reference> getAnalyses() {
+        return analyses;
     }
 
-    public List<Reference> getFileUrls() {
-        return fileUrls;
+    public List<Reference> getFiles() {
+        return files;
     }
 
     public List<Reference> getAdditionalProperties() {
