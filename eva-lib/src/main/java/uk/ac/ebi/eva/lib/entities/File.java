@@ -15,6 +15,9 @@
  */
 package uk.ac.ebi.eva.lib.entities;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.ac.ebi.eva.lib.models.FileFtpReference;
 
 import javax.persistence.*;
@@ -58,6 +61,8 @@ import java.util.Map;
 })
 @Table(name = "file")
 public class File {
+
+    protected static Logger logger = LoggerFactory.getLogger(File.class);
 
     @Id
     @Column(name = "file_id")
@@ -140,9 +145,13 @@ public class File {
     }
 
     public Map<String, Sample> getNameInFileToSampleMap() {
-        // TODO is nameInFile unique per file?
         Map<String, Sample> nameInFileToSampleMap = new HashMap<>();
         for (FileSample fileSample : fileSamples) {
+            // Sample names should not be duplicated within a file, but this isn't currently checked during ingestion.
+            // Log a warning if we encounter such a case.
+            if (nameInFileToSampleMap.containsKey(fileSample.getNameInFile())) {
+                logger.warn("Duplicate nameInFile found: {}", fileSample.getNameInFile());
+            }
             nameInFileToSampleMap.put(fileSample.getNameInFile(), fileSample.getSample());
         }
         return nameInFileToSampleMap;
