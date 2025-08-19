@@ -21,7 +21,7 @@ public class Sample {
     @Column(name = "ena_accession")
     private String enaAccession;
 
-    @OneToMany(mappedBy = "sample")
+    @OneToMany(mappedBy = "fileSamplePK.sampleId")
     private List<FileSample> fileSamples;
 
     public Sample() {
@@ -35,6 +35,14 @@ public class Sample {
 
     public String getBiosampleAccession() {
         return biosampleAccession;
+    }
+
+    public List<FileSample> getFileSamples() {
+        return fileSamples;
+    }
+
+    public void setFileSamples(List<FileSample> fileSamples) {
+        this.fileSamples = fileSamples;
     }
 
 }

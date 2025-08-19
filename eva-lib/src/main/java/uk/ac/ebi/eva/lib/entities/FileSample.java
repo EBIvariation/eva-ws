@@ -3,8 +3,8 @@ package uk.ac.ebi.eva.lib.entities;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Table;
 
 @Entity
@@ -15,11 +15,11 @@ public class FileSample {
     private FileSamplePK fileSamplePK;
 
     @ManyToOne
-    @JoinColumn(name = "file_id", insertable = false, updatable = false)
+    @MapsId("fileId")
     private File file;
 
     @ManyToOne
-    @JoinColumn(name = "sample_id", insertable = false, updatable = false)
+    @MapsId("sampleId")
     private Sample sample;
 
     @Column(name = "name_in_file")
@@ -34,12 +34,35 @@ public class FileSample {
         this.nameInFile = nameInFile;
     }
 
-    public String getNameInFile() {
-        return nameInFile;
+    public FileSamplePK getFileSamplePK() {
+        return fileSamplePK;
+    }
+
+    public void setFileSamplePK(FileSamplePK fileSamplePK) {
+        this.fileSamplePK = fileSamplePK;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 
     public Sample getSample() {
         return sample;
     }
 
+    public void setSample(Sample sample) {
+        this.sample = sample;
+    }
+
+    public String getNameInFile() {
+        return nameInFile;
+    }
+
+    public void setNameInFile(String nameInFile) {
+        this.nameInFile = nameInFile;
+    }
 }

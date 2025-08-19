@@ -96,7 +96,7 @@ public class File {
     @Column(length = 15, name = "eva_submission_file_id")
     private String evaSubmissionFileId;
 
-    @OneToMany(mappedBy = "file")
+    @OneToMany(mappedBy = "fileSamplePK.fileId")
     private List<FileSample> fileSamples;
 
     public File() {

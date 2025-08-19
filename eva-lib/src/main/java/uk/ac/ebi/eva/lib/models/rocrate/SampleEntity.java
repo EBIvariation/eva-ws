@@ -9,13 +9,16 @@ public class SampleEntity extends RoCrateEntity {
     @JsonProperty("identifier")
     private String sampleAccession;
 
+    private String url;
+
     public SampleEntity() {
     }
 
-    public SampleEntity(String name, String sampleAccession) {
-        super("https://www.ebi.ac.uk/biosamples/samples/" + sampleAccession, "Sample");
+    public SampleEntity(String fileName, String name, String sampleAccession) {
+        super("#" + fileName + "-" + sampleAccession, "Sample");
         this.name = name;
         this.sampleAccession = sampleAccession;
+        this.url = "https://www.ebi.ac.uk/biosamples/samples/" + sampleAccession;
     }
 
     public String getName() {

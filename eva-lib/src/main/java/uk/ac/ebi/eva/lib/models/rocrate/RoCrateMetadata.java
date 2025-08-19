@@ -41,4 +41,9 @@ public class RoCrateMetadata {
                     .collect(Collectors.toList());
     }
 
+    public List<RoCrateEntity> getEntitiesOfType(String type) {
+        return graph.stream().filter(roCrateEntity -> roCrateEntity.getType().equalsIgnoreCase(type))
+                .collect(Collectors.toList());
+    }
+
 }

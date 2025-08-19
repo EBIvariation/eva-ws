@@ -57,8 +57,10 @@ public class RoCrateMetadataAdaptor {
             List<File> files = analysis.getFiles();
             List<RoCrateEntity> fileRoEntities = new ArrayList<>();
             List<RoCrateEntity> sampleRoEntities = new ArrayList<>();
-            // TODO filter files to get only VCFs? include accessioned files?
             for (File file : files) {
+                if (!file.getFileType().equalsIgnoreCase("VCF")) {
+                    continue;
+                }
                 List<RoCrateEntity> fileProps = Collections.singletonList(
                         new CommentEntity(file.getFilename(), "md5", file.getFileMd5()));
                 fileRoEntities.add(new FileEntity(project.getProjectAccession(), file.getFilename(), null,
@@ -66,7 +68,7 @@ public class RoCrateMetadataAdaptor {
                 allFileAdditionalProps.addAll(fileProps);
 
                 for (Map.Entry<String, Sample> entry : file.getNameInFileToSampleMap().entrySet()) {
-                    sampleRoEntities.add(new SampleEntity(entry.getKey(), entry.getValue().getBiosampleAccession()));
+                    sampleRoEntities.add(new SampleEntity(file.getFilename(), entry.getKey(), entry.getValue().getBiosampleAccession()));
                 }
             }
 
@@ -87,7 +89,7 @@ public class RoCrateMetadataAdaptor {
                                        getFirstSubmissionDate(project), project.getCenterName(), publications,
                                        getReferences(analysisRoEntities), getReferences(allFiles),
                                        getReferences(additionalProjectProperties)));
-        // TODO would there be duplicates in any of these?
+        // TODO If samples can appear in multiple files, then the ID needs to reflect this - currently we have duplicate ID
         entities.addAll(additionalProjectProperties);
         entities.addAll(analysisRoEntities);
         entities.addAll(allAnalysisAdditionalProps);
