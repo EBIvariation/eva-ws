@@ -89,7 +89,6 @@ public class RoCrateMetadataAdaptor {
                                        getFirstSubmissionDate(project), project.getCenterName(), publications,
                                        getReferences(analysisRoEntities), getReferences(allFiles),
                                        getReferences(additionalProjectProperties)));
-        // TODO If samples can appear in multiple files, then the ID needs to reflect this - currently we have duplicate ID
         entities.addAll(additionalProjectProperties);
         entities.addAll(analysisRoEntities);
         entities.addAll(allAnalysisAdditionalProps);

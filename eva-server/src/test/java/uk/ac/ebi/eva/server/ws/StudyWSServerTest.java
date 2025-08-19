@@ -103,17 +103,22 @@ public class StudyWSServerTest {
         platformRepository.save(platform);
         experimentTypeRepository.save(experimentType);
 
+        // File in analysis 1 with 2 samples
         File file1 = new File(1L, "ena file id", "file1.vcf", "md5_1", "file location", "VCF", "submitted", 1,
                               true, null, false, "eva file id");
+        // File in analysis 2 with 1 sample
         File file2 = new File(2L, "ena file id", "file2.vcf", "md5_2", "file location", "vcf", "submitted", 1,
                               true, null, false, "eva file id");
-        // Non-VCF file
+        // Non-VCF file in analysis 1
         File file3 = new File(3L, "ena file id", "file1.vcf.csi", "md5_3", "file location", "csi", "submitted", 1,
+                              true, null, false, "eva file id");
+        // VCF file in analysis 1 with no samples
+        File file4 = new File(4L, "ena file id", "file4.vcf", "md5_4", "file location", "VCF", "submitted", 1,
                               true, null, false, "eva file id");
         Sample sample1 = new Sample(1L, "SAMEA0001", "ERS0001");
         Sample sample2 = new Sample(2L, "SAMEA0002", "ERS0002");
         sampleRepository.saveAll(Arrays.asList(sample1, sample2));
-        fileRepository.saveAll(Arrays.asList(file1, file2, file3));
+        fileRepository.saveAll(Arrays.asList(file1, file2, file3, file4));
 
         FileSample fileSample11 = new FileSample(file1, sample1, "sample1_in_file1");
         FileSample fileSample12 = new FileSample(file1, sample2, "sample2_in_file1");
@@ -135,7 +140,7 @@ public class StudyWSServerTest {
         analysis1.setExperimentType(experimentType);
         analysis1.setPlatform(platform);
         analysis1.setSubmission(submission1);
-        analysis1.setFiles(Arrays.asList(file1, file3));
+        analysis1.setFiles(Arrays.asList(file1, file3, file4));
         analysis2.setExperimentType(experimentType);
         analysis2.setPlatform(platform);
         analysis2.setSubmission(submission2);
@@ -194,7 +199,7 @@ public class StudyWSServerTest {
 
         // Check file entities
         List<RoCrateEntity> fileEntities = roCrateMetadata.getEntities(analysis.getFiles());
-        assertEquals(1, fileEntities.size());
+        assertEquals(2, fileEntities.size());
         FileEntity file = (FileEntity) fileEntities.get(0);
         assertEquals("file1.vcf", file.getName());
         List<Reference> md5Refs = file.getAdditionalProperties()
