@@ -133,9 +133,9 @@ public class StudyWSServerTest {
         fileSampleRepository.saveAll(Arrays.asList(fileSample11, fileSample12, fileSample22));
 
         Analysis analysis1 = new Analysis("ERZ0001", "analysis 1", "alias", "description", "center", null, "reference",
-                                          "GCA_0001.1", 0, 1);
+                                          "GCA_0001.1", 0, 1L);
         Analysis analysis2 = new Analysis("ERZ0002", "analysis 2", "alias", "description", "center", null, "reference",
-                                          "GCA_0001.2", 0, 1);
+                                          "GCA_0001.2", 0, 1L);
         List<Analysis> analyses = Arrays.asList(analysis1, analysis2);
         analysis1.setExperimentType(experimentType);
         analysis1.setPlatform(platform);
