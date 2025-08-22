@@ -38,10 +38,10 @@ public class Analysis {
     private String vcfReferenceAccession;
 
     @Column(name = "hidden_in_eva")
-    private int hiddenInEva;
+    private Integer hiddenInEva;
 
     @Column(name = "assembly_set_id")
-    private int assemblySetId;
+    private Long assemblySetId;
 
     @OneToMany
     @JoinTable(name = "analysis_file",
@@ -71,7 +71,8 @@ public class Analysis {
     }
 
     public Analysis(String analysisAccession, String title, String alias, String description, String centerName,
-                    Date date, String vcfReference, String vcfReferenceAccession, int hiddenInEva, int assemblySetId) {
+                    Date date, String vcfReference, String vcfReferenceAccession, Integer hiddenInEva,
+                    Long assemblySetId) {
         this.analysisAccession = analysisAccession;
         this.title = title;
         this.alias = alias;
