@@ -3,8 +3,8 @@ package uk.ac.ebi.eva.lib.entities;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.Table;
 
 @Entity
@@ -15,11 +15,11 @@ public class FileSample {
     private FileSamplePK fileSamplePK;
 
     @ManyToOne
-    @MapsId("fileId")
+    @JoinColumn(name = "file_id", insertable = false, updatable = false)
     private File file;
 
     @ManyToOne
-    @MapsId("sampleId")
+    @JoinColumn(name = "sample_id", insertable = false, updatable = false)
     private Sample sample;
 
     @Column(name = "name_in_file")
