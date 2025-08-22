@@ -15,9 +15,15 @@
  */
 package uk.ac.ebi.eva.lib.entities;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.ac.ebi.eva.lib.models.FileFtpReference;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jorizci on 03/10/16.
@@ -56,6 +62,8 @@ import javax.persistence.*;
 @Table(name = "file")
 public class File {
 
+    protected static Logger logger = LoggerFactory.getLogger(File.class);
+
     @Id
     @Column(name = "file_id")
     private Long fileId;
@@ -93,6 +101,12 @@ public class File {
     @Column(length = 15, name = "eva_submission_file_id")
     private String evaSubmissionFileId;
 
+    @OneToMany(mappedBy = "fileSamplePK.fileId")
+    private List<FileSample> fileSamples;
+
+    public File() {
+    }
+
     public File(Long fileId, String enaSubmissionFileId, String filename, String fileMd5, String fileLocation,
                 String fileType, String fileClass, int fileVersion, boolean isCurrent, String ftpFile,
                 boolean mongoLoadStatus, String evaSubmissionFileId) {
@@ -109,4 +123,38 @@ public class File {
         this.mongoLoadStatus = mongoLoadStatus;
         this.evaSubmissionFileId = evaSubmissionFileId;
     }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public String getFileMd5() {
+        return fileMd5;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public List<FileSample> getFileSamples() {
+        return fileSamples;
+    }
+
+    public void setFileSamples(List<FileSample> fileSamples) {
+        this.fileSamples = fileSamples;
+    }
+
+    public Map<String, Sample> getNameInFileToSampleMap() {
+        Map<String, Sample> nameInFileToSampleMap = new HashMap<>();
+        for (FileSample fileSample : fileSamples) {
+            // Sample names should not be duplicated within a file, but this isn't currently checked during ingestion.
+            // Log a warning if we encounter such a case.
+            if (nameInFileToSampleMap.containsKey(fileSample.getNameInFile())) {
+                logger.warn("Duplicate nameInFile found: {}", fileSample.getNameInFile());
+            }
+            nameInFileToSampleMap.put(fileSample.getNameInFile(), fileSample.getSample());
+        }
+        return nameInFileToSampleMap;
+    }
+
 }

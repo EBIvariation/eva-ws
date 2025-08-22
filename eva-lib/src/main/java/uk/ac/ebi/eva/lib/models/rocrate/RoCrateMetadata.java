@@ -2,6 +2,7 @@ package uk.ac.ebi.eva.lib.models.rocrate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,9 @@ public class RoCrateMetadata {
     public RoCrateMetadata(List<RoCrateEntity> graph) {
         this.context = "https://w3id.org/ro/crate/1.2/context";
         this.graph = graph;
+        if (this.graph == null) {
+            this.graph = new ArrayList<>();
+        }
         // Add the entity that describes this metadata document
         this.graph.add(0, new MetadataEntity());
     }
@@ -35,6 +39,11 @@ public class RoCrateMetadata {
         List<String> identifiers = references.stream().map(Reference::getId).collect(Collectors.toList());
         return graph.stream().filter(roCrateEntity -> identifiers.contains(roCrateEntity.getId()))
                     .collect(Collectors.toList());
+    }
+
+    public List<RoCrateEntity> getEntitiesOfType(String type) {
+        return graph.stream().filter(roCrateEntity -> roCrateEntity.getType().equalsIgnoreCase(type))
+                .collect(Collectors.toList());
     }
 
 }
