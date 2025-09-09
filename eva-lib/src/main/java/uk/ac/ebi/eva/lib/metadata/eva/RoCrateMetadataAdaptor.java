@@ -146,10 +146,14 @@ public class RoCrateMetadataAdaptor {
         String analysisAccession = analysis.getAnalysisAccession();
         additionalProperties.add(new CommentEntity(analysisAccession, "assemblyAccession",
                                                    analysis.getVcfReferenceAccession()));
-        additionalProperties.add(new CommentEntity(analysisAccession, "experimentType",
-                                                   analysis.getExperimentType().getExperimentType()));
-        additionalProperties.add(new CommentEntity(analysisAccession, "platform",
-                                                   analysis.getPlatform().getPlatform()));
+        if (analysis.getExperimentType() != null) {
+            additionalProperties.add(new CommentEntity(analysisAccession, "experimentType",
+                                                       analysis.getExperimentType().getExperimentType()));
+        }
+        if (analysis.getPlatform() != null) {
+            additionalProperties.add(new CommentEntity(analysisAccession, "platform",
+                                                       analysis.getPlatform().getPlatform()));
+        }
         return additionalProperties;
     }
 
