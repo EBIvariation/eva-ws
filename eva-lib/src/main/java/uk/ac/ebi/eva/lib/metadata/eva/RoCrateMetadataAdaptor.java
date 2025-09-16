@@ -72,8 +72,9 @@ public class RoCrateMetadataAdaptor {
                 }
             }
 
+            LocalDate analysisDate = analysis.getSubmission() != null ? analysis.getSubmission().getDate() : null;
             analysisRoEntities.add(new LabProcessEntity(analysis.getAnalysisAccession(), analysis.getTitle(),
-                                                        analysis.getDescription(), analysis.getSubmission().getDate(),
+                                                        analysis.getDescription(), analysisDate,
                                                         getReferences(sampleRoEntities), getReferences(fileRoEntities),
                                                         getReferences(analysisProps)));
             allAnalysisAdditionalProps.addAll(analysisProps);

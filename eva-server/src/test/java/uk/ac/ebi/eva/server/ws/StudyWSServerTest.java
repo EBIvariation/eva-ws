@@ -141,9 +141,8 @@ public class StudyWSServerTest {
         analysis1.setPlatform(platform);
         analysis1.setSubmission(submission1);
         analysis1.setFiles(Arrays.asList(file1, file3, file4));
-        analysis2.setSubmission(submission2);
         analysis2.setFiles(Collections.singletonList(file2));
-        // Analysis 2 missing experiment type and platform
+        // Analysis 2 missing experiment type, platform and submissions
         analysisRepository.saveAll(analyses);
 
         // Create and save entities required for project
