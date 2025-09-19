@@ -150,9 +150,14 @@ public class File {
             // Sample names should not be duplicated within a file, but this isn't currently checked during ingestion.
             // Log a warning if we encounter such a case.
             if (nameInFileToSampleMap.containsKey(fileSample.getNameInFile())) {
-                logger.warn("Duplicate nameInFile found: {}", fileSample.getNameInFile());
+                logger.warn("Duplicate sample nameInFile found: {}", fileSample.getNameInFile());
             }
-            nameInFileToSampleMap.put(fileSample.getNameInFile(), fileSample.getSample());
+            if (fileSample.getNameInFile() == null) {
+                logger.warn("Sample nameInFile is null: file {}, sample accession {}", fileId,
+                            fileSample.getSample().getBiosampleAccession());
+            } else {
+                nameInFileToSampleMap.put(fileSample.getNameInFile(), fileSample.getSample());
+            }
         }
         return nameInFileToSampleMap;
     }

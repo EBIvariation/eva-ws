@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = MetadataEntity.class, name = "CreativeWork"),
         @JsonSubTypes.Type(value = SampleEntity.class, name = "Sample")
 })
-public abstract class RoCrateEntity {
+public abstract class RoCrateEntity implements Comparable<RoCrateEntity> {
 
     @JsonProperty("@id")
     private String id;
@@ -41,6 +41,10 @@ public abstract class RoCrateEntity {
 
     public String getType() {
         return type;
+    }
+
+    public int compareTo(RoCrateEntity o) {
+        return this.id.compareTo(o.id);
     }
 
 }

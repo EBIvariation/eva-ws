@@ -141,9 +141,8 @@ public class StudyWSServerTest {
         analysis1.setPlatform(platform);
         analysis1.setSubmission(submission1);
         analysis1.setFiles(Arrays.asList(file1, file3, file4));
-        analysis2.setSubmission(submission2);
         analysis2.setFiles(Collections.singletonList(file2));
-        // Analysis 2 missing experiment type and platform
+        // Analysis 2 missing experiment type, platform and submissions
         analysisRepository.saveAll(analyses);
 
         // Create and save entities required for project
@@ -193,13 +192,13 @@ public class StudyWSServerTest {
         // Check analysis entities (LabProcess)
         List<RoCrateEntity> analyses = roCrateMetadata.getEntitiesOfType("LabProcess");
         assertEquals(2, analyses.size());
-        LabProcessEntity analysis = (LabProcessEntity) analyses.get(0);
+        LabProcessEntity analysis = (LabProcessEntity) analyses.stream().sorted().findFirst().get();
         assertEquals("ERZ0001", analysis.getAnalysisAccession());
 
         // Check file entities
         List<RoCrateEntity> fileEntities = roCrateMetadata.getEntities(analysis.getFiles());
         assertEquals(2, fileEntities.size());
-        FileEntity file = (FileEntity) fileEntities.get(0);
+        FileEntity file = (FileEntity) fileEntities.stream().sorted().findFirst().get();
         assertEquals("file1.vcf", file.getName());
         List<Reference> md5Refs = file.getAdditionalProperties()
                                       .stream()
