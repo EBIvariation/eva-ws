@@ -192,13 +192,13 @@ public class StudyWSServerTest {
         // Check analysis entities (LabProcess)
         List<RoCrateEntity> analyses = roCrateMetadata.getEntitiesOfType("LabProcess");
         assertEquals(2, analyses.size());
-        LabProcessEntity analysis = (LabProcessEntity) analyses.get(0);
+        LabProcessEntity analysis = (LabProcessEntity) analyses.stream().sorted().findFirst().get();
         assertEquals("ERZ0001", analysis.getAnalysisAccession());
 
         // Check file entities
         List<RoCrateEntity> fileEntities = roCrateMetadata.getEntities(analysis.getFiles());
         assertEquals(2, fileEntities.size());
-        FileEntity file = (FileEntity) fileEntities.get(0);
+        FileEntity file = (FileEntity) fileEntities.stream().sorted().findFirst().get();
         assertEquals("file1.vcf", file.getName());
         List<Reference> md5Refs = file.getAdditionalProperties()
                                       .stream()
