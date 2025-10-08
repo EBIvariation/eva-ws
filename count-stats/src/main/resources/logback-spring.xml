@@ -1,5 +1,5 @@
 <configuration>
-    <property name="LOG_DIR" value="logs"/>
+    <property name="LOG_DIR" value="logs/count-stats"/>
     <property name="APP_NAME" value="count-stats"/>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/${APP_NAME}.log</file>
