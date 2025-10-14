@@ -176,6 +176,19 @@ public class RegionWSServerTest {
         testGetVariantsByRegionHelper("21:8000-9000", 0);
     }
 
+    @Test
+    public void testGetVariantsByNonExistingDBName() {
+        // species name not in the required format of taxonomycode_assemblyCode
+        String speciesName = "mmusculus-grcm38";
+        String url = "/v1/segments/21:8000-9000/variants?species=" + speciesName;
+        ResponseEntity<QueryResponse<String>> response = restTemplate.exchange(url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<String>>() {
+                });
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        QueryResponse<String> queryResponse = response.getBody();
+        assertEquals("Please specify a valid species name", queryResponse.getResponse().get(0));
+    }
+
     private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants) throws URISyntaxException {
         List<VariantWithSamplesAndAnnotation> results = regionWsHelper(testRegion, null);
         assertEquals(expectedVariants, results.size());
