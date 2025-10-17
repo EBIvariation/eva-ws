@@ -114,6 +114,13 @@ public class RegionWSServer extends EvaWSServer {
             return setQueryResponse("Please specify a species");
         }
 
+        String[] dbNameParts = species.split("_", 2);
+
+        if (dbNameParts.length != 2) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return setQueryResponse("Please specify a valid species name");
+        }
+
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
 
         List<VariantRepositoryFilter> filters = new FilterBuilder()
@@ -148,7 +155,6 @@ public class RegionWSServer extends EvaWSServer {
         Map<Region, String> insdcRegionAndNameInOriginalNamingConventionMap = new HashMap<>();
 
         try {
-            String[] dbNameParts = species.split("_", 2);
             Optional<String> asmAcc = taxonomyUtils.getAssemblyAccessionForAssemblyCode(dbNameParts[1]);
             if (asmAcc.isPresent()) {
                 List<Region> translatedRegions = regions.stream().map(region -> {
