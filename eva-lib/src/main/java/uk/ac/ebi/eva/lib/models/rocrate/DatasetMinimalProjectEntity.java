@@ -10,54 +10,37 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import java.time.LocalDate;
 import java.util.List;
 
-public class DatasetEntity extends RoCrateEntity {
+public class DatasetMinimalProjectEntity extends RoCrateEntity {
 
-    private String name;
+    protected String name;
 
-    private String description;
+    protected String description;
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate datePublished;
+    protected LocalDate datePublished;
 
-    private String license;
-
-    @JsonProperty("creator")
-    private String centerName;
-
-    @JsonProperty("citation")
-    private List<String> publications;
+    protected String license;
 
     @JsonProperty("identifier")
-    private String projectAccession;
-
-    @JsonProperty("processSequence")
-    private List<Reference> analyses;
-
-    @JsonProperty("hasPart")
-    private List<Reference> files;
+    protected String projectAccession;
 
     @JsonProperty("comment")
     // Project-level properties that aren't in schema.org/Dataset are included as Comments
-    private List<Reference> additionalProperties;
+    protected List<Reference> additionalProperties;
 
-    public DatasetEntity() {
+    public DatasetMinimalProjectEntity() {
     }
 
-    public DatasetEntity(String accession, String name, String description, LocalDate datePublished, String centerName,
-                         List<String> publications, List<Reference> analyses, List<Reference> files,
-                         List<Reference> additionalProperties) {
+    public DatasetMinimalProjectEntity(String accession, String name, String description, LocalDate datePublished,
+                                       List<Reference> additionalProperties) {
         super("https://www.ebi.ac.uk/eva/?eva-study=" + accession, "Dataset");
         this.projectAccession = accession;
         this.name = name;
         this.description = description;
         this.datePublished = datePublished;
         this.license = "https://www.ebi.ac.uk/data-protection/privacy-notice/embl-ebi-public-website/";
-        this.centerName = centerName;
-        this.publications = publications;
-        this.analyses = analyses;
-        this.files = files;
         this.additionalProperties = additionalProperties;
     }
 
@@ -77,24 +60,8 @@ public class DatasetEntity extends RoCrateEntity {
         return license;
     }
 
-    public String getCenterName() {
-        return centerName;
-    }
-
-    public List<String> getPublications() {
-        return publications;
-    }
-
     public String getProjectAccession() {
         return projectAccession;
-    }
-
-    public List<Reference> getAnalyses() {
-        return analyses;
-    }
-
-    public List<Reference> getFiles() {
-        return files;
     }
 
     public List<Reference> getAdditionalProperties() {

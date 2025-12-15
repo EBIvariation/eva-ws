@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = CommentEntity.class, name = "Comment"),
-        @JsonSubTypes.Type(value = DatasetEntity.class, name = "Dataset"),
+        @JsonSubTypes.Type(value = DatasetProjectEntity.class, name = "Dataset"),
         @JsonSubTypes.Type(value = FileEntity.class, name = "File"),
         @JsonSubTypes.Type(value = LabProcessEntity.class, name = "LabProcess"),
         @JsonSubTypes.Type(value = MetadataEntity.class, name = "CreativeWork"),

@@ -13,7 +13,9 @@ import uk.ac.ebi.eva.lib.entities.Sample;
 import uk.ac.ebi.eva.lib.entities.Submission;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
 import uk.ac.ebi.eva.lib.models.rocrate.CommentEntity;
-import uk.ac.ebi.eva.lib.models.rocrate.DatasetEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.DataCatalogEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.DatasetMinimalProjectEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.DatasetProjectEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.FileEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.LabProcessEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.Reference;
@@ -86,7 +88,7 @@ public class RoCrateMetadataAdaptor {
         List<RoCrateEntity> entities = new ArrayList<>();
         List<String> publications = getPublications(project);
         List<RoCrateEntity> additionalProjectProperties = getAdditionalProjectProperties(project);
-        entities.add(new DatasetEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
+        entities.add(new DatasetProjectEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
                                        getFirstSubmissionDate(project), project.getCenterName(), publications,
                                        getReferences(analysisRoEntities), getReferences(allFiles),
                                        getReferences(additionalProjectProperties)));
@@ -97,6 +99,21 @@ public class RoCrateMetadataAdaptor {
         entities.addAll(allFileAdditionalProps);
         entities.addAll(allSamples);
 
+        return new RoCrateMetadata(entities);
+    }
+
+    public RoCrateMetadata getAllProjects(){
+        List<Project> projects = projectRepository.getAllProjects();
+        // Construct the project-related entities
+        List<RoCrateEntity> projectsRoEntities = new ArrayList<>();
+        // Construct the DatasetEntity for the project and add all entities to the RO-crate metadata
+        List<RoCrateEntity> entities = new ArrayList<>();
+        for (Project project : projects) {
+            List<RoCrateEntity> additionalProjectProperties = getAdditionalProjectProperties(project);
+            entities.add(new DatasetMinimalProjectEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
+                    getFirstSubmissionDate(project), getReferences(additionalProjectProperties)));
+        }
+        entities.add(new DataCatalogEntity(getReferences(projectsRoEntities)));
         return new RoCrateMetadata(entities);
     }
 

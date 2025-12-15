@@ -125,4 +125,13 @@ public class StudyWSServer extends EvaWSServer {
         }
         return ResponseEntity.ok(roCrateMetadata);
     }
+
+    @RequestMapping(value = "/ro-crate", method = RequestMethod.GET)
+    public ResponseEntity<RoCrateMetadata> getAllRoCrates() {
+        RoCrateMetadata roCrateMetadata = roCrateMetadataAdaptor.getAllProjects(); // adapt to your service
+        if (roCrateMetadata == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(roCrateMetadata);
+    }
 }

@@ -24,7 +24,7 @@ import uk.ac.ebi.eva.lib.entities.Sample;
 import uk.ac.ebi.eva.lib.entities.Submission;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
 import uk.ac.ebi.eva.lib.models.rocrate.CommentEntity;
-import uk.ac.ebi.eva.lib.models.rocrate.DatasetEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.DatasetProjectEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.FileEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.LabProcessEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.MetadataEntity;
@@ -175,7 +175,7 @@ public class StudyWSServerTest {
         assertEquals("ro-crate-metadata.json", metadata.getId());
 
         // Second entity is the dataset, corresponding to the project
-        DatasetEntity dataset = (DatasetEntity) roCrateMetadata.getGraph().get(1);
+        DatasetProjectEntity dataset = (DatasetProjectEntity) roCrateMetadata.getGraph().get(1);
         assertEquals("PRJEB0001", dataset.getProjectAccession());
         assertEquals("project title", dataset.getName());
         assertEquals(LocalDate.of(2025, 1, 1), dataset.getDatePublished());
@@ -216,6 +216,14 @@ public class StudyWSServerTest {
                      sampleEntities.stream().map(SampleEntity::getSampleAccession).collect(Collectors.toSet()));
         assertEquals(Sets.newHashSet("sample1_in_file1", "sample2_in_file1"),
                      sampleEntities.stream().map(SampleEntity::getName).collect(Collectors.toSet()));
+    }
+
+    @Test
+    public void testGetRoCrateCatalog() {
+        String url = "/v1/studies/ro-crate";
+        ResponseEntity<RoCrateMetadata> response = restTemplate.exchange(url, HttpMethod.GET, null,
+                RoCrateMetadata.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
