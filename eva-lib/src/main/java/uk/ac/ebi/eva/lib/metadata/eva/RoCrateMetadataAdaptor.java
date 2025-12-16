@@ -103,7 +103,7 @@ public class RoCrateMetadataAdaptor {
     }
 
     public RoCrateMetadata getAllProjects(){
-        List<Project> projects = projectRepository.getAllProjects();
+        List<Project> projects = projectRepository.findAll();
         // Construct the project-related entities
         List<RoCrateEntity> projectsRoEntities = new ArrayList<>();
         // Construct the DatasetEntity for the project and add all entities to the RO-crate metadata

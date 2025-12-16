@@ -24,6 +24,4 @@ public interface ProjectRepository extends JpaRepository<Project,String > {
 
     Project getProjectByProjectAccession(String accession);
 
-    List<Project> getAllProjects();
-
 }
