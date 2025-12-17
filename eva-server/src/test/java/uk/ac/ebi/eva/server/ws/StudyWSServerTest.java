@@ -185,7 +185,7 @@ public class StudyWSServerTest {
         // Additional properties of project are separate entities
         List<Reference> taxonomyRefs = dataset.getAdditionalProperties()
                                               .stream()
-                                              .filter(ref -> ref.getId().equalsIgnoreCase("#taxonomyId"))
+                                              .filter(ref -> ref.getId().equalsIgnoreCase("#PRJEB0001-taxonomyId"))
                                               .collect(Collectors.toList());
         List<RoCrateEntity> taxonomyEntities = roCrateMetadata.getEntities(taxonomyRefs);
         assertEquals(1, taxonomyEntities.size());
