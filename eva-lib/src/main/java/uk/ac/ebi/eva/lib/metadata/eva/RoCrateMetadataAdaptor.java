@@ -106,14 +106,19 @@ public class RoCrateMetadataAdaptor {
         List<Project> projects = projectRepository.findAll();
         // Construct the project-related entities
         List<RoCrateEntity> projectsRoEntities = new ArrayList<>();
+        List<RoCrateEntity> allAdditionalProjectProperties = new ArrayList<>();
+
         // Construct the DatasetEntity for the project and add all entities to the RO-crate metadata
-        List<RoCrateEntity> entities = new ArrayList<>();
         for (Project project : projects) {
             List<RoCrateEntity> additionalProjectProperties = getAdditionalProjectProperties(project);
-            entities.add(new DatasetMinimalProjectEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
+            allAdditionalProjectProperties.addAll(additionalProjectProperties);
+            projectsRoEntities.add(new DatasetMinimalProjectEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
                     getFirstSubmissionDate(project), getReferences(additionalProjectProperties)));
         }
-        entities.add(new DataCatalogEntity(getReferences(projectsRoEntities)));
+        List<RoCrateEntity> entities = new ArrayList<>();
+        entities.add(new DataCatalogEntity(getReferences(projectsRoEntities), getMostRecentDatePublished(projectsRoEntities)));
+        entities.addAll(projectsRoEntities);
+        entities.addAll(allAdditionalProjectProperties);
         return new RoCrateMetadata(entities);
     }
 
@@ -135,6 +140,14 @@ public class RoCrateMetadataAdaptor {
                       .map(Submission::getDate).orElse(null);
     }
 
+    private LocalDate getMostRecentDatePublished(List<RoCrateEntity> projectsRoEntities) {
+
+        return projectsRoEntities.stream()
+                .map(T -> (DatasetMinimalProjectEntity) T)
+                .max(Comparator.comparing(DatasetMinimalProjectEntity::getDatePublished))
+                .map(DatasetMinimalProjectEntity::getDatePublished).orElse(null);
+    }
+
     private List<RoCrateEntity> getAdditionalProjectProperties(Project project) {
         List<RoCrateEntity> additionalProperties = new ArrayList<>();
         Long taxonomyId = null;
@@ -150,11 +163,11 @@ public class RoCrateMetadataAdaptor {
             scientificName = taxonomy.getScientificName();
         }
 
-        additionalProperties.add(new CommentEntity("taxonomyId", "" + taxonomyId));
-        additionalProperties.add(new CommentEntity("scientificName", scientificName));
-        additionalProperties.add(new CommentEntity("scope", project.getScope()));
-        additionalProperties.add(new CommentEntity("material", project.getMaterial()));
-        additionalProperties.add(new CommentEntity("sourceType", project.getSourceType()));
+        additionalProperties.add(new CommentEntity(project.getProjectAccession(), "taxonomyId", "" + taxonomyId));
+        additionalProperties.add(new CommentEntity(project.getProjectAccession(), "scientificName", scientificName));
+        additionalProperties.add(new CommentEntity(project.getProjectAccession(), "scope", project.getScope()));
+        additionalProperties.add(new CommentEntity(project.getProjectAccession(), "material", project.getMaterial()));
+        additionalProperties.add(new CommentEntity(project.getProjectAccession(), "sourceType", project.getSourceType()));
 
         return additionalProperties;
     }

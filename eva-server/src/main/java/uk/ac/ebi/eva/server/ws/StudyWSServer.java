@@ -132,6 +132,7 @@ public class StudyWSServer extends EvaWSServer {
         if (roCrateMetadata == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(roCrateMetadata);
+        ResponseEntity<RoCrateMetadata> response = ResponseEntity.ok(roCrateMetadata);
+        return response;
     }
 }

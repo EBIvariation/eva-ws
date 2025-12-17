@@ -24,6 +24,8 @@ import uk.ac.ebi.eva.lib.entities.Sample;
 import uk.ac.ebi.eva.lib.entities.Submission;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
 import uk.ac.ebi.eva.lib.models.rocrate.CommentEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.DataCatalogEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.DatasetMinimalProjectEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.DatasetProjectEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.FileEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.LabProcessEntity;
@@ -224,6 +226,23 @@ public class StudyWSServerTest {
         ResponseEntity<RoCrateMetadata> response = restTemplate.exchange(url, HttpMethod.GET, null,
                 RoCrateMetadata.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        RoCrateMetadata roCrateMetadata = response.getBody();
+
+        // First entity describes the metadata document itself
+        MetadataEntity metadata = (MetadataEntity) roCrateMetadata.getGraph().get(0);
+        assertEquals("ro-crate-metadata.json", metadata.getId());
+
+        // Second entity is the dataCatalog for all of EVA's projects
+        DataCatalogEntity dataCatalog = (DataCatalogEntity) roCrateMetadata.getGraph().get(1);
+        assertEquals("EVA studies", dataCatalog.getIdentifier());
+        assertEquals(LocalDate.of(2025, 1, 1), dataCatalog.getDatePublished());
+
+        // Check project entities (dataset)
+        List<RoCrateEntity> projects = roCrateMetadata.getEntitiesOfType("Dataset");
+        assertEquals(1, projects.size());
+        DatasetMinimalProjectEntity project = (DatasetMinimalProjectEntity) projects.stream().sorted().findFirst().get();
+        assertEquals("PRJEB0001", project.getProjectAccession());
     }
 
     @Test

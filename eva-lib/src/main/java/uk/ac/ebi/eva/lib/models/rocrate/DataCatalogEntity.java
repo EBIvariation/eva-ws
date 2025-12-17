@@ -14,12 +14,8 @@ public class DataCatalogEntity extends RoCrateEntity {
 
     private static final String ID = "https://www.ebi.ac.uk/eva/";
     private static final String TYPE = "DataCatalog";
-    private static final String IDENTIFIER = "EVA";
+    private static final String IDENTIFIER = "EVA studies";
     private static final String LICENCE = "https://www.ebi.ac.uk/data-protection/privacy-notice/embl-ebi-public-website/";
-
-    private String name;
-
-    private String description;
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
@@ -27,9 +23,6 @@ public class DataCatalogEntity extends RoCrateEntity {
     private LocalDate datePublished;
 
     private String license;
-
-    @JsonProperty("creator")
-    private String eva_at_ebi;
 
     @JsonProperty("identifier")
     private String identifier;
@@ -40,28 +33,19 @@ public class DataCatalogEntity extends RoCrateEntity {
     public DataCatalogEntity() {
     }
 
-    public DataCatalogEntity(List<Reference> projects) {
+    public DataCatalogEntity(List<Reference> projects, LocalDate datePublished) {
         super(ID , TYPE);
         this.license = LICENCE;
         this.identifier = IDENTIFIER;
         this.projects = projects;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
+        this.datePublished = datePublished;
     }
 
     public String getIdentifier() { return identifier;}
 
     public List<Reference> getProjects() { return projects; }
 
-    public LocalDate getDatePublished() {
-        return datePublished;
-    }
+    public LocalDate getDatePublished() {return datePublished;}
 
     public String getLicense() {
         return license;
