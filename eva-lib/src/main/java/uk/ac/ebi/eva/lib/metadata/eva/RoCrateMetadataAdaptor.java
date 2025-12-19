@@ -13,7 +13,9 @@ import uk.ac.ebi.eva.lib.entities.Sample;
 import uk.ac.ebi.eva.lib.entities.Submission;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
 import uk.ac.ebi.eva.lib.models.rocrate.CommentEntity;
-import uk.ac.ebi.eva.lib.models.rocrate.DatasetEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.DataCatalogEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.MinimalProjectDatasetEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.ProjectDatasetEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.FileEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.LabProcessEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.Reference;
@@ -86,7 +88,7 @@ public class RoCrateMetadataAdaptor {
         List<RoCrateEntity> entities = new ArrayList<>();
         List<String> publications = getPublications(project);
         List<RoCrateEntity> additionalProjectProperties = getAdditionalProjectProperties(project);
-        entities.add(new DatasetEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
+        entities.add(new ProjectDatasetEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
                                        getFirstSubmissionDate(project), project.getCenterName(), publications,
                                        getReferences(analysisRoEntities), getReferences(allFiles),
                                        getReferences(additionalProjectProperties)));
@@ -97,6 +99,26 @@ public class RoCrateMetadataAdaptor {
         entities.addAll(allFileAdditionalProps);
         entities.addAll(allSamples);
 
+        return new RoCrateMetadata(entities);
+    }
+
+    public RoCrateMetadata getAllProjects(){
+        List<Project> projects = projectRepository.findAll();
+        // Construct the project-related entities
+        List<RoCrateEntity> projectsRoEntities = new ArrayList<>();
+        List<RoCrateEntity> allAdditionalProjectProperties = new ArrayList<>();
+        for (Project project : projects) {
+            List<RoCrateEntity> additionalProjectProperties = getAdditionalProjectProperties(project);
+            allAdditionalProjectProperties.addAll(additionalProjectProperties);
+            projectsRoEntities.add(new MinimalProjectDatasetEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
+                    getFirstSubmissionDate(project), getReferences(additionalProjectProperties)));
+        }
+
+        // Construct the DataCatalogEntity and add all entities to the RO-crate metadata
+        List<RoCrateEntity> entities = new ArrayList<>();
+        entities.add(new DataCatalogEntity(getReferences(projectsRoEntities), getMostRecentDatePublished(projectsRoEntities)));
+        entities.addAll(projectsRoEntities);
+        entities.addAll(allAdditionalProjectProperties);
         return new RoCrateMetadata(entities);
     }
 
@@ -118,6 +140,14 @@ public class RoCrateMetadataAdaptor {
                       .map(Submission::getDate).orElse(null);
     }
 
+    private LocalDate getMostRecentDatePublished(List<RoCrateEntity> projectsRoEntities) {
+
+        return projectsRoEntities.stream()
+                .map(entity -> (MinimalProjectDatasetEntity) entity)
+                .max(Comparator.comparing(MinimalProjectDatasetEntity::getDatePublished))
+                .map(MinimalProjectDatasetEntity::getDatePublished).orElse(null);
+    }
+
     private List<RoCrateEntity> getAdditionalProjectProperties(Project project) {
         List<RoCrateEntity> additionalProperties = new ArrayList<>();
         Long taxonomyId = null;
@@ -133,11 +163,11 @@ public class RoCrateMetadataAdaptor {
             scientificName = taxonomy.getScientificName();
         }
 
-        additionalProperties.add(new CommentEntity("taxonomyId", "" + taxonomyId));
-        additionalProperties.add(new CommentEntity("scientificName", scientificName));
-        additionalProperties.add(new CommentEntity("scope", project.getScope()));
-        additionalProperties.add(new CommentEntity("material", project.getMaterial()));
-        additionalProperties.add(new CommentEntity("sourceType", project.getSourceType()));
+        additionalProperties.add(new CommentEntity(project.getProjectAccession(), "taxonomyId", "" + taxonomyId));
+        additionalProperties.add(new CommentEntity(project.getProjectAccession(), "scientificName", scientificName));
+        additionalProperties.add(new CommentEntity(project.getProjectAccession(), "scope", project.getScope()));
+        additionalProperties.add(new CommentEntity(project.getProjectAccession(), "material", project.getMaterial()));
+        additionalProperties.add(new CommentEntity(project.getProjectAccession(), "sourceType", project.getSourceType()));
 
         return additionalProperties;
     }
