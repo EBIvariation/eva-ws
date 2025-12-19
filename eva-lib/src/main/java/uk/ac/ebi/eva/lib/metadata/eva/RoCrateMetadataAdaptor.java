@@ -113,6 +113,8 @@ public class RoCrateMetadataAdaptor {
             projectsRoEntities.add(new DatasetMinimalProjectEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
                     getFirstSubmissionDate(project), getReferences(additionalProjectProperties)));
         }
+
+        // Construct the DataCatalogEntity and add all entities to the RO-crate metadata
         List<RoCrateEntity> entities = new ArrayList<>();
         entities.add(new DataCatalogEntity(getReferences(projectsRoEntities), getMostRecentDatePublished(projectsRoEntities)));
         entities.addAll(projectsRoEntities);
