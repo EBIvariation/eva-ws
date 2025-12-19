@@ -18,8 +18,6 @@ package uk.ac.ebi.eva.lib.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import uk.ac.ebi.eva.lib.entities.Project;
 
-import java.util.List;
-
 public interface ProjectRepository extends JpaRepository<Project,String > {
 
     Project getProjectByProjectAccession(String accession);
