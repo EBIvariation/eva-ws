@@ -24,7 +24,6 @@ public class DataCatalogEntity extends RoCrateEntity {
 
     private String license;
 
-    @JsonProperty("identifier")
     private String identifier;
 
     @JsonProperty("dataset")
