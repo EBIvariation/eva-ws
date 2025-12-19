@@ -15,7 +15,7 @@ public class DataCatalogEntity extends RoCrateEntity {
     private static final String ID = "https://www.ebi.ac.uk/eva/";
     private static final String TYPE = "DataCatalog";
     private static final String IDENTIFIER = "EVA studies";
-    private static final String LICENCE = "https://www.ebi.ac.uk/data-protection/privacy-notice/embl-ebi-public-website/";
+    private static final String LICENSE = "https://www.ebi.ac.uk/data-protection/privacy-notice/embl-ebi-public-website/";
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
