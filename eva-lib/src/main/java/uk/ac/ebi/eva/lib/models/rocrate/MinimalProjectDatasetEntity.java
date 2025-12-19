@@ -10,7 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import java.time.LocalDate;
 import java.util.List;
 
-public class DatasetMinimalProjectEntity extends RoCrateEntity {
+public class MinimalProjectDatasetEntity extends RoCrateEntity {
 
     protected String name;
 
@@ -30,10 +30,10 @@ public class DatasetMinimalProjectEntity extends RoCrateEntity {
     // Project-level properties that aren't in schema.org/Dataset are included as Comments
     protected List<Reference> additionalProperties;
 
-    public DatasetMinimalProjectEntity() {
+    public MinimalProjectDatasetEntity() {
     }
 
-    public DatasetMinimalProjectEntity(String accession, String name, String description, LocalDate datePublished,
+    public MinimalProjectDatasetEntity(String accession, String name, String description, LocalDate datePublished,
                                        List<Reference> additionalProperties) {
         super("https://www.ebi.ac.uk/eva/?eva-study=" + accession, "Dataset");
         this.projectAccession = accession;

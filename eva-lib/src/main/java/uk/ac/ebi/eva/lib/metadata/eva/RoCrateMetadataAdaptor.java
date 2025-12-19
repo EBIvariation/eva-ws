@@ -14,8 +14,8 @@ import uk.ac.ebi.eva.lib.entities.Submission;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
 import uk.ac.ebi.eva.lib.models.rocrate.CommentEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.DataCatalogEntity;
-import uk.ac.ebi.eva.lib.models.rocrate.DatasetMinimalProjectEntity;
-import uk.ac.ebi.eva.lib.models.rocrate.DatasetProjectEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.MinimalProjectDatasetEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.ProjectDatasetEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.FileEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.LabProcessEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.Reference;
@@ -88,7 +88,7 @@ public class RoCrateMetadataAdaptor {
         List<RoCrateEntity> entities = new ArrayList<>();
         List<String> publications = getPublications(project);
         List<RoCrateEntity> additionalProjectProperties = getAdditionalProjectProperties(project);
-        entities.add(new DatasetProjectEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
+        entities.add(new ProjectDatasetEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
                                        getFirstSubmissionDate(project), project.getCenterName(), publications,
                                        getReferences(analysisRoEntities), getReferences(allFiles),
                                        getReferences(additionalProjectProperties)));
@@ -110,7 +110,7 @@ public class RoCrateMetadataAdaptor {
         for (Project project : projects) {
             List<RoCrateEntity> additionalProjectProperties = getAdditionalProjectProperties(project);
             allAdditionalProjectProperties.addAll(additionalProjectProperties);
-            projectsRoEntities.add(new DatasetMinimalProjectEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
+            projectsRoEntities.add(new MinimalProjectDatasetEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
                     getFirstSubmissionDate(project), getReferences(additionalProjectProperties)));
         }
 
@@ -143,9 +143,9 @@ public class RoCrateMetadataAdaptor {
     private LocalDate getMostRecentDatePublished(List<RoCrateEntity> projectsRoEntities) {
 
         return projectsRoEntities.stream()
-                .map(entity -> (DatasetMinimalProjectEntity) entity)
-                .max(Comparator.comparing(DatasetMinimalProjectEntity::getDatePublished))
-                .map(DatasetMinimalProjectEntity::getDatePublished).orElse(null);
+                .map(entity -> (MinimalProjectDatasetEntity) entity)
+                .max(Comparator.comparing(MinimalProjectDatasetEntity::getDatePublished))
+                .map(MinimalProjectDatasetEntity::getDatePublished).orElse(null);
     }
 
     private List<RoCrateEntity> getAdditionalProjectProperties(Project project) {

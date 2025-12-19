@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.List;
 
-public class DatasetProjectEntity extends DatasetMinimalProjectEntity {
+public class ProjectDatasetEntity extends MinimalProjectDatasetEntity {
 
     @JsonProperty("creator")
     private String centerName;
@@ -20,10 +20,10 @@ public class DatasetProjectEntity extends DatasetMinimalProjectEntity {
     @JsonProperty("hasPart")
     private List<Reference> files;
 
-    public DatasetProjectEntity() {
+    public ProjectDatasetEntity() {
     }
 
-    public DatasetProjectEntity(String accession, String name, String description, LocalDate datePublished, String centerName,
+    public ProjectDatasetEntity(String accession, String name, String description, LocalDate datePublished, String centerName,
                                 List<String> publications, List<Reference> analyses, List<Reference> files,
                                 List<Reference> additionalProperties) {
         super(accession, name, description, datePublished, additionalProperties);

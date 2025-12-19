@@ -35,17 +35,23 @@ public class DataCatalogEntity extends RoCrateEntity {
 
     public DataCatalogEntity(List<Reference> projects, LocalDate datePublished) {
         super(ID , TYPE);
-        this.license = LICENCE;
+        this.license = LICENSE;
         this.identifier = IDENTIFIER;
         this.projects = projects;
         this.datePublished = datePublished;
     }
 
-    public String getIdentifier() { return identifier;}
+    public String getIdentifier() {
+        return identifier;
+    }
 
-    public List<Reference> getProjects() { return projects; }
+    public List<Reference> getProjects() {
+        return projects;
+    }
 
-    public LocalDate getDatePublished() {return datePublished;}
+    public LocalDate getDatePublished() {
+        return datePublished;
+    }
 
     public String getLicense() {
         return license;
