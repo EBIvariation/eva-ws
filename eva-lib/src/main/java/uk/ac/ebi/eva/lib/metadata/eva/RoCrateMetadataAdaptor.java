@@ -143,7 +143,7 @@ public class RoCrateMetadataAdaptor {
     private LocalDate getMostRecentDatePublished(List<RoCrateEntity> projectsRoEntities) {
 
         return projectsRoEntities.stream()
-                .map(T -> (DatasetMinimalProjectEntity) T)
+                .map(entity -> (DatasetMinimalProjectEntity) entity)
                 .max(Comparator.comparing(DatasetMinimalProjectEntity::getDatePublished))
                 .map(DatasetMinimalProjectEntity::getDatePublished).orElse(null);
     }
