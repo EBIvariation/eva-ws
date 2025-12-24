@@ -97,7 +97,9 @@ public class StudyWSServerTest {
                                                 LocalDate.of(2025, 1, 1), 1);
         Submission submission2 = new Submission(2L, "ERA456", "PROJECT", "ADD", "second submission", null,
                                                 LocalDate.of(2025, 7, 1), 1);
-        List<Submission> submissions = Arrays.asList(submission1, submission2);
+        // Submission with a null submission date
+        Submission submission3 = new Submission(3L, "ERA789", "PROJECT", "ADD", "third submission", null, null, 1);
+        List<Submission> submissions = Arrays.asList(submission1, submission2, submission3);
         submissionRepository.saveAll(submissions);
 
         Platform platform = new Platform(1L, "Illumina HiSeq 2000", "Illumina");
