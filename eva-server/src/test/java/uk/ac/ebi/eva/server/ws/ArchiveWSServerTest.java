@@ -62,6 +62,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 
 @RunWith(SpringRunner.class)
@@ -167,18 +168,21 @@ public class ArchiveWSServerTest {
         given(archiveDgvaDBAdaptor.countStudiesPerType(anyObject()))
                 .willReturn(encapsulateInQueryResult(svStudiesGroupedByStudyType.entrySet().toArray()));
 
-        List<VariantStudySummary> studies = buildVariantStudySummaries();
-        given(service.findAll()).willReturn(studies);
+        given(service.findAll()).willReturn(buildVariantStudySummaries(study1, study2, study3));
+        given(service.findByFromDate(any())).willReturn(buildVariantStudySummaries(study1));
     }
 
-    private List<VariantStudySummary> buildVariantStudySummaries() {
-        List<VariantStudySummary> studies = new ArrayList<>();
-        VariantStudySummary study = new VariantStudySummary();
-        study.setFilesCount(1);
-        study.setStudyId("studyId");
-        study.setStudyName("studyName");
-        studies.add(study);
-        return studies;
+    private List<VariantStudySummary> buildVariantStudySummaries(VariantStudy... studies) {
+        List<VariantStudySummary> summaries = new ArrayList<>();
+
+        for (VariantStudy study : studies) {
+            VariantStudySummary summary = new VariantStudySummary();
+            summary.setFilesCount(1);
+            summary.setStudyId(study.getId());
+            summary.setStudyName(study.getName());
+            summaries.add(summary);
+        }
+        return summaries;
     }
 
     private <T> QueryResult<T> encapsulateInQueryResult(T... results) {
@@ -313,13 +317,49 @@ public class ArchiveWSServerTest {
         assertEquals(1, queryResponse.getResponse().size());
 
         List<VariantStudySummary> results = queryResponse.getResponse().get(0).getResult();
-        assertTrue(results.size() >= 1);
+        assertEquals(3, results.size());
 
         for (VariantStudySummary variantStudySummary : results) {
             assertTrue(variantStudySummary.getFilesCount() > 0);
             assertNotNull(variantStudySummary.getStudyName());
             assertNotNull(variantStudySummary.getStudyId());
         }
+    }
+
+    @Test
+    public void testGetBrowsableStudiesBySpeciesAndFromDate() throws URISyntaxException {
+        String url = "/v1/meta/studies/list?species=hsapiens_grch37&fromDate=2018-01-01";
+        ResponseEntity<QueryResponse<QueryResult<VariantStudySummary>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantStudySummary>>>() {});
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        QueryResponse<QueryResult<VariantStudySummary>> queryResponse = response.getBody();
+        assertEquals(1, queryResponse.getResponse().size());
+
+        List<VariantStudySummary> results = queryResponse.getResponse().get(0).getResult();
+        assertEquals(1, results.size());
+
+        for (VariantStudySummary variantStudySummary : results) {
+            assertTrue(variantStudySummary.getFilesCount() > 0);
+            assertEquals("Human Test study 1", variantStudySummary.getStudyName());
+            assertEquals("S1", variantStudySummary.getStudyId());
+        }
+    }
+
+    @Test
+    public void testGetBrowsableStudiesBySpeciesAndFutureFromDate() throws URISyntaxException {
+        String url = "/v1/meta/studies/list?species=hsapiens_grch37&fromDate=3000-01-01";
+        ResponseEntity<QueryResponse<QueryResult<VariantStudySummary>>> response = restTemplate.exchange(
+                url, HttpMethod.GET, null,
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantStudySummary>>>() {});
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        QueryResponse<QueryResult<VariantStudySummary>> queryResponse = response.getBody();
+        assertEquals(1, queryResponse.getResponse().size());
+
+        List<VariantStudySummary> results = queryResponse.getResponse().get(0).getResult();
+        assertEquals(0, results.size());
     }
 
     @Test
