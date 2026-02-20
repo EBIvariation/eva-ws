@@ -101,6 +101,9 @@ public class File {
     @Column(length = 15, name = "eva_submission_file_id")
     private String evaSubmissionFileId;
 
+    @Column(name = "file_size")
+    private Long fileSize;
+
     @OneToMany(mappedBy = "fileSamplePK.fileId")
     private List<FileSample> fileSamples;
 
@@ -134,6 +137,10 @@ public class File {
 
     public String getFileType() {
         return fileType;
+    }
+
+    public Long getFileSize() {
+        return fileSize;
     }
 
     public List<FileSample> getFileSamples() {
