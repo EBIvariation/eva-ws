@@ -143,6 +143,10 @@ public class File {
         return fileSize;
     }
 
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
+    }
+
     public List<FileSample> getFileSamples() {
         return fileSamples;
     }
