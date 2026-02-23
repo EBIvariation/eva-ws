@@ -51,11 +51,9 @@ public class SubmissionStatsEvaproDBAdaptorTest {
         Submission sub1 = new Submission(1L, "ERA001", "STUDY", "ADD", "Submission 1", null,
                                          LocalDate.of(2023, 1, 15), 0);
         File file1 = new File(101L, "ERF101", "file1.vcf.gz", "md5_1", "/dir", "vcf", "submitted",
-                              1, true, "/ftp/file1.vcf.gz", true, "EVAF101");
-        file1.setFileSize(100L);
+                              1, true, "/ftp/file1.vcf.gz", true, "EVAF101", 100L);
         File file2 = new File(102L, "ERF102", "file2.vcf.gz", "md5_2", "/dir", "vcf", "submitted",
-                              1, true, "/ftp/file2.vcf.gz", true, "EVAF102");
-        file2.setFileSize(200L);
+                              1, true, "/ftp/file2.vcf.gz", true, "EVAF102", 200L);
         Analysis analysis1 = new Analysis("ERZ001", "Analysis 1", "alias1", "desc1", "EBI",
                                           null, null, null, 0, null);
         entityManager.persist(sub1);
@@ -69,8 +67,7 @@ public class SubmissionStatsEvaproDBAdaptorTest {
         Submission sub2 = new Submission(2L, "ERA002", "STUDY", "ADD", "Submission 2", null,
                                          LocalDate.of(2023, 1, 20), 0);
         File file3 = new File(103L, "ERF103", "file3.vcf.gz", "md5_3", "/dir", "vcf", "submitted",
-                              1, true, "/ftp/file3.vcf.gz", true, "EVAF103");
-        file3.setFileSize(500L);
+                              1, true, "/ftp/file3.vcf.gz", true, "EVAF103", 500L);
         Analysis analysis2 = new Analysis("ERZ002", "Analysis 2", "alias2", "desc2", "EBI",
                                           null, null, null, 0, null);
         entityManager.persist(sub2);
@@ -83,7 +80,7 @@ public class SubmissionStatsEvaproDBAdaptorTest {
         Submission sub3 = new Submission(3L, "ERA003", "STUDY", "ADD", "Submission 3", null,
                                          LocalDate.of(2023, 2, 10), 0);
         File file4 = new File(104L, "ERF104", "file4.vcf.gz", "md5_4", "/dir", "vcf", "submitted",
-                              1, true, "/ftp/file4.vcf.gz", true, "EVAF104");
+                              1, true, "/ftp/file4.vcf.gz", true, "EVAF104", null);
         // file4 has no file size (null), so SUM will be null → 0L
         Analysis analysis3 = new Analysis("ERZ003", "Analysis 3", "alias3", "desc3", "EBI",
                                           null, null, null, 0, null);
@@ -97,8 +94,7 @@ public class SubmissionStatsEvaproDBAdaptorTest {
         Submission sub4 = new Submission(4L, "ERA004", "STUDY", "ADD", "Submission 4", null,
                                          null, 0);
         File file5 = new File(105L, "ERF105", "file5.vcf.gz", "md5_5", "/dir", "vcf", "submitted",
-                              1, true, "/ftp/file5.vcf.gz", true, "EVAF105");
-        file5.setFileSize(50L);
+                              1, true, "/ftp/file5.vcf.gz", true, "EVAF105", 50L);
         Analysis analysis4 = new Analysis("ERZ004", "Analysis 4", "alias4", "desc4", "EBI",
                                           null, null, null, 0, null);
         entityManager.persist(sub4);

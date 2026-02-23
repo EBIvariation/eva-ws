@@ -109,16 +109,16 @@ public class StudyWSServerTest {
 
         // File in analysis 1 with 2 samples
         File file1 = new File(1L, "ena file id", "file1.vcf", "md5_1", "file location", "VCF", "submitted", 1,
-                              true, null, false, "eva file id");
+                              true, null, false, "eva file id", null);
         // File in analysis 2 with 1 sample
         File file2 = new File(2L, "ena file id", "file2.vcf", "md5_2", "file location", "vcf", "submitted", 1,
-                              true, null, false, "eva file id");
+                              true, null, false, "eva file id", null);
         // Non-VCF file in analysis 1
         File file3 = new File(3L, "ena file id", "file1.vcf.csi", "md5_3", "file location", "csi", "submitted", 1,
-                              true, null, false, "eva file id");
+                              true, null, false, "eva file id", null);
         // VCF file in analysis 1 with no samples
         File file4 = new File(4L, "ena file id", "file4.vcf", "md5_4", "file location", "VCF", "submitted", 1,
-                              true, null, false, "eva file id");
+                              true, null, false, "eva file id", null);
         Sample sample1 = new Sample(1L, "SAMEA0001", "ERS0001");
         Sample sample2 = new Sample(2L, "SAMEA0002", "ERS0002");
         sampleRepository.saveAll(Arrays.asList(sample1, sample2));

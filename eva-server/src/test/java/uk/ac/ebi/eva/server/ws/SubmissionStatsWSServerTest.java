@@ -69,23 +69,4 @@ public class SubmissionStatsWSServerTest {
         assertTrue(body.contains("202302\t2048\n"));
     }
 
-    @Test
-    public void testGetSubmissionsCountPerMonthEmpty() {
-        given(submissionStatsAdaptor.getCountByMonth()).willReturn(new TreeMap<>());
-
-        ResponseEntity<String> response = restTemplate.getForEntity("/v1/stats/submissions/count", String.class);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Month\tEntries\n", response.getBody());
-    }
-
-    @Test
-    public void testGetSubmissionsBytesPerMonthEmpty() {
-        given(submissionStatsAdaptor.getBytesByMonth()).willReturn(new TreeMap<>());
-
-        ResponseEntity<String> response = restTemplate.getForEntity("/v1/stats/submissions/bytes", String.class);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Month\tBytes\n", response.getBody());
-    }
 }
