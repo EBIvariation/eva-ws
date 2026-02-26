@@ -29,6 +29,7 @@ import uk.ac.ebi.eva.lib.entities.File;
 import uk.ac.ebi.eva.lib.entities.Submission;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -120,6 +121,8 @@ public class SubmissionStatsEvaproDBAdaptorTest {
         assertEquals(2L, (long) result.get("202301"));
         // SUB003 is in February 2023
         assertEquals(1L, (long) result.get("202302"));
+        // Most recent month first
+        assertEquals(Arrays.asList("202302", "202301"), new ArrayList<>(result.keySet()));
     }
 
     @Test
@@ -131,5 +134,7 @@ public class SubmissionStatsEvaproDBAdaptorTest {
         assertEquals(800L, (long) result.get("202301"));
         // SUB003: file size is null → 0
         assertEquals(0L, (long) result.get("202302"));
+        // Most recent month first
+        assertEquals(Arrays.asList("202302", "202301"), new ArrayList<>(result.keySet()));
     }
 }
