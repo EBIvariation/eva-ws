@@ -25,7 +25,7 @@ public class SubmissionStatsEvaproDBAdaptor {
                 .filter(row -> row[1] != null)
                 .collect(Collectors.groupingBy(
                         row -> ((LocalDate) row[1]).format(DateTimeFormatter.ofPattern("yyyyMM")),
-                        () -> new TreeMap<>(Comparator.reverseOrder()),
+                        () -> new TreeMap<String, Long>(Comparator.reverseOrder()),
                         Collectors.counting()
                 ));
     }
@@ -36,7 +36,7 @@ public class SubmissionStatsEvaproDBAdaptor {
                 .filter(row -> row[1] != null)
                 .collect(Collectors.groupingBy(
                         row -> ((LocalDate) row[1]).format(DateTimeFormatter.ofPattern("yyyyMM")),
-                        () -> new TreeMap<>(Comparator.reverseOrder()),
+                        () -> new TreeMap<String, Long>(Comparator.reverseOrder()),
                         Collectors.summingLong(row -> row[2] != null ? (Long) row[2] : 0L)
                 ));
     }
