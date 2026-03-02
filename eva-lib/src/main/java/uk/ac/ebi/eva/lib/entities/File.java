@@ -101,6 +101,9 @@ public class File {
     @Column(length = 15, name = "eva_submission_file_id")
     private String evaSubmissionFileId;
 
+    @Column(name = "file_size")
+    private Long fileSize;
+
     @OneToMany(mappedBy = "fileSamplePK.fileId")
     private List<FileSample> fileSamples;
 
@@ -109,7 +112,7 @@ public class File {
 
     public File(Long fileId, String enaSubmissionFileId, String filename, String fileMd5, String fileLocation,
                 String fileType, String fileClass, int fileVersion, boolean isCurrent, String ftpFile,
-                boolean mongoLoadStatus, String evaSubmissionFileId) {
+                boolean mongoLoadStatus, String evaSubmissionFileId, Long fileSize) {
         this.fileId = fileId;
         this.enaSubmissionFileId = enaSubmissionFileId;
         this.filename = filename;
@@ -122,6 +125,7 @@ public class File {
         this.ftpFile = ftpFile;
         this.mongoLoadStatus = mongoLoadStatus;
         this.evaSubmissionFileId = evaSubmissionFileId;
+        this.fileSize = fileSize;
     }
 
     public String getFilename() {
@@ -134,6 +138,10 @@ public class File {
 
     public String getFileType() {
         return fileType;
+    }
+
+    public Long getFileSize() {
+        return fileSize;
     }
 
     public List<FileSample> getFileSamples() {
