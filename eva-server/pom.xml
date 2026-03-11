@@ -76,7 +76,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>27.0-jre</version>
+            <version>32.0.0-jre</version>
         </dependency>
         <!--
             The reason why this dependency was used for hateoas instead of using `spring-boot-starter-hateoas`
