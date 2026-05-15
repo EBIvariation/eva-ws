@@ -66,13 +66,9 @@ public class RateLimiterAspect {
             throw new IllegalArgumentException(RATE_LIMIT_PRECONDITION_FAIL);
         }
         Object lastParam = args[args.length - 1];
-        // Get client IP address
-        // To account for clients which are behind a proxy server or a load balancer,
-        // use the client IP address via the HTTP request header X-Forwarded-For (XFF).
         if (lastParam instanceof HttpServletRequest) {
             HttpServletRequest request = (HttpServletRequest) lastParam;
-            String ipAddress = request.getHeader("X-FORWARDED-FOR");
-            return ipAddress == null ? request.getRemoteAddr() : ipAddress;
+            return request.getRemoteAddr();
         } else {
             throw new IllegalArgumentException(RATE_LIMIT_PRECONDITION_FAIL);
         }
