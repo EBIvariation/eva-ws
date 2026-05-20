@@ -27,6 +27,8 @@ import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasTranslator;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 
+import org.springframework.web.util.UriComponentsBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -159,7 +161,10 @@ public class ContigAliasService {
         if (contigNamingConvention == null) {
             return "";
         }
-        String url = contigAliasUrl + CONTIG_ALIAS_CHROMOSOMES_GENBANK_ENDPOINT + insdcContig;
+        String url = UriComponentsBuilder.fromHttpUrl(contigAliasUrl)
+                .path(CONTIG_ALIAS_CHROMOSOMES_GENBANK_ENDPOINT + "{contig}")
+                .buildAndExpand(insdcContig)
+                .toUriString();
         ContigAliasResponse contigAliasResponse = restTemplate.getForObject(url, ContigAliasResponse.class);
         if (contigAliasResponse == null || contigAliasResponse.getEmbedded() == null) {
             return "";
@@ -186,7 +191,10 @@ public class ContigAliasService {
     }
 
     private String translateContigRefseqToInsdc(String refseq) {
-        String url = contigAliasUrl + CONTIG_ALIAS_CHROMOSOMES_REFSEQ_ENDPOINT + refseq;
+        String url = UriComponentsBuilder.fromHttpUrl(contigAliasUrl)
+                .path(CONTIG_ALIAS_CHROMOSOMES_REFSEQ_ENDPOINT + "{refseq}")
+                .buildAndExpand(refseq)
+                .toUriString();
         ContigAliasResponse contigAliasResponse = restTemplate.getForObject(url, ContigAliasResponse.class);
         if (contigAliasResponse == null || contigAliasResponse.getEmbedded() == null) {
             return "";
@@ -195,8 +203,12 @@ public class ContigAliasService {
     }
 
     private String translateContigNameToInsdc(String contigName, String assembly, ContigNamingConvention contigNamingConvention) {
-        String url = contigAliasUrl + CONTIG_ALIAS_CHROMOSOMES_NAME_ENDPOINT + contigName
-                + "?accession=" + assembly + "&name=" + getNameParam(contigNamingConvention);
+        String url = UriComponentsBuilder.fromHttpUrl(contigAliasUrl)
+                .path(CONTIG_ALIAS_CHROMOSOMES_NAME_ENDPOINT + "{name}")
+                .queryParam("accession", assembly)
+                .queryParam("name", getNameParam(contigNamingConvention))
+                .buildAndExpand(contigName)
+                .toUriString();
         ContigAliasResponse contigAliasResponse = restTemplate.getForObject(url, ContigAliasResponse.class);
         if (contigAliasResponse == null || contigAliasResponse.getEmbedded() == null) {
             return "";
@@ -205,14 +217,15 @@ public class ContigAliasService {
     }
 
     public List<ContigAliasChromosome> searchChromosomeByName(String contigName, String assembly, ContigNamingConvention contigNamingConvention) {
-        String url = contigAliasUrl + CONTIG_ALIAS_CHROMOSOMES_SEARCH_ENDPOINT + contigName;
-        if ((assembly != null && !assembly.isEmpty()) && contigNamingConvention != null) {
-            url += "?assemblyAccession=" + assembly + "&namingConvention=" + getNameParam(contigNamingConvention);
-        } else if (assembly != null && !assembly.isEmpty()) {
-            url += "?assemblyAccession=" + assembly;
-        } else if (contigNamingConvention != null) {
-            url += "?namingConvention=" + getNameParam(contigNamingConvention);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(contigAliasUrl)
+                .path(CONTIG_ALIAS_CHROMOSOMES_SEARCH_ENDPOINT + "{name}");
+        if (assembly != null && !assembly.isEmpty()) {
+            builder.queryParam("assemblyAccession", assembly);
         }
+        if (contigNamingConvention != null) {
+            builder.queryParam("namingConvention", getNameParam(contigNamingConvention));
+        }
+        String url = builder.buildAndExpand(contigName).toUriString();
 
         ContigAliasResponse contigAliasResponse = restTemplate.getForObject(url, ContigAliasResponse.class);
         if (contigAliasResponse == null || contigAliasResponse.getEmbedded() == null ||
