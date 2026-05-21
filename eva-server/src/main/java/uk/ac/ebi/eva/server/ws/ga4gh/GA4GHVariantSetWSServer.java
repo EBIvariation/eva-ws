@@ -95,7 +95,7 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public void handleException(IllegalArgumentException e, HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        response.sendError(HttpStatus.BAD_REQUEST.value(), "Invalid request parameters");
     }
 
 }

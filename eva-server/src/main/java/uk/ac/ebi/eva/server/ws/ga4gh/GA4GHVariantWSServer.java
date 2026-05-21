@@ -130,7 +130,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public void handleException(IllegalArgumentException e, HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.PAYLOAD_TOO_LARGE.value(), e.getMessage());
+        response.sendError(HttpStatus.PAYLOAD_TOO_LARGE.value(), "Request parameters exceed allowed limits");
     }
 
 }

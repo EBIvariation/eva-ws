@@ -49,6 +49,11 @@
             <artifactId>springfox-swagger2</artifactId>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-spring-webmvc</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.eva</groupId>

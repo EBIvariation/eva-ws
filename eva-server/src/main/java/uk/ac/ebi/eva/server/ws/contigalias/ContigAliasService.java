@@ -33,10 +33,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
 public class ContigAliasService {
+
+    // Contig identifiers are INSDC/RefSeq accessions or chromosome names: letters, digits, dots, underscores, hyphens
+    private static final Pattern SAFE_CONTIG_PATTERN = Pattern.compile("[A-Za-z0-9._\\-]+");
 
     public static final String CONTIG_ALIAS_CHROMOSOMES_GENBANK_ENDPOINT = "/v1/chromosomes/genbank/";
 
@@ -161,6 +165,7 @@ public class ContigAliasService {
         if (contigNamingConvention == null) {
             return "";
         }
+        validateContigIdentifier(insdcContig);
         String url = UriComponentsBuilder.fromHttpUrl(contigAliasUrl)
                 .path(CONTIG_ALIAS_CHROMOSOMES_GENBANK_ENDPOINT + "{contig}")
                 .buildAndExpand(insdcContig)
@@ -191,6 +196,7 @@ public class ContigAliasService {
     }
 
     private String translateContigRefseqToInsdc(String refseq) {
+        validateContigIdentifier(refseq);
         String url = UriComponentsBuilder.fromHttpUrl(contigAliasUrl)
                 .path(CONTIG_ALIAS_CHROMOSOMES_REFSEQ_ENDPOINT + "{refseq}")
                 .buildAndExpand(refseq)
@@ -203,6 +209,7 @@ public class ContigAliasService {
     }
 
     private String translateContigNameToInsdc(String contigName, String assembly, ContigNamingConvention contigNamingConvention) {
+        validateContigIdentifier(contigName);
         String url = UriComponentsBuilder.fromHttpUrl(contigAliasUrl)
                 .path(CONTIG_ALIAS_CHROMOSOMES_NAME_ENDPOINT + "{name}")
                 .queryParam("accession", assembly)
@@ -217,6 +224,7 @@ public class ContigAliasService {
     }
 
     public List<ContigAliasChromosome> searchChromosomeByName(String contigName, String assembly, ContigNamingConvention contigNamingConvention) {
+        validateContigIdentifier(contigName);
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(contigAliasUrl)
                 .path(CONTIG_ALIAS_CHROMOSOMES_SEARCH_ENDPOINT + "{name}");
         if (assembly != null && !assembly.isEmpty()) {
@@ -272,6 +280,12 @@ public class ContigAliasService {
             return ContigNamingConvention.UCSC;
         } else {
             return null;
+        }
+    }
+
+    private static void validateContigIdentifier(String contig) {
+        if (contig == null || !SAFE_CONTIG_PATTERN.matcher(contig).matches()) {
+            throw new IllegalArgumentException("Invalid contig identifier");
         }
     }
 
