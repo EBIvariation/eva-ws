@@ -43,7 +43,7 @@
             <artifactId>springfox-swagger2</artifactId>
             <scope>compile</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>uk.ac.ebi.eva</groupId>
             <artifactId>eva-lib</artifactId>
