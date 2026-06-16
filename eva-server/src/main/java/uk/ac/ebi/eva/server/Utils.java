@@ -67,7 +67,7 @@ public class Utils {
     public static PageRequest getPageRequest(int limit, int skip) {
         int size = (limit < 0) ? 10 : limit;
         int page = (skip < 0) ? 0 : Math.floorDiv(skip, size);
-        return new PageRequest(page, size);
+        return PageRequest.of(page, size);
     }
 
     public static String getNextPageToken(PageRequest pageRequest, int limit, long numTotalResults) {

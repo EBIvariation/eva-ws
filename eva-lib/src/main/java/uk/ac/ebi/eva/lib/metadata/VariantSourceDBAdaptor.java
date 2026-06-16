@@ -7,7 +7,7 @@ import uk.ac.ebi.eva.lib.utils.QueryResult;
 import java.util.List;
 
 public interface VariantSourceDBAdaptor {
-    
+
     QueryResult countSources();
 
     QueryResult getAllSources(QueryOptions var1);
@@ -29,5 +29,5 @@ public interface VariantSourceDBAdaptor {
     QueryResult updateSourceStats(VariantSourceStats var1, QueryOptions var2);
 
     boolean close();
-    
+
 }

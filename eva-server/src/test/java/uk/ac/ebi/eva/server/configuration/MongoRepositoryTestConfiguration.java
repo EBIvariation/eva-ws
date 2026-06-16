@@ -15,24 +15,27 @@
  */
 package uk.ac.ebi.eva.server.configuration;
 
-import com.mongodb.MongoClient;
-
+import com.mongodb.client.MongoClient;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import uk.ac.ebi.eva.lib.MongoConfiguration;
 import uk.ac.ebi.eva.lib.Profiles;
 import uk.ac.ebi.eva.lib.configuration.SpringDataMongoDbProperties;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+
+import static uk.ac.ebi.eva.server.utils.MongoTestContainerHelper.mongo;
 
 @Configuration
 @Import({MongoConfiguration.class})
@@ -41,9 +44,14 @@ import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 @AutoConfigureDataMongo
 public class MongoRepositoryTestConfiguration {
 
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.host", () -> mongo.getHost() + ":" + mongo.getFirstMappedPort());
+    }
+
     @Bean
-    public MongoTemplate mongoTemplate(MongoDbFactory mongoDbFactory,
-            MappingMongoConverter mappingMongoConverter) throws Exception {
+    public MongoTemplate mongoTemplate(MongoDatabaseFactory mongoDbFactory,
+                                       MappingMongoConverter mappingMongoConverter) {
         return new MongoTemplate(mongoDbFactory, mappingMongoConverter);
     }
 
@@ -54,8 +62,8 @@ public class MongoRepositoryTestConfiguration {
 
     @Bean
     @Profile(Profiles.TEST_MONGO_FACTORY)
-    public MongoDbFactory mongoDbFactory(MongoClient mongoClient) throws Exception {
-        return new SimpleMongoDbFactory(mongoClient, this.getDatabaseName());
+    public MongoDatabaseFactory mongoDbFactory(MongoClient mongoClient) {
+        return new SimpleMongoClientDatabaseFactory(mongoClient, this.getDatabaseName());
     }
 
     private String getDatabaseName() {

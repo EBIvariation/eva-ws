@@ -16,12 +16,13 @@
 package uk.ac.ebi.eva.lib.eva_utils;
 
 import com.mongodb.AuthenticationMechanism;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.eva.lib.configuration.DbCollectionsProperties;
@@ -29,7 +30,6 @@ import uk.ac.ebi.eva.lib.configuration.SpringDataMongoDbProperties;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -45,12 +45,12 @@ public class DBAdaptorConnector {
      * Get a MongoClient using the configuration (credentials) in a given Properties.
      *
      * @param springDataMongoDbProperties can have the next values:
-     *                   - eva.mongo.auth.db authentication database
-     *                   - eva.mongo.host comma-separated strings of colon-separated host and port strings: host_1:port_1,host_2:port_2
-     *                   - eva.mongo.user
-     *                   - eva.mongo.passwd
-     *                   - eva.mongo.read-preference string, "secondaryPreferred" if unspecified. one of:
-     *                          [primary, primaryPreferred, secondary, secondaryPreferred, nearest]
+     *                                    - eva.mongo.auth.db authentication database
+     *                                    - eva.mongo.host comma-separated strings of colon-separated host and port strings: host_1:port_1,host_2:port_2
+     *                                    - eva.mongo.user
+     *                                    - eva.mongo.passwd
+     *                                    - eva.mongo.read-preference string, "secondaryPreferred" if unspecified. one of:
+     *                                    [primary, primaryPreferred, secondary, secondaryPreferred, nearest]
      * @return MongoClient with given credentials
      * @throws UnknownHostException
      */
@@ -70,28 +70,33 @@ public class DBAdaptorConnector {
         }
 
         String readPreference = springDataMongoDbProperties.getReadPreference();
-        readPreference = readPreference == null || readPreference.isEmpty()? "secondaryPreferred" : readPreference;
+        readPreference = readPreference == null || readPreference.isEmpty() ? "secondaryPreferred" : readPreference;
 
-        MongoClientOptions options = MongoClientOptions.builder()
-                .readPreference(ReadPreference.valueOf(readPreference)).readConcern(ReadConcern.MAJORITY).build();
+        MongoClientSettings.Builder settingsBuilder = MongoClientSettings.builder()
+                .applyToClusterSettings(cluster -> cluster.hosts(servers))
+                .readPreference(ReadPreference.valueOf(readPreference))
+                .readConcern(ReadConcern.MAJORITY);
 
-        List<MongoCredential> mongoCredentialList = new ArrayList<>();
         String authenticationDb = springDataMongoDbProperties.getAuthenticationDatabase();
         if (authenticationDb != null && !authenticationDb.isEmpty()) {
-            MongoCredential mongoCredential = MongoCredential.createCredential(
-                    springDataMongoDbProperties.getUsername(),
-                    authenticationDb,
-                    springDataMongoDbProperties.getPassword().toCharArray());
             String authenticationMechanism = springDataMongoDbProperties.getAuthenticationMechanism();
-            if (authenticationMechanism == null) {
-                return new MongoClient(servers, options);
+            MongoCredential credential;
+            if (authenticationMechanism != null) {
+                credential = MongoCredential.createCredential(
+                                springDataMongoDbProperties.getUsername(),
+                                authenticationDb,
+                                springDataMongoDbProperties.getPassword().toCharArray())
+                        .withMechanism(AuthenticationMechanism.fromMechanismName(authenticationMechanism));
+            } else {
+                credential = MongoCredential.createCredential(
+                        springDataMongoDbProperties.getUsername(),
+                        authenticationDb,
+                        springDataMongoDbProperties.getPassword().toCharArray());
             }
-            mongoCredential = mongoCredential.withMechanism(
-                    AuthenticationMechanism.fromMechanismName(authenticationMechanism));
-            mongoCredentialList = Collections.singletonList(mongoCredential);
+            settingsBuilder.credential(credential);
         }
 
-        return new MongoClient(servers, mongoCredentialList, options);
+        return MongoClients.create(settingsBuilder.build());
     }
 
     public static String getDBName(String species) {

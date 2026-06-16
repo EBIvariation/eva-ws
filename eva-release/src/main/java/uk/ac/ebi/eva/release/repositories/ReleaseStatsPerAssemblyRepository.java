@@ -17,9 +17,8 @@ package uk.ac.ebi.eva.release.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-
-import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyPK;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssembly;
+import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyPK;
 
 @Repository
 public interface ReleaseStatsPerAssemblyRepository extends CrudRepository<ReleaseStatsPerAssembly,

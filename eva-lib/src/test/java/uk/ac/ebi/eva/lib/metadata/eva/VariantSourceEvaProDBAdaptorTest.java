@@ -15,14 +15,14 @@
  */
 package uk.ac.ebi.eva.lib.metadata.eva;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.commons.core.models.stats.VariantSourceStats;
 import uk.ac.ebi.eva.lib.metadata.FileTestData;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
@@ -33,10 +33,11 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 @Sql({"classpath:eva-schema.sql", "classpath:eva-data.sql"})
 public class VariantSourceEvaProDBAdaptorTest {
@@ -48,41 +49,41 @@ public class VariantSourceEvaProDBAdaptorTest {
     @Autowired
     private VariantSourceEvaProDBAdaptor variantSourceEvaproDBAdaptor;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         FileTestData.persistTestData(entityManager);
     }
 
     @Test
-    public void countSources() throws Exception {
+    public void countSources() {
         QueryResult<Long> count = variantSourceEvaproDBAdaptor.countSources();
         assertEquals(1, count.getNumResults());
         assertEquals(3, count.first().longValue());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void getAllSources() throws Exception {
-        variantSourceEvaproDBAdaptor.getAllSources(new QueryOptions());
+    @Test
+    public void getAllSources() {
+        assertThrows(UnsupportedOperationException.class, () -> variantSourceEvaproDBAdaptor.getAllSources(new QueryOptions()));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void getAllSourcesByStudyId() throws Exception {
-        variantSourceEvaproDBAdaptor.getAllSourcesByStudyId("s1", new QueryOptions());
+    @Test
+    public void getAllSourcesByStudyId() {
+        assertThrows(UnsupportedOperationException.class, () -> variantSourceEvaproDBAdaptor.getAllSourcesByStudyId("s1", new QueryOptions()));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void getAllSourcesByStudyIds() throws Exception {
-        variantSourceEvaproDBAdaptor.getAllSourcesByStudyIds(Arrays.asList("s1", "s2"), new QueryOptions());
+    @Test
+    public void getAllSourcesByStudyIds() {
+        assertThrows(UnsupportedOperationException.class, () -> variantSourceEvaproDBAdaptor.getAllSourcesByStudyIds(Arrays.asList("s1", "s2"), new QueryOptions()));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void getSamplesBySource() throws Exception {
-        variantSourceEvaproDBAdaptor.getSamplesBySource("source", new QueryOptions());
+    @Test
+    public void getSamplesBySource() {
+        assertThrows(UnsupportedOperationException.class, () -> variantSourceEvaproDBAdaptor.getSamplesBySource("source", new QueryOptions()));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void getSamplesBySources() throws Exception {
-        variantSourceEvaproDBAdaptor.getSamplesBySources(Arrays.asList("s1", "s2"), new QueryOptions());
+    @Test
+    public void getSamplesBySources() {
+        assertThrows(UnsupportedOperationException.class, () -> variantSourceEvaproDBAdaptor.getSamplesBySources(Arrays.asList("s1", "s2"), new QueryOptions()));
     }
 
     @Test
@@ -94,7 +95,7 @@ public class VariantSourceEvaProDBAdaptorTest {
     }
 
     @Test
-    public void getSourceDownloadUrlByNameFileNotInBrowsableFiles() throws Exception {
+    public void getSourceDownloadUrlByNameFileNotInBrowsableFiles() {
         QueryResult<URL> sourceUrls = variantSourceEvaproDBAdaptor
                 .getSourceDownloadUrlByName(FileTestData.FILE_NOT_BROWSABLE);
 
@@ -110,25 +111,25 @@ public class VariantSourceEvaProDBAdaptorTest {
         URL expectedFtpUrlFile1 = new URI("ftp://parentdir/dir1/file1.vcf.gz").toURL();
         URL expectedFtpUrlFile2 = new URI("ftp://parentdir/dir2/file2.vcf.gz").toURL();
         assertTrue(sourceUrls.stream()
-                             .anyMatch(queryResult -> queryResult.first().equals(expectedFtpUrlFile1)));
+                .anyMatch(queryResult -> queryResult.first().equals(expectedFtpUrlFile1)));
         assertTrue(sourceUrls.stream()
-                             .anyMatch(queryResult -> queryResult.first().equals(expectedFtpUrlFile2)));
+                .anyMatch(queryResult -> queryResult.first().equals(expectedFtpUrlFile2)));
 
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void getSourceDownloadUrlById() throws Exception {
-        variantSourceEvaproDBAdaptor.getSourceDownloadUrlById("s1", "s2");
+    @Test
+    public void getSourceDownloadUrlById() {
+        assertThrows(UnsupportedOperationException.class, () -> variantSourceEvaproDBAdaptor.getSourceDownloadUrlById("s1", "s2"));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void updateSourceStats() throws Exception {
-        variantSourceEvaproDBAdaptor.updateSourceStats(new VariantSourceStats("f1", "s1"), new QueryOptions());
+    @Test
+    public void updateSourceStats() {
+        assertThrows(UnsupportedOperationException.class, () -> variantSourceEvaproDBAdaptor.updateSourceStats(new VariantSourceStats("f1", "s1"), new QueryOptions()));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void close() throws Exception {
-        variantSourceEvaproDBAdaptor.close();
+    @Test
+    public void close() {
+        assertThrows(UnsupportedOperationException.class, () -> variantSourceEvaproDBAdaptor.close());
     }
 
 }

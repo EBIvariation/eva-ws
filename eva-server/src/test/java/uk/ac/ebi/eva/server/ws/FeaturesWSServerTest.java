@@ -18,9 +18,9 @@
  */
 package uk.ac.ebi.eva.server.ws;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,7 +29,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.mongodb.services.FeatureService;
@@ -42,11 +42,10 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class FeaturesWSServerTest {
 
@@ -63,7 +62,7 @@ public class FeaturesWSServerTest {
 
     FeatureCoordinates exampleFeature = new FeatureCoordinates("id", FEATURE_NAME, "feature", "chr", 0, 1);
 
-    @Before
+    @BeforeEach
     public void setup() throws URISyntaxException, IOException {
         given(service.findByIdOrName(FEATURE_NAME, FEATURE_NAME))
                 .willReturn(Collections.singletonList(exampleFeature));
@@ -72,11 +71,12 @@ public class FeaturesWSServerTest {
     }
 
     @Test
-    public void testGetFeatures() throws URISyntaxException {
+    public void testGetFeatures() {
         String url = "/v1/features/" + FEATURE_NAME + "?species=hsapiens_grch37";
         ResponseEntity<QueryResponse<QueryResult<FeatureCoordinates>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<FeatureCoordinates>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<FeatureCoordinates>>>() {
+                });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         QueryResponse<QueryResult<FeatureCoordinates>> queryResponse = response.getBody();
@@ -89,7 +89,7 @@ public class FeaturesWSServerTest {
     }
 
     @Test
-    public void testGetFeaturesWithTranslatedContig() throws URISyntaxException {
+    public void testGetFeaturesWithTranslatedContig() {
         FeatureCoordinates translatedFeature = new FeatureCoordinates("id", FEATURE_NAME, "feature", "1", 0, 1);
         given(contigAliasService.getFeatureCoordinatesWithTranslatedContig(Collections.singletonList(exampleFeature),
                 ContigNamingConvention.ENA_SEQUENCE_NAME))
@@ -99,7 +99,8 @@ public class FeaturesWSServerTest {
                 + ContigNamingConvention.ENA_SEQUENCE_NAME;
         ResponseEntity<QueryResponse<QueryResult<FeatureCoordinates>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<FeatureCoordinates>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<FeatureCoordinates>>>() {
+                });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         QueryResponse<QueryResult<FeatureCoordinates>> queryResponse = response.getBody();
@@ -111,11 +112,12 @@ public class FeaturesWSServerTest {
     }
 
     @Test
-    public void testGetFeaturesWithEmptySpeciesShouldFail() throws URISyntaxException {
+    public void testGetFeaturesWithEmptySpeciesShouldFail() {
         String url = "/v1/features/" + FEATURE_NAME + "?species=";
         ResponseEntity<QueryResponse<QueryResult<FeatureCoordinates>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<FeatureCoordinates>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<FeatureCoordinates>>>() {
+                });
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
         QueryResponse<QueryResult<FeatureCoordinates>> queryResponse = response.getBody();
@@ -124,11 +126,12 @@ public class FeaturesWSServerTest {
     }
 
     @Test
-    public void testGetFeaturesWithoutSpeciesShouldFail() throws URISyntaxException {
+    public void testGetFeaturesWithoutSpeciesShouldFail() {
         String url = "/v1/features/" + FEATURE_NAME;
         ResponseEntity<QueryResponse<QueryResult<FeatureCoordinates>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<FeatureCoordinates>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<FeatureCoordinates>>>() {
+                });
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
         QueryResponse<QueryResult<FeatureCoordinates>> queryResponse = response.getBody();

@@ -19,25 +19,22 @@
 
 package uk.ac.ebi.dgva.server.ws;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import uk.ac.ebi.eva.lib.metadata.dgva.ArchiveDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.shared.ArchiveWSServerHelper;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 
 @RestController
 @RequestMapping(value = "/v1/meta", produces = "application/json")
-@Api(tags = {"archive"})
+@Tag(name = "archive")
 public class ArchiveWSServer extends DgvaWSServer {
 
     @Autowired
@@ -49,7 +46,7 @@ public class ArchiveWSServer extends DgvaWSServer {
     private ArchiveWSServerHelper archiveWSServerHelper;
 
 
-    public ArchiveWSServer() throws IOException {
+    public ArchiveWSServer() {
         archiveWSServerHelper = new ArchiveWSServerHelper();
     }
 

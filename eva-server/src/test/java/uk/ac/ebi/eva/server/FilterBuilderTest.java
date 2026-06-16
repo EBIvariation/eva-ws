@@ -18,17 +18,17 @@
  */
 package uk.ac.ebi.eva.server;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilterBuilderTest {
 
     @Test
-    public void createExclusionFieldString() throws Exception {
+    public void createExclusionFieldString() {
         List<String> exclude = new ArrayList<>();
         exclude.add("files");
         exclude.add("st");

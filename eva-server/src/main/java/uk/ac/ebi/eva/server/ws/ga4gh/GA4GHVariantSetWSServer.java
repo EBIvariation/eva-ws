@@ -18,7 +18,9 @@
  */
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,40 +33,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.core.models.VariantSource;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantSetsRequest;
 import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantSetsResponse;
 import uk.ac.ebi.eva.lib.models.ga4gh.GAVariantSet;
 import uk.ac.ebi.eva.lib.models.ga4gh.GAVariantSetFactory;
-import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/v1/ga4gh/variantsets", produces = "application/json")
-@Api(tags = { "ga4gh", "files" })
+@Tags({@Tag(name = "ga4gh"), @Tag(name = "files")})
 public class GA4GHVariantSetWSServer extends EvaWSServer {
 
     @Autowired
     private VariantSourceService service;
 
     protected static Logger logger = LoggerFactory.getLogger(GA4GHVariantSetWSServer.class);
-    
-    public GA4GHVariantSetWSServer() { }
-    
+
+    public GA4GHVariantSetWSServer() {
+    }
+
     /**
-     * 
+     *
      * @see http://ga4gh.org/documentation/api/v0.5/ga4gh_api.html#/schema/org.ga4gh.GASearchVariantSetsRequest
      */
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public GASearchVariantSetsResponse getVariantSets(@RequestParam(name = "datasetIds") List<String> studies,
                                                       @RequestParam(name = "pageToken", required = false) String pageToken,
-                                                      @RequestParam(name = "pageSize", defaultValue = "10") int limit)
-            throws IOException {
+                                                      @RequestParam(name = "pageSize", defaultValue = "10") int limit) {
         initializeQuery();
 
         if (studies.isEmpty()) {
@@ -86,10 +87,9 @@ public class GA4GHVariantSetWSServer extends EvaWSServer {
         // Create the custom response for the GA4GH API
         return new GASearchVariantSetsResponse(gaVariantSets, nextPageToken);
     }
-    
+
     @RequestMapping(value = "/search", method = RequestMethod.POST, consumes = "application/json")
-    public GASearchVariantSetsResponse getVariantSets(GASearchVariantSetsRequest request)
-            throws IOException {
+    public GASearchVariantSetsResponse getVariantSets(GASearchVariantSetsRequest request) {
         return getVariantSets(request.getDatasetIds(), request.getPageToken(), request.getPageSize());
     }
 

@@ -279,36 +279,36 @@ public class ReleaseStatsPerAssemblyDto {
         ReleaseStatsPerAssemblyDto that = (ReleaseStatsPerAssemblyDto) o;
         return taxonomyId == that.taxonomyId && releaseVersion == that.releaseVersion && Objects.equals(
                 assemblyAccession, that.assemblyAccession) && Objects.equals(scientificName,
-                                                                             that.scientificName) && Objects.equals(
+                that.scientificName) && Objects.equals(
                 releaseFolder, that.releaseFolder) && Objects.equals(currentRs,
-                                                                     that.currentRs) && Objects.equals(
+                that.currentRs) && Objects.equals(
                 remappedCurrentRs, that.remappedCurrentRs) && Objects.equals(multiMappedRs,
-                                                                             that.multiMappedRs) && Objects.equals(
+                that.multiMappedRs) && Objects.equals(
                 mergedRs, that.mergedRs) && Objects.equals(splitRs, that.splitRs) && Objects.equals(
                 deprecatedRs, that.deprecatedRs) && Objects.equals(mergedDeprecatedRs,
-                                                                   that.mergedDeprecatedRs) && Objects.equals(
+                that.mergedDeprecatedRs) && Objects.equals(
                 ssClustered, that.ssClustered) && Objects.equals(newCurrentRs,
-                                                                 that.newCurrentRs) && Objects.equals(
+                that.newCurrentRs) && Objects.equals(
                 newRemappedCurrentRs, that.newRemappedCurrentRs) && Objects.equals(newMultiMappedRs,
-                                                                                   that.newMultiMappedRs) && Objects.equals(
+                that.newMultiMappedRs) && Objects.equals(
                 newMergedRs, that.newMergedRs) && Objects.equals(newSplitRs,
-                                                                 that.newSplitRs) && Objects.equals(
+                that.newSplitRs) && Objects.equals(
                 newDeprecatedRs, that.newDeprecatedRs) && Objects.equals(newMergedDeprecatedRs,
-                                                                         that.newMergedDeprecatedRs) && Objects.equals(
+                that.newMergedDeprecatedRs) && Objects.equals(
                 newSsClustered, that.newSsClustered) && Objects.equals(clusteredCurrentRs,
-                                                                       that.clusteredCurrentRs) && Objects.equals(
+                that.clusteredCurrentRs) && Objects.equals(
                 newClusteredCurrentRs, that.newClusteredCurrentRs) && Objects.equals(releaseLink,
-                                                                                     that.releaseLink) && Objects.equals(
+                that.releaseLink) && Objects.equals(
                 taxonomyLink, that.taxonomyLink);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(taxonomyId, assemblyAccession, releaseVersion, scientificName, releaseFolder, currentRs,
-                            remappedCurrentRs, multiMappedRs, mergedRs, splitRs, deprecatedRs, mergedDeprecatedRs,
-                            ssClustered, newCurrentRs, newRemappedCurrentRs, newMultiMappedRs, newMergedRs, newSplitRs,
-                            newDeprecatedRs, newMergedDeprecatedRs, newSsClustered, clusteredCurrentRs,
-                            newClusteredCurrentRs, releaseLink, taxonomyLink);
+                remappedCurrentRs, multiMappedRs, mergedRs, splitRs, deprecatedRs, mergedDeprecatedRs,
+                ssClustered, newCurrentRs, newRemappedCurrentRs, newMultiMappedRs, newMergedRs, newSplitRs,
+                newDeprecatedRs, newMergedDeprecatedRs, newSsClustered, clusteredCurrentRs,
+                newClusteredCurrentRs, releaseLink, taxonomyLink);
     }
 
     @Override

@@ -18,8 +18,8 @@ package uk.ac.ebi.eva.lib.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.eva.lib.extension.ExtendedJpaRepositoryFunctions;
 import uk.ac.ebi.eva.lib.entities.DgvaStudyBrowser;
+import uk.ac.ebi.eva.lib.extension.ExtendedJpaRepositoryFunctions;
 
 @Transactional
 public interface DgvaStudyBrowserRepository extends JpaRepository<DgvaStudyBrowser, String>, ExtendedJpaRepositoryFunctions<DgvaStudyBrowser, String>, JpaSpecificationExecutor<DgvaStudyBrowser> {

@@ -24,8 +24,14 @@ import uk.ac.ebi.eva.commons.core.models.VariantType;
 
 @JsonIgnoreProperties({"id"})
 public abstract class VariantMixin {
-    @JsonInclude(JsonInclude.Include.NON_NULL) String reference;
-    @JsonInclude(JsonInclude.Include.NON_NULL) String alternate;
-    @JsonProperty("type") abstract VariantType getType();
-    @JsonProperty("length") abstract int getLength();
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    String reference;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    String alternate;
+
+    @JsonProperty("type")
+    abstract VariantType getType();
+
+    @JsonProperty("length")
+    abstract int getLength();
 }

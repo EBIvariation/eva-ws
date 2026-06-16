@@ -15,15 +15,16 @@
  */
 package uk.ac.ebi.eva.release.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
+
 import java.util.Objects;
 
 @Entity
 @IdClass(ReleaseStatsPerAssemblyPK.class)
-@Table(name = "release_rs_statistics_per_assembly", schema="eva_stats")
+@Table(name = "release_rs_statistics_per_assembly", schema = "eva_stats")
 public class ReleaseStatsPerAssembly {
 
     @Id
@@ -269,35 +270,35 @@ public class ReleaseStatsPerAssembly {
         ReleaseStatsPerAssembly assembly = (ReleaseStatsPerAssembly) o;
         return taxonomyId == assembly.taxonomyId && releaseVersion == assembly.releaseVersion && Objects.equals(
                 assemblyAccession, assembly.assemblyAccession) && Objects.equals(scientificName,
-                                                                                 assembly.scientificName) && Objects.equals(
+                assembly.scientificName) && Objects.equals(
                 releaseFolder, assembly.releaseFolder) && Objects.equals(currentRs,
-                                                                         assembly.currentRs) && Objects.equals(
+                assembly.currentRs) && Objects.equals(
                 remappedCurrentRs, assembly.remappedCurrentRs) && Objects.equals(multiMappedRs,
-                                                                                 assembly.multiMappedRs) && Objects.equals(
+                assembly.multiMappedRs) && Objects.equals(
                 mergedRs, assembly.mergedRs) && Objects.equals(splitRs,
-                                                               assembly.splitRs) && Objects.equals(
+                assembly.splitRs) && Objects.equals(
                 deprecatedRs, assembly.deprecatedRs) && Objects.equals(mergedDeprecatedRs,
-                                                                       assembly.mergedDeprecatedRs) && Objects.equals(
+                assembly.mergedDeprecatedRs) && Objects.equals(
                 ssClustered, assembly.ssClustered) && Objects.equals(newCurrentRs,
-                                                                     assembly.newCurrentRs) && Objects.equals(
+                assembly.newCurrentRs) && Objects.equals(
                 newRemappedCurrentRs, assembly.newRemappedCurrentRs) && Objects.equals(newMultiMappedRs,
-                                                                                       assembly.newMultiMappedRs) && Objects.equals(
+                assembly.newMultiMappedRs) && Objects.equals(
                 newMergedRs, assembly.newMergedRs) && Objects.equals(newSplitRs,
-                                                                     assembly.newSplitRs) && Objects.equals(
+                assembly.newSplitRs) && Objects.equals(
                 newDeprecatedRs, assembly.newDeprecatedRs) && Objects.equals(newMergedDeprecatedRs,
-                                                                             assembly.newMergedDeprecatedRs) && Objects.equals(
+                assembly.newMergedDeprecatedRs) && Objects.equals(
                 newSsClustered, assembly.newSsClustered) && Objects.equals(clusteredCurrentRs,
-                                                                           assembly.clusteredCurrentRs) && Objects.equals(
+                assembly.clusteredCurrentRs) && Objects.equals(
                 newClusteredCurrentRs, assembly.newClusteredCurrentRs);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(taxonomyId, assemblyAccession, releaseVersion, scientificName, releaseFolder, currentRs,
-                            remappedCurrentRs, multiMappedRs, mergedRs, splitRs, deprecatedRs, mergedDeprecatedRs,
-                            ssClustered, newCurrentRs, newRemappedCurrentRs, newMultiMappedRs, newMergedRs, newSplitRs,
-                            newDeprecatedRs, newMergedDeprecatedRs, newSsClustered, clusteredCurrentRs,
-                            newClusteredCurrentRs);
+                remappedCurrentRs, multiMappedRs, mergedRs, splitRs, deprecatedRs, mergedDeprecatedRs,
+                ssClustered, newCurrentRs, newRemappedCurrentRs, newMultiMappedRs, newMergedRs, newSplitRs,
+                newDeprecatedRs, newMergedDeprecatedRs, newSsClustered, clusteredCurrentRs,
+                newClusteredCurrentRs);
     }
 
     @Override

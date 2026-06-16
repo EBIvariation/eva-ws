@@ -5,5 +5,5 @@ package uk.ac.ebi.eva.server;
  */
 public class Profiles {
     public static final String OAUTH_SECURITY = "oauth2-security";
-    public static final String NOT_OAUTHSECURITY = "!"+ OAUTH_SECURITY;
+    public static final String NOT_OAUTHSECURITY = "!" + OAUTH_SECURITY;
 }

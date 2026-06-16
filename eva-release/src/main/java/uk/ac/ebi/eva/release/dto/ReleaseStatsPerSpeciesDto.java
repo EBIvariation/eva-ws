@@ -15,7 +15,8 @@
  */
 package uk.ac.ebi.eva.release.dto;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
+
 import java.util.Objects;
 
 public class ReleaseStatsPerSpeciesDto {
@@ -244,10 +245,10 @@ public class ReleaseStatsPerSpeciesDto {
     @Override
     public int hashCode() {
         return Objects.hash(taxonomyId, releaseVersion, scientificName, releaseFolder, currentRs, multiMappedRs,
-                            mergedRs,
-                            deprecatedRs, mergedDeprecatedRs, unmappedRs, newCurrentRs, newMultiMappedRs, newMergedRs,
-                            newDeprecatedRs, newMergedDeprecatedRs, newUnmappedRs, newSsClustered, releaseLink,
-                            taxonomyLink);
+                mergedRs,
+                deprecatedRs, mergedDeprecatedRs, unmappedRs, newCurrentRs, newMultiMappedRs, newMergedRs,
+                newDeprecatedRs, newMergedDeprecatedRs, newUnmappedRs, newSsClustered, releaseLink,
+                taxonomyLink);
     }
 
     @Override

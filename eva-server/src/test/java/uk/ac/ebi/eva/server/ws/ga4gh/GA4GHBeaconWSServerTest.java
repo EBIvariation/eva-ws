@@ -18,16 +18,16 @@
  */
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 
@@ -35,15 +35,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GA4GHBeaconWSServerTest {
 
@@ -53,10 +53,10 @@ public class GA4GHBeaconWSServerTest {
     @MockBean
     private VariantWithSamplesAndAnnotationsService service;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         VariantWithSamplesAndAnnotation variant = new VariantWithSamplesAndAnnotation("1", 1000, 1005, "reference",
-                                                                                      "alternate", "rs1");
+                "alternate", "rs1");
         List<VariantWithSamplesAndAnnotation> variantEntities = Collections.singletonList(variant);
 
         given(service.findByChromosomeAndStartAndAltAndStudyIn(eq("1"), anyLong(), any(), any(), any()))
@@ -64,12 +64,12 @@ public class GA4GHBeaconWSServerTest {
     }
 
     @Test
-    public void testAltAlleleExistsBeacon() throws Exception {
+    public void testAltAlleleExistsBeacon() {
         assertTrue(testBeaconHelper("1", 1000, "alternate", new ArrayList<>()));
     }
 
     @Test
-    public void testAltAlleleDoesntExistsBeacon() throws Exception {
+    public void testAltAlleleDoesntExistsBeacon() {
         assertFalse(testBeaconHelper("2", 2000, "alternateOther", new ArrayList<>()));
     }
 

@@ -20,10 +20,6 @@
 package uk.ac.ebi.eva.server.ws.ga4gh.beaconv2;
 
 import uk.ac.ebi.eva.commons.beacon.models.Beacon;
-import uk.ac.ebi.eva.commons.beacon.models.BeaconDataset;
-import uk.ac.ebi.eva.commons.beacon.models.BeaconOrganization;
-
-import java.util.List;
 
 public class BeaconImpl extends Beacon {
 
@@ -34,7 +30,7 @@ public class BeaconImpl extends Beacon {
     static final String API_VERSION = "v1.0";
 
     static final String DESCRIPTION = "Beacon for human variants in the European Variation Archive, an open-access " +
-        "database of all types of genetic variation data from all species.";
+            "database of all types of genetic variation data from all species.";
 
     static final String VERSION = "v2";
 

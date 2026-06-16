@@ -34,14 +34,13 @@ public class SoTermsDeserializer extends StdDeserializer<Set<Integer>> {
     }
 
     @Override
-    public Set<Integer> deserialize(JsonParser parser, DeserializationContext ctxt)
-            throws IOException, JsonProcessingException {
+    public Set<Integer> deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
         JsonNode node = parser.getCodec().readTree(parser);
         Set<Integer> soAccessions = new HashSet<>();
         for (JsonNode element : node) {
             String accession = element.get("soAccession").asText();
             String[] code = accession.split(":");
-            Assert.isTrue(code.length == 2);
+            Assert.isTrue(code.length == 2, "Invalid so accession: " + accession + "");
             soAccessions.add(Integer.parseInt(code[1]));
         }
         return soAccessions;

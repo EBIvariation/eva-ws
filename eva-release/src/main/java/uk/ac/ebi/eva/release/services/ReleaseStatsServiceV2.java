@@ -16,12 +16,11 @@
 package uk.ac.ebi.eva.release.services;
 
 import org.springframework.stereotype.Service;
-import uk.ac.ebi.eva.release.dto.*;
+import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyV2Dto;
+import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesV2Dto;
 import uk.ac.ebi.eva.release.mappers.ReleaseStatsPerAssemblyMapper;
 import uk.ac.ebi.eva.release.mappers.ReleaseStatsPerSpeciesMapper;
-import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssembly;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyV2;
-import uk.ac.ebi.eva.release.models.ReleaseStatsPerSpecies;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerTaxonomyV2;
 import uk.ac.ebi.eva.release.repositories.ReleaseStatsPerAssemblyV2Repository;
 import uk.ac.ebi.eva.release.repositories.ReleaseStatsPerTaxonomyV2Repository;
@@ -49,7 +48,7 @@ public class ReleaseStatsServiceV2 {
     }
 
 
-    public Iterable<ReleaseStatsPerSpeciesV2Dto> getReleaseStatsPerSpeciesWithNewRsIds(Integer releaseVersion){
+    public Iterable<ReleaseStatsPerSpeciesV2Dto> getReleaseStatsPerSpeciesWithNewRsIds(Integer releaseVersion) {
         Iterable<ReleaseStatsPerTaxonomyV2> releaseData;
         releaseData = releaseStatsPerTaxonomyRepository.findAllByReleaseVersion(releaseVersion);
         return this.releaseStatsPerSpeciesMapper.toDtoV2(releaseData);
