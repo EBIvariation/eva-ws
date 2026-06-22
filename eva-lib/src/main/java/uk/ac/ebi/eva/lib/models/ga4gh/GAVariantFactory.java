@@ -34,8 +34,7 @@ public class GAVariantFactory {
      * @param variants List of variants to transform
      * @return GA4GH variants representing the same data as the internal API ones
      */
-    public static List<GAVariant> create(List<VariantWithSamplesAndAnnotation> variants) {//, Map<String, List<String>>
-        // samplesPerSource) {
+    public static List<GAVariant> create(List<VariantWithSamplesAndAnnotation> variants) {
         Set<GAVariant> gaVariants = new LinkedHashSet<>();
 
         for (VariantWithSamplesAndAnnotation variant : variants) {

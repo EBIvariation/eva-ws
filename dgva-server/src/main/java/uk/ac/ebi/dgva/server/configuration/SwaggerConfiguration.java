@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class Swagger2Configuration {
+public class SwaggerConfiguration {
     @Bean
     public OpenAPI apiConfiguration() {
         return new OpenAPI()

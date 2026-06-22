@@ -40,7 +40,7 @@ public class SoTermsDeserializer extends StdDeserializer<Set<Integer>> {
         for (JsonNode element : node) {
             String accession = element.get("soAccession").asText();
             String[] code = accession.split(":");
-            Assert.isTrue(code.length == 2, "Invalid so accession: " + accession + "");
+            Assert.isTrue(code.length == 2, "Invalid SO accession: " + accession + "");
             soAccessions.add(Integer.parseInt(code[1]));
         }
         return soAccessions;

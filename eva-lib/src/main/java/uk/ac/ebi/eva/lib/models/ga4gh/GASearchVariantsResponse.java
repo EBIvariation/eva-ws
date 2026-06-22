@@ -39,7 +39,6 @@ public class GASearchVariantsResponse {
 
     public GASearchVariantsResponse(List<GAVariant> variants, String nextPageToken) {
         this.variants = variants != null ? variants : new ArrayList<GAVariant>();
-        ;
         this.nextPageToken = nextPageToken;
     }
 
