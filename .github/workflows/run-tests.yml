@@ -2,9 +2,9 @@ name: Run tests
 
 on:
   push:
-    branches: [ master, java21 ]
+    branches: [ master ]
   pull_request:
-    branches: [ master, java21 ]
+    branches: [ master ]
 
 permissions:
   contents: read
