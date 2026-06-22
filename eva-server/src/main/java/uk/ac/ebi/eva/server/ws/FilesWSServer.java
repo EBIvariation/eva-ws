@@ -19,7 +19,7 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,12 +27,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
-import uk.ac.ebi.eva.lib.metadata.eva.VariantSourceEvaProDBAdaptor;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.metadata.eva.VariantSourceEvaProDBAdaptor;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -40,7 +39,7 @@ import java.util.Arrays;
  */
 @RestController
 @RequestMapping(value = "/v1/files", produces = "application/json")
-@Api(tags = {"files"})
+@Tag(name = "files")
 public class FilesWSServer extends EvaWSServer {
 
     @Autowired
@@ -51,8 +50,7 @@ public class FilesWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
 //    @ApiOperation(httpMethod = "GET", value = "Gets the files of a species")
-    public QueryResponse getFiles(@RequestParam("species") String species)
-            throws IOException {
+    public QueryResponse getFiles(@RequestParam("species") String species) {
         initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));

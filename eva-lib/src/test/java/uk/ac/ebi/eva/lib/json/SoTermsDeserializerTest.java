@@ -20,14 +20,14 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
 
+import org.junit.jupiter.api.Test;
 import uk.ac.ebi.eva.commons.core.models.ConsequenceType;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SoTermsDeserializerTest {
     @Test
@@ -38,10 +38,10 @@ public class SoTermsDeserializerTest {
         objectMapper.addMixIn(ConsequenceType.class, ConsequenceTypeMixin.class);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.setVisibility(objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
-                                               .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
-                                               .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
-                                               .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
-                                               .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
+                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
+                .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+                .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
+                .withCreatorVisibility(JsonAutoDetect.Visibility.NONE));
 
         // when
         ConsequenceType ct = objectMapper.readValue(

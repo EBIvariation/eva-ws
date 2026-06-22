@@ -23,16 +23,16 @@ import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
@@ -44,21 +44,20 @@ import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsSe
 import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GeneWSServerV2Test {
 
@@ -89,7 +88,7 @@ public class GeneWSServerV2Test {
     VariantWithSamplesAndAnnotation variantEntity = new VariantWithSamplesAndAnnotation("20", 1000, 1005,
             "A", "C", MAIN_ID);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         List<Region> oneRegion = Collections.singletonList(new Region("20", 60000L, 62000L));
         given(variantService.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any(), any()))
@@ -135,7 +134,7 @@ public class GeneWSServerV2Test {
     }
 
     @Test
-    public void testGetVariantsByExistingGene() throws URISyntaxException {
+    public void testGetVariantsByExistingGene() {
         Variant variant = testGetVariantsByGeneHelper("ENSG00000227232", 1, HttpStatus.OK, null).get(0);
         assertEquals("20", variant.getChromosome());
         assertEquals("A", variant.getReference());
@@ -168,8 +167,7 @@ public class GeneWSServerV2Test {
     }
 
     private List<Variant> testGetVariantsByGeneHelper(String testRegion, int expectedVariants, HttpStatus status,
-                                                      ContigNamingConvention contigNamingConvention)
-            throws URISyntaxException {
+                                                      ContigNamingConvention contigNamingConvention) {
         String url = "/v2/genes/" + testRegion + "/variants?species=mmusculus&assembly=grcm38";
         if (contigNamingConvention != null) {
             url += "&contigNamingConvention=" + contigNamingConvention;
@@ -197,7 +195,7 @@ public class GeneWSServerV2Test {
     }
 
     @Test
-    public void testGetVariantsByExistingGenes() throws URISyntaxException {
+    public void testGetVariantsByExistingGenes() {
         List<Variant> variants = testGetVariantsByGeneHelper("ENSG00000227232,ENSG00000227244", 2,
                 HttpStatus.OK, null);
         assertEquals("20", variants.get(0).getChromosome());
@@ -209,12 +207,12 @@ public class GeneWSServerV2Test {
     }
 
     @Test
-    public void testGetVariantsByNonExistingGene() throws URISyntaxException {
+    public void testGetVariantsByNonExistingGene() {
         testGetVariantsByGeneHelper("nonexisting", 0, HttpStatus.NO_CONTENT, null);
     }
 
     @Test
-    public void testGetVariantsByNonExistingGenes() throws URISyntaxException {
+    public void testGetVariantsByNonExistingGenes() {
         testGetVariantsByGeneHelper("nonexisting,nonexisting", 0, HttpStatus.NO_CONTENT, null);
     }
 }

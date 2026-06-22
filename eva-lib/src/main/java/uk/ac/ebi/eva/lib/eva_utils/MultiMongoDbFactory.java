@@ -15,25 +15,25 @@
  */
 package uk.ac.ebi.eva.lib.eva_utils;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 
 /**
  * Simplified version of https://github.com/Loki-Afro/multi-tenant-spring-mongodb/blob/master/src/main/java/com/github/zarathustra/mongo/MultiTenantMongoDbFactory.java
- *
+ * <p>
  * This is another implementation to MongoDbFactory, similar to SimpleMongoDbFactory, but allows to use several DBs.
- *
+ * <p>
  * To use this class, you must @Autowire it in some component, or any place that loads beans into the environment.
- *
+ * <p>
  * This class is used with the static method setDatabaseNameForCurrentThread, which uses a static ThreadLocal variable,
  * in order to make this change only visible to the current thread.
  *
  * @author Jose Miguel Mut Lopez &lt;jmmut@ebi.ac.uk&gt;
  */
-public class MultiMongoDbFactory extends SimpleMongoDbFactory {
+public class MultiMongoDbFactory extends SimpleMongoClientDatabaseFactory {
 
     protected static Logger logger = LoggerFactory.getLogger(MultiMongoDbFactory.class);
 
@@ -49,6 +49,7 @@ public class MultiMongoDbFactory extends SimpleMongoDbFactory {
     /**
      * This method allows to change the mongo connection to another database, for example, for reusing a
      * FeatureRepository across several DBs.
+     *
      * @param databaseName the DB that will be used next time someone does "mongoDbFactory.getDB()" (note empty parameter)
      */
     public static void setDatabaseNameForCurrentThread(final String databaseName) {
@@ -64,11 +65,11 @@ public class MultiMongoDbFactory extends SimpleMongoDbFactory {
     }
 
     @Override
-    public MongoDatabase getDb() {
-        final String tlName = dbName.get();
+    protected MongoDatabase doGetMongoDatabase(String dbName) {
+        final String tlName = MultiMongoDbFactory.dbName.get();
         final String dbToUse = (tlName != null ? tlName : this.defaultName);
-        logger.debug("Acquiring database: " + dbToUse);
-        return super.getDb(dbToUse);
+        logger.debug("Acquiring database: {}", dbToUse);
+        return super.doGetMongoDatabase(dbToUse);
     }
 
     @Override

@@ -19,7 +19,8 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +45,6 @@ import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,7 +53,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/v1/variants", produces = "application/json")
-@Api(tags = {"variants"})
+@Tag(name = "variants")
 public class VariantWSServer extends EvaWSServer {
 
     @Autowired
@@ -81,8 +80,7 @@ public class VariantWSServer extends EvaWSServer {
                                         @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
                                         @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
                                         @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
-                                        HttpServletResponse response)
-            throws IOException {
+                                        HttpServletResponse response) {
         initializeQuery();
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
@@ -167,18 +165,17 @@ public class VariantWSServer extends EvaWSServer {
 
     @RequestMapping(value = "/{variantIds}", method = RequestMethod.GET)
     public QueryResponse getVariantByIdList(@PathVariable("variantIds") String variantIds,
-                                        @RequestParam(name = "studies", required = false) List<String> studies,
-                                        @RequestParam(name = "species") String species,
-                                        @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
-                                        @RequestParam(name = "maf", required = false) String maf,
-                                        @RequestParam(name = "polyphen", required = false) String polyphenScore,
-                                        @RequestParam(name = "sift", required = false) String siftScore,
-                                        @RequestParam(name = "exclude", required = false) List<String> exclude,
-                                        @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
-                                        @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
-                                        @RequestParam(name="contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
-                                        HttpServletResponse response)
-            throws IOException {
+                                            @RequestParam(name = "studies", required = false) List<String> studies,
+                                            @RequestParam(name = "species") String species,
+                                            @RequestParam(name = "annot-ct", required = false) List<String> consequenceType,
+                                            @RequestParam(name = "maf", required = false) String maf,
+                                            @RequestParam(name = "polyphen", required = false) String polyphenScore,
+                                            @RequestParam(name = "sift", required = false) String siftScore,
+                                            @RequestParam(name = "exclude", required = false) List<String> exclude,
+                                            @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
+                                            @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheVersion,
+                                            @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
+                                            HttpServletResponse response) {
         initializeQuery();
 
         if (annotationVepVersion == null ^ annotationVepCacheVersion == null) {
@@ -252,7 +249,7 @@ public class VariantWSServer extends EvaWSServer {
         }
         if (alternate != null) {
             return service.findByChromosomeAndStartAndReferenceAndAlternate(chromosome, start, reference, alternate,
-                                                                            annotationMetadata);
+                    annotationMetadata);
         } else {
             return service.findByChromosomeAndStartAndReference(chromosome, start, reference, annotationMetadata);
         }
@@ -265,8 +262,7 @@ public class VariantWSServer extends EvaWSServer {
                                             @RequestParam("species") String species,
                                             @RequestParam(name = "contigNamingConvention", required = false)
                                             ContigNamingConvention contigNamingConvention,
-                                            HttpServletResponse response)
-            throws IOException {
+                                            HttpServletResponse response) {
         initializeQuery();
 
         if (species.isEmpty()) {

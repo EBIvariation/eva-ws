@@ -15,21 +15,32 @@
  */
 package uk.ac.ebi.eva.server.configuration;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.lib.configuration.DbCollectionsProperties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static uk.ac.ebi.eva.server.utils.MongoTestContainerHelper.mongo;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = {DbCollectionsPropertiesTestConfiguration.class})
+@EnableConfigurationProperties
+@TestPropertySource(locations = "classpath:application.properties")
 public class DbCollectionsPropertiesTest {
+
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.data.mongodb.host", () -> mongo.getHost() + ":" + mongo.getFirstMappedPort());
+    }
 
     @Autowired
     private DbCollectionsProperties dbCollectionsProperties;

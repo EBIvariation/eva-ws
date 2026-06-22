@@ -10,8 +10,8 @@ import java.util.List;
 public interface AnalysisRepository extends JpaRepository<Analysis, String> {
 
     @Query("SELECT a.submission.submissionAccession, a.submission.date, SUM(f.fileSize) " +
-           "FROM Analysis a JOIN a.files f " +
-           "GROUP BY a.submission.submissionAccession, a.submission.date")
+            "FROM Analysis a JOIN a.files f " +
+            "GROUP BY a.submission.submissionAccession, a.submission.date")
     List<Object[]> getSubmissionFileSizes();
 
 }

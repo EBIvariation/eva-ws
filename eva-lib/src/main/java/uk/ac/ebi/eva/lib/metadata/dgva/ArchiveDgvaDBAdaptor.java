@@ -15,17 +15,22 @@
  */
 package uk.ac.ebi.eva.lib.metadata.dgva;
 
+import jakarta.persistence.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-
 import uk.ac.ebi.eva.lib.metadata.ArchiveDBAdaptor;
+import uk.ac.ebi.eva.lib.repositories.DgvaStudyBrowserRepository;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
-import uk.ac.ebi.eva.lib.repositories.DgvaStudyBrowserRepository;
 
-import javax.persistence.Tuple;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static uk.ac.ebi.eva.lib.dgva_utils.DgvaDBUtils.getSpeciesAndTypeFilters;
 
@@ -52,7 +57,7 @@ public class ArchiveDgvaDBAdaptor implements ArchiveDBAdaptor {
 
         for (Tuple tuple : countGroupBy) {
             // Some studies are associated with multiple species, return as comma-separated values
-            String[] species = tuple.get(0) != null ? ((String) tuple.get(0)).split(",") : new String[]{ "Others" };
+            String[] species = tuple.get(0) != null ? ((String) tuple.get(0)).split(",") : new String[]{"Others"};
             for (String s : species) {
                 long count = (long) tuple.get(1);
                 if (result.containsKey(s)) {

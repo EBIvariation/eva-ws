@@ -19,9 +19,9 @@
 
 package uk.ac.ebi.eva.server.ws.ga4gh.beaconv2;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,7 +31,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleResponse;
@@ -47,13 +47,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.eq;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GA4GHBeaconWSServerV2Test {
 
@@ -63,7 +63,7 @@ public class GA4GHBeaconWSServerV2Test {
     @MockBean
     private VariantWithSamplesAndAnnotationsService service;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         VariantMongo variantMongo = new VariantMongo(null, "X", 100470026, 100470026, 1, "G", "A");
         List<VariantMongo> variantMongoList = Collections.singletonList(variantMongo);
@@ -72,7 +72,7 @@ public class GA4GHBeaconWSServerV2Test {
         List<VariantRepositoryFilter> variantRepositoryFilters = new FilterBuilder().getBeaconFilters("G", "A",
                 null, Arrays.asList("PRJEB7218"));
 
-        Pageable pageable = new PageRequest(0, 1);
+        Pageable pageable = PageRequest.of(0, 1);
         given(service.findByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters),
                 eq(pageable))).willReturn(variantMongoList);
         given(service.countByRegionAndOtherBeaconFilters(eq(startRange), eq(endRange), eq(variantRepositoryFilters)))
@@ -87,7 +87,7 @@ public class GA4GHBeaconWSServerV2Test {
     }
 
     @Test
-    public void testForExisting() throws Exception {
+    public void testForExisting() {
         BeaconAlleleRequest request = new BeaconAlleleRequest();
         request.setReferenceName(Chromosome.X);
         request.setAssemblyId("GRCh37");

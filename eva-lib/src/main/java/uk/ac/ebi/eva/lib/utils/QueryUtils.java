@@ -17,12 +17,12 @@
 package uk.ac.ebi.eva.lib.utils;
 
 import com.google.common.base.Splitter;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,10 +53,10 @@ public class QueryUtils {
         this.queryOptions = new QueryOptions();
         Map<String, String[]> multivaluedMap = httpServletRequest.getParameterMap();
 
-        boolean metadata = (multivaluedMap.get("metadata") != null) ? multivaluedMap.get("metadata")[0].equals("true") : true ;
+        boolean metadata = (multivaluedMap.get("metadata") != null) ? multivaluedMap.get("metadata")[0].equals("true") : true;
         int limit = (multivaluedMap.get("limit") != null) ? Integer.parseInt(multivaluedMap.get("limit")[0]) : -1;
         int skip = (multivaluedMap.get("skip") != null) ? Integer.parseInt(multivaluedMap.get("skip")[0]) : -1;
-        boolean count = (multivaluedMap.get("count") != null) ? multivaluedMap.get("count")[0].equals("true") : false ;
+        boolean count = (multivaluedMap.get("count") != null) ? multivaluedMap.get("count")[0].equals("true") : false;
 
         String[] exclude = multivaluedMap.get("exclude");
         String[] include = multivaluedMap.get("include");
@@ -74,7 +74,7 @@ public class QueryUtils {
         queryResponse.setResponse(coll);
         return queryResponse;
     }
-    
+
     public <T> QueryResponse<T> setQueryResponse(T obj, String version) {
         QueryResponse<T> queryResponse = buildQueryResponse(version);
 

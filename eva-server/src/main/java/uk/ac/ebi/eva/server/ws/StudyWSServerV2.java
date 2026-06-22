@@ -1,10 +1,10 @@
 package uk.ac.ebi.eva.server.ws;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.PagedResources;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,12 +19,12 @@ import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import java.util.Collections;
 import java.util.List;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/v2/studies", produces = "application/hal+json")
-@Api(tags = "studies")
+@Tag(name = "studies")
 public class StudyWSServerV2 {
 
     @Autowired
@@ -32,17 +32,17 @@ public class StudyWSServerV2 {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity getBrowsableStudies(
-            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. " +
+            @Parameter(description = "First letter of the genus, followed by the full species name, e.g. hsapiens. " +
                     "Allowed values can be looked up in /v1/meta/species/list/ in the field named" +
                     " 'taxonomyCode'.", required = true)
             @RequestParam("species") String species,
-            @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
+            @Parameter(description = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
                     "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam("assembly") String assembly,
-            @ApiParam(value = "The number of the page that should be displayed. Starts from 0 and is an integer." +
+            @Parameter(description = "The number of the page that should be displayed. Starts from 0 and is an integer." +
                     " e.g. 0")
             @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
-            @ApiParam(value = "The number of elements that should be displayed in a single page. e.g. 5")
+            @Parameter(description = "The number of elements that should be displayed in a single page. e.g. 5")
             @RequestParam(required = false, defaultValue = "20") Integer pageSize)
             throws IllegalArgumentException {
         if (species == null || species.isEmpty()) {
@@ -53,24 +53,29 @@ public class StudyWSServerV2 {
 
         int totalNumberOfResults = variantStudySummaryService.countAll();
         if (totalNumberOfResults == 0) {
-            return new ResponseEntity(new PagedResources<>(Collections.EMPTY_LIST, new PagedResources.PageMetadata
-                    (pageSize, pageNumber < 0 ? 0 : pageNumber, totalNumberOfResults)), HttpStatus.NO_CONTENT);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(PagedModel.of(Collections.emptyList(),
+                            new PagedModel.PageMetadata(
+                                    pageSize.longValue(),
+                                    pageNumber < 0 ? 0L : pageNumber.longValue(),
+                                    totalNumberOfResults
+                            )));
         }
 
         List<VariantStudySummary> uniqueStudies = variantStudySummaryService.findAll(pageNumber, pageSize);
 
-        PagedResources.PageMetadata pageMetadata;
+        PagedModel.PageMetadata pageMetadata;
         try {
             pageMetadata = buildPageMetadata(pageSize, pageNumber, totalNumberOfResults);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
         }
 
-        PagedResources pagedResources = buildPagedResources(uniqueStudies, species, assembly, pageMetadata);
+        PagedModel<VariantStudySummary> pagedResources = buildPagedResources(uniqueStudies, species, assembly, pageMetadata);
         return new ResponseEntity(pagedResources, HttpStatus.OK);
     }
 
-    private PagedResources.PageMetadata buildPageMetadata(Integer pageSize, Integer pageNumber, Integer
+    private PagedModel.PageMetadata buildPageMetadata(Integer pageSize, Integer pageNumber, Integer
             totalNumberOfResults)
             throws IllegalArgumentException {
         Long totalPages = pageSize == 0L ? 0L : (long) Math.ceil((double) totalNumberOfResults / (double) pageSize);
@@ -79,13 +84,13 @@ public class StudyWSServerV2 {
             throw new IllegalArgumentException("For the given page size, there are " + totalPages + " page(s), so " +
                     "the correct page range is from 0 to " + (totalPages - 1) + " (both included).");
         }
-        return new PagedResources.PageMetadata(pageSize, pageNumber, totalNumberOfResults, totalPages);
+        return new PagedModel.PageMetadata(pageSize, pageNumber, totalNumberOfResults, totalPages);
     }
 
-    private PagedResources buildPagedResources(List<VariantStudySummary> uniqueStudies, String species,
-                                               String assembly, PagedResources.PageMetadata pageMetadata) {
+    private PagedModel<VariantStudySummary> buildPagedResources(List<VariantStudySummary> uniqueStudies, String species,
+                                                                String assembly, PagedModel.PageMetadata pageMetadata) {
 
-        PagedResources pagedResources = new PagedResources<>(uniqueStudies, pageMetadata);
+        PagedModel<VariantStudySummary> pagedResources = PagedModel.of(uniqueStudies, pageMetadata);
 
         int pageNumber = (int) pageMetadata.getNumber();
         int pageSize = (int) pageMetadata.getSize();
@@ -106,9 +111,7 @@ public class StudyWSServerV2 {
     }
 
     private Link createPaginationLink(String species, String assembly, int pageNumber, int pageSize, String linkName) {
-        return new Link(linkTo(methodOn(StudyWSServerV2.class).getBrowsableStudies(species, assembly,
-                pageNumber, pageSize))
-                .toUriComponentsBuilder()
-                .toUriString(), linkName);
+        return linkTo(methodOn(StudyWSServerV2.class).getBrowsableStudies(species, assembly, pageNumber, pageSize))
+                .withRel(linkName);
     }
 }

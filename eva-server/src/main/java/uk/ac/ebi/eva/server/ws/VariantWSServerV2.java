@@ -19,12 +19,13 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,7 @@ import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasTranslator;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
+import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
@@ -45,17 +47,16 @@ import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/v2/variants", produces = "application/hal+json")
-@Api(tags = {"variants"})
+@Tag(name = "variants")
 public class VariantWSServerV2 {
 
     @Autowired
@@ -69,17 +70,17 @@ public class VariantWSServerV2 {
 
     @GetMapping(value = "/{variantCoreString}")
     public ResponseEntity getCoreInfo(
-            @ApiParam(value = "Chromosome, start, reference allele and" +
+            @Parameter(description = "Chromosome, start, reference allele and" +
                     " alternate allele; all joined by colon. e.g. 13:32884647:T:C")
             @PathVariable("variantCoreString") String variantCoreString,
-            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. " +
+            @Parameter(description = "First letter of the genus, followed by the full species name, e.g. hsapiens. " +
                     "Allowed values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
                     required = true)
             @RequestParam(name = "species") String species,
-            @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
+            @Parameter(description = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
                     "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam(name = "assembly") String assembly,
-            @ApiParam(value = "Contig naming convention desired, default is INSDC")
+            @Parameter(description = "Contig naming convention desired, default is INSDC")
             @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
             HttpServletResponse response) throws IllegalArgumentException {
         try {
@@ -121,16 +122,18 @@ public class VariantWSServerV2 {
         Variant variant = new Variant(variantContig, retrievedVariant.getStart(),
                 retrievedVariant.getEnd(), retrievedVariant.getReference(), retrievedVariant.getAlternate());
         variant.setIds(variantEntity.get().getIds());
-        Link annotationLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
-                species, assembly, null, null, contigNamingConvention, response)).toUri().toString(), "annotation");
+        Link annotationLink = linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
+                species, assembly, null, null, contigNamingConvention, response))
+                .withRel("annotation");
 
-        Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getSources(variantCoreString, species,
-                assembly, null, null, contigNamingConvention, response)).toUri().toString(), "sources");
+        Link sourcesLink = linkTo(methodOn(VariantWSServerV2.class).getSources(variantCoreString, species,
+                assembly, null, null, contigNamingConvention, response))
+                .withRel("sources");
 
         List<Link> links = new ArrayList<>();
         links.add(sourcesLink);
         links.add(annotationLink);
-        return new ResponseEntity(new Resource<>(variant, links), HttpStatus.OK);
+        return new ResponseEntity(EntityModel.of(variant, links), HttpStatus.OK);
     }
 
     private void checkParameters(String variantCoreString, String annotationVepVersion,
@@ -189,23 +192,23 @@ public class VariantWSServerV2 {
 
     @GetMapping(value = "/{variantCoreString}/annotations")
     public ResponseEntity getAnnotations(
-            @ApiParam(value = "Chromosome, start, reference allele and" +
+            @Parameter(description = "Chromosome, start, reference allele and" +
                     " alternate allele; all joined by colon. e.g. 13:32884647:T:C")
             @PathVariable("variantCoreString") String variantCoreString,
-            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens." +
+            @Parameter(description = "First letter of the genus, followed by the full species name, e.g. hsapiens." +
                     " Allowed values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
                     required = true)
             @RequestParam(name = "species") String species,
-            @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in" +
+            @Parameter(description = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in" +
                     " /v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam(name = "assembly") String assembly,
-            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP release. e.g. 78")
+            @Parameter(description = "Include in the response any available annotation for this Ensembl VEP release. e.g. 78")
             @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
-            @ApiParam(value = "Include in the response any available annotation for this Ensembl VEP cache release. " +
+            @Parameter(description = "Include in the response any available annotation for this Ensembl VEP cache release. " +
                     "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false)
             String annotationVepCacheVersion,
-            @ApiParam(value = "Contig naming convention desired, default is INSDC")
+            @Parameter(description = "Contig naming convention desired, default is INSDC")
             @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
             HttpServletResponse response) throws IllegalArgumentException {
         try {
@@ -239,33 +242,33 @@ public class VariantWSServerV2 {
         if (!variantEntity.isPresent() || variantEntity.get().getAnnotation() == null) {
             return new ResponseEntity(null, HttpStatus.NOT_FOUND);
         }
-        Link coreVariantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
-                species, assembly, contigNamingConvention, response)).toUri().toString(), "coreVariant");
+        Link coreVariantLink = linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
+                species, assembly, contigNamingConvention, response)).withRel("coreVariant");
 
-        return new ResponseEntity(new Resource<>(contigAliasService.getAnnotationWithTranslatedContig(
+        return new ResponseEntity(EntityModel.of(contigAliasService.getAnnotationWithTranslatedContig(
                 variantEntity.get().getAnnotation(), contigNamingConvention), coreVariantLink), HttpStatus.OK);
 
     }
 
     @GetMapping(value = "/{variantCoreString}/sources")
     public ResponseEntity getSources(
-            @ApiParam(value = "Internal species-relative variant ID. Chromosome, start, reference allele and" +
+            @Parameter(description = "Internal species-relative variant ID. Chromosome, start, reference allele and" +
                     " alternate allele; all joined by colon. e.g. 13:32884647:T:C")
             @PathVariable("variantCoreString") String variantCoreString,
-            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. " +
+            @Parameter(description = "First letter of the genus, followed by the full species name, e.g. hsapiens. " +
                     "Allowed values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
                     required = true)
             @RequestParam(name = "species") String species,
-            @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
+            @Parameter(description = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
                     "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam(name = "assembly") String assembly,
-            @ApiParam(value = "Ensembl VEP release whose annotations will be included in the response, e.g. 78")
+            @Parameter(description = "Ensembl VEP release whose annotations will be included in the response, e.g. 78")
             @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
-            @ApiParam(value = "Ensembl VEP cache release whose annotations will be included in the response, " +
+            @Parameter(description = "Ensembl VEP cache release whose annotations will be included in the response, " +
                     "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false)
             String annotationVepCacheVersion,
-            @ApiParam(value = "Contig naming convention desired, default is INSDC")
+            @Parameter(description = "Contig naming convention desired, default is INSDC")
             @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
             HttpServletResponse response) throws IllegalArgumentException {
         try {
@@ -296,18 +299,18 @@ public class VariantWSServerV2 {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        List<Resource> resourceList = new ArrayList<>();
+        List<EntityModel<VariantSourceEntryWithSampleNames>> resourceList = new ArrayList<>();
         if (!variantEntity.isPresent()) {
             return new ResponseEntity(null, HttpStatus.NOT_FOUND);
         }
         variantEntity.get().getSourceEntries().forEach(sourceEntry -> {
-            resourceList.add(new Resource<>(sourceEntry));
+            resourceList.add(EntityModel.of(sourceEntry));
         });
-        Link coreVariantLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
-                species, assembly, contigNamingConvention, response)).toUri().toString(), "coreVariant");
+        Link coreVariantLink = linkTo(methodOn(VariantWSServerV2.class).getCoreInfo(variantCoreString,
+                species, assembly, contigNamingConvention, response)).withRel("coreVariant");
         if (resourceList.size() == 0) {
-            return new ResponseEntity(new Resources<>(resourceList, coreVariantLink), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(CollectionModel.of(resourceList, coreVariantLink), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity(new Resources<>(resourceList, coreVariantLink), HttpStatus.OK);
+        return new ResponseEntity(CollectionModel.of(resourceList, coreVariantLink), HttpStatus.OK);
     }
 }

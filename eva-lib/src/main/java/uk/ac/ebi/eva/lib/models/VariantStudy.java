@@ -81,7 +81,7 @@ public class VariantStudy {
 
     public VariantStudy(String studyName, String studyId, List<VariantSourceEntryWithSampleNames> sources) {
         this(studyName, studyId, sources, null, new int[0], null, null, null, null, null, null, StudyType.COLLECTION,
-             null, null, null, null, null, null, new String[0], -1, -1, false);
+                null, null, null, null, null, null, new String[0], -1, -1, false);
     }
 
     public VariantStudy(String studyName, String studyId, List<VariantSourceEntryWithSampleNames> sources,

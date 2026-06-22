@@ -16,10 +16,13 @@
 package uk.ac.ebi.eva.lib.entities;
 
 
-import uk.ac.ebi.eva.lib.models.VariantStudy;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import uk.ac.ebi.eva.lib.eva_utils.EvaproDbUtils;
+import uk.ac.ebi.eva.lib.models.VariantStudy;
 
-import javax.persistence.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -98,7 +101,8 @@ public class DgvaStudyBrowser {
         this.assemblyAccession = assemblyAccession;
     }
 
-    DgvaStudyBrowser() { }
+    DgvaStudyBrowser() {
+    }
 
     public VariantStudy generateVariantStudy() {
         // Convert the list of tax ids to integer values
@@ -131,10 +135,10 @@ public class DgvaStudyBrowser {
         }
 
         VariantStudy study = new VariantStudy(displayName, studyAccession, null,
-                                              studyDescription, taxIds, commonName, scientificName,
-                                              null, null, null, null, EvaproDbUtils.stringToStudyType(studyType),
-                                              analysisType, null, assemblyName, assemblyAccession, platformName, uri,
-                                              publications, -1, -1, false);
+                studyDescription, taxIds, commonName, scientificName,
+                null, null, null, null, EvaproDbUtils.stringToStudyType(studyType),
+                analysisType, null, assemblyName, assemblyAccession, platformName, uri,
+                publications, -1, -1, false);
         return study;
     }
 

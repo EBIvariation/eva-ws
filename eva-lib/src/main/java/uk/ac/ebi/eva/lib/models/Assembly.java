@@ -24,13 +24,13 @@ package uk.ac.ebi.eva.lib.models;
  * @author Cristina Yenyxe Gonzalez Garcia <cyenyxe@ebi.ac.uk>
  */
 public class Assembly {
- 
+
     private String assemblyAccession;
     private String assemblyChain;
     private String assemblyVersion;
     private String assemblyName;
     private String assemblyCode;
-    
+
     private int taxonomyId;
     private String taxonomyCommonName;
     private String taxonomyScientificName;
@@ -41,7 +41,7 @@ public class Assembly {
     }
 
     public Assembly(String assemblyAccession, String assemblyChain, String assemblyVersion, String assemblyName, String assemblyCode,
-            int taxonomyId, String taxonomyCommonName, String taxonomyScientificName, String taxonomyCode, String taxonomyEvaName) {
+                    int taxonomyId, String taxonomyCommonName, String taxonomyScientificName, String taxonomyCode, String taxonomyEvaName) {
         this.assemblyAccession = assemblyAccession;
         this.assemblyChain = assemblyChain;
         this.assemblyVersion = assemblyVersion;
@@ -93,6 +93,6 @@ public class Assembly {
     public String getTaxonomyEvaName() {
         return taxonomyEvaName;
     }
-    
-    
+
+
 }

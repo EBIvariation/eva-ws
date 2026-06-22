@@ -18,7 +18,9 @@
  */
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,26 +38,24 @@ import uk.ac.ebi.eva.commons.mongodb.filter.FilterBuilder;
 import uk.ac.ebi.eva.commons.mongodb.filter.VariantRepositoryFilter;
 import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundException;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantRequest;
 import uk.ac.ebi.eva.lib.models.ga4gh.GASearchVariantsResponse;
 import uk.ac.ebi.eva.lib.models.ga4gh.GAVariant;
 import uk.ac.ebi.eva.lib.models.ga4gh.GAVariantFactory;
-import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/v1/ga4gh/variants", produces = "application/json")
-@Api(tags = {"ga4gh", "variants"})
+@Tags({@Tag(name = "ga4gh"), @Tag(name = "variants")})
 public class GA4GHVariantWSServer extends EvaWSServer {
 
     @Autowired
@@ -85,7 +85,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
                                                         ContigNamingConvention contigNamingConvention,
                                                         @RequestParam(name = "pageToken", required = false) String pageToken,
                                                         @RequestParam(name = "pageSize", defaultValue = "10") int limit)
-            throws UnknownHostException, IOException, AnnotationMetadataNotFoundException {
+            throws AnnotationMetadataNotFoundException {
         initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
@@ -102,8 +102,8 @@ public class GA4GHVariantWSServer extends EvaWSServer {
         regions.add(region);
 
         List<VariantWithSamplesAndAnnotation> variantEntities = service.findByRegionsAndComplexFilters(regions, filters,
-                                                                                                       null, null,
-                                                                                                       pageRequest);
+                null, null,
+                pageRequest);
         List<VariantWithSamplesAndAnnotation> variants = Collections.unmodifiableList(
                 contigAliasService.getVariantsWithTranslatedContig(variantEntities, contigNamingConvention));
 
@@ -122,7 +122,7 @@ public class GA4GHVariantWSServer extends EvaWSServer {
     public GASearchVariantsResponse getVariantsByRegion(GASearchVariantRequest request,
                                                         @RequestParam(name = "contigNamingConvention", required = false)
                                                         ContigNamingConvention contigNamingConvention)
-            throws UnknownHostException, IOException, AnnotationMetadataNotFoundException {
+            throws AnnotationMetadataNotFoundException {
         request.validate();
         return getVariantsByRegion(request.getReferenceName(), request.getStart(), request.getEnd(),
                 request.getVariantSetIds(), contigNamingConvention, request.getPageToken(), request.getPageSize());
