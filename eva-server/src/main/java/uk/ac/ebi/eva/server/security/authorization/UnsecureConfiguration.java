@@ -17,6 +17,7 @@ public class UnsecureConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.anonymous(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                // CSRF disabled intentionally — stateless REST API uses Basic Auth with no session cookies, so CSRF is not applicable
                 .csrf(csrf -> csrf.disable());
 
         return http.build();
