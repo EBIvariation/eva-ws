@@ -5,6 +5,7 @@ stages:
 
 variables:
     DOCKER_REGISTRY: dockerhub.ebi.ac.uk
+    DOCKER_IMAGE: $DOCKER_REGISTRY/ebivariation/eva-ws
     K8S_REPO_URL: https://github.com/EBIvariation/eva-k8s.git
     MAVEN_SETTINGS: maven-settings.xml
     URL_MAVEN_SETTINGS: https://api.github.com/repos/EBIvariation/configuration/contents/eva-maven-settings.xml
@@ -82,8 +83,10 @@ test:
         - curl -u $GITHUB_USER:$GITHUB_TOKEN -H "Accept:$MEDIA_TYPE" $KUBECONFIG_FILE > ~/.kube/config
         - chmod 600 ~/.kube/config
     script:
-       # Create/update the image pull secret in the target namespace from DOCKER_AUTH_CONFIG. It only updates if DOCKER_AUTH_CONFIG changes
-       - kubectl create secret generic regcred --type=kubernetes.io/dockerconfigjson --from-literal=.dockerconfigjson="$DOCKER_AUTH_CONFIG" -n $K8S_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
+        # Create the target namespace if it doesn't already exist
+        - kubectl apply -f $K8S_MANIFEST_PATH/namespace.yaml
+        # Create/update the image pull secret in the target namespace from DOCKER_AUTH_CONFIG. It only updates if DOCKER_AUTH_CONFIG changes
+        - kubectl create secret generic regcred --type=kubernetes.io/dockerconfigjson --from-literal=.dockerconfigjson="$DOCKER_AUTH_CONFIG" -n $K8S_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
         - source $HOME/.venv/bin/activate
         # Download Maven settings from private repository
         - curl -u $GITHUB_USER:$GITHUB_TOKEN -H "Accept:$MEDIA_TYPE" $URL_MAVEN_SETTINGS > maven-settings.xml
@@ -117,7 +120,6 @@ build:docker:eva-server:dev:
     extends: .build_docker
     variables:
         DOCKERFILE_PATH: eva-server/Dockerfile
-        DOCKER_IMAGE: $DOCKER_REGISTRY/ebivariation/eva-server
         IMAGE_TAG: eva-server-dev-$CI_COMMIT_SHORT_SHA
         IMAGE_LATEST: dev-latest
     only:
@@ -170,7 +172,6 @@ build:docker:eva-release:dev:
     extends: .build_docker
     variables:
         DOCKERFILE_PATH: eva-release/Dockerfile
-        DOCKER_IMAGE: $DOCKER_REGISTRY/ebivariation/eva-release
         IMAGE_TAG: eva-release-dev-$CI_COMMIT_SHORT_SHA
         IMAGE_LATEST: dev-latest
     only:
@@ -223,7 +224,6 @@ build:docker:count-stats:dev:
     extends: .build_docker
     variables:
         DOCKERFILE_PATH: count-stats/Dockerfile
-        DOCKER_IMAGE: $DOCKER_REGISTRY/ebivariation/count-stats
         IMAGE_TAG: count-stat-dev-$CI_COMMIT_SHORT_SHA
         IMAGE_LATEST: dev-latest
     only:
@@ -277,28 +277,8 @@ build:docker:dgva-server:dev:
     extends: .build_docker
     variables:
         DOCKERFILE_PATH: dgva-server/Dockerfile
-        DOCKER_IMAGE: $DOCKER_REGISTRY/ebivariation/dgva-server
         IMAGE_TAG: dgva-server-dev-$CI_COMMIT_SHORT_SHA
         IMAGE_LATEST: dev-latest
-    only:
-        - master
-        - java21
-
-deploy:dgva-server:dev:
-    extends: .update_and_deploy
-    needs:
-        - build:docker:dgva-server:dev
-    variables:
-        SERVICE_NAME: dgva-server
-        PROPERTY_SET: dgva-server
-        IMAGE_TAG: dgva-server-dev-$CI_COMMIT_SHORT_SHA
-        ENV: development
-        MAVEN_PROFILE: development
-        K8S_MANIFEST_PATH: k8s-manifests/dgva-server/overlays/dev
-        K8S_NAMESPACE: dgva-server-dev
-        KUBECONFIG_FILE: $KUBECONFIG_FILE_DEV
-    environment:
-        name: development
     only:
         - master
         - java21
