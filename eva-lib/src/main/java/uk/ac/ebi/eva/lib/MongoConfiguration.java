@@ -21,19 +21,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-
 import uk.ac.ebi.eva.lib.configuration.DbCollectionsProperties;
 import uk.ac.ebi.eva.lib.configuration.SpringDataMongoDbProperties;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
-
-import java.io.IOException;
 
 @Configuration
 @Import(DbCollectionsProperties.class)
@@ -45,7 +42,7 @@ public class MongoConfiguration {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private MongoDbFactory mongoDbFactory;
+    private MongoDatabaseFactory mongoDbFactory;
 
     @Autowired
     private DbCollectionsProperties dbCollectionsProperties;
@@ -86,7 +83,7 @@ public class MongoConfiguration {
     }
 
     @Bean
-    public MappingMongoConverter mappingMongoConverter() throws IOException {
+    public MappingMongoConverter mappingMongoConverter() {
         DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDbFactory);
         MappingMongoConverter mongoConverter = new MappingMongoConverter(dbRefResolver, mongoMappingContext());
 
@@ -98,8 +95,9 @@ public class MongoConfiguration {
     }
 
     @Bean
-    public MongoDbFactory mongoDbFactory(SpringDataMongoDbProperties springDataMongoDbProperties) throws Exception {
-        return new SimpleMongoDbFactory(DBAdaptorConnector.getMongoClient(springDataMongoDbProperties),
-                                        springDataMongoDbProperties.getDatabase());
+    public MongoDatabaseFactory mongoDbFactory(SpringDataMongoDbProperties springDataMongoDbProperties) throws Exception {
+        return new SimpleMongoClientDatabaseFactory(DBAdaptorConnector.getMongoClient(springDataMongoDbProperties),
+                springDataMongoDbProperties.getDatabase()
+        );
     }
 }

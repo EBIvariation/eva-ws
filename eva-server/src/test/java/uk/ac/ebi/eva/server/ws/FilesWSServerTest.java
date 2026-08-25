@@ -18,9 +18,9 @@
  */
 package uk.ac.ebi.eva.server.ws;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,7 +29,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.commons.core.models.Aggregation;
 import uk.ac.ebi.eva.commons.core.models.StudyType;
 import uk.ac.ebi.eva.commons.core.models.VariantSource;
@@ -38,18 +38,17 @@ import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class FilesWSServerTest {
 
@@ -63,7 +62,7 @@ public class FilesWSServerTest {
     @MockBean
     private VariantSourceService service;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         Map<String, Object> metadata = new TreeMap<>();
         Map<String, Integer> samples = new TreeMap<>();
@@ -78,7 +77,7 @@ public class FilesWSServerTest {
     }
 
     @Test
-    public void testGetFiles() throws URISyntaxException {
+    public void testGetFiles() {
         String url = "/v1/files/all?species=hsapiens_grch37";
         ResponseEntity<QueryResponse<QueryResult<VariantSource>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,

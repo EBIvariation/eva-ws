@@ -20,9 +20,9 @@ package uk.ac.ebi.eva.server.ws;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,13 +31,13 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.commons.core.models.StudyType;
 import uk.ac.ebi.eva.commons.mongodb.entities.projections.VariantStudySummary;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantStudySummaryService;
 import uk.ac.ebi.eva.lib.metadata.dgva.ArchiveDgvaDBAdaptor;
-import uk.ac.ebi.eva.lib.metadata.eva.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
+import uk.ac.ebi.eva.lib.metadata.eva.ArchiveEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.eva.StudyEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.models.Assembly;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
@@ -55,16 +55,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyObject;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ArchiveWSServerTest {
 
@@ -88,15 +87,15 @@ public class ArchiveWSServerTest {
     @MockBean
     private VariantStudySummaryService service;
 
-    @Before
+    @BeforeEach
     public void setup() throws URISyntaxException, IOException {
         // species test data
         Assembly grch37 = new Assembly("GCA_000001405.1", "GCA_000001405", "1", "GRCh37", "grc3h7", 9606, "Human", "Homo Sapiens", "hsapiens", "human");
 
         Assembly grch38 = new Assembly("GCA_000001405.18", "GCA_000001405", "18", "GRCh38.p3", "grc3h8", 9606, "Human",
-                              "Homo Sapiens", "hsapiens", "human");
+                "Homo Sapiens", "hsapiens", "human");
         Assembly umd31 = new Assembly("GCA_000003055.3", "GCA_000003055", "3", "Bos_taurus_UMD_3.1", "umd31", 9913, "Cattle",
-                             "Bos taurus", "btaurus", "cow");
+                "Bos taurus", "btaurus", "cow");
         given(this.archiveEvaproDBAdaptor.getBrowsableSpecies())
                 .willReturn(encapsulateInQueryResult(grch37, grch38, umd31));
         given(this.archiveEvaproDBAdaptor.getAccessionedSpecies())
@@ -109,62 +108,62 @@ public class ArchiveWSServerTest {
 
 
         VariantStudy study1 = new VariantStudy("Human Test study 1", "S1", null, "Study 1 description", new int[]{9606},
-                                               "Human", "Homo Sapiens", "Germline", "EBI", "DNA", "multi-isolate",
-                                               StudyType.CASE_CONTROL, "Exome Sequencing", "ES", "GRCh37",
-                                               "GCA_000001405.3", "Illumina", new URI("http://www.s1.org"),
-                                               new String[]{"10"}, 1000, 10, false);
+                "Human", "Homo Sapiens", "Germline", "EBI", "DNA", "multi-isolate",
+                StudyType.CASE_CONTROL, "Exome Sequencing", "ES", "GRCh37",
+                "GCA_000001405.3", "Illumina", new URI("http://www.s1.org"),
+                new String[]{"10"}, 1000, 10, false);
         VariantStudy study2 = new VariantStudy("Human Test study 2", "S2", null, "Study 2 description", new int[]{9606},
-                                               "Human", "Homo Sapiens", "Germline", "EBI", "DNA", "multi-isolate",
-                                               StudyType.AGGREGATE, "Exome Sequencing", "ES", "GRCh38",
-                                               "GCA_000001405.14", "Illumina", new URI("http://www.s2.org"),
-                                               new String[]{"13"}, 5000, 4, false);
+                "Human", "Homo Sapiens", "Germline", "EBI", "DNA", "multi-isolate",
+                StudyType.AGGREGATE, "Exome Sequencing", "ES", "GRCh38",
+                "GCA_000001405.14", "Illumina", new URI("http://www.s2.org"),
+                new String[]{"13"}, 5000, 4, false);
         VariantStudy study3 = new VariantStudy("Cow Test study 1", "CS1", null, "Cow study 1 description",
-                                               new int[]{9913}, "Cow", "Bos taurus", "Germline", "EBI", "DNA",
-                                               "multi-isolate", StudyType.AGGREGATE, "Whole Genome Sequencing",
-                                               "WGSS", "Bos_taurus_UMD_3.1", "GCA_000003055.3", "Illumina",
-                                               new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12, false);
-        given(studyEvaproDBAdaptor.getAllStudies(anyObject()))
+                new int[]{9913}, "Cow", "Bos taurus", "Germline", "EBI", "DNA",
+                "multi-isolate", StudyType.AGGREGATE, "Whole Genome Sequencing",
+                "WGSS", "Bos_taurus_UMD_3.1", "GCA_000003055.3", "Illumina",
+                new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12, false);
+        given(studyEvaproDBAdaptor.getAllStudies(any()))
                 .willReturn(encapsulateInQueryResult(study1, study2, study3));
         Map<String, Long> studiesGroupedBySpeciesName = Stream.of(study1, study2, study3).collect(
                 Collectors.groupingBy(VariantStudy::getSpeciesCommonName,
-                                      Collectors.counting()));
-        given(archiveEvaproDBAdaptor.countStudiesPerSpecies(anyObject()))
+                        Collectors.counting()));
+        given(archiveEvaproDBAdaptor.countStudiesPerSpecies(any()))
                 .willReturn(encapsulateInQueryResult(studiesGroupedBySpeciesName.entrySet().toArray()));
         Map<String, Long> studiesGroupedByStudyType = Stream.of(study1, study2, study3).map(s -> s.getType().toString())
-                                                       .collect(Collectors.groupingBy(Function.identity(),
-                                                                                      Collectors.counting()));
-        given(archiveEvaproDBAdaptor.countStudiesPerType(anyObject()))
+                .collect(Collectors.groupingBy(Function.identity(),
+                        Collectors.counting()));
+        given(archiveEvaproDBAdaptor.countStudiesPerType(any()))
                 .willReturn(encapsulateInQueryResult(studiesGroupedByStudyType.entrySet().toArray()));
 
 
         VariantStudy svStudy1 = new VariantStudy("Human SV Test study 1", "svS1", null, "SV study 1 description",
-                                                 new int[]{9606}, "Human", "Homo Sapiens", "Germline", "EBI", "DNA",
-                                                 "multi-isolate", StudyType.CASE_CONTROL, "Exome Sequencing", "ES",
-                                                 "GRCh37", "GCA_000001405.3", "Illumina", new URI("http://www.s1.org"),
-                                                 new String[]{"10"}, 1000, 10, false);
+                new int[]{9606}, "Human", "Homo Sapiens", "Germline", "EBI", "DNA",
+                "multi-isolate", StudyType.CASE_CONTROL, "Exome Sequencing", "ES",
+                "GRCh37", "GCA_000001405.3", "Illumina", new URI("http://www.s1.org"),
+                new String[]{"10"}, 1000, 10, false);
         VariantStudy svStudy2 = new VariantStudy("Human SVV Test study 2", "svS2", null, "SV study 2 description",
-                                                 new int[]{9606}, "Human", "Homo Sapiens", "Germline", "EBI", "DNA",
-                                                 "multi-isolate", StudyType.AGGREGATE, "Exome Sequencing", "ES",
-                                                 "GRCh38", "GCA_000001405.14", "Illumina", new URI("http://www.s2.org"),
-                                                 new String[]{"13"}, 5000, 4, false);
+                new int[]{9606}, "Human", "Homo Sapiens", "Germline", "EBI", "DNA",
+                "multi-isolate", StudyType.AGGREGATE, "Exome Sequencing", "ES",
+                "GRCh38", "GCA_000001405.14", "Illumina", new URI("http://www.s2.org"),
+                new String[]{"13"}, 5000, 4, false);
         VariantStudy svStudy3 = new VariantStudy("Cow SV Test study 1", "svCS1", null, "SV cow study 1 description",
-                                                 new int[]{9913}, "Cow", "Bos taurus", "Germline", "EBI", "DNA",
-                                                 "multi-isolate", StudyType.AGGREGATE, "Whole Genome Sequencing", "WGS",
-                                                 "Bos_taurus_UMD_3.1", "GCA_000003055.3", "Illumina",
-                                                 new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12, false);
-        given(studyDgvaDBAdaptor.getAllStudies(anyObject()))
-                  .willReturn(encapsulateInQueryResult(svStudy1, svStudy2, svStudy3));
+                new int[]{9913}, "Cow", "Bos taurus", "Germline", "EBI", "DNA",
+                "multi-isolate", StudyType.AGGREGATE, "Whole Genome Sequencing", "WGS",
+                "Bos_taurus_UMD_3.1", "GCA_000003055.3", "Illumina",
+                new URI("http://www.cs1.org"), new String[]{"1", "2"}, 1300, 12, false);
+        given(studyDgvaDBAdaptor.getAllStudies(any()))
+                .willReturn(encapsulateInQueryResult(svStudy1, svStudy2, svStudy3));
 
         Map<String, Long> svStudiesGroupedBySpeciesName = Stream.of(svStudy1, svStudy2, svStudy3)
                 .collect(Collectors.groupingBy(VariantStudy::getSpeciesCommonName, Collectors.counting()));
-        given(archiveDgvaDBAdaptor.countStudiesPerSpecies(anyObject()))
+        given(archiveDgvaDBAdaptor.countStudiesPerSpecies(any()))
                 .willReturn(encapsulateInQueryResult(svStudiesGroupedBySpeciesName.entrySet().toArray()));
 
         Map<String, Long> svStudiesGroupedByStudyType = Stream.of(svStudy1, svStudy2, svStudy3)
-                                                              .map(s -> s.getType().toString())
-                                                              .collect(Collectors.groupingBy(Function.identity(),
-                                                                                             Collectors.counting()));
-        given(archiveDgvaDBAdaptor.countStudiesPerType(anyObject()))
+                .map(s -> s.getType().toString())
+                .collect(Collectors.groupingBy(Function.identity(),
+                        Collectors.counting()));
+        given(archiveDgvaDBAdaptor.countStudiesPerType(any()))
                 .willReturn(encapsulateInQueryResult(svStudiesGroupedByStudyType.entrySet().toArray()));
 
         List<VariantStudySummary> studies = buildVariantStudySummaries();
@@ -187,11 +186,12 @@ public class ArchiveWSServerTest {
 
 
     @Test
-    public void testCountSpecies() throws URISyntaxException {
+    public void testCountSpecies() {
         String url = "/v1/meta/species/count";
         ResponseEntity<QueryResponse<QueryResult<Integer>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Integer>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<Integer>>>() {
+                });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         QueryResponse<QueryResult<Integer>> queryResponse = response.getBody();
@@ -203,11 +203,12 @@ public class ArchiveWSServerTest {
     }
 
     @Test
-    public void testGetBrowsableSpecies() throws URISyntaxException {
+    public void testGetBrowsableSpecies() {
         String url = "/v1/meta/species/list";
         ResponseEntity<QueryResponse<QueryResult<Assembly>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Assembly>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<Assembly>>>() {
+                });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         QueryResponse<QueryResult<Assembly>> queryResponse = response.getBody();
@@ -233,11 +234,12 @@ public class ArchiveWSServerTest {
     }
 
     @Test
-    public void testGetAccessionedSpecies() throws URISyntaxException {
+    public void testGetAccessionedSpecies() {
         String url = "/v1/meta/species/accessioned";
         ResponseEntity<QueryResponse<QueryResult<Assembly>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Assembly>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<Assembly>>>() {
+                });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         QueryResponse<QueryResult<Assembly>> queryResponse = response.getBody();
@@ -263,13 +265,13 @@ public class ArchiveWSServerTest {
     }
 
     @Test
-    public void testCountFiles() throws URISyntaxException {
+    public void testCountFiles() {
         String url = "/v1/meta/files/count";
         assertGetCount(url, 5);
     }
 
     @Test
-    public void testCountStudies() throws URISyntaxException {
+    public void testCountStudies() {
         String url = "/v1/meta/studies/count";
         assertGetCount(url, 3);
     }
@@ -277,7 +279,8 @@ public class ArchiveWSServerTest {
     private void assertGetCount(String url, Integer expectedCount) {
         ResponseEntity<QueryResponse<QueryResult<Integer>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<Integer>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<Integer>>>() {
+                });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         QueryResponse<QueryResult<Integer>> queryResponse = response.getBody();
@@ -290,11 +293,12 @@ public class ArchiveWSServerTest {
     }
 
     @Test
-    public void testGetBrowsableStudiesNoSpecies() throws URISyntaxException {
+    public void testGetBrowsableStudiesNoSpecies() {
         String url = "/v1/meta/studies/list";
         ResponseEntity<QueryResponse<QueryResult<VariantStudySummary>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantStudySummary>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantStudySummary>>>() {
+                });
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
         QueryResponse<QueryResult<VariantStudySummary>> queryResponse = response.getBody();
@@ -302,11 +306,12 @@ public class ArchiveWSServerTest {
     }
 
     @Test
-    public void testGetBrowsableStudiesBySpecies() throws URISyntaxException {
+    public void testGetBrowsableStudiesBySpecies() {
         String url = "/v1/meta/studies/list?species=hsapiens_grch37";
         ResponseEntity<QueryResponse<QueryResult<VariantStudySummary>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantStudySummary>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantStudySummary>>>() {
+                });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         QueryResponse<QueryResult<VariantStudySummary>> queryResponse = response.getBody();
@@ -323,13 +328,13 @@ public class ArchiveWSServerTest {
     }
 
     @Test
-    public void testGetStudies() throws URISyntaxException {
+    public void testGetStudies() {
         String url = "/v1/meta/studies/all";
         assertGetStudiesAll(url);
     }
 
     @Test
-    public void testGetStudiesStructural() throws URISyntaxException {
+    public void testGetStudiesStructural() {
         String url = "/v1/meta/studies/all?structural=true";
         assertGetStudiesAll(url);
     }
@@ -337,7 +342,8 @@ public class ArchiveWSServerTest {
     private void assertGetStudiesAll(String url) {
         ResponseEntity<QueryResponse<QueryResult<VariantStudy>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantStudy>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<VariantStudy>>>() {
+                });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         QueryResponse<QueryResult<VariantStudy>> queryResponse = response.getBody();
@@ -377,7 +383,7 @@ public class ArchiveWSServerTest {
     }
 
     @Test
-    public void testGetStudiesStats() throws URISyntaxException {
+    public void testGetStudiesStats() {
         String url = "/v1/meta/studies/stats";
         assertGetStudiesStats(url);
     }
@@ -385,7 +391,8 @@ public class ArchiveWSServerTest {
     private void assertGetStudiesStats(String url) {
         ResponseEntity<QueryResponse<QueryResult<ObjectNode>>> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
-                new ParameterizedTypeReference<QueryResponse<QueryResult<ObjectNode>>>() {});
+                new ParameterizedTypeReference<QueryResponse<QueryResult<ObjectNode>>>() {
+                });
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         QueryResponse<QueryResult<ObjectNode>> queryResponse = response.getBody();

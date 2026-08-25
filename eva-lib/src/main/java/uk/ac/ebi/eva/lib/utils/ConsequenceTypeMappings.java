@@ -78,7 +78,7 @@ public class ConsequenceTypeMappings {
         termToAccession.put("start_lost", 2012);
 
         // Fill the accession to term map
-        for(String key : termToAccession.keySet()) {
+        for (String key : termToAccession.keySet()) {
             accessionToTerm.putIfAbsent(termToAccession.get(key), key);
         }
     }

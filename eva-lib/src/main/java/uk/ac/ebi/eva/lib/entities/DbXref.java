@@ -1,9 +1,9 @@
 package uk.ac.ebi.eva.lib.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "dbxref")
@@ -25,7 +25,8 @@ public class DbXref {
     @Column(name = "source_object")
     private String sourceObject;
 
-    public DbXref() {}
+    public DbXref() {
+    }
 
     public DbXref(Long dbxrefId, String db, String id, String label, String linkType, String sourceObject) {
         this.dbxrefId = dbxrefId;

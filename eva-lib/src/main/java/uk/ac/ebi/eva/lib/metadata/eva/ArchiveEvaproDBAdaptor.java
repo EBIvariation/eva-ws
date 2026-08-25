@@ -15,23 +15,26 @@
  */
 package uk.ac.ebi.eva.lib.metadata.eva;
 
+import jakarta.persistence.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-
+import uk.ac.ebi.eva.lib.extension.GenericSpecifications;
 import uk.ac.ebi.eva.lib.metadata.ArchiveDBAdaptor;
 import uk.ac.ebi.eva.lib.models.Assembly;
-import uk.ac.ebi.eva.lib.extension.GenericSpecifications;
-import uk.ac.ebi.eva.lib.utils.QueryOptions;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
+import uk.ac.ebi.eva.lib.repositories.EvaStudyBrowserRepository;
 import uk.ac.ebi.eva.lib.repositories.FileRepository;
 import uk.ac.ebi.eva.lib.repositories.ProjectRepository;
-import uk.ac.ebi.eva.lib.repositories.EvaStudyBrowserRepository;
 import uk.ac.ebi.eva.lib.repositories.TaxonomyRepository;
+import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryOptionsConstants;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 
-import javax.persistence.Tuple;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.jpa.domain.Specification.where;
@@ -110,8 +113,8 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
         long start = System.currentTimeMillis();
         List<Assembly> result = taxonomyRepository.getBrowsableSpecies();
         result = result.stream()
-                       .filter(assembly -> assembly.getTaxonomyCode() != null && assembly.getAssemblyCode() != null)
-                       .collect(Collectors.toList());
+                .filter(assembly -> assembly.getTaxonomyCode() != null && assembly.getAssemblyCode() != null)
+                .collect(Collectors.toList());
         long end = System.currentTimeMillis();
         return new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
     }
@@ -121,8 +124,8 @@ public class ArchiveEvaproDBAdaptor implements ArchiveDBAdaptor {
         long start = System.currentTimeMillis();
         List<Assembly> result = taxonomyRepository.getAccessionedSpecies();
         result = result.stream()
-                       .filter(assembly -> assembly.getTaxonomyCode() != null && assembly.getAssemblyCode() != null)
-                       .collect(Collectors.toList());
+                .filter(assembly -> assembly.getTaxonomyCode() != null && assembly.getAssemblyCode() != null)
+                .collect(Collectors.toList());
         long end = System.currentTimeMillis();
         return new QueryResult(null, ((Long) (end - start)).intValue(), result.size(), result.size(), null, null, result);
     }

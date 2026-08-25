@@ -18,8 +18,7 @@
  */
 package uk.ac.ebi.eva.lib.configuration;
 
-import com.mongodb.MongoClient;
-
+import com.mongodb.client.MongoClient;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
@@ -27,10 +26,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
@@ -59,14 +58,14 @@ public class MongoRepositoryTestConfiguration {
     }
 
     @Bean
-    public MongoTemplate mongoTemplate(MongoDbFactory mongoDbFactory,
-            MappingMongoConverter mappingMongoConverter) throws Exception {
+    public MongoTemplate mongoTemplate(MongoDatabaseFactory mongoDbFactory,
+                                       MappingMongoConverter mappingMongoConverter) {
         return new MongoTemplate(mongoDbFactory, mappingMongoConverter);
     }
 
     @Bean
-    public MongoDbFactory mongoDbFactory(MongoClient mongoClient) throws Exception {
-        return new SimpleMongoDbFactory(mongoClient, this.getDatabaseName());
+    public MongoDatabaseFactory mongoDbFactory(MongoClient mongoClient) {
+        return new SimpleMongoClientDatabaseFactory(mongoClient, this.getDatabaseName());
     }
 
     private String getDatabaseName() {

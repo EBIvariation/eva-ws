@@ -15,52 +15,37 @@
  */
 package uk.ac.ebi.eva.server.ws;
 
-import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
-import com.lordofthejars.nosqlunit.mongodb.MongoDbConfigurationBuilder;
-import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.Profiles;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
-import uk.ac.ebi.eva.server.test.rule.FixSpringMongoDbRule;
+import uk.ac.ebi.eva.server.utils.MongoTestContainerHelper;
+import uk.ac.ebi.eva.server.utils.MongoTestDataLoader;
 
-import java.net.URISyntaxException;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(MongoRepositoryTestConfiguration.class)
-@UsingDataSet(locations = {
-        "/test-data/variants.json",
-        "/test-data/files.json",
-        "/test-data/annotations.json",
-        "/test-data/annotation_metadata.json"
-})
 @ActiveProfiles(Profiles.TEST_MONGO_FACTORY)
-public class GeneWSServerIntegrationTest {
-
-    private static final String TEST_DB = "test-db";
-
-    @Autowired
-    private ApplicationContext applicationContext;
+public class GeneWSServerIntegrationTest extends MongoTestContainerHelper {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -69,33 +54,43 @@ public class GeneWSServerIntegrationTest {
     private VariantWithSamplesAndAnnotationsService service;
 
     @Autowired
-    MongoDbFactory mongoDbFactory;
+    private MongoTemplate mongoTemplate;
 
-    @Rule
-    public MongoDbRule mongoDbRule = new FixSpringMongoDbRule(
-            MongoDbConfigurationBuilder.mongoDb().databaseName(TEST_DB).build());
+    @Autowired
+    private ResourceLoader resourceLoader;
 
-
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
+        mongoTemplate.getDb().drop();
+
+        MongoTestDataLoader mongoTestDataLoader = new MongoTestDataLoader(mongoTemplate, resourceLoader);
+        mongoTestDataLoader.load("/test-data/variants.json");
+        mongoTestDataLoader.load("/test-data/files.json");
+        mongoTestDataLoader.load("/test-data/annotations.json");
+        mongoTestDataLoader.load("/test-data/annotation_metadata.json");
+    }
+
+    @AfterEach
+    public void tearDown() {
+        mongoTemplate.getDb().drop();
     }
 
     @Test
-    public void testGetVariantsByGene() throws URISyntaxException {
+    public void testGetVariantsByGene() {
         testGetVariantsByGeneHelper("SH3YL1", 1);
     }
 
     @Test
-    public void testGetVariantsByGenes() throws URISyntaxException {
+    public void testGetVariantsByGenes() {
         testGetVariantsByGeneHelper("SH3YL1,DDX11L5", 2);
     }
 
     @Test
-    public void testGetVariantsByNonExistingGene() throws URISyntaxException {
+    public void testGetVariantsByNonExistingGene() {
         testGetVariantsByGeneHelper("ABC", 0);
     }
 
-    private void testGetVariantsByGeneHelper(String testGene, int expectedVariants) throws URISyntaxException {
+    private void testGetVariantsByGeneHelper(String testGene, int expectedVariants) {
         List<VariantWithSamplesAndAnnotation> results = geneWsHelper(testGene);
         WSTestHelpers.checkVariantsInFullResults(results, expectedVariants);
     }

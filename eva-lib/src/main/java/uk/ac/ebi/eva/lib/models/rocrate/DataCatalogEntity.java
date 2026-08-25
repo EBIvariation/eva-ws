@@ -33,7 +33,7 @@ public class DataCatalogEntity extends RoCrateEntity {
     }
 
     public DataCatalogEntity(List<Reference> projects, LocalDate datePublished) {
-        super(ID , TYPE);
+        super(ID, TYPE);
         this.license = LICENSE;
         this.identifier = IDENTIFIER;
         this.projects = projects;

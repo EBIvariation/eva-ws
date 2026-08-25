@@ -2,19 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>uk.ac.ebi.eva</groupId>
         <artifactId>eva</artifactId>
-        <version>1.8.2-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>eva-lib</artifactId>
-
-    <properties>
-        <compileSource>1.8</compileSource>
-        <eva.mongo.host.test>localhost</eva.mongo.host.test>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -34,16 +29,8 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.lordofthejars</groupId>
-            <artifactId>nosqlunit-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.lordofthejars</groupId>
-            <artifactId>nosqlunit-mongodb</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -57,7 +44,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -67,19 +53,6 @@
 
     <build>
         <finalName>${project.artifactId}-${project.version}-${git.commit.id.abbrev}</finalName>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources/properties</directory>
-                <filtering>true</filtering>
-            </testResource>
-            <testResource>
-                <directory>src/test/resources/</directory>
-                <filtering>false</filtering>
-                <excludes>
-                    <exclude>src/test/resources/properties/*</exclude>
-                </excludes>
-            </testResource>
-        </testResources>
     </build>
     
 </project>

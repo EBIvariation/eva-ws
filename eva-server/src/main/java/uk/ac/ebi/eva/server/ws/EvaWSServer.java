@@ -38,8 +38,9 @@ public class EvaWSServer {
     protected QueryUtils queryUtils;
 
     protected static Logger logger = LoggerFactory.getLogger(EvaWSServer.class);
-    
-    public EvaWSServer() { }
+
+    public EvaWSServer() {
+    }
 
     protected QueryOptions getQueryOptions() {
         return queryUtils.getQueryOptions();
