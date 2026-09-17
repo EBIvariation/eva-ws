@@ -243,8 +243,7 @@ deploy:count-stats:prod:
 # ============================================================================
 # dgva-server
 # ============================================================================
-# NOTE: unchanged from today - there is no dev *deploy* job for dgva-server (only a dev *build*,
-# consumed by the staging deploy below). Not adding one silently as part of this migration.
+# NOTE: Bo dev *deploy* job for dgva-server because there are no DGVA dev database to connect to
 
 build:docker:dgva-server:dev:
     extends: .build_docker
