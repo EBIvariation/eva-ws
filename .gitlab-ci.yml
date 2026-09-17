@@ -167,19 +167,13 @@ deploy:eva-release:prod:
     only:
         - tags
 
-# ============================================================================
-# count-stats
-# ============================================================================
-# NOTE: dev/staging tags below keep the pre-existing "count-stat" (no "s") prefix, unchanged from
-# today. Only the new prod tag uses "count-stats" (matching SERVICE_NAME) - cosmetic mismatch,
-# not worth a behaviour-changing rename of the working dev/staging tags.
 
 build:docker:count-stats:dev:
     extends: .build_docker
     variables:
         SERVICE_NAME: count-stats
         DOCKERFILE_PATH: count-stats/Dockerfile
-        IMAGE_TAG: count-stat-dev-$CI_COMMIT_SHORT_SHA
+        IMAGE_TAG: count-stats-dev-$CI_COMMIT_SHORT_SHA
     only:
         - master
         - java21
