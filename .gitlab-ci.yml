@@ -82,7 +82,7 @@ deploy:eva-server:prod:
         SERVICE_NAME: eva-server
         IMAGE_TAG: eva-server-$CI_COMMIT_TAG
         ENV: prod
-        MAVEN_PROFILE: production
+        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
         K8S_MANIFEST_PATH: k8s-manifests/eva-server/overlays/prod
         K8S_NAMESPACE: eva-server-prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
@@ -158,7 +158,7 @@ deploy:eva-release:prod:
         SERVICE_NAME: eva-release
         IMAGE_TAG: eva-release-$CI_COMMIT_TAG
         ENV: prod
-        MAVEN_PROFILE: production
+        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
         K8S_MANIFEST_PATH: k8s-manifests/eva-release/overlays/prod
         K8S_NAMESPACE: eva-release-prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
@@ -231,7 +231,7 @@ deploy:count-stats:prod:
         SERVICE_NAME: count-stats
         IMAGE_TAG: count-stats-$CI_COMMIT_TAG
         ENV: prod
-        MAVEN_PROFILE: production
+        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
         K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/prod
         K8S_NAMESPACE: count-stats-prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
@@ -290,7 +290,7 @@ deploy:dgva-server:prod:
         SERVICE_NAME: dgva-server
         IMAGE_TAG: dgva-server-$CI_COMMIT_TAG
         ENV: prod
-        MAVEN_PROFILE: production
+        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
         K8S_MANIFEST_PATH: k8s-manifests/dgva-server/overlays/prod
         K8S_NAMESPACE: dgva-server-prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
