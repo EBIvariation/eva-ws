@@ -55,7 +55,7 @@ public class GAVariantSetFactory {
 
         if (split.length > 1) { // Header entries like INFO or FORMAT
             // Remove leading ## and trailing equals symbol
-            metadata.setKey(split[0].substring(2, split[0].length()-1));
+            metadata.setKey(split[0].substring(2, split[0].length() - 1));
             metadata.setValue(split[1]);
 
             // Split by commas that are NOT between quotes

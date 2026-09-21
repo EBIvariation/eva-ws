@@ -33,8 +33,9 @@ public class DgvaWSServer {
     protected QueryUtils queryUtils;
 
     protected static Logger logger = LoggerFactory.getLogger(DgvaWSServer.class);
-    
-    public DgvaWSServer() { }
+
+    public DgvaWSServer() {
+    }
 
     protected QueryOptions getQueryOptions() {
         return queryUtils.getQueryOptions();

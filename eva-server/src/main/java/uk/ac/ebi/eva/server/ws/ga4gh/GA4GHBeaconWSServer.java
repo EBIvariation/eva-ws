@@ -19,7 +19,8 @@
 
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +38,12 @@ import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/v1/ga4gh", produces = "application/json")
-@Api(tags = { "ga4gh" })
+@Tag(name = "ga4gh")
 public class GA4GHBeaconWSServer extends EvaWSServer {
 
     @Autowired
@@ -54,8 +54,9 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
 
     protected static Logger logger = LoggerFactory.getLogger(GA4GHBeaconWSServer.class);
 
-    public GA4GHBeaconWSServer() { }
-    
+    public GA4GHBeaconWSServer() {
+    }
+
     @RequestMapping(value = "/beacon", method = RequestMethod.GET)
     public GA4GHBeaconResponse beacon(@RequestParam("referenceName") String chromosome,
                                       @RequestParam("start") long start,
@@ -70,7 +71,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
         if (start < 0) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new GA4GHBeaconResponse(chromosome, start, allele, String.join(",", studies),
-                                           "Please provide a positive number as start position");
+                    "Please provide a positive number as start position");
         }
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName("hsapiens_grch37"));
@@ -78,7 +79,7 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
         List<VariantWithSamplesAndAnnotation> variantEntities;
         if (allele.equalsIgnoreCase("INDEL")) {
             variantEntities = service.findByChromosomeAndStartAndTypeAndStudyIn(chromosome, start, VariantType.INDEL,
-                                                                                studies, null);
+                    studies, null);
         } else {
             variantEntities = service.findByChromosomeAndStartAndAltAndStudyIn(chromosome, start, allele, studies, null);
         }
@@ -88,6 +89,6 @@ public class GA4GHBeaconWSServer extends EvaWSServer {
             chromosome = translatedContig;
         }
         return new GA4GHBeaconResponse(chromosome, start, allele, String.join(",", studies),
-                                       variantEntities.size() > 0);
+                variantEntities.size() > 0);
     }
 }

@@ -1,24 +1,25 @@
 package uk.ac.ebi.eva.server.security.authorization;
 
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
 import uk.ac.ebi.eva.server.Profiles;
 
 @Configuration
 @Profile(Profiles.NOT_OAUTHSECURITY)
-@EnableResourceServer
-public class UnsecureConfiguration extends ResourceServerConfigurerAdapter {
+public class UnsecureConfiguration {
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http.anonymous() // Enable anonymous / configure any related anonymous role
-                .and()
-                .authorizeRequests().antMatchers("/**").permitAll() //Authorize anonymous access to every mapping.
-        ;
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.anonymous(Customizer.withDefaults())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                // CSRF disabled intentionally — stateless REST API uses Basic Auth with no session cookies, so CSRF is not applicable
+                .csrf(csrf -> csrf.disable());
+
+        return http.build();
     }
-
 }

@@ -19,7 +19,8 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,27 +29,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import uk.ac.ebi.eva.commons.mongodb.entities.projections.VariantStudySummary;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantStudySummaryService;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.metadata.dgva.StudyDgvaDBAdaptor;
 import uk.ac.ebi.eva.lib.metadata.eva.RoCrateMetadataAdaptor;
 import uk.ac.ebi.eva.lib.metadata.eva.StudyEvaproDBAdaptor;
 import uk.ac.ebi.eva.lib.models.rocrate.RoCrateMetadata;
 import uk.ac.ebi.eva.lib.utils.QueryResponse;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
-import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/v1/studies", produces = "application/json")
-@Api(tags = {"studies"})
+@Tag(name = "studies")
 public class StudyWSServer extends EvaWSServer {
 
     @Autowired
@@ -66,8 +64,7 @@ public class StudyWSServer extends EvaWSServer {
 //    @ApiOperation(httpMethod = "GET", value = "Retrieves all the files from a study", response = QueryResponse.class)
     public QueryResponse getFilesByStudy(@PathVariable("study") String study,
                                          @RequestParam("species") String species,
-                                         HttpServletResponse response)
-            throws IOException {
+                                         HttpServletResponse response) {
         initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));
@@ -89,8 +86,7 @@ public class StudyWSServer extends EvaWSServer {
 //    @ApiOperation(httpMethod = "GET", value = "The info of a study", response = QueryResponse.class)
     public QueryResponse getStudy(@PathVariable("study") String study,
                                   @RequestParam(name = "species") String species,
-                                  HttpServletResponse response)
-            throws IOException {
+                                  HttpServletResponse response) {
         initializeQuery();
 
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species));

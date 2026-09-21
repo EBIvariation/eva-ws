@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.dgva.server.ws;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,7 @@ import uk.ac.ebi.eva.lib.utils.QueryResponse;
 
 @RestController
 @RequestMapping(value = "/v1/studies", produces = "application/json")
-@Api(tags = {"studies"})
+@Tag(name = "studies")
 public class StudyWSServer extends DgvaWSServer {
 
     @Autowired

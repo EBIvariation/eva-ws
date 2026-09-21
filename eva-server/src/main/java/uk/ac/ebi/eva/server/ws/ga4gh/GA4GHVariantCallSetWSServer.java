@@ -18,7 +18,9 @@
  */
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +33,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.core.models.VariantSource;
 import uk.ac.ebi.eva.commons.mongodb.services.VariantSourceService;
+import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
+import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.lib.models.ga4gh.GACallSet;
 import uk.ac.ebi.eva.lib.models.ga4gh.GACallSetFactory;
 import uk.ac.ebi.eva.lib.models.ga4gh.GASearchCallSetsRequest;
 import uk.ac.ebi.eva.lib.models.ga4gh.GASearchCallSetsResponse;
-import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
-import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.EvaWSServer;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,27 +50,27 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/v1/ga4gh/callsets", produces = "application/json")
-@Api(tags = { "ga4gh", "samples" })
+@Tags({@Tag(name = "ga4gh"), @Tag(name = "samples")})
 public class GA4GHVariantCallSetWSServer extends EvaWSServer {
 
     @Autowired
     private VariantSourceService service;
 
     protected static Logger logger = LoggerFactory.getLogger(GA4GHVariantCallSetWSServer.class);
-    
-    public GA4GHVariantCallSetWSServer() { }
-    
+
+    public GA4GHVariantCallSetWSServer() {
+    }
+
     /**
-     * 
+     *
      * @see http://ga4gh.org/documentation/api/v0.5/ga4gh_api.html#/schema/org.ga4gh.GASearchCallSetsRequest
      */
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public GASearchCallSetsResponse getCallSets(@RequestParam("variantSetIds") List<String> files,
                                                 @RequestParam(name = "pageToken", required = false) String pageToken,
-                                                @RequestParam(name = "pageSize", defaultValue = "10") int limit)
-            throws IOException {
+                                                @RequestParam(name = "pageSize", defaultValue = "10") int limit) {
         initializeQuery();
-        
+
         if (files.isEmpty()) {
             throw new IllegalArgumentException("The 'variantSetIds' argument must not be empty");
         }
@@ -81,14 +82,14 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
         long numTotalResults = service.countByFileIdIn(files);
 
         List<String> fileIds = variantSourceEntities.stream()
-                                                    .map(VariantSource::getFileId)
-                                                    .collect(Collectors.toList());
+                .map(VariantSource::getFileId)
+                .collect(Collectors.toList());
 
-        List<List<String>> samplesLists  = variantSourceEntities.stream()
-                                                                .map(VariantSource::getSamplesPosition)
-                                                                .map(Map::keySet)
-                                                                .map(ArrayList::new)
-                                                                .collect(Collectors.toList());
+        List<List<String>> samplesLists = variantSourceEntities.stream()
+                .map(VariantSource::getSamplesPosition)
+                .map(Map::keySet)
+                .map(ArrayList::new)
+                .collect(Collectors.toList());
 
         // Convert sample names objects to GACallSet
         List<GACallSet> gaCallSets = GACallSetFactory.create(fileIds, samplesLists);
@@ -98,13 +99,12 @@ public class GA4GHVariantCallSetWSServer extends EvaWSServer {
         // Create the custom response for the GA4GH API
         return new GASearchCallSetsResponse(gaCallSets, nextPageToken);
     }
-    
+
     @RequestMapping(value = "/search", method = RequestMethod.POST, consumes = "application/json")
-    public GASearchCallSetsResponse getCallSets(GASearchCallSetsRequest request)
-            throws IOException {
+    public GASearchCallSetsResponse getCallSets(GASearchCallSetsRequest request) {
         return getCallSets(request.getVariantSetIds(), request.getPageToken(), request.getPageSize());
     }
-  
+
     @ExceptionHandler(IllegalArgumentException.class)
     public void handleException(IllegalArgumentException e, HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.BAD_REQUEST.value(), "Invalid request parameters");

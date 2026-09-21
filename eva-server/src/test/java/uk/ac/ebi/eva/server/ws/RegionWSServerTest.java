@@ -18,9 +18,9 @@
  */
 package uk.ac.ebi.eva.server.ws;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,7 +29,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
@@ -41,23 +41,22 @@ import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.AdditionalMatchers.or;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class RegionWSServerTest {
 
@@ -79,7 +78,7 @@ public class RegionWSServerTest {
             "reference", "alternate",
             MAIN_ID);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         List<Region> oneRegion = Collections.singletonList(new Region("20", 60000L, 62000L));
         given(service.findByRegionsAndComplexFilters(eq(oneRegion), any(), any(), any(), any()))
@@ -111,12 +110,12 @@ public class RegionWSServerTest {
     }
 
     @Test
-    public void testGetVariantsByRegion() throws URISyntaxException {
+    public void testGetVariantsByRegion() {
         testGetVariantsByRegionHelper("20:60000-62000", 1);
     }
 
     @Test
-    public void testGetVariantsByRegionAfterSearchTranslation() throws URISyntaxException, AnnotationMetadataNotFoundException {
+    public void testGetVariantsByRegionAfterSearchTranslation() throws AnnotationMetadataNotFoundException {
         given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
         ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
         contigAliasChromosome.setInsdcAccession("chr30");
@@ -147,7 +146,7 @@ public class RegionWSServerTest {
     }
 
     @Test
-    public void testGetVariantsByRegionWithTranslatedContig() throws URISyntaxException {
+    public void testGetVariantsByRegionWithTranslatedContig() {
         VariantWithSamplesAndAnnotation translatedContig = new VariantWithSamplesAndAnnotation("1", 1000, 1005,
                 "reference", "alternate", MAIN_ID);
         given(contigAliasService.getVariantsWithTranslatedContig(any(List.class), any(Map.class)))
@@ -167,12 +166,12 @@ public class RegionWSServerTest {
     }
 
     @Test
-    public void testGetVariantsByRegions() throws URISyntaxException {
+    public void testGetVariantsByRegions() {
         testGetVariantsByRegionHelper("20:60000-61000,20:61500-62500", 2);
     }
 
     @Test
-    public void testGetVariantsByNonExistingRegion() throws URISyntaxException {
+    public void testGetVariantsByNonExistingRegion() {
         testGetVariantsByRegionHelper("21:8000-9000", 0);
     }
 
@@ -189,7 +188,7 @@ public class RegionWSServerTest {
         assertEquals("Please specify a valid species name", queryResponse.getResponse().get(0));
     }
 
-    private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants) throws URISyntaxException {
+    private void testGetVariantsByRegionHelper(String testRegion, int expectedVariants) {
         List<VariantWithSamplesAndAnnotation> results = regionWsHelper(testRegion, null);
         assertEquals(expectedVariants, results.size());
 

@@ -19,14 +19,14 @@
 package uk.ac.ebi.eva.server;
 
 import com.google.common.util.concurrent.RateLimiter;
-import org.aspectj.lang.annotation.Before;
-import org.slf4j.Logger;
+import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -51,7 +51,7 @@ public class RateLimiterAspect {
         if (!acquired) {
             logger.error("Could not acquire rate limit permission");
             throw new RateLimitException(String.format("Rate limit exceeded. Please limit rate to %d requests/second.",
-                                                       limit.value()));
+                    limit.value()));
         }
         logger.debug("Acquired rate limit permission");
     }

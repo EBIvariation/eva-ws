@@ -26,25 +26,23 @@ import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
-import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
@@ -54,44 +52,27 @@ import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsSe
 import uk.ac.ebi.eva.lib.Profiles;
 import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
+import uk.ac.ebi.eva.server.utils.MongoTestContainerHelper;
+import uk.ac.ebi.eva.server.utils.MongoTestDataLoader;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
-import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(MongoRepositoryTestConfiguration.class)
-@UsingDataSet(locations = {
-        "/test-data/variants.json",
-        "/test-data/files.json",
-        "/test-data/annotations.json",
-        "/test-data/annotation_metadata.json"
-})
 @ActiveProfiles(Profiles.TEST_MONGO_FACTORY)
-public class VariantWSServerV2IntegrationTest {
-
-    private static final String TEST_DB = "test-db";
-
-    @Rule
-    public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
-
-    @Autowired
-    MongoDbFactory mongoDbFactory;
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
+public class VariantWSServerV2IntegrationTest extends MongoTestContainerHelper {
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -107,8 +88,22 @@ public class VariantWSServerV2IntegrationTest {
     @MockBean
     private TaxonomyUtils taxonomyUtils;
 
-    @Before
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
+
+    @BeforeEach
     public void setUp() throws Exception {
+        mongoTemplate.getDb().drop();
+
+        MongoTestDataLoader mongoTestDataLoader = new MongoTestDataLoader(mongoTemplate, resourceLoader);
+        mongoTestDataLoader.load("/test-data/variants.json");
+        mongoTestDataLoader.load("/test-data/files.json");
+        mongoTestDataLoader.load("/test-data/annotations.json");
+        mongoTestDataLoader.load("/test-data/annotation_metadata.json");
+
         given(contigAliasService.translateContigFromInsdc("13", null))
                 .willReturn("");
         given(contigAliasService.translateContigFromInsdc("20", null))
@@ -136,8 +131,13 @@ public class VariantWSServerV2IntegrationTest {
         given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
     }
 
+    @AfterEach
+    public void tearDown() {
+        mongoTemplate.getDb().drop();
+    }
+
     @Test
-    public void rootTestGetVariantsByVariantCoreString() throws URISyntaxException {
+    public void rootTestGetVariantsByVariantCoreString() {
         String url = "/v2/variants/20:60100:A:T?species=mmusculus&assembly=grcm38";
         VariantWithSamplesAndAnnotation variantWithSamplesAndAnnotations = restTemplate.exchange(
                 url, HttpMethod.GET, null,
@@ -149,19 +149,19 @@ public class VariantWSServerV2IntegrationTest {
     }
 
     @Test
-    public void rootTestGetVariantsByNonExistingVariantCoreString() throws URISyntaxException {
+    public void rootTestGetVariantsByNonExistingVariantCoreString() {
         String url = "/v2/variants/10:0:A:T?species=mmusculus&assembly=grcm38";
         testForNonExistingHelper(url);
     }
 
-    private void testForNonExistingHelper(String url) throws URISyntaxException {
+    private void testForNonExistingHelper(String url) {
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
     }
 
     @Test
-    public void rootTestParameterErrors() throws URISyntaxException {
+    public void rootTestParameterErrors() {
         String url = "/v2/variants/13:32889669:C:T?species=&assembly=grcm38";
         assertEquals("Please specify a species", testForErrorHelper(url));
     }
@@ -171,7 +171,7 @@ public class VariantWSServerV2IntegrationTest {
     }
 
     @Test
-    public void annotationEndPointTestExisting() throws URISyntaxException {
+    public void annotationEndPointTestExisting() {
         given(contigAliasService.getMatchingContigNamingConvention(any(), any())).willReturn(null);
 
         Annotation translatedAnnotation = new Annotation("chr1", 0, 0, null, null, null, null);
@@ -186,19 +186,19 @@ public class VariantWSServerV2IntegrationTest {
     }
 
     @Test
-    public void annotationEndPointTestForNonExistingAnnotationWithNonExistingVariant() throws URISyntaxException {
+    public void annotationEndPointTestForNonExistingAnnotationWithNonExistingVariant() {
         String url = "/v2/variants/100:0:C:T/annotations?species=mmusculus&assembly=grcm38";
         testForNonExistingHelper(url);
     }
 
     @Test
-    public void annotationEndPointTestForNonExistingAnnotationWithExistingVariant() throws URISyntaxException {
+    public void annotationEndPointTestForNonExistingAnnotationWithExistingVariant() {
         String url = "/v2/variants/X:1000014:G:A/annotations?species=mmusculus&assembly=grcm38";
         testForNonExistingHelper(url);
     }
 
     @Test
-    public void annotationEndpointTestForError() throws URISyntaxException {
+    public void annotationEndpointTestForError() {
         String url = "/v2/variants/13:32889669:C:T/annotations?species=mmusculus&assembly=grcm38&" +
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
@@ -210,7 +210,7 @@ public class VariantWSServerV2IntegrationTest {
     }
 
     @Test
-    public void sourceEntriesEndPointTestExisting() throws URISyntaxException {
+    public void sourceEntriesEndPointTestExisting() {
         String url = "/v2/variants/20:60100:A:T/sources?species=mmusculus&assembly=grcm38";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         Configuration configuration = Configuration.defaultConfiguration()
@@ -226,7 +226,7 @@ public class VariantWSServerV2IntegrationTest {
     }
 
     @Test
-    public void sourceEntriesEndPointTestNonExistingWithNonExistingVariant() throws URISyntaxException {
+    public void sourceEntriesEndPointTestNonExistingWithNonExistingVariant() {
         String url = "/v2/variants/100:0:C:T/sources?species=mmusculus&assembly=grcm38";
         testForNonExistingHelper(url);
     }
@@ -249,7 +249,7 @@ public class VariantWSServerV2IntegrationTest {
     }
 
     @Test
-    public void sourceEntriesEndpointTestForError() throws URISyntaxException {
+    public void sourceEntriesEndpointTestForError() {
         String url = "/v2/variants/13:32889669:C:T/sources?species=mmusculus&assembly=grcm38&" +
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
@@ -257,7 +257,7 @@ public class VariantWSServerV2IntegrationTest {
     }
 
     @Test
-    public void rootTestForDeletions() throws URISyntaxException {
+    public void rootTestForDeletions() {
         String url = "/v2/variants/13:32889711:T:?species=mmusculus&assembly=grcm38";
         VariantWithSamplesAndAnnotation variantWithSamplesAndAnnotations = restTemplate.exchange(
                 url, HttpMethod.GET, null,
@@ -270,7 +270,7 @@ public class VariantWSServerV2IntegrationTest {
     }
 
     @Test
-    public void rootTestForInsertions() throws URISyntaxException {
+    public void rootTestForInsertions() {
         String url = "/v2/variants/13:32889711::A?species=mmusculus&assembly=grcm38";
         VariantWithSamplesAndAnnotation variantWithSamplesAndAnnotations = restTemplate.exchange(
                 url, HttpMethod.GET, null,

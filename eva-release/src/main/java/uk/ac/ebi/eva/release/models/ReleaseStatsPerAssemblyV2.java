@@ -15,15 +15,20 @@
  */
 package uk.ac.ebi.eva.release.models;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import org.hibernate.annotations.Array;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "release_rs_count_per_assembly", schema="eva_stats")
+@Table(name = "release_rs_count_per_assembly", schema = "eva_stats")
 public class ReleaseStatsPerAssemblyV2 {
 
     private static final String ASSEMBLY_DIRECTORY = "by_assembly/";
@@ -36,11 +41,11 @@ public class ReleaseStatsPerAssemblyV2 {
     private int releaseVersion;
 
     @ManyToOne
-    @JoinColumn(name="releaseVersion", insertable = false, updatable = false)
-    @NotFound(action= NotFoundAction.IGNORE)
+    @JoinColumn(name = "releaseVersion", insertable = false, updatable = false)
+    @NotFound(action = NotFoundAction.IGNORE)
     private ReleaseInfo releaseInfo;
 
-    @Type(type = "int-array")
+    @Array(length = 100)
     @Column(
             name = "taxonomy_ids",
             columnDefinition = "integer[]"

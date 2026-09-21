@@ -15,27 +15,28 @@
  */
 package uk.ac.ebi.eva.lib.metadata.dgva;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.lib.utils.QueryOptionsConstants;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.CHICKEN;
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.CHIMPANZEE;
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.HUMAN;
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.MOUSE;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 @Sql({"classpath:dgva-schema.sql", "classpath:dgva-data.sql"})
 public class ArchiveDgvaDBAdaptorTest {
@@ -44,7 +45,7 @@ public class ArchiveDgvaDBAdaptorTest {
     private ArchiveDgvaDBAdaptor archiveDgvaDBAdaptor;
 
     @Test
-    public void countStudies() throws Exception {
+    public void countStudies() {
         QueryResult<Long> queryResult = archiveDgvaDBAdaptor.countStudies();
 
         assertEquals(1, queryResult.getNumTotalResults());
@@ -52,7 +53,7 @@ public class ArchiveDgvaDBAdaptorTest {
     }
 
     @Test
-    public void countStudiesPerSpeciesFilteringBySpecies() throws Exception {
+    public void countStudiesPerSpeciesFilteringBySpecies() {
         QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor
                 .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.SPECIES, HUMAN));
 
@@ -63,7 +64,7 @@ public class ArchiveDgvaDBAdaptorTest {
     }
 
     @Test
-    public void countStudiesPerSpeciesFilteringBySpeciesAndType() throws Exception {
+    public void countStudiesPerSpeciesFilteringBySpeciesAndType() {
         QueryOptions queryOptions = new QueryOptions();
         queryOptions.put(QueryOptionsConstants.SPECIES, HUMAN);
         queryOptions.put(QueryOptionsConstants.TYPE, DgvaStudyTestData.CONTROL_SET);
@@ -76,20 +77,20 @@ public class ArchiveDgvaDBAdaptorTest {
     }
 
     @Test
-    public void countStudiesPerSpeciesUnfiltered() throws Exception {
+    public void countStudiesPerSpeciesUnfiltered() {
         QueryResult<Map.Entry<String, Long>> queryResult =
                 archiveDgvaDBAdaptor.countStudiesPerSpecies(new QueryOptions());
 
         assertEquals(23, queryResult.getNumTotalResults());
-        List<Map.Entry<String, Long>> results =  queryResult.getResult();
+        List<Map.Entry<String, Long>> results = queryResult.getResult();
         long chickenStudiesCount = results.stream().filter(e -> e.getKey().equals(CHICKEN))
-                                        .mapToLong(Map.Entry::getValue).findAny().getAsLong();
+                .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         long chimpanzeeStudiesCount = results.stream().filter(e -> e.getKey().equals(CHIMPANZEE))
-                                          .mapToLong(Map.Entry::getValue).findAny().getAsLong();
+                .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         long humanStudiesCount = results.stream().filter(e -> e.getKey().equals(HUMAN))
-                                        .mapToLong(Map.Entry::getValue).findAny().getAsLong();
+                .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         long mouseStudiesCount = results.stream().filter(e -> e.getKey().equals(MOUSE))
-                                      .mapToLong(Map.Entry::getValue).findAny().getAsLong();
+                .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         assertEquals(3, chickenStudiesCount);
         assertEquals(4, chimpanzeeStudiesCount);
         assertEquals(155, humanStudiesCount);
@@ -97,7 +98,7 @@ public class ArchiveDgvaDBAdaptorTest {
     }
 
     @Test
-    public void countStudiesPerSpeciesFilteringByNonExistingSpecies() throws Exception {
+    public void countStudiesPerSpeciesFilteringByNonExistingSpecies() {
         QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor
                 .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.SPECIES, "notExistingSpecies"));
 
@@ -106,7 +107,7 @@ public class ArchiveDgvaDBAdaptorTest {
 
 
     @Test
-    public void countStudiesPerTypeFilteringByType() throws Exception {
+    public void countStudiesPerTypeFilteringByType() {
         QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor
                 .countStudiesPerType(new QueryOptions(QueryOptionsConstants.TYPE, DgvaStudyTestData.CONTROL_SET));
 
@@ -117,7 +118,7 @@ public class ArchiveDgvaDBAdaptorTest {
     }
 
     @Test
-    public void countStudiesPerSpeciesFilteringByNonExistingType() throws Exception {
+    public void countStudiesPerSpeciesFilteringByNonExistingType() {
         QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor
                 .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.TYPE, "notExistingType"));
 
@@ -125,32 +126,32 @@ public class ArchiveDgvaDBAdaptorTest {
     }
 
     @Test
-    public void countStudiesPerTypeUnfiltered() throws Exception {
+    public void countStudiesPerTypeUnfiltered() {
         QueryResult<Map.Entry<String, Long>> queryResult = archiveDgvaDBAdaptor
                 .countStudiesPerType(new QueryOptions());
 
         assertEquals(6, queryResult.getNumTotalResults());
-        List<Map.Entry<String, Long>> results =  queryResult.getResult();
+        List<Map.Entry<String, Long>> results = queryResult.getResult();
         long controlSetStudiesCount = results.stream().filter(e -> e.getKey().equals(DgvaStudyTestData.CONTROL_SET))
-                                        .mapToLong(Map.Entry::getValue).findAny().getAsLong();
+                .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         long collectionStudiesCount = results.stream().filter(e -> e.getKey().equals(DgvaStudyTestData.COLLECTION))
-                                        .mapToLong(Map.Entry::getValue).findAny().getAsLong();
+                .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         assertEquals(117, controlSetStudiesCount);
         assertEquals(26, collectionStudiesCount);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void countFiles() throws Exception {
-        archiveDgvaDBAdaptor.countFiles();
+    @Test
+    public void countFiles() {
+        assertThrows(UnsupportedOperationException.class, () -> archiveDgvaDBAdaptor.countFiles());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void countSpecies() throws Exception {
-        archiveDgvaDBAdaptor.countSpecies();
+    @Test
+    public void countSpecies() {
+        assertThrows(UnsupportedOperationException.class, () -> archiveDgvaDBAdaptor.countSpecies());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void getBrowsableSpecies() throws Exception {
-        archiveDgvaDBAdaptor.getBrowsableSpecies();
+    @Test
+    public void getBrowsableSpecies() {
+        assertThrows(UnsupportedOperationException.class, () -> archiveDgvaDBAdaptor.getBrowsableSpecies());
     }
 }

@@ -16,15 +16,15 @@
 package uk.ac.ebi.eva.lib.entities;
 
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.ebi.eva.commons.core.models.StudyType;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -127,7 +127,8 @@ public class EvaStudyBrowser {
         this.browsable = browsable;
     }
 
-    EvaStudyBrowser() { }
+    EvaStudyBrowser() {
+    }
 
     public VariantStudy generateVariantStudy() {
         int[] taxIds = Arrays.stream(taxId.split(", ")).map(String::trim).mapToInt(Integer::parseInt).toArray();

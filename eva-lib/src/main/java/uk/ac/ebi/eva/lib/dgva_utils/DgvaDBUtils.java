@@ -34,8 +34,8 @@ public class DgvaDBUtils {
         Specification speciesSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.SPECIES)) {
             String[] species = queryOptions.getAsStringList(QueryOptionsConstants.SPECIES).toArray(new String[]{});
-            speciesSpecifications = where(in(DgvaStudyBrowserRepository.COMMON_NAME, (Object[])species))
-                    .or(in(DgvaStudyBrowserRepository.SCIENTIFIC_NAME, (Object[])species));
+            speciesSpecifications = where(in(DgvaStudyBrowserRepository.COMMON_NAME, (Object[]) species))
+                    .or(in(DgvaStudyBrowserRepository.SCIENTIFIC_NAME, (Object[]) species));
 
             for (String speciesName : species) {
                 speciesSpecifications = speciesSpecifications
@@ -47,7 +47,7 @@ public class DgvaDBUtils {
         Specification typeSpecifications = null;
         if (queryOptions.containsKey(QueryOptionsConstants.TYPE)) {
             String[] types = queryOptions.getAsStringList(QueryOptionsConstants.TYPE).toArray(new String[]{});
-            typeSpecifications = where(in(DgvaStudyBrowserRepository.STUDY_TYPE, (Object[])types));
+            typeSpecifications = where(in(DgvaStudyBrowserRepository.STUDY_TYPE, (Object[]) types));
             for (String type : types) {
                 typeSpecifications = typeSpecifications.or(
                         ilike(DgvaStudyBrowserRepository.STUDY_TYPE, "%" + type + "%"));

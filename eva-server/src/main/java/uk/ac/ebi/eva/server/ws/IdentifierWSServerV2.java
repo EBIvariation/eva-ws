@@ -19,12 +19,13 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,17 +42,16 @@ import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/v2/identifiers", produces = "application/hal+json")
-@Api(tags = "identifier")
+@Tag(name = "identifier")
 public class IdentifierWSServerV2 {
 
     @Autowired
@@ -62,15 +62,15 @@ public class IdentifierWSServerV2 {
 
     @GetMapping(value = "/{identifier}/variants")
     public ResponseEntity getVariants(
-            @ApiParam(value = "RS or SS identifier of a variant, e.g.: rs55880202", required = true) @PathVariable
+            @Parameter(description = "RS or SS identifier of a variant, e.g.: rs55880202", required = true) @PathVariable
             String identifier,
-            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. Allowed" +
+            @Parameter(description = "First letter of the genus, followed by the full species name, e.g. hsapiens. Allowed" +
                     " values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
                     required = true) @RequestParam String species,
-            @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in" +
+            @Parameter(description = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in" +
                     " /v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam String assembly,
-            @ApiParam(value = "Contig naming convention desired, default is INSDC")
+            @Parameter(description = "Contig naming convention desired, default is INSDC")
             @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
             HttpServletResponse response)
             throws AnnotationMetadataNotFoundException, IllegalArgumentException {
@@ -80,7 +80,7 @@ public class IdentifierWSServerV2 {
         List<VariantWithSamplesAndAnnotation> variantEntities = service.findByIdsAndComplexFilters(Arrays.asList
                 (identifier), null, null, null, null);
 
-        List<Resource> resourcesList = new ArrayList<>();
+        List<EntityModel<Variant>> resourcesList = new ArrayList<>();
 
         variantEntities.forEach(variantEntity -> {
             String variantContig = variantEntity.getChromosome();
@@ -95,17 +95,19 @@ public class IdentifierWSServerV2 {
             String variantCoreString = variantEntity.getChromosome() + ":" + variantEntity.getStart() + ":" +
                     variantEntity.getReference() + ":" + variantEntity.getAlternate();
 
-            Link annotationsLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
-                    species, assembly, null, null, contigNamingConvention, response)).toUri().toString(), "annotation");
-            Link sourcesLink = new Link(linkTo(methodOn(VariantWSServerV2.class).getSources(variantCoreString, species,
-                    assembly, null, null, contigNamingConvention, response)).toUri().toString(), "sources");
+            Link annotationsLink = linkTo(methodOn(VariantWSServerV2.class).getAnnotations(variantCoreString,
+                    species, assembly, null, null, contigNamingConvention, response))
+                    .withRel("annotation");
+            Link sourcesLink = linkTo(methodOn(VariantWSServerV2.class).getSources(variantCoreString, species,
+                    assembly, null, null, contigNamingConvention, response))
+                    .withRel("sources");
 
-            resourcesList.add(new Resource<>(variant, Arrays.asList(sourcesLink, annotationsLink)));
+            resourcesList.add(EntityModel.of(variant, Arrays.asList(sourcesLink, annotationsLink)));
         });
-        if (resourcesList.size() > 0) {
-            return new ResponseEntity<>(new Resources<>(resourcesList), HttpStatus.OK);
+        if (!resourcesList.isEmpty()) {
+            return ResponseEntity.ok(CollectionModel.of(resourcesList));
         } else {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 

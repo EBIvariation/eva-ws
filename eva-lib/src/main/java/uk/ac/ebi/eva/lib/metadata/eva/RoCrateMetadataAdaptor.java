@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import uk.ac.ebi.eva.lib.entities.Analysis;
 import uk.ac.ebi.eva.lib.entities.DbXref;
 import uk.ac.ebi.eva.lib.entities.File;
@@ -14,10 +13,10 @@ import uk.ac.ebi.eva.lib.entities.Submission;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
 import uk.ac.ebi.eva.lib.models.rocrate.CommentEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.DataCatalogEntity;
-import uk.ac.ebi.eva.lib.models.rocrate.MinimalProjectDatasetEntity;
-import uk.ac.ebi.eva.lib.models.rocrate.ProjectDatasetEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.FileEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.LabProcessEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.MinimalProjectDatasetEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.ProjectDatasetEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.Reference;
 import uk.ac.ebi.eva.lib.models.rocrate.RoCrateEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.RoCrateMetadata;
@@ -66,7 +65,7 @@ public class RoCrateMetadataAdaptor {
                 List<RoCrateEntity> fileProps = Collections.singletonList(
                         new CommentEntity(file.getFilename(), "md5", file.getFileMd5()));
                 fileRoEntities.add(new FileEntity(project.getProjectAccession(), file.getFilename(), null,
-                                                  file.getFileType(), getReferences(fileProps)));
+                        file.getFileType(), getReferences(fileProps)));
                 allFileAdditionalProps.addAll(fileProps);
 
                 for (Map.Entry<String, Sample> entry : file.getNameInFileToSampleMap().entrySet()) {
@@ -76,9 +75,9 @@ public class RoCrateMetadataAdaptor {
 
             LocalDate analysisDate = analysis.getSubmission() != null ? analysis.getSubmission().getDate() : null;
             analysisRoEntities.add(new LabProcessEntity(analysis.getAnalysisAccession(), analysis.getTitle(),
-                                                        analysis.getDescription(), analysisDate,
-                                                        getReferences(sampleRoEntities), getReferences(fileRoEntities),
-                                                        getReferences(analysisProps)));
+                    analysis.getDescription(), analysisDate,
+                    getReferences(sampleRoEntities), getReferences(fileRoEntities),
+                    getReferences(analysisProps)));
             allAnalysisAdditionalProps.addAll(analysisProps);
             allFiles.addAll(fileRoEntities);
             allSamples.addAll(sampleRoEntities);
@@ -89,9 +88,9 @@ public class RoCrateMetadataAdaptor {
         List<String> publications = getPublications(project);
         List<RoCrateEntity> additionalProjectProperties = getAdditionalProjectProperties(project);
         entities.add(new ProjectDatasetEntity(project.getProjectAccession(), project.getTitle(), project.getDescription(),
-                                       getFirstSubmissionDate(project), project.getCenterName(), publications,
-                                       getReferences(analysisRoEntities), getReferences(allFiles),
-                                       getReferences(additionalProjectProperties)));
+                getFirstSubmissionDate(project), project.getCenterName(), publications,
+                getReferences(analysisRoEntities), getReferences(allFiles),
+                getReferences(additionalProjectProperties)));
         entities.addAll(additionalProjectProperties);
         entities.addAll(analysisRoEntities);
         entities.addAll(allAnalysisAdditionalProps);
@@ -102,7 +101,7 @@ public class RoCrateMetadataAdaptor {
         return new RoCrateMetadata(entities);
     }
 
-    public RoCrateMetadata getAllProjects(){
+    public RoCrateMetadata getAllProjects() {
         List<Project> projects = projectRepository.findAll();
         // Construct the project-related entities
         List<RoCrateEntity> projectsRoEntities = new ArrayList<>();
@@ -124,10 +123,10 @@ public class RoCrateMetadataAdaptor {
 
     private List<String> getPublications(Project project) {
         return project.getDbXrefs()
-                      .stream()
-                      .filter(dbXref -> dbXref.getLinkType().equalsIgnoreCase("publication"))
-                      .map(DbXref::getCurie)
-                      .collect(Collectors.toList());
+                .stream()
+                .filter(dbXref -> dbXref.getLinkType().equalsIgnoreCase("publication"))
+                .map(DbXref::getCurie)
+                .collect(Collectors.toList());
     }
 
     private List<Reference> getReferences(List<RoCrateEntity> entities) {
@@ -136,15 +135,15 @@ public class RoCrateMetadataAdaptor {
 
     private LocalDate getFirstSubmissionDate(Project project) {
         return project.getSubmissions().stream()
-                      .min(Comparator.comparing(Submission::getDate, Comparator.nullsLast(LocalDate::compareTo)))
-                      .map(Submission::getDate).orElse(null);
+                .min(Comparator.comparing(Submission::getDate, Comparator.nullsLast(LocalDate::compareTo)))
+                .map(Submission::getDate).orElse(null);
     }
 
     private LocalDate getMostRecentDatePublished(List<RoCrateEntity> projectsRoEntities) {
         return projectsRoEntities.stream()
                 .map(entity -> (MinimalProjectDatasetEntity) entity)
                 .max(Comparator.comparing(MinimalProjectDatasetEntity::getDatePublished,
-                                          Comparator.nullsFirst(LocalDate::compareTo)))
+                        Comparator.nullsFirst(LocalDate::compareTo)))
                 .map(MinimalProjectDatasetEntity::getDatePublished).orElse(null);
     }
 
@@ -176,14 +175,14 @@ public class RoCrateMetadataAdaptor {
         List<RoCrateEntity> additionalProperties = new ArrayList<>();
         String analysisAccession = analysis.getAnalysisAccession();
         additionalProperties.add(new CommentEntity(analysisAccession, "assemblyAccession",
-                                                   analysis.getVcfReferenceAccession()));
+                analysis.getVcfReferenceAccession()));
         if (analysis.getExperimentType() != null) {
             additionalProperties.add(new CommentEntity(analysisAccession, "experimentType",
-                                                       analysis.getExperimentType().getExperimentType()));
+                    analysis.getExperimentType().getExperimentType()));
         }
         if (analysis.getPlatform() != null) {
             additionalProperties.add(new CommentEntity(analysisAccession, "platform",
-                                                       analysis.getPlatform().getPlatform()));
+                    analysis.getPlatform().getPlatform()));
         }
         return additionalProperties;
     }

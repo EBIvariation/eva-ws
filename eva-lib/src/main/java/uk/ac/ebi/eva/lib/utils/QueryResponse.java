@@ -18,7 +18,7 @@ package uk.ac.ebi.eva.lib.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QueryResponse<T>{
+public class QueryResponse<T> {
 
     private static final long serialVersionUID = -2978952531219554024L;
 

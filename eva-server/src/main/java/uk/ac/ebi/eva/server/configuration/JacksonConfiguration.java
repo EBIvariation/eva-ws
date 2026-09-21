@@ -47,13 +47,13 @@ public class JacksonConfiguration {
         objectMapper.addMixIn(VariantStudy.class, VariantStudyMixin.class);
         objectMapper.addMixIn(VariantStatistics.class, VariantStatisticsMixin.class);
         objectMapper.addMixIn(ConsequenceType.class, ConsequenceTypeMixin.class);
-        objectMapper.addMixIn(Variant.class,VariantMixin.class);
+        objectMapper.addMixIn(Variant.class, VariantMixin.class);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         VisibilityChecker<?> vc = objectMapper.getSerializationConfig().getDefaultVisibilityChecker()
-                                              .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
-                                              .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
-                                              .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
-                                              .withCreatorVisibility(JsonAutoDetect.Visibility.NONE);
+                .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
+                .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+                .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
+                .withCreatorVisibility(JsonAutoDetect.Visibility.NONE);
         objectMapper.setVisibility(vc);
         return objectMapper;
     }

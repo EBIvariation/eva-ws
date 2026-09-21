@@ -17,10 +17,8 @@
 package uk.ac.ebi.eva.lib.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-
 import uk.ac.ebi.eva.lib.utils.ConsequenceTypeMappings;
 
 import java.io.IOException;
@@ -34,7 +32,7 @@ public class SoTermsSerializer extends StdSerializer<Set<Integer>> {
 
     @Override
     public void serialize(Set<Integer> integers, JsonGenerator jsonGenerator,
-                          SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
+                          SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeStartArray();
         for (Integer soAccession : integers) {
             jsonGenerator.writeStartObject();

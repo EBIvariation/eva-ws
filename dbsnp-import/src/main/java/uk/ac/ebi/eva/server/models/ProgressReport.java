@@ -15,15 +15,14 @@
  */
 package uk.ac.ebi.eva.server.models;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
+
 import java.util.Date;
 
 @Entity
@@ -57,15 +56,12 @@ public class ProgressReport {
     private Boolean assemblyFullyMatches;
 
     @Enumerated(EnumType.STRING)
-    @Convert(converter = StatusConverter.class)
     private Status variantsWithEvidenceImported;
 
     @Enumerated(EnumType.STRING)
-    @Convert(converter = StatusConverter.class)
     private Status variantsImported;
 
     @Enumerated(EnumType.STRING)
-    @Convert(converter = StatusConverter.class)
     private Status rsSynonymsImported;
 
     private Date variantsWithEvidenceImportedDate;
@@ -203,15 +199,27 @@ public class ProgressReport {
         return rsSynonymsImportedDate;
     }
 
-    public Long getImportedRs() { return importedRs; }
+    public Long getImportedRs() {
+        return importedRs;
+    }
 
-    public Long getTotalRsDbsnp() { return totalRsDbsnp; }
+    public Long getTotalRsDbsnp() {
+        return totalRsDbsnp;
+    }
 
-    public Long getImportedSynonymousRs() { return importedSynonymousRs; }
+    public Long getImportedSynonymousRs() {
+        return importedSynonymousRs;
+    }
 
-    public Long getTotalSynonymousRsDbsnp() { return totalSynonymousRsDbsnp; }
+    public Long getTotalSynonymousRsDbsnp() {
+        return totalSynonymousRsDbsnp;
+    }
 
-    public Long getImportedSs() { return importedSs; }
+    public Long getImportedSs() {
+        return importedSs;
+    }
 
-    public Long getTotalSsDbsnp() { return totalSsDbsnp; }
+    public Long getTotalSsDbsnp() {
+        return totalSsDbsnp;
+    }
 }

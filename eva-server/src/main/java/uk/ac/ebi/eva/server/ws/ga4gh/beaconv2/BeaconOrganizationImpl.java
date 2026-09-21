@@ -20,10 +20,6 @@
 package uk.ac.ebi.eva.server.ws.ga4gh.beaconv2;
 
 import uk.ac.ebi.eva.commons.beacon.models.BeaconOrganization;
-import uk.ac.ebi.eva.commons.beacon.models.KeyValuePair;
-
-import java.util.List;
-import java.util.Map;
 
 public class BeaconOrganizationImpl extends BeaconOrganization {
 

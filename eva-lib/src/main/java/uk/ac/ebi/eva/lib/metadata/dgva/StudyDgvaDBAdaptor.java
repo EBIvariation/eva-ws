@@ -18,13 +18,13 @@ package uk.ac.ebi.eva.lib.metadata.dgva;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import uk.ac.ebi.eva.lib.dgva_utils.DgvaDBUtils;
 import uk.ac.ebi.eva.lib.entities.DgvaStudyBrowser;
 import uk.ac.ebi.eva.lib.metadata.StudyDBAdaptor;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
+import uk.ac.ebi.eva.lib.repositories.DgvaStudyBrowserRepository;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
-import uk.ac.ebi.eva.lib.repositories.DgvaStudyBrowserRepository;
-import uk.ac.ebi.eva.lib.dgva_utils.DgvaDBUtils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.eva.release.controllers;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +27,7 @@ import uk.ac.ebi.eva.release.services.ReleaseStatsService;
 
 @RestController
 @RequestMapping(value = "/v1/stats", produces = "application/json")
-@Api(tags = {"RS Release Statistics"})
+@Tag(name = "RS Release Statistics")
 public class ReleaseStatsController {
 
     private final ReleaseStatsService releaseStatsService;

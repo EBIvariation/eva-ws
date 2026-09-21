@@ -23,8 +23,8 @@ package uk.ac.ebi.eva.server.exception;
 @SuppressWarnings("serial")
 public class VersionException extends Exception {
 
-	public VersionException(String msg) {
-		super(msg);
-	}
-	
+    public VersionException(String msg) {
+        super(msg);
+    }
+
 }

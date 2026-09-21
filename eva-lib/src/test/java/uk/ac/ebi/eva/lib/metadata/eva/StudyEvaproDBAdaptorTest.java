@@ -15,27 +15,27 @@
  */
 package uk.ac.ebi.eva.lib.metadata.eva;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import uk.ac.ebi.eva.lib.utils.QueryOptions;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
+import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryOptionsConstants;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 
 import java.util.function.Predicate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.HUMAN;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class StudyEvaproDBAdaptorTest {
 
@@ -45,77 +45,77 @@ public class StudyEvaproDBAdaptorTest {
     @Autowired
     private StudyEvaproDBAdaptor studyEvaproDBAdaptor;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         EvaStudyBrowserTestData.persistTestData(entityManager);
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() {
         entityManager.clear();
     }
 
     @Test
-    public void getAllStudies() throws Exception {
+    public void getAllStudies() {
         QueryResult<VariantStudy> queryResult = studyEvaproDBAdaptor.getAllStudies(new QueryOptions());
 
         assertEquals(5, queryResult.getNumTotalResults());
     }
 
     @Test
-    public void getAllStudiesForOneSpecies() throws Exception {
+    public void getAllStudiesForOneSpecies() {
         QueryOptions queryOptions = new QueryOptions();
         queryOptions.put(QueryOptionsConstants.SPECIES, HUMAN);
         QueryResult<VariantStudy> queryResult = studyEvaproDBAdaptor.getAllStudies(queryOptions);
 
         checkReturnedStudies(queryResult, 3,
-                             study -> study.getSpeciesCommonName().equals(HUMAN));
+                study -> study.getSpeciesCommonName().equals(HUMAN));
     }
 
     @Test
-    public void getAllStudiesForOneType() throws Exception {
+    public void getAllStudiesForOneType() {
         QueryOptions queryOptions = new QueryOptions();
         queryOptions.put(QueryOptionsConstants.TYPE, EvaStudyBrowserTestData.EXOME_SEQUENCING);
         QueryResult<VariantStudy> queryResult = studyEvaproDBAdaptor.getAllStudies(queryOptions);
 
         checkReturnedStudies(queryResult, 2,
-                             study -> study.getExperimentType().equals(EvaStudyBrowserTestData.EXOME_SEQUENCING));
+                study -> study.getExperimentType().equals(EvaStudyBrowserTestData.EXOME_SEQUENCING));
     }
 
     @Test
-    public void getAllStudiesForAnSpeciesAndType() throws Exception {
+    public void getAllStudiesForAnSpeciesAndType() {
         QueryOptions queryOptions = new QueryOptions();
         queryOptions.put(QueryOptionsConstants.SPECIES, HUMAN);
         queryOptions.put(QueryOptionsConstants.TYPE, EvaStudyBrowserTestData.EXOME_SEQUENCING);
         QueryResult<VariantStudy> queryResult = studyEvaproDBAdaptor.getAllStudies(queryOptions);
 
         checkReturnedStudies(queryResult, 1,
-                             study -> study.getSpeciesCommonName().equals(HUMAN) && study
-                                     .getExperimentType()
-                                     .equals(EvaStudyBrowserTestData.EXOME_SEQUENCING));
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void listStudies() throws Exception {
-        studyEvaproDBAdaptor.listStudies();
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void findStudyNameOrStudyId() throws Exception {
-        studyEvaproDBAdaptor.findStudyNameOrStudyId("any study", new QueryOptions());
+                study -> study.getSpeciesCommonName().equals(HUMAN) && study
+                        .getExperimentType()
+                        .equals(EvaStudyBrowserTestData.EXOME_SEQUENCING));
     }
 
     @Test
-    public void getStudyById() throws Exception {
+    public void listStudies() {
+        assertThrows(UnsupportedOperationException.class, () -> studyEvaproDBAdaptor.listStudies());
+    }
+
+    @Test
+    public void findStudyNameOrStudyId() {
+        assertThrows(UnsupportedOperationException.class, () -> studyEvaproDBAdaptor.findStudyNameOrStudyId("any study", new QueryOptions()));
+    }
+
+    @Test
+    public void getStudyById() {
         QueryResult<VariantStudy> queryResult = studyEvaproDBAdaptor
                 .getStudyById(EvaStudyBrowserTestData.PROJECT_ID_1, new QueryOptions());
 
         checkReturnedStudies(queryResult, 1, study -> study.getId().equals(EvaStudyBrowserTestData.PROJECT_ID_1));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void close() throws Exception {
-        studyEvaproDBAdaptor.close();
+    @Test
+    public void close() {
+        assertThrows(UnsupportedOperationException.class, () -> studyEvaproDBAdaptor.close());
     }
 
     private void checkReturnedStudies(QueryResult<VariantStudy> queryResult, int expectedNumberOfResults,

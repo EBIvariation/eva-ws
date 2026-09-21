@@ -15,15 +15,14 @@
  */
 package uk.ac.ebi.eva.lib.metadata.eva;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.lib.entities.Project;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
 import uk.ac.ebi.eva.lib.metadata.FileTestData;
@@ -39,13 +38,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.BOS_TAURUS;
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.CATTLE;
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.HOMO_SAPIENS;
 import static uk.ac.ebi.eva.lib.metadata.MetadataTestData.HUMAN;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 @Sql({"classpath:eva-schema.sql", "classpath:eva-data.sql"})
 public class ArchiveEvaproDBAdaptorTest {
@@ -55,16 +54,16 @@ public class ArchiveEvaproDBAdaptorTest {
     @Autowired
     private ArchiveEvaproDBAdaptor archiveEvaproDBAdaptor;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         Project prj1 = new Project("PRJEB1", "EBI", "PRJ 1", "Project 1 title", "Project 1 description",
-                                   "multi-isolate", "DNA", "genome", "SUBMISSION", "ERP1", "Germline", 1L,
-                                   "Variation data project 1", "European Bioinformatics Institute",
-                                   "http://www.ebi.ac.uk", 1L, "Control Set");
+                "multi-isolate", "DNA", "genome", "SUBMISSION", "ERP1", "Germline", 1L,
+                "Variation data project 1", "European Bioinformatics Institute",
+                "http://www.ebi.ac.uk", 1L, "Control Set");
         Project prj2 = new Project("PRJEB2", "EBI", "PRJ 2", "Project 2 title", "Project 2 description",
-                                   "multi-isolate", "DNA", "genome", "SUBMISSION", "ERP2", "Germline", 2L,
-                                   "Variation data project 2", "European Bioinformatics Institute",
-                                   "http://www.ebi.ac.uk", 2L, "Control Set");
+                "multi-isolate", "DNA", "genome", "SUBMISSION", "ERP2", "Germline", 2L,
+                "Variation data project 2", "European Bioinformatics Institute",
+                "http://www.ebi.ac.uk", 2L, "Control Set");
 
         entityManager.persist(prj1);
         entityManager.persist(prj2);
@@ -91,7 +90,7 @@ public class ArchiveEvaproDBAdaptorTest {
     }
 
     @Test
-    public void countStudies() throws Exception {
+    public void countStudies() {
         QueryResult<Long> countStudiesResult = archiveEvaproDBAdaptor.countStudies();
 
         assertEquals(1, countStudiesResult.getNumResults());
@@ -99,7 +98,7 @@ public class ArchiveEvaproDBAdaptorTest {
     }
 
     @Test
-    public void countStudiesPerSpeciesFilteringBySpecies() throws Exception {
+    public void countStudiesPerSpeciesFilteringBySpecies() {
         QueryResult<Map.Entry<String, Long>> countStudiesResult = archiveEvaproDBAdaptor
                 .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.SPECIES, HUMAN));
 
@@ -110,7 +109,7 @@ public class ArchiveEvaproDBAdaptorTest {
     }
 
     @Test
-    public void countStudiesPerSpeciesFilteringBySpeciesAndtype() throws Exception {
+    public void countStudiesPerSpeciesFilteringBySpeciesAndtype() {
         QueryOptions queryOptions = new QueryOptions();
         queryOptions.put(QueryOptionsConstants.SPECIES, HUMAN);
         queryOptions.put(QueryOptionsConstants.TYPE, EvaStudyBrowserTestData.EXOME_SEQUENCING);
@@ -125,7 +124,7 @@ public class ArchiveEvaproDBAdaptorTest {
     }
 
     @Test
-    public void countStudiesPerSpeciesFilteringByNotExistingSpecies() throws Exception {
+    public void countStudiesPerSpeciesFilteringByNotExistingSpecies() {
         QueryResult<Map.Entry<String, Long>> countStudiesResult = archiveEvaproDBAdaptor
                 .countStudiesPerSpecies(new QueryOptions(QueryOptionsConstants.SPECIES, "NotExistingSpecies"));
 
@@ -133,22 +132,22 @@ public class ArchiveEvaproDBAdaptorTest {
     }
 
     @Test
-    public void countStudiesPerSpeciesUnfiltered() throws Exception {
+    public void countStudiesPerSpeciesUnfiltered() {
         QueryResult<Map.Entry<String, Long>> countStudiesResult = archiveEvaproDBAdaptor
                 .countStudiesPerSpecies(new QueryOptions());
 
         assertEquals(2, countStudiesResult.getNumResults());
-        List<Map.Entry<String, Long>> results =  countStudiesResult.getResult();
+        List<Map.Entry<String, Long>> results = countStudiesResult.getResult();
         long humanStudiesCount = results.stream().filter(e -> e.getKey().equals(HUMAN))
-                                        .mapToLong(Map.Entry::getValue).findAny().getAsLong();
+                .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         long cowStudiesCount = results.stream().filter(e -> e.getKey().equals(CATTLE))
-                                      .mapToLong(Map.Entry::getValue).findAny().getAsLong();
+                .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         assertEquals(3, humanStudiesCount);
         assertEquals(3, cowStudiesCount);
     }
 
     @Test
-    public void countStudiesPerTypeFilteringByType() throws Exception {
+    public void countStudiesPerTypeFilteringByType() {
         QueryResult<Map.Entry<String, Long>> countStudiesResult = archiveEvaproDBAdaptor
                 .countStudiesPerType(
                         new QueryOptions(QueryOptionsConstants.TYPE, EvaStudyBrowserTestData.EXOME_SEQUENCING));
@@ -159,7 +158,7 @@ public class ArchiveEvaproDBAdaptorTest {
     }
 
     @Test
-    public void countStudiesPerTypeFilteringByNotExistingType() throws Exception {
+    public void countStudiesPerTypeFilteringByNotExistingType() {
         QueryResult<Map.Entry<String, Long>> countStudiesResult = archiveEvaproDBAdaptor
                 .countStudiesPerType(
                         new QueryOptions(QueryOptionsConstants.TYPE, "NotExistingType"));
@@ -168,27 +167,27 @@ public class ArchiveEvaproDBAdaptorTest {
     }
 
     @Test
-    public void countStudiesPerTypeUnfiltered() throws Exception {
+    public void countStudiesPerTypeUnfiltered() {
         QueryResult<Map.Entry<String, Long>> countStudiesResult = archiveEvaproDBAdaptor
                 .countStudiesPerType(new QueryOptions());
 
         assertEquals(3, countStudiesResult.getNumResults());
-        List<Map.Entry<String, Long>> results =  countStudiesResult.getResult();
+        List<Map.Entry<String, Long>> results = countStudiesResult.getResult();
         long wgsStudiesCount = results.stream()
-                                      .filter(e -> e.getKey().equals(EvaStudyBrowserTestData.WHOLE_GENOME_SEQUENCING))
-                                      .mapToLong(Map.Entry::getValue).findAny().getAsLong();
+                .filter(e -> e.getKey().equals(EvaStudyBrowserTestData.WHOLE_GENOME_SEQUENCING))
+                .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         long rnaSeqStudiesCount = results.stream().filter(e -> e.getKey().equals(EvaStudyBrowserTestData.RNA_SEQ))
-                                      .mapToLong(Map.Entry::getValue).findAny().getAsLong();
+                .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         long exomeSeqStudiesCount = results.stream()
-                                           .filter(e -> e.getKey().equals(EvaStudyBrowserTestData.EXOME_SEQUENCING))
-                                           .mapToLong(Map.Entry::getValue).findAny().getAsLong();
+                .filter(e -> e.getKey().equals(EvaStudyBrowserTestData.EXOME_SEQUENCING))
+                .mapToLong(Map.Entry::getValue).findAny().getAsLong();
         assertEquals(3, wgsStudiesCount);
         assertEquals(1, rnaSeqStudiesCount);
         assertEquals(2, exomeSeqStudiesCount);
     }
 
     @Test
-    public void countFiles() throws Exception {
+    public void countFiles() {
         QueryResult<Long> queryResult = archiveEvaproDBAdaptor.countFiles();
 
         assertEquals(1, queryResult.getNumTotalResults());
@@ -196,7 +195,7 @@ public class ArchiveEvaproDBAdaptorTest {
     }
 
     @Test
-    public void countSpecies() throws Exception {
+    public void countSpecies() {
         QueryResult<Long> queryResult = archiveEvaproDBAdaptor.countSpecies();
 
         assertEquals(1, queryResult.getNumTotalResults());
@@ -204,7 +203,7 @@ public class ArchiveEvaproDBAdaptorTest {
     }
 
     @Test
-    public void getBrowsableSpecies() throws Exception {
+    public void getBrowsableSpecies() {
         QueryResult<Assembly> queryResult = archiveEvaproDBAdaptor.getBrowsableSpecies();
 
         assertEquals(2, queryResult.getNumTotalResults());
@@ -220,7 +219,7 @@ public class ArchiveEvaproDBAdaptorTest {
     }
 
     @Test
-    public void getAccessionedSpecies() throws Exception {
+    public void getAccessionedSpecies() {
         QueryResult<Assembly> queryResult = archiveEvaproDBAdaptor.getAccessionedSpecies();
         // Those assemblies should not be returned by getAccessionedSpecies:
         // - Chicken - galgal4, Sheep - Oar_v3.1 - assembly_in_accessioning_store is false

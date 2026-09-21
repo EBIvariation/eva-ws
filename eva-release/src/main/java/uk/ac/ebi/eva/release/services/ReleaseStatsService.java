@@ -81,7 +81,7 @@ public class ReleaseStatsService {
     public Iterable<ReleaseStatsPerSpeciesDto> getSpeciesWithNewRsIds(Integer releaseVersion) {
         if (releaseVersion != null) {
             return releaseStatsPerSpeciesMapper.toDto(releaseStatsPerSpeciesRepository
-                                 .findByReleaseVersionAndNewCurrentRsGreaterThan(releaseVersion, 0L));
+                    .findByReleaseVersionAndNewCurrentRsGreaterThan(releaseVersion, 0L));
         } else {
             return releaseStatsPerSpeciesMapper.toDto(releaseStatsPerSpeciesRepository.findByNewCurrentRsGreaterThan(0L));
         }

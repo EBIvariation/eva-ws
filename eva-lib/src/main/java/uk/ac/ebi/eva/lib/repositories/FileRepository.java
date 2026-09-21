@@ -18,8 +18,8 @@ package uk.ac.ebi.eva.lib.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import uk.ac.ebi.eva.lib.models.FileFtpReference;
 import uk.ac.ebi.eva.lib.entities.File;
+import uk.ac.ebi.eva.lib.models.FileFtpReference;
 
 import java.util.List;
 

@@ -15,21 +15,21 @@
  */
 package uk.ac.ebi.eva.lib.metadata.dgva;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class StudyDgvaDBAdaptorTest {
 
@@ -39,30 +39,30 @@ public class StudyDgvaDBAdaptorTest {
     @Autowired
     private StudyDgvaDBAdaptor studyDgvaDBAdaptor;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         DgvaStudyTestData.persistTestData(entityManager);
     }
 
     @Test
-    public void getAllStudiesUnfiltered() throws Exception {
+    public void getAllStudiesUnfiltered() {
         QueryResult<VariantStudy> queryResult = studyDgvaDBAdaptor.getAllStudies(new QueryOptions());
 
         assertEquals(3, queryResult.getNumTotalResults());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void listStudies() throws Exception {
-        studyDgvaDBAdaptor.listStudies();
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void findStudyNameOrStudyId() throws Exception {
-        studyDgvaDBAdaptor.findStudyNameOrStudyId("Study", new QueryOptions());
+    @Test
+    public void listStudies() {
+        assertThrows(UnsupportedOperationException.class, () -> studyDgvaDBAdaptor.listStudies());
     }
 
     @Test
-    public void getStudyById() throws Exception {
+    public void findStudyNameOrStudyId() {
+        assertThrows(UnsupportedOperationException.class, () -> studyDgvaDBAdaptor.findStudyNameOrStudyId("Study", new QueryOptions()));
+    }
+
+    @Test
+    public void getStudyById() {
         QueryResult<VariantStudy> queryResult = studyDgvaDBAdaptor.getStudyById(DgvaStudyTestData.STUDY_1_ID, new QueryOptions());
 
         assertEquals(1, queryResult.getNumTotalResults());
@@ -70,9 +70,9 @@ public class StudyDgvaDBAdaptorTest {
         assertEquals(DgvaStudyTestData.STUDY_1_ID, variantStudy.getId());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void close() throws Exception {
-        studyDgvaDBAdaptor.close();
+    @Test
+    public void close() {
+        assertThrows(UnsupportedOperationException.class, () -> studyDgvaDBAdaptor.close());
     }
 
 }

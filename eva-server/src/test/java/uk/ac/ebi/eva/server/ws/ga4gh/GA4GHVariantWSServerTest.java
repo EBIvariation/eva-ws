@@ -18,17 +18,16 @@
  */
 package uk.ac.ebi.eva.server.ws.ga4gh;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantSourceEntryWithSampleNames;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
@@ -40,12 +39,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GA4GHVariantWSServerTest {
 
@@ -57,7 +56,7 @@ public class GA4GHVariantWSServerTest {
     @MockBean
     private VariantWithSamplesAndAnnotationsService variantEntityRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         variant = new VariantWithSamplesAndAnnotation("1", 1000, 1005, "A", "C", "rs1");
         variant.setIds(Collections.singleton("1_1000_A_C"));
@@ -68,10 +67,10 @@ public class GA4GHVariantWSServerTest {
         Region region = new Region("1", 500L, 2000L);
 
         given(variantEntityRepository.findByRegionsAndComplexFilters(eq(Collections.singletonList(region)),
-                                                                     any(),
-                                                                     any(),
-                                                                     any(),
-                                                                     any()))
+                any(),
+                any(),
+                any(),
+                any()))
                 .willReturn(variantEntities);
         given(variantEntityRepository.countByRegionsAndComplexFilters(eq(Collections.singletonList(region)),
                 any()))
@@ -79,7 +78,7 @@ public class GA4GHVariantWSServerTest {
     }
 
     @Test
-    public void testRegionWithVariants() throws Exception {
+    public void testRegionWithVariants() {
         GASearchVariantsResponse gaSearchVariantsResponse = testVariantWsHelper("1", 500, 2000, new ArrayList<>(),
                 "0", 10);
         assertEquals(1, gaSearchVariantsResponse.getVariants().size());
@@ -88,7 +87,7 @@ public class GA4GHVariantWSServerTest {
     }
 
     @Test
-    public void testRegionWithNoVariants() throws Exception {
+    public void testRegionWithNoVariants() {
         GASearchVariantsResponse gaSearchVariantsResponse = testVariantWsHelper("2", 5000, 10000, new ArrayList<>(),
                 "0", 10);
         assertEquals(0, gaSearchVariantsResponse.getVariants().size());

@@ -39,7 +39,7 @@ public class GACall {
      * value of ["A", "C"], and the genotype was [2, 1], that would mean the call represented the heterozygous
      * value "CA" for this variant. If the genotype was instead [0, 1] the represented value would be "TA".
      * Ordering of the genotype values is important if the phaseset field is present
-     *
+     * <p>
      * NOTE: Arrays and Lists should be plural names
      */
     private int[] genotype;
@@ -47,7 +47,7 @@ public class GACall {
     /**
      * If this field is present, this variant call's genotype ordering implies the phase of the bases and is consistent
      * with any other variant calls on the same contig which have the same phaseset value
-     *
+     * <p>
      * NOTE: should not this name be phaseSet?
      */
     private String phaseset;
@@ -56,7 +56,7 @@ public class GACall {
     /**
      * The genotype likelihoods for this variant call. Each array entry represents how likely a specific genotype is
      * for this call. The value ordering is defined by the GL tag in the VCF spec
-     *
+     * <p>
      * NOTE: float should be enough for storing the likelihoods. Anyway this field is not very useful since each caller
      * use a different metric.
      */

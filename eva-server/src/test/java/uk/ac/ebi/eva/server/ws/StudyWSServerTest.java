@@ -1,17 +1,16 @@
 package uk.ac.ebi.eva.server.ws;
 
 import com.google.common.collect.Sets;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.lib.entities.Analysis;
 import uk.ac.ebi.eva.lib.entities.DbXref;
 import uk.ac.ebi.eva.lib.entities.ExperimentType;
@@ -25,11 +24,11 @@ import uk.ac.ebi.eva.lib.entities.Submission;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
 import uk.ac.ebi.eva.lib.models.rocrate.CommentEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.DataCatalogEntity;
-import uk.ac.ebi.eva.lib.models.rocrate.MinimalProjectDatasetEntity;
-import uk.ac.ebi.eva.lib.models.rocrate.ProjectDatasetEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.FileEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.LabProcessEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.MetadataEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.MinimalProjectDatasetEntity;
+import uk.ac.ebi.eva.lib.models.rocrate.ProjectDatasetEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.Reference;
 import uk.ac.ebi.eva.lib.models.rocrate.RoCrateEntity;
 import uk.ac.ebi.eva.lib.models.rocrate.RoCrateMetadata;
@@ -51,9 +50,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StudyWSServerTest {
 
@@ -90,13 +89,13 @@ public class StudyWSServerTest {
     @Autowired
     private AnalysisRepository analysisRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         // Create and save entities required for analyses
         Submission submission1 = new Submission(1L, "ERA123", "PROJECT", "ADD", "first submission", null,
-                                                LocalDate.of(2025, 1, 1), 1);
+                LocalDate.of(2025, 1, 1), 1);
         Submission submission2 = new Submission(2L, "ERA456", "PROJECT", "ADD", "second submission", null,
-                                                LocalDate.of(2025, 7, 1), 1);
+                LocalDate.of(2025, 7, 1), 1);
         // Submission with a null submission date
         Submission submission3 = new Submission(3L, "ERA789", "PROJECT", "ADD", "third submission", null, null, 1);
         List<Submission> submissions = Arrays.asList(submission1, submission2, submission3);
@@ -109,16 +108,16 @@ public class StudyWSServerTest {
 
         // File in analysis 1 with 2 samples
         File file1 = new File(1L, "ena file id", "file1.vcf", "md5_1", "file location", "VCF", "submitted", 1,
-                              true, null, false, "eva file id", null);
+                true, null, false, "eva file id", null);
         // File in analysis 2 with 1 sample
         File file2 = new File(2L, "ena file id", "file2.vcf", "md5_2", "file location", "vcf", "submitted", 1,
-                              true, null, false, "eva file id", null);
+                true, null, false, "eva file id", null);
         // Non-VCF file in analysis 1
         File file3 = new File(3L, "ena file id", "file1.vcf.csi", "md5_3", "file location", "csi", "submitted", 1,
-                              true, null, false, "eva file id", null);
+                true, null, false, "eva file id", null);
         // VCF file in analysis 1 with no samples
         File file4 = new File(4L, "ena file id", "file4.vcf", "md5_4", "file location", "VCF", "submitted", 1,
-                              true, null, false, "eva file id", null);
+                true, null, false, "eva file id", null);
         Sample sample1 = new Sample(1L, "SAMEA0001", "ERS0001");
         Sample sample2 = new Sample(2L, "SAMEA0002", "ERS0002");
         sampleRepository.saveAll(Arrays.asList(sample1, sample2));
@@ -137,9 +136,9 @@ public class StudyWSServerTest {
         fileSampleRepository.saveAll(Arrays.asList(fileSample11, fileSample12, fileSample22));
 
         Analysis analysis1 = new Analysis("ERZ0001", "analysis 1", "alias", "description", "center", null, "reference",
-                                          "GCA_0001.1", 0, 1L);
+                "GCA_0001.1", 0, 1L);
         Analysis analysis2 = new Analysis("ERZ0002", "analysis 2", "alias", "description", "center", null, "reference",
-                                          "GCA_0001.2", 0, 1L);
+                "GCA_0001.2", 0, 1L);
         List<Analysis> analyses = Arrays.asList(analysis1, analysis2);
         analysis1.setExperimentType(experimentType);
         analysis1.setPlatform(platform);
@@ -156,8 +155,8 @@ public class StudyWSServerTest {
         dbXrefRepository.save(dbXref);
 
         Project project = new Project("PRJEB0001", "submitter center", "project alias", "project title", "description",
-                                      "multi-isolate", "DNA", "other", "other", "studyId", "germline", 999L, null, null,
-                                      null, null, "control set");
+                "multi-isolate", "DNA", "other", "other", "studyId", "germline", 999L, null, null,
+                null, null, "control set");
 
         project.setDbXrefs(Collections.singletonList(dbXref));
         project.setTaxonomies(Collections.singletonList(taxonomy));
@@ -170,7 +169,7 @@ public class StudyWSServerTest {
     public void testGetRoCrate() {
         String url = "/v1/studies/ro-crate/PRJEB0001";
         ResponseEntity<RoCrateMetadata> response = restTemplate.exchange(url, HttpMethod.GET, null,
-                                                                         RoCrateMetadata.class);
+                RoCrateMetadata.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         RoCrateMetadata roCrateMetadata = response.getBody();
 
@@ -186,9 +185,9 @@ public class StudyWSServerTest {
 
         // Additional properties of project are separate entities
         List<Reference> taxonomyRefs = dataset.getAdditionalProperties()
-                                              .stream()
-                                              .filter(ref -> ref.getId().equalsIgnoreCase("#PRJEB0001-taxonomyId"))
-                                              .collect(Collectors.toList());
+                .stream()
+                .filter(ref -> ref.getId().equalsIgnoreCase("#PRJEB0001-taxonomyId"))
+                .collect(Collectors.toList());
         List<RoCrateEntity> taxonomyEntities = roCrateMetadata.getEntities(taxonomyRefs);
         assertEquals(1, taxonomyEntities.size());
         assertEquals("9606", ((CommentEntity) taxonomyEntities.get(0)).getText());
@@ -205,9 +204,9 @@ public class StudyWSServerTest {
         FileEntity file = (FileEntity) fileEntities.stream().sorted().findFirst().get();
         assertEquals("file1.vcf", file.getName());
         List<Reference> md5Refs = file.getAdditionalProperties()
-                                      .stream()
-                                      .filter(ref -> ref.getId().endsWith("md5"))
-                                      .collect(Collectors.toList());
+                .stream()
+                .filter(ref -> ref.getId().endsWith("md5"))
+                .collect(Collectors.toList());
         List<RoCrateEntity> md5Entities = roCrateMetadata.getEntities(md5Refs);
         assertEquals(1, md5Entities.size());
         assertEquals("md5_1", ((CommentEntity) md5Entities.get(0)).getText());
@@ -217,9 +216,9 @@ public class StudyWSServerTest {
                 entity -> (SampleEntity) entity).collect(Collectors.toList());
         assertEquals(2, sampleEntities.size());
         assertEquals(Sets.newHashSet("SAMEA0001", "SAMEA0002"),
-                     sampleEntities.stream().map(SampleEntity::getSampleAccession).collect(Collectors.toSet()));
+                sampleEntities.stream().map(SampleEntity::getSampleAccession).collect(Collectors.toSet()));
         assertEquals(Sets.newHashSet("sample1_in_file1", "sample2_in_file1"),
-                     sampleEntities.stream().map(SampleEntity::getName).collect(Collectors.toSet()));
+                sampleEntities.stream().map(SampleEntity::getName).collect(Collectors.toSet()));
     }
 
     @Test
@@ -251,7 +250,7 @@ public class StudyWSServerTest {
     public void testGetRoCrateNotFound() {
         String url = "/v1/studies/ro-crate/PRJEB999";
         ResponseEntity<RoCrateMetadata> response = restTemplate.exchange(url, HttpMethod.GET, null,
-                                                                         RoCrateMetadata.class);
+                RoCrateMetadata.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

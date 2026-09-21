@@ -1,140 +1,289 @@
 stages:
-    - test
-    - package
+    - build
     - deploy
 
+# Shared .build_docker / .update_and_deploy templates live in eva-k8s
+# See https://github.com/EBIvariation/eva-k8s/blob/main/gitlab-ci/webservice.yml.
+include:
+    - remote: 'https://raw.githubusercontent.com/EBIvariation/eva-k8s/refs/tags/v1.0/gitlab-ci/webservice.yml'
+
+# REQUIRED GitLab CI/CD Variables (Global):
+# DOCKER_AUTH_CONFIG: Contains username and password for the docker registry above
+# GITHUB_USER: GitHub username for accessing private maven settings repository
+# GITHUB_TOKEN: GitHub personal access token for accessing private maven settings repository
+
 variables:
-    COUNT_STATS_ARTIFACT_PATH: count-stats/target/count-stats-$ENVIRONMENT_NAME.war
-    RELEASE_ARTIFACT_PATH: eva-release/target/eva-release-$ENVIRONMENT_NAME.war
-    WS_ARTIFACT_PATH: eva-server/target/eva-$ENVIRONMENT_NAME.war
-    MAVEN_SETTINGS: maven-settings.xml
-    URL_MAVEN_SETTINGS: https://api.github.com/repos/EBIvariation/configuration/contents/eva-maven-settings.xml
-    MEDIA_TYPE: application/vnd.github.raw
+    IMAGE_REPOSITORY: dockerhub.ebi.ac.uk/ebivariation/eva-ws
 
-test:
-    stage: test
-    image: maven:3.6.1-jdk-8-alpine
-    services:
-        - mongo:4.0.18
-    script:
-        # Gitlab exposes services under their own hostnames. So test host should be "mongo" instead of "localhost".
-        - mvn clean test --projects 'eva-lib,eva-server,count-stats,eva-release' -Deva.mongo.host.test=mongo
+# ============================================================================
+# eva-server
+# ============================================================================
+
+build:docker:eva-server:dev:
+    extends: .build_docker
+    variables:
+        SERVICE_NAME: eva-server
+        DOCKERFILE_PATH: eva-server/Dockerfile
+        IMAGE_TAG: eva-server-dev-$CI_COMMIT_SHORT_SHA
     only:
         - master
-        - tags
 
-# Not executed, parent job definition for package
-.package:
-    image: maven:3.6.1-jdk-8-alpine
-    stage: package
+deploy:eva-server:dev:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:eva-server:dev
+    variables:
+        SERVICE_NAME: eva-server
+        IMAGE_TAG: eva-server-dev-$CI_COMMIT_SHORT_SHA
+        ENV: development
+        MAVEN_PROFILE: development
+        K8S_MANIFEST_PATH: k8s-manifests/eva-server/overlays/dev
+        K8S_NAMESPACE: eva-server-dev
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_DEV
     environment:
-        name: $ENVIRONMENT_NAME
-    resource_group: $ENVIRONMENT_NAME
-    before_script:
-        - DATETIME=$(date +%Y-%m-%dT%H-%M-%S)
-        - apk add --update curl
-        - curl -u $GITHUB_USER:$GITHUB_TOKEN -H "Accept:$MEDIA_TYPE" $URL_MAVEN_SETTINGS > $MAVEN_SETTINGS
-    script:
-        - mvn package --projects 'eva-lib,eva-server,eva-release' --settings $MAVEN_SETTINGS -P $WS_MAVEN_PROFILE -DskipTests -Dtimestamp=$DATETIME
-        - mvn package --projects 'count-stats' --settings $MAVEN_SETTINGS -P $COUNT_STATS_MAVEN_PROFILE -DskipTests -Dtimestamp=$DATETIME
-        - cp eva-server/target/eva-*.war $WS_ARTIFACT_PATH
-        - cp eva-release/target/eva-*.war $RELEASE_ARTIFACT_PATH
-        - cp count-stats/target/count-stats-*.war $COUNT_STATS_ARTIFACT_PATH
-    after_script:
-        - rm $MAVEN_SETTINGS
-    artifacts:
-        expire_in: 1 week
-        paths:
-            - $WS_ARTIFACT_PATH
-            - $COUNT_STATS_ARTIFACT_PATH
-            - $RELEASE_ARTIFACT_PATH
-
-package-internal:
-    extends: .package
-    variables:
-        WS_MAVEN_PROFILE: internal
-        COUNT_STATS_MAVEN_PROFILE: internal
-        ENVIRONMENT_NAME: internal
+        name: development
     only:
         - master
 
-package-staging:
-    extends: .package
+deploy:eva-server:staging:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:eva-server:dev
     variables:
-        WS_MAVEN_PROFILE: production_processing
-        COUNT_STATS_MAVEN_PROFILE: production_processing
-        ENVIRONMENT_NAME: staging
-    only:
-        - master
-
-package-production:
-    extends: .package
-    variables:
-        WS_MAVEN_PROFILE: production,$ACTIVE_EVAPRO
-        # COUNT_STATS_MAVEN_PROFILE is production_processing because we are writing to the staging metadata database
-        COUNT_STATS_MAVEN_PROFILE: production_processing
-        ENVIRONMENT_NAME: production
-    only:
-        - tags
-
-# Not executed, parent job definition for Tomcat deployments
-.deploy-tomcat:
-    stage: deploy
-    image: alpine:3.9.5
+        SERVICE_NAME: eva-server
+        IMAGE_TAG: eva-server-dev-$CI_COMMIT_SHORT_SHA
+        ENV: staging
+        MAVEN_PROFILE: production_processing
+        K8S_MANIFEST_PATH: k8s-manifests/eva-server/overlays/staging
+        K8S_NAMESPACE: eva-server-stage
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_STAGING
     environment:
-        name: $ENVIRONMENT_NAME
-    resource_group: $ENVIRONMENT_NAME
-    script:
-        - DATETIME=$(date +%Y-%m-%dT%H-%M-%S)
-        - apk add --update curl
-        - curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T "$WS_ARTIFACT_PATH" "http://$TOMCAT_HOST/manager/text/deploy?update=true&path=/eva&version=$DATETIME" | grep "OK - Deployed application"
-        - curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T "$RELEASE_ARTIFACT_PATH" "http://$TOMCAT_HOST/manager/text/deploy?update=true&path=/eva/webservices/release&version=$DATETIME" | grep "OK - Deployed application"
-        - curl -u $TOMCAT_USER:$TOMCAT_PASSWORD -T "$COUNT_STATS_ARTIFACT_PATH" "http://$TOMCAT_HOST/manager/text/deploy?update=true&path=/eva/webservices/count-stats&version=$DATETIME" | grep "OK - Deployed application"
-
-deploy-tomcat-internal:
-    extends: .deploy-tomcat
-    variables:
-        ENVIRONMENT_NAME: internal
-        TOMCAT_USER: $TOMCAT_INTERNAL_USER
-        TOMCAT_PASSWORD: $TOMCAT_INTERNAL_PASSWORD
-        TOMCAT_HOST: $TOMCAT_INTERNAL_HOST
-    dependencies:
-        - package-internal
+        name: staging
     only:
         - master
 
-deploy-tomcat-staging:
-    extends: .deploy-tomcat
+build:docker:eva-server:prod:
+    extends: .build_docker
     variables:
-        ENVIRONMENT_NAME: staging
-        TOMCAT_USER: $TOMCAT_DEVELOPMENT_USER
-        TOMCAT_PASSWORD: $TOMCAT_DEVELOPMENT_PASSWORD
-        TOMCAT_HOST: $TOMCAT_DEVELOPMENT_HOST
-    dependencies:
-        - package-staging
-    only:
-        - master
-
-deploy-tomcat-production:
-    extends: .deploy-tomcat
-    variables:
-        ENVIRONMENT_NAME: production
-        TOMCAT_USER: $TOMCAT_PRODUCTION_USER
-        TOMCAT_PASSWORD: $TOMCAT_PRODUCTION_PASSWORD
-        TOMCAT_HOST: $TOMCAT_PRODUCTION_HOST
-    dependencies:
-        - package-production
+        SERVICE_NAME: eva-server
+        DOCKERFILE_PATH: eva-server/Dockerfile
+        IMAGE_TAG: eva-server-$CI_COMMIT_TAG
     only:
         - tags
 
-deploy-tomcat-production-fallback:
-    extends: .deploy-tomcat
+deploy:eva-server:prod:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:eva-server:prod
     variables:
-        ENVIRONMENT_NAME: production
-        TOMCAT_USER: $TOMCAT_PRODUCTION_FALLBACK_USER
-        TOMCAT_PASSWORD: $TOMCAT_PRODUCTION_FALLBACK_PASSWORD
-        TOMCAT_HOST: $TOMCAT_PRODUCTION_FALLBACK_HOST
-    dependencies:
-        - package-production
+        SERVICE_NAME: eva-server
+        IMAGE_TAG: eva-server-$CI_COMMIT_TAG
+        ENV: prod
+        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
+        K8S_MANIFEST_PATH: k8s-manifests/eva-server/overlays/prod
+        K8S_NAMESPACE: eva-server-prod
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
+    environment:
+        name: prod
+    only:
+        - tags
+
+# ============================================================================
+# eva-release
+# ============================================================================
+
+build:docker:eva-release:dev:
+    extends: .build_docker
+    variables:
+        SERVICE_NAME: eva-release
+        DOCKERFILE_PATH: eva-release/Dockerfile
+        IMAGE_TAG: eva-release-dev-$CI_COMMIT_SHORT_SHA
+    only:
+        - master
+
+deploy:eva-release:dev:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:eva-release:dev
+    variables:
+        SERVICE_NAME: eva-release
+        IMAGE_TAG: eva-release-dev-$CI_COMMIT_SHORT_SHA
+        ENV: development
+        MAVEN_PROFILE: development
+        K8S_MANIFEST_PATH: k8s-manifests/eva-release/overlays/dev
+        K8S_NAMESPACE: eva-release-dev
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_DEV
+    environment:
+        name: development
+    only:
+        - master
+
+deploy:eva-release:staging:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:eva-release:dev
+    variables:
+        SERVICE_NAME: eva-release
+        IMAGE_TAG: eva-release-dev-$CI_COMMIT_SHORT_SHA
+        ENV: staging
+        MAVEN_PROFILE: production_processing
+        K8S_MANIFEST_PATH: k8s-manifests/eva-release/overlays/staging
+        K8S_NAMESPACE: eva-release-stage
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_STAGING
+    environment:
+        name: staging
+    only:
+        - master
+
+build:docker:eva-release:prod:
+    extends: .build_docker
+    variables:
+        SERVICE_NAME: eva-release
+        DOCKERFILE_PATH: eva-release/Dockerfile
+        IMAGE_TAG: eva-release-$CI_COMMIT_TAG
+    only:
+        - tags
+
+deploy:eva-release:prod:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:eva-release:prod
+    variables:
+        SERVICE_NAME: eva-release
+        IMAGE_TAG: eva-release-$CI_COMMIT_TAG
+        ENV: prod
+        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
+        K8S_MANIFEST_PATH: k8s-manifests/eva-release/overlays/prod
+        K8S_NAMESPACE: eva-release-prod
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
+    environment:
+        name: prod
+    only:
+        - tags
+
+
+build:docker:count-stats:dev:
+    extends: .build_docker
+    variables:
+        SERVICE_NAME: count-stats
+        DOCKERFILE_PATH: count-stats/Dockerfile
+        IMAGE_TAG: count-stats-dev-$CI_COMMIT_SHORT_SHA
+    only:
+        - master
+
+deploy:count-stats:dev:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:count-stats:dev
+    variables:
+        SERVICE_NAME: count-stats
+        IMAGE_TAG: count-stat-dev-$CI_COMMIT_SHORT_SHA
+        ENV: development
+        MAVEN_PROFILE: development
+        K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/dev
+        K8S_NAMESPACE: count-stats-dev
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_DEV
+    environment:
+        name: development
+    only:
+        - master
+
+deploy:count-stats:staging:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:count-stats:dev
+    variables:
+        SERVICE_NAME: count-stats
+        IMAGE_TAG: count-stat-dev-$CI_COMMIT_SHORT_SHA
+        ENV: staging
+        MAVEN_PROFILE: production_processing
+        K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/staging
+        K8S_NAMESPACE: count-stats-stage
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_STAGING
+    environment:
+        name: staging
+    only:
+        - master
+
+build:docker:count-stats:prod:
+    extends: .build_docker
+    variables:
+        SERVICE_NAME: count-stats
+        DOCKERFILE_PATH: count-stats/Dockerfile
+        IMAGE_TAG: count-stats-$CI_COMMIT_TAG
+    only:
+        - tags
+
+deploy:count-stats:prod:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:count-stats:prod
+    variables:
+        SERVICE_NAME: count-stats
+        IMAGE_TAG: count-stats-$CI_COMMIT_TAG
+        ENV: prod
+        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
+        K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/prod
+        K8S_NAMESPACE: count-stats-prod
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
+    environment:
+        name: prod
+    only:
+        - tags
+
+# ============================================================================
+# dgva-server
+# ============================================================================
+# NOTE: Bo dev *deploy* job for dgva-server because there are no DGVA dev database to connect to
+
+build:docker:dgva-server:dev:
+    extends: .build_docker
+    variables:
+        SERVICE_NAME: dgva-server
+        DOCKERFILE_PATH: dgva-server/Dockerfile
+        IMAGE_TAG: dgva-server-dev-$CI_COMMIT_SHORT_SHA
+    only:
+        - master
+
+deploy:dgva-server:staging:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:dgva-server:dev
+    variables:
+        SERVICE_NAME: dgva-server
+        IMAGE_TAG: dgva-server-dev-$CI_COMMIT_SHORT_SHA
+        ENV: staging
+        MAVEN_PROFILE: production_processing
+        K8S_MANIFEST_PATH: k8s-manifests/dgva-server/overlays/staging
+        K8S_NAMESPACE: dgva-server-stage
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_STAGING
+    environment:
+        name: staging
+    only:
+        - master
+
+build:docker:dgva-server:prod:
+    extends: .build_docker
+    variables:
+        SERVICE_NAME: dgva-server
+        DOCKERFILE_PATH: dgva-server/Dockerfile
+        IMAGE_TAG: dgva-server-$CI_COMMIT_TAG
+    only:
+        - tags
+
+deploy:dgva-server:prod:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:dgva-server:prod
+    variables:
+        SERVICE_NAME: dgva-server
+        IMAGE_TAG: dgva-server-$CI_COMMIT_TAG
+        ENV: prod
+        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
+        K8S_MANIFEST_PATH: k8s-manifests/dgva-server/overlays/prod
+        K8S_NAMESPACE: dgva-server-prod
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
+    environment:
+        name: prod
     only:
         - tags

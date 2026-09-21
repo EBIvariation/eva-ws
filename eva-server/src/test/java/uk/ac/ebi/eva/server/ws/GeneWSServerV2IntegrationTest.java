@@ -23,66 +23,44 @@ import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import com.lordofthejars.nosqlunit.annotation.UsingDataSet;
-import com.lordofthejars.nosqlunit.mongodb.MongoDbRule;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.pipeline.Variant;
 import uk.ac.ebi.eva.lib.Profiles;
 import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.configuration.MongoRepositoryTestConfiguration;
+import uk.ac.ebi.eva.server.utils.MongoTestContainerHelper;
+import uk.ac.ebi.eva.server.utils.MongoTestDataLoader;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
-import static com.lordofthejars.nosqlunit.mongodb.MongoDbRule.MongoDbRuleBuilder.newMongoDbRule;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(MongoRepositoryTestConfiguration.class)
-@UsingDataSet(locations = {
-        "/test-data/features.json",
-        "/test-data/variants.json",
-        "/test-data/files.json",
-        "/test-data/annotations.json",
-        "/test-data/annotation_metadata.json"
-})
 @ActiveProfiles(Profiles.TEST_MONGO_FACTORY)
-public class GeneWSServerV2IntegrationTest {
-
-    private static final String TEST_DB = "test-db";
-
-    @Rule
-    public MongoDbRule mongoDbRule = newMongoDbRule().defaultSpringMongoDb(TEST_DB);
-
-    @Autowired
-    MongoDbFactory mongoDbFactory;
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
+public class GeneWSServerV2IntegrationTest extends MongoTestContainerHelper {
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -95,8 +73,24 @@ public class GeneWSServerV2IntegrationTest {
     @MockBean
     private ContigAliasService contigAliasService;
 
-    @Before
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
+
+    @BeforeEach
     public void setUp() throws Exception {
+        mongoTemplate.getDb().drop();
+
+        MongoTestDataLoader mongoTestDataLoader = new MongoTestDataLoader(mongoTemplate, resourceLoader);
+        mongoTestDataLoader.load("/test-data/features.json");
+        mongoTestDataLoader.load("/test-data/variants.json");
+        mongoTestDataLoader.load("/test-data/files.json");
+        mongoTestDataLoader.load("/test-data/annotations.json");
+        mongoTestDataLoader.load("/test-data/annotation_metadata.json");
+
+
         ContigAliasChromosome contigAliasChromosome = new ContigAliasChromosome();
         contigAliasChromosome.setInsdcAccession("20");
         given(contigAliasService.getUniqueInsdcChromosomeByName("20", "GCA_000001635.2",
@@ -108,8 +102,13 @@ public class GeneWSServerV2IntegrationTest {
         given(taxonomyUtils.getAssemblyAccessionForAssemblyCode("grcm38")).willReturn(Optional.of("GCA_000001635.2"));
     }
 
+    @AfterEach
+    public void tearDown() {
+        mongoTemplate.getDb().drop();
+    }
+
     @Test
-    public void testGetVariantsByExistingGene() throws URISyntaxException {
+    public void testGetVariantsByExistingGene() {
         String url = "/v2/genes/ENSG00000227232/variants?species=mmusculus&assembly=grcm38";
         Variant variant = testGetVariantsGeneHelper(url, 1, HttpStatus.OK).get(0);
         assertEquals("20", variant.getChromosome());
@@ -117,8 +116,7 @@ public class GeneWSServerV2IntegrationTest {
         assertEquals("T", variant.getAlternate());
     }
 
-    private List<Variant> testGetVariantsGeneHelper(String url, int expectedVariants, HttpStatus status)
-            throws URISyntaxException {
+    private List<Variant> testGetVariantsGeneHelper(String url, int expectedVariants, HttpStatus status) {
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         assertEquals(status, response.getStatusCode());
         if (status == HttpStatus.NO_CONTENT) {
@@ -142,7 +140,7 @@ public class GeneWSServerV2IntegrationTest {
     }
 
     @Test
-    public void testGetVariantsByExistingGenes() throws URISyntaxException {
+    public void testGetVariantsByExistingGenes() {
         String url = "/v2/genes/ENSG00000227232,ENST00000488147/variants?species=mmusculus&assembly=grcm38";
         List<Variant> variants = testGetVariantsGeneHelper(url, 2, HttpStatus.OK);
         assertEquals("20", variants.get(0).getChromosome());
@@ -154,13 +152,13 @@ public class GeneWSServerV2IntegrationTest {
     }
 
     @Test
-    public void testGetVariantsByNonExistingGene() throws URISyntaxException {
+    public void testGetVariantsByNonExistingGene() {
         String url = "/v2/genes/nonexisting/variants?species=mmusculus&assembly=grcm38";
         testGetVariantsGeneHelper(url, 0, HttpStatus.NO_CONTENT);
     }
 
     @Test
-    public void testGetVariantsByNonExistingGenes() throws URISyntaxException {
+    public void testGetVariantsByNonExistingGenes() {
         String url = "/v2/genes/nonexisting,nonexisting/variants?species=mmusculus&assembly=grcm38";
         testGetVariantsGeneHelper(url, 0, HttpStatus.NO_CONTENT);
     }
@@ -205,7 +203,7 @@ public class GeneWSServerV2IntegrationTest {
     }
 
     @Test
-    public void testBufferValue() throws URISyntaxException{
+    public void testBufferValue() {
         String url = "/v2/genes/ENSG00000227232/variants?species=mmusculus&assembly=grcm38&buffer=10000";
         List<Variant> variants = testGetVariantsGeneHelper(url, 2, HttpStatus.OK);
         assertEquals("20", variants.get(0).getChromosome());
@@ -223,7 +221,7 @@ public class GeneWSServerV2IntegrationTest {
     }
 
     @Test
-    public void testByMafParameterExisting() throws URISyntaxException{
+    public void testByMafParameterExisting() {
         String url = "/v2/genes/ENSG00000227232/variants?species=mmusculus&assembly=grcm38&maf=<=0.2";
         List<Variant> variants = testGetVariantsGeneHelper(url, 1, HttpStatus.OK);
         assertEquals("20", variants.get(0).getChromosome());
@@ -232,7 +230,7 @@ public class GeneWSServerV2IntegrationTest {
     }
 
     @Test
-    public void testByMafParameterNonExisting() throws URISyntaxException{
+    public void testByMafParameterNonExisting() {
         String url = "/v2/genes/ENSG00000227232/variants?species=mmusculus&assembly=grcm38&maf=>=0.3";
         List<Variant> variants = testGetVariantsGeneHelper(url, 0, HttpStatus.NO_CONTENT);
 

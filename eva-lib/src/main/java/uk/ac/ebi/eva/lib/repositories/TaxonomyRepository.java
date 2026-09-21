@@ -17,9 +17,8 @@ package uk.ac.ebi.eva.lib.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-import uk.ac.ebi.eva.lib.models.Assembly;
 import uk.ac.ebi.eva.lib.entities.Taxonomy;
+import uk.ac.ebi.eva.lib.models.Assembly;
 
 import java.util.List;
 
@@ -27,6 +26,7 @@ public interface TaxonomyRepository extends JpaRepository<Taxonomy, Long> {
 
     @Query(nativeQuery = true)
     List<Assembly> getBrowsableSpecies();
+
     @Query(nativeQuery = true)
     List<Assembly> getAccessionedSpecies();
 

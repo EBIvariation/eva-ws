@@ -15,16 +15,21 @@
  */
 package uk.ac.ebi.eva.release.models;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import org.hibernate.annotations.Array;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
 import java.util.Objects;
 
 
 @Entity
-@Table(name = "release_rs_count_per_taxonomy", schema="eva_stats")
+@Table(name = "release_rs_count_per_taxonomy", schema = "eva_stats")
 public class ReleaseStatsPerTaxonomyV2 {
 
     private static final String SPECIES_DIRECTORY = "by_species/";
@@ -36,16 +41,16 @@ public class ReleaseStatsPerTaxonomyV2 {
     private int releaseVersion;
 
     @ManyToOne
-    @JoinColumn(name="releaseVersion", insertable = false, updatable = false)
-    @NotFound(action=NotFoundAction.IGNORE)
+    @JoinColumn(name = "releaseVersion", insertable = false, updatable = false)
+    @NotFound(action = NotFoundAction.IGNORE)
     private ReleaseInfo releaseInfo;
 
     @ManyToOne()
-    @JoinColumn(name="taxonomyId", insertable = false, updatable = false)
-    @NotFound(action=NotFoundAction.IGNORE)
+    @JoinColumn(name = "taxonomyId", insertable = false, updatable = false)
+    @NotFound(action = NotFoundAction.IGNORE)
     private Taxonomy taxonomy;
 
-    @Type(type = "string-array")
+    @Array(length = 100)
     @Column(
             name = "assembly_accessions",
             columnDefinition = "text[]"
@@ -208,17 +213,17 @@ public class ReleaseStatsPerTaxonomyV2 {
     }
 
     public String getScientificName() {
-        if ( this.taxonomy != null) {
+        if (this.taxonomy != null) {
             return taxonomy.getScientificName();
-        }else {
+        } else {
             return null;
         }
     }
 
     public String getCommonName() {
-        if ( this.taxonomy != null) {
+        if (this.taxonomy != null) {
             return taxonomy.getCommonName();
-        }else {
+        } else {
             return null;
         }
     }

@@ -16,14 +16,17 @@
 package uk.ac.ebi.eva.release.mappers;
 
 import org.springframework.stereotype.Component;
-
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyDto;
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerAssemblyV2Dto;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssembly;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerAssemblyV2;
 import uk.ac.ebi.eva.release.repositories.ReleaseInfoRepository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class ReleaseStatsPerAssemblyMapper {
@@ -40,7 +43,7 @@ public class ReleaseStatsPerAssemblyMapper {
         this.releaseStatMapperUtils = new ReleaseStatsMapperUtils(releaseInfoRepository);
     }
 
-    public Iterable<ReleaseStatsPerAssemblyV2Dto> toDtoV2(Iterable<ReleaseStatsPerAssemblyV2> releaseData){
+    public Iterable<ReleaseStatsPerAssemblyV2Dto> toDtoV2(Iterable<ReleaseStatsPerAssemblyV2> releaseData) {
         List<ReleaseStatsPerAssemblyV2Dto> releaseStatsPerAssemblyDtos = new ArrayList();
         for (ReleaseStatsPerAssemblyV2 assemblyData : releaseData) {
             releaseStatsPerAssemblyDtos.add(toDtoV2(assemblyData));
@@ -49,7 +52,7 @@ public class ReleaseStatsPerAssemblyMapper {
     }
 
     private ReleaseStatsPerAssemblyV2Dto toDtoV2(ReleaseStatsPerAssemblyV2 assemblyData) {
-        HashMap<String, ReleaseStatsPerAssemblyV2Dto> keyToDto= new HashMap<>();
+        HashMap<String, ReleaseStatsPerAssemblyV2Dto> keyToDto = new HashMap<>();
         ReleaseStatsPerAssemblyV2Dto dto = new ReleaseStatsPerAssemblyV2Dto();
         dto.setAssemblyAccession(assemblyData.getAssemblyAccession());
         dto.setReleaseVersion(assemblyData.getReleaseVersion());

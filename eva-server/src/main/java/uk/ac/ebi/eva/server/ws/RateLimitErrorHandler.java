@@ -18,13 +18,12 @@
 
 package uk.ac.ebi.eva.server.ws;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
 import uk.ac.ebi.eva.server.RateLimitException;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @ControllerAdvice

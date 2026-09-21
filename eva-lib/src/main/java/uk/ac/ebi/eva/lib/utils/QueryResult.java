@@ -55,7 +55,7 @@ public class QueryResult<T> {
     }
 
     public T first() {
-        if(result != null && result.size() > 0) {
+        if (result != null && result.size() > 0) {
             return result.get(0);
         }
         return null;

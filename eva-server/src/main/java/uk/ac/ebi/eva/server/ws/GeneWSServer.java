@@ -19,16 +19,14 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import io.swagger.annotations.Api;
-import uk.ac.ebi.eva.lib.utils.QueryResponse;
-import uk.ac.ebi.eva.lib.utils.QueryResult;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import uk.ac.ebi.eva.commons.core.models.AnnotationMetadata;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.core.models.ws.VariantWithSamplesAndAnnotation;
@@ -38,16 +36,17 @@ import uk.ac.ebi.eva.commons.mongodb.services.AnnotationMetadataNotFoundExceptio
 import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
+import uk.ac.ebi.eva.lib.utils.QueryResponse;
+import uk.ac.ebi.eva.lib.utils.QueryResult;
 import uk.ac.ebi.eva.server.Utils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/v1/genes", produces = "application/json")
-@Api(tags = { "genes" })
+@Tag(name = "genes")
 public class GeneWSServer extends EvaWSServer {
 
     @Autowired
@@ -91,7 +90,7 @@ public class GeneWSServer extends EvaWSServer {
                 .getVariantEntityRepositoryFilters(maf, polyphenScore, siftScore, studies, consequenceType);
 
         List<String> excludeMapped = new ArrayList<>();
-        if (exclude != null && !exclude.isEmpty()){
+        if (exclude != null && !exclude.isEmpty()) {
             for (String e : exclude) {
                 String docPath = Utils.getApiToMongoDocNameMap().get(e);
                 if (docPath == null) {
@@ -142,7 +141,7 @@ public class GeneWSServer extends EvaWSServer {
                                                @RequestParam(name = "annot-vep-version", required = false) String annotationVepVersion,
                                                @RequestParam(name = "annot-vep-cache-version", required = false) String annotationVepCacheversion,
                                                @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
-                                               HttpServletResponse response) throws AnnotationMetadataNotFoundException {
+                                               HttpServletResponse response) {
         return getVariantsByGene(geneIds, species, studies, consequenceType, maf, polyphenScore, siftScore, exclude,
                 annotationVepVersion, annotationVepCacheversion, contigNamingConvention, response);
     }

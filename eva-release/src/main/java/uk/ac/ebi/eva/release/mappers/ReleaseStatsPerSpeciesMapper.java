@@ -16,14 +16,15 @@
 package uk.ac.ebi.eva.release.mappers;
 
 import org.springframework.stereotype.Component;
-
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesDto;
 import uk.ac.ebi.eva.release.dto.ReleaseStatsPerSpeciesV2Dto;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerSpecies;
 import uk.ac.ebi.eva.release.models.ReleaseStatsPerTaxonomyV2;
 import uk.ac.ebi.eva.release.repositories.ReleaseInfoRepository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class ReleaseStatsPerSpeciesMapper {
@@ -38,7 +39,7 @@ public class ReleaseStatsPerSpeciesMapper {
         this.releaseStatMapperUtils = new ReleaseStatsMapperUtils(releaseInfoRepository);
     }
 
-    public Iterable<ReleaseStatsPerSpeciesV2Dto> toDtoV2(Iterable<ReleaseStatsPerTaxonomyV2> releaseData){
+    public Iterable<ReleaseStatsPerSpeciesV2Dto> toDtoV2(Iterable<ReleaseStatsPerTaxonomyV2> releaseData) {
         List<ReleaseStatsPerSpeciesV2Dto> releaseStatsPerSpeciesDtos = new ArrayList();
         for (ReleaseStatsPerTaxonomyV2 taxonomyData : releaseData) {
             releaseStatsPerSpeciesDtos.add(toDtoV2(taxonomyData));
@@ -46,7 +47,7 @@ public class ReleaseStatsPerSpeciesMapper {
         return releaseStatsPerSpeciesDtos;
     }
 
-    public ReleaseStatsPerSpeciesV2Dto toDtoV2(ReleaseStatsPerTaxonomyV2 taxonomyData){
+    public ReleaseStatsPerSpeciesV2Dto toDtoV2(ReleaseStatsPerTaxonomyV2 taxonomyData) {
         ReleaseStatsPerSpeciesV2Dto dto = new ReleaseStatsPerSpeciesV2Dto();
         dto.setTaxonomyId(taxonomyData.getTaxonomyId());
         dto.setTaxonomyLink(TAXONOMY_URL + taxonomyData.getTaxonomyId());

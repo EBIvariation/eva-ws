@@ -19,38 +19,36 @@
 
 package uk.ac.ebi.eva.server.ws;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.PagedResources;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import springfox.documentation.annotations.ApiIgnore;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.commons.core.models.FeatureCoordinates;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
 import uk.ac.ebi.eva.commons.mongodb.services.FeatureService;
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/v2/genes", produces = "application/hal+json")
-@Api(tags = {"genes"})
+@Tag(name = "genes")
 public class GeneWSServerV2 {
 
     @Autowired
@@ -67,50 +65,50 @@ public class GeneWSServerV2 {
 
     @GetMapping(value = "/{geneIds}/variants")
     public ResponseEntity getVariantsByGene(
-            @ApiParam(value = "Comma separated gene symbols and/or Ensembl gene IDs, e.g. BRCA2,FOXP2,ENSG00000223972")
+            @Parameter(description = "Comma separated gene symbols and/or Ensembl gene IDs, e.g. BRCA2,FOXP2,ENSG00000223972")
             @PathVariable("geneIds") List<String> geneIds,
-            @ApiParam(value = "First letter of the genus, followed by the full species name, e.g. hsapiens. Allowed" +
+            @Parameter(description = "First letter of the genus, followed by the full species name, e.g. hsapiens. Allowed" +
                     " values can be looked up in /v1/meta/species/list/ in the field named 'taxonomyCode'.",
                     required = true)
             @RequestParam(name = "species") String species,
-            @ApiParam(value = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
+            @Parameter(description = "Encoded assembly name, e.g. grch37. Allowed values can be looked up in " +
                     "/v1/meta/species/list/ in the field named 'assemblyCode'.", required = true)
             @RequestParam(name = "assembly") String assembly,
-            @ApiParam(value = "Identifiers of studies. If this field is null/not specified, all studies should" +
+            @Parameter(description = "Identifiers of studies. If this field is null/not specified, all studies should" +
                     " be queried. Each individual identifier of studies can be looked up in" +
                     " /v2/studies in the field named `studyId`. e.g. PRJEB6930,PRJEB27824")
             @RequestParam(name = "studies", required = false) List<String> studies,
-            @ApiParam(value = "Retrieve only variants with exactly this consequence type (as stated by Ensembl VEP)")
+            @Parameter(description = "Retrieve only variants with exactly this consequence type (as stated by Ensembl VEP)")
             @RequestParam(name = "annot-ct", required = false) List<String>
                     consequenceType,
-            @ApiParam(value = "Retrieve only variants whose Minor Allele Frequency is less than (<), less" +
+            @Parameter(description = "Retrieve only variants whose Minor Allele Frequency is less than (<), less" +
                     " than or equals (<=), greater than (>), greater than or equals (>=) or equals (=) the" +
                     " provided number. e.g. <0.1")
             @RequestParam(name = "maf", required = false) String maf,
-            @ApiParam(value = "Retrieve only variants whose PolyPhen score as stated by Ensembl VEP is less than" +
+            @Parameter(description = "Retrieve only variants whose PolyPhen score as stated by Ensembl VEP is less than" +
                     " (<), less than or equals (<=), greater than (>), greater than or equals (>=) or equals (=) " +
                     "the provided number. e.g. <0.1")
             @RequestParam(name = "polyphen", required = false) String polyphenScore,
-            @ApiParam(value = "Retrieve only variants whose SIFT score as stated by Ensembl VEP is less than (<)," +
+            @Parameter(description = "Retrieve only variants whose SIFT score as stated by Ensembl VEP is less than (<)," +
                     " less than or equals (<=), greater than (>), greater than or equals (>=) or equals (=) the " +
                     "provided number. e.g. <0.1")
             @RequestParam(name = "sift", required = false) String siftScore,
-            @ApiParam(value = "Ensembl VEP release whose annotations will be included in the response, e.g. 78")
+            @Parameter(description = "Ensembl VEP release whose annotations will be included in the response, e.g. 78")
             @RequestParam(name = "annot-vep-version", required = false) String
                     annotationVepVersion,
-            @ApiParam(value = "Ensembl VEP cache release whose annotations will be included in the response, " +
+            @Parameter(description = "Ensembl VEP cache release whose annotations will be included in the response, " +
                     "e.g. 78")
             @RequestParam(name = "annot-vep-cache-version", required = false) String
                     annotationVepCacheVersion,
-            @ApiParam(value = "Contig naming convention desired, default is INSDC")
+            @Parameter(description = "Contig naming convention desired, default is INSDC")
             @RequestParam(name = "contigNamingConvention", required = false) ContigNamingConvention contigNamingConvention,
-            @ApiParam(value = "The number of the page that should be displayed. Starts from 0 and is an integer.")
+            @Parameter(description = "The number of the page that should be displayed. Starts from 0 and is an integer.")
             @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
-            @ApiParam(value = "The number of elements that should be retrieved per page.")
+            @Parameter(description = "The number of elements that should be retrieved per page.")
             @RequestParam(required = false, defaultValue = "20") Integer pageSize,
             @RequestParam(required = false, defaultValue = "0", name = "buffer") Integer bufferValue,
             HttpServletResponse response,
-            @ApiIgnore HttpServletRequest request)
+            @Parameter(hidden = true) HttpServletRequest request)
             throws IllegalArgumentException {
         checkParameters(geneIds, species, assembly, bufferValue);
         MultiMongoDbFactory.setDatabaseNameForCurrentThread(DBAdaptorConnector.getDBName(species + "_" + assembly));
@@ -130,7 +128,7 @@ public class GeneWSServerV2 {
 
         String regions = featureCoordinates.stream().map(this::getRegionString).collect(Collectors.joining(","));
 
-        ResponseEntity<PagedResources> responseEntity = regionWSServerV2.getVariantsByRegion(regions, species,
+        ResponseEntity<PagedModel<?>> responseEntity = regionWSServerV2.getVariantsByRegion(regions, species,
                 assembly, studies, consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
                 annotationVepCacheVersion, contigNamingConvention, pageNumber, pageSize, response, request);
 
@@ -173,39 +171,39 @@ public class GeneWSServerV2 {
         return coordinates.getChromosome() + ":" + coordinates.getStart() + "-" + coordinates.getEnd();
     }
 
-    private PagedResources buildPage(List<String> geneIds, String species, String assembly, List<String> studies,
+    private PagedModel<?> buildPage(List<String> geneIds, String species, String assembly, List<String> studies,
                                      List<String> consequenceType, String maf, String polyphenScore, String siftScore,
                                      String annotationVepVersion, String annotationVepCacheVersion,
                                      ContigNamingConvention contigNamingConvention, Integer bufferValue,
-                                     PagedResources pagedResources, HttpServletResponse response,
+                                    PagedModel<?> pagedModel, HttpServletResponse response,
                                      HttpServletRequest request) {
 
-        int pageNumber = (int) pagedResources.getMetadata().getNumber();
-        int pageSize = (int) pagedResources.getMetadata().getSize();
-        int totalPages = (int) pagedResources.getMetadata().getTotalPages();
+        int pageNumber = (int) pagedModel.getMetadata().getNumber();
+        int pageSize = (int) pagedModel.getMetadata().getSize();
+        int totalPages = (int) pagedModel.getMetadata().getTotalPages();
 
         if (pageNumber > 0) {
-            pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
+            pagedModel.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
                     maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion, contigNamingConvention,
                     pageNumber - 1, pageSize, bufferValue, response, request, "prev"));
 
-            pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
+            pagedModel.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
                     maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
                     contigNamingConvention, 0, pageSize, bufferValue, response, request, "first"));
         }
 
         if (pageNumber < (totalPages - 1)) {
-            pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
+            pagedModel.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
                     maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
                     contigNamingConvention, pageNumber + 1, pageSize, bufferValue, response, request,
                     "next"));
 
-            pagedResources.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
+            pagedModel.add(createPaginationLink(geneIds, species, assembly, studies, consequenceType,
                     maf, polyphenScore, siftScore, annotationVepVersion, annotationVepCacheVersion,
                     contigNamingConvention, totalPages - 1, pageSize, bufferValue, response, request,
                     "last"));
         }
-        return pagedResources;
+        return pagedModel;
     }
 
     private Link createPaginationLink(List<String> geneIds, String species, String assembly, List<String> studies,
@@ -215,11 +213,14 @@ public class GeneWSServerV2 {
                                       int pageNumber, int pageSize, Integer bufferValue, HttpServletResponse response,
                                       HttpServletRequest request,
                                       String linkName) {
-        return new Link(linkTo(methodOn(GeneWSServerV2.class).getVariantsByGene(geneIds, species, assembly, studies,
-                consequenceType, maf, polyphenScore, siftScore, annotationVepVersion,
-                annotationVepCacheVersion, contigNamingConvention, pageNumber, pageSize, bufferValue, response, request))
-                .toUriComponentsBuilder()
-                .toUriString(), linkName);
+        return linkTo(methodOn(GeneWSServerV2.class)
+                .getVariantsByGene(
+                        geneIds, species, assembly, studies,
+                        consequenceType, maf, polyphenScore, siftScore,
+                        annotationVepVersion, annotationVepCacheVersion,
+                        contigNamingConvention, pageNumber, pageSize,
+                        bufferValue, response, request))
+                .withRel(linkName);
     }
 }
 

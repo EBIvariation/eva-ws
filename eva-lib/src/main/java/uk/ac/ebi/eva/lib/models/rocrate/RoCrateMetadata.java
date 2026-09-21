@@ -38,7 +38,7 @@ public class RoCrateMetadata {
     public List<RoCrateEntity> getEntities(List<Reference> references) {
         List<String> identifiers = references.stream().map(Reference::getId).collect(Collectors.toList());
         return graph.stream().filter(roCrateEntity -> identifiers.contains(roCrateEntity.getId()))
-                    .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     public List<RoCrateEntity> getEntitiesOfType(String type) {

@@ -20,7 +20,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import uk.ac.ebi.eva.lib.entities.EvaStudyBrowser;
 import uk.ac.ebi.eva.lib.extension.ExtendedJpaRepositoryFunctions;
 
-public interface EvaStudyBrowserRepository extends JpaRepository<EvaStudyBrowser, String>, ExtendedJpaRepositoryFunctions<EvaStudyBrowser, String>, JpaSpecificationExecutor<EvaStudyBrowser>{
+public interface EvaStudyBrowserRepository extends JpaRepository<EvaStudyBrowser, String>, ExtendedJpaRepositoryFunctions<EvaStudyBrowser, String>, JpaSpecificationExecutor<EvaStudyBrowser> {
 
     public static final String COMMON_NAME = "commonName";
     public static final String SCIENTIFIC_NAME = "scientificName";

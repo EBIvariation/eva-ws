@@ -26,9 +26,9 @@ import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -37,7 +37,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.commons.core.models.Annotation;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigAliasChromosome;
 import uk.ac.ebi.eva.commons.core.models.contigalias.ContigNamingConvention;
@@ -47,22 +47,21 @@ import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsSe
 import uk.ac.ebi.eva.lib.utils.TaxonomyUtils;
 import uk.ac.ebi.eva.server.ws.contigalias.ContigAliasService;
 
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class VariantWSServerV2Test {
 
@@ -90,7 +89,7 @@ public class VariantWSServerV2Test {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         VARIANT.addId("randomID");
         VARIANT.setAnnotation(new Annotation(CHROMOSOME, 0, 0, null, null, null, null));
@@ -120,7 +119,7 @@ public class VariantWSServerV2Test {
     }
 
     @Test
-    public void rootTestGetVariantsByVariantCoreString() throws URISyntaxException {
+    public void rootTestGetVariantsByVariantCoreString() {
         String url = "/v2/variants/" + CHROMOSOME + ":71822:C:G?species=mmusculus&assembly=grcm38";
         ResponseEntity<VariantWithSamplesAndAnnotation> response = restTemplate.exchange(
                 url, HttpMethod.GET, null,
@@ -133,7 +132,7 @@ public class VariantWSServerV2Test {
     }
 
     @Test
-    public void rootTestGetVariantsByVariantCoreStringWithTranslatedContig() throws URISyntaxException {
+    public void rootTestGetVariantsByVariantCoreStringWithTranslatedContig() {
         given(contigAliasService.translateContigFromInsdc(VARIANT.getChromosome(), ContigNamingConvention.ENA_SEQUENCE_NAME))
                 .willReturn("2");
 
@@ -150,7 +149,7 @@ public class VariantWSServerV2Test {
     }
 
     @Test
-    public void rootTestGetVariantsByNonExistingVariantCoreString() throws URISyntaxException {
+    public void rootTestGetVariantsByNonExistingVariantCoreString() {
         String url = "/v2/variants/" + NON_EXISTING_CHROMOSOME + ":71822:C:G?species=mmusculus&assembly=grcm38";
         testForNonExistingHelper(url);
     }
@@ -162,7 +161,7 @@ public class VariantWSServerV2Test {
     }
 
     @Test
-    public void rootTestForError() throws URISyntaxException {
+    public void rootTestForError() {
         String url = "/v2/variants/13:32889669:C:T?species=&assembly=grcm38";
         assertEquals("Please specify a species", testForErrorHelper(url));
     }
@@ -172,7 +171,7 @@ public class VariantWSServerV2Test {
     }
 
     @Test
-    public void annotationEndPointTestExisting() throws URISyntaxException {
+    public void annotationEndPointTestExisting() {
         given(contigAliasService.getAnnotationWithTranslatedContig(VARIANT.getAnnotation(), null))
                 .willReturn(VARIANT.getAnnotation());
         String url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/annotations?species=mmusculus&assembly=grcm38";
@@ -185,7 +184,7 @@ public class VariantWSServerV2Test {
     }
 
     @Test
-    public void annotationEndPointTestExistingWithTranslatedContig() throws URISyntaxException {
+    public void annotationEndPointTestExistingWithTranslatedContig() {
         Annotation translatedAnnotation = new Annotation("chr1", 0, 0, null, null, null, null);
         given(contigAliasService.getAnnotationWithTranslatedContig(VARIANT.getAnnotation(), ContigNamingConvention.ENA_SEQUENCE_NAME))
                 .willReturn(translatedAnnotation);
@@ -200,13 +199,13 @@ public class VariantWSServerV2Test {
     }
 
     @Test
-    public void annotationEndPointTestNonExisting() throws URISyntaxException {
+    public void annotationEndPointTestNonExisting() {
         String url = "/v2/variants/100:0:C:T/annotations?species=mmusculus&assembly=grcm38";
         testForNonExistingHelper(url);
     }
 
     @Test
-    public void annotationEndpointTestForError() throws URISyntaxException {
+    public void annotationEndpointTestForError() {
         String url = "/v2/variants/13:32889669:C:T/annotations?species=mmusculus&assembly=grcm38&" +
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +
@@ -214,7 +213,7 @@ public class VariantWSServerV2Test {
     }
 
     @Test
-    public void sourceEntriesEndPointTestExisting() throws URISyntaxException {
+    public void sourceEntriesEndPointTestExisting() {
         String url = "/v2/variants/" + CHROMOSOME + ":60100:A:T/sources?species=mmusculus&assembly=grcm38";
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         Configuration configuration = Configuration.defaultConfiguration()
@@ -229,13 +228,13 @@ public class VariantWSServerV2Test {
     }
 
     @Test
-    public void sourceEntriesEndPointTestNonExisting() throws URISyntaxException {
+    public void sourceEntriesEndPointTestNonExisting() {
         String url = "/v2/variants/100:0:C:T/sources?species=mmusculus&assembly=grcm38";
         testForNonExistingHelper(url);
     }
 
     @Test
-    public void sourceEntriesEndpointTestForError() throws URISyntaxException {
+    public void sourceEntriesEndpointTestForError() {
         String url = "/v2/variants/13:32889669:C:T/sources?species=mmusculus&assembly=grcm38&" +
                 "annot-vep-version=1";
         assertEquals("Please specify either both annotation VEP version and annotation VEP cache version, " +

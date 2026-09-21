@@ -7,7 +7,7 @@
     <groupId>uk.ac.ebi.eva</groupId>
     <artifactId>eva</artifactId>
     <packaging>pom</packaging>
-    <version>1.8.2-SNAPSHOT</version>
+    <version>${revision}</version>
 
     <modules>
         <module>eva-lib</module>
@@ -21,107 +21,55 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.0.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>3.4.13</version>
     </parent>
 
     <properties>
-        <compileSource>1.8</compileSource>
+        <revision>1.8.2-SNAPSHOT</revision>
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <variation-commons-version>1.0.0</variation-commons-version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Testing dependencies (rest-assured needs to be first) -->
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.13.1</version>
-                <scope>test</scope>
-            </dependency>
-
-
             <!-- Intra-module dependencies -->
             <dependency>
                 <groupId>uk.ac.ebi.eva</groupId>
                 <artifactId>eva-lib</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <!-- General dependencies -->
             <dependency>
                 <groupId>uk.ac.ebi.eva</groupId>
                 <artifactId>variation-commons-core</artifactId>
-                <version>0.8.5</version>
+                <version>${variation-commons-version}</version>
             </dependency>
             <dependency>
                 <groupId>uk.ac.ebi.eva</groupId>
                 <artifactId>variation-commons-jpa</artifactId>
-                <version>0.8.5</version>
+                <version>${variation-commons-version}</version>
             </dependency>
             <dependency>
                 <groupId>uk.ac.ebi.eva</groupId>
                 <artifactId>variation-commons-mongodb</artifactId>
-                <version>0.8.5</version>
+                <version>${variation-commons-version}</version>
             </dependency>
             <dependency>
                 <groupId>uk.ac.ebi.eva</groupId>
                 <artifactId>variation-commons-beacon</artifactId>
-                <version>0.8.5</version>
+                <version>${variation-commons-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>42.7.11</version>
-            </dependency>
-            <dependency>
-                <groupId>asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>3.3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>2.8.0</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>2.8.0</version>
-                <scope>compile</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>2.2.224</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.lordofthejars</groupId>
-                <artifactId>nosqlunit-core</artifactId>
-                <version>0.10.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.lordofthejars</groupId>
-                <artifactId>nosqlunit-mongodb</artifactId>
-                <version>0.14.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-tomcat</artifactId>
-                <version>2.1.2.RELEASE</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.9.8</version>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>2.8.17</version>
             </dependency>
             <dependency>
                 <groupId>io.hypersistence</groupId>
-                <artifactId>hypersistence-utils-hibernate-52</artifactId>
-                <version>3.7.3</version>
+                <artifactId>hypersistence-utils-hibernate-63</artifactId>
+                <version>3.9.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -135,8 +83,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>${compileSource}</source>
-                    <target>${compileSource}</target>
+                    <release>${java.version}</release>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <encoding>UTF-8</encoding>
@@ -145,7 +92,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.3.0</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <delimiters>
@@ -168,9 +115,17 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
-                <version>2.2.5</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <reuseForks>false</reuseForks>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>io.github.git-commit-id</groupId>
+                <artifactId>git-commit-id-maven-plugin</artifactId>
+                <version>9.0.1</version>
                 <configuration>
                     <includeOnlyProperties>
                         <includeOnlyProperty>^git.tags$</includeOnlyProperty>
@@ -181,6 +136,31 @@
                         <includeOnlyProperty>^git.commit.time$</includeOnlyProperty>
                     </includeOnlyProperties>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

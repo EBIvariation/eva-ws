@@ -15,15 +15,16 @@
  */
 package uk.ac.ebi.eva.release.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
+
 import java.util.Objects;
 
 @Entity
 @IdClass(ReleaseStatsPerSpeciesPK.class)
-@Table(name = "release_rs_statistics_per_species", schema="eva_stats")
+@Table(name = "release_rs_statistics_per_species", schema = "eva_stats")
 public class ReleaseStatsPerSpecies {
 
     @Id
@@ -228,9 +229,9 @@ public class ReleaseStatsPerSpecies {
     @Override
     public int hashCode() {
         return Objects.hash(taxonomyId, releaseVersion, scientificName, releaseFolder, currentRs, multiMappedRs,
-                            mergedRs,
-                            deprecatedRs, mergedDeprecatedRs, unmappedRs, newCurrentRs, newMultiMappedRs, newMergedRs,
-                            newDeprecatedRs, newMergedDeprecatedRs, newUnmappedRs, newSsClustered);
+                mergedRs,
+                deprecatedRs, mergedDeprecatedRs, unmappedRs, newCurrentRs, newMultiMappedRs, newMergedRs,
+                newDeprecatedRs, newMergedDeprecatedRs, newUnmappedRs, newSsClustered);
     }
 
     @Override

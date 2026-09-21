@@ -1,19 +1,17 @@
 package uk.ac.ebi.eva.server.ws;
 
-import io.swagger.annotations.Api;
-
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import uk.ac.ebi.eva.lib.metadata.eva.SubmissionStatsEvaproDBAdaptor;
 
 @RestController
 @RequestMapping(value = "/v1/stats", produces = "text/plain")
-@Api(tags = {"submission-stats"})
+@Tag(name = "submission-stats")
 public class SubmissionStatsWSServer {
 
     @Autowired

@@ -15,12 +15,21 @@
  */
 package uk.ac.ebi.eva.lib.entities;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.ColumnResult;
+import jakarta.persistence.ConstructorResult;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedNativeQueries;
+import jakarta.persistence.NamedNativeQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SqlResultSetMapping;
+import jakarta.persistence.SqlResultSetMappings;
+import jakarta.persistence.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import uk.ac.ebi.eva.lib.models.FileFtpReference;
 
-import javax.persistence.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,34 +39,34 @@ import java.util.Map;
  */
 @Entity
 @SqlResultSetMappings({
-    @SqlResultSetMapping(
-            name = "fileFtpReference",
-            classes = @ConstructorResult(
-                    targetClass = FileFtpReference.class,
-                    columns = {
-                        @ColumnResult(name = "filename", type = String.class),
-                        @ColumnResult(name= "ftp_file", type = String.class)
-                    }
-            )
-    )
+        @SqlResultSetMapping(
+                name = "fileFtpReference",
+                classes = @ConstructorResult(
+                        targetClass = FileFtpReference.class,
+                        columns = {
+                                @ColumnResult(name = "filename", type = String.class),
+                                @ColumnResult(name = "ftp_file", type = String.class)
+                        }
+                )
+        )
 })
 @NamedNativeQueries({
-    @NamedNativeQuery(
-            name = "File.getFileFtpReferenceByFilename",
-            query = "select distinct bf.filename, f.ftp_file " +
-                    "from browsable_file bf " +
-                    "left join file f on bf.file_id = f.file_id " +
-                    "where bf.filename = :filename",
-            resultSetMapping = "fileFtpReference"
-    ),
-    @NamedNativeQuery(
-            name = "File.getFileFtpReferenceByNames",
-            query = "select distinct bf.filename, f.ftp_file " +
-                    "from browsable_file bf "+
-                    "left join file f on bf.file_id = f.file_id "+
-                    "where bf.filename in :filenames",
-            resultSetMapping = "fileFtpReference"
-    )
+        @NamedNativeQuery(
+                name = "File.getFileFtpReferenceByFilename",
+                query = "select distinct bf.filename, f.ftp_file " +
+                        "from browsable_file bf " +
+                        "left join file f on bf.file_id = f.file_id " +
+                        "where bf.filename = :filename",
+                resultSetMapping = "fileFtpReference"
+        ),
+        @NamedNativeQuery(
+                name = "File.getFileFtpReferenceByNames",
+                query = "select distinct bf.filename, f.ftp_file " +
+                        "from browsable_file bf " +
+                        "left join file f on bf.file_id = f.file_id " +
+                        "where bf.filename in :filenames",
+                resultSetMapping = "fileFtpReference"
+        )
 })
 @Table(name = "file")
 public class File {
@@ -68,7 +77,7 @@ public class File {
     @Column(name = "file_id")
     private Long fileId;
 
-    @Column(length = 45, name="ena_submission_file_id")
+    @Column(length = 45, name = "ena_submission_file_id")
     private String enaSubmissionFileId;
 
     @Column(length = 250)
@@ -77,13 +86,13 @@ public class File {
     @Column(length = 250, name = "file_md5")
     private String fileMd5;
 
-    @Column(length = 250, name="file_location")
+    @Column(length = 250, name = "file_location")
     private String fileLocation;
 
-    @Column(length = 250, name="file_type", nullable = false)
+    @Column(length = 250, name = "file_type", nullable = false)
     private String fileType;
 
-    @Column(length = 250, name="file_class", nullable = false)
+    @Column(length = 250, name = "file_class", nullable = false)
     private String fileClass;
 
     @Column(name = "file_version")
@@ -92,7 +101,7 @@ public class File {
     @Column(name = "is_current")
     private boolean isCurrent;
 
-    @Column(length = 250, name="ftp_file")
+    @Column(length = 250, name = "ftp_file")
     private String ftpFile;
 
     @Column(name = "mongo_load_status")
@@ -162,7 +171,7 @@ public class File {
             }
             if (fileSample.getNameInFile() == null) {
                 logger.warn("Sample nameInFile is null: file {}, sample accession {}", fileId,
-                            fileSample.getSample().getBiosampleAccession());
+                        fileSample.getSample().getBiosampleAccession());
             } else {
                 nameInFileToSampleMap.put(fileSample.getNameInFile(), fileSample.getSample());
             }

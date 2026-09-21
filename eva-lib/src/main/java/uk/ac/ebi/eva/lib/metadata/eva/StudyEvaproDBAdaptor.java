@@ -20,13 +20,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-
+import uk.ac.ebi.eva.lib.entities.EvaStudyBrowser;
 import uk.ac.ebi.eva.lib.metadata.StudyDBAdaptor;
 import uk.ac.ebi.eva.lib.models.VariantStudy;
-import uk.ac.ebi.eva.lib.entities.EvaStudyBrowser;
+import uk.ac.ebi.eva.lib.repositories.EvaStudyBrowserRepository;
 import uk.ac.ebi.eva.lib.utils.QueryOptions;
 import uk.ac.ebi.eva.lib.utils.QueryResult;
-import uk.ac.ebi.eva.lib.repositories.EvaStudyBrowserRepository;
 
 import java.util.ArrayList;
 import java.util.List;

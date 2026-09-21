@@ -19,14 +19,15 @@
 
 package uk.ac.ebi.eva.server.ws.ga4gh.beaconv2;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest;
-import uk.ac.ebi.eva.commons.beacon.models.BeaconError;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleResponse;
-import uk.ac.ebi.eva.commons.beacon.models.BeaconDatasetAlleleResponse;
 import uk.ac.ebi.eva.commons.beacon.models.BeaconDataset;
+import uk.ac.ebi.eva.commons.beacon.models.BeaconDatasetAlleleResponse;
+import uk.ac.ebi.eva.commons.beacon.models.BeaconError;
 import uk.ac.ebi.eva.commons.beacon.models.Chromosome;
 import uk.ac.ebi.eva.commons.core.models.Region;
 import uk.ac.ebi.eva.commons.core.models.VariantSource;
@@ -39,14 +40,13 @@ import uk.ac.ebi.eva.commons.mongodb.services.VariantWithSamplesAndAnnotationsSe
 import uk.ac.ebi.eva.lib.eva_utils.DBAdaptorConnector;
 import uk.ac.ebi.eva.lib.eva_utils.MultiMongoDbFactory;
 
-import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import static uk.ac.ebi.eva.commons.beacon.models.BeaconAlleleRequest.IncludeDatasetResponsesEnum;
 
@@ -126,7 +126,7 @@ public class BeaconServiceV2 {
                 return buildBeaconAlleleResponse(true, request, null, null);
             }
             variantMongoList = service.findByRegionAndOtherBeaconFilters(startRange, endRange, filters,
-                    new PageRequest(0, pageSize));
+                    PageRequest.of(0, pageSize));
         } else {
             variantMongoList = Collections.emptyList();
         }

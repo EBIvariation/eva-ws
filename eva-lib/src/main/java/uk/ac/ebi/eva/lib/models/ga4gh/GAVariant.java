@@ -54,14 +54,14 @@ public class GAVariant {
 
     /**
      * The start position at which this variant occurs (0-based). This corresponds to the first base of the string of reference bases
-     *
+     * <p>
      * NOTE: this field should be INT and not LONG, it stays as LONG for compatibility reasons
      */
     private long start;
 
     /**
      * The end position (exclusive), resulting in [start, end) closed-open interval. This is typically calculated by start + referenceBases.length
-     *
+     * <p>
      * NOTE: this field should be INT and not LONG, it stays as LONG for compatibility reasons
      */
     private long end;
@@ -78,7 +78,7 @@ public class GAVariant {
 
     /**
      * A map of additional variant information. In JSON, this looks like: info: {key1: value1, key2: value2}
-     *
+     * <p>
      * NOTE: GAKeyValue is useless as this could be replaced by a Map<String, String>
      */
     private Map<String, List> info;

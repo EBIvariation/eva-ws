@@ -16,9 +16,17 @@
 package uk.ac.ebi.eva.lib.entities;
 
 
+import jakarta.persistence.Column;
+import jakarta.persistence.ColumnResult;
+import jakarta.persistence.ConstructorResult;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedNativeQueries;
+import jakarta.persistence.NamedNativeQuery;
+import jakarta.persistence.SqlResultSetMapping;
+import jakarta.persistence.SqlResultSetMappings;
+import jakarta.persistence.Table;
 import uk.ac.ebi.eva.lib.models.Assembly;
-
-import javax.persistence.*;
 
 /**
  * Created by jorizci on 03/10/16.
@@ -47,19 +55,50 @@ import javax.persistence.*;
 @NamedNativeQueries({
         @NamedNativeQuery(
                 name = "Taxonomy.getBrowsableSpecies",
-                query = "select distinct(assembly.*), taxonomy.* " +
-                        "from assembly left join browsable_file bf on assembly.assembly_set_id=bf.assembly_set_id " +
-                        " and assembly.assembly_accession = bf.loaded_assembly " +
-                        "left join dbsnp_assemblies dbs on assembly.assembly_set_id = dbs.assembly_set_id " +
-                        "join taxonomy on assembly.taxonomy_id=taxonomy.taxonomy_id " +
-                        "where (bf.loaded = true and bf.deleted = false) or (dbs.loaded = true)",
+                query = """
+                select distinct
+                    a.assembly_accession,
+                    a.assembly_chain,
+                    a.assembly_version,
+                    a.assembly_name,
+                    a.assembly_code,
+                    a.taxonomy_id,
+                    t.common_name,
+                    t.scientific_name,
+                    t.taxonomy_code,
+                    t.eva_name
+                from assembly a
+                left join browsable_file bf
+                    on a.assembly_set_id = bf.assembly_set_id
+                   and a.assembly_accession = bf.loaded_assembly
+                left join dbsnp_assemblies dbs
+                    on a.assembly_set_id = dbs.assembly_set_id
+                join taxonomy t
+                    on a.taxonomy_id = t.taxonomy_id
+                where (bf.loaded = true and bf.deleted = false)
+                   or (dbs.loaded = true)
+                """,
                 resultSetMapping = "assembly"
         ),
         @NamedNativeQuery(
                 name = "Taxonomy.getAccessionedSpecies",
-                query = "select distinct(assembly.*), taxonomy.* " +
-                        "from assembly join taxonomy on assembly.taxonomy_id=taxonomy.taxonomy_id " +
-                        "where assembly_in_accessioning_store = true",
+                query = """
+                select distinct
+                    a.assembly_accession,
+                    a.assembly_chain,
+                    a.assembly_version,
+                    a.assembly_name,
+                    a.assembly_code,
+                    a.taxonomy_id,
+                    t.common_name,
+                    t.scientific_name,
+                    t.taxonomy_code,
+                    t.eva_name
+                from assembly a
+                join taxonomy t
+                    on a.taxonomy_id = t.taxonomy_id
+                where a.assembly_in_accessioning_store = true
+                """,
                 resultSetMapping = "assembly"
         )
 })
@@ -82,7 +121,8 @@ public class Taxonomy {
     @Column(length = 25, name = "eva_name")
     private String evaName;
 
-    public Taxonomy() {}
+    public Taxonomy() {
+    }
 
     public Taxonomy(Long taxonomyId, String commonName, String scientificName, String taxonomyCode,
                     String evaName) {

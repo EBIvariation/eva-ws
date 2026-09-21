@@ -15,12 +15,11 @@
  */
 package uk.ac.ebi.eva.server.repositories;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.eva.server.models.ProgressReport;
 import uk.ac.ebi.eva.server.models.ProgressReportPK;
 import uk.ac.ebi.eva.server.models.Status;
@@ -31,10 +30,11 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
+
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class ProgressReportRepositoryTest {
 
@@ -49,12 +49,12 @@ public class ProgressReportRepositoryTest {
     @Test
     public void testFindById() {
         Optional<ProgressReport> report = progressReportRepository.findById(new ProgressReportPK("fruitfly_7227",
-                                                                                                 "GCA_000001215.4"));
+                "GCA_000001215.4"));
         assertTrue(report.isPresent());
         ProgressReport expected = new ProgressReport("fruitfly_7227", 7227, "Drosophila melanogaster", "Fruit fly",
-                                                     "GCA_000001215.4", 149, true, false, false, Status.pending,
-                                                     Status.pending, Status.pending, null, null, null, 0L, 0L, 0L, 0L,
-                                                     0L, 0L);
+                "GCA_000001215.4", 149, true, false, false, Status.pending,
+                Status.pending, Status.pending, null, null, null, 0L, 0L, 0L, 0L,
+                0L, 0L);
         assertEquals(expected, report.get());
     }
 
@@ -73,7 +73,7 @@ public class ProgressReportRepositoryTest {
     @Test
     public void testVariantWithEvidenceImportFields() {
         Optional<ProgressReport> report = progressReportRepository.findById(new ProgressReportPK("arabidopsis_3702",
-                                                                                                 "GCA_000001735.1"));
+                "GCA_000001735.1"));
         assertTrue(report.isPresent());
         assertEquals(Status.done, report.get().getVariantsWithEvidenceImported());
         Calendar cal = Calendar.getInstance();
@@ -88,7 +88,7 @@ public class ProgressReportRepositoryTest {
         String databaseName = "orangutan_9600";
         String genbankAssemblyAccession = "";
         Optional<ProgressReport> report = progressReportRepository.findById(new ProgressReportPK(databaseName,
-                                                                                                 genbankAssemblyAccession));
+                genbankAssemblyAccession));
         assertTrue(report.isPresent());
         assertEquals(genbankAssemblyAccession, report.get().getGenbankAssemblyAccession());
         assertEquals(databaseName, report.get().getDatabaseName());
