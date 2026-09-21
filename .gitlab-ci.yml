@@ -177,7 +177,7 @@ deploy:count-stats:dev:
         - build:docker:count-stats:dev
     variables:
         SERVICE_NAME: count-stats
-        IMAGE_TAG: count-stat-dev-$CI_COMMIT_SHORT_SHA
+        IMAGE_TAG: count-stats-dev-$CI_COMMIT_SHORT_SHA
         ENV: development
         MAVEN_PROFILE: development
         K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/dev
@@ -194,7 +194,7 @@ deploy:count-stats:staging:
         - build:docker:count-stats:dev
     variables:
         SERVICE_NAME: count-stats
-        IMAGE_TAG: count-stat-dev-$CI_COMMIT_SHORT_SHA
+        IMAGE_TAG: count-stats-dev-$CI_COMMIT_SHORT_SHA
         ENV: staging
         MAVEN_PROFILE: production_processing
         K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/staging
