@@ -1,116 +1,19 @@
 stages:
-    - test
-    - package
+    - build
     - deploy
 
-variables:
-    DOCKER_REGISTRY: dockerhub.ebi.ac.uk
-    DOCKER_IMAGE: $DOCKER_REGISTRY/ebivariation/eva-ws
-    K8S_REPO_URL: https://github.com/EBIvariation/eva-k8s.git
-    MAVEN_SETTINGS: maven-settings.xml
-    URL_MAVEN_SETTINGS: https://api.github.com/repos/EBIvariation/configuration/contents/eva-maven-settings.xml
-    KUBECONFIG_FILE_DEV: https://api.github.com/repos/EBIvariation/configuration/contents/kubernetes-clusters/development-k8s-team-admin-conf.conf
-    KUBECONFIG_FILE_STAGING: https://api.github.com/repos/EBIvariation/configuration/contents/kubernetes-clusters/staging-k8s-team-admin-conf.conf
-    MEDIA_TYPE: application/vnd.github.raw
+# Shared .build_docker / .update_and_deploy templates live in eva-k8s
+# See https://github.com/EBIvariation/eva-k8s/blob/main/gitlab-ci/webservice.yml.
+include:
+    - remote: 'https://raw.githubusercontent.com/EBIvariation/eva-k8s/refs/tags/v1.0/gitlab-ci/webservice.yml'
 
-# REQUIRED GitLab CI/CD Variables (Global or per-project):
+# REQUIRED GitLab CI/CD Variables (Global):
 # DOCKER_AUTH_CONFIG: Contains username and password for the docker registry above
 # GITHUB_USER: GitHub username for accessing private maven settings repository
 # GITHUB_TOKEN: GitHub personal access token for accessing private maven settings repository
-#
-# ============================================================================
-# Test
-# ============================================================================
 
-test:
-    stage: test
-    image: maven:3.9-eclipse-temurin-21-alpine
-    services:
-        - docker:dind
-    variables:
-        DOCKER_HOST: tcp://docker:2375
-        DOCKER_TLS_CERTDIR: ""
-        DOCKER_DRIVER: overlay2
-    script:
-        - mvn -B clean test
-    environment:
-        name: test-env
-    only:
-        - master
-        - tags
-
-# ============================================================================
-# Base Job Templates
-# ============================================================================
-
-.build_docker:
-    stage: package
-    image: docker:latest
-    services:
-        - name: docker:dind
-          alias: docker
-          command: ["--storage-driver=overlay2", "--insecure-registry=localhost"]
-    variables:
-        DOCKER_DRIVER: overlay2
-        DOCKER_TLS_CERTDIR: ""
-        DOCKER_HOST: tcp://docker:2375
-    before_script:
-        - echo "Waiting for Docker daemon to be ready..."
-        - docker info
-    script:
-        - docker build -f $DOCKERFILE_PATH -t $DOCKER_IMAGE:$IMAGE_TAG -t $DOCKER_IMAGE:$IMAGE_LATEST .
-        - docker push $DOCKER_IMAGE:$IMAGE_TAG
-        - docker push $DOCKER_IMAGE:$IMAGE_LATEST
-
-.update_and_deploy:
-    stage: deploy
-    image: alpine:latest
-    before_script:
-        - apk add --no-cache git curl python3 kubectl
-        - python3 -m venv $HOME/.venv
-        - source $HOME/.venv/bin/activate
-        - git config --global user.email "gitlab-ci@ebi.ac.uk"
-        - git config --global user.name "GitLab CI"
-        - git config --global credential.helper store
-        # Clone eva-k8s for scripts and manifests
-        - git clone --depth 1 https://github.com/EBIvariation/eva-k8s.git k8s-repo
-        - cd k8s-repo
-        - pip install --no-cache-dir lxml retry cached-property pyyaml requests
-        - pip install --no-dependencies -r scripts/requirements.txt
-        - echo "https://${GITHUB_TOKEN}:x-oauth-basic@github.com" > ~/.git-credentials
-        - mkdir -p ~/.kube
-        # Download kubernetes cluster configuration from private repository
-        - curl -u $GITHUB_USER:$GITHUB_TOKEN -H "Accept:$MEDIA_TYPE" $KUBECONFIG_FILE > ~/.kube/config
-        - chmod 600 ~/.kube/config
-    script:
-        # Create the target namespace if it doesn't already exist
-        - kubectl apply -f $K8S_MANIFEST_PATH/namespace.yaml
-        # Create/update the image pull secret in the target namespace from DOCKER_AUTH_CONFIG. It only updates if DOCKER_AUTH_CONFIG changes
-        - kubectl create secret generic regcred --type=kubernetes.io/dockerconfigjson --from-literal=.dockerconfigjson="$DOCKER_AUTH_CONFIG" -n $K8S_NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
-        - source $HOME/.venv/bin/activate
-        # Download Maven settings from private repository
-        - curl -u $GITHUB_USER:$GITHUB_TOKEN -H "Accept:$MEDIA_TYPE" $URL_MAVEN_SETTINGS > maven-settings.xml
-        # Convert Maven settings to application.properties
-        - python scripts/maven-settings-to-properties.py --maven_file maven-settings.xml --property_set $PROPERTY_SET --profile $MAVEN_PROFILE --output application.properties
-        # Update image tag in kustomization
-        - python scripts/update-image-tag.py "$K8S_MANIFEST_PATH/kustomization.yaml" "${IMAGE_TAG}"
-        - git add "$K8S_MANIFEST_PATH/kustomization.yaml"
-        # Only commit if the image tag has changed
-        - |
-            if ! git diff --cached --quiet; then
-              git commit -m "Update $SERVICE_NAME ${ENV} image tag to ${IMAGE_TAG}"
-              git push https://${GITHUB_TOKEN}:x-oauth-basic@github.com/EBIvariation/eva-k8s.git main
-            fi
-
-        # Copy the application.properties where it is expected -- DO NOT COMMIT
-        - cp -vf application.properties $K8S_MANIFEST_PATH/
-
-        # Deploy to cluster
-        - kubectl apply -k $K8S_MANIFEST_PATH
-        - kubectl rollout status deployment/$SERVICE_NAME -n $K8S_NAMESPACE --timeout=5m
-    environment:
-        kubernetes:
-            namespace: $K8S_NAMESPACE
+variables:
+    IMAGE_REPOSITORY: dockerhub.ebi.ac.uk/ebivariation/eva-ws
 
 # ============================================================================
 # eva-server
@@ -119,9 +22,9 @@ test:
 build:docker:eva-server:dev:
     extends: .build_docker
     variables:
+        SERVICE_NAME: eva-server
         DOCKERFILE_PATH: eva-server/Dockerfile
         IMAGE_TAG: eva-server-dev-$CI_COMMIT_SHORT_SHA
-        IMAGE_LATEST: dev-latest
     only:
         - master
         - java21
@@ -132,7 +35,6 @@ deploy:eva-server:dev:
         - build:docker:eva-server:dev
     variables:
         SERVICE_NAME: eva-server
-        PROPERTY_SET: eva-server
         IMAGE_TAG: eva-server-dev-$CI_COMMIT_SHORT_SHA
         ENV: development
         MAVEN_PROFILE: development
@@ -151,7 +53,6 @@ deploy:eva-server:staging:
         - build:docker:eva-server:dev
     variables:
         SERVICE_NAME: eva-server
-        PROPERTY_SET: eva-server
         IMAGE_TAG: eva-server-dev-$CI_COMMIT_SHORT_SHA
         ENV: staging
         MAVEN_PROFILE: production_processing
@@ -164,6 +65,32 @@ deploy:eva-server:staging:
         - master
         - java21
 
+build:docker:eva-server:prod:
+    extends: .build_docker
+    variables:
+        SERVICE_NAME: eva-server
+        DOCKERFILE_PATH: eva-server/Dockerfile
+        IMAGE_TAG: eva-server-$CI_COMMIT_TAG
+    only:
+        - tags
+
+deploy:eva-server:prod:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:eva-server:prod
+    variables:
+        SERVICE_NAME: eva-server
+        IMAGE_TAG: eva-server-$CI_COMMIT_TAG
+        ENV: prod
+        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
+        K8S_MANIFEST_PATH: k8s-manifests/eva-server/overlays/prod
+        K8S_NAMESPACE: eva-server-prod
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
+    environment:
+        name: prod
+    only:
+        - tags
+
 # ============================================================================
 # eva-release
 # ============================================================================
@@ -171,9 +98,9 @@ deploy:eva-server:staging:
 build:docker:eva-release:dev:
     extends: .build_docker
     variables:
+        SERVICE_NAME: eva-release
         DOCKERFILE_PATH: eva-release/Dockerfile
         IMAGE_TAG: eva-release-dev-$CI_COMMIT_SHORT_SHA
-        IMAGE_LATEST: dev-latest
     only:
         - master
         - java21
@@ -184,7 +111,6 @@ deploy:eva-release:dev:
         - build:docker:eva-release:dev
     variables:
         SERVICE_NAME: eva-release
-        PROPERTY_SET: eva-release
         IMAGE_TAG: eva-release-dev-$CI_COMMIT_SHORT_SHA
         ENV: development
         MAVEN_PROFILE: development
@@ -203,7 +129,6 @@ deploy:eva-release:staging:
         - build:docker:eva-release:dev
     variables:
         SERVICE_NAME: eva-release
-        PROPERTY_SET: eva-release
         IMAGE_TAG: eva-release-dev-$CI_COMMIT_SHORT_SHA
         ENV: staging
         MAVEN_PROFILE: production_processing
@@ -216,16 +141,39 @@ deploy:eva-release:staging:
         - master
         - java21
 
-# ============================================================================
-# count-stats
-# ============================================================================
+build:docker:eva-release:prod:
+    extends: .build_docker
+    variables:
+        SERVICE_NAME: eva-release
+        DOCKERFILE_PATH: eva-release/Dockerfile
+        IMAGE_TAG: eva-release-$CI_COMMIT_TAG
+    only:
+        - tags
+
+deploy:eva-release:prod:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:eva-release:prod
+    variables:
+        SERVICE_NAME: eva-release
+        IMAGE_TAG: eva-release-$CI_COMMIT_TAG
+        ENV: prod
+        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
+        K8S_MANIFEST_PATH: k8s-manifests/eva-release/overlays/prod
+        K8S_NAMESPACE: eva-release-prod
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
+    environment:
+        name: prod
+    only:
+        - tags
+
 
 build:docker:count-stats:dev:
     extends: .build_docker
     variables:
+        SERVICE_NAME: count-stats
         DOCKERFILE_PATH: count-stats/Dockerfile
-        IMAGE_TAG: count-stat-dev-$CI_COMMIT_SHORT_SHA
-        IMAGE_LATEST: dev-latest
+        IMAGE_TAG: count-stats-dev-$CI_COMMIT_SHORT_SHA
     only:
         - master
         - java21
@@ -236,7 +184,6 @@ deploy:count-stats:dev:
         - build:docker:count-stats:dev
     variables:
         SERVICE_NAME: count-stats
-        PROPERTY_SET: count-stats
         IMAGE_TAG: count-stat-dev-$CI_COMMIT_SHORT_SHA
         ENV: development
         MAVEN_PROFILE: development
@@ -255,7 +202,6 @@ deploy:count-stats:staging:
         - build:docker:count-stats:dev
     variables:
         SERVICE_NAME: count-stats
-        PROPERTY_SET: count-stats
         IMAGE_TAG: count-stat-dev-$CI_COMMIT_SHORT_SHA
         ENV: staging
         MAVEN_PROFILE: production_processing
@@ -268,17 +214,43 @@ deploy:count-stats:staging:
         - master
         - java21
 
+build:docker:count-stats:prod:
+    extends: .build_docker
+    variables:
+        SERVICE_NAME: count-stats
+        DOCKERFILE_PATH: count-stats/Dockerfile
+        IMAGE_TAG: count-stats-$CI_COMMIT_TAG
+    only:
+        - tags
+
+deploy:count-stats:prod:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:count-stats:prod
+    variables:
+        SERVICE_NAME: count-stats
+        IMAGE_TAG: count-stats-$CI_COMMIT_TAG
+        ENV: prod
+        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
+        K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/prod
+        K8S_NAMESPACE: count-stats-prod
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
+    environment:
+        name: prod
+    only:
+        - tags
 
 # ============================================================================
 # dgva-server
 # ============================================================================
+# NOTE: Bo dev *deploy* job for dgva-server because there are no DGVA dev database to connect to
 
 build:docker:dgva-server:dev:
     extends: .build_docker
     variables:
+        SERVICE_NAME: dgva-server
         DOCKERFILE_PATH: dgva-server/Dockerfile
         IMAGE_TAG: dgva-server-dev-$CI_COMMIT_SHORT_SHA
-        IMAGE_LATEST: dev-latest
     only:
         - master
         - java21
@@ -289,7 +261,6 @@ deploy:dgva-server:staging:
         - build:docker:dgva-server:dev
     variables:
         SERVICE_NAME: dgva-server
-        PROPERTY_SET: dgva-server
         IMAGE_TAG: dgva-server-dev-$CI_COMMIT_SHORT_SHA
         ENV: staging
         MAVEN_PROFILE: production_processing
@@ -301,3 +272,29 @@ deploy:dgva-server:staging:
     only:
         - master
         - java21
+
+build:docker:dgva-server:prod:
+    extends: .build_docker
+    variables:
+        SERVICE_NAME: dgva-server
+        DOCKERFILE_PATH: dgva-server/Dockerfile
+        IMAGE_TAG: dgva-server-$CI_COMMIT_TAG
+    only:
+        - tags
+
+deploy:dgva-server:prod:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:dgva-server:prod
+    variables:
+        SERVICE_NAME: dgva-server
+        IMAGE_TAG: dgva-server-$CI_COMMIT_TAG
+        ENV: prod
+        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
+        K8S_MANIFEST_PATH: k8s-manifests/dgva-server/overlays/prod
+        K8S_NAMESPACE: dgva-server-prod
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
+    environment:
+        name: prod
+    only:
+        - tags
