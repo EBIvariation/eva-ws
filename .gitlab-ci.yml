@@ -38,7 +38,6 @@ deploy:eva-server:dev:
         ENV: development
         MAVEN_PROFILE: development
         K8S_MANIFEST_PATH: k8s-manifests/eva-server/overlays/dev
-        K8S_NAMESPACE: eva-server-dev
         KUBECONFIG_FILE: $KUBECONFIG_FILE_DEV
     environment:
         name: development
@@ -55,7 +54,6 @@ deploy:eva-server:staging:
         ENV: staging
         MAVEN_PROFILE: production_processing
         K8S_MANIFEST_PATH: k8s-manifests/eva-server/overlays/staging
-        K8S_NAMESPACE: eva-server-stage
         KUBECONFIG_FILE: $KUBECONFIG_FILE_STAGING
     environment:
         name: staging
@@ -81,7 +79,6 @@ deploy:eva-server:prod:
         ENV: prod
         MAVEN_PROFILE: production,$ACTIVE_EVAPRO
         K8S_MANIFEST_PATH: k8s-manifests/eva-server/overlays/prod
-        K8S_NAMESPACE: eva-server-prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
     environment:
         name: prod
@@ -98,7 +95,6 @@ deploy:eva-server:prod-fallback:
         ENV: prod-fallback
         MAVEN_PROFILE: production,production-fallback,${ACTIVE_EVAPRO}-fallback
         K8S_MANIFEST_PATH: k8s-manifests/eva-server/overlays/prod
-        K8S_NAMESPACE: eva-server-prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD_FALLBACK
     environment:
         name: prod-fallback
@@ -128,7 +124,6 @@ deploy:eva-release:dev:
         ENV: development
         MAVEN_PROFILE: development
         K8S_MANIFEST_PATH: k8s-manifests/eva-release/overlays/dev
-        K8S_NAMESPACE: eva-release-dev
         KUBECONFIG_FILE: $KUBECONFIG_FILE_DEV
     environment:
         name: development
@@ -145,7 +140,6 @@ deploy:eva-release:staging:
         ENV: staging
         MAVEN_PROFILE: production_processing
         K8S_MANIFEST_PATH: k8s-manifests/eva-release/overlays/staging
-        K8S_NAMESPACE: eva-release-stage
         KUBECONFIG_FILE: $KUBECONFIG_FILE_STAGING
     environment:
         name: staging
@@ -171,7 +165,6 @@ deploy:eva-release:prod:
         ENV: prod
         MAVEN_PROFILE: production,$ACTIVE_EVAPRO
         K8S_MANIFEST_PATH: k8s-manifests/eva-release/overlays/prod
-        K8S_NAMESPACE: eva-release-prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
     environment:
         name: prod
@@ -188,7 +181,6 @@ deploy:eva-release:prod-fallback:
         ENV: prod-fallback
         MAVEN_PROFILE: production,production-fallback,${ACTIVE_EVAPRO}-fallback
         K8S_MANIFEST_PATH: k8s-manifests/eva-release/overlays/prod
-        K8S_NAMESPACE: eva-release-prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD_FALLBACK
     environment:
         name: prod-fallback
@@ -215,7 +207,6 @@ deploy:count-stats:dev:
         ENV: development
         MAVEN_PROFILE: development
         K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/dev
-        K8S_NAMESPACE: count-stats-dev
         KUBECONFIG_FILE: $KUBECONFIG_FILE_DEV
     environment:
         name: development
@@ -232,7 +223,6 @@ deploy:count-stats:staging:
         ENV: staging
         MAVEN_PROFILE: production_processing
         K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/staging
-        K8S_NAMESPACE: count-stats-stage
         KUBECONFIG_FILE: $KUBECONFIG_FILE_STAGING
     environment:
         name: staging
@@ -258,7 +248,6 @@ deploy:count-stats:prod:
         ENV: prod
         MAVEN_PROFILE: production,$ACTIVE_EVAPRO
         K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/prod
-        K8S_NAMESPACE: count-stats-prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
     environment:
         name: prod
@@ -275,7 +264,6 @@ deploy:count-stats:prod-fallback:
         ENV: prod-fallback
         MAVEN_PROFILE: production,production-fallback,${ACTIVE_EVAPRO}-fallback
         K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/prod
-        K8S_NAMESPACE: count-stats-prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD_FALLBACK
     environment:
         name: prod-fallback
@@ -306,7 +294,6 @@ deploy:dgva-server:staging:
         ENV: staging
         MAVEN_PROFILE: production_processing
         K8S_MANIFEST_PATH: k8s-manifests/dgva-server/overlays/staging
-        K8S_NAMESPACE: dgva-server-stage
         KUBECONFIG_FILE: $KUBECONFIG_FILE_STAGING
     environment:
         name: staging
@@ -332,7 +319,6 @@ deploy:dgva-server:prod:
         ENV: prod
         MAVEN_PROFILE: production,$ACTIVE_EVAPRO
         K8S_MANIFEST_PATH: k8s-manifests/dgva-server/overlays/prod
-        K8S_NAMESPACE: dgva-server-prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
     environment:
         name: prod
@@ -349,7 +335,6 @@ deploy:dgva-server:prod-fallback:
         ENV: prod-fallback
         MAVEN_PROFILE: production,production-fallback,${ACTIVE_EVAPRO}-fallback
         K8S_MANIFEST_PATH: k8s-manifests/dgva-server/overlays/prod
-        K8S_NAMESPACE: dgva-server-prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD_FALLBACK
     environment:
         name: prod-fallback
