@@ -5,7 +5,7 @@ stages:
 # Shared .build_docker / .update_and_deploy templates live in eva-k8s
 # See https://github.com/EBIvariation/eva-k8s/blob/main/gitlab-ci/webservice.yml.
 include:
-    - remote: 'https://raw.githubusercontent.com/EBIvariation/eva-k8s/refs/tags/v1.0/gitlab-ci/webservice.yml'
+    - remote: 'https://raw.githubusercontent.com/EBIvariation/eva-k8s/refs/tags/v1.1/gitlab-ci/webservice.yml'
 
 # REQUIRED GitLab CI/CD Variables (Global):
 # DOCKER_AUTH_CONFIG: Contains username and password for the docker registry above
@@ -88,6 +88,23 @@ deploy:eva-server:prod:
     only:
         - tags
 
+deploy:eva-server:prod-fallback:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:eva-server:prod
+    variables:
+        SERVICE_NAME: eva-server
+        IMAGE_TAG: eva-server-$CI_COMMIT_TAG
+        ENV: prod-fallback
+        MAVEN_PROFILE: production,production-fallback,${ACTIVE_EVAPRO}-fallback
+        K8S_MANIFEST_PATH: k8s-manifests/eva-server/overlays/prod
+        K8S_NAMESPACE: eva-server-prod
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD_FALLBACK
+    environment:
+        name: prod-fallback
+    only:
+        - tags
+
 # ============================================================================
 # eva-release
 # ============================================================================
@@ -161,6 +178,23 @@ deploy:eva-release:prod:
     only:
         - tags
 
+deploy:eva-release:prod-fallback:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:eva-release:prod
+    variables:
+        SERVICE_NAME: eva-release
+        IMAGE_TAG: eva-release-$CI_COMMIT_TAG
+        ENV: prod-fallback
+        MAVEN_PROFILE: production,production-fallback,${ACTIVE_EVAPRO}-fallback
+        K8S_MANIFEST_PATH: k8s-manifests/eva-release/overlays/prod
+        K8S_NAMESPACE: eva-release-prod
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD_FALLBACK
+    environment:
+        name: prod-fallback
+    only:
+        - tags
+
 
 build:docker:count-stats:dev:
     extends: .build_docker
@@ -231,6 +265,23 @@ deploy:count-stats:prod:
     only:
         - tags
 
+deploy:count-stats:prod-fallback:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:count-stats:prod
+    variables:
+        SERVICE_NAME: count-stats
+        IMAGE_TAG: count-stats-$CI_COMMIT_TAG
+        ENV: prod-fallback
+        MAVEN_PROFILE: production,production-fallback,${ACTIVE_EVAPRO}-fallback
+        K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/prod
+        K8S_NAMESPACE: count-stats-prod
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD_FALLBACK
+    environment:
+        name: prod-fallback
+    only:
+        - tags
+
 # ============================================================================
 # dgva-server
 # ============================================================================
@@ -285,5 +336,22 @@ deploy:dgva-server:prod:
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
     environment:
         name: prod
+    only:
+        - tags
+
+deploy:dgva-server:prod-fallback:
+    extends: .update_and_deploy
+    needs:
+        - build:docker:dgva-server:prod
+    variables:
+        SERVICE_NAME: dgva-server
+        IMAGE_TAG: dgva-server-$CI_COMMIT_TAG
+        ENV: prod-fallback
+        MAVEN_PROFILE: production,production-fallback,${ACTIVE_EVAPRO}-fallback
+        K8S_MANIFEST_PATH: k8s-manifests/dgva-server/overlays/prod
+        K8S_NAMESPACE: dgva-server-prod
+        KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD_FALLBACK
+    environment:
+        name: prod-fallback
     only:
         - tags
