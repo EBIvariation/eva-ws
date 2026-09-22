@@ -35,7 +35,6 @@ deploy:eva-server:dev:
     variables:
         SERVICE_NAME: eva-server
         IMAGE_TAG: eva-server-dev-$CI_COMMIT_SHORT_SHA
-        ENV: development
         MAVEN_PROFILE: development
         K8S_MANIFEST_PATH: k8s-manifests/eva-server/overlays/dev
         KUBECONFIG_FILE: $KUBECONFIG_FILE_DEV
@@ -51,7 +50,6 @@ deploy:eva-server:staging:
     variables:
         SERVICE_NAME: eva-server
         IMAGE_TAG: eva-server-dev-$CI_COMMIT_SHORT_SHA
-        ENV: staging
         MAVEN_PROFILE: production_processing
         K8S_MANIFEST_PATH: k8s-manifests/eva-server/overlays/staging
         KUBECONFIG_FILE: $KUBECONFIG_FILE_STAGING
@@ -76,7 +74,6 @@ deploy:eva-server:prod:
     variables:
         SERVICE_NAME: eva-server
         IMAGE_TAG: eva-server-$CI_COMMIT_TAG
-        ENV: prod
         MAVEN_PROFILE: production,$ACTIVE_EVAPRO
         K8S_MANIFEST_PATH: k8s-manifests/eva-server/overlays/prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
@@ -92,7 +89,6 @@ deploy:eva-server:prod-fallback:
     variables:
         SERVICE_NAME: eva-server
         IMAGE_TAG: eva-server-$CI_COMMIT_TAG
-        ENV: prod-fallback
         MAVEN_PROFILE: production,production-fallback,${ACTIVE_EVAPRO}-fallback
         K8S_MANIFEST_PATH: k8s-manifests/eva-server/overlays/prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD_FALLBACK
@@ -121,7 +117,6 @@ deploy:eva-release:dev:
     variables:
         SERVICE_NAME: eva-release
         IMAGE_TAG: eva-release-dev-$CI_COMMIT_SHORT_SHA
-        ENV: development
         MAVEN_PROFILE: development
         K8S_MANIFEST_PATH: k8s-manifests/eva-release/overlays/dev
         KUBECONFIG_FILE: $KUBECONFIG_FILE_DEV
@@ -137,7 +132,6 @@ deploy:eva-release:staging:
     variables:
         SERVICE_NAME: eva-release
         IMAGE_TAG: eva-release-dev-$CI_COMMIT_SHORT_SHA
-        ENV: staging
         MAVEN_PROFILE: production_processing
         K8S_MANIFEST_PATH: k8s-manifests/eva-release/overlays/staging
         KUBECONFIG_FILE: $KUBECONFIG_FILE_STAGING
@@ -162,7 +156,6 @@ deploy:eva-release:prod:
     variables:
         SERVICE_NAME: eva-release
         IMAGE_TAG: eva-release-$CI_COMMIT_TAG
-        ENV: prod
         MAVEN_PROFILE: production,$ACTIVE_EVAPRO
         K8S_MANIFEST_PATH: k8s-manifests/eva-release/overlays/prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
@@ -178,7 +171,6 @@ deploy:eva-release:prod-fallback:
     variables:
         SERVICE_NAME: eva-release
         IMAGE_TAG: eva-release-$CI_COMMIT_TAG
-        ENV: prod-fallback
         MAVEN_PROFILE: production,production-fallback,${ACTIVE_EVAPRO}-fallback
         K8S_MANIFEST_PATH: k8s-manifests/eva-release/overlays/prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD_FALLBACK
@@ -204,7 +196,6 @@ deploy:count-stats:dev:
     variables:
         SERVICE_NAME: count-stats
         IMAGE_TAG: count-stats-dev-$CI_COMMIT_SHORT_SHA
-        ENV: development
         MAVEN_PROFILE: development
         K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/dev
         KUBECONFIG_FILE: $KUBECONFIG_FILE_DEV
@@ -220,7 +211,6 @@ deploy:count-stats:staging:
     variables:
         SERVICE_NAME: count-stats
         IMAGE_TAG: count-stats-dev-$CI_COMMIT_SHORT_SHA
-        ENV: staging
         MAVEN_PROFILE: production_processing
         K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/staging
         KUBECONFIG_FILE: $KUBECONFIG_FILE_STAGING
@@ -245,7 +235,6 @@ deploy:count-stats:prod:
     variables:
         SERVICE_NAME: count-stats
         IMAGE_TAG: count-stats-$CI_COMMIT_TAG
-        ENV: prod
         MAVEN_PROFILE: production,$ACTIVE_EVAPRO
         K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
@@ -261,7 +250,6 @@ deploy:count-stats:prod-fallback:
     variables:
         SERVICE_NAME: count-stats
         IMAGE_TAG: count-stats-$CI_COMMIT_TAG
-        ENV: prod-fallback
         MAVEN_PROFILE: production,production-fallback,${ACTIVE_EVAPRO}-fallback
         K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD_FALLBACK
@@ -291,7 +279,6 @@ deploy:dgva-server:staging:
     variables:
         SERVICE_NAME: dgva-server
         IMAGE_TAG: dgva-server-dev-$CI_COMMIT_SHORT_SHA
-        ENV: staging
         MAVEN_PROFILE: production_processing
         K8S_MANIFEST_PATH: k8s-manifests/dgva-server/overlays/staging
         KUBECONFIG_FILE: $KUBECONFIG_FILE_STAGING
@@ -316,7 +303,6 @@ deploy:dgva-server:prod:
     variables:
         SERVICE_NAME: dgva-server
         IMAGE_TAG: dgva-server-$CI_COMMIT_TAG
-        ENV: prod
         MAVEN_PROFILE: production,$ACTIVE_EVAPRO
         K8S_MANIFEST_PATH: k8s-manifests/dgva-server/overlays/prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
@@ -332,7 +318,6 @@ deploy:dgva-server:prod-fallback:
     variables:
         SERVICE_NAME: dgva-server
         IMAGE_TAG: dgva-server-$CI_COMMIT_TAG
-        ENV: prod-fallback
         MAVEN_PROFILE: production,production-fallback,${ACTIVE_EVAPRO}-fallback
         K8S_MANIFEST_PATH: k8s-manifests/dgva-server/overlays/prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD_FALLBACK
