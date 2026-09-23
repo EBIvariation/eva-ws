@@ -5,7 +5,7 @@ stages:
 # Shared .build_docker / .update_and_deploy templates live in eva-k8s
 # See https://github.com/EBIvariation/eva-k8s/blob/main/gitlab-ci/webservice.yml.
 include:
-    - remote: 'https://raw.githubusercontent.com/EBIvariation/eva-k8s/refs/tags/v1.1/gitlab-ci/webservice.yml'
+    - remote: 'https://raw.githubusercontent.com/EBIvariation/eva-k8s/refs/tags/v1.2/gitlab-ci/webservice.yml'
 
 # REQUIRED GitLab CI/CD Variables (Global):
 # DOCKER_AUTH_CONFIG: Contains username and password for the docker registry above
