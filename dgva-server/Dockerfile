@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl \
 RUN groupadd -r dgva_server && useradd -r -g dgva_server dgva_server
 
 # Create config directory for runtime application.properties mount
-RUN mkdir -p /app/config && chown -R dgva_server:dgva_server /app
+RUN mkdir -p /app/config /tmp/tomcat/logs && chown -R dgva_server:dgva_server /app /tmp/tomcat
 
 # Copy the JAR file from build stage
 COPY --from=build /app/dgva-server/target/*.jar app.jar

@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl \
 RUN groupadd -r count_stats && useradd -r -g count_stats count_stats
 
 # Create config directory for runtime application.properties mount
-RUN mkdir -p /app/config && chown -R count_stats:count_stats /app
+RUN mkdir -p /app/config /tmp/tomcat/logs && chown -R count_stats:count_stats /app /tmp/tomcat
 
 # Copy the JAR file from build stage
 COPY --from=build /app/count-stats/target/*.jar app.jar
