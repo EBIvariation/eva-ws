@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl \
 RUN groupadd -r eva_release && useradd -r -g eva_release eva_release
 
 # Create config directory for runtime application.properties mount
-RUN mkdir -p /app/config && chown -R eva_release:eva_release /app
+RUN mkdir -p /app/config /tmp/tomcat/logs && chown -R eva_release:eva_release /app /tmp/tomcat
 
 # Copy the JAR file from build stage
 COPY --from=build /app/eva-release/target/*.jar app.jar
