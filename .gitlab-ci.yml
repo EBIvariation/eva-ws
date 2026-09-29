@@ -235,7 +235,8 @@ deploy:count-stats:prod:
     variables:
         SERVICE_NAME: count-stats
         IMAGE_TAG: count-stats-$CI_COMMIT_TAG
-        MAVEN_PROFILE: production,$ACTIVE_EVAPRO
+        # count stats' MAVEN_PROFILE is production_processing because we are writing to the staging metadata database
+        MAVEN_PROFILE: production_processing
         K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD
     environment:
@@ -250,7 +251,8 @@ deploy:count-stats:prod-fallback:
     variables:
         SERVICE_NAME: count-stats
         IMAGE_TAG: count-stats-$CI_COMMIT_TAG
-        MAVEN_PROFILE: production,production-fallback,${ACTIVE_EVAPRO}-fallback
+        # count stats' MAVEN_PROFILE is production_processing because we are writing to the staging metadata database
+        MAVEN_PROFILE: production_processing,production_processing_fallback
         K8S_MANIFEST_PATH: k8s-manifests/count-stats/overlays/prod
         KUBECONFIG_FILE: $KUBECONFIG_FILE_PROD_FALLBACK
     environment:
