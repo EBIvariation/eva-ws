@@ -35,6 +35,10 @@ public class SoTermsSerializer extends StdSerializer<Set<Integer>> {
                           SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeStartArray();
         for (Integer soAccession : integers) {
+            if (soAccession == null) {
+                // Some annotations were loaded with SO terms that could not be mapped to an accession
+                continue;
+            }
             jsonGenerator.writeStartObject();
             String soName = ConsequenceTypeMappings.accessionToTerm.get(soAccession);
             jsonGenerator.writeStringField("soName", soName);
