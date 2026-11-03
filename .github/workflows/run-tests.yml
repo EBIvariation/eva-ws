@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04  # MongoDB 8.0 refuses to start on newer version
 
     strategy:
       matrix:
