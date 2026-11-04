@@ -66,6 +66,11 @@ public class MongoConfiguration {
     }
 
     @Bean
+    public String mongoCollectionsDefaultLocusRangeMetadata() {
+        return dbCollectionsProperties.getDefaultLocusRangeMetadata();
+    }
+
+    @Bean
     public String mongoCollectionsAnnotations() {
         return dbCollectionsProperties.getAnnotations();
     }

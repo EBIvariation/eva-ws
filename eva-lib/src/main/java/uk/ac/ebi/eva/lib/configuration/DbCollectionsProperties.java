@@ -40,6 +40,10 @@ public class DbCollectionsProperties {
 
     @Size(min = 1)
     @NotNull
+    private String defaultLocusRangeMetadata;
+
+    @Size(min = 1)
+    @NotNull
     private String annotations;
 
     @Size(min = 1)
@@ -66,8 +70,16 @@ public class DbCollectionsProperties {
         return annotationMetadata;
     }
 
+    public String getDefaultLocusRangeMetadata() {
+        return defaultLocusRangeMetadata;
+    }
+
     public void setAnnotationMetadata(String annotationMetadata) {
         this.annotationMetadata = annotationMetadata;
+    }
+
+    public void setDefaultLocusRangeMetadata(String defaultLocusRangeMetadata) {
+        this.defaultLocusRangeMetadata = defaultLocusRangeMetadata;
     }
 
     public String getAnnotations() {
