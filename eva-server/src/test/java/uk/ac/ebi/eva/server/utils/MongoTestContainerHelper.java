@@ -10,7 +10,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public abstract class MongoTestContainerHelper {
 
-    private static final String MONGO_IMAGE = "mongo:8.0.34";
+    private static final String MONGO_IMAGE = "mongo:8.0.28";
 
     @Container
     @ServiceConnection
