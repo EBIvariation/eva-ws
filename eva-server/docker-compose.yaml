@@ -37,7 +37,7 @@ services:
       retries: 5
 
   mongodb:
-    image: mongo:6.0
+    image: percona/percona-server-mongodb:8.0.38-16
     ports:
       - "27017:27017"
     environment:
