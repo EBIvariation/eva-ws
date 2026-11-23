@@ -6,11 +6,13 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
 public abstract class MongoTestContainerHelper {
 
-    private static final String MONGO_IMAGE = "mongo:8.0.28";
+    private static final DockerImageName MONGO_IMAGE =
+            DockerImageName.parse("percona/percona-server-mongodb:8.0.38-16").asCompatibleSubstituteFor("mongo");
 
     @Container
     @ServiceConnection
